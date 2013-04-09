@@ -1,0 +1,125 @@
+
+(defun show-nrepl-buffer-and-send-text-to-it (text)
+  (labels ((insert-text () (insert text)))
+    (let* ((original-window (selected-window)))
+      (set-buffer nrepl-nrepl-buffer)
+      (unless (eq (current-buffer) (window-buffer))
+        (pop-to-buffer (current-buffer) t))
+      (goto-char (point-max))
+      (if *nrepl-send-to-buffer-print-newline-first*
+          (progn
+            (newline)
+            (insert-text))
+        (progn
+          (insert-text)
+          (indent-pp-sexp)   ; FIXME: make this work when in a comment ; ****
+          ;; (paredit-reindent-defun)
+          ))
+      (when t;(null arg) ; ****
+        (nrepl-return)
+        (select-window original-window)))))
+
+(defun nrepl-send-to-repl-helper (arg top-level-p)
+  (labels ((the-text
+            ()
+            (let* ((region-selected?
+                    (not (equal mark-active nil))))
+              (save-excursion
+                (cond
+                 (top-level-p
+                  (let ((start (save-excursion
+                                 (beginning-of-this-defun)
+                                 (point)))
+                        (end (save-excursion
+                               (beginning-of-this-defun)
+                               (forward-sexp 1)
+                               (point))))
+                    (buffer-substring start end)))
+                 (region-selected?
+                  (buffer-substring (mark) (point)))
+                 (t
+                  (move-to-start-of-sexp-around-point)
+                  (let ((start (point))
+                        (end (save-excursion
+                               (forward-sexp 1)
+                               (point))))
+                    (buffer-substring start end))))))))
+    (transform-text-for-nrepl-and-show-nrepl-buffer-and-send-text-to-it
+     (the-text)
+     "com.nomistech.todo" ; ****
+     "user" ; ****
+     )))
+
+(defparameter *transform-text-format-string*
+  ;; **** This doesn't work in Clojure.
+  ;;      FWIW, it works in Common Lisp. See the file "cl-read-and-print.lisp".
+  "(let [in-text \"%s\"
+         ns-name-of-the-buffer-we-are-in \"%s\"
+         ns-name-of-the-repl \"%s\"]
+     (letfn [(ns-from-name [name] (find-ns (symbol name)))]
+       (binding [*ns* (ns-from-name ns-name-of-the-buffer-we-are-in)]
+         (let [ns-when-reading *ns*
+               form (read-string in-text)]
+           (binding [*ns* (ns-from-name ns-name-of-the-repl)]
+             (with-out-str
+               (clojure.pprint/pprint
+                {:ns-name-of-the-buffer-we-are-in ns-name-of-the-buffer-we-are-in
+                 :ns-name-of-the-repl ns-name-of-the-repl
+                 :ns-name-when-reading (name (ns-name ns-when-reading))
+                 :ns-name-when-printing (name (ns-name *ns*))
+                 :form form})))))))")
+
+(defun transform-text-for-nrepl-and-show-nrepl-buffer-and-send-text-to-it
+  (text ns-of-the-buffer-we-are-in ns-of-the-repl)
+  ;; Need to make a handler (like nrepl-interactive-eval-handler) that
+  ;; sends the result tothe nrepl buffer.
+  
+  ;; Also, I think you don't need ns-of-the-buffer-we-are-in -- you already
+  ;; have nrepl-buffer-ns to do the job (right?)
+  (progn                                ;with-temp-buffer ; ****
+    (let ((buffer (current-buffer)))
+      (jsk-nrepl-with-right-namespace ; ****
+       (nrepl-send-string (format *transform-text-format-string*
+                                  text
+                                  ns-of-the-buffer-we-are-in
+                                  ns-of-the-repl)
+                          (jsk-nrepl-transform-text-handler buffer)
+                          nrepl-buffer-ns
+                          ;; (nrepl-current-tooling-session) ; ****
+                          )))))
+
+(defun trim-string (string)
+  "Remove white spaces in beginning and ending of STRING.
+White space here is any of: space, tab, emacs newline (line feed, ASCII 10)."
+  ;; Obtained from http://xahlee.blogspot.co.uk/2011/09/emacs-lisp-function-to-trim-string.html
+  (replace-regexp-in-string
+   "\\`[ \t\n]*" ""
+   (replace-regexp-in-string
+    "[ \t\n]*\\'" "" string)))
+
+(defparameter jsk-newline-string "
+")
+
+(defun transform-value (value)
+  (replace-regexp-in-string
+   "\\\\\"" "\""                 ; replace all \" with "
+   (trim-string                  ; get rid of trailing newline
+    (replace-regexp-in-string
+     "\\\\n" jsk-newline-string  ; replace all \n with newline
+     (replace-regexp-in-string
+      "\\`\"" ""                 ; remove quote at start
+      (replace-regexp-in-string
+       "\"\\'" ""                ; remove quote at end
+       value))))))
+
+(defun jsk-nrepl-transform-text-handler (buffer)
+  (nrepl-make-response-handler
+   buffer
+   (lambda (buffer value)
+     (show-nrepl-buffer-and-send-text-to-it (transform-value value)))
+   (lambda (buffer value)
+     (nrepl-emit-interactive-output value))
+   (lambda (buffer err)
+     (message "%s" err))
+   '()))
+
