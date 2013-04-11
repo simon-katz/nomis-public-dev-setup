@@ -16,7 +16,7 @@
 ;;;; General
 
 (setq org-directory
-      "~/Documents/jsk/development-100/__for-sync/to-do-and-planning")
+      "~/Documents/jsk/development-100/__for-sync/notes/to-do-and-planning")
 (setq org-replace-disputed-keys t)
 (setq org-log-done nil)
 
