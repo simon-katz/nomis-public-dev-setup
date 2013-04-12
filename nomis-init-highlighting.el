@@ -10,7 +10,8 @@
 
 ;; Tailoring
 (progn
-  (set-face-background 'modeline "#ccccff"))
+  (set-face-background 'modeline "#ccccff")
+  (set-face-background 'modeline-inactive "grey75"))
 
 ;;;; ___________________________________________________________________________
 
