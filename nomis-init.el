@@ -89,6 +89,7 @@
 (load "nomis-init-line-numbering.el")
 (load "nomis-init-watch-words.el")
 (load "nomis-init-frames.el")
+(load "nomis-init-saveplace.el")
 ;; (load "nomis-init-remember-desktop-using-windows.el")
 (load "nomis-init-remember-desktop-using-workgroups.el")
 (load "nomis-init-auto-complete.el")
