@@ -107,8 +107,9 @@
 (load "nomis-init-nrepl-extras.el")
 ;; (load "nomis-init-slime-fancy.el")
 ;; (load "nomis-init-zip-files.el")
-(load "nomis-init-keyboard-scrolling-and-movement")
+(load "nomis-init-keyboard-scrolling-and-movement.el")
 
+(load "nomis-init-clojure-indentation.el")
 
 ;;;; ___________________________________________________________________________
 ;;;;; ---- temp for playing ----
