@@ -90,3 +90,52 @@
   (interactive)
   (mapc 'nomis-maximize-frame-height
         (frame-list)))
+
+;;;; ___________________________________________________________________________
+;;;; ---- Fiddling with windows ----
+
+;;;; ---------------------------------------------------------------------------
+;;;; ---- transpose-frame ----
+;;;; Swap windows around within a frame.
+
+(require 'transpose-frame)
+
+;;;; ---------------------------------------------------------------------------
+;;;; ---- swap-buffers-in-windows ----
+;;;; Swap buffers between windows.
+
+;;;; Based on something I found at
+;;;; http://www.emacswiki.org/emacs/TransposeWindows.
+
+(defvar swapping-buffer nil)
+
+(defvar swapping-window nil)
+
+(defun swap-buffers-in-windows-setup ()
+  "Swap buffers between two windows -- setup"
+  (interactive)
+  (setq swapping-buffer (current-buffer))
+  (setq swapping-window (selected-window))
+  (message "Buffer and window marked for swapping."))
+
+(defun swap-buffers-in-windows-do-it ()
+  "Swap buffers between two windows -- do it"
+  (interactive)
+  (if (and swapping-window
+           swapping-buffer)
+      (let ((this-buffer (current-buffer))
+            (this-window (selected-window)))
+        (if (and (window-live-p swapping-window)
+                 (buffer-live-p swapping-buffer))
+            (progn (switch-to-buffer swapping-buffer)
+                   (select-window swapping-window)
+                   (switch-to-buffer this-buffer)
+                   (select-window this-window)
+                   (message "Swapped buffers."))
+          (message "Old buffer/window killed.  Aborting."))
+        (setq swapping-buffer nil)
+        (setq swapping-window nil))
+    (error "Need to do `swap-buffers-in-windows-setup` first.")))
+
+(global-set-key (kbd "C-c C-o") 'swap-buffers-in-windows-setup)
+(global-set-key (kbd "C-c C-p") 'swap-buffers-in-windows-do-it)
