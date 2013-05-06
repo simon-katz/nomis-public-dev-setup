@@ -108,7 +108,6 @@
 ;;;; http://www.emacswiki.org/emacs/TransposeWindows.
 
 (defvar swapping-buffer nil)
-
 (defvar swapping-window nil)
 
 (defun swap-buffers-in-windows-setup ()
@@ -133,9 +132,9 @@
                    (select-window this-window)
                    (message "Swapped buffers."))
           (message "Old buffer/window killed.  Aborting."))
-        (setq swapping-buffer nil)
-        (setq swapping-window nil))
+        (setq swapping-window this-window) ; allow for a chain of swaps
+        )
     (error "Need to do `swap-buffers-in-windows-setup` first.")))
 
-(global-set-key (kbd "C-c C-o") 'swap-buffers-in-windows-setup)
-(global-set-key (kbd "C-c C-p") 'swap-buffers-in-windows-do-it)
+(global-set-key (kbd "C-c C--") 'swap-buffers-in-windows-setup)
+(global-set-key (kbd "C-c C-=") 'swap-buffers-in-windows-do-it)
