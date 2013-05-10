@@ -349,9 +349,8 @@ Ring the bell if there's an error in the Clojure world."
                  :top-level-p nil
                  :delete-p (not nomis-rearrange-strings-in-one-go-p))))
     (nomis-nrepl-interactive-eval-print-with-bells-on
-     (format "(do (require 'com.nomistech.emacs-hacks-in-clojure)
-                  (com.nomistech.emacs-hacks-in-clojure/rearrange-string-into-lines
-                   '%s %s %s))"
+     (format "(do (require '[com.nomistech.emacs-hacks-in-clojure :as ehic])
+                  (ehic/rearrange-string-into-lines '%s %s %s))"
              string
              (+ 1 (current-column))
              72)
