@@ -352,7 +352,7 @@ Ring the bell if there's an error in the Clojure world."
      (format "(do (require '[com.nomistech.emacs-hacks-in-clojure :as ehic])
                   (ehic/rearrange-string-into-lines '%s %s %s))"
              string
-             (+ 1 (current-column))
+             (current-column)
              72)
      :save-excursion-p t)))
 
