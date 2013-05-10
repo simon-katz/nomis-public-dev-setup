@@ -61,7 +61,7 @@
 ;;;; ---- load-path ----
 
 (defvar nomis-init-dir
-  "~/Documents/jsk/development-100/__for-sync/Clojure-learning-with-Emacs-etc/emacs-configuration")
+  "~/Documents/jsk/development-100/__for-sync/code/nomis/emacs-configuration")
 
 (defvar nomis-addons-dir
   (concat nomis-init-dir
