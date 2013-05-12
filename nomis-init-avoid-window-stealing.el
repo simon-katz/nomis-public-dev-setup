@@ -36,3 +36,8 @@
 
 (setq ido-default-file-method 'selected-window)
 (setq ido-default-buffer-method 'selected-window)
+
+;;;; ___________________________________________________________________________
+;;;; ---- Have C-x C-b open the buffer list in the current window ----
+
+(global-set-key (kbd "C-x C-b") 'buffer-menu)
