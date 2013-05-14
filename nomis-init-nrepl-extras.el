@@ -343,8 +343,14 @@ Ring the bell if there's an error in the Clojure world."
     (insert-file-contents-literally filePath)
     (buffer-string)))
 
-(defun nomis-nrepl-rearrange-strings-into-lines ()
-  (interactive)
+(defun nomis-nrepl-rearrange-strings-into-lines (prefix)
+  "Rearrange string into lines.
+   Without a prefix argument, indent second and subsequent lines so
+   that they line up sensibly with the first line.
+   With a prefix argument, indent second and subsequent lines one
+   character less as is the convention for Clojure doc strings
+   (which is stupid)."
+  (interactive "*P")
   (let ((string (nomis-nrepl-grab-text
                  :top-level-p nil
                  :delete-p (not nomis-rearrange-strings-in-one-go-p))))
@@ -352,7 +358,8 @@ Ring the bell if there's an error in the Clojure world."
      (format "(do (require '[com.nomistech.emacs-hacks-in-clojure :as ehic])
                   (ehic/rearrange-string-into-lines '%s %s %s))"
              string
-             (current-column)
+             (+ (current-column)
+                (if prefix 0 1))
              72)
      :save-excursion-p t)))
 
