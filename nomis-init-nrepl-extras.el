@@ -234,7 +234,7 @@ Really send to REPL? "
 
 
 ;;;; ___________________________________________________________________________
-;;;; ---- nomis-nrepl-rearrange-strings-into-lines ----
+;;;; ---- nomis-nrepl-rearrange-string-into-lines ----
 
 ;;;; ****
 ;;;; + Ring bell when you get a Clojure error.
@@ -275,8 +275,8 @@ Really send to REPL? "
 ;;;; + Compare nrepl-last-expression with how you get an expression.
 ;;;;   + Mine is better.
 
-(defparameter nomis-rearrange-strings-in-one-go-p t
-  "Having this T means that undoing a nomis-nrepl-rearrange-strings-into-lines
+(defparameter nomis-rearrange-string-in-one-go-p t
+  "Having this T means that undoing a nomis-nrepl-rearrange-string-into-lines
 undoes the whole thing.
 Having this NIL gives a two-step undo.
 Before this was introduced, I had the two-step behaviour.
@@ -304,7 +304,7 @@ the mark-active thing. It all seems to be ok though.")
        (with-current-buffer buffer
          (flet ((do-it
                  ()
-                 (when nomis-rearrange-strings-in-one-go-p
+                 (when nomis-rearrange-string-in-one-go-p
                    (nomis-nrepl-grab-text :top-level-p nil
                                           :delete-p t))
                  (insert
@@ -343,7 +343,7 @@ Ring the bell if there's an error in the Clojure world."
     (insert-file-contents-literally filePath)
     (buffer-string)))
 
-(defun nomis-nrepl-rearrange-strings-into-lines (prefix)
+(defun nomis-nrepl-rearrange-string-into-lines (prefix)
   "Rearrange string into lines.
    Without a prefix argument, indent second and subsequent lines so
    that they line up sensibly with the first line.
@@ -353,7 +353,7 @@ Ring the bell if there's an error in the Clojure world."
   (interactive "*P")
   (let ((string (nomis-nrepl-grab-text
                  :top-level-p nil
-                 :delete-p (not nomis-rearrange-strings-in-one-go-p))))
+                 :delete-p (not nomis-rearrange-string-in-one-go-p))))
     (nomis-nrepl-interactive-eval-print-with-bells-on
      (format "(do (require '[com.nomistech.emacs-hacks-in-clojure :as ehic])
                   (ehic/rearrange-string-into-lines '%s %s %s))"
@@ -364,7 +364,7 @@ Ring the bell if there's an error in the Clojure world."
      :save-excursion-p t)))
 
 (define-key clojure-mode-map (kbd "C-c C-f")
-  'nomis-nrepl-rearrange-strings-into-lines)
+  'nomis-nrepl-rearrange-string-into-lines)
 
 
 ;;;; ___________________________________________________________________________
