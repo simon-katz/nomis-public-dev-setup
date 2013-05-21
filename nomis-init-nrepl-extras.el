@@ -88,6 +88,79 @@
 
 
 ;;;; ___________________________________________________________________________
+;;;; ---- Prompt ----
+
+;;;; I want to enter my input on a fresh line. Nice when you are in a
+;;;; namespace that has a long name.
+
+(cond
+ ((equal nrepl-current-version "0.1.7")
+  (defun nrepl-insert-prompt (namespace)
+    "Insert the prompt (before markers!), taking into account NAMESPACE.
+Set point after the prompt.
+Return the position of the prompt beginning."
+    (goto-char nrepl-input-start-mark)
+    (nrepl-save-marker nrepl-output-start
+      (nrepl-save-marker nrepl-output-end
+        (unless (bolp) (insert-before-markers "\n"))
+        (let ((prompt-start (point))
+              (prompt (format "%s>\n" namespace))) ; jsk: Added \n here
+          (nrepl-propertize-region
+              '(face nrepl-prompt-face read-only t intangible t
+                     nrepl-prompt t
+                     rear-nonsticky (nrepl-prompt read-only face intangible))
+            (insert-before-markers prompt))
+          (set-marker nrepl-prompt-start-mark prompt-start)
+          prompt-start))))))
+
+;;;; ___________________________________________________________________________
+;;;; ---- Pretty printing of results ----
+
+;;;; Pretty printing of results is broken, because:
+;;;; - It returns (and prints) nil.
+
+;;;; A hack to return the right value (and unfortunately print twice, once
+;;;; pretty and once not).
+
+(cond
+ ((equal nrepl-current-version "0.1.7")
+  (defun nrepl-send-input (&optional newline)
+  "Goto to the end of the input and send the current input.
+If NEWLINE is true then add a newline at the end of the input."
+  (unless (nrepl-in-input-area-p)
+    (error "No input at point"))
+  (goto-char (point-max))
+  (let ((end (point)))             ; end of input, without the newline
+    (nrepl-add-to-input-history (buffer-substring nrepl-input-start-mark end))
+    (when newline
+      (insert "\n")
+      (nrepl-show-maximum-output))
+    (let ((inhibit-modification-hooks t))
+      (add-text-properties nrepl-input-start-mark
+                           (point)
+                           `(nrepl-old-input
+                             ,(incf nrepl-old-input-counter))))
+    (let ((overlay (make-overlay nrepl-input-start-mark end)))
+      ;; These properties are on an overlay so that they won't be taken
+      ;; by kill/yank.
+      (overlay-put overlay 'read-only t)
+      (overlay-put overlay 'face 'nrepl-input-face)))
+  (let* ((input (nrepl-current-input))
+         (form (if (and (not (string-match "\\`[ \t\r\n]*\\'" input)) nrepl-use-pretty-printing)
+                   ;; jsk changes here:
+                   ;; was: (format "(clojure.pprint/pprint %s)" input)
+                   (format "(let [res %s]
+                              (clojure.pprint/pprint res)
+                              (print \"____\")
+                              res)"
+                           input)
+                 input)))
+    (goto-char (point-max))
+    (nrepl-mark-input-start)
+    (nrepl-mark-output-start)
+    (nrepl-send-string form (nrepl-handler (current-buffer)) nrepl-buffer-ns)))))
+
+;;;; ___________________________________________________________________________
 ;;;; ---- Namespace functions ----
 
 (defun nomis-nrepl-repl-namespace ()
@@ -201,7 +274,7 @@ Control of evaluation:
   (interactive "P")
   (nomis-nrepl-send-to-repl-helper arg t))
 
-(defvar *nrepl-send-to-buffer-print-newline-first* t)
+(defvar *nrepl-send-to-buffer-print-newline-first* nil) ; because you always have a newline now -- you changed the prompt to have a newline at the end
 
 (defun nomis-nrepl-send-to-repl-helper (arg top-level-p)
   (when (or (nomis-nrepl-buffer-namespace-is-repl-namespace-p)
