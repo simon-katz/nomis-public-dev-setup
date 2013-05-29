@@ -104,7 +104,13 @@ Return the position of the prompt beginning."
       (nrepl-save-marker nrepl-output-end
         (unless (bolp) (insert-before-markers "\n"))
         (let ((prompt-start (point))
-              (prompt (format "%s>\n" namespace))) ; jsk: Added \n here
+              (prompt (let ((original-prompt (format "%s>" namespace)))
+                        ;; jsk: Added stuff here
+                        (concatenate 'string
+                                     ;; (make-string 80 ?\_)
+                                     "\n"
+                                     original-prompt
+                                     "\n"))))
           (nrepl-propertize-region
               '(face nrepl-prompt-face read-only t intangible t
                      nrepl-prompt t
