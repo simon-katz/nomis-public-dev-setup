@@ -75,6 +75,7 @@
 ;;;; ---- Load various files ----
 
 (load "nomis-init-very-general-stuff.el")
+(load "nomis-init-dired.el")
 
 (load "nomis-init-ispell")
 (load "nomis-init-org-mode")
