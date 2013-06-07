@@ -63,12 +63,17 @@
 (defvar nomis-init-dir
   "~/Documents/jsk/development-100/__for-sync/code/nomis/emacs-configuration")
 
-(defvar nomis-addons-dir
-  (concat nomis-init-dir
-          "/nomis-addons"))
+(defun add-dir-and-subdirs-to-load-path (base-dir)
+  (add-to-list 'load-path base-dir)
+  (dolist (f (directory-files base-dir))
+    (let ((name (concat base-dir "/" f)))
+      (when (and (file-directory-p name) 
+                 (not (equal f ".."))
+                 (not (equal f "."))
+                 (not (equal f ".git")))
+        (add-to-list 'load-path name)))))
 
-(add-to-list 'load-path nomis-init-dir)
-(add-to-list 'load-path nomis-addons-dir)
+(add-dir-and-subdirs-to-load-path nomis-init-dir)
 
 ;;;; ___________________________________________________________________________
 ;;;; ---- Load various files ----
