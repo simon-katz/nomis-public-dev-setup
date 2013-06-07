@@ -67,9 +67,8 @@
   (concat nomis-init-dir
           "/nomis-addons"))
 
-(setq load-path (append (list nomis-init-dir
-                              nomis-addons-dir)
-                        load-path))
+(add-to-list 'load-path nomis-init-dir)
+(add-to-list 'load-path nomis-addons-dir)
 
 ;;;; ___________________________________________________________________________
 ;;;; ---- Load various files ----
