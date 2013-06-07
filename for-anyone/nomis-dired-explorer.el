@@ -26,28 +26,28 @@ If selected entry is a directory go into it."
 
 (defun nomis-dired-previous-line (arg)
   "Nomis Explorer-like dired:
-Move up lines and maybe display file in other window."
+Move up lines and display file in other window."
   (interactive "p")
   (dired-previous-line arg)
   (dired-display-file))
 
 (defun nomis-dired-next-line (arg)
   "Nomis Explorer-like dired:
-Move down lines and maybe display file in other window."
+Move down lines and display file in other window."
   (interactive "p")
   (dired-next-line arg)
   (dired-display-file))
 
 (defun nomis-dired-down-directory ()
   "Nomis Explorer-like dired:
-Go into selected directory and maybe display its contents in other window."
+Go into selected directory and display its contents in other window."
   (interactive)
   (nomis-dired-find-file-if-dir-helper :beep-if-not-dir nil)
   (dired-display-file))
 
 (defun nomis-dired-up-directory ()
   "Nomis Explorer-like dired:
-Go up a directory and maybe display its contents in other window."
+Go up a directory and display its contents in other window."
   (interactive)
   (dired-up-directory)
   (dired-display-file))
