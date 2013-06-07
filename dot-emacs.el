@@ -63,20 +63,8 @@
 (defun nomis-load-file-name ()
   (file-truename (or load-file-name (buffer-file-name))))
 
-(defun add-dir-and-subdirs-to-load-path (base-dir)
-  (add-to-list 'load-path base-dir)
-  (dolist (f (directory-files base-dir))
-    (let ((name (concat base-dir "/" f)))
-      (when (and (file-directory-p name) 
-                 (not (equal f ".."))
-                 (not (equal f "."))
-                 (not (equal f ".git")))
-        (add-to-list 'load-path name)))))
-
-(defun add-this-dir-and-subdirs-to-load-path ()
-  (add-dir-and-subdirs-to-load-path (file-name-directory (nomis-load-file-name))))
-
-(add-this-dir-and-subdirs-to-load-path)
+(let ((default-directory (file-name-directory (nomis-load-file-name))))
+  (normal-top-level-add-subdirs-to-load-path))
 
 ;;;; ___________________________________________________________________________
 ;;;; ---- Load various files ----
