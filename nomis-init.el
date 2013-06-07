@@ -112,7 +112,7 @@
 
 (load "nomis-init-clojure-indentation.el")
 
-(load "nomis-shell-stuff.el")
+(load "nomis-init-shell-stuff.el")
 
 ;;;; ___________________________________________________________________________
 ;;;;; ---- temp for playing ----
