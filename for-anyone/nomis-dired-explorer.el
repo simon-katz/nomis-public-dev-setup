@@ -1,10 +1,35 @@
 ;;;; ___________________________________________________________________________
 ;;;; ---- "Explorer"-like behaviour for dired ----
-;;;; Navigate in one window; display contents in other window.
+;;;;
+;;;; Navigate in one window; display contents in other window in the
+;;;; same frame.  (That's "window" and "frame" in Emacs terminology.
+;;;; See http://www.gnu.org/software/emacs/manual/html_node/elisp/Frames.html.)
+;;;;
+;;;; You may find something that suits you better by reading
+;;;; http://www.emacswiki.org/emacs/DiredMode.
+;;;;
+;;;; How this works:
+;;;;
+;;;; In a dired buffer:
+;;;;
+;;;; - M-<up/down/left/right>
+;;;;   Navigate around without updating the other window.
+;;;;   Most of these are simply new bindings for existing dired
+;;;;   commands.
+;;;    The new key bindings are useful because adding Shift gives...
+;;;;
+;;;; - M-S-<up/down/left/right>...
+;;;;   Navigate around and update the other window to show the
+;;;;   newly-selected item.
+;;;; 
 ;;;; Does not show the contents of the current directory (.) because the
 ;;;; underlying functionality (dired-display-file) doesn't.
-;;;; I suggest having "A" in your dired-listing-switches so that . and ..
-;;;; are not displayed.
+;;;; 
+;;;; I suggest the following:
+;;;; - Have "A" in your dired-listing-switches so that . and ..
+;;;;   are not displayed.
+;;;; - Use this with two windows side by side to make best use of
+;;;;   vertical space.
 
 (require 'cl)
 
