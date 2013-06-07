@@ -6,14 +6,21 @@
 ;;;; I suggest having "A" in your dired-listing-switches so that . and ..
 ;;;; are not displayed.
 
+(require 'cl)
+
 (defvar nomis-dired-do-display-file t)
 
+(defun* nomis-dired-find-file-if-dir-helper (&key (beep-if-not-dir t))
+  (if (file-directory-p (dired-get-filename nil t))
+      (dired-find-file)
+    (when beep-if-not-dir
+      (beep))))
+
 (defun nomis-dired-find-file-if-dir ()
- "Nomis Explorer-like dired:
+  "Nomis Explorer-like dired:
 If selected entry is a directory go into it."
   (interactive)
-  (when (file-directory-p (dired-get-filename nil t))
-    (dired-find-file)))
+  (nomis-dired-find-file-if-dir-helper :beep-if-not-dir t))
 
 (defun nomis-dired-previous-line (arg)
   "Nomis Explorer-like dired:
@@ -33,7 +40,7 @@ Move down lines and maybe display file in other window."
   "Nomis Explorer-like dired:
 Go into selected directory and maybe display its contents in other window."
   (interactive)
-  (nomis-dired-find-file-if-dir)
+  (nomis-dired-find-file-if-dir-helper :beep-if-not-dir nil)
   (dired-display-file))
 
 (defun nomis-dired-up-directory ()
