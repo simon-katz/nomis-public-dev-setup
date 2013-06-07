@@ -8,6 +8,8 @@
 
 (require 'cl)
 
+(setq dired-auto-revert-buffer t)
+
 (defvar nomis-dired-do-display-file t)
 
 (defun* nomis-dired-find-file-if-dir-helper (&key (beep-if-not-dir t))
