@@ -138,3 +138,7 @@
 
 (global-set-key (kbd "C-c C--") 'swap-buffers-in-windows-setup)
 (global-set-key (kbd "C-c C-=") 'swap-buffers-in-windows-do-it)
+
+;;;; ___________________________________________________________________________
+
+(provide 'nomis-init-frames)

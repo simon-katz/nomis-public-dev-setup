@@ -22,3 +22,7 @@
      ;; without.)
      (define-key paredit-mode-map (kbd "M-d")
        'paredit-forward-down)))
+
+;;;; ___________________________________________________________________________
+
+(provide 'nomis-init-paredit)

@@ -17,3 +17,7 @@
 
 (add-hook 'clojure-mode-hook 'subword-mode)
 (add-hook 'clojure-mode-hook 'generic-lispy-stuff)
+
+;;;; ___________________________________________________________________________
+
+(provide 'nomis-init-clojure-mode)

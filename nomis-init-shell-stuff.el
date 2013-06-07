@@ -5,3 +5,7 @@
   "execute region in an inferior shell"
   (interactive "r")
   (shell-command (buffer-substring-no-properties start end)))
+
+;;;; ___________________________________________________________________________
+
+(provide 'nomis-init-shell-stuff)

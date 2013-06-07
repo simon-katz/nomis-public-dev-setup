@@ -31,3 +31,7 @@
 ;; (set-face-background 'hl-line "lightyellow")
 ;; (set-face-background 'hl-line "LightGoldenrodYellow")
 ;; (remove-hook 'coding-hook 'turn-on-hl-line-mode)
+
+;;;; ___________________________________________________________________________
+
+(provide 'nomis-init-highlighting)

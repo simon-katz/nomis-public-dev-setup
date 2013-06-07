@@ -41,3 +41,7 @@
 ;;;; ---- Have C-x C-b open the buffer list in the current window ----
 
 (global-set-key (kbd "C-x C-b") 'buffer-menu)
+
+;;;; ___________________________________________________________________________
+
+(provide 'nomis-init-avoid-window-stealing)

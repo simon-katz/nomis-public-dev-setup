@@ -102,3 +102,7 @@
 (add-hook 'org-finalize-agenda-hook
     (lambda () (remove-text-properties
            (point-min) (point-max) '(mouse-face t))))
+
+;;;; ___________________________________________________________________________
+
+(provide 'nomis-init-org-mode)

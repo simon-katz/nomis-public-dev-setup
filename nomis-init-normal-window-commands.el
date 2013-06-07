@@ -19,3 +19,7 @@
 ;;   (other-frame -1))
 (define-key global-map [(control tab)] 'next-multiframe-window)
 (define-key global-map [(control shift tab)] 'previous-multiframe-window)
+
+;;;; ___________________________________________________________________________
+
+(provide 'nomis-init-normal-window-commands)

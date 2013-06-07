@@ -67,4 +67,6 @@ Go up a directory and maybe display its contents in other window."
    (define-key dired-mode-map (kbd "M-S-<left>") 'nomis-dired-up-directory)
    (define-key dired-mode-map (kbd "M-S-<right>") 'nomis-dired-into)))
 
+;;;; ___________________________________________________________________________
+
 (provide 'nomis-dired-explorer)

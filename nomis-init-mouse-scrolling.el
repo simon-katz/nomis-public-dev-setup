@@ -8,3 +8,7 @@
                                   ;; ((meta-shift) . 8)
                                   ))
 (setq mouse-wheel-progressive-speed nil) ; don't accelerate scrolling
+
+;;;; ___________________________________________________________________________
+
+(provide 'nomis-init-mouse-scrolling)

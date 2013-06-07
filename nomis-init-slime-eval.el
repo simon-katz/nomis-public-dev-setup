@@ -67,3 +67,7 @@
 (ad-activate 'slime-eval-defun)
 (ad-activate 'slime-eval-last-expression)
 
+
+;;;; ___________________________________________________________________________
+
+(provide 'nomis-init-slime-eval)

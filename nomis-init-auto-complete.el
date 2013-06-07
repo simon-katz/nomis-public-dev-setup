@@ -44,3 +44,7 @@
           'set-auto-complete-as-completion-at-point-function)
 
 (define-key nrepl-interaction-mode-map (kbd "C-c C-d") 'ac-nrepl-popup-doc)
+
+;;;; ___________________________________________________________________________
+
+(provide 'nomis-init-auto-complete)

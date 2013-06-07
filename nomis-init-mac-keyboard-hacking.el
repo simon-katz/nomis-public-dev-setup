@@ -124,3 +124,7 @@ any other value
     ;; finger-bending.
     (define-key global-map "≈" 'nomis-option-x)
     (define-key global-map "Ω" 'nomis-option-z)))
+
+;;;; ___________________________________________________________________________
+
+(provide 'nomis-init-mac-keyboard-hacking)

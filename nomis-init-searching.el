@@ -22,3 +22,7 @@
 (ad-activate 'grep-tag-default)
 
 ;; (define-key global-map (kbd "C-c C-v C-s") 'rgrep)
+
+;;;; ___________________________________________________________________________
+
+(provide 'nomis-init-searching)

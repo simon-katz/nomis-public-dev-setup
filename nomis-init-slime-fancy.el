@@ -20,3 +20,7 @@
 ;;     (setq slime-use-autodoc-mode nil) ; So slime-fancy will work with
 ;;                                         ; clojure
 ;;     ))
+
+;;;; ___________________________________________________________________________
+
+(provide 'nomis-init-slime-fancy)

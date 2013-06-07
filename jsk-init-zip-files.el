@@ -31,3 +31,7 @@
 ;;     ad-do-it))
 
 ;; (ad-activate 'archive-zip-extract)
+
+;;;; ___________________________________________________________________________
+
+(provide 'jsk-init-zip-files)

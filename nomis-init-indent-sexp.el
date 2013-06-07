@@ -48,3 +48,7 @@
 (eval-after-load 'clojure-mode
   '(define-key clojure-mode-map (kbd "C-M-q") 'indent-pp-sexp))
 
+
+;;;; ___________________________________________________________________________
+
+(provide 'nomis-init-indent-sexp)

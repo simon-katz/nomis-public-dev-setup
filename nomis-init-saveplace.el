@@ -9,3 +9,7 @@
 
 (require 'saveplace)
 (setq-default save-place t)
+
+;;;; ___________________________________________________________________________
+
+(provide 'nomis-init-saveplace)

@@ -26,3 +26,7 @@
 ;;;; - [REMAINING-ISSUE]aaa
 ;;;; - REMAINING-ISSUEaaa
 ;;;; - TODO-THINKaaa
+
+;;;; ___________________________________________________________________________
+
+(provide 'nomis-init-watch-words)

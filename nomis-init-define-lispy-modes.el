@@ -19,3 +19,7 @@
 (defun generic-lispy-stuff ()
   (rainbow-delimiters-mode)
   (nomis-whitespace-mode))
+
+;;;; ___________________________________________________________________________
+
+(provide 'nomis-init-define-lispy-modes)

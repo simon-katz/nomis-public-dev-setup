@@ -26,3 +26,7 @@
     (with-temp-buffer
       (insert (with-output-to-string (pp sexp))) ; was (insert (format "%S" sexp))
       (write-file file))))
+
+;;;; ___________________________________________________________________________
+
+(provide 'nomis-init-remember-desktop-using-workgroups)

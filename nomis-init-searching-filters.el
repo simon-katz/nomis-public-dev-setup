@@ -23,3 +23,7 @@
              *extra-ignored-files*)
        (mapc (lambda (x) (add-to-list 'grep-find-ignored-directories x))
              *extra-ignored-directories*))))
+
+;;;; ___________________________________________________________________________
+
+(provide 'nomis-init-searching-filters)

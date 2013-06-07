@@ -27,3 +27,7 @@
 ;;;; ---- (for repl and for Clojure source files) ----
 
 (add-hook 'nrepl-interaction-mode-hook 'nrepl-turn-on-eldoc-mode)
+
+;;;; ___________________________________________________________________________
+
+(provide 'nomis-init-nrepl-tailoring)

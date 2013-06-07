@@ -18,3 +18,7 @@ in the display."
 (define-key global-map (kbd "C-M-S-<down>") 'scroll-up-line)
 (define-key global-map (kbd "C-S-<up>")     'nomis-scroll-down-in-place)
 (define-key global-map (kbd "C-S-<down>")   'nomis-scroll-up-in-place)
+
+;;;; ___________________________________________________________________________
+
+(provide 'nomis-init-keyboard-scrolling-and-movement)

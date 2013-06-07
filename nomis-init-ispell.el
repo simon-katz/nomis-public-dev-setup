@@ -6,3 +6,7 @@
 (setq flyspell-mark-duplications-exceptions
       (quote ((nil "that" "had" "blah" "plop" "etc")
               ("\\`francais" "nous" "vous"))))
+
+;;;; ___________________________________________________________________________
+
+(provide 'nomis-init-ispell)

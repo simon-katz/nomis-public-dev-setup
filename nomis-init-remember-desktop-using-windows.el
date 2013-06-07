@@ -26,3 +26,7 @@
  ;; (define-key global-map win:switch-prefix nil)
  ;; (define-key global-map "\C-cw1" 'win-switch-to-window)
  )
+
+;;;; ___________________________________________________________________________
+
+(provide 'nomis-init-remember-desktop-using-windows)

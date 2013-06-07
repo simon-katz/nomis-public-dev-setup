@@ -486,3 +486,7 @@ comments."
   (save-excursion
     (when (search-backward "#_" nil t) ; wrong -- not structure-aware
       (delete-char 2))))
+
+;;;; ___________________________________________________________________________
+
+(provide 'nomis-init-nrepl-extras)
