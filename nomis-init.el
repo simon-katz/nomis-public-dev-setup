@@ -60,8 +60,8 @@
 ;;;; ___________________________________________________________________________
 ;;;; ---- load-path ----
 
-(defvar nomis-init-dir
-  "~/Documents/jsk/development-100/__for-sync/code/nomis/emacs-configuration")
+(defun nomis-load-file-name ()
+  (file-truename (or load-file-name (buffer-file-name))))
 
 (defun add-dir-and-subdirs-to-load-path (base-dir)
   (add-to-list 'load-path base-dir)
@@ -73,7 +73,10 @@
                  (not (equal f ".git")))
         (add-to-list 'load-path name)))))
 
-(add-dir-and-subdirs-to-load-path nomis-init-dir)
+(defun add-this-dir-and-subdirs-to-load-path ()
+  (add-dir-and-subdirs-to-load-path (file-name-directory (nomis-load-file-name))))
+
+(add-this-dir-and-subdirs-to-load-path)
 
 ;;;; ___________________________________________________________________________
 ;;;; ---- Load various files ----
