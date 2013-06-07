@@ -38,7 +38,7 @@ Move down lines and maybe display file in other window."
   (dired-next-line arg)
   (dired-display-file))
 
-(defun nomis-dired-into ()
+(defun nomis-dired-down-directory ()
   "Nomis Explorer-like dired:
 Go into selected directory and maybe display its contents in other window."
   (interactive)
@@ -65,7 +65,7 @@ Go up a directory and maybe display its contents in other window."
    (define-key dired-mode-map (kbd "M-S-<up>") 'nomis-dired-previous-line)
    (define-key dired-mode-map (kbd "M-S-<down>") 'nomis-dired-next-line)
    (define-key dired-mode-map (kbd "M-S-<left>") 'nomis-dired-up-directory)
-   (define-key dired-mode-map (kbd "M-S-<right>") 'nomis-dired-into)))
+   (define-key dired-mode-map (kbd "M-S-<right>") 'nomis-dired-down-directory)))
 
 ;;;; ___________________________________________________________________________
 
