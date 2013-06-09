@@ -1,5 +1,4 @@
-;;;; ___________________________________________________________________________
-;;;; ---- "Explorer"-like behaviour for dired ----
+;;;; nomis-dired-explorer -- A Simple File Explorer.
 ;;;;
 ;;;; Navigate in one window; display contents in other window in the
 ;;;; same frame.  (That's "window" and "frame" in Emacs terminology.
@@ -30,6 +29,8 @@
 ;;;;   are not displayed.
 ;;;; - Use this with two windows side by side to make best use of
 ;;;;   vertical space.
+
+;;;; ___________________________________________________________________________
 
 (require 'cl)
 
