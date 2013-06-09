@@ -4,8 +4,8 @@
 ;;;; same frame.  (That's "window" and "frame" in Emacs terminology.
 ;;;; See http://www.gnu.org/software/emacs/manual/html_node/elisp/Frames.html.)
 ;;;;
-;;;; You may find something that suits you better by reading
-;;;; http://www.emacswiki.org/emacs/DiredMode.
+;;;; See my blog post at
+;;;; http://nomistech.blogspot.co.uk/2013/06/simple-directory-navigation-for-emacs.html
 ;;;;
 ;;;; How this works:
 ;;;;
@@ -29,6 +29,9 @@
 ;;;;   are not displayed.
 ;;;; - Use this with two windows side by side to make best use of
 ;;;;   vertical space.
+;;;;
+;;;; You may find something that suits you better by reading
+;;;; http://www.emacswiki.org/emacs/DiredMode.
 
 ;;;; ___________________________________________________________________________
 
