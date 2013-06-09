@@ -1,4 +1,4 @@
-;;;; nomis-dired-explorer -- A Simple File Explorer.
+;;;; Nomis Dired Explorer -- A Simple File Explorer.
 ;;;;
 ;;;; Navigate in one window; display contents in other window in the
 ;;;; same frame.  (That's "window" and "frame" in Emacs terminology.
@@ -45,34 +45,34 @@
       (beep))))
 
 (defun nomis-dired-find-file-if-dir ()
-  "Nomis Explorer-like dired:
+  "Nomis Dired Explorer:
 If selected entry is a directory go into it."
   (interactive)
   (nomis-dired-find-file-if-dir-helper :beep-if-not-dir t))
 
 (defun nomis-dired-previous-line (arg)
-  "Nomis Explorer-like dired:
+  "Nomis Dired Explorer:
 Move up lines and display file in other window."
   (interactive "p")
   (dired-previous-line arg)
   (dired-display-file))
 
 (defun nomis-dired-next-line (arg)
-  "Nomis Explorer-like dired:
+  "Nomis Dired Explorer:
 Move down lines and display file in other window."
   (interactive "p")
   (dired-next-line arg)
   (dired-display-file))
 
 (defun nomis-dired-down-directory ()
-  "Nomis Explorer-like dired:
+  "Nomis Dired Explorer:
 Go into selected directory and display its contents in other window."
   (interactive)
   (nomis-dired-find-file-if-dir-helper :beep-if-not-dir nil)
   (dired-display-file))
 
 (defun nomis-dired-up-directory ()
-  "Nomis Explorer-like dired:
+  "Nomis Dired Explorer:
 Go up a directory and display its contents in other window."
   (interactive)
   (dired-up-directory)
