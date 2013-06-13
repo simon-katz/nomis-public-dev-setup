@@ -55,6 +55,7 @@
 ;; (progn shell-file-name)
 ;;; So hack like this instead for now:
 (setenv "PATH" (concat "~/bin:"
+                       "/usr/local/bin:"
                        (shell-command-to-string "echo $PATH")))
 
 ;;;; ___________________________________________________________________________
