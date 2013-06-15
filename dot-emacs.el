@@ -70,6 +70,8 @@
 ;;;; ___________________________________________________________________________
 ;;;; ---- Load various files ----
 
+(require 'homeless)
+
 (require 'nomis-very-general-stuff)
 (require 'nomis-dired)
 
