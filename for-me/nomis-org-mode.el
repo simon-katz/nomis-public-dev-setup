@@ -70,7 +70,7 @@
 ;;;; Dependencies
 
 (setq org-enforce-todo-dependencies t)
-(setq org-agenda-dim-blocked-tasks 'invisible)
+;; (setq org-agenda-dim-blocked-tasks 'invisible) ; actually the default dimmimg is nice -- you can see more info
 
 ;;;; ---------------------------------------------------------------------------
 ;;;; Capture
