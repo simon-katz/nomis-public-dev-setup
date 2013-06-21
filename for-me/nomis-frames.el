@@ -30,7 +30,7 @@
   (defparameter nomis-frame-prefs `((width  . ,single-window-frame-width)
                                     (height . ,window-height)
                                     (top . 0)
-                                    (left . 125)
+                                    (left . 140)
                                     ;; (font . "4.System VIO")
                                     ;; (foreground-color . "Black")
                                     (background-color . "#f5f5f5")
