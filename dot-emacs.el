@@ -26,8 +26,15 @@
                         starter-kit-lisp
                         starter-kit-bindings
                         clojure-mode
+                        clojure-test-mode
                         saveplace
-                        )
+                        workgroups
+                        auto-complete
+                        ac-nrepl
+                        rainbow-delimiters
+                        fuzzy
+                        htmlize
+                        pos-tip)
     "A list of packages to ensure are installed at launch.")
 
   (dolist (p my-packages)
