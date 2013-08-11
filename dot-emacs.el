@@ -74,6 +74,7 @@
 
 (require 'nomis-very-general-stuff)
 (require 'nomis-dired)
+(require 'dirtree) ; see https://github.com/zk/emacs-dirtree
 
 (require 'nomis-ispell)
 (require 'nomis-org-mode)
