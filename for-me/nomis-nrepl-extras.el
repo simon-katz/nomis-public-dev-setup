@@ -489,4 +489,39 @@ comments."
 
 ;;;; ___________________________________________________________________________
 
+;;;; TODO: Tidy; just hacked for now.
+
+;; Alternative approach (From
+;; https://news.ycombinator.com/item?id=5819487) This technique will
+;; display the output in the minibuffer, the latter will display it in
+;; the repl.
+
+(defun nrepl-refresh ()
+  (interactive)
+  (nrepl-interactive-eval "(clojure.tools.namespace.repl/refresh)"))
+
+(defun nrepl-reset ()
+  (interactive)
+  (nrepl-interactive-eval "(user/reset)"))
+
+(defun nrepl-refresh-to-repl ()
+  (interactive)
+  (set-buffer "*nrepl*")
+  (goto-char (point-max))
+  (insert "(clojure.tools.namespace.repl/refresh)")
+  (nrepl-return)
+  ;; (goto-char (point-max))
+  )
+
+(defun nrepl-reset-to-repl ()
+  (interactive)
+  (set-buffer "*nrepl*")
+  (goto-char (point-max))
+  (insert "(user/reset)")
+  (nrepl-return)
+  ;; (goto-char (point-max))
+  )
+
+;;;; ___________________________________________________________________________
+
 (provide 'nomis-nrepl-extras)
