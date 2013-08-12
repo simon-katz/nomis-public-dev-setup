@@ -1,5 +1,8 @@
 ;;;; ---- Emacs init file ----
 
+;; TODO: Look at compiling things in for-me/nomis-addons.
+;; TODO: When eval form in Clojure buffer -> Debugger
+;;       - No longer making it the active window.
 
 ;;;; ___________________________________________________________________________
 ;;;; ---- Emacs Starter Kit ----
@@ -22,7 +25,7 @@
 
   ;; Add in your own as you wish:
 
-  (defvar my-packages '(starter-kit
+  (defvar my-packages '(starter-kit ; TODO: Get rid of starter kit.
                         starter-kit-lisp
                         starter-kit-bindings
                         clojure-mode
