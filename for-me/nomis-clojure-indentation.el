@@ -1,10 +1,9 @@
 ;;;; Init stuff -- Clojure indentation.
 
-;;;; From https://github.com/weavejester/compojure/wiki/Emacs-indentation.
-
 (eval-after-load 'clojure-mode
   '(define-clojure-indent
      ;; Ring and Compojure
+     ;; From https://github.com/weavejester/compojure/wiki/Emacs-indentation.
      (defroutes 'defun)
      (GET 2)
      (POST 2)
