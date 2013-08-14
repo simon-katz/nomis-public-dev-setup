@@ -59,7 +59,7 @@
 
   (defun nomis-meta-w (arg)
     (interactive "p")
-    (flet ((nomis-meta-w-replacement
+    (cl-flet ((nomis-meta-w-replacement
             ()
             (ding)
             (when (prog1

@@ -3,15 +3,15 @@
 ;;;; ___________________________________________________________________________
 
 ;; Defaults:
-;; (set-face-background 'modeline          "grey75")
-;; (set-face-background 'modeline-inactive "grey90")
-;; (set-face-foreground 'modeline          "black")
-;; (set-face-foreground 'modeline-inactive "grey20")
+;; (set-face-background 'mode-line          "grey75")
+;; (set-face-background 'mode-line-inactive "grey90")
+;; (set-face-foreground 'mode-line          "black")
+;; (set-face-foreground 'mode-line-inactive "grey20")
 
 ;; Tailoring
 (progn
-  (set-face-background 'modeline "#ccccff")
-  (set-face-background 'modeline-inactive "grey75"))
+  (set-face-background 'mode-line "#ccccff")
+  (set-face-background 'mode-line-inactive "grey75"))
 
 ;;;; ___________________________________________________________________________
 

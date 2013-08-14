@@ -14,7 +14,7 @@
 ;;;; ---- Stuff for rgrep and lgrep ----
 
 (defadvice grep-tag-default (around change-space-to-todo ())
-  (flet ((do-it () ad-do-it))
+  (cl-flet ((do-it () ad-do-it))
     (when (string-equal (do-it) "")
       (setq ad-return-value
             ;; use \ below so this doesn't show up in searches

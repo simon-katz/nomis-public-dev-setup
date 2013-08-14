@@ -12,7 +12,7 @@
 ;; (defun nomis-indent-sexp (arg)
 ;;   (interactive "P")
 ;;   (save-excursion
-;;     (flet ((do-it () (indent-pp-sexp arg)))
+;;     (cl-flet ((do-it () (indent-pp-sexp arg)))
 ;;       (if (or (looking-at "(")
 ;;               (let ((just-after-close-paren-p
 ;;                      (prog2
@@ -29,7 +29,7 @@
 
 (defadvice indent-pp-sexp (around work-when-at-end-of-sexp (&optional arg))
   (save-excursion
-    (flet ((do-it () ad-do-it))
+    (cl-flet ((do-it () ad-do-it))
       (if (or (looking-at "(")
               (let ((just-after-close-paren-p
                      (prog2

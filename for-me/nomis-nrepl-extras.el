@@ -289,12 +289,12 @@ Control of evaluation:
 Really send to REPL? "
                      (nrepl-find-ns)
                      (nomis-nrepl-repl-namespace))))
-    (labels ((the-text
+    (cl-labels ((the-text
               ()
               (nomis-nrepl-grab-text :top-level-p top-level-p :delete-p nil))
              (show-nrepl-buffer-and-send-text-to-it
               (text)
-              (labels ((insert-text () (insert text)))
+              (cl-labels ((insert-text () (insert text)))
                 (let* ((original-window (selected-window)))
                   (set-buffer (nomis-nrepl-find-or-create-repl-buffer))
                   (unless (eq (current-buffer) (window-buffer))
@@ -381,7 +381,7 @@ the mark-active thing. It all seems to be ok though.")
      buffer
      (lambda (buffer value)
        (with-current-buffer buffer
-         (flet ((do-it
+         (cl-flet ((do-it
                  ()
                  (when nomis-rearrange-string-in-one-go-p
                    (nomis-nrepl-grab-text :top-level-p nil
