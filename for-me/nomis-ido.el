@@ -1,0 +1,20 @@
+;; Init stuff -- ido.
+
+;;;; ___________________________________________________________________________
+
+;; TODO: Look at this ido stuff copied from the Starter Kit.
+
+(ido-mode t)
+;; (ido-ubiquitous t)
+;; (setq ido-enable-prefix nil)
+;; (setq ido-enable-flex-matching t) ; This was in better-defaults too.
+;; (setq ido-auto-merge-work-directories-length nil)
+;; (setq ido-create-new-buffer 'always)
+(setq ido-use-filename-at-point 'guess)
+;; (setq ido-use-virtual-buffers t)
+;; (setq ido-handle-duplicate-virtual-buffers 2)
+;; (setq ido-max-prospects 10)
+
+;;;; ___________________________________________________________________________
+
+(provide 'nomis-ido)

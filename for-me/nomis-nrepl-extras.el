@@ -290,25 +290,25 @@ Really send to REPL? "
                      (nrepl-find-ns)
                      (nomis-nrepl-repl-namespace))))
     (cl-labels ((the-text
-              ()
-              (nomis-nrepl-grab-text :top-level-p top-level-p :delete-p nil))
-             (show-nrepl-buffer-and-send-text-to-it
-              (text)
-              (cl-labels ((insert-text () (insert text)))
-                (let* ((original-window (selected-window)))
-                  (set-buffer (nomis-nrepl-find-or-create-repl-buffer))
-                  (unless (eq (current-buffer) (window-buffer))
-                    (pop-to-buffer (current-buffer) t))
-                  (goto-char (point-max))
-                  (when *nrepl-send-to-buffer-print-newline-first*
-                    (newline))
-                  (insert-text)
-                  (backward-sexp)
-                  (indent-pp-sexp) ; (paredit-reindent-defun) ; nrepl doesn't indent (yet)
-                  (forward-sexp)
-                  (when (null arg)
-                    (nrepl-return)
-                    (select-window original-window))))))
+                 ()
+                 (nomis-nrepl-grab-text :top-level-p top-level-p :delete-p nil))
+                (show-nrepl-buffer-and-send-text-to-it
+                 (text)
+                 (cl-labels ((insert-text () (insert text)))
+                   (let* ((original-window (selected-window)))
+                     (set-buffer (nomis-nrepl-find-or-create-repl-buffer))
+                     (unless (eq (current-buffer) (window-buffer))
+                       (pop-to-buffer (current-buffer) t))
+                     (goto-char (point-max))
+                     (when *nrepl-send-to-buffer-print-newline-first*
+                       (newline))
+                     (insert-text)
+                     (backward-sexp)
+                     (indent-pp-sexp) ; (paredit-reindent-defun) ; nrepl doesn't indent (yet)
+                     (forward-sexp)
+                     (when (null arg)
+                       (nrepl-return)
+                       (select-window original-window))))))
       (show-nrepl-buffer-and-send-text-to-it (the-text)))))
 
 
@@ -382,13 +382,13 @@ the mark-active thing. It all seems to be ok though.")
      (lambda (buffer value)
        (with-current-buffer buffer
          (cl-flet ((do-it
-                 ()
-                 (when nomis-rearrange-string-in-one-go-p
-                   (nomis-nrepl-grab-text :top-level-p nil
-                                          :delete-p t))
-                 (insert
-                  (format "%s"
-                          (transform-string-value value)))))
+                    ()
+                    (when nomis-rearrange-string-in-one-go-p
+                      (nomis-nrepl-grab-text :top-level-p nil
+                                             :delete-p t))
+                    (insert
+                     (format "%s"
+                             (transform-string-value value)))))
            (if save-excursion-p
                (save-excursion (do-it))
              (do-it)))))

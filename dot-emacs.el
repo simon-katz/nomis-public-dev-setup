@@ -1,55 +1,57 @@
 ;;;; ---- Emacs init file ----
 
-;; TODO: Look at compiling things in for-me/nomis-addons.
-;; TODO: When eval form in Clojure buffer -> Debugger
-;;       - No longer making it the active window.
+(let ((expected-version "24.3.1")
+      (version emacs-version))
+  (unless (equal version expected-version)
+    (unless (y-or-n-p (format (concat
+                               "Things might not work. This Emacs init is"
+                               " expecting Emacs %s, but this is Emacs %s."
+                               " Type 'y' to continue or 'n' to exit.")
+                              expected-version
+                              version))
+      (kill-emacs))))
 
 ;;;; ___________________________________________________________________________
-;;;; ---- Emacs Starter Kit ----
+;;;; ---- Package setup ----
 
 (progn
-  ;; From https://github.com/technomancy/emacs-starter-kit
+  (require 'package)
 
   ;; Add Marmalade as a package archive source in ~/.emacs.d/init.e
-
-  (require 'package)
   (add-to-list 'package-archives
                '("marmalade" . "http://marmalade-repo.org/packages/") t)
-  (package-initialize)
 
-  ;; It's recommended to create a list of packages in init.el which will be
-  ;; installed if they are found to not be present:
+  (package-initialize)
 
   (when (not package-archive-contents)
     (package-refresh-contents))
 
-  ;; Add in your own as you wish:
-
-  (defvar my-packages '(starter-kit ; TODO: Get rid of starter kit.
-                        starter-kit-lisp
-                        starter-kit-bindings
+  (defvar my-packages '(elisp-slime-nav
+                        paredit
+                        rainbow-delimiters
+                        auto-complete
+                        nrepl
+                        ac-nrepl
                         clojure-mode
                         clojure-test-mode
                         saveplace
                         workgroups
-                        auto-complete
-                        ac-nrepl
-                        rainbow-delimiters
                         fuzzy
                         htmlize
-                        pos-tip)
+                        pos-tip
+                        magit
+                        ido-ubiquitous
+                        smex
+                        idle-highlight-mode)
     "A list of packages to ensure are installed at launch.")
 
   (dolist (p my-packages)
     (when (not (package-installed-p p))
-      (package-install p)))
-
-  ;; There are a few conventions for naming files which will get loaded automatically. ~/.emacs.d/$USER.el as well as any files in the ~/.emacs.d/$USER/ directory. Finally, the Starter Kit will look for a file named after the current hostname ending in ".el" which will allow host-specific configuration.
-
-  ;; The Starter Kit used to be a git repository that you checked out and used as your own personal .emacs.d directory, but it's been restructured so that it can be treated like any other package, freeing you up to structure your .emacs.d directory as you wish. See "Upgrading" below.
-  )
+      (package-install p))))
 
 ;;;; ___________________________________________________________________________
+
+;;; TODO: Move to new file: "nomis-environment-os-x".
 
 ;;;; From https://github.com/technomancy/swank-clojure:
 
@@ -83,8 +85,12 @@
 (require 'homeless)
 
 (require 'nomis-very-general-stuff)
+
 (require 'nomis-dired)
 (require 'dirtree) ; see https://github.com/zk/emacs-dirtree
+
+(require 'nomis-ido)
+(require 'nomis-smex)
 
 (require 'nomis-ispell)
 (require 'nomis-org-mode)
@@ -98,7 +104,11 @@
 (require 'nomis-highlighting)
 (require 'nomis-line-numbering)
 (require 'nomis-watch-words)
+
 (require 'nomis-frames)
+(require 'nomis-windows)
+(require 'nomis-uniquify)
+
 (require 'nomis-saveplace)
 ;; (require 'nomis-remember-desktop-using-windows)
 (require 'nomis-remember-desktop-using-workgroups)

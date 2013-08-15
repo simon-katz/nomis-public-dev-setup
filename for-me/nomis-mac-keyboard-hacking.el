@@ -60,12 +60,12 @@
   (defun nomis-meta-w (arg)
     (interactive "p")
     (cl-flet ((nomis-meta-w-replacement
-            ()
-            (ding)
-            (when (prog1
-                      (y-or-n-p "Really delete frame?")
-                    (message nil))
-              (delete-frame))))
+               ()
+               (ding)
+               (when (prog1
+                         (y-or-n-p "Really delete frame?")
+                       (message nil))
+                 (delete-frame))))
       (if *nomis-meta-w-replacement-p*
           (nomis-meta-w-replacement)
         (kill-ring-save (point) (mark)))))

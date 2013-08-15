@@ -16,9 +16,20 @@
                       ;; :underline nil
                       ))
 
-(defun generic-lispy-stuff ()
+(defun _generic-lispy-stuff-for-both-repls-and-non-repls ()
   (rainbow-delimiters-mode)
+  (paredit-mode t))
+
+(defun generic-lispy-stuff-for-repls ()
+  (_generic-lispy-stuff-for-both-repls-and-non-repls))
+
+(defun generic-lispy-stuff-for-non-repls ()
+  (_generic-lispy-stuff-for-both-repls-and-non-repls)
   (nomis-whitespace-mode))
+
+(dolist (mode '(scheme lisp)) ; yeuch!
+    (add-hook (intern (concat (symbol-name mode) "-mode-hook"))
+              (lambda () (paredit-mode t))))
 
 ;;;; ___________________________________________________________________________
 

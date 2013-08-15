@@ -6,12 +6,6 @@
 ;;;; See https://github.com/kingtim/nrepl.el
 
 ;;;; ---------------------------------------------------------------------------
-
-(when (not (package-installed-p 'nrepl))
-  (package-install 'nrepl))
-
-
-;;;; ---------------------------------------------------------------------------
 ;;;; ---- Stuff for the REPL ----
 
 (setq nrepl-history-file "~/.nrepl-history.eld")
@@ -27,6 +21,9 @@
 ;;;; ---- (for repl and for Clojure source files) ----
 
 (add-hook 'nrepl-interaction-mode-hook 'nrepl-turn-on-eldoc-mode)
+
+;; TODO: I've seen this a lot. Do I want it?
+;; (setq nrepl-popup-stacktraces nil)
 
 ;;;; ___________________________________________________________________________
 

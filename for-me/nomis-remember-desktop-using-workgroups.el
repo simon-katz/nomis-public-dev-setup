@@ -36,7 +36,7 @@ Return the buffer if it was found, nil otherwise."
     (wg-abind win (fname bname)
       (cond ((and fname (file-exists-p fname))
              (find-file fname)
-             (rename-buffer bname t) ; jsk: Added the `t` arg here so ok if name already in use
+             (rename-buffer bname t) ; jsk: Added the `t` arg here so ok if name already in use   TODO: With uniquify, is this still needed?
              (current-buffer))
             ((wg-awhen (get-buffer bname) (switch-to-buffer it)))
             (t (switch-to-buffer wg-default-buffer) nil)))))

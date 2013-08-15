@@ -1,5 +1,7 @@
 ;;;; Init stuff -- Make windows and some window commands more "normal".
 
+;;;; TODO: Rename -> "nomis-normal-frames.el".
+
 (if (fboundp 'menu-bar-mode) (menu-bar-mode +1))
 (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
 (if (fboundp 'scroll-bar-mode) (scroll-bar-mode +1))

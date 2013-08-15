@@ -1,8 +1,15 @@
 ;;;; Init stuff -- Very general stuff.
 
+(setq-default indent-tabs-mode nil) ; use spaces, not tabs
 (setq visible-bell t)
+(setq whitespace-style '(face trailing lines-tail tabs))
+(show-paren-mode 1)
 (setq line-move-visual nil) ; the default of T is annoying, and it
                             ; screws up keyboard macros
+
+(when (display-graphic-p)
+  ;; (mouse-wheel-mode t)
+  (blink-cursor-mode -1))
 
 ;; (setq-default indent-tabs-mode nil)
 

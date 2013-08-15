@@ -1,0 +1,65 @@
+TODO:
+
+- Fix "nomis-mac-keyboard-hacking".
+  Maybe comment out all that stuff.
+  Maybe don't call `smex`, but something that does either `smex` or the thing
+  that it replaces, depending on what's set up.
+
+- Get your nrepl hacking working with new nrepl. Consider doing it properly
+  (fork the Git repository, etc) and creating pull requests.
+
+- Spell checking is not working. Seee whit I meen?
+
+- eldoc is not working in *nrepl* buffer. Did it work before?
+
+- Get rid of nomis-define-lispy-modes and make it easier to see what's
+  going on.
+  Maybe make clojure-mode, emacs-lisp-mode-hook and ielm-mode-hook
+  share more.
+  Starter kit has stuff for (scheme emacs-lisp lisp clojure).
+
+- When eval form in Clojure buffer -> Debugger, no longer making it
+  the active window.
+
+- Need to be sure of having a particular version of a package.
+  - Can you append version numbers to package names?
+    I thought I saw that somewhere, but it does seem not.
+  - Consider manually installing packages
+    - To .../dot-emacs-dot-d rather than to .emacs.d.
+    - Have symbolic link from ~/.emacs.d to .../dot-emacs-dot-d.
+
+- Compiling
+  - What about compiling these init files? And other ones you manually
+    install?
+  - Look at compiling things in for-me/nomis-addons.
+
+- Consider Emacs Prelude (or parts of it, like the project thing
+  which allows grepping across a project).
+
+- Do you have lexical binding?
+
+- Delete old unused files (now you have version control).
+
+- Stuff from better-defaults:
+   ;; (progn
+   ;; 
+   ;;   (global-set-key (kbd "M-/") 'hippie-expand)
+   ;;   (global-set-key (kbd "C-x C-b") 'ibuffer)
+   ;; 
+   ;;   (global-set-key (kbd "C-s") 'isearch-forward-regexp)
+   ;;   (global-set-key (kbd "C-r") 'isearch-backward-regexp)
+   ;;   (global-set-key (kbd "C-M-s") 'isearch-forward)
+   ;;   (global-set-key (kbd "C-M-r") 'isearch-backward)
+   ;; 
+   ;;   (setq x-select-enable-clipboard t
+   ;;         x-select-enable-primary t
+   ;;         save-interprogram-paste-before-kill t
+   ;;         apropos-do-all t
+   ;;         mouse-yank-at-point t
+   ;;         save-place-file (concat user-emacs-directory "places")
+   ;;         backup-directory-alist `(("." . ,(concat user-emacs-directory
+   ;;                                                  "backups")))))
+
+
+- Starter kit
+  - See "stuff-from-starter-kit-for-reference.el".

@@ -1,6 +1,9 @@
-;;;; Init stuff -- Frame size.
+;;;; Init stuff -- Frames.
 
 ;;;; ___________________________________________________________________________
+
+(when (display-graphic-p)
+  (setq frame-title-format '(buffer-file-name "%f" ("%b"))))
 
 (defvar single-window-frame-width 85)
 (defvar double-window-frame-width 180)
@@ -92,7 +95,7 @@
         (frame-list)))
 
 ;;;; ___________________________________________________________________________
-;;;; ---- Fiddling with windows ----
+;;;; ---- Fiddling with windows ---- TODO: Move to "nomis-windows.el".
 
 ;;;; ---------------------------------------------------------------------------
 ;;;; ---- transpose-frame ----
