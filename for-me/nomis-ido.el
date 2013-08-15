@@ -5,7 +5,7 @@
 ;; TODO: Look at this ido stuff copied from the Starter Kit.
 
 (ido-mode t)
-(ido-ubiquitous t)
+(ido-ubiquitous t) ; e.g. for `describe-function' (C-h f)
 
 (setq ido-default-file-method 'selected-window)
 (setq ido-default-buffer-method 'selected-window)
