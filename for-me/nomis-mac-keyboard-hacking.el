@@ -57,8 +57,8 @@
 
   (defparameter *nomis-meta-w-replacement-p* nil)
 
-  (defun nomis-meta-w (arg)
-    (interactive "p")
+  (defun nomis-meta-w ()
+    (interactive)
     (cl-flet ((nomis-meta-w-replacement
                ()
                (ding)
@@ -89,6 +89,26 @@ ignore-until-i-learn-not-to-use-it
   means issue a warning message that nothing is going to happen
 any other value
   means do nomis M-x replacement.")
+
+  (defparameter *nomis-meta-x-command-when-first-loaded*
+    ;; Note that this relies on any non-build-in binding of M-x being set
+    ;; before this file is loaded. Hmmm, not great.
+    (let ((command (key-binding (kbd "M-x"))))
+      (if (and (boundp '*nomis-meta-x-command-when-first-loaded*)
+               (eql command 'nomis-meta-x))
+          ;; Don't change what happened when first loaded.
+          *nomis-meta-x-command-when-first-loaded*
+        command)))
+  
+  (defun call-old-meta-x (arg)
+    (case *nomis-meta-x-command-when-first-loaded*
+      ('execute-extended-command
+       (execute-extended-command arg))
+      ('smex
+       (smex))
+      (t
+       (error "Don't know how to call %s"
+              *nomis-meta-x-command-when-first-loaded*))))
   
   (defun issue-meta-x-replacement-message ()
     (message "Use Option-x or Option-z instead of M-x")
@@ -98,7 +118,7 @@ any other value
     (interactive "p")
     (cond
      ((null *nomis-meta-x-replacement*)
-      (smex))
+      (call-old-meta-x arg))
      ((eql *nomis-meta-x-replacement* 'ignore-until-i-learn-not-to-use-it)
       (issue-meta-x-replacement-message))
      (t
@@ -108,13 +128,13 @@ any other value
     (interactive "p")
     (if (null *nomis-meta-x-replacement*)
         (insert "≈")
-      (smex)))
+      (call-old-meta-x arg)))
   
   (defun nomis-option-z (arg)
     (interactive "p")
     (if (null *nomis-meta-x-replacement*)
         (insert "Ω")
-      (smex)))
+      (call-old-meta-x arg)))
   
   (define-key global-map (kbd "M-x") 'nomis-meta-x)
   
