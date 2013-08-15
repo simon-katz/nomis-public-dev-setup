@@ -7,6 +7,11 @@
 (setq line-move-visual nil) ; the default of T is annoying, and it
                             ; screws up keyboard macros
 
+(progn
+  (defun nomis-turn-on-idle-highlight-mode ()
+    (idle-highlight-mode t))
+  (add-hook 'prog-mode-hook 'nomis-turn-on-idle-highlight-mode))
+
 (when (display-graphic-p)
   ;; (mouse-wheel-mode t)
   (blink-cursor-mode -1))

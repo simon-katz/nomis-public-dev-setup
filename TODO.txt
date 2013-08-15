@@ -1,7 +1,5 @@
 TODO:
 
-- You've lost the on-idle highlight of the current symbol elsewhere.
-
 - M-a and M-e assume two spaces between sentences.  Can you change this? Plop.
 
 - M-+ and M-- for scaling text.
