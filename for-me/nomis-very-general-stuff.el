@@ -17,6 +17,8 @@
 
 (add-hook 'find-file-hooks (lambda () (auto-fill-mode -1)))
 
+(defalias 'yes-or-no-p 'y-or-n-p)
+
 (defmacro defparameter (symbol &optional initvalue docstring)
   `(progn
      (defvar ,symbol nil ,docstring)
