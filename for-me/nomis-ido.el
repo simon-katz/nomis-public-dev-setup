@@ -6,6 +6,10 @@
 
 (ido-mode t)
 ;; (ido-ubiquitous t)
+
+(setq ido-default-file-method 'selected-window)
+(setq ido-default-buffer-method 'selected-window)
+
 ;; (setq ido-enable-prefix nil)
 ;; (setq ido-enable-flex-matching t) ; This was in better-defaults too.
 ;; (setq ido-auto-merge-work-directories-length nil)

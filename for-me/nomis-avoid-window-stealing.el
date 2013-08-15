@@ -34,8 +34,7 @@
 ;;;; ___________________________________________________________________________
 ;;;; ---- Open buffers in current window ----
 
-(setq ido-default-file-method 'selected-window)
-(setq ido-default-buffer-method 'selected-window)
+;;;; See "nomis-ido.el" for ido tailoring.
 
 ;;;; ___________________________________________________________________________
 ;;;; ---- Have C-x C-b open the buffer list in the current window ----
