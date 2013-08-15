@@ -1,5 +1,44 @@
 TODO:
 
+- You've lost the on-idle highlight of the current symbol elsewhere.
+
+- M-a and M-e assume two spaces between sentences.  Can you change this? Plop.
+
+- M-+ and M-- for scaling text.
+
+- Consider .gitignore-ing for files in .emacs.d that change regularly (or have
+  those files elsewhere).
+
+- Modes and keybindings...
+  General question: Do you want a generic-lispy-mode-map? Think about
+  maps and modes -- does every mode have a map? If so you want a
+  generic-lispy-mode (as the starter kit has, right?) (Or maybe KIES --
+  keep the modes separate and duplciate things) -- ah see this from "ido.el"...
+  ;; 
+  ;; To modify the keybindings, use the ido-setup-hook.  For example:
+  ;; (add-hook 'ido-setup-hook 'ido-my-keys)
+  ;;
+  ;; (defun ido-my-keys ()
+  ;;  "Add my keybindings for ido."
+  ;;  (define-key ido-completion-map " " 'ido-next-match))
+
+
+- `nomis-nrepl-rearrange-string-into-lines`:
+  - Not available everywhere with C-c C-f. Is there a good reason?
+  - You want different behaviour from Clojure and everywhere else.
+    - Maybe the command can see what mode is active? (I like this.)
+    - Maybe C-c C-f should handle the difference by being bound to different
+      commands for Clojure and other things? (I don't like this.)
+
+- Need a command for adding `...` around things.
+
+- C-x C-f is more aggressive than it used to be in finding things to match;
+  it's taking me to kinda random places.
+
+- Look at ~ files being created in same dir as files. Did this happen before?
+
+- Look at .emacs* files in home directory. (".emacs-places")
+
 - Fix "nomis-mac-keyboard-hacking".
   Maybe comment out all that stuff.
   Maybe don't call `smex`, but something that does either `smex` or the thing
