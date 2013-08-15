@@ -5,13 +5,13 @@
 ;; TODO: Look at this ido stuff copied from the Starter Kit.
 
 (ido-mode t)
-;; (ido-ubiquitous t)
+(ido-ubiquitous t)
 
 (setq ido-default-file-method 'selected-window)
 (setq ido-default-buffer-method 'selected-window)
 
 ;; (setq ido-enable-prefix nil)
-;; (setq ido-enable-flex-matching t) ; This was in better-defaults too.
+(setq ido-enable-flex-matching t)
 ;; (setq ido-auto-merge-work-directories-length nil)
 ;; (setq ido-create-new-buffer 'always)
 (setq ido-use-filename-at-point 'guess)
