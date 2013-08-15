@@ -7,6 +7,8 @@
 (show-paren-mode 1)
 (setq line-move-visual nil) ; the default of T is annoying, and it
                             ; screws up keyboard macros
+(setq backup-directory-alist
+      `(("." . ,(expand-file-name "~/.emacs-backups"))))
 
 (progn
   (defun nomis-turn-on-idle-highlight-mode ()

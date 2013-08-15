@@ -27,8 +27,6 @@ TODO:
 - C-x C-f is more aggressive than it used to be in finding things to match;
   it's taking me to kinda random places.
 
-- Look at ~ files being created in same dir as files. Did this happen before?
-
 - Look at .emacs* files in home directory. (".emacs-places")
 
 - Get your nrepl hacking working with new nrepl. Consider doing it properly
