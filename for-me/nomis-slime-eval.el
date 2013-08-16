@@ -1,5 +1,8 @@
 ;;;; Init stuff -- Slime eval.
 
+;;;; TODO: Is any of this still needed? (Maybe you did this to get around
+;;;;       some Emacs Starter Kit strangeness.)
+
 ;;;; ___________________________________________________________________________
 ;;;; ---- Functions to help nicify evaluation commands ----
 

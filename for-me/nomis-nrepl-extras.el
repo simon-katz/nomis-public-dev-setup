@@ -1,5 +1,9 @@
 ;;;; Init stuff -- nrepl extras
 
+;;;; TODO: Look at all this in the light of:
+;;;;       - Now have nrepl.el 0.1.8.
+;;;;       - Did/does it all make sense anyway?
+
 ;;;; ___________________________________________________________________________
 ;;;; ---- Wrappers for things in nrepl.el, to isolate dependencies and make ----
 ;;;; ---- it easier to upgrade nrepl.el.                                    ----
