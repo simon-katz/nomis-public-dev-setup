@@ -82,8 +82,6 @@
 ;;;; ___________________________________________________________________________
 ;;;; ---- Load various files ----
 
-(require 'homeless)
-
 (require 'nomis-very-general-stuff)
 
 (require 'nomis-dired)
@@ -132,6 +130,8 @@
 (require 'nomis-clojure-indentation)
 
 (require 'nomis-shell-stuff)
+
+(require 'homeless)
 
 ;;;; ___________________________________________________________________________
 ;;;;; ---- temp for playing ----
