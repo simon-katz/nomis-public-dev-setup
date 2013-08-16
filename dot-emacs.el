@@ -87,7 +87,6 @@
 (require 'nomis-uniquify)
 
 (require 'nomis-saveplace)
-;; (require 'nomis-remember-desktop-using-windows)
 (require 'nomis-remember-desktop-using-workgroups)
 (require 'nomis-auto-complete)
 (require 'nomis-keyboard-macros)
