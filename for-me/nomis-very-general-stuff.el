@@ -9,7 +9,6 @@
                             ; screws up keyboard macros
 (setq backup-directory-alist
       `(("." . ,(expand-file-name "~/.emacs-backups"))))
-(add-hook 'text-mode-hook 'turn-on-flyspell)
 
 (progn
   (defun nomis-turn-on-idle-highlight-mode ()

@@ -1,5 +1,7 @@
 ;;;; Init stuff -- Ispell
 
+(add-hook 'text-mode-hook 'turn-on-flyspell)
+
 (setq ispell-program-name "/usr/local/bin/ispell")
 (setq flyspell-issue-message-flag nil)
 
