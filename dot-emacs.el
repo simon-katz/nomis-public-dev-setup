@@ -74,8 +74,6 @@
 (require 'nomis-ispell)
 (require 'nomis-org-mode)
 
-;; (require 'nomis-cygwin-support)
-
 (require 'nomis-mac-keyboard-hacking)
 (require 'nomis-normal-window-commands)
 (require 'nomis-avoid-window-stealing)
