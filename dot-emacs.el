@@ -62,54 +62,55 @@
 ;;;; ---- Load various files ----
 
 (require 'nomis-environment-os-x)
-
 (require 'nomis-very-general-stuff)
+(require 'nomis-normal-window-commands)
+(require 'nomis-mouse-scrolling)
+(require 'nomis-avoid-window-stealing)
+(require 'nomis-highlighting)
+(require 'nomis-line-numbering)
+(require 'nomis-saveplace)
+(require 'nomis-ido)
+(require 'nomis-smex)
+(require 'nomis-frames)
+(require 'nomis-windows)
+(require 'nomis-uniquify)
+(require 'nomis-remember-desktop-using-workgroups)
+(require 'nomis-mac-keyboard-hacking)
+(require 'nomis-keyboard-scrolling-and-movement)
+
+(require 'nomis-ispell)
+(require 'nomis-watch-words)
 
 (require 'nomis-dired)
 (require 'dirtree) ; see https://github.com/zk/emacs-dirtree
 
-(require 'nomis-ido)
-(require 'nomis-smex)
-
-(require 'nomis-ispell)
 (require 'nomis-org-mode)
 
-(require 'nomis-mac-keyboard-hacking)
-(require 'nomis-normal-window-commands)
-(require 'nomis-avoid-window-stealing)
-(require 'nomis-mouse-scrolling)
-(require 'nomis-highlighting)
-(require 'nomis-line-numbering)
-(require 'nomis-watch-words)
-
-(require 'nomis-frames)
-(require 'nomis-windows)
-(require 'nomis-uniquify)
-
-(require 'nomis-saveplace)
-(require 'nomis-remember-desktop-using-workgroups)
-(require 'nomis-auto-complete)
-(require 'nomis-keyboard-macros)
-;; (require 'nomis-searching)
-;; (require 'nomis-searching-filters)
 (require 'nomis-paredit)
-;; (require 'nomis-ibuffer)
-(require 'nomis-indent-sexp)
 (require 'nomis-define-lispy-modes)
 (require 'nomis-emacs-lisp-mode)
+(require 'clojure-mode)
 (require 'nomis-clojure-mode)
-(require 'nomis-slime-eval)
+(require 'nomis-clojure-indentation)
+(require 'nrepl)
 (require 'nomis-nrepl-tailoring)
 (require 'nomis-nrepl-extras)
-;; (require 'nomis-slime-fancy)
-;; (require 'nomis-zip-files)
-(require 'nomis-keyboard-scrolling-and-movement)
-
-(require 'nomis-clojure-indentation)
 
 (require 'nomis-shell-stuff)
 
 (require 'homeless)
+
+(require 'nomis-auto-complete) ; TODO: Check this; maybe move nrepl stuff.
+
+;; TODO: Consider these; maybe delete.
+(require 'nomis-slime-eval)
+(require 'nomis-indent-sexp)
+(require 'nomis-keyboard-macros)
+;; (require 'nomis-searching)
+;; (require 'nomis-searching-filters)
+;; (require 'nomis-ibuffer)
+;; (require 'nomis-slime-fancy)
+;; (require 'nomis-zip-files)
 
 ;;;; ___________________________________________________________________________
 ;;;;; ---- temp for playing ----
