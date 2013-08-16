@@ -4,6 +4,8 @@
 ;;;;       - Now have nrepl.el 0.1.8.
 ;;;;       - Did/does it all make sense anyway?
 
+(require 'nrepl)
+
 ;;;; ___________________________________________________________________________
 ;;;; ---- Wrappers for things in nrepl.el, to isolate dependencies and make ----
 ;;;; ---- it easier to upgrade nrepl.el.                                    ----

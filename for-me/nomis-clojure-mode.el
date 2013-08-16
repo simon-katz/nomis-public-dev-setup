@@ -1,5 +1,7 @@
 ;;;; Init stuff -- Clojure mode.
 
+(require 'clojure-mode)
+
 ;; (eval-after-load 'clojure-mode
 ;;   ;; Get rid of displaying (fn ...) as italic-y f (f ...),
 ;;   ;; which is set up in ".../.emacs.d/starter-kit-lisp.el" using a
