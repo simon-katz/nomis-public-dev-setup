@@ -32,8 +32,6 @@ TODO:
 - Get your nrepl hacking working with new nrepl. Consider doing it properly
   (fork the Git repository, etc) and creating pull requests.
 
-- Spell checking is not working. Seee whit I meen?
-
 - eldoc is not working in *nrepl* buffer. Did it work before?
 
 - Get rid of nomis-define-lispy-modes and make it easier to see what's
