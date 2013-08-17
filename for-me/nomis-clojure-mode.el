@@ -18,7 +18,7 @@
   (remove-hook 'clojure-mode-hook 'esk-pretty-fn))
 
 (add-hook 'clojure-mode-hook 'nomis-lispy-non-repl-setup)
-(add-hook 'clojure-mode-hook 'subword-mode)
+(add-hook 'clojure-mode-hook 'nomis-clojure-setup)
 
 (define-key clojure-mode-map (kbd "RET") 'newline-and-indent) ; TODO: Modularise with same change to emacs-lisp-mode-map.
 

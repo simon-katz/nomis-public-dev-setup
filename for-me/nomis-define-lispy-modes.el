@@ -13,6 +13,9 @@
   (_nomis-lispy-common-repl-and-non-repl-setup)
   (whitespace-mode))
 
+(defun nomis-clojure-setup ()
+  (subword-mode))
+
 ;;;; ___________________________________________________________________________
 
 (provide 'nomis-define-lispy-modes)
