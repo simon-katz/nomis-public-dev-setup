@@ -85,11 +85,11 @@
 (require 'nomis-dired)
 (require 'dirtree) ; see https://github.com/zk/emacs-dirtree
 
-(require 'nomis-org-mode)
+(require 'nomis-org)
 
 (require 'nomis-paredit)
 (require 'nomis-emacs-lisp-and-ielm)
-(require 'nomis-clojure-mode)
+(require 'nomis-clojure)
 (require 'nomis-clojure-indentation)
 (require 'nomis-nrepl-tailoring)
 (require 'nomis-nrepl-extras)
