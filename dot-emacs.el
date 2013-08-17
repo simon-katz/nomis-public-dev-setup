@@ -66,6 +66,7 @@
 (require 'nomis-normal-window-commands)
 (require 'nomis-mouse-scrolling)
 (require 'nomis-avoid-window-stealing)
+(require 'nomis-whitespace)
 (require 'nomis-highlighting)
 (require 'nomis-line-numbering)
 (require 'nomis-saveplace)
