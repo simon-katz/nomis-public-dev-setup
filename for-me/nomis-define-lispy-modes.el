@@ -27,10 +27,6 @@
   (_generic-lispy-stuff-for-both-repls-and-non-repls)
   (nomis-whitespace-mode))
 
-(dolist (mode '(scheme lisp)) ; yeuch!
-    (add-hook (intern (concat (symbol-name mode) "-mode-hook"))
-              (lambda () (paredit-mode t))))
-
 ;;;; ___________________________________________________________________________
 
 (provide 'nomis-define-lispy-modes)
