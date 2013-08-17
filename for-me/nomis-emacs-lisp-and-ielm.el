@@ -1,4 +1,4 @@
-;;;; Init stuff -- Emacs Lisp mode.
+;;;; Init stuff -- emacs-lisp and ielm.
 
 ;;;; ___________________________________________________________________________
 
@@ -16,4 +16,4 @@
 
 ;;;; ___________________________________________________________________________
 
-(provide 'nomis-emacs-lisp-mode)
+(provide 'nomis-emacs-lisp-and-ielm)

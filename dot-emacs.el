@@ -89,7 +89,7 @@
 
 (require 'nomis-paredit)
 (require 'nomis-define-lispy-modes)
-(require 'nomis-emacs-lisp-mode)
+(require 'nomis-emacs-lisp-and-ielm)
 (require 'nomis-clojure-mode)
 (require 'nomis-clojure-indentation)
 (require 'nomis-nrepl-tailoring)
