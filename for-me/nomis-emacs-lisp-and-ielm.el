@@ -2,6 +2,8 @@
 
 ;;;; ___________________________________________________________________________
 
+(require 'nomis-define-lispy-modes)
+
 (add-hook 'emacs-lisp-mode-hook 'nomis-emacs-lisp-setup)
 (add-hook 'ielm-mode-hook 'nomis-ielm-setup)
 

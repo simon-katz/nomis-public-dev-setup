@@ -1,6 +1,7 @@
 ;;;; Init stuff -- Clojure mode.
 
 (require 'clojure-mode)
+(require 'nomis-define-lispy-modes)
 
 ;; (eval-after-load 'clojure-mode
 ;;   ;; Get rid of displaying (fn ...) as italic-y f (f ...),
