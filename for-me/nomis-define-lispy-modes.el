@@ -2,15 +2,15 @@
 
 ;;;; ___________________________________________________________________________
 
-(defun _generic-lispy-stuff-for-both-repls-and-non-repls ()
+(defun _nomis-lispy-common-repl-and-non-repl-setup ()
   (rainbow-delimiters-mode)
   (paredit-mode))
 
-(defun generic-lispy-stuff-for-repls ()
-  (_generic-lispy-stuff-for-both-repls-and-non-repls))
+(defun nomis-lispy-repl-setup ()
+  (_nomis-lispy-common-repl-and-non-repl-setup))
 
-(defun generic-lispy-stuff-for-non-repls ()
-  (_generic-lispy-stuff-for-both-repls-and-non-repls)
+(defun nomis-lispy-non-repl-setup ()
+  (_nomis-lispy-common-repl-and-non-repl-setup)
   (whitespace-mode))
 
 ;;;; ___________________________________________________________________________

@@ -14,7 +14,7 @@
 
 (add-to-list 'same-window-buffer-names "*nrepl*")
 
-(add-hook 'nrepl-mode-hook 'generic-lispy-stuff-for-repls)
+(add-hook 'nrepl-mode-hook 'nomis-lispy-repl-setup)
 (add-hook 'nrepl-mode-hook 'subword-mode)
 
 ;;;; ---------------------------------------------------------------------------

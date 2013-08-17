@@ -7,10 +7,10 @@
   (add-hook hook 'turn-on-eldoc-mode))
 
 (dolist (hook '(emacs-lisp-mode-hook))
-  (add-hook hook 'generic-lispy-stuff-for-non-repls))
+  (add-hook hook 'nomis-lispy-non-repl-setup))
 
 (dolist (hook '(ielm-mode-hook))
-  (add-hook hook 'generic-lispy-stuff-for-repls))
+  (add-hook hook 'nomis-lispy-repl-setup))
 
 (define-key emacs-lisp-mode-map (kbd "RET") 'newline-and-indent) ; TODO: Modularise with same change to clojure-mode-map, and see comment there
 
