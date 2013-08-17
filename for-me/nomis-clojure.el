@@ -1,7 +1,7 @@
 ;;;; Init stuff -- Clojure mode.
 
 (require 'clojure-mode)
-(require 'nomis-define-lispy-modes)
+(require 'nomis-lispy-mode-hooks)
 
 (add-hook 'clojure-mode-hook 'nomis-lispy-non-repl-setup)
 (add-hook 'clojure-mode-hook 'nomis-clojure-setup)

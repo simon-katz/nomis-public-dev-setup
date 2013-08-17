@@ -34,4 +34,4 @@
 
 ;;;; ___________________________________________________________________________
 
-(provide 'nomis-define-lispy-modes)
+(provide 'nomis-lispy-mode-hooks)

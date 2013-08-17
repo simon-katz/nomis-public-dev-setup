@@ -1,7 +1,7 @@
 ;;;; Init stuff -- nrepl tailoring
 
 (require 'nrepl)
-(require 'nomis-define-lispy-modes)
+(require 'nomis-lispy-mode-hooks)
 
 ;;;; ___________________________________________________________________________
 ;;;; ---- Basics ----
