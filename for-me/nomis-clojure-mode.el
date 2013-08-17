@@ -17,8 +17,8 @@
   ;; Get rid of displaying (fn ...) as italic-y f (f ...)
   (remove-hook 'clojure-mode-hook 'esk-pretty-fn))
 
-(add-hook 'clojure-mode-hook 'subword-mode)
 (add-hook 'clojure-mode-hook 'nomis-lispy-non-repl-setup)
+(add-hook 'clojure-mode-hook 'subword-mode)
 
 (define-key clojure-mode-map (kbd "RET") 'newline-and-indent) ; TODO: Modularise with same change to emacs-lisp-mode-map.
 
