@@ -18,7 +18,7 @@
 
 (defun _generic-lispy-stuff-for-both-repls-and-non-repls ()
   (rainbow-delimiters-mode)
-  (paredit-mode t))
+  (paredit-mode))
 
 (defun generic-lispy-stuff-for-repls ()
   (_generic-lispy-stuff-for-both-repls-and-non-repls))
