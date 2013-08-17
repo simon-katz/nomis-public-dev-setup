@@ -2,15 +2,8 @@
 
 ;;;; ___________________________________________________________________________
 
-(dolist (hook '(emacs-lisp-mode-hook ielm-mode-hook))
-  (add-hook hook 'turn-on-elisp-slime-nav-mode)
-  (add-hook hook 'turn-on-eldoc-mode))
-
-(dolist (hook '(emacs-lisp-mode-hook))
-  (add-hook hook 'nomis-lispy-non-repl-setup))
-
-(dolist (hook '(ielm-mode-hook))
-  (add-hook hook 'nomis-lispy-repl-setup))
+(add-hook 'emacs-lisp-mode-hook 'nomis-emacs-lisp-setup)
+(add-hook 'ielm-mode-hook 'nomis-ielm-setup)
 
 (define-key emacs-lisp-mode-map (kbd "RET") 'newline-and-indent) ; TODO: Modularise with same change to clojure-mode-map, and see comment there
 
