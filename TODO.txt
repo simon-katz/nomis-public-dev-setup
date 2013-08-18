@@ -1,9 +1,5 @@
 TODO:
 
-- If you move back to Emacs 24.2.1, you'll need to revert some changes.
-  - The cl stuff.
-  - Anything else? -- No.
-
 - Report this bug...
   - What's happened to repetition of keyboard macros? It used to do it
     once; now it repeats until error (I think).
@@ -11,6 +7,7 @@ TODO:
 - `nomis-nrepl-rearrange-string-into-lines`:
   - Not available everywhere with C-c C-f. Is there a good reason?
   - You want different behaviour from Clojure and everywhere else.
+    - Not so: even within Clojure, doc strings and your HTML strings are different.
     - Maybe the command can see what mode is active? (I like this.)
     - Maybe C-c C-f should handle the difference by being bound to different
       commands for Clojure and other things? (I don't like this.)
