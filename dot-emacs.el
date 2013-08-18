@@ -56,7 +56,10 @@
 (defun nomis-load-file-name ()
   (file-truename (or load-file-name (buffer-file-name))))
 
-(let ((default-directory (file-name-directory (nomis-load-file-name))))
+(defun nomis-load-file-directory ()
+  (file-name-directory (nomis-load-file-name)))
+
+(let ((default-directory (nomis-load-file-directory)))
   (normal-top-level-add-subdirs-to-load-path))
 
 ;;;; ___________________________________________________________________________
