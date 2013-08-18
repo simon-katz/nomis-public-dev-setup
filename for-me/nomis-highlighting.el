@@ -30,8 +30,14 @@
 ;; (set-face-background 'hl-line "RGB:9999/9999/9999")
 ;; (set-face-background 'hl-line "lightyellow")
 ;; (set-face-background 'hl-line "LightGoldenrodYellow")
-;; (remove-hook 'coding-hook 'turn-on-hl-line-mode)
 
 ;;;; ___________________________________________________________________________
+
+(defun nomis-highlight-backquote-xxxx-backquote ()
+  (font-lock-add-keywords nil '(("`.*`" 0 'font-lock-constant-face t)))
+  (font-lock-add-keywords nil '(("`.*'" 0 'font-lock-constant-face t))))
+
+(add-hook 'text-mode-hook 'nomis-highlight-backquote-xxxx-backquote)
+(add-hook 'prog-mode-hook 'nomis-highlight-backquote-xxxx-backquote)
 
 (provide 'nomis-highlighting)
