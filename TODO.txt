@@ -9,8 +9,8 @@ TODO:
   you do that)), put the manually-installed packages in .emacs.d.
 
 - Compiling
-  - Look into any compilation errors and warnings, and do this when you
-    make changes.
+  - Look into any compilation errors and warnings now, and do so when
+    you make changes.
   - What about compiling these init files? And other ones you manually
     install?
     - Ah, Emacs uses a "newer" check to see if recompilation is needed.
