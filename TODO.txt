@@ -4,13 +4,6 @@ TODO:
   - What's happened to repetition of keyboard macros? It used to do it
     once; now it repeats until error (I think).
 
-- Need to be sure of having a particular version of a package.
-  - Can you append version numbers to package names?
-    I thought I saw that somewhere, but it does seem not.
-  - Consider manually installing packages
-    - To .../dot-emacs-dot-d rather than to .emacs.d.
-    - Have symbolic link from ~/.emacs.d to .../dot-emacs-dot-d.
-
 - You have some manually-installed packages in "for-me/nomis-addons".
   Instead, (after .emacs.d and .emacs are in the same repository (if
   you do that)), put the manually-installed packages in .emacs.d.
