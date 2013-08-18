@@ -4,23 +4,6 @@ TODO:
   - What's happened to repetition of keyboard macros? It used to do it
     once; now it repeats until error (I think).
 
-- `nomis-nrepl-rearrange-string-into-lines`:
-  - Not available everywhere with C-c C-f. Is there a good reason?
-  - You want different behaviour from Clojure and everywhere else.
-    - Not so: even within Clojure, doc strings and your HTML strings are different.
-    - Maybe the command can see what mode is active? (I like this.)
-    - Maybe C-c C-f should handle the difference by being bound to different
-      commands for Clojure and other things? (I don't like this.)
-
-- Need a command for adding `...` around things.
-  (Or `...'? `foo` vs `foo' in lisp-mode.) 
-
-- C-x C-f is more aggressive than it used to be in finding things to match;
-  it's taking me to kinda random places.
-
-- Get your nrepl hacking working with new nrepl. Consider doing it properly
-  (fork the Git repository, etc) and creating pull requests.
-
 - Need to be sure of having a particular version of a package.
   - Can you append version numbers to package names?
     I thought I saw that somewhere, but it does seem not.
@@ -35,6 +18,9 @@ TODO:
 
 - Consider Emacs Prelude (or parts of it, like the project thing
   which allows grepping across a project).
+
+- Get your nrepl hacking working with new nrepl. Consider doing it properly
+  (fork the Git repository, etc) and creating pull requests.
 
 - Stuff from better-defaults:
    ;; (progn
@@ -56,6 +42,16 @@ TODO:
    ;;         backup-directory-alist `(("." . ,(concat user-emacs-directory
    ;;                                                  "backups")))))
 
-
 - Starter kit
   - See "stuff-from-starter-kit-for-reference.el".
+
+- Need a command for adding `...` around things.
+  (Or `...'? `foo` vs `foo' in lisp-mode.) 
+
+- `nomis-nrepl-rearrange-string-into-lines`:
+  - Not available everywhere with C-c C-f. Is there a good reason?
+  - You want different behaviour from Clojure and everywhere else.
+    - Not so: even within Clojure, doc strings and your HTML strings are different.
+    - Maybe the command can see what mode is active? (I like this.)
+    - Maybe C-c C-f should handle the difference by being bound to different
+      commands for Clojure and other things? (I don't like this.)
