@@ -63,6 +63,29 @@
   (normal-top-level-add-subdirs-to-load-path))
 
 ;;;; ___________________________________________________________________________
+;;;; ---- Compilation ----
+
+;;;; It would be nice to compile things when necessary, but Emacs
+;;;; relies on an "is source file newer than compiled file" check to
+;;;; decide whether to recompile. This won't work with the way you
+;;;; often replace source files with copies of old copies. But it's
+;;;; nice to check for compilation errors every now and then.
+;;;; 
+;;;; For some reason, having these combined in a single function
+;;;; means that deletion doesn't happen. So have two functions.
+
+(defun nomis-compile-this-dir ()
+  "Compile and delete the results."
+  (byte-recompile-directory (nomis-load-file-directory) 0 t))
+
+(defun nomis-delete-elc-files ()
+  (shell-command (format "find \"%s\" -name *.elc -delete"
+                         (nomis-load-file-directory))))
+
+;;;; (nomis-compile-this-dir)
+;;;; (nomis-delete-elc-files)
+
+;;;; ___________________________________________________________________________
 ;;;; ---- Load various files ----
 
 (require 'nomis-environment-os-x)
