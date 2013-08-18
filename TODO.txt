@@ -11,13 +11,17 @@ TODO:
     - To .../dot-emacs-dot-d rather than to .emacs.d.
     - Have symbolic link from ~/.emacs.d to .../dot-emacs-dot-d.
 
+- You have some manually-installed packages in "for-me/nomis-addons".
+  Instead, (after .emacs.d and .emacs are in the same repository (if
+  you do that)), put the manually-installed packages in .emacs.d.
+
 - Compiling
+  - Look into any compilation errors and warnings, and do this when you
+    make changes.
   - What about compiling these init files? And other ones you manually
     install?
     - Ah, Emacs uses a "newer" check to see if recompilation is needed.
       This isn't going to work for you.
-  - Look at compiling things in for-me/nomis-addons.
-  - Look into any compilation errors and warnings.
 
 - Consider Emacs Prelude (or parts of it, like the project thing
   which allows grepping across a project).
