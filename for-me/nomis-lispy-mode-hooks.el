@@ -11,7 +11,7 @@
 
 (defun nomis-lispy-non-repl-setup ()
   (_nomis-lispy-common-repl-and-non-repl-setup)
-  (whitespace-mode))
+  (nomis-whitespace-mode-reinstating-blatted-faces))
 
 ;;;; ___________________________________________________________________________
 
