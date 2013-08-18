@@ -1,6 +1,6 @@
 ;;;; ---- Emacs init file ----
 
-(let ((expected-version "24.3.1")
+(let ((expected-version "24.2.1")
       (version emacs-version))
   (unless (equal version expected-version)
     (unless (y-or-n-p (format (concat
@@ -27,6 +27,7 @@
     (package-refresh-contents))
 
   (defvar my-packages '(elisp-slime-nav
+                        cl-lib
                         paredit
                         rainbow-delimiters
                         auto-complete

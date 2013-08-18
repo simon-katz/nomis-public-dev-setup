@@ -1,7 +1,12 @@
 TODO:
 
-- What's happened to repetition of keyboard macros? It used to do it
-  once; now it repeats until error (I think).
+- If you move back to Emacs 24.2.1, you'll need to revert some changes.
+  - The cl stuff.
+  - Anything else? -- No.
+
+- Report this bug...
+  - What's happened to repetition of keyboard macros? It used to do it
+    once; now it repeats until error (I think).
 
 - `nomis-nrepl-rearrange-string-into-lines`:
   - Not available everywhere with C-c C-f. Is there a good reason?
