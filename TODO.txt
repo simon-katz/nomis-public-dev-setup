@@ -8,6 +8,8 @@ TODO:
   Instead, (after .emacs.d and .emacs are in the same repository (if
   you do that)), put the manually-installed packages in .emacs.d.
 
+- Move some stuff from "for-me" to "for-anyone".
+
 - Compiling
   - Look into any compilation errors and warnings now, and do so when
     you make changes.
