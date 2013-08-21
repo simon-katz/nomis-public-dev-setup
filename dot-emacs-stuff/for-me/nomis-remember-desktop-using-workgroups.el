@@ -29,6 +29,30 @@
       (insert (with-output-to-string (pp sexp))) ; was (insert (format "%S" sexp))
       (write-file file)))
 
+  ;; Use `abbreviate-file-name' (giving use of `~`) so that
+  ;; configuration files can be moved between users or machines.
+  (defun wg-ewin->window (ewin)
+    "Return a new workgroups window from EWIN.
+EWIN should be an Emacs window object."
+    (with-current-buffer (window-buffer ewin)
+      `((type     .   window)
+        (edges    .  ,(window-edges ewin))
+        (bname    .  ,(buffer-name))
+        (fname    .  ,(let ((file-name (buffer-file-name)))
+                        (if (null file-name)
+                            nil
+                          (abbreviate-file-name file-name))))
+        (point    .  ,(wg-window-point ewin))
+        (mark     .  ,(mark))
+        (markx    .  ,mark-active)
+        (wstart   .  ,(window-start ewin))
+        (hscroll  .  ,(window-hscroll ewin))
+        (sbars    .  ,(window-scroll-bars ewin))
+        (margins  .  ,(window-margins ewin))
+        (fringes  .  ,(window-fringes ewin))
+        (selwin   .  ,(eq ewin (selected-window)))
+        (mbswin   .  ,(eq ewin minibuffer-scroll-window)))))
+
   ;; Rename buffer if the name is already in use...
   (defun wg-switch-to-window-buffer (win)
     "Switch to a buffer determined from WIN's fname and bname.
