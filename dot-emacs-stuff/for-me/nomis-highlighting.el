@@ -1,6 +1,7 @@
 ;;;; Init stuff -- Line highlighting.
 
 ;;;; ___________________________________________________________________________
+;;;; Mode line
 
 ;; Defaults:
 ;; (set-face-background 'mode-line          "grey75")
@@ -14,8 +15,7 @@
   (set-face-background 'mode-line-inactive "grey75"))
 
 ;;;; ___________________________________________________________________________
-
-;; Use M-x list-colors-display to see colors.
+;;;; Highlighting of the current line
 
 (global-hl-line-mode 1)
 ;; (set-face-background 'hl-line "lightcyan")
@@ -32,12 +32,29 @@
 ;; (set-face-background 'hl-line "LightGoldenrodYellow")
 
 ;;;; ___________________________________________________________________________
+;;;; Highlighting of text (usually symbol names) inside `` and inside `'.
+;;;; e.g. `foo` and `foo'.
 
-(defun nomis-highlight-backquote-xxxx-backquote ()
-  (font-lock-add-keywords nil '(("`.*`" 0 'font-lock-constant-face t)))
-  (font-lock-add-keywords nil '(("`.*'" 0 'font-lock-constant-face t))))
+;;; How is it done in Lisp mode?
+;;; See:
+;;; - `lisp-mode-variables' in "lisp-mode.el"
+;;;       (setq font-lock-defaults
+;;;         (... lisp-font-lock-keywords-1 lisp-font-lock-keywords-2 ...)
+;;; - `lisp-font-lock-keywords-2' in "font-lock.el"
+;;;       (...
+;;;        ;; Words inside `' tend to be symbol names.
+;;;        ("`\\(\\sw\\sw+\\)'" 1 font-lock-constant-face prepend)
+;;;        ...)
 
-(add-hook 'text-mode-hook 'nomis-highlight-backquote-xxxx-backquote)
-(add-hook 'prog-mode-hook 'nomis-highlight-backquote-xxxx-backquote)
+;;; I want Lisp mode's highlighting of `foo' in other modes, and I
+;;; want similar highlighting for `foo`.
+
+(defun nomis-highlight-symbol-quoting-in-text ()
+  (dolist (regex '("`\\(\\sw\\sw+\\)'"
+                   "`\\(\\sw\\sw+\\)`"))
+    (font-lock-add-keywords nil `((,regex 1 font-lock-constant-face prepend)))))
+
+(add-hook 'text-mode-hook 'nomis-highlight-symbol-quoting-in-text)
+(add-hook 'prog-mode-hook 'nomis-highlight-symbol-quoting-in-text)
 
 (provide 'nomis-highlighting)
