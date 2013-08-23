@@ -4,7 +4,7 @@
 
 ;; (setq wg-prefix-key (kbd "C-c C-c"))
 (workgroups-mode 1)
-(wg-load "~/Documents/jsk/development-100/__for-sync/repositories/nomis/jsk-settings/emacs-workgroups-configuration.txt")
+(wg-load "~/development-100/repositories/nomis-jsk-settings/emacs-workgroups-configuration.txt")
 
 (define-key wg-map (kbd "<right>")   'wg-switch-right)
 (define-key wg-map (kbd "C-<right>") 'wg-switch-right)
