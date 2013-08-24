@@ -1,14 +1,65 @@
 ;;;; Init stuff -- Frames.
 
 ;;;; ___________________________________________________________________________
+;;;; ---- Sort out menu bars, tools bars and scroll bars ----
+
+(if (fboundp 'menu-bar-mode) (menu-bar-mode +1))
+(if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
+(if (fboundp 'scroll-bar-mode) (scroll-bar-mode +1))
+
+;;;; ___________________________________________________________________________
+;;;; ---- Get rid of some annoying key bindings ----
+
+(global-unset-key "\C-z") ; default was `suspend-frame`
+
+(defun nomis-do-not-close-lots-of-frames (arg)
+  (interactive "p")
+  (message "No, I won't close lots of frames."))
+
+(define-key ctl-x-5-map "1"
+  'nomis-do-not-close-lots-of-frames) ; default was `delete-other-frames`
+
+;;;; ___________________________________________________________________________
+;;;; ---- Closing frames ----
+
+;; Should do this for MS Windows only, I guess.
+;; (define-key global-map [(meta f4)] 'delete-frame)
+
+
+;;;; ___________________________________________________________________________
+;;;; ---- Frame title ----
 
 (when (display-graphic-p)
   (setq frame-title-format '(buffer-file-name "%f" ("%b"))))
+
+;;;; ___________________________________________________________________________
+;;;; ---- Frame size ----
 
 (defvar single-window-frame-width 85)
 (defvar double-window-frame-width 180)
 
 ;;;; ___________________________________________________________________________
+;;;; ---- Cycle frames ----
+
+;;;; Generally use OS stuff for this.
+
+(when (and (equal emacs-version "24.3.1")
+           (equal system-configuration "x86_64-apple-darwin"))
+
+  ;; Command-` and Shift-Command-` don't work on this combination of Emacs
+  ;; and system.
+  ;; - TODO: Report this as a bug.
+  ;; So add some extra key bindings:
+
+  (defun other-frame-backwards ()
+    (interactive)
+    (other-frame -1))
+
+  (define-key global-map (kbd "C-`") 'other-frame)
+  (define-key global-map (kbd "C-~") 'other-frame-backwards))
+
+;;;; ___________________________________________________________________________
+;;;; ---- Default frame size ----
 
 (let ((window-height (cond ((string-equal (system-name) "CHIVERS")
                             ;; 1200 pixels
@@ -51,24 +102,24 @@
     (if (= arg 1) (setq arg double-window-frame-width))
     (set-frame-width (selected-frame) arg))
 
-  (defun nomis-w-single (arg)
-    (interactive "p")
+  (defun nomis-w-single ()
+    (interactive)
     (nomis-set-frame-width single-window-frame-width))
 
-  (defun nomis-w-double (arg)
-    (interactive "p")
+  (defun nomis-w-double ()
+    (interactive)
     (nomis-set-frame-width double-window-frame-width))
 
   (defun nomis-set-frame-height (arg)
     (interactive "p")
     (set-frame-height (selected-frame) arg))
 
-  (defun nomis-h62 (arg)
-    (interactive "p")
+  (defun nomis-h62 ()
+    (interactive)
     (nomis-set-frame-height 62))
 
-  (defun nomis-h29 (arg)
-    (interactive "p")
+  (defun nomis-h29 ()
+    (interactive)
     (nomis-set-frame-height 29)))
 
 (defun nomis-maximize-frame-height (&optional frame)
@@ -86,61 +137,13 @@
                     n-rows))
   (set-frame-position frame (frame-parameter frame 'left)
                       1) ; 1 to allow pointing at something underneath
-                                        ; the frame
+                         ; the frame
   )
 
 (defun nomis-maximize-all-frame-heights ()
   (interactive)
   (mapc 'nomis-maximize-frame-height
         (frame-list)))
-
-;;;; ___________________________________________________________________________
-;;;; ---- Fiddling with windows ---- TODO: Move to "nomis-windows.el".
-
-;;;; ---------------------------------------------------------------------------
-;;;; ---- transpose-frame ----
-;;;; Swap windows around within a frame.
-
-(require 'transpose-frame)
-
-;;;; ---------------------------------------------------------------------------
-;;;; ---- swap-buffers-in-windows ----
-;;;; Swap buffers between windows.
-
-;;;; Based on something I found at
-;;;; http://www.emacswiki.org/emacs/TransposeWindows.
-
-(defvar swapping-buffer nil)
-(defvar swapping-window nil)
-
-(defun swap-buffers-in-windows-setup ()
-  "Swap buffers between two windows -- setup"
-  (interactive)
-  (setq swapping-buffer (current-buffer))
-  (setq swapping-window (selected-window))
-  (message "Buffer and window marked for swapping."))
-
-(defun swap-buffers-in-windows-do-it ()
-  "Swap buffers between two windows -- do it"
-  (interactive)
-  (if (and swapping-window
-           swapping-buffer)
-      (let ((this-buffer (current-buffer))
-            (this-window (selected-window)))
-        (if (and (window-live-p swapping-window)
-                 (buffer-live-p swapping-buffer))
-            (progn (switch-to-buffer swapping-buffer)
-                   (select-window swapping-window)
-                   (switch-to-buffer this-buffer)
-                   (select-window this-window)
-                   (message "Swapped buffers."))
-          (message "Old buffer/window killed.  Aborting."))
-        (setq swapping-window this-window) ; allow for a chain of swaps
-        )
-    (error "Need to do `swap-buffers-in-windows-setup` first.")))
-
-(global-set-key (kbd "C-c C--") 'swap-buffers-in-windows-setup)
-(global-set-key (kbd "C-c C-=") 'swap-buffers-in-windows-do-it)
 
 ;;;; ___________________________________________________________________________
 

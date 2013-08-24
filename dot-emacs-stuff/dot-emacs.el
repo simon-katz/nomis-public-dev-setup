@@ -17,13 +17,12 @@
 (progn
   (require 'package)
 
-  ;; Add Marmalade as a package archive source in ~/.emacs.d/init.e
   (add-to-list 'package-archives
                '("marmalade" . "http://marmalade-repo.org/packages/") t)
 
   (package-initialize)
 
-  (when (not package-archive-contents)
+  (when (null package-archive-contents)
     (package-refresh-contents))
 
   (defvar my-packages '(elisp-slime-nav
@@ -88,9 +87,7 @@
 ;;;; ___________________________________________________________________________
 ;;;; ---- Load various files ----
 
-(require 'nomis-environment-os-x)
 (require 'nomis-very-general-stuff)
-(require 'nomis-normal-window-commands)
 (require 'nomis-mouse-scrolling)
 (require 'nomis-avoid-window-stealing)
 (require 'nomis-whitespace)
