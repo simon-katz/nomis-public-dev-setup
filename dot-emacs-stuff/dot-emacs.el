@@ -132,7 +132,6 @@
 ;; (require 'nomis-ibuffer)
 ;; TODO: Consider these; maybe delete.
 ;;;; #### I'm happy up to here
-;; (require 'nomis-slime-fancy)
 ;; (require 'nomis-zip-files)
 
 ;;;; ___________________________________________________________________________
