@@ -38,9 +38,6 @@
 ;;      (defvar ,symbol nil ,docstring)
 ;;      (setq   ,symbol ,initvalue)))
 
-;; (global-set-key (kbd "<escape>") 'keyboard-quit)
-                                        ; hmmm, so I can't do ESC C-k -- not a huge deal, but annoying -- have I lost anything else?
-
 ;;;; ___________________________________________________________________________
 
 (provide 'nomis-very-general-stuff)
