@@ -111,8 +111,8 @@
 
 (require 'nomis-org)
 
-;;;; #### I'm happy up to here
 (require 'nomis-paredit)
+;;;; #### I'm happy up to here
 (require 'nomis-emacs-lisp-and-ielm)
 (require 'nomis-clojure)
 (require 'nomis-clojure-indentation)
