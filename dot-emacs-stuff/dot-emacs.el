@@ -89,7 +89,6 @@
 
 (require 'nomis-very-general-stuff)
 (require 'nomis-mouse-scrolling)
-;;;; #### I'm happy up to here
 (require 'nomis-avoid-window-stealing)
 (require 'nomis-whitespace)
 (require 'nomis-highlighting)
@@ -101,6 +100,7 @@
 (require 'nomis-windows)
 (require 'nomis-uniquify)
 (require 'nomis-remember-desktop-using-workgroups)
+;;;; #### I'm happy up to here
 (require 'nomis-mac-keyboard-hacking)
 (require 'nomis-keyboard-scrolling-and-movement)
 

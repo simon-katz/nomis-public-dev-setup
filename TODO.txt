@@ -1,5 +1,7 @@
 TODO:
 
+- Search for TODOs.
+
 - Report this bug in Emacs 24.3:
   - Cycling windows doesn't find any windows.
   - System Preferences » Keyboard » Keyboard Shortcuts » Keyboard and
