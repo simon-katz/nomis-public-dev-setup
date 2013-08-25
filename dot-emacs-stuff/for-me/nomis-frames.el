@@ -10,7 +10,8 @@
 ;;;; ___________________________________________________________________________
 ;;;; ---- Get rid of some annoying key bindings ----
 
-(global-unset-key "\C-z") ; default was `suspend-frame`
+(when (eql (key-binding (kbd "C-z")) 'suspend-frame)
+  (global-unset-key (kbd "C-z")))
 
 (defun nomis-do-not-close-lots-of-frames (arg)
   (interactive "p")
