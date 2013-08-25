@@ -118,9 +118,9 @@
 (require 'nomis-nrepl-tailoring)
 (require 'nomis-nrepl-extras)
 
-;;;; #### I'm happy up to here
 (require 'nomis-shell-stuff)
 
+;;;; #### I'm happy up to here
 (require 'homeless)
 
 (require 'nomis-auto-complete) ; TODO: Check this; maybe move nrepl stuff.
