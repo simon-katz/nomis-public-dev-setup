@@ -1,6 +1,9 @@
 ;;;; Init stuff -- auto-complete
 
-;;; Basics
+;;;; TODO: Check this; maybe move nrepl stuff.
+
+;;;; ___________________________________________________________________________
+;;;; Basics
 
 (require 'auto-complete-config)
 (add-to-list 'ac-dictionary-directories "~/.emacs.d/ac-dict")
@@ -20,7 +23,8 @@
 (setq ac-expand-on-auto-complete nil)
 
 
-;;; Stuff obtained from nrepl docs -- general
+;;;; ___________________________________________________________________________
+;;;; Stuff obtained from nrepl docs -- general
 
 (defun set-auto-complete-as-completion-at-point-function ()
   (setq completion-at-point-functions '(auto-complete)))
@@ -29,7 +33,8 @@
           'set-auto-complete-as-completion-at-point-function)
 
 
-;;; Stuff obtained from nrepl docs -- for nrepl
+;;;; ___________________________________________________________________________
+;;;; Stuff obtained from nrepl docs -- for nrepl
 
 (require 'ac-nrepl)
 

@@ -122,9 +122,9 @@
 
 (require 'homeless)
 
-;;;; #### I'm happy up to here
-(require 'nomis-auto-complete) ; TODO: Check this; maybe move nrepl stuff.
+(require 'nomis-auto-complete)
 
+;;;; #### I'm happy up to here
 ;; TODO: Consider these; maybe delete.
 (require 'nomis-slime-eval)
 (require 'nomis-indent-sexp)
