@@ -360,7 +360,7 @@ Really send to REPL? "
 ;;;; + Compare nrepl-last-expression with how you get an expression.
 ;;;;   + Mine is better.
 
-(defparameter nomis-rearrange-string-in-one-go-p t
+(defvar nomis-rearrange-string-in-one-go-p t
   "Having this T means that undoing a nomis-nrepl-rearrange-string-into-lines
 undoes the whole thing.
 Having this NIL gives a two-step undo.
@@ -369,7 +369,7 @@ I'm more confident that things works properly that way.
 When T I'm unsure about maybe destroying info when grabbing text, particularly
 the mark-active thing. It all seems to be ok though.")
 
-(defparameter nomis-newline-string "
+(defvar nomis-newline-string "
 ")
 
 (defun transform-string-value (value)
