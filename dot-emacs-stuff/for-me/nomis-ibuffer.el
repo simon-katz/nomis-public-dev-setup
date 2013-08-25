@@ -1,12 +1,12 @@
 ;;;; Init stuff -- ibuffer.
 
-;;;; TODO: What is ibuffer?  Looks like you aren't using it.
+;;;; TODO: What is ibuffer?  Delete?
 
 ;;;; ___________________________________________________________________________
 
 ;; (require 'ibuffer)
 ;; (global-set-key (kbd "C-x C-b") 'ibuffer)
-(setq ibuffer-default-sorting-mode 'alphabetic)
+;; (setq ibuffer-default-sorting-mode 'alphabetic)
 
 ;;;; ___________________________________________________________________________
 

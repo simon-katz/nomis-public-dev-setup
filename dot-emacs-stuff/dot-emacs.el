@@ -129,7 +129,7 @@
 (require 'nomis-keyboard-macros)
 (require 'nomis-searching)
 (require 'nomis-searching-filters)
-;; (require 'nomis-ibuffer)
+(require 'nomis-ibuffer)
 
 ;;;; ___________________________________________________________________________
 ;;;;; ---- temp for playing ----
