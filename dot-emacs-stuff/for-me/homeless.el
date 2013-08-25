@@ -1,4 +1,6 @@
-;; Init stuff -- homeless -- to maybe move to a better place
+;;;; Init stuff -- homeless -- to maybe move to a better place
+
+;;;; TODO: Move homeless stuff to somewhere appropriate.
 
 ;;;; ___________________________________________________________________________
 ;;;; Reverting buffers.

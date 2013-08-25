@@ -120,9 +120,9 @@
 
 (require 'nomis-shell-stuff)
 
-;;;; #### I'm happy up to here
 (require 'homeless)
 
+;;;; #### I'm happy up to here
 (require 'nomis-auto-complete) ; TODO: Check this; maybe move nrepl stuff.
 
 ;; TODO: Consider these; maybe delete.
