@@ -4,6 +4,13 @@
 ;;;;       - Now have nrepl.el 0.1.8.
 ;;;;       - Did/does it all make sense anyway?
 
+
+;;;; TODO: Consider not doing this redefining of functions, and instead
+;;;;       having a file "nomis-nrepl.el" (under CM control) that
+;;;;       contains your hacks. (And have "nrepl.el" for comparison.)
+;;;;       (Same as you are considering for "workgroups.el".)
+
+
 (require 'nrepl)
 
 ;;;; ___________________________________________________________________________

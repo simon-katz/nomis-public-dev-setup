@@ -23,6 +23,7 @@
   ;; TODO: Consider not doing this redefining of functions, and instead
   ;;       having a file "nomis-workgroups.el" (under CM control) that
   ;;       contains your hacks. (And have "workgroups.el" for comparison.)
+  ;;       (Same as you are considering for "nrepl.el".)
 
   ;; Pretty print so I can see what changes happen...
   (defun wg-write-sexp-to-file (sexp file)
