@@ -19,11 +19,12 @@
   ;; (mouse-wheel-mode t)
   (blink-cursor-mode -1))
 
-;; (setq-default indent-tabs-mode nil)
-
 (setq Buffer-menu-sort-column nil) ; 2
 
-(add-hook 'find-file-hooks (lambda () (auto-fill-mode -1)))
+(progn
+  (defun nomis-turn-off-auto-fill-mode ()
+    (auto-fill-mode -1))
+  (add-hook 'find-file-hooks 'nomis-turn-off-auto-fill-mode))
 
 (defalias 'yes-or-no-p 'y-or-n-p)
 
