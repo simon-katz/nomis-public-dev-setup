@@ -55,7 +55,7 @@
   ;; The default for M-w is kill-ring-save.
   ;; Consider using M-c for that and having M-w delete a frame.
 
-  (defparameter *nomis-meta-w-replacement-p* nil)
+  (defvar *nomis-meta-w-replacement-p* nil)
 
   (defun nomis-meta-w ()
     (interactive)
@@ -81,7 +81,7 @@
 (progn
   ;; Deal with M-x.
 
-  (defparameter *nomis-meta-x-replacement* nil ; 'ignore-until-i-learn-not-to-use-it
+  (defvar *nomis-meta-x-replacement* nil ; 'ignore-until-i-learn-not-to-use-it
     "Whether to do nomis M-x replacement.
 nil
   means no.
@@ -90,7 +90,7 @@ ignore-until-i-learn-not-to-use-it
 any other value
   means do nomis M-x replacement.")
 
-  (defparameter *nomis-meta-x-command-when-first-loaded*
+  (defvar *nomis-meta-x-command-when-first-loaded*
     ;; Note that this relies on any non-build-in binding of M-x being set
     ;; before this file is loaded. Hmmm, not great.
     (let ((command (key-binding (kbd "M-x"))))

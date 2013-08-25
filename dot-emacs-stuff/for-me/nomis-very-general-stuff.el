@@ -28,10 +28,15 @@
 
 (defalias 'yes-or-no-p 'y-or-n-p)
 
-(defmacro defparameter (symbol &optional initvalue docstring)
-  `(progn
-     (defvar ,symbol nil ,docstring)
-     (setq   ,symbol ,initvalue)))
+;; Try not using defparameter, because:
+;; - It's not Emacs Lisp.
+;; - Lots of Emacs, I think, depends on being able to set values before
+;;   the thing that defines them has been loaded.  Maybe want to stick
+;;   with that philosophy.
+;; (defmacro defparameter (symbol &optional initvalue docstring)
+;;   `(progn
+;;      (defvar ,symbol nil ,docstring)
+;;      (setq   ,symbol ,initvalue)))
 
 ;; (global-set-key (kbd "<escape>") 'keyboard-quit)
                                         ; hmmm, so I can't do ESC C-k -- not a huge deal, but annoying -- have I lost anything else?
