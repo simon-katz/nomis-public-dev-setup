@@ -7,7 +7,8 @@
                                   ;; ((meta) .       4)
                                   ;; ((meta-shift) . 8)
                                   ))
-(setq mouse-wheel-progressive-speed nil) ; don't accelerate scrolling
+
+(setq mouse-wheel-progressive-speed nil) ; trackpad scrolls too fast when non-nil
 
 ;;;; ___________________________________________________________________________
 

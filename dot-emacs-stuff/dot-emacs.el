@@ -87,9 +87,9 @@
 ;;;; ___________________________________________________________________________
 ;;;; ---- Load various files ----
 
-;;;; #### I'm happy up to here
 (require 'nomis-very-general-stuff)
 (require 'nomis-mouse-scrolling)
+;;;; #### I'm happy up to here
 (require 'nomis-avoid-window-stealing)
 (require 'nomis-whitespace)
 (require 'nomis-highlighting)
