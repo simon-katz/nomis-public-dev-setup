@@ -30,41 +30,29 @@
 (setq org-default-priority ?6)
 
 ;;;; ---------------------------------------------------------------------------
-;;;; Layout
+;;;; Org mode hook function
 
-(add-hook 'org-mode-hook
-          (lambda ()
-            (linum-mode 0) ; see "Linum-mode + org-indent-mode gives strange graphical refresh bugs" at http://orgmode.org/worg/org-issues.html
-            ;; (setq org-indent-fix-section-after-idle-time nil)
-            (setq org-indent-indentation-per-level 3) ; the default of 2 is too small; 4 screws up auto indentation in large files
-            ;; (setq org-indent-max 60)
-            ;; (setq org-indent-max-levels 80)
-            ))
+(defun nomis-org-mode ()
+  ;; Layout
+  (linum-mode 0) ; see "Linum-mode + org-indent-mode gives strange graphical refresh bugs" at http://orgmode.org/worg/org-issues.html
+  ;; (setq org-indent-fix-section-after-idle-time nil)
+  (setq org-indent-indentation-per-level 3) ; the default of 2 is too small; 4 screws up auto indentation in large files
+  ;; (setq org-indent-max 60)
+  ;; (setq org-indent-max-levels 80)
 
-;;;; ---------------------------------------------------------------------------
-;;;; Copying and pasting
+  ;; Copying and pasting
+  (setq org-yank-adjusted-subtrees t)
+  
+  ;; Exporting
+  ;; (setq org-export-headline-levels 3)
+  (setq org-export-initial-scope 'subtree)
 
-(add-hook 'org-mode-hook
-          (lambda ()
-            (setq org-yank-adjusted-subtrees t)))
+  ;; Scrolling
+  (setq org-cycle-hook
+        (remq 'org-optimize-window-after-visibility-change
+              org-cycle-hook)))
 
-;;;; ---------------------------------------------------------------------------
-;;;; Exporting
-
-(add-hook 'org-mode-hook
-          (lambda ()
-            ;; (setq org-export-headline-levels 3)
-            (setq org-export-initial-scope 'subtree)))
-
-
-;;;; ---------------------------------------------------------------------------
-;;;; Scrolling
-
-(add-hook 'org-mode-hook
-          (lambda ()
-            (setq org-cycle-hook
-                  (remq 'org-optimize-window-after-visibility-change
-                        org-cycle-hook))))
+(add-hook 'org-mode-hook 'nomis-org-mode)
 
 ;;;; ---------------------------------------------------------------------------
 ;;;; Dependencies

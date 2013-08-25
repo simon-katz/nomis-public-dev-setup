@@ -100,7 +100,6 @@
 (require 'nomis-windows)
 (require 'nomis-uniquify)
 (require 'nomis-remember-desktop-using-workgroups)
-;;;; #### I'm happy up to here
 (require 'nomis-mac-keyboard-hacking)
 (require 'nomis-keyboard-scrolling-and-movement)
 
@@ -112,6 +111,7 @@
 
 (require 'nomis-org)
 
+;;;; #### I'm happy up to here
 (require 'nomis-paredit)
 (require 'nomis-emacs-lisp-and-ielm)
 (require 'nomis-clojure)
