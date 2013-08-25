@@ -127,11 +127,11 @@
 (require 'nomis-slime-eval)
 (require 'nomis-indent-sexp)
 (require 'nomis-keyboard-macros)
-;; TODO: Consider these; maybe delete.
 ;; (require 'nomis-searching)
 ;; (require 'nomis-searching-filters)
-;;;; #### I'm happy up to here
 ;; (require 'nomis-ibuffer)
+;; TODO: Consider these; maybe delete.
+;;;; #### I'm happy up to here
 ;; (require 'nomis-slime-fancy)
 ;; (require 'nomis-zip-files)
 
