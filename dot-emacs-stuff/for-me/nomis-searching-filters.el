@@ -1,5 +1,7 @@
 ;;;; Init stuff -- search filters.
 
+;;;; TODO: Take a look at this.  What does it do?
+
 ;;;; ___________________________________________________________________________
 ;;;; ---- Stuff for grep-find / find-grep ----
 
