@@ -127,9 +127,9 @@
 (require 'nomis-slime-eval)
 (require 'nomis-indent-sexp)
 (require 'nomis-keyboard-macros)
-;;;; #### I'm happy up to here
 ;; TODO: Consider these; maybe delete.
 ;; (require 'nomis-searching)
+;;;; #### I'm happy up to here
 ;; (require 'nomis-searching-filters)
 ;; (require 'nomis-ibuffer)
 ;; (require 'nomis-slime-fancy)
