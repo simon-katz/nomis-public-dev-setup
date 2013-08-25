@@ -17,16 +17,6 @@
 (setq mac-option-modifier nil)    ; do not map option key
 
 ;;;; ___________________________________________________________________________
-;;;; ---- A few conveniences that don't change existing functonality ----
-
-(progn
-  ;; Deal with delete-frame.
-  ;; The default C-x 5 0 is too long.
-  ;; Can't use the normal M-w without stealing from Emacs.
-  ;; This is ok:
-  (define-key global-map (kbd "M-W") 'delete-frame))
-
-;;;; ___________________________________________________________________________
 ;;;; ---- Experiment: Make some keys more "normal" ----
 
 ;;;; The only thing I actually need here is the binding of M-v to yank, so that

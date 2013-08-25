@@ -26,6 +26,13 @@
 ;; Should do this for MS Windows only, I guess.
 ;; (define-key global-map [(meta f4)] 'delete-frame)
 
+(progn
+  ;; Deal with delete-frame.
+  ;; The default C-x 5 0 is too long.
+  ;; Can't use the normal M-w without stealing from Emacs.
+  ;; This is ok:
+  (define-key global-map (kbd "M-W") 'delete-frame))
+
 ;;;; ___________________________________________________________________________
 ;;;; ---- Frame title ----
 
