@@ -4,7 +4,11 @@
 
 ;; (setq wg-prefix-key (kbd "C-c C-c"))
 (workgroups-mode 1)
-(wg-load "~/development-100/repositories/nomis-jsk-settings/emacs-workgroups-configuration.txt")
+
+(defvar my-workgroups-configuration-file
+  "~/development-100/repositories/nomis-jsk-settings/emacs-workgroups-configuration.txt")
+
+(wg-load my-workgroups-configuration-file)
 
 (define-key wg-map (kbd "<right>")   'wg-switch-right)
 (define-key wg-map (kbd "C-<right>") 'wg-switch-right)
@@ -16,6 +20,9 @@
 
 
 (when (equal wg-version "0.2.0")
+  ;; TODO: Consider not doing this redefining of functions, and instead
+  ;;       having a file "nomis-workgroups.el" (under CM control) that
+  ;;       contains your hacks. (And have "workgroups.el" for comparison.)
 
   ;; Pretty print so I can see what changes happen...
   (defun wg-write-sexp-to-file (sexp file)
