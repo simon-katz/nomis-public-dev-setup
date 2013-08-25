@@ -130,9 +130,6 @@
 ;; (require 'nomis-searching)
 ;; (require 'nomis-searching-filters)
 ;; (require 'nomis-ibuffer)
-;; TODO: Consider these; maybe delete.
-;;;; #### I'm happy up to here
-;; (require 'nomis-zip-files)
 
 ;;;; ___________________________________________________________________________
 ;;;;; ---- temp for playing ----
