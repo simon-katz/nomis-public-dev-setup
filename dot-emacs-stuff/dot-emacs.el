@@ -112,13 +112,13 @@
 (require 'nomis-org)
 
 (require 'nomis-paredit)
-;;;; #### I'm happy up to here
 (require 'nomis-emacs-lisp-and-ielm)
 (require 'nomis-clojure)
 (require 'nomis-clojure-indentation)
 (require 'nomis-nrepl-tailoring)
 (require 'nomis-nrepl-extras)
 
+;;;; #### I'm happy up to here
 (require 'nomis-shell-stuff)
 
 (require 'homeless)

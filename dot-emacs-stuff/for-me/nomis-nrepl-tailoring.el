@@ -24,8 +24,13 @@
 
 (add-hook 'nrepl-interaction-mode-hook 'nrepl-turn-on-eldoc-mode)
 
-;; TODO: I've seen this a lot. Do I want it?
-;; (setq nrepl-popup-stacktraces nil)
+;;;; ___________________________________________________________________________
+
+;;;; TODO: I've seen this a lot. Do I want it?
+;;;; (setq nrepl-popup-stacktraces nil)
+
+;;;; TODO: Consider other tailoring.
+;;;;       See https://github.com/clojure-emacs/nrepl.el.
 
 ;;;; ___________________________________________________________________________
 
