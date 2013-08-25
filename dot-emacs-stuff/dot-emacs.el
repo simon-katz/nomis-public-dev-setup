@@ -128,7 +128,7 @@
 (require 'nomis-indent-sexp)
 (require 'nomis-keyboard-macros)
 (require 'nomis-searching)
-;; (require 'nomis-searching-filters)
+(require 'nomis-searching-filters)
 ;; (require 'nomis-ibuffer)
 
 ;;;; ___________________________________________________________________________
