@@ -1,5 +1,8 @@
 ;;;; Init stuff -- Indenting s-expressions.
 
+;;;; TODO: Do you want this?
+;;;;       Is the default horrible?
+;;;;       Was there a Starter Kit issue that made you do this?
 
 ;;;; ___________________________________________________________________________
 ;;;; ---- Want C-M-q to work when at the end of a sexp ----

@@ -124,10 +124,10 @@
 
 (require 'nomis-auto-complete)
 
-;;;; #### I'm happy up to here
-;; TODO: Consider these; maybe delete.
 (require 'nomis-slime-eval)
 (require 'nomis-indent-sexp)
+;;;; #### I'm happy up to here
+;; TODO: Consider these; maybe delete.
 (require 'nomis-keyboard-macros)
 ;; (require 'nomis-searching)
 ;; (require 'nomis-searching-filters)
