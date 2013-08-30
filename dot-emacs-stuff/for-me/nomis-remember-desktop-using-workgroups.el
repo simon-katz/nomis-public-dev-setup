@@ -6,7 +6,7 @@
 (workgroups-mode 1)
 
 (defvar my-workgroups-configuration-file
-  "~/development-100/repositories/nomis-jsk-settings/emacs-workgroups-configuration.txt")
+  "~/development-100/repositories/nomis/jsk-settings/emacs-workgroups-configuration.txt")
 
 (wg-load my-workgroups-configuration-file)
 
