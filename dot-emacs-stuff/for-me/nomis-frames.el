@@ -48,22 +48,18 @@
 ;;;; ___________________________________________________________________________
 ;;;; ---- Cycle frames ----
 
-;;;; Generally use OS stuff for this.
+;;;; Would use OS stuff for this, but various combinations of OS X and Emacs
+;;;; give various different behaviours, including stack backtraces, going to
+;;;; Emacs menus and even, in some cases (Lion and 24.2 IIRC), cycling frames.
 
-(when (and (equal emacs-version "24.3.1")
-           (equal system-configuration "x86_64-apple-darwin"))
-
-  ;; Command-` and Shift-Command-` don't work on this combination of Emacs
-  ;; and system.
-  ;; - TODO: Report this as a bug.
-  ;; So add some extra key bindings:
+(when (equal system-configuration "x86_64-apple-darwin")
 
   (defun other-frame-backwards ()
     (interactive)
     (other-frame -1))
 
-  (define-key global-map (kbd "C-`") 'other-frame)
-  (define-key global-map (kbd "C-~") 'other-frame-backwards))
+  (define-key global-map (kbd "M-`") 'other-frame)
+  (define-key global-map (kbd "M-~") 'other-frame-backwards))
 
 ;;;; ___________________________________________________________________________
 ;;;; ---- Default frame size ----
