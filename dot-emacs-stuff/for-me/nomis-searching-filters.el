@@ -11,20 +11,24 @@
 ;; ;;;; ___________________________________________________________________________
 ;; ;;;; ---- Stuff for rgrep and lgrep ----
 
-;; (progn
-;;   ;; a hack -- really want to be able to change this within a session
-;;   (defvar *extra-ignored-directories*
-;;     '("labrepl*/public/javascripts/jquery.js"
-;;       "emacs-configuration/nomis-addons/cygwin-mount.el"))
-;;   (defvar *extra-ignored-files*
-;;     '(".jar"
-;;       ".exe"))
-;;   (eval-after-load "grep"
-;;     '(progn
-;;        (mapc (lambda (x) (add-to-list 'grep-find-ignored-files x))
-;;              *extra-ignored-files*)
-;;        (mapc (lambda (x) (add-to-list 'grep-find-ignored-directories x))
-;;              *extra-ignored-directories*))))
+;;;; TODO: Move this into "nomis-searching.el". Probably delete this file.
+
+(progn
+  ;; a hack -- really want to be able to change this within a session
+  (defvar *extra-ignored-directories*
+    '(;; "labrepl*/public/javascripts/jquery.js"
+      ;; "emacs-configuration/nomis-addons/cygwin-mount.el"
+      "dot-emacs-d-stuff"))
+  (defvar *extra-ignored-files*
+    '(;; ".jar"
+      ;; ".exe"
+      ))
+  (eval-after-load "grep"
+    '(progn
+       (mapc (lambda (x) (add-to-list 'grep-find-ignored-files x))
+             *extra-ignored-files*)
+       (mapc (lambda (x) (add-to-list 'grep-find-ignored-directories x))
+             *extra-ignored-directories*))))
 
 ;;;; ___________________________________________________________________________
 
