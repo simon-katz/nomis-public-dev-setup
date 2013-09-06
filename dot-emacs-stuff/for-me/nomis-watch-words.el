@@ -1,14 +1,15 @@
 ;;;; Init stuff -- Watch words.
 
 (defvar nomis-watch-words
-  '("FIXME"
-    "FIX"
-    "TODO-THINK"
-    "TODO"
-    "REMAINING-ISSUE"
-    "HACK"
-    "REFACTOR"
-    "NOCOMMIT"))
+  ;; Use \\ in the strings below so you don't get the highlighting here.
+  '("F\\IXME"
+    "F\\IX"
+    "T\\ODO-THINK"
+    "T\\ODO"
+    "R\\EMAINING-ISSUE"
+    "H\\ACK"
+    "R\\EFACTOR"
+    "N\\OCOMMIT"))
 
 (defun nomis-make-regex-from-watchwords-helper (words beginning-of-word-p)
   (with-output-to-string
