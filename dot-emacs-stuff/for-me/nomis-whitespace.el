@@ -1,5 +1,7 @@
 ;;;; Init stuff -- whitespace
 
+(require 'whitespace)
+
 (setq whitespace-line-column nomis-right-margin)
 
 (setq whitespace-style '(face trailing lines-tail tabs))
@@ -20,15 +22,12 @@
                       ;; :underline nil
                       ))
 
-(eval-after-load 'whitespace
-  '(nomis-whitespace-faces))
-
-(defun nomis-whitespace-mode-reinstating-blatted-faces () ; TODO: Use advice instead
-  "Use this instead of `whitespace-mode'.
-For some reason my whitespace face definitions get blatted, even
-if this file is the last thing that gets loaded by my init."
-  (whitespace-mode)
-  (nomis-whitespace-faces))
+(progn
+  ;; For some reason my whitespace face definitions get blatted, even
+  ;; if this file is the last thing that gets loaded by my init.
+  (defadvice whitespace-mode (after nomis-whitespace-faces (&rest args))
+    (nomis-whitespace-faces))
+  (ad-activate 'whitespace-mode))
 
 (defun whitespace-mode-off () (whitespace-mode -1))
 
