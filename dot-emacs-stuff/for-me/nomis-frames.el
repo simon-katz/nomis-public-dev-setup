@@ -101,31 +101,59 @@
 ;;;; ___________________________________________________________________________
 ;;;; ---- Commands to adjust frames ----
 
-(progn
-  (defun nomis-set-frame-width (arg)
-    (interactive "p")
-    (if (= arg 1) (setq arg double-window-frame-width))
-    (set-frame-width (selected-frame) arg))
+(require 'cl)
 
+(progn
+
+  (defun reasonable-string-for-frame-width-or-height-p (string)
+    (eql (string-match-p "^[1-9][0-9]\\{0,2\\}$"
+                         string)
+         0))
+  
+  (assert (equal (mapcar 'reasonable-string-for-frame-width-or-height-p
+                         '("0" "1" "12" "123" "1234" "xyz12"))
+                 '(nil t t t nil nil)))
+  
+  (defun read-reasonable-frame-width-or-height (kind current-value)
+    (let* ((string (read-from-minibuffer
+                    (format "Enter new frame %s (currently %s): "
+                            kind
+                            current-value))))
+      (if (reasonable-string-for-frame-width-or-height-p string)
+          (string-to-number string)
+        (error "Silly %s: %s" kind string))))
+    
+  (defun nomis-set-frame-width* (width)
+    (set-frame-width (selected-frame) width))
+  
+  (defun nomis-set-frame-width ()
+    (interactive "")
+    (nomis-set-frame-width*
+     (read-reasonable-frame-width-or-height "width" (frame-width))))
+   
   (defun nomis-w-single ()
     (interactive)
-    (nomis-set-frame-width single-window-frame-width))
+    (nomis-set-frame-width* single-window-frame-width))
 
   (defun nomis-w-double ()
     (interactive)
-    (nomis-set-frame-width double-window-frame-width))
+    (nomis-set-frame-width* double-window-frame-width))
 
-  (defun nomis-set-frame-height (arg)
-    (interactive "p")
-    (set-frame-height (selected-frame) arg))
+  (defun nomis-set-frame-height* (height)
+    (set-frame-height (selected-frame) height))
+  
+  (defun nomis-set-frame-height ()
+    (interactive "")
+    (nomis-set-frame-height*
+     (read-reasonable-frame-width-or-height "height" (frame-height))))
 
   (defun nomis-h62 ()
     (interactive)
-    (nomis-set-frame-height 62))
+    (nomis-set-frame-height* 62))
 
   (defun nomis-h29 ()
     (interactive)
-    (nomis-set-frame-height 29)))
+    (nomis-set-frame-height* 29)))
 
 (defun nomis-maximize-frame-height (&optional frame)
   "Maximize the selected frame in the vertical direction."
