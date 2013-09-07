@@ -2,7 +2,7 @@
 
 (require 'whitespace)
 
-(setq whitespace-line-column nomis-right-margin)
+(setq whitespace-line-column nomis-right-margin-column)
 
 (setq whitespace-style '(face trailing lines-tail tabs))
 

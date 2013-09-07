@@ -2,26 +2,40 @@
 
 ;;;; ___________________________________________________________________________
 
-(defvar nomis-right-margin 80)
+(defvar nomis-right-margin-column 80)
 
 (require 'nomis-whitespace)
 (require 'nomis-fci-mode)
 
-(defun nomis-right-margin-mode ()
-  (whitespace-mode)
-  (fci-mode))
+(define-minor-mode nomis-right-margin-mode
+  "A minor mode that combines whitespace-mode and fci-mode."
+  nil nil nil
+  (if nomis-right-margin-mode
+      (progn
+        (whitespace-mode)
+        ;; (fci-mode) ; See `nomis-fci-mode-issues`.
+        )
+    (progn
+      (whitespace-mode-off)
+      ;; (fci-mode-off) ; See `nomis-fci-mode-issues`.
+      )))
 
-(defun nomis-right-margin-mode-off ()
-  (whitespace-mode-off)
-  (fci-mode-off))
+(defun turn-on-nomis-right-margin-mode ()
+  "Turn on nomis-right-margin-mode unconditionally."
+  (interactive)
+  (nomis-right-margin-mode 1))
+
+(defun turn-off-nomis-right-margin-mode ()
+  "Turn off nomis-right-margin-mode unconditionally."
+  (interactive)
+  (nomis-right-margin-mode 0))
 
 ;;;; ___________________________________________________________________________
 
-(add-hook 'text-mode-hook 'nomis-right-margin-mode)
-(add-hook 'prog-mode-hook 'nomis-right-margin-mode)
+(add-hook 'text-mode-hook 'turn-on-nomis-right-margin-mode)
+(add-hook 'prog-mode-hook 'turn-on-nomis-right-margin-mode)
 
-(add-hook 'org-mode-hook 'nomis-right-margin-mode-off)
-(add-hook 'emacs-lisp-mode-hook 'fci-mode-off) ; because it doesn't work
+(add-hook 'org-mode-hook 'turn-off-nomis-right-margin-mode)
 
 ;;;; ___________________________________________________________________________
 

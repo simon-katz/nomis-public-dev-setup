@@ -2,6 +2,14 @@ TODO:
 
 - Search for TODOs.
 
+- Understand minor modes.
+  See `nomis-right-margin-mode`.
+  Compare with `fci-mode` and `whitespace-mode`.
+  Parameters?
+  Different ways of doing it?
+
+- Do you have other things that should be modes (like nomis-right-margin-mode)?
+
 - Report this bug in Emacs 24.3:
   - Cycling windows doesn't find any windows.
   - System Preferences » Keyboard » Keyboard Shortcuts » Keyboard and
