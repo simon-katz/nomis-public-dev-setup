@@ -89,13 +89,13 @@
 (defvar nomis-frame-prefs `((width  . ,single-window-frame-width)
                             (height . ,nomis-window-height)
                             (top . 0)
-                            (left . 140)
+                            ;; (left . 140)
                             ;; (font . "4.System VIO")
                             ;; (foreground-color . "Black")
                             (background-color . "#f5f5f5")
                             ;;(cursor-color . "SkyBlue")
                             ))
-(setq initial-frame-alist (append nomis-frame-prefs initial-frame-alist))
+;; (setq initial-frame-alist (append nomis-frame-prefs initial-frame-alist))
 (setq default-frame-alist (append nomis-frame-prefs default-frame-alist))
 
 ;;;; ___________________________________________________________________________
