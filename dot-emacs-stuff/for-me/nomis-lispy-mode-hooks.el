@@ -10,8 +10,7 @@
   (_nomis-lispy-common-repl-and-non-repl-setup))
 
 (defun nomis-lispy-non-repl-setup ()
-  (_nomis-lispy-common-repl-and-non-repl-setup)
-  (nomis-whitespace-mode-reinstating-blatted-faces))
+  (_nomis-lispy-common-repl-and-non-repl-setup))
 
 ;;;; ___________________________________________________________________________
 

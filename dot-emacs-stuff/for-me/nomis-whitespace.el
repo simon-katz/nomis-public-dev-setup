@@ -1,5 +1,9 @@
 ;;;; Init stuff -- whitespace
 
+(setq whitespace-line-column nomis-right-margin)
+
+(setq whitespace-style '(face trailing lines-tail tabs))
+
 (defun nomis-whitespace-faces ()
   ;; Less-garish-than-default highlighting for > 80 (or whatever)
   ;; characters.
@@ -19,11 +23,13 @@
 (eval-after-load 'whitespace
   '(nomis-whitespace-faces))
 
-(defun nomis-whitespace-mode-reinstating-blatted-faces ()
+(defun nomis-whitespace-mode-reinstating-blatted-faces () ; TODO: Use advice instead
   "Use this instead of `whitespace-mode'.
 For some reason my whitespace face definitions get blatted, even
 if this file is the last thing that gets loaded by my init."
   (whitespace-mode)
   (nomis-whitespace-faces))
+
+(defun whitespace-mode-off () (whitespace-mode -1))
 
 (provide 'nomis-whitespace)

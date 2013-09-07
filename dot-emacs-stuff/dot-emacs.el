@@ -90,7 +90,7 @@
 (require 'nomis-very-general-stuff)
 (require 'nomis-mouse-scrolling)
 (require 'nomis-avoid-window-stealing)
-(require 'nomis-whitespace)
+(require 'nomis-right-margin)
 (require 'nomis-highlighting)
 (require 'nomis-line-numbering)
 (require 'nomis-saveplace)
