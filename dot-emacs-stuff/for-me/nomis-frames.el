@@ -155,27 +155,13 @@
     (interactive)
     (nomis-set-frame-height* 29)))
 
-(defun nomis-maximize-frame-height (&optional frame)
-  "Maximize the selected frame in the vertical direction."
-  (interactive)
-  (when (null frame)
-    (setq frame (selected-frame)))
-  (let* ((pixels-per-row (/ (float (frame-pixel-height frame))
-                            (frame-height frame)))
-         (n-rows (- (floor (/ (x-display-pixel-height frame)
-                              pixels-per-row))
-                    3)))
-    (set-frame-size frame
-                    (frame-width frame)
-                    n-rows))
-  (set-frame-position frame (frame-parameter frame 'left)
-                      1) ; 1 to allow pointing at something underneath
-                         ; the frame
-  )
+;;;; ___________________________________________________________________________
+
+(require 'frame-cmds)
 
 (defun nomis-maximize-all-frame-heights ()
   (interactive)
-  (mapc 'nomis-maximize-frame-height
+  (mapc (lambda (frame) (maximize-frame-vertically frame t))
         (frame-list)))
 
 ;;;; ___________________________________________________________________________
