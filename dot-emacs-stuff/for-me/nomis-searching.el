@@ -1,5 +1,24 @@
 ;;;; Init stuff -- Searching.
 
+;; ;;;; ___________________________________________________________________________
+;; ;;;; ---- Stuff for rgrep and lgrep ----
+
+(progn
+  (defvar *extra-ignored-directories*
+    '(;; "labrepl*/public/javascripts/jquery.js"
+      ;; "emacs-configuration/nomis-addons/cygwin-mount.el"
+      "dot-emacs-d-stuff"))
+  (defvar *extra-ignored-files*
+    '(;; ".jar"
+      ;; ".exe"
+      ))
+  (eval-after-load "grep"
+    '(progn
+       (mapc (lambda (x) (add-to-list 'grep-find-ignored-files x))
+             *extra-ignored-files*)
+       (mapc (lambda (x) (add-to-list 'grep-find-ignored-directories x))
+             *extra-ignored-directories*))))
+
 ;;;; ___________________________________________________________________________
 
 (progn
