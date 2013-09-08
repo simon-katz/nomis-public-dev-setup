@@ -15,9 +15,6 @@
 
 (add-to-list 'same-window-buffer-names "*nrepl*")
 
-(add-hook 'nrepl-mode-hook 'nomis-lispy-repl-setup)
-(add-hook 'nrepl-mode-hook 'nomis-clojure-setup)
-
 ;;;; ---------------------------------------------------------------------------
 ;;;; ---- Stuff for when connected to nrepl       ----
 ;;;; ---- (for repl and for Clojure source files) ----

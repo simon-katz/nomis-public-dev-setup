@@ -2,12 +2,15 @@
 
 ;;;; ___________________________________________________________________________
 
-(require 'nomis-lispy-mode-hooks)
+(dolist (hook '(emacs-lisp-mode-hook
+                ielm-mode-hook))
+  (dolist (hook-fun '(rainbow-delimiters-mode
+                      paredit-mode
+                      turn-on-elisp-slime-nav-mode
+                      turn-on-eldoc-mode))
+          (add-hook hook hook-fun)))
 
-(add-hook 'emacs-lisp-mode-hook 'nomis-emacs-lisp-setup)
-(add-hook 'ielm-mode-hook 'nomis-ielm-setup)
-
-(define-key emacs-lisp-mode-map (kbd "RET") 'newline-and-indent) ; TODO: Modularise with same change to clojure-mode-map, and see comment there
+(define-key emacs-lisp-mode-map (kbd "RET") 'newline-and-indent)
 
 ;;;; ___________________________________________________________________________
 
