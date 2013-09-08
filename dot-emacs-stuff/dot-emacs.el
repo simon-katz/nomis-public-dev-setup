@@ -115,7 +115,6 @@
 (require 'nomis-emacs-lisp-and-ielm)
 (require 'nomis-clojure)
 (require 'nomis-clojure-indentation)
-(require 'nomis-nrepl-tailoring)
 (require 'nomis-nrepl-extras)
 
 (require 'nomis-shell-stuff)
