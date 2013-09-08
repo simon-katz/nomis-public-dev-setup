@@ -1,15 +1,15 @@
 ;;;; Init stuff -- nrepl extras
 
 ;;;; TODO: Look at all this in the light of:
-;;;;       - Now have nrepl.el 0.1.8.
+;;;;       - Now have nrepl.el 0.1.8. (Hmmm, no, reverted to 0.1.7 because eldoc
+;;;;         doesn't hapen with 0.1.8.)
+;;;;         See https://groups.google.com/forum/#!topic/nrepl-el/RZTitQyb6mo.
 ;;;;       - Did/does it all make sense anyway?
-
 
 ;;;; TODO: Consider not doing this redefining of functions, and instead
 ;;;;       having a file "nomis-nrepl.el" (under CM control) that
 ;;;;       contains your hacks. (And have "nrepl.el" for comparison.)
 ;;;;       (Same as you are considering for "workgroups.el".)
-
 
 (require 'nrepl)
 

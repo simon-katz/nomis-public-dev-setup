@@ -1,7 +1,5 @@
 ;;;; Init stuff -- Clojure mode.
 
-;;;; TODO: Get rid of `nomis-nrepl-tailoring` and move contents to here.
-
 ;;;; ___________________________________________________________________________
 
 (require 'clojure-mode)
