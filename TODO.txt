@@ -10,15 +10,10 @@ TODO:
 
 - Do you have other things that should be modes (like nomis-right-margin-mode)?
 
-- Report this bug in Emacs 24.3:
-  - Cycling windows doesn't find any windows.
-  - System Preferences » Keyboard » Keyboard Shortcuts » Keyboard and
-    Text Input. Look for Move focus to next window in application
-  - Command-`.
-
-- Report this bug...
-  - What's happened to repetition of keyboard macros? It used to do it
++ Report this bug in Emacs 24.3:
+  + What's happened to repetition of keyboard macros? It used to do it
     once; now it repeats until error (I think).
+  + Done.  See https://groups.google.com/forum/#!search/emacs$20bug$20keyboard$20macro$2015126/gnu.emacs.bug/i2DKFcWfzfY/9QMePrbxpiQJ
 
 - You have some manually-installed packages in "for-me/nomis-addons".
   Instead, (after .emacs.d and .emacs are in the same repository (if
