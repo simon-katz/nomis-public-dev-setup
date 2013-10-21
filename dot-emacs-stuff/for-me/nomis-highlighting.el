@@ -50,8 +50,7 @@
 ;;; want similar highlighting for `foo`.
 
 (defun nomis-highlight-symbol-quoting-in-text ()
-  (dolist (regex '("`\\(\\sw\\sw+\\)'"
-                   "`\\(\\sw\\sw+\\)`"))
+  (dolist (regex '("`\\(.+?\\)[`']"))
     (font-lock-add-keywords nil `((,regex 1 font-lock-constant-face prepend)))))
 
 (add-hook 'text-mode-hook 'nomis-highlight-symbol-quoting-in-text)
