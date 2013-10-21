@@ -15,8 +15,14 @@
 ;;;; ---------------------------------------------------------------------------
 ;;;; General
 
-(setq org-directory
-      "~/Documents/jsk/development-100/__for-sync/notes/to-do-and-planning")
+
+(defvar my-org-directory
+  "~/Documents/jsk/development-100/__for-sync/notes/to-do-and-planning")
+
+(if (file-exists-p my-org-directory)
+    (setq org-directory my-org-directory)
+  (setq org-directory "~/.emacs-lisp-dir"))
+
 (setq org-replace-disputed-keys t)
 (setq org-log-done nil)
 
