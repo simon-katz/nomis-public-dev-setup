@@ -87,7 +87,7 @@
          66)))
 
 (defvar nomis-frame-prefs `((width  . ,single-window-frame-width)
-                            (height . ,nomis-window-height)
+                            ;; (height . ,nomis-window-height) ; TODO: Broken when people have thingy bar at the bottom of the screen.  (Also, this depends on a particular font size.)
                             (top . 0)
                             ;; (left . 140)
                             ;; (font . "4.System VIO")
