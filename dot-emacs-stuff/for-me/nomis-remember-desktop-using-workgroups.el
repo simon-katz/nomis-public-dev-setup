@@ -8,7 +8,8 @@
 (defvar my-workgroups-configuration-file
   "~/development-100/repositories/nomis/jsk-settings/emacs-workgroups-configuration.txt")
 
-(wg-load my-workgroups-configuration-file)
+(when (file-exists-p my-workgroups-configuration-file)
+  (wg-load my-workgroups-configuration-file))
 
 (define-key wg-map (kbd "<right>")   'wg-switch-right)
 (define-key wg-map (kbd "C-<right>") 'wg-switch-right)
