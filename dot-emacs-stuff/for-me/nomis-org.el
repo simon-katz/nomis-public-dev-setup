@@ -21,7 +21,7 @@
 
 (if (file-exists-p my-org-directory)
     (setq org-directory my-org-directory)
-  (setq org-directory "~/.emacs-lisp-dir"))
+  (setq org-directory "~/.emacs-org-dir"))
 
 (setq org-replace-disputed-keys t)
 (setq org-log-done nil)
