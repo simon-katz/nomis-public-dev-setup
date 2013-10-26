@@ -73,16 +73,25 @@
 ;;;; For some reason, having these combined in a single function
 ;;;; means that deletion doesn't happen. So have two functions.
 
-(defun nomis-compile-this-dir ()
-  "Compile and delete the results."
-  (byte-recompile-directory (nomis-load-file-directory) 0 t))
-
-(defun nomis-delete-elc-files ()
+(defun nomis-delete-elc-files (dir)
   (shell-command (format "find \"%s\" -name *.elc -delete"
-                         (nomis-load-file-directory))))
+                         dir)))
 
-;;;; (nomis-compile-this-dir)
-;;;; (nomis-delete-elc-files)
+(defun nomis-compile-dir (dir)
+  (byte-recompile-directory dir 0 t))
+
+(defvar *this-dir*
+  (nomis-load-file-directory))
+
+(defvar *emacs-config-dir*
+  (file-truename (concat *this-dir* "../")))
+
+(defun nomis-compile-emacs-config ()
+  (interactive)
+  (nomis-compile-dir *emacs-config-dir*))
+
+;;;; (nomis-delete-elc-files *emacs-config-dir*)
+;;;; (nomis-compile-dir *emacs-config-dir*)
 
 ;;;; ___________________________________________________________________________
 ;;;; ---- Load various files ----
