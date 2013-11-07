@@ -139,5 +139,10 @@
 (require 'nomis-searching-filters)
 (require 'nomis-ibuffer)
 
+(progn
+  ;; Putting this where it belongs (in "nomis-very-general-stuff") doesn't work;
+  ;; I guess something blats it.
+  (define-key global-map [(insert)] nil))
+
 ;;;; ___________________________________________________________________________
 ;;;;; ---- temp for playing ----
