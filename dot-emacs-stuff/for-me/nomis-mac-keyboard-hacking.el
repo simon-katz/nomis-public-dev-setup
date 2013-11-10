@@ -62,11 +62,11 @@
   
   (define-key global-map (kbd "M-w") 'nomis-meta-w))
 
-(progn
-  ;; Deal with M-z.
-  ;; The default for M-z is zap-to-char.
-  ;; I never use M-z, so I don't need a new binding for zap-to-char.
-  (define-key global-map (kbd "M-z") 'undo))
+;; Nope -- see "nomis-undo-tree.el".
+;; (progn
+;;   ;; Deal with M-z.
+;;   ;; The default for M-z is zap-to-char.  I don't need that, so...
+;;   (define-key global-map (kbd "M-z") 'undo))
 
 (progn
   ;; Deal with M-x.

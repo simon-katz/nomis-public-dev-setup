@@ -109,7 +109,10 @@
 (require 'nomis-windows)
 (require 'nomis-uniquify)
 (require 'nomis-remember-desktop-using-workgroups)
+
 (require 'nomis-mac-keyboard-hacking)
+(require 'nomis-undo-tree)
+
 (require 'nomis-keyboard-scrolling-and-movement)
 
 (require 'nomis-ispell)
