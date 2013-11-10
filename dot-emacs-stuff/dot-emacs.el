@@ -142,6 +142,8 @@
 (progn
   ;; Putting this where it belongs (in "nomis-very-general-stuff") doesn't work;
   ;; I guess something blats it.
+  ;; Ah! This was probably because of issues with source files vs compiled
+  ;; files, so try again.
   (define-key global-map [(insert)] nil))
 
 ;;;; ___________________________________________________________________________
