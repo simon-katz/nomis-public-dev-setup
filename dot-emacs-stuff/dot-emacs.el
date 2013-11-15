@@ -112,6 +112,7 @@
 
 (require 'nomis-mac-keyboard-hacking)
 (require 'nomis-undo-tree)
+(require 'nomis-diff-mode)
 
 (require 'nomis-keyboard-scrolling-and-movement)
 
