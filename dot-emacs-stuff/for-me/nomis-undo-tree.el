@@ -11,10 +11,9 @@
 
 (progn
   ;; Fix what seems to be a bug (and make it match the documentation)...
-  (define-key undo-tree-visualizer-map [C-up] 'undo-tree-visualize-undo-to-x)
-  (define-key undo-tree-visualizer-map [C-down] 'undo-tree-visualize-redo-to-x))
+  (define-key undo-tree-visualizer-map (kbd "C-<up>") 'undo-tree-visualize-undo-to-x)
+  (define-key undo-tree-visualizer-map (kbd "C-<down>") 'undo-tree-visualize-redo-to-x))
 
 ;;;; ___________________________________________________________________________
 
 (provide 'nomis-undo-tree)
-
