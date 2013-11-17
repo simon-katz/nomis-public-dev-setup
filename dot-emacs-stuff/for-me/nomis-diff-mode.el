@@ -5,7 +5,7 @@
 (defun nomis-diff-colors ()
   "update the colors for diff faces"
   (set-face-attribute
-   'diff-added nil :foreground "green")
+   'diff-added nil :foreground "SpringGreen4")
   (set-face-attribute
    'diff-removed nil :foreground "red")
   (set-face-attribute
