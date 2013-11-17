@@ -17,33 +17,33 @@
 (define-key clojure-mode-map (kbd "RET") 'newline-and-indent)
 
 ;;;; ___________________________________________________________________________
-;;;; nrepl
+;;;; Cider
 
-;;;; ---------------------------------------------------------------------------
-;;;; ---- Basics ----
-
-;;;; See https://github.com/kingtim/nrepl.el
+;;;; See https://github.com/clojure-emacs/cider.
+;;;; - TODO: Consider other tailoring.
 
 ;;;; ---------------------------------------------------------------------------
 ;;;; ---- Stuff for the REPL ----
 
-(setq cider-history-file "~/.cider-history")
-
+(setq nrepl-buffer-name-separator "--")
 (setq cider-repl-display-in-current-window t)
+
+(setq cider-history-file "~/.cider-history")
+(setq cider-history-size 1000) ; the default is 500
+
+(setq cider-repl-use-pretty-printing t)
 
 ;;;; ---------------------------------------------------------------------------
 ;;;; ---- Stuff for when connected to nrepl       ----
-;;;; ---- (for repl and for Clojure source files) ----
+;;;; ---- (for REPL and for Clojure source files) ----
 
 (add-hook 'cider-mode-hook 'cider-turn-on-eldoc-mode)
 
-;;;; ___________________________________________________________________________
+;;;; ---------------------------------------------------------------------------
+;;;; ---- Stack backtraces ----
 
-;;;; TODO: I've seen this a lot. Do I want it?
-;;;; (setq nrepl-popup-stacktraces nil)
-
-;;;; TODO: Consider other tailoring.
-;;;;       See https://github.com/clojure-emacs/nrepl.el.
+(setq cider-repl-popup-stacktraces t)
+(setq cider-auto-select-error-buffer t)
 
 ;;;; ___________________________________________________________________________
 
