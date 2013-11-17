@@ -3,8 +3,9 @@
 ;;; Code:
 
 
-;;;### (autoloads nil nil ("pos-tip-pkg.el" "pos-tip.el") (21009
-;;;;;;  8226 363681))
+;;;### (autoloads nil nil ("../../../../../../../.emacs.d/elpa/pos-tip-0.4.5/pos-tip-pkg.el"
+;;;;;;  "../../../../../../../.emacs.d/elpa/pos-tip-0.4.5/pos-tip.el")
+;;;;;;  (21127 34704 943765))
 
 ;;;***
 

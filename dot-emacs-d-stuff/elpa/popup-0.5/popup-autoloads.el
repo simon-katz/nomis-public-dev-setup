@@ -3,8 +3,9 @@
 ;;; Code:
 
 
-;;;### (autoloads nil nil ("popup-pkg.el" "popup.el") (21009 8217
-;;;;;;  948560))
+;;;### (autoloads nil nil ("../../../../../../../.emacs.d/elpa/popup-0.5/popup-pkg.el"
+;;;;;;  "../../../../../../../.emacs.d/elpa/popup-0.5/popup.el")
+;;;;;;  (21127 34689 208689))
 
 ;;;***
 

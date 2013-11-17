@@ -30,10 +30,10 @@
                         paredit
                         rainbow-delimiters
                         auto-complete
-                        nrepl
+                        cider
                         ac-nrepl
                         clojure-mode
-                        clojure-test-mode
+                        ;; xxx-nrepl ; clojure-test-mode ; this is downloading nrepl (old!)
                         saveplace
                         workgroups
                         fuzzy
@@ -128,7 +128,7 @@
 (require 'nomis-emacs-lisp-and-ielm)
 (require 'nomis-clojure)
 (require 'nomis-clojure-indentation)
-(require 'nomis-nrepl-extras)
+(require 'nomis-cider-extras)
 
 (require 'nomis-shell-stuff)
 

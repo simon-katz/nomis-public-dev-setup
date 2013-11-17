@@ -3,12 +3,12 @@
 ;;;; ___________________________________________________________________________
 
 (require 'clojure-mode)
-(require 'nrepl)
+(require 'cider)
 
 ;;;; ___________________________________________________________________________
 
 (dolist (hook '(clojure-mode-hook
-                nrepl-mode-hook))
+                cider-repl-mode-hook))
   (dolist (hook-fun '(rainbow-delimiters-mode
                       paredit-mode
                       subword-mode))
@@ -27,15 +27,15 @@
 ;;;; ---------------------------------------------------------------------------
 ;;;; ---- Stuff for the REPL ----
 
-(setq nrepl-history-file "~/.nrepl-history.eld")
+(setq cider-history-file "~/.cider-history")
 
-(add-to-list 'same-window-buffer-names "*nrepl*")
+(setq cider-repl-display-in-current-window t)
 
 ;;;; ---------------------------------------------------------------------------
 ;;;; ---- Stuff for when connected to nrepl       ----
 ;;;; ---- (for repl and for Clojure source files) ----
 
-(add-hook 'nrepl-interaction-mode-hook 'nrepl-turn-on-eldoc-mode)
+(add-hook 'cider-mode-hook 'cider-turn-on-eldoc-mode)
 
 ;;;; ___________________________________________________________________________
 

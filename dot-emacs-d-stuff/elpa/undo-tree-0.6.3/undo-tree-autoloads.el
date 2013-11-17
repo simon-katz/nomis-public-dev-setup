@@ -4,8 +4,9 @@
 
 
 ;;;### (autoloads (global-undo-tree-mode undo-tree-mode) "undo-tree"
-;;;;;;  "undo-tree.el" (21118 53141))
-;;; Generated autoloads from undo-tree.el
+;;;;;;  "../../../../../../../.emacs.d/elpa/undo-tree-0.6.3/undo-tree.el"
+;;;;;;  "4fa0b0ea762b055117472f2d16cba04f")
+;;; Generated autoloads from ../../../../../../../.emacs.d/elpa/undo-tree-0.6.3/undo-tree.el
 
 (autoload 'undo-tree-mode "undo-tree" "\
 Toggle undo-tree mode.
@@ -50,7 +51,9 @@ See `undo-tree-mode' for more information on Undo-Tree mode.
 
 ;;;***
 
-;;;### (autoloads nil nil ("undo-tree-pkg.el") (21118 53141 648675))
+;;;### (autoloads nil nil ("../../../../../../../.emacs.d/elpa/undo-tree-0.6.3/undo-tree-pkg.el"
+;;;;;;  "../../../../../../../.emacs.d/elpa/undo-tree-0.6.3/undo-tree.el")
+;;;;;;  (21127 34750 834250))
 
 ;;;***
 
