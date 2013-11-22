@@ -3,9 +3,8 @@
 ;;; Code:
 
 
-;;;### (autoloads (magit-status) "magit" "../../../../../../../.emacs.d/elpa/magit-1.2.0/magit.el"
-;;;;;;  "ed6541873c520da9e7279ef88895dec9")
-;;; Generated autoloads from ../../../../../../../.emacs.d/elpa/magit-1.2.0/magit.el
+;;;### (autoloads (magit-status) "magit" "magit.el" (21009 8227))
+;;; Generated autoloads from magit.el
 
 (autoload 'magit-status "magit" "\
 Open a Magit status buffer for the Git repository containing
@@ -21,9 +20,9 @@ user input.
 
 ;;;***
 
-;;;### (autoloads (magit-blame-mode) "magit-blame" "../../../../../../../.emacs.d/elpa/magit-1.2.0/magit-blame.el"
-;;;;;;  "df3b98696a2827704979850c7f9e037d")
-;;; Generated autoloads from ../../../../../../../.emacs.d/elpa/magit-1.2.0/magit-blame.el
+;;;### (autoloads (magit-blame-mode) "magit-blame" "magit-blame.el"
+;;;;;;  (21009 8227))
+;;; Generated autoloads from magit-blame.el
 
 (autoload 'magit-blame-mode "magit-blame" "\
 Display blame information inline.
@@ -33,9 +32,8 @@ Display blame information inline.
 ;;;***
 
 ;;;### (autoloads (turn-on-magit-stgit magit-stgit-mode) "magit-stgit"
-;;;;;;  "../../../../../../../.emacs.d/elpa/magit-1.2.0/magit-stgit.el"
-;;;;;;  "3a799c21b480259ac5942c12153a0e2f")
-;;; Generated autoloads from ../../../../../../../.emacs.d/elpa/magit-1.2.0/magit-stgit.el
+;;;;;;  "magit-stgit.el" (21009 8227))
+;;; Generated autoloads from magit-stgit.el
 
 (autoload 'magit-stgit-mode "magit-stgit" "\
 StGit support for Magit
@@ -50,9 +48,8 @@ Unconditionally turn on `magit-stgit-mode'.
 ;;;***
 
 ;;;### (autoloads (turn-on-magit-svn magit-svn-mode) "magit-svn"
-;;;;;;  "../../../../../../../.emacs.d/elpa/magit-1.2.0/magit-svn.el"
-;;;;;;  "1165865405f67b53f4b888c4b4a07ed4")
-;;; Generated autoloads from ../../../../../../../.emacs.d/elpa/magit-1.2.0/magit-svn.el
+;;;;;;  "magit-svn.el" (21009 8227))
+;;; Generated autoloads from magit-svn.el
 
 (autoload 'magit-svn-mode "magit-svn" "\
 SVN support for Magit
@@ -67,9 +64,8 @@ Unconditionally turn on `magit-svn-mode'.
 ;;;***
 
 ;;;### (autoloads (turn-on-magit-topgit magit-topgit-mode) "magit-topgit"
-;;;;;;  "../../../../../../../.emacs.d/elpa/magit-1.2.0/magit-topgit.el"
-;;;;;;  "4ab21c607308ffc9dd96dba3f5d06e85")
-;;; Generated autoloads from ../../../../../../../.emacs.d/elpa/magit-1.2.0/magit-topgit.el
+;;;;;;  "magit-topgit.el" (21009 8227))
+;;; Generated autoloads from magit-topgit.el
 
 (autoload 'magit-topgit-mode "magit-topgit" "\
 Topgit support for Magit
@@ -84,9 +80,8 @@ Unconditionally turn on `magit-topgit-mode'.
 ;;;***
 
 ;;;### (autoloads (global-magit-wip-save-mode magit-wip-save-mode
-;;;;;;  magit-wip-mode) "magit-wip" "../../../../../../../.emacs.d/elpa/magit-1.2.0/magit-wip.el"
-;;;;;;  "ffe9e1c421911a9366218c10f341fa52")
-;;; Generated autoloads from ../../../../../../../.emacs.d/elpa/magit-1.2.0/magit-wip.el
+;;;;;;  magit-wip-mode) "magit-wip" "magit-wip.el" (21009 8227))
+;;; Generated autoloads from magit-wip.el
 
 (defvar magit-wip-mode nil "\
 Non-nil if Magit-Wip mode is enabled.
@@ -134,9 +129,9 @@ See `magit-wip-save-mode' for more information on Magit-Wip-Save mode.
 
 ;;;***
 
-;;;### (autoloads (rebase-mode) "rebase-mode" "../../../../../../../.emacs.d/elpa/magit-1.2.0/rebase-mode.el"
-;;;;;;  "475429652819edec7004bbe0b89f98dc")
-;;; Generated autoloads from ../../../../../../../.emacs.d/elpa/magit-1.2.0/rebase-mode.el
+;;;### (autoloads (rebase-mode) "rebase-mode" "rebase-mode.el" (21009
+;;;;;;  8227))
+;;; Generated autoloads from rebase-mode.el
 
 (autoload 'rebase-mode "rebase-mode" "\
 Major mode for editing of a Git rebase file.
@@ -152,17 +147,8 @@ running 'man git-rebase' at the command line) for details.
 
 ;;;***
 
-;;;### (autoloads nil nil ("../../../../../../../.emacs.d/elpa/magit-1.2.0/magit-bisect.el"
-;;;;;;  "../../../../../../../.emacs.d/elpa/magit-1.2.0/magit-blame.el"
-;;;;;;  "../../../../../../../.emacs.d/elpa/magit-1.2.0/magit-key-mode.el"
-;;;;;;  "../../../../../../../.emacs.d/elpa/magit-1.2.0/magit-pkg.el"
-;;;;;;  "../../../../../../../.emacs.d/elpa/magit-1.2.0/magit-stgit.el"
-;;;;;;  "../../../../../../../.emacs.d/elpa/magit-1.2.0/magit-svn.el"
-;;;;;;  "../../../../../../../.emacs.d/elpa/magit-1.2.0/magit-topgit.el"
-;;;;;;  "../../../../../../../.emacs.d/elpa/magit-1.2.0/magit-wip.el"
-;;;;;;  "../../../../../../../.emacs.d/elpa/magit-1.2.0/magit.el"
-;;;;;;  "../../../../../../../.emacs.d/elpa/magit-1.2.0/rebase-mode.el")
-;;;;;;  (21127 34707 190278))
+;;;### (autoloads nil nil ("magit-bisect.el" "magit-key-mode.el"
+;;;;;;  "magit-pkg.el") (21009 8227 569841))
 
 ;;;***
 

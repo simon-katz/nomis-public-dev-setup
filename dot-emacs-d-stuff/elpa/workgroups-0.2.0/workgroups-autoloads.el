@@ -3,9 +3,8 @@
 ;;; Code:
 
 
-;;;### (autoloads nil nil ("../../../../../../../.emacs.d/elpa/workgroups-0.2.0/workgroups-pkg.el"
-;;;;;;  "../../../../../../../.emacs.d/elpa/workgroups-0.2.0/workgroups.el")
-;;;;;;  (21127 34697 626274))
+;;;### (autoloads nil nil ("workgroups-pkg.el" "workgroups.el") (21009
+;;;;;;  8224 169788))
 
 ;;;***
 

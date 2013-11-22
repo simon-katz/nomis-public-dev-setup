@@ -1,6 +1,6 @@
 ;;;; Init stuff -- auto-complete
 
-;;;; TODO: Check this; maybe move cider stuff.
+;;;; TODO: Check this; maybe move nrepl stuff. ; xxxx-cider
 
 ;;;; ___________________________________________________________________________
 ;;;; Basics
@@ -24,7 +24,7 @@
 
 
 ;;;; ___________________________________________________________________________
-;;;; Stuff obtained from cider docs -- general
+;;;; Stuff obtained from nrepl docs -- general ; xxxx-cider
 
 (defun set-auto-complete-as-completion-at-point-function ()
   (setq completion-at-point-functions '(auto-complete)))
@@ -34,28 +34,28 @@
 
 
 ;;;; ___________________________________________________________________________
-;;;; Stuff obtained from cider docs.
+;;;; Stuff obtained from nrepl docs. ; xxxx-cider
 
 (require 'ac-nrepl)
 
-(add-hook 'cider-repl-mode-hook 'ac-nrepl-setup)
-(add-hook 'cider-mode-hook 'ac-nrepl-setup)
+(add-hook 'nrepl-mode-hook 'ac-nrepl-setup) ; xxxx-cider cider-repl-mode-hook
+(add-hook 'nrepl-interaction-mode-hook 'ac-nrepl-setup) ; xxxx-cider cider-mode-hook
 
 (eval-after-load "auto-complete"
-  '(add-to-list 'ac-modes 'cider-repl-mode))
+  '(add-to-list 'ac-modes 'nrepl-mode)) ; xxxx-cider cider-repl-mode
 
 (add-hook 'auto-complete-mode-hook
           'set-auto-complete-as-completion-at-point-function)
 
-(add-hook 'cider-repl-mode-hook
+(add-hook 'nrepl-mode-hook ; xxxx-cider cider-mode-hook
           'set-auto-complete-as-completion-at-point-function)
 
-(add-hook 'cider-mode-hook
+(add-hook 'nrepl-interaction-mode-hook ; xxxx-cider cider-repl-mode-hook
           'set-auto-complete-as-completion-at-point-function)
 
 
-(eval-after-load "cider"
-  '(define-key cider-mode-map (kbd "C-c C-d") 'ac-nrepl-popup-doc))
+(eval-after-load "nrepl" ; xxxx-cider cider
+  '(define-key nrepl-interaction-mode-map (kbd "C-c C-d") 'ac-nrepl-popup-doc)) ; xxxx-cider cider-mode-map
 
 
 ;;;; ___________________________________________________________________________

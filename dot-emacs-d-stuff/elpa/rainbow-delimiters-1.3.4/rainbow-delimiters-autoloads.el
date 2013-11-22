@@ -5,9 +5,8 @@
 
 ;;;### (autoloads (global-rainbow-delimiters-mode rainbow-delimiters-mode-disable
 ;;;;;;  rainbow-delimiters-mode-enable rainbow-delimiters-mode) "rainbow-delimiters"
-;;;;;;  "../../../../../../../.emacs.d/elpa/rainbow-delimiters-1.3.4/rainbow-delimiters.el"
-;;;;;;  "89f94146a898173e19b8e70d090afeda")
-;;; Generated autoloads from ../../../../../../../.emacs.d/elpa/rainbow-delimiters-1.3.4/rainbow-delimiters.el
+;;;;;;  "rainbow-delimiters.el" (21009 8217))
+;;; Generated autoloads from rainbow-delimiters.el
 
 (autoload 'rainbow-delimiters-mode "rainbow-delimiters" "\
 Highlight nested parentheses, brackets, and braces according to their depth.
@@ -47,9 +46,8 @@ See `rainbow-delimiters-mode' for more information on Rainbow-Delimiters mode.
 
 ;;;***
 
-;;;### (autoloads nil nil ("../../../../../../../.emacs.d/elpa/rainbow-delimiters-1.3.4/rainbow-delimiters-pkg.el"
-;;;;;;  "../../../../../../../.emacs.d/elpa/rainbow-delimiters-1.3.4/rainbow-delimiters.el")
-;;;;;;  (21127 34688 58922))
+;;;### (autoloads nil nil ("rainbow-delimiters-pkg.el") (21009 8217
+;;;;;;  360951))
 
 ;;;***
 

@@ -3,9 +3,9 @@
 ;;; Code:
 
 
-;;;### (autoloads (smex-initialize smex) "smex" "../../../../../../../.emacs.d/elpa/smex-2.1/smex.el"
-;;;;;;  "4626c1541077a84227818f24257ea160")
-;;; Generated autoloads from ../../../../../../../.emacs.d/elpa/smex-2.1/smex.el
+;;;### (autoloads (smex-initialize smex) "smex" "smex.el" (21009
+;;;;;;  8230))
+;;; Generated autoloads from smex.el
 
 (autoload 'smex "smex" "\
 
@@ -19,9 +19,7 @@
 
 ;;;***
 
-;;;### (autoloads nil nil ("../../../../../../../.emacs.d/elpa/smex-2.1/smex-pkg.el"
-;;;;;;  "../../../../../../../.emacs.d/elpa/smex-2.1/smex.el") (21127
-;;;;;;  34711 63222))
+;;;### (autoloads nil nil ("smex-pkg.el") (21009 8230 759671))
 
 ;;;***
 

@@ -5,9 +5,9 @@
 
 ;;;### (autoloads (elisp-slime-nav-describe-elisp-thing-at-point
 ;;;;;;  elisp-slime-nav-find-elisp-thing-at-point turn-on-elisp-slime-nav-mode
-;;;;;;  elisp-slime-nav-mode) "elisp-slime-nav" "../../../../../../../.emacs.d/elpa/elisp-slime-nav-0.6/elisp-slime-nav.el"
-;;;;;;  "799be6a36b2ef938205ade7f95e250ce")
-;;; Generated autoloads from ../../../../../../../.emacs.d/elpa/elisp-slime-nav-0.6/elisp-slime-nav.el
+;;;;;;  elisp-slime-nav-mode) "elisp-slime-nav" "elisp-slime-nav.el"
+;;;;;;  (21009 8215))
+;;; Generated autoloads from elisp-slime-nav.el
 
 (autoload 'elisp-slime-nav-mode "elisp-slime-nav" "\
 Enable Slime-style navigation of elisp symbols using M-. and M-,
@@ -36,9 +36,8 @@ Argument SYM-NAME thing to find.
 
 ;;;***
 
-;;;### (autoloads nil nil ("../../../../../../../.emacs.d/elpa/elisp-slime-nav-0.6/elisp-slime-nav-pkg.el"
-;;;;;;  "../../../../../../../.emacs.d/elpa/elisp-slime-nav-0.6/elisp-slime-nav.el")
-;;;;;;  (21127 34683 591069))
+;;;### (autoloads nil nil ("elisp-slime-nav-pkg.el") (21009 8215
+;;;;;;  413002))
 
 ;;;***
 
