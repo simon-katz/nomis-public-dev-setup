@@ -1,5 +1,9 @@
 ;;;; Init stuff -- ace jump mode.
 
+;;;; See:
+;;;; - https://github.com/winterTTr/ace-jump-mode
+;;;; - https://github.com/winterTTr/ace-jump-mode/wiki/AceJump-FAQ
+
 ;;;; ___________________________________________________________________________
 
 (require 'ace-jump-mode)
