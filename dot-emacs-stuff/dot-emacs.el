@@ -143,6 +143,8 @@
 (require 'nomis-searching-filters)
 (require 'nomis-ibuffer)
 
+(require 'nomis-ace-jump-mode)
+
 (progn
   ;; Putting this where it belongs (in "nomis-very-general-stuff") doesn't work;
   ;; I guess something blats it.
