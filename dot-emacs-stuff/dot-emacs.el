@@ -120,7 +120,7 @@
 (require 'nomis-watch-words)
 
 (require 'nomis-dired)
-(require 'dirtree) ; see https://github.com/zk/emacs-dirtree
+(require 'nomis-dirtree)
 
 (require 'nomis-org)
 

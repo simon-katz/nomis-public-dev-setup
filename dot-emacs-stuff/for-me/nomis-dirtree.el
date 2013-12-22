@@ -1,12 +1,6 @@
-;;; dirtree.el --- Directory tree views
-
-;; Copyright (C) 2010 Free Software Foundation, Inc.
-;;
-;; Author: Ye Wenbin <wenbinye@gmail.com>
-;; Maintainer: Ye Wenbin <wenbinye@gmail.com>
-;; Created: 09 Jan 2010
-;; Version: 0.01
-;; Keywords
+;;;; nomis-dirtree.el --- Directory tree views
+;;;; Based on dirtree.el (see https://github.com/zk/emacs-dirtree).
+;;;; This work was started on 2013-12-22.
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -22,59 +16,42 @@
 ;; along with this program; if not, write to the Free Software
 ;; Foundation, Inc., 51 Franklin Street, Suite 500, Boston, MA 02110.
 
-;;; Commentary:
-;; There are several dir-tree widget implements, but I need these features:
-;;  1. display many directory in one buffer to reduce buffer numbers
-;;  2. reuse directory tree when already there is one
-;;  3. use my favarite key binding
-;;
-;; So I wrote this one use `tree-mode'.
-;; 
-;; See also:
-;; http://www.splode.com/~friedman/software/emacs-lisp/src/dirtree.el
-;; http://svn.halogen.kharkov.ua/svn/repos/alex-emacs-settings/emhacks/dir-tree.el
-
-;; Put this file into your load-path and the following into your ~/.emacs:
-;;   (autoload 'dirtree "dirtree" "Add directory to tree view")
-
-;;; Code:
-
 (eval-when-compile
   (require 'cl))
 (require 'tree-mode)
 (require 'windata)
 (require 'dired-x)
 
-(defgroup dirtree nil
+(defgroup nomis-dirtree nil
   "Directory tree views"
   :group 'tools)
 
-(defcustom dirtree-windata '(frame left 0.3 delete)
+(defcustom nomis-dirtree-windata '(frame left 0.3 delete)
   "*Arguments to set the window buffer display.
 See `windata-display-buffer' for setup the arguments."
   :type 'sexp
-  :group 'dirtree)
+  :group 'nomis-dirtree)
 
-(defcustom dirtree-buffer "*dirtree*"
-  "*Buffer name for `dirtree'"
+(defcustom nomis-dirtree-buffer "*nomis-dirtree*"
+  "*Buffer name for `nomis-dirtree'"
   :type 'string
-  :group 'dirtree)
+  :group 'nomis-dirtree)
 
-(define-widget 'dirtree-dir-widget 'tree-widget
+(define-widget 'nomis-dirtree-dir-widget 'tree-widget
   "Directory Tree widget."
-  :dynargs        'dirtree-expand
+  :dynargs        'nomis-dirtree-expand
   :has-children   t)
 
-(define-widget 'dirtree-file-widget 'push-button
+(define-widget 'nomis-dirtree-file-widget 'push-button
   "File widget."
   :format         "%[%t%]\n"
   :button-face    'default
-  :notify         'dirtree-select)
+  :notify         'nomis-dirtree-select)
 
-(defun dirtree-show ()
-  "Show `dirtree-buffer'. Create tree when no parent directory find."
+(defun nomis-dirtree-show ()
+  "Show `nomis-dirtree-buffer'. Create tree when no parent directory find."
   (interactive)
-  (let ((buffer (get-buffer-create dirtree-buffer))
+  (let ((buffer (get-buffer-create nomis-dirtree-buffer))
         (dir default-directory)
         trees tree button path)
     (with-current-buffer buffer
@@ -88,30 +65,30 @@ See `windata-display-buffer' for setup the arguments."
     (if tree
         (progn
           (setq path (split-string (file-relative-name buffer-file-name (widget-get tree :file)) "/"))
-          (dirtree (widget-get tree :file) t)
+          (nomis-dirtree (widget-get tree :file) t)
           (setq button (tree-mode-find-node tree path))
           (if button
               (goto-char (widget-get (car button) :from))))
-      (call-interactively 'dirtree))))
+      (call-interactively 'nomis-dirtree))))
 
-(defun dirtree (root select)
+(defun nomis-dirtree (root select)
   "create tree of `root' directory
-With prefix arguement select `dirtree-buffer'"
+With prefix arguement select `nomis-dirtree-buffer'"
   (interactive "DDirectory: \nP")
-  (let ((buffer (get-buffer-create dirtree-buffer))
+  (let ((buffer (get-buffer-create nomis-dirtree-buffer))
         tree win)
     (with-current-buffer buffer
-      (unless (eq major-mode 'dirtree-mode)
-        (dirtree-mode))
+      (unless (eq major-mode 'nomis-dirtree-mode)
+        (nomis-dirtree-mode))
       (dolist (atree tree-mode-list)
         (if (string= (widget-get atree :file) root)
             (setq tree atree)))
       (or tree
-          (setq tree (tree-mode-insert (dirtree-root-widget root)))))
-    ;; (setq win (get-buffer-window dirtree-buffer))
+          (setq tree (tree-mode-insert (nomis-dirtree-root-widget root)))))
+    ;; (setq win (get-buffer-window nomis-dirtree-buffer))
     (unless win
-      ;;(setq win (get-buffer-window dirtree-buffer))
-      (setq win (apply 'windata-display-buffer dirtree-buffer dirtree-windata))
+      ;;(setq win (get-buffer-window nomis-dirtree-buffer))
+      (setq win (apply 'windata-display-buffer nomis-dirtree-buffer nomis-dirtree-windata))
       (select-window win))
     (with-selected-window win
       (unless (widget-get tree :open)
@@ -121,37 +98,37 @@ With prefix arguement select `dirtree-buffer'"
     (if select
         (select-window win))))
 
-(defun dirtree-in-buffer (root select)
+(defun nomis-dirtree-in-buffer (root select)
   "create tree of `root' directory
-With prefix arguement select `dirtree-buffer'"
+With prefix arguement select `nomis-dirtree-buffer'"
   (interactive "DDirectory: \nP")
-  (let ((buffer (get-buffer-create dirtree-buffer))
+  (let ((buffer (get-buffer-create nomis-dirtree-buffer))
         tree win)
     (with-current-buffer buffer
-      (unless (eq major-mode 'dirtree-mode)
-        (dirtree-mode))
+      (unless (eq major-mode 'nomis-dirtree-mode)
+        (nomis-dirtree-mode))
       (dolist (atree tree-mode-list)
         (if (string= (widget-get atree :file) root)
             (setq tree atree)))
       (or tree
-          (setq tree (tree-mode-insert (dirtree-root-widget root)))))
+          (setq tree (tree-mode-insert (nomis-dirtree-root-widget root)))))
     (if select
-        (switch-to-buffer dirtree-buffer))))
+        (switch-to-buffer nomis-dirtree-buffer))))
 
-(define-derived-mode dirtree-mode tree-mode "Dir-Tree"
+(define-derived-mode nomis-dirtree-mode tree-mode "Dir-Tree"
   "A mode to display tree of directory"
   (tree-widget-set-theme "folder"))
 
-(defun dirtree-root-widget (directory)
+(defun nomis-dirtree-root-widget (directory)
   "create the root directory"
-  `(dirtree-dir-widget
-    :node (dirtree-file-widget
+  `(nomis-dirtree-dir-widget
+    :node (nomis-dirtree-file-widget
            :tag ,directory
            :file ,directory)
     :file ,directory
     :open t))
 
-(defun dirtree-expand (tree)
+(defun nomis-dirtree-expand (tree)
   "expand directory"
   (or (widget-get tree :args)
       (let ((directory (widget-get tree :file))
@@ -167,25 +144,25 @@ With prefix arguement select `dirtree-buffer'"
         (setq files (sort files (lambda (a b) (string< (cdr a) (cdr b)))))
         (append
          (mapcar (lambda (file)
-                   `(dirtree-dir-widget
+                   `(nomis-dirtree-dir-widget
                      :file ,(car file)
-                     :node (dirtree-file-widget
+                     :node (nomis-dirtree-file-widget
                             :tag ,(cdr file)
                             :file ,(car file))))
                  dirs)
          (mapcar (lambda (file)
-                   `(dirtree-file-widget
+                   `(nomis-dirtree-file-widget
                      :file ,(car file)
                      :tag ,(cdr file)))
                  files)))))
 
-(defun dirtree-select (node &rest ignore)
+(defun nomis-dirtree-select (node &rest ignore)
   "Open file in other window"
   (let ((file (widget-get node :file)))
     (and file
          (find-file-other-window file))))
 
-(defun dirtree-display ()
+(defun nomis-dirtree-display ()
   "Open file under point"
   (interactive)
   (let ((widget (widget-at (1- (line-end-position))))
@@ -193,6 +170,6 @@ With prefix arguement select `dirtree-buffer'"
     (if (setq file (widget-get widget :file))
         (find-file-other-window file))))
 
-(define-key dirtree-mode-map "\C-o" 'dirtree-display)
-(provide 'dirtree)
-;;; dirtree.el ends here
+(define-key nomis-dirtree-mode-map "\C-o" 'nomis-dirtree-display)
+
+(provide 'nomis-dirtree)
