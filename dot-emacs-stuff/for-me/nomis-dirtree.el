@@ -46,7 +46,7 @@ See `windata-display-buffer' for setup the arguments."
   "File widget."
   :format         "%[%t%]\n"
   :button-face    'default
-  :notify         'nomis-dirtree-display-file)
+  :notify         'nomis-dirtree-display-file-using-node)
 
 (defun nomis-dirtree-show ()
   "Show `nomis-dirtree-buffer'. Create tree when no parent directory find."
@@ -156,7 +156,7 @@ With prefix arguement select `nomis-dirtree-buffer'"
                      :tag ,(cdr file)))
                  files)))))
 
-(defun nomis-dirtree-display-file (node &rest ignore)
+(defun nomis-dirtree-display-file-using-node (node &rest ignore)
   "Open file in other window"
   (let ((window (selected-window))
         (file (widget-get node :file)))
@@ -169,7 +169,7 @@ With prefix arguement select `nomis-dirtree-buffer'"
          (file (widget-get widget :file)))
     file))
 
-(defun nomis-dirtree-display ()
+(defun nomis-dirtree-display-file ()
   "Open file under point"
   (interactive)
   (let ((window (selected-window))
@@ -192,7 +192,7 @@ With prefix arguement select `nomis-dirtree-buffer'"
 
 (defun* nomis-dirtree-find-file-if-dir-helper (&key (beep-if-not-dir t))
   (if (file-directory-p (nomis-dirtree-selected-file-or-dir))
-      (nomis-dirtree-display)
+      (nomis-dirtree-display-file)
     (when beep-if-not-dir
       (beep))))
 
@@ -207,34 +207,32 @@ If selected entry is a directory go into it."
 Move up lines and display file in other window."
   (interactive "p")
   (nomis-dirtree-previous-line arg)
-  (nomis-dirtree-display))
+  (nomis-dirtree-display-file))
 
 (defun nomis-dirtree-next-line-and-display (arg)
   "Nomis Dirtree:
 Move down lines and display file in other window."
   (interactive "p")
   (nomis-dirtree-next-line arg)
-  (nomis-dirtree-display))
+  (nomis-dirtree-display-file))
 
 (defun nomis-dirtree-down-directory-and-display ()
   "Nomis Dirtree:
 Go into selected directory and display its contents in other window."
   (interactive)
   (nomis-dirtree-find-file-if-dir-helper :beep-if-not-dir nil)
-  (nomis-dirtree-display))
+  (nomis-dirtree-display-file))
 
 (defun nomis-dirtree-up-directory-and-display (arg)
   "Nomis Dirtree:
 Go up a directory and display its contents in other window."
   (interactive "p")
   (nomis-dirtree-up-directory arg)
-  (nomis-dirtree-display))
+  (nomis-dirtree-display-file))
 
 (progn
 
-  ;; (define-key nomis-dirtree-mode-map "\C-o" 'nomis-dirtree-display)
-
-  (define-key nomis-dirtree-mode-map (kbd "M-<RET>") 'nomis-dirtree-display)
+  (define-key nomis-dirtree-mode-map (kbd "M-<RET>") 'nomis-dirtree-display-file)
    
   (define-key nomis-dirtree-mode-map (kbd "M-<up>") 'nomis-dirtree-previous-line)
   (define-key nomis-dirtree-mode-map (kbd "M-<down>") 'nomis-dirtree-next-line)
