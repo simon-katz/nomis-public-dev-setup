@@ -46,7 +46,7 @@ See `windata-display-buffer' for setup the arguments."
   "File widget."
   :format         "%[%t%]\n"
   :button-face    'default
-  :notify         'nomis-dirtree-select)
+  :notify         'nomis-dirtree-display-file)
 
 (defun nomis-dirtree-show ()
   "Show `nomis-dirtree-buffer'. Create tree when no parent directory find."
@@ -156,20 +156,94 @@ With prefix arguement select `nomis-dirtree-buffer'"
                      :tag ,(cdr file)))
                  files)))))
 
-(defun nomis-dirtree-select (node &rest ignore)
+(defun nomis-dirtree-display-file (node &rest ignore)
   "Open file in other window"
-  (let ((file (widget-get node :file)))
-    (and file
-         (find-file-other-window file))))
+  (let ((window (selected-window))
+        (file (widget-get node :file)))
+    (when file
+      (find-file-other-window file)
+      (select-window window))))
+
+(defun nomis-dirtree-selected-file-or-dir ()
+  (let* ((widget (widget-at (1- (line-end-position))))
+         (file (widget-get widget :file)))
+    file))
 
 (defun nomis-dirtree-display ()
   "Open file under point"
   (interactive)
-  (let ((widget (widget-at (1- (line-end-position))))
-        file)
-    (if (setq file (widget-get widget :file))
-        (find-file-other-window file))))
+  (let ((window (selected-window))
+        (file (nomis-dirtree-selected-file-or-dir)))
+    (when file
+      (find-file-other-window file)
+      (select-window window))))
 
-(define-key nomis-dirtree-mode-map "\C-o" 'nomis-dirtree-display)
+(defun nomis-dirtree-previous-line (arg)
+  (interactive "p")
+  (tree-mode-previous-node arg))
+
+(defun nomis-dirtree-next-line (arg)
+  (interactive "p")
+  (tree-mode-next-node arg))
+
+(defun nomis-dirtree-up-directory (arg)
+  (interactive "p")
+  (tree-mode-goto-parent arg))
+
+(defun* nomis-dirtree-find-file-if-dir-helper (&key (beep-if-not-dir t))
+  (if (file-directory-p (nomis-dirtree-selected-file-or-dir))
+      (nomis-dirtree-display)
+    (when beep-if-not-dir
+      (beep))))
+
+(defun nomis-dirtree-find-file-if-dir ()
+  "Nomis Dirtree:
+If selected entry is a directory go into it."
+  (interactive)
+  (nomis-dirtree-find-file-if-dir-helper :beep-if-not-dir t))
+
+(defun nomis-dirtree-previous-line-and-display (arg)
+  "Nomis Dirtree:
+Move up lines and display file in other window."
+  (interactive "p")
+  (nomis-dirtree-previous-line arg)
+  (nomis-dirtree-display))
+
+(defun nomis-dirtree-next-line-and-display (arg)
+  "Nomis Dirtree:
+Move down lines and display file in other window."
+  (interactive "p")
+  (nomis-dirtree-next-line arg)
+  (nomis-dirtree-display))
+
+(defun nomis-dirtree-down-directory-and-display ()
+  "Nomis Dirtree:
+Go into selected directory and display its contents in other window."
+  (interactive)
+  (nomis-dirtree-find-file-if-dir-helper :beep-if-not-dir nil)
+  (nomis-dirtree-display))
+
+(defun nomis-dirtree-up-directory-and-display (arg)
+  "Nomis Dirtree:
+Go up a directory and display its contents in other window."
+  (interactive "p")
+  (nomis-dirtree-up-directory arg)
+  (nomis-dirtree-display))
+
+(progn
+
+  ;; (define-key nomis-dirtree-mode-map "\C-o" 'nomis-dirtree-display)
+
+  (define-key nomis-dirtree-mode-map (kbd "M-<RET>") 'nomis-dirtree-display)
+   
+  (define-key nomis-dirtree-mode-map (kbd "M-<up>") 'nomis-dirtree-previous-line)
+  (define-key nomis-dirtree-mode-map (kbd "M-<down>") 'nomis-dirtree-next-line)
+  (define-key nomis-dirtree-mode-map (kbd "M-<left>") 'nomis-dirtree-up-directory)
+  (define-key nomis-dirtree-mode-map (kbd "M-<right>") 'nomis-dirtree-find-file-if-dir)
+   
+  (define-key nomis-dirtree-mode-map (kbd "M-S-<up>") 'nomis-dirtree-previous-line-and-display)
+  (define-key nomis-dirtree-mode-map (kbd "M-S-<down>") 'nomis-dirtree-next-line-and-display)
+  (define-key nomis-dirtree-mode-map (kbd "M-S-<left>") 'nomis-dirtree-up-directory-and-display)
+  (define-key nomis-dirtree-mode-map (kbd "M-S-<right>") 'nomis-dirtree-down-directory-and-display))
 
 (provide 'nomis-dirtree)
