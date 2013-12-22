@@ -230,18 +230,19 @@ Go up a directory and display its contents in other window."
   (nomis-dirtree-up-directory arg)
   (nomis-dirtree-display-file))
 
-(progn
-
-  (define-key nomis-dirtree-mode-map (kbd "M-<RET>") 'nomis-dirtree-display-file)
+(add-hook
+ 'nomis-dirtree-mode-hook
+ (lambda ()
+   (define-key nomis-dirtree-mode-map (kbd "M-<RET>") 'nomis-dirtree-display-file)
    
-  (define-key nomis-dirtree-mode-map (kbd "M-<up>") 'nomis-dirtree-previous-line)
-  (define-key nomis-dirtree-mode-map (kbd "M-<down>") 'nomis-dirtree-next-line)
-  (define-key nomis-dirtree-mode-map (kbd "M-<left>") 'nomis-dirtree-up-directory)
-  (define-key nomis-dirtree-mode-map (kbd "M-<right>") 'nomis-dirtree-find-file-if-dir)
+   (define-key nomis-dirtree-mode-map (kbd "M-<up>") 'nomis-dirtree-previous-line)
+   (define-key nomis-dirtree-mode-map (kbd "M-<down>") 'nomis-dirtree-next-line)
+   (define-key nomis-dirtree-mode-map (kbd "M-<left>") 'nomis-dirtree-up-directory)
+   (define-key nomis-dirtree-mode-map (kbd "M-<right>") 'nomis-dirtree-find-file-if-dir)
    
-  (define-key nomis-dirtree-mode-map (kbd "M-S-<up>") 'nomis-dirtree-previous-line-and-display)
-  (define-key nomis-dirtree-mode-map (kbd "M-S-<down>") 'nomis-dirtree-next-line-and-display)
-  (define-key nomis-dirtree-mode-map (kbd "M-S-<left>") 'nomis-dirtree-up-directory-and-display)
-  (define-key nomis-dirtree-mode-map (kbd "M-S-<right>") 'nomis-dirtree-down-directory-and-display))
+   (define-key nomis-dirtree-mode-map (kbd "M-S-<up>") 'nomis-dirtree-previous-line-and-display)
+   (define-key nomis-dirtree-mode-map (kbd "M-S-<down>") 'nomis-dirtree-next-line-and-display)
+   (define-key nomis-dirtree-mode-map (kbd "M-S-<left>") 'nomis-dirtree-up-directory-and-display)
+   (define-key nomis-dirtree-mode-map (kbd "M-S-<right>") 'nomis-dirtree-down-directory-and-display)))
 
 (provide 'nomis-dirtree)
