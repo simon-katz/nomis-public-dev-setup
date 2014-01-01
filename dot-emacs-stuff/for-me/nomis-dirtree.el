@@ -16,6 +16,25 @@
 ;; along with this program; if not, write to the Free Software
 ;; Foundation, Inc., 51 Franklin Street, Suite 500, Boston, MA 02110.
 
+;;;; ___________________________________________________________________________
+
+;;;; TODO:
+
+;;;; - When hitting up and down arrow keys, when you hit directories
+;;;;   there are messages saying "Expand" and "Collapse" (depending on
+;;;;   whether the directory is collapsed or expanded).
+
+;;;; - Add backward and forward navigation (to previous and next selections).
+
+;;;; - Look into the Tree menu.
+;;;;   - Is stuff not as it says?
+;;;;   - Can you add to it?  Do you want to?
+
+;;;; - Scan all for badness.
+;;;; - Tidy.
+
+;;;; ___________________________________________________________________________
+
 (eval-when-compile
   (require 'cl))
 (require 'tree-mode)
@@ -26,7 +45,7 @@
   "Directory tree views"
   :group 'tools)
 
-(defcustom nomis-dirtree-windata '(frame left 0.3 delete)
+(defcustom nomis-dirtree-windata '(frame left 0.5 delete)
   "*Arguments to set the window buffer display.
 See `windata-display-buffer' for setup the arguments."
   :type 'sexp
@@ -37,16 +56,26 @@ See `windata-display-buffer' for setup the arguments."
   :type 'string
   :group 'nomis-dirtree)
 
-(define-widget 'nomis-dirtree-dir-widget 'tree-widget
+(define-widget 'nomis-dirtree-directory-widget 'tree-widget
   "Directory Tree widget."
-  :dynargs        'nomis-dirtree-expand
+  :dynargs        'nomis-dirtree-setup-children
   :has-children   t)
 
-(define-widget 'nomis-dirtree-file-widget 'push-button
+(define-widget 'nomis-dirtree-file-widget-for-file 'push-button
   "File widget."
   :format         "%[%t%]\n"
-  :button-face    'default
-  :notify         'nomis-dirtree-display-file-using-node)
+  :button-face    'default)
+
+(define-widget 'nomis-dirtree-file-widget-for-directory 'push-button
+  "File widget."
+  :format         "%[%t%]\n"
+  :button-face    'default)
+
+(defun nomis-dirtree-directory-widget-p (widget)
+  (eql (car widget) 'nomis-dirtree-directory-widget))
+
+(defun nomis-dirtree-file-widget-for-directory-p (widget)
+  (eql (car widget) 'nomis-dirtree-file-widget-for-directory))
 
 (defun nomis-dirtree-show ()
   "Show `nomis-dirtree-buffer'. Create tree when no parent directory find."
@@ -121,14 +150,14 @@ With prefix arguement select `nomis-dirtree-buffer'"
 
 (defun nomis-dirtree-root-widget (directory)
   "create the root directory"
-  `(nomis-dirtree-dir-widget
-    :node (nomis-dirtree-file-widget
+  `(nomis-dirtree-directory-widget
+    :node (nomis-dirtree-file-widget-for-directory
            :tag ,directory
            :file ,directory)
     :file ,directory
     :open t))
 
-(defun nomis-dirtree-expand (tree)
+(defun nomis-dirtree-setup-children (tree)
   "expand directory"
   (or (widget-get tree :args)
       (let ((directory (widget-get tree :file))
@@ -144,28 +173,26 @@ With prefix arguement select `nomis-dirtree-buffer'"
         (setq files (sort files (lambda (a b) (string< (cdr a) (cdr b)))))
         (append
          (mapcar (lambda (file)
-                   `(nomis-dirtree-dir-widget
+                   `(nomis-dirtree-directory-widget
                      :file ,(car file)
-                     :node (nomis-dirtree-file-widget
+                     :node (nomis-dirtree-file-widget-for-directory
                             :tag ,(cdr file)
                             :file ,(car file))))
                  dirs)
          (mapcar (lambda (file)
-                   `(nomis-dirtree-file-widget
+                   `(nomis-dirtree-file-widget-for-file
                      :file ,(car file)
                      :tag ,(cdr file)))
                  files)))))
 
-(defun nomis-dirtree-display-file-using-node (node &rest ignore)
-  "Open file in other window"
-  (let ((window (selected-window))
-        (file (widget-get node :file)))
-    (when file
-      (find-file-other-window file)
-      (select-window window))))
+(defun nomis-dirtree-selected-widget ()
+  (let* ((widget (widget-at (1- (line-end-position)))))
+    (if (nomis-dirtree-file-widget-for-directory-p widget)
+        (widget-get widget :parent)
+      widget)))
 
 (defun nomis-dirtree-selected-file-or-dir ()
-  (let* ((widget (widget-at (1- (line-end-position))))
+  (let* ((widget (nomis-dirtree-selected-widget))
          (file (widget-get widget :file)))
     file))
 
@@ -190,18 +217,6 @@ With prefix arguement select `nomis-dirtree-buffer'"
   (interactive "p")
   (tree-mode-goto-parent arg))
 
-(defun* nomis-dirtree-find-file-if-dir-helper (&key (beep-if-not-dir t))
-  (if (file-directory-p (nomis-dirtree-selected-file-or-dir))
-      (nomis-dirtree-display-file)
-    (when beep-if-not-dir
-      (beep))))
-
-(defun nomis-dirtree-find-file-if-dir ()
-  "Nomis Dirtree:
-If selected entry is a directory go into it."
-  (interactive)
-  (nomis-dirtree-find-file-if-dir-helper :beep-if-not-dir t))
-
 (defun nomis-dirtree-previous-line-and-display (arg)
   "Nomis Dirtree:
 Move up lines and display file in other window."
@@ -216,33 +231,123 @@ Move down lines and display file in other window."
   (nomis-dirtree-next-line arg)
   (nomis-dirtree-display-file))
 
-(defun nomis-dirtree-down-directory-and-display ()
-  "Nomis Dirtree:
-Go into selected directory and display its contents in other window."
+(defun nomis-tree-mode-expand (widget)
+  (assert (nomis-dirtree-directory-widget-p widget))
+  (unless (widget-get widget :open)
+    (widget-apply-action widget)))
+
+(defun nomis-tree-mode-collapse (widget)
+  (assert (nomis-dirtree-directory-widget-p widget))
+  (when (widget-get widget :open)
+    (widget-apply-action widget)))
+
+(defun nomis-dirtree-collapse ()
   (interactive)
-  (nomis-dirtree-find-file-if-dir-helper :beep-if-not-dir nil)
-  (nomis-dirtree-display-file))
+  (let* ((widget (nomis-dirtree-selected-widget)))
+    (if (nomis-dirtree-directory-widget-p widget)
+        (when (widget-get widget :open)
+          (nomis-tree-mode-collapse widget))
+      (beep))))
+
+(defvar *dirs-to-keep-collapsed*
+  '(".git"
+    "target"))
+
+(defun directory-to-keep-collapsed-p (name)
+  (some (lambda (no-expand-name)
+          (string-match (concat "/" no-expand-name "$")
+                        name))
+        *dirs-to-keep-collapsed*))
+
+(defun nomis-dirtree-expand-helper (widget n-times &optional force-expand-p)
+  (when (and (nomis-dirtree-directory-widget-p widget)
+             (>= n-times 1)
+             (or force-expand-p
+                 (not (directory-to-keep-collapsed-p (widget-get widget :file)))))
+    (nomis-tree-mode-expand widget)
+    (mapc (lambda (x) (nomis-dirtree-expand-helper x (1- n-times)))
+          (widget-get widget :children))))
+
+(defun nomis-dirtree-expand (arg)
+  (interactive "P")
+  (let* ((widget (nomis-dirtree-selected-widget)))
+    (if (nomis-dirtree-directory-widget-p widget)
+        (progn
+          (unless (null arg)
+            (nomis-dirtree-collapse-all))
+          (nomis-dirtree-expand-helper widget
+                                       (or arg 1)
+                                       t))
+      (beep))))
+
+(defun nomis-dirtree-next-line-with-expansion (arg)
+  (interactive "p")
+  (unless (< arg 1)
+    (let* ((widget (nomis-dirtree-selected-widget)))
+      (when (nomis-dirtree-directory-widget-p widget)
+        (nomis-tree-mode-expand widget))
+      (nomis-dirtree-next-line 1))
+    (nomis-dirtree-next-line-with-expansion (1- arg))))
 
 (defun nomis-dirtree-up-directory-and-display (arg)
-  "Nomis Dirtree:
-Go up a directory and display its contents in other window."
   (interactive "p")
   (nomis-dirtree-up-directory arg)
   (nomis-dirtree-display-file))
 
-(add-hook
- 'nomis-dirtree-mode-hook
- (lambda ()
-   (define-key nomis-dirtree-mode-map (kbd "M-<RET>") 'nomis-dirtree-display-file)
-   
-   (define-key nomis-dirtree-mode-map (kbd "M-<up>") 'nomis-dirtree-previous-line)
-   (define-key nomis-dirtree-mode-map (kbd "M-<down>") 'nomis-dirtree-next-line)
-   (define-key nomis-dirtree-mode-map (kbd "M-<left>") 'nomis-dirtree-up-directory)
-   (define-key nomis-dirtree-mode-map (kbd "M-<right>") 'nomis-dirtree-find-file-if-dir)
-   
-   (define-key nomis-dirtree-mode-map (kbd "M-S-<up>") 'nomis-dirtree-previous-line-and-display)
-   (define-key nomis-dirtree-mode-map (kbd "M-S-<down>") 'nomis-dirtree-next-line-and-display)
-   (define-key nomis-dirtree-mode-map (kbd "M-S-<left>") 'nomis-dirtree-up-directory-and-display)
-   (define-key nomis-dirtree-mode-map (kbd "M-S-<right>") 'nomis-dirtree-down-directory-and-display)))
+(defun nomis-dirtree-next-line-with-expansion-and-display (arg)
+  (interactive "p")
+  (nomis-dirtree-next-line-with-expansion arg)
+  (nomis-dirtree-display-file))
+
+(defun nomis-dirtree-expand-all ()
+  (interactive)
+  (nomis-dirtree-expand 1000000))
+
+(defun nomis-dirtree-collapse-recursively (tree)
+  (mapc 'nomis-dirtree-collapse-recursively
+        (widget-get tree :children))
+  (when (tree-widget-p tree)
+    (if (widget-get tree :open)
+        (widget-apply-action tree))))
+
+(defun nomis-dirtree-collapse-all ()
+  (interactive)
+  (let* ((widget (nomis-dirtree-selected-widget)))
+    (if (nomis-dirtree-directory-widget-p widget)
+        (nomis-dirtree-collapse-recursively widget)
+      (beep))))
+
+(defun nomis-dirtree-show-selection-info ()
+  (interactive)
+  (let* ((widget (nomis-dirtree-selected-widget))
+         (file (widget-get widget :file)))
+    (message-box "(car widget) = %s
+file = %s"
+                 (car widget)
+                 file)))
+
+(labels ((dk (k f)
+             (define-key nomis-dirtree-mode-map k f)))
+
+  (dk (kbd "d")            'nomis-dirtree-show-selection-info)
+
+  (define-key widget-keymap (kbd "<RET>") nil)
+  (dk (kbd "<RET>")       'nomis-dirtree-display-file)
+  (dk (kbd "C-<return>")  'nomis-dirtree-display-file)
+
+  (dk (kbd "<up>")        'nomis-dirtree-previous-line)
+  (dk (kbd "<down>")      'nomis-dirtree-next-line)
+  (dk (kbd "<left>")      'nomis-dirtree-up-directory)
+  (dk (kbd "<right>")     'nomis-dirtree-next-line-with-expansion)
+  
+  (dk (kbd "C-<up>")      'nomis-dirtree-previous-line-and-display)
+  (dk (kbd "C-<down>")    'nomis-dirtree-next-line-and-display)
+  (dk (kbd "C-<left>")    'nomis-dirtree-up-directory-and-display)
+  (dk (kbd "C-<right>")   'nomis-dirtree-next-line-with-expansion-and-display)
+
+  (dk (kbd "M-<right>")   'nomis-dirtree-expand)
+  (dk (kbd "M-<left>")    'nomis-dirtree-collapse)
+  (dk (kbd "M-S-<right>") 'nomis-dirtree-expand-all)
+  (dk (kbd "M-S-<left>")  'nomis-dirtree-collapse-all))
 
 (provide 'nomis-dirtree)
