@@ -24,7 +24,7 @@
 ;;;;   there are messages saying "Expand" and "Collapse" (depending on
 ;;;;   whether the directory is collapsed or expanded).
 
-;;;; - Add backward and forward navigation (to previous and next selections).
+;;;; - Navigate to node in tree from a file.
 
 ;;;; - Look into the Tree menu.
 ;;;;   - Is stuff not as it says?
@@ -32,6 +32,20 @@
 
 ;;;; - Scan all for badness.
 ;;;; - Tidy.
+
+;;;; ---------------------------------------------------------------------------
+
+;;;; Probably won't do the following:
+
+;;;; - Could add backward and forward navigation (to previous and next selections).
+;;;;   - You have `nomis-dirtree-goto-previous-up-from-position`.
+;;;;     Maybe that's good enough.
+;;;;     It's broken after collapsing/expanding/refreshing, though.
+;;;;   - Using positions would be no good.
+;;;;     - A refresh changes things.
+;;;;     - Needs to work with collapsing and expanding.
+;;;;   - Need to use filenames.
+;;;;     But how can you go to a particular widget? Maybe use its :start or :end.
 
 ;;;; ___________________________________________________________________________
 
@@ -155,7 +169,8 @@ With prefix arguement select `nomis-dirtree-buffer'"
            :tag ,directory
            :file ,directory)
     :file ,directory
-    :open t))
+    :open t
+    :nomis-root t))
 
 (defun nomis-dirtree-setup-children (tree)
   "expand directory"
@@ -215,7 +230,14 @@ With prefix arguement select `nomis-dirtree-buffer'"
 
 (defun nomis-dirtree-up-directory (arg)
   (interactive "p")
-  (tree-mode-goto-parent arg))
+  (if (plist-get (rest (nomis-dirtree-selected-widget))
+                 :nomis-root)
+      (progn
+        (message "Already at root.")
+        (beep))
+    (progn
+      (nomis-dirtree-note-previous-up-from-position)
+      (tree-mode-goto-parent arg))))
 
 (defun nomis-dirtree-previous-line-and-display (arg)
   "Nomis Dirtree:
@@ -317,14 +339,36 @@ Move down lines and display file in other window."
         (nomis-dirtree-collapse-recursively widget)
       (beep))))
 
+(defvar *nomis-dirtree-previous-up-from-positions* '())
+
+(defun nomis-dirtree-note-previous-up-from-position ()
+  (push (point) *nomis-dirtree-previous-up-from-positions*))
+
+(defun nomis-dirtree-goto-previous-up-from-position ()
+  (interactive)
+  (if (null *nomis-dirtree-previous-up-from-positions*)
+      (beep)
+    (progn
+      (goto-char (first *nomis-dirtree-previous-up-from-positions*))
+      (pop *nomis-dirtree-previous-up-from-positions*))))
+
 (defun nomis-dirtree-show-selection-info ()
   (interactive)
   (let* ((widget (nomis-dirtree-selected-widget))
          (file (widget-get widget :file)))
-    (message-box "(car widget) = %s
-file = %s"
+    (message-box "                              (car widget) = %s
+                              file = %s
+                              (line-end-position) = %s
+                              from = %s
+                              to = %s
+                              widget keys = %s"
                  (car widget)
-                 file)))
+                 file
+                 (line-end-position)
+                 (plist-get (rest widget) :from)
+                 (plist-get (rest widget) :to)
+                 (loop for k in (rest widget) by 'cddr
+                       collect k))))
 
 (labels ((dk (k f)
              (define-key nomis-dirtree-mode-map k f)))
@@ -348,6 +392,8 @@ file = %s"
   (dk (kbd "M-<right>")   'nomis-dirtree-expand)
   (dk (kbd "M-<left>")    'nomis-dirtree-collapse)
   (dk (kbd "M-S-<right>") 'nomis-dirtree-expand-all)
-  (dk (kbd "M-S-<left>")  'nomis-dirtree-collapse-all))
+  (dk (kbd "M-S-<left>")  'nomis-dirtree-collapse-all)
+
+  (dk (kbd "M-[")         'nomis-dirtree-goto-previous-up-from-position))
 
 (provide 'nomis-dirtree)
