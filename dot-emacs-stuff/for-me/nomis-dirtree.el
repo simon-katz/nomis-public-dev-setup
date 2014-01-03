@@ -220,6 +220,12 @@ With prefix arguement select `nomis-dirtree-buffer'"
       (find-file-other-window file)
       (select-window window))))
 
+(defun nomis-dirtree-open-in-default-app ()
+  (interactive)
+  (let ((file (nomis-dirtree-selected-file-or-dir)))
+    (when file
+      (shell-command (concat "open \"" file "\"")))))
+
 (defun nomis-dirtree-previous-line (arg)
   (interactive "p")
   (tree-mode-previous-node arg))
@@ -373,8 +379,6 @@ Move down lines and display file in other window."
 (labels ((dk (k f)
              (define-key nomis-dirtree-mode-map k f)))
 
-  (dk (kbd "d")            'nomis-dirtree-show-selection-info)
-
   (define-key widget-keymap (kbd "<RET>") nil)
   (dk (kbd "<RET>")       'nomis-dirtree-display-file)
   (dk (kbd "C-<return>")  'nomis-dirtree-display-file)
@@ -394,6 +398,9 @@ Move down lines and display file in other window."
   (dk (kbd "M-S-<right>") 'nomis-dirtree-expand-all)
   (dk (kbd "M-S-<left>")  'nomis-dirtree-collapse-all)
 
-  (dk (kbd "M-[")         'nomis-dirtree-goto-previous-up-from-position))
+  (dk (kbd "M-[")         'nomis-dirtree-goto-previous-up-from-position)
+  
+  (dk (kbd "M-d")         'nomis-dirtree-show-selection-info)
+  (dk (kbd "M-o")         'nomis-dirtree-open-in-default-app))
 
 (provide 'nomis-dirtree)
