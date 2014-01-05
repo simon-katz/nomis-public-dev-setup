@@ -221,7 +221,7 @@ With prefix argument select `nomis-dirtree-buffer'"
     (when (widget-get widget :open)
       (widget-apply-action widget))))
 
-(defvar *dirs-to-keep-collapsed*
+(defvar *dirs-to-keep-collapsed-unless-forced*
   '(".git"
     "target"))
 
@@ -229,7 +229,7 @@ With prefix argument select `nomis-dirtree-buffer'"
   (some (lambda (no-expand-name)
           (string-match (concat "/" no-expand-name "$")
                         name))
-        *dirs-to-keep-collapsed*))
+        *dirs-to-keep-collapsed-unless-forced*))
 
 (defun nomis-dirtree-expand-helper (widget n-times &optional force-expand-p)
   (when (and (nomis-dirtree-directory-widget-p widget)
