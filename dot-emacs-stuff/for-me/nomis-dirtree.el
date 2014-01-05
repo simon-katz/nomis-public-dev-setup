@@ -273,11 +273,11 @@ positions."
       (tree-mode-goto-parent arg))))
 
 (defun nomis-dirtree-up-directory-and-display (arg)
-  (interactive "p")
   "Move to parent directory. Repeat <arg> times if <arg> supplied.
 Before doing this, push the current line onto a stack of previous up-from
 positions.
 Then display contents of file under point in other window."
+  (interactive "p")
   (nomis-dirtree-up-directory arg)
   (nomis-dirtree-display-file))
 
@@ -390,10 +390,10 @@ positions, popping the stack."
       (pop *nomis-dirtree-previous-up-from-positions*))))
 
 (defun nomis-dirtree-goto-previous-up-from-position-and-display ()
-  (interactive)
   "Return to the line at the front of the stack of previous up-from
 positions, popping the stack.
 Then display contents of file under point in other window."
+  (interactive)
   (nomis-dirtree-goto-previous-up-from-position)
   (nomis-dirtree-display-file))
 
