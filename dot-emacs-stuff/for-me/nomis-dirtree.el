@@ -47,7 +47,12 @@
 ;;;;   - Need to use filenames.
 ;;;;     But how can you go to a particular widget? Maybe use its :start or :end.
 
+
+
+
 ;;;; ___________________________________________________________________________
+;;;; Initially we have, more-or-less, the original dirtree.
+;;;; I don't have a deep understanding of this, but I've hacked it a bit.
 
 (eval-when-compile
   (require 'cl))
@@ -116,7 +121,7 @@ See `windata-display-buffer' for setup the arguments."
 
 (defun nomis-dirtree (root select)
   "create tree of `root' directory
-With prefix arguement select `nomis-dirtree-buffer'"
+With prefix argument select `nomis-dirtree-buffer'"
   (interactive "DDirectory: \nP")
   (let ((buffer (get-buffer-create nomis-dirtree-buffer))
         tree win)
@@ -143,7 +148,7 @@ With prefix arguement select `nomis-dirtree-buffer'"
 
 (defun nomis-dirtree-in-buffer (root select)
   "create tree of `root' directory
-With prefix arguement select `nomis-dirtree-buffer'"
+With prefix argument select `nomis-dirtree-buffer'"
   (interactive "DDirectory: \nP")
   (let ((buffer (get-buffer-create nomis-dirtree-buffer))
         tree win)
@@ -199,6 +204,9 @@ With prefix arguement select `nomis-dirtree-buffer'"
                      :file ,(car file)
                      :tag ,(cdr file)))
                  files)))))
+
+;;;; ___________________________________________________________________________
+;;;; My stuff.
 
 (defun nomis-dirtree-selected-widget ()
   (let* ((widget (widget-at (1- (line-end-position)))))
