@@ -365,6 +365,11 @@ Move down lines and display file in other window."
       (goto-char (first *nomis-dirtree-previous-up-from-positions*))
       (pop *nomis-dirtree-previous-up-from-positions*))))
 
+(defun nomis-dirtree-goto-previous-up-from-position-and-display ()
+  (interactive)
+  (nomis-dirtree-goto-previous-up-from-position)
+  (nomis-dirtree-display-file))
+
 (defun nomis-dirtree-show-selection-info ()
   (interactive)
   (let* ((widget (nomis-dirtree-selected-widget))
@@ -406,8 +411,9 @@ Move down lines and display file in other window."
   (dk (kbd "M-S-<left>")  'nomis-dirtree-collapse-all)
 
   (dk (kbd "M-[")         'nomis-dirtree-goto-previous-up-from-position)
+  (dk (kbd "C-M-[")       'nomis-dirtree-goto-previous-up-from-position-and-display)
   
-  (dk (kbd "M-d")         'nomis-dirtree-show-selection-info)
-  (dk (kbd "M-o")         'nomis-dirtree-open-in-default-app))
+  (dk (kbd "M-o")         'nomis-dirtree-open-in-default-app)
+  (dk (kbd "M-d")         'nomis-dirtree-show-selection-info))
 
 (provide 'nomis-dirtree)
