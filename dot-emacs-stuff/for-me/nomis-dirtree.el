@@ -231,15 +231,6 @@ With prefix argument select `nomis-dirtree-buffer'"
                         name))
         *dirs-to-keep-collapsed-unless-forced*))
 
-(defun nomis-dirtree-expand-helper (widget n-times &optional force-expand-p)
-  (when (and (nomis-dirtree-directory-widget-p widget)
-             (>= n-times 1)
-             (or force-expand-p
-                 (not (directory-to-keep-collapsed-p (widget-get widget :file)))))
-    (nomis-tree-mode-expand widget)
-    (mapc (lambda (x) (nomis-dirtree-expand-helper x (1- n-times)))
-          (widget-get widget :children))))
-
 ;;;; ---------------------------------------------------------------------------
 ;;;; The stack of previous up-from positions.
 
@@ -358,15 +349,24 @@ Then display contents of file under point in other window."
   "Expand directory under point, showing previous expansion of subdirectories.
 If <arg> is supplied, first collapse all and then expand to <arg> levels."
   (interactive "P")
-  (let* ((widget (nomis-dirtree-selected-widget)))
-    (if (nomis-dirtree-directory-widget-p widget)
-        (progn
-          (unless (null arg)
-            (nomis-dirtree-collapse-all))
-          (nomis-dirtree-expand-helper widget
-                                       (or arg 1)
-                                       t))
-      (beep))))
+  (labels ((expand-recursively
+            (widget n-times &optional force-expand-p)
+            (when (and (nomis-dirtree-directory-widget-p widget)
+                       (>= n-times 1)
+                       (or force-expand-p
+                           (not (directory-to-keep-collapsed-p (widget-get widget :file)))))
+              (nomis-tree-mode-expand widget)
+              (mapc (lambda (x) (expand-recursively x (1- n-times)))
+                    (widget-get widget :children)))))
+    (let* ((widget (nomis-dirtree-selected-widget)))
+      (if (nomis-dirtree-directory-widget-p widget)
+          (progn
+            (unless (null arg)
+              (nomis-dirtree-collapse-all))
+            (expand-recursively widget
+                                (or arg 1)
+                                t))
+        (beep)))))
 
 (defun nomis-dirtree-collapse ()
   "Collapse directory under point, retaining previous expansion of subdirectories."
