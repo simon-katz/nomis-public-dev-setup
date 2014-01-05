@@ -248,6 +248,14 @@ With prefix argument select `nomis-dirtree-buffer'"
 (defun nomis-dirtree-note-previous-up-from-position ()
   (push (point) *nomis-dirtree-previous-up-from-positions*))
 
+(defun no-previous-up-from-position-p? ()
+  (null *nomis-dirtree-previous-up-from-positions*))
+
+(defun pop-to-previous-up-from-position ()
+  (assert (not (no-previous-up-from-position-p?)))
+  (goto-char (first *nomis-dirtree-previous-up-from-positions*))
+  (pop *nomis-dirtree-previous-up-from-positions*))
+
 ;;;; ---------------------------------------------------------------------------
 ;;;; Helper functions to do with the selection.
 
@@ -395,11 +403,11 @@ sub-subdirectories, etc, so that subsequent expansion shows only one level."
   "Return to the line at the front of the stack of previous up-from
 positions, popping the stack."
   (interactive)
-  (if (null *nomis-dirtree-previous-up-from-positions*)
-      (beep)
-    (progn
-      (goto-char (first *nomis-dirtree-previous-up-from-positions*))
-      (pop *nomis-dirtree-previous-up-from-positions*))))
+  (if (no-previous-up-from-position-p?)
+      (progn
+        (beep)
+        (message "There is no previous up-from position."))
+    (pop-to-previous-up-from-position)))
 
 (defun nomis-dirtree-goto-previous-up-from-position-and-display ()
   "Return to the line at the front of the stack of previous up-from
