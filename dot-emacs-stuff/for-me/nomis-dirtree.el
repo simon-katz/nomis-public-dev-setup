@@ -384,7 +384,9 @@ If <arg> is supplied, first collapse all and then expand to <arg> levels."
             (expand-recursively widget
                                 (or arg 1)
                                 t))
-        (beep)))))
+        (progn
+          (message "Not a directory, so can't expand.")
+          (beep))))))
 
 (defun nomis-dirtree-collapse ()
   "Collapse directory under point, retaining previous expansion of subdirectories."
@@ -393,7 +395,9 @@ If <arg> is supplied, first collapse all and then expand to <arg> levels."
     (if (nomis-dirtree-directory-widget-p widget)
         (when (widget-get widget :open)
           (nomis-dirtree-collapse-node widget))
-      (beep))))
+      (progn
+        (message "Not a directory, so can't collapse.")
+        (beep)))))
 
 (defun nomis-dirtree-expand-all ()
   "Expand directory under point to show all subdirectories,
@@ -412,7 +416,9 @@ sub-subdirectories, etc, so that subsequent expansion shows only one level."
     (let* ((widget (nomis-dirtree-selected-widget)))
       (if (nomis-dirtree-directory-widget-p widget)
           (collapse-recursively widget)
-        (beep)))))
+        (progn
+          (message "Not a directory, so can't collapse.")
+          (beep))))))
 
 (defun nomis-dirtree-show-selection-info ()
   "Display some details of the file under point in a message dialog.
