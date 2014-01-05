@@ -120,7 +120,7 @@ See `windata-display-buffer' for setup the arguments."
       (call-interactively 'nomis-dirtree))))
 
 (defun nomis-dirtree (root select)
-  "create tree of `root' directory
+  "Create tree of `root' directory.
 With prefix argument select `nomis-dirtree-buffer'"
   (interactive "DDirectory: \nP")
   (let ((buffer (get-buffer-create nomis-dirtree-buffer))
@@ -147,7 +147,7 @@ With prefix argument select `nomis-dirtree-buffer'"
         (select-window win))))
 
 (defun nomis-dirtree-in-buffer (root select)
-  "create tree of `root' directory
+  "Create tree of `root' directory.
 With prefix argument select `nomis-dirtree-buffer'"
   (interactive "DDirectory: \nP")
   (let ((buffer (get-buffer-create nomis-dirtree-buffer))
@@ -220,7 +220,7 @@ With prefix argument select `nomis-dirtree-buffer'"
     file))
 
 (defun nomis-dirtree-display-file ()
-  "Open file under point"
+  "Display contents of file under point in other window."
   (interactive)
   (save-selected-window
     (let* ((file (nomis-dirtree-selected-file-or-dir)))
@@ -228,20 +228,26 @@ With prefix argument select `nomis-dirtree-buffer'"
         (find-file-other-window file)))))
 
 (defun nomis-dirtree-open-in-default-app ()
+  "Open file under point using its default app."
   (interactive)
   (let* ((file (nomis-dirtree-selected-file-or-dir)))
     (when file
       (shell-command (concat "open \"" file "\"")))))
 
 (defun nomis-dirtree-previous-line (arg)
+  "Move up <arg> lines."
   (interactive "p")
   (tree-mode-previous-node arg))
 
 (defun nomis-dirtree-next-line (arg)
+  "Move down <arg> lines."
   (interactive "p")
   (tree-mode-next-node arg))
 
 (defun nomis-dirtree-up-directory (arg)
+  "Move to parent directory. Repeat <arg> times if <arg> supplied.
+Before doing this, push the current line onto a stack of previous up-from
+positions."
   (interactive "p")
   (if (plist-get (rest (nomis-dirtree-selected-widget))
                  :nomis-root)
@@ -253,15 +259,15 @@ With prefix argument select `nomis-dirtree-buffer'"
       (tree-mode-goto-parent arg))))
 
 (defun nomis-dirtree-previous-line-and-display (arg)
-  "Nomis Dirtree:
-Move up lines and display file in other window."
+  "Move up <arg> lines.
+Then display contents of file under point in other window."
   (interactive "p")
   (nomis-dirtree-previous-line arg)
   (nomis-dirtree-display-file))
 
 (defun nomis-dirtree-next-line-and-display (arg)
-  "Nomis Dirtree:
-Move down lines and display file in other window."
+  "Move down <arg> lines.
+Then display contents of file under point in other window."
   (interactive "p")
   (nomis-dirtree-next-line arg)
   (nomis-dirtree-display-file))
@@ -277,6 +283,7 @@ Move down lines and display file in other window."
     (widget-apply-action widget)))
 
 (defun nomis-dirtree-collapse ()
+  "Collapse directory under point, retaining previous expansion of subdirectories."
   (interactive)
   (let* ((widget (nomis-dirtree-selected-widget)))
     (if (nomis-dirtree-directory-widget-p widget)
@@ -304,6 +311,8 @@ Move down lines and display file in other window."
           (widget-get widget :children))))
 
 (defun nomis-dirtree-expand (arg)
+  "Expand directory under point, showing previous expansion of subdirectories.
+If <arg> is supplied, first collapse all and then expand to <arg> levels."
   (interactive "P")
   (let* ((widget (nomis-dirtree-selected-widget)))
     (if (nomis-dirtree-directory-widget-p widget)
@@ -316,6 +325,8 @@ Move down lines and display file in other window."
       (beep))))
 
 (defun nomis-dirtree-next-line-with-expansion (arg)
+  "Move down <arg> lines, expanding any encountered collapsed directories
+and showing previous expansion of subdirectories."
   (interactive "p")
   (unless (< arg 1)
     (let* ((widget (nomis-dirtree-selected-widget)))
@@ -326,15 +337,24 @@ Move down lines and display file in other window."
 
 (defun nomis-dirtree-up-directory-and-display (arg)
   (interactive "p")
+  "Move to parent directory. Repeat <arg> times if <arg> supplied.
+Before doing this, push the current line onto a stack of previous up-from
+positions.
+Then display contents of file under point in other window."
   (nomis-dirtree-up-directory arg)
   (nomis-dirtree-display-file))
 
 (defun nomis-dirtree-next-line-with-expansion-and-display (arg)
+  "Move down <arg> lines, expanding any encountered collapsed directories
+and showing previous expansion of subdirectories.
+Then display contents of file under point in other window."
   (interactive "p")
   (nomis-dirtree-next-line-with-expansion arg)
   (nomis-dirtree-display-file))
 
 (defun nomis-dirtree-expand-all ()
+  "Expand directory under point to show all subdirectories,
+sub-subdirectories, etc."
   (interactive)
   (nomis-dirtree-expand 1000000))
 
@@ -346,6 +366,8 @@ Move down lines and display file in other window."
         (widget-apply-action tree))))
 
 (defun nomis-dirtree-collapse-all ()
+  "Collapse directory under point and all of its subdirectories,
+sub-subdirectories, etc, so that subsequent expansion shows only one level."
   (interactive)
   (let* ((widget (nomis-dirtree-selected-widget)))
     (if (nomis-dirtree-directory-widget-p widget)
@@ -358,6 +380,8 @@ Move down lines and display file in other window."
   (push (point) *nomis-dirtree-previous-up-from-positions*))
 
 (defun nomis-dirtree-goto-previous-up-from-position ()
+  "Return to the line at the front of the stack of previous up-from
+positions, popping the stack."
   (interactive)
   (if (null *nomis-dirtree-previous-up-from-positions*)
       (beep)
@@ -367,10 +391,15 @@ Move down lines and display file in other window."
 
 (defun nomis-dirtree-goto-previous-up-from-position-and-display ()
   (interactive)
+  "Return to the line at the front of the stack of previous up-from
+positions, popping the stack.
+Then display contents of file under point in other window."
   (nomis-dirtree-goto-previous-up-from-position)
   (nomis-dirtree-display-file))
 
 (defun nomis-dirtree-show-selection-info ()
+  "Display some details of the file under point in a message dialog.
+Mostly for debugging purposes."
   (interactive)
   (let* ((widget (nomis-dirtree-selected-widget))
          (file (widget-get widget :file)))
