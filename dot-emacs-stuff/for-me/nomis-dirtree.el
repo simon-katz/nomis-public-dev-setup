@@ -209,6 +209,15 @@ With prefix argument select `nomis-dirtree-buffer'"
 ;;;; My stuff.
 
 ;;;; ---------------------------------------------------------------------------
+;;;; Widget stuff.
+
+(defun nomis-dirtree-widget-file (widget)
+  (widget-get widget :file))
+
+(defun nomis-dirtree-widget-children (widget)
+  (widget-get widget :children))
+
+;;;; ---------------------------------------------------------------------------
 ;;;; Support for expand/collapse.
 
 (defun nomis-dirtree-expand-node (widget)
@@ -260,6 +269,10 @@ With prefix argument select `nomis-dirtree-buffer'"
   (let* ((widget (nomis-dirtree-selected-widget))
          (file (widget-get widget :file)))
     file))
+
+(defun nomis-dirtree-root-p (widget)
+  (plist-get (rest widget)
+             :nomis-root))
 
 ;;;; ---------------------------------------------------------------------------
 ;;;; User-visible commands.
@@ -327,8 +340,7 @@ Then display contents of file under point in other window."
 Before doing this, push the current line onto a stack of previous up-from
 positions."
   (interactive "p")
-  (if (plist-get (rest (nomis-dirtree-selected-widget))
-                 :nomis-root)
+  (if (nomis-dirtree-root-p (nomis-dirtree-selected-widget))
       (progn
         (message "Already at root.")
         (beep))
@@ -372,10 +384,11 @@ If <arg> is supplied, first collapse all and then expand to <arg> levels."
             (when (and (nomis-dirtree-directory-widget-p widget)
                        (>= n-times 1)
                        (or force-expand-p
-                           (not (directory-to-keep-collapsed-p (widget-get widget :file)))))
+                           (not (directory-to-keep-collapsed-p
+                                 (nomis-dirtree-widget-file widget)))))
               (nomis-dirtree-expand-node widget)
               (mapc (lambda (x) (expand-recursively x (1- n-times)))
-                    (widget-get widget :children)))))
+                    (nomis-dirtree-widget-children widget)))))
     (let* ((widget (nomis-dirtree-selected-widget)))
       (if (nomis-dirtree-directory-widget-p widget)
           (progn
@@ -393,8 +406,7 @@ If <arg> is supplied, first collapse all and then expand to <arg> levels."
   (interactive)
   (let* ((widget (nomis-dirtree-selected-widget)))
     (if (nomis-dirtree-directory-widget-p widget)
-        (when (widget-get widget :open)
-          (nomis-dirtree-collapse-node widget))
+        (nomis-dirtree-collapse-node widget)
       (progn
         (message "Not a directory, so can't collapse.")
         (beep)))))
@@ -411,7 +423,7 @@ sub-subdirectories, etc, so that subsequent expansion shows only one level."
   (interactive)
   (labels ((collapse-recursively (widget)
                                  (mapc 'collapse-recursively
-                                       (widget-get widget :children))
+                                       (nomis-dirtree-widget-children widget))
                                  (nomis-dirtree-collapse-node widget)))
     (let* ((widget (nomis-dirtree-selected-widget)))
       (if (nomis-dirtree-directory-widget-p widget)
@@ -425,7 +437,7 @@ sub-subdirectories, etc, so that subsequent expansion shows only one level."
 Mostly for debugging purposes."
   (interactive)
   (let* ((widget (nomis-dirtree-selected-widget))
-         (file (widget-get widget :file)))
+         (file (nomis-dirtree-widget-file widget)))
     (message-box "                              (car widget) = %s
                               file = %s
                               (line-end-position) = %s
