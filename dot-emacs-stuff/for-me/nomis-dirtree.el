@@ -212,14 +212,14 @@ With prefix argument select `nomis-dirtree-buffer'"
 ;;;; Support for expand/collapse.
 
 (defun nomis-tree-mode-expand (widget)
-  (assert (nomis-dirtree-directory-widget-p widget))
-  (unless (widget-get widget :open)
-    (widget-apply-action widget)))
+  (when (tree-widget-p widget)
+    (unless (widget-get widget :open)
+      (widget-apply-action widget))))
 
 (defun nomis-tree-mode-collapse (widget)
-  (assert (nomis-dirtree-directory-widget-p widget))
-  (when (widget-get widget :open)
-    (widget-apply-action widget)))
+  (when (tree-widget-p widget)
+    (when (widget-get widget :open)
+      (widget-apply-action widget))))
 
 (defvar *dirs-to-keep-collapsed*
   '(".git"
@@ -271,7 +271,7 @@ With prefix argument select `nomis-dirtree-buffer'"
     file))
 
 ;;;; ---------------------------------------------------------------------------
-;;;; User-visible commands and helpers.
+;;;; User-visible commands.
 
 (defun nomis-dirtree-display-file ()
   "Display contents of file under point in other window."
@@ -383,21 +383,18 @@ sub-subdirectories, etc."
   (interactive)
   (nomis-dirtree-expand 1000000))
 
-(defun nomis-dirtree-collapse-recursively (tree)
-  (mapc 'nomis-dirtree-collapse-recursively
-        (widget-get tree :children))
-  (when (tree-widget-p tree)
-    (if (widget-get tree :open)
-        (widget-apply-action tree))))
-
 (defun nomis-dirtree-collapse-all ()
   "Collapse directory under point and all of its subdirectories,
 sub-subdirectories, etc, so that subsequent expansion shows only one level."
   (interactive)
-  (let* ((widget (nomis-dirtree-selected-widget)))
-    (if (nomis-dirtree-directory-widget-p widget)
-        (nomis-dirtree-collapse-recursively widget)
-      (beep))))
+  (labels ((collapse-recursively (widget)
+                                 (mapc 'collapse-recursively
+                                       (widget-get widget :children))
+                                 (nomis-tree-mode-collapse widget)))
+    (let* ((widget (nomis-dirtree-selected-widget)))
+      (if (nomis-dirtree-directory-widget-p widget)
+          (collapse-recursively widget)
+        (beep)))))
 
 (defun nomis-dirtree-goto-previous-up-from-position ()
   "Return to the line at the front of the stack of previous up-from
