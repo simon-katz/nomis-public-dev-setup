@@ -222,11 +222,10 @@ With prefix argument select `nomis-dirtree-buffer'"
 (defun nomis-dirtree-display-file ()
   "Open file under point"
   (interactive)
-  (let ((window (selected-window))
-        (file (nomis-dirtree-selected-file-or-dir)))
-    (when file
-      (find-file-other-window file)
-      (select-window window))))
+  (save-selected-window
+    (let ((file (nomis-dirtree-selected-file-or-dir)))
+      (when file
+        (find-file-other-window file)))))
 
 (defun nomis-dirtree-open-in-default-app ()
   (interactive)
