@@ -223,13 +223,13 @@ With prefix argument select `nomis-dirtree-buffer'"
   "Open file under point"
   (interactive)
   (save-selected-window
-    (let ((file (nomis-dirtree-selected-file-or-dir)))
+    (let* ((file (nomis-dirtree-selected-file-or-dir)))
       (when file
         (find-file-other-window file)))))
 
 (defun nomis-dirtree-open-in-default-app ()
   (interactive)
-  (let ((file (nomis-dirtree-selected-file-or-dir)))
+  (let* ((file (nomis-dirtree-selected-file-or-dir)))
     (when file
       (shell-command (concat "open \"" file "\"")))))
 
