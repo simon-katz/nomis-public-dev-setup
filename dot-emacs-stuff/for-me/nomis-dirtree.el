@@ -239,10 +239,24 @@ With prefix argument select `nomis-dirtree-buffer'"
   (interactive "p")
   (tree-mode-previous-node arg))
 
+(defun nomis-dirtree-previous-line-and-display (arg)
+  "Move up <arg> lines.
+Then display contents of file under point in other window."
+  (interactive "p")
+  (nomis-dirtree-previous-line arg)
+  (nomis-dirtree-display-file))
+
 (defun nomis-dirtree-next-line (arg)
   "Move down <arg> lines."
   (interactive "p")
   (tree-mode-next-node arg))
+
+(defun nomis-dirtree-next-line-and-display (arg)
+  "Move down <arg> lines.
+Then display contents of file under point in other window."
+  (interactive "p")
+  (nomis-dirtree-next-line arg)
+  (nomis-dirtree-display-file))
 
 (defun nomis-dirtree-up-directory (arg)
   "Move to parent directory. Repeat <arg> times if <arg> supplied.
@@ -258,18 +272,32 @@ positions."
       (nomis-dirtree-note-previous-up-from-position)
       (tree-mode-goto-parent arg))))
 
-(defun nomis-dirtree-previous-line-and-display (arg)
-  "Move up <arg> lines.
-Then display contents of file under point in other window."
+(defun nomis-dirtree-up-directory-and-display (arg)
   (interactive "p")
-  (nomis-dirtree-previous-line arg)
+  "Move to parent directory. Repeat <arg> times if <arg> supplied.
+Before doing this, push the current line onto a stack of previous up-from
+positions.
+Then display contents of file under point in other window."
+  (nomis-dirtree-up-directory arg)
   (nomis-dirtree-display-file))
 
-(defun nomis-dirtree-next-line-and-display (arg)
-  "Move down <arg> lines.
+(defun nomis-dirtree-next-line-with-expansion (arg)
+  "Move down <arg> lines, expanding any encountered collapsed directories
+and showing previous expansion of subdirectories."
+  (interactive "p")
+  (unless (< arg 1)
+    (let* ((widget (nomis-dirtree-selected-widget)))
+      (when (nomis-dirtree-directory-widget-p widget)
+        (nomis-tree-mode-expand widget))
+      (nomis-dirtree-next-line 1))
+    (nomis-dirtree-next-line-with-expansion (1- arg))))
+
+(defun nomis-dirtree-next-line-with-expansion-and-display (arg)
+  "Move down <arg> lines, expanding any encountered collapsed directories
+and showing previous expansion of subdirectories.
 Then display contents of file under point in other window."
   (interactive "p")
-  (nomis-dirtree-next-line arg)
+  (nomis-dirtree-next-line-with-expansion arg)
   (nomis-dirtree-display-file))
 
 (defun nomis-tree-mode-expand (widget)
@@ -323,34 +351,6 @@ If <arg> is supplied, first collapse all and then expand to <arg> levels."
                                        (or arg 1)
                                        t))
       (beep))))
-
-(defun nomis-dirtree-next-line-with-expansion (arg)
-  "Move down <arg> lines, expanding any encountered collapsed directories
-and showing previous expansion of subdirectories."
-  (interactive "p")
-  (unless (< arg 1)
-    (let* ((widget (nomis-dirtree-selected-widget)))
-      (when (nomis-dirtree-directory-widget-p widget)
-        (nomis-tree-mode-expand widget))
-      (nomis-dirtree-next-line 1))
-    (nomis-dirtree-next-line-with-expansion (1- arg))))
-
-(defun nomis-dirtree-up-directory-and-display (arg)
-  (interactive "p")
-  "Move to parent directory. Repeat <arg> times if <arg> supplied.
-Before doing this, push the current line onto a stack of previous up-from
-positions.
-Then display contents of file under point in other window."
-  (nomis-dirtree-up-directory arg)
-  (nomis-dirtree-display-file))
-
-(defun nomis-dirtree-next-line-with-expansion-and-display (arg)
-  "Move down <arg> lines, expanding any encountered collapsed directories
-and showing previous expansion of subdirectories.
-Then display contents of file under point in other window."
-  (interactive "p")
-  (nomis-dirtree-next-line-with-expansion arg)
-  (nomis-dirtree-display-file))
 
 (defun nomis-dirtree-expand-all ()
   "Expand directory under point to show all subdirectories,
@@ -425,13 +425,12 @@ Mostly for debugging purposes."
   (dk (kbd "C-<return>")  'nomis-dirtree-display-file)
 
   (dk (kbd "<up>")        'nomis-dirtree-previous-line)
-  (dk (kbd "<down>")      'nomis-dirtree-next-line)
-  (dk (kbd "<left>")      'nomis-dirtree-up-directory)
-  (dk (kbd "<right>")     'nomis-dirtree-next-line-with-expansion)
-  
   (dk (kbd "C-<up>")      'nomis-dirtree-previous-line-and-display)
+  (dk (kbd "<down>")      'nomis-dirtree-next-line)
   (dk (kbd "C-<down>")    'nomis-dirtree-next-line-and-display)
+  (dk (kbd "<left>")      'nomis-dirtree-up-directory)
   (dk (kbd "C-<left>")    'nomis-dirtree-up-directory-and-display)
+  (dk (kbd "<right>")     'nomis-dirtree-next-line-with-expansion)
   (dk (kbd "C-<right>")   'nomis-dirtree-next-line-with-expansion-and-display)
 
   (dk (kbd "M-<right>")   'nomis-dirtree-expand)
