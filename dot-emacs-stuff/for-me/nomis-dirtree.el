@@ -211,12 +211,12 @@ With prefix argument select `nomis-dirtree-buffer'"
 ;;;; ---------------------------------------------------------------------------
 ;;;; Support for expand/collapse.
 
-(defun nomis-tree-mode-expand-node (widget)
+(defun nomis-dirtree-expand-node (widget)
   (when (tree-widget-p widget)
     (unless (widget-get widget :open)
       (widget-apply-action widget))))
 
-(defun nomis-tree-mode-collapse-node (widget)
+(defun nomis-dirtree-collapse-node (widget)
   (when (tree-widget-p widget)
     (when (widget-get widget :open)
       (widget-apply-action widget))))
@@ -310,7 +310,7 @@ and showing previous expansion of subdirectories."
   (unless (< arg 1)
     (let* ((widget (nomis-dirtree-selected-widget)))
       (when (nomis-dirtree-directory-widget-p widget)
-        (nomis-tree-mode-expand-node widget))
+        (nomis-dirtree-expand-node widget))
       (nomis-dirtree-next-line 1))
     (nomis-dirtree-next-line-with-expansion (1- arg))))
 
@@ -373,7 +373,7 @@ If <arg> is supplied, first collapse all and then expand to <arg> levels."
                        (>= n-times 1)
                        (or force-expand-p
                            (not (directory-to-keep-collapsed-p (widget-get widget :file)))))
-              (nomis-tree-mode-expand-node widget)
+              (nomis-dirtree-expand-node widget)
               (mapc (lambda (x) (expand-recursively x (1- n-times)))
                     (widget-get widget :children)))))
     (let* ((widget (nomis-dirtree-selected-widget)))
@@ -392,7 +392,7 @@ If <arg> is supplied, first collapse all and then expand to <arg> levels."
   (let* ((widget (nomis-dirtree-selected-widget)))
     (if (nomis-dirtree-directory-widget-p widget)
         (when (widget-get widget :open)
-          (nomis-tree-mode-collapse-node widget))
+          (nomis-dirtree-collapse-node widget))
       (beep))))
 
 (defun nomis-dirtree-expand-all ()
@@ -408,7 +408,7 @@ sub-subdirectories, etc, so that subsequent expansion shows only one level."
   (labels ((collapse-recursively (widget)
                                  (mapc 'collapse-recursively
                                        (widget-get widget :children))
-                                 (nomis-tree-mode-collapse-node widget)))
+                                 (nomis-dirtree-collapse-node widget)))
     (let* ((widget (nomis-dirtree-selected-widget)))
       (if (nomis-dirtree-directory-widget-p widget)
           (collapse-recursively widget)
