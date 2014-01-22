@@ -20,6 +20,16 @@
 
 ;;;; TODO:
 
+;;;; - Bug: `nomis-dirtree-goto-previous-up-from-position-and-display`
+;;;;        does the display part when the first part fails.
+;;;;        We need to be thowing errors, probably at all places
+;;;;        where we currenty beep.
+
+;;;; - Why did you get rid of generalised back navigation?
+;;;;   Were there difficulties?
+;;;;   General back navigation, with control key skipping to only files
+;;;;   that were displayed, would be good.  (Right?)
+
 ;;;; - When hitting up and down arrow keys, when you hit directories
 ;;;;   there are messages saying "Expand" and "Collapse" (depending on
 ;;;;   whether the directory is collapsed or expanded).
