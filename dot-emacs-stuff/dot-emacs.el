@@ -18,7 +18,12 @@
   (require 'package)
 
   (add-to-list 'package-archives
-               '("marmalade" . "http://marmalade-repo.org/packages/") t)
+               '("marmalade" . "http://marmalade-repo.org/packages/")
+               t)
+
+  (add-to-list 'package-archives
+               '("melpa" . "http://melpa.milkbox.net/packages/")
+               t)
 
   (package-initialize)
 
@@ -42,7 +47,8 @@
                         magit
                         ido-ubiquitous
                         smex
-                        idle-highlight-mode)
+                        idle-highlight-mode
+                        scala-mode2)
     "A list of packages to ensure are installed at launch.")
 
   (dolist (p my-packages)
