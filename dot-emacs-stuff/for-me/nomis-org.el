@@ -17,7 +17,7 @@
 
 
 (defvar my-org-directory
-  "~/Documents/jsk/development-100/__for-sync/notes/to-do-and-planning")
+  "~/development-100/repositories/nomis/notes/to-do-and-planning")
 
 (if (file-exists-p my-org-directory)
     (setq org-directory my-org-directory)
