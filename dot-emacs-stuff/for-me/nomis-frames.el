@@ -43,7 +43,7 @@
 ;;;; ---- Frame size ----
 
 (defvar single-window-frame-width 85)
-(defvar double-window-frame-width 180)
+(defvar double-window-frame-width 176)
 
 ;;;; ___________________________________________________________________________
 ;;;; ---- Cycle frames ----
