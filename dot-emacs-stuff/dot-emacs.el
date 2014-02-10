@@ -133,7 +133,6 @@
 (require 'nomis-paredit)
 (require 'nomis-emacs-lisp-and-ielm)
 (require 'nomis-clojure)
-(require 'nomis-clojure-indentation)
 (require 'nomis-nrepl-extras) ; xxxx-cider nomis-cider-extras
 
 (require 'nomis-shell-stuff)
