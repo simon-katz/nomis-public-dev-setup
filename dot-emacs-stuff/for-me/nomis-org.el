@@ -15,7 +15,6 @@
 ;;;; ---------------------------------------------------------------------------
 ;;;; General
 
-
 (defvar my-org-directory
   "~/development-100/repositories/nomis/notes/to-do-and-planning")
 
@@ -27,6 +26,8 @@
 (setq org-log-done nil)
 
 (setq org-return-follows-link t)
+
+(setq org-startup-indented t)
 
 ;;;; ---------------------------------------------------------------------------
 ;;;; Priorities
