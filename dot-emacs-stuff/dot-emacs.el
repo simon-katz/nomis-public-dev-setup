@@ -35,10 +35,6 @@
                         paredit
                         rainbow-delimiters
                         auto-complete
-                        nrepl ;  xxxx-cider cider
-                        ac-nrepl
-                        clojure-mode
-                        clojure-test-mode ; xxxx-cider this is downloading nrepl
                         saveplace
                         workgroups
                         fuzzy
@@ -46,9 +42,14 @@
                         pos-tip
                         magit
                         ido-ubiquitous
-                        smex
+                        ;; smex
                         idle-highlight-mode
-                        scala-mode2)
+                        scala-mode2
+                        undo-tree
+                        cider
+                        ac-nrepl
+                        clojure-mode
+                        clojure-test-mode)
     "A list of packages to ensure are installed at launch.")
 
   (dolist (p my-packages)
@@ -133,7 +134,7 @@
 (require 'nomis-paredit)
 (require 'nomis-emacs-lisp-and-ielm)
 (require 'nomis-clojure)
-(require 'nomis-nrepl-extras) ; xxxx-cider nomis-cider-extras
+(require 'nomis-cider-extras)
 
 (require 'nomis-shell-stuff)
 

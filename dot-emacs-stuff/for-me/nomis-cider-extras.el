@@ -71,8 +71,8 @@
 ;;;; namespace that has a long name.
 
 (cond
- ((equal (cider-version) "0.3.1")
-  (defun cider-insert-prompt (namespace)
+ ((equal (cider-version) "CIDER 0.6.0alpha (package: 20140210.622)")
+  (defun cider-repl--insert-prompt (namespace)
     "Insert the prompt (before markers!), taking into account NAMESPACE.
 Set point after the prompt.
 Return the position of the prompt beginning."
