@@ -3,8 +3,10 @@
 ;;;; ___________________________________________________________________________
 
 (require 'clojure-mode)
-(require 'nomis-clojure-indentation)
 (require 'cider)
+
+(require 'nomis-clojure-indentation)
+(require 'nomis-cider-extras)
 
 ;;;; ___________________________________________________________________________
 
@@ -21,7 +23,6 @@
 ;;;; Cider
 
 ;;;; See https://github.com/clojure-emacs/cider.
-;;;; - TODO: Consider other tailoring.
 
 ;;;; ---------------------------------------------------------------------------
 ;;;; ---- Stuff for the REPL ----

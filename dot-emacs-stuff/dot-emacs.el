@@ -42,7 +42,7 @@
                         pos-tip
                         magit
                         ido-ubiquitous
-                        ;; smex
+                        smex
                         idle-highlight-mode
                         scala-mode2
                         undo-tree
@@ -103,6 +103,22 @@
 ;;;; ___________________________________________________________________________
 ;;;; ---- Load various files ----
 
+;;;; ---- Lisp and Clojure stuff probably good for anyone ----
+
+(require 'nomis-paredit)
+(require 'nomis-emacs-lisp-and-ielm)
+(require 'nomis-clojure)
+
+(require 'nomis-auto-complete)
+
+;;;; ---- Lisp and Clojure stuff probably only for me ----
+
+(require 'nomis-indent-sexp)
+
+(require 'nomis-slime-eval)
+
+;;;; ---- Other stuff ----
+
 (require 'nomis-very-general-stuff)
 (require 'nomis-mouse-scrolling)
 (require 'nomis-avoid-window-stealing)
@@ -131,27 +147,17 @@
 
 (require 'nomis-org)
 
-(require 'nomis-paredit)
-(require 'nomis-emacs-lisp-and-ielm)
-(require 'nomis-clojure)
-(require 'nomis-cider-extras)
-
 (require 'nomis-shell-stuff)
 
-(require 'homeless)
-
-(require 'nomis-auto-complete)
-
-(require 'nomis-slime-eval)
-(require 'nomis-indent-sexp)
 (require 'nomis-keyboard-macros)
 (require 'nomis-searching)
 (require 'nomis-searching-filters)
 (require 'nomis-ibuffer)
-
 (require 'nomis-ace-jump-mode)
 
 (require 'nomis-multi-web-mode)
+
+(require 'homeless)
 
 (progn
   ;; Putting this where it belongs (in "nomis-very-general-stuff") doesn't work;
