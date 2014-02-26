@@ -36,7 +36,7 @@
 (setq cider-repl-history-file "~/.cider-history")
 (setq cider-repl-history-size 1000) ; the default is 500
 
-(setq cider-repl-use-pretty-printing t)
+;; (setq cider-repl-use-pretty-printing t) ; doesn't work with ClojureScript
 
 ;; ;;;; ---------------------------------------------------------------------------
 ;; ;;;; ---- Stuff for when connected to nrepl       ----
