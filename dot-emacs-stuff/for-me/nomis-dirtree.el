@@ -242,6 +242,8 @@ With prefix argument select `nomis-dirtree-buffer'"
 
 (defvar *dirs-to-keep-collapsed-unless-forced*
   '(".git"
+    ".repl"
+    "out"
     "target"))
 
 (defun directory-to-keep-collapsed-p (name)
