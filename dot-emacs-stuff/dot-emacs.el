@@ -157,6 +157,8 @@
 
 (require 'nomis-multi-web-mode)
 
+(require 'nomis-javascript)
+
 (require 'homeless)
 
 (progn
