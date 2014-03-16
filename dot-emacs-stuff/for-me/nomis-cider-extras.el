@@ -183,42 +183,42 @@ Return the position of the prompt beginning."
          (ignore-errors (forward-sexp 1))
          (backward-sexp 1))))
 
-;;## (defun nomis-beginning-of-this-defun ()
-;;##   ;; this deals with most situations
-;;##   (while (ignore-errors (paredit-backward-up) t))
-;;##   ;; this handles the case when we are between top-level forms
-;;##   (when (not (nomis-looking-at-sexp-start))
-;;##     (backward-sexp)))
-;;## 
-;;## (defun* nomis-nrepl-grab-text (&key top-level-p delete-p)
-;;##   (let* ((grab-function (if delete-p
-;;##                             #'delete-and-extract-region
-;;##                           #'buffer-substring)))
-;;##     (save-excursion
-;;##       (cond
-;;##        (top-level-p
-;;##         (let ((start (save-excursion
-;;##                        (nomis-beginning-of-this-defun)
-;;##                        (point)))
-;;##               (end (save-excursion
-;;##                      (nomis-beginning-of-this-defun)
-;;##                      (forward-sexp 1)
-;;##                      (point))))
-;;##           (funcall grab-function start end)))
-;;##        (t
-;;##         (let* ((region-selected?
-;;##                 (not (equal mark-active nil))))
-;;##           (cond
-;;##            (region-selected?
-;;##             (funcall grab-function (mark) (point)))
-;;##            (t
-;;##             (nomis-move-to-start-of-sexp-around-point)
-;;##             (let ((start (point))
-;;##                   (end (save-excursion
-;;##                          (forward-sexp 1)
-;;##                          (point))))
-;;##               (funcall grab-function start end))))))))))
-;;## 
+(defun nomis-beginning-of-this-defun ()
+  ;; this deals with most situations
+  (while (ignore-errors (paredit-backward-up) t))
+  ;; this handles the case when we are between top-level forms
+  (when (not (nomis-looking-at-sexp-start))
+    (backward-sexp)))
+
+(defun* nomis-grab-text (&key top-level-p delete-p)
+  (let* ((grab-function (if delete-p
+                            #'delete-and-extract-region
+                          #'buffer-substring)))
+    (save-excursion
+      (cond
+       (top-level-p
+        (let ((start (save-excursion
+                       (nomis-beginning-of-this-defun)
+                       (point)))
+              (end (save-excursion
+                     (nomis-beginning-of-this-defun)
+                     (forward-sexp 1)
+                     (point))))
+          (funcall grab-function start end)))
+       (t
+        (let* ((region-selected?
+                (not (equal mark-active nil))))
+          (cond
+           (region-selected?
+            (funcall grab-function (mark) (point)))
+           (t
+            (nomis-move-to-start-of-sexp-around-point)
+            (let ((start (point))
+                  (end (save-excursion
+                         (forward-sexp 1)
+                         (point))))
+              (funcall grab-function start end))))))))))
+
 ;;## ;;;; ___________________________________________________________________________
 ;;## ;;;; ---- nomis-nrepl-send-to-repl ----
 ;;## 
@@ -267,7 +267,7 @@ Return the position of the prompt beginning."
 ;;##                      (nomis-nrepl-repl-namespace))))
 ;;##     (labels ((the-text
 ;;##               ()
-;;##               (nomis-nrepl-grab-text :top-level-p top-level-p :delete-p nil))
+;;##               (nomis-grab-text :top-level-p top-level-p :delete-p nil))
 ;;##              (show-nrepl-buffer-and-send-text-to-it
 ;;##               (text)
 ;;##               (labels ((insert-text () (insert text)))
@@ -289,21 +289,19 @@ Return the position of the prompt beginning."
 ;;## 
 ;;## 
 ;;## ;;;; ___________________________________________________________________________
-;;## ;;;; ---- nomis-nrepl-rearrange-string-into-lines ----
+;;## ;;;; ---- nomis-cider-rearrange-string-into-lines ----
 ;;## 
 ;;## ;;;; ****
 ;;## ;;;; + Ring bell when you get a Clojure error.
 ;;## ;;;;   Need to write something a bit different to `nrepl-eval-print'.
 ;;## ;;;;
-;;## ;;;; + You have two-step undo. Can you have one-step undo?
-;;## ;;;; 
 ;;## ;;;; + Either understand Elisp `format' or find a `cl-format' for Emacs.
 ;;## ;;;;   There is a CL format, but using it changed the current buffer to
 ;;## ;;;;   *scratch*.  Bad.  Got rid of it.
 ;;## ;;;;
-;;## ;;;; + Ensure `nomis-nrepl-grab-text' has no free variables.
+;;## ;;;; + Ensure `nomis-grab-text' has no free variables.
 ;;## ;;;;
-;;## ;;;; + Modularise `nomis-nrepl-grab-text' and `nomis-nrepl-grab-and-delete-current-form'.
+;;## ;;;; + Modularise `nomis-grab-text' and `nomis-nrepl-grab-and-delete-current-form'.
 ;;## ;;;;
 ;;## ;;;; + Put all your code-manipulation Clojure functions in single file in
 ;;## ;;;;   a new project.
@@ -322,70 +320,15 @@ Return the position of the prompt beginning."
 ;;## ;;;;       time.
 ;;## ;;;;     x I had wanted to load it in some after advice to `nrepl-jack-in',
 ;;## ;;;;       but you'd have to wait somehow for the server to finish starting.
-;;## ;;;;
-;;## ;;;; + Change all `jsk' to `nomis.'
-;;## ;;;;
-;;## ;;;; + Choose between `nomis-' prefix and `nomis-' prefix.
-;;## ;;;;
-;;## ;;;; + Compare nrepl-last-expression with how you get an expression.
-;;## ;;;;   + Mine is better.
-;;## 
-;;## (defvar nomis-rearrange-string-in-one-go-p t
-;;##   "Having this T means that undoing a nomis-nrepl-rearrange-string-into-lines
-;;## undoes the whole thing.
-;;## Having this NIL gives a two-step undo.
-;;## Before this was introduced, I had the two-step behaviour.
-;;## I'm more confident that things works properly that way.
-;;## When T I'm unsure about maybe destroying info when grabbing text, particularly
-;;## the mark-active thing. It all seems to be ok though.")
-;;## 
-;;## (defvar nomis-newline-string "
-;;## ")
-;;## 
-;;## (defun transform-string-value (value)
-;;##   (replace-regexp-in-string
-;;##    "\\\\n" nomis-newline-string         ; replace all \n with newline
-;;##    value))
-;;## 
-;;## (defun* nomis-nrepl-interactive-eval-print-handler-with-bells-on
-;;##     (buffer
-;;##      &key
-;;##      save-excursion-p)
-;;##   ;; Based on `nrepl-interactive-eval-print-handler'.
-;;##   (lexical-let* ((save-excursion-p save-excursion-p))
-;;##     (nrepl-make-response-handler
-;;##      buffer
-;;##      (lambda (buffer value)
-;;##        (with-current-buffer buffer
-;;##          (flet ((do-it
-;;##                  ()
-;;##                  (when nomis-rearrange-string-in-one-go-p
-;;##                    (nomis-nrepl-grab-text :top-level-p nil
-;;##                                           :delete-p t))
-;;##                  (insert
-;;##                   (format "%s"
-;;##                           (transform-string-value value)))))
-;;##            (if save-excursion-p
-;;##                (save-excursion (do-it))
-;;##              (do-it)))))
-;;##      '()
-;;##      (lambda (buffer err)
-;;##        (ding)
-;;##        (message "%s" err))
-;;##      '())))
-;;## 
-;;## (defun* nomis-nrepl-interactive-eval-print-with-bells-on
-;;##     (form &key save-excursion-p)
-;;##   "Evaluate the given form and print value in current buffer.
-;;## Ring the bell if there's an error in the Clojure world."
-;;##   ;; Based on `nrepl-interactive-eval-print'.
-;;##   (let ((buffer (current-buffer)))
-;;##     (nrepl-send-string form
-;;##                        (nomis-nrepl-interactive-eval-print-handler-with-bells-on
-;;##                         buffer
-;;##                         :save-excursion-p save-excursion-p)
-;;##                        nrepl-buffer-ns)))
-;;## 
+
+(defvar nomis-newline-string "
+")
+
+(defun transform-string-value (value)
+  (replace-regexp-in-string
+   "\\\\n" nomis-newline-string ; replace all \n with newline
+   value))
+
 ;;## (defun get-string-from-file (filePath)
 ;;##   "Return FILEPATH's file content."
 ;;##   ;; http://xahlee.blogspot.co.uk/2010/09/elisp-read-file-content-in-one-shot.html
@@ -397,30 +340,34 @@ Return the position of the prompt beginning."
 ;;##   (with-temp-buffer
 ;;##     (insert-file-contents-literally filePath)
 ;;##     (buffer-string)))
-;;## 
-;;## (defun nomis-nrepl-rearrange-string-into-lines (prefix)
-;;##   "Rearrange string into lines.
-;;##    Without a prefix argument, indent second and subsequent lines so
-;;##    that they line up sensibly with the first line.
-;;##    With a prefix argument, indent second and subsequent lines one
-;;##    character less as is the convention for Clojure doc strings
-;;##    (which is stupid)."
-;;##   (interactive "*P")
-;;##   (let ((string (nomis-nrepl-grab-text
-;;##                  :top-level-p nil
-;;##                  :delete-p (not nomis-rearrange-string-in-one-go-p))))
-;;##     (nomis-nrepl-interactive-eval-print-with-bells-on
-;;##      (format "(do (require '[com.nomistech.emacs-hacks-in-clojure :as ehic])
-;;##                   (ehic/rearrange-string-into-lines '%s %s %s))"
-;;##              string
-;;##              (+ (current-column)
-;;##                 (if prefix 0 1))
-;;##              72)
-;;##      :save-excursion-p t)))
-;;## 
-;;## (define-key clojure-mode-map (kbd "C-c C-f")
-;;##   'nomis-nrepl-rearrange-string-into-lines)
 
+(defun nomis-cider-rearrange-string-into-lines (prefix)
+  "Rearrange string into lines.
+   Without a prefix argument, indent second and subsequent lines so
+   that they line up sensibly with the first line.
+   With a prefix argument, indent second and subsequent lines one
+   character less as is the convention for Clojure doc strings
+   (which is stupid)."
+  (interactive "*P")
+  (let* ((string (nomis-grab-text
+                  :top-level-p nil
+                  :delete-p t))
+         (clojure-form-as-string
+          (format "(do (require '[com.nomistech.emacs-hacks-in-clojure :as ehic])
+                  (ehic/rearrange-string-into-lines '%s %s %s))"
+                  string
+                  (+ (current-column)
+                     (if prefix 0 1))
+                  72))
+         (string-value (cider-eval-and-get-value clojure-form-as-string
+                                                 nrepl-buffer-ns)))
+    (save-excursion
+      (insert
+       (format "\"%s\""
+               (transform-string-value string-value))))))
+
+(define-key clojure-mode-map (kbd "C-c C-g")
+  'nomis-cider-rearrange-string-into-lines)
 
 ;;;; ___________________________________________________________________________
 ;;;; ---- Reader comments ----
