@@ -9,12 +9,22 @@
 (require 'nomis-cider-extras)
 
 ;;;; ___________________________________________________________________________
+;;;; clj-refactor
+
+(require 'clj-refactor)
+
+(defun nomis-setup-clj-refactor-mode ()
+  (clj-refactor-mode 1)
+  (cljr-add-keybindings-with-prefix "M-R"))
+
+;;;; ___________________________________________________________________________
 
 (dolist (hook '(clojure-mode-hook
                 cider-repl-mode-hook))
   (dolist (hook-fun '(rainbow-delimiters-mode
                       paredit-mode
-                      subword-mode))
+                      subword-mode
+                      nomis-setup-clj-refactor-mode))
     (add-hook hook hook-fun)))
 
 (define-key clojure-mode-map (kbd "RET") 'newline-and-indent)

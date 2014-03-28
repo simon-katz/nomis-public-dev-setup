@@ -49,7 +49,9 @@
                         cider
                         ac-nrepl
                         clojure-mode
-                        clojure-test-mode)
+                        clojure-test-mode
+                        clj-refactor
+                        align-cljlet)
     "A list of packages to ensure are installed at launch.")
 
   (dolist (p my-packages)
