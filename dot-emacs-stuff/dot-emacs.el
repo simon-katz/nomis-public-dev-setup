@@ -171,4 +171,13 @@
   (define-key global-map [(insert)] nil))
 
 ;;;; ___________________________________________________________________________
+;;;;; ---- personal ----
+
+(let ((nomis-personal-emacs-init-file
+       (concat (nomis-load-file-directory)
+               "../../emacs-configuration-personal/nomis-personal-emacs-init.el")))
+  (when (file-exists-p nomis-personal-emacs-init-file)
+    (load nomis-personal-emacs-init-file)))
+
+;;;; ___________________________________________________________________________
 ;;;;; ---- temp for playing ----
