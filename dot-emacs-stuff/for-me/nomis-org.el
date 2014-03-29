@@ -15,12 +15,16 @@
 ;;;; ---------------------------------------------------------------------------
 ;;;; General
 
-(defvar my-org-directory
-  "~/development-100/repositories/nomis/notes/to-do-and-planning")
+(defvar nomis-notes-directory
+  (if i-am-nomis?
+      "~/development-100/repositories/nomis/notes"
+    "you are not nomis so you don't have a nomis-notes-directory"))
 
-(if (file-exists-p my-org-directory)
-    (setq org-directory my-org-directory)
-  (setq org-directory "~/.emacs-org-dir"))
+(setq org-directory
+      (if i-am-nomis?
+          (concat nomis-notes-directory "/to-do-and-planning")
+        "~/.emacs-org-dir"))
+
 
 (setq org-replace-disputed-keys t)
 (setq org-log-done nil)
@@ -88,15 +92,21 @@
 ;;;; ---------------------------------------------------------------------------
 ;;;; Agendas
 
-(setq org-agenda-files (list org-directory))
+(setq org-agenda-files
+      (if i-am-nomis?
+          (progn
+            (load-library "find-lisp")
+            (find-lisp-find-files nomis-notes-directory
+                                  "\.org$"))
+        (list org-directory)))
 
 ;;; From http://orgmode.org/worg/org-faq.html
 ;;;   How can I stop the mouse cursor from highlighting lines in the agenda?
 ;;;     You can add the following to your .emacs:
 
 (add-hook 'org-finalize-agenda-hook
-    (lambda () (remove-text-properties
-           (point-min) (point-max) '(mouse-face t))))
+          (lambda () (remove-text-properties
+                      (point-min) (point-max) '(mouse-face t))))
 
 ;;;; ___________________________________________________________________________
 
