@@ -38,7 +38,7 @@
 
 (setq org-highest-priority ?1)
 (setq org-lowest-priority  ?9)
-(setq org-default-priority ?6)
+(setq org-default-priority ?2)
 
 ;;;; ---------------------------------------------------------------------------
 ;;;; Org mode hook function
