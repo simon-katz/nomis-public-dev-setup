@@ -103,6 +103,16 @@
 ;; ;;;; (nomis-compile-dir *emacs-config-dir*)
 
 ;;;; ___________________________________________________________________________
+;;;; ---- i-am-nomis? ----
+
+(defvar nomis-personal-emacs-init-file
+  (concat (nomis-load-file-directory)
+          "../../emacs-configuration-personal/nomis-personal-emacs-init.el"))
+
+(defvar i-am-nomis?
+  (file-exists-p nomis-personal-emacs-init-file))
+
+;;;; ___________________________________________________________________________
 ;;;; ---- Load various files ----
 
 ;;;; ---- Lisp and Clojure stuff probably good for anyone ----
@@ -173,11 +183,8 @@
 ;;;; ___________________________________________________________________________
 ;;;;; ---- personal ----
 
-(let ((nomis-personal-emacs-init-file
-       (concat (nomis-load-file-directory)
-               "../../emacs-configuration-personal/nomis-personal-emacs-init.el")))
-  (when (file-exists-p nomis-personal-emacs-init-file)
-    (load nomis-personal-emacs-init-file)))
+(when i-am-nomis?
+  (load nomis-personal-emacs-init-file))
 
 ;;;; ___________________________________________________________________________
 ;;;;; ---- temp for playing ----
