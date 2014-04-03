@@ -103,13 +103,13 @@
 ;; ;;;; (nomis-compile-dir *emacs-config-dir*)
 
 ;;;; ___________________________________________________________________________
-;;;; ---- i-am-nomis? ----
+;;;; ---- i-am-nomis-p ----
 
 (defvar nomis-personal-emacs-init-file
   (concat (nomis-load-file-directory)
           "../../emacs-configuration-personal/nomis-personal-emacs-init.el"))
 
-(defvar i-am-nomis?
+(defvar i-am-nomis-p
   (file-exists-p nomis-personal-emacs-init-file))
 
 ;;;; ___________________________________________________________________________
@@ -183,7 +183,7 @@
 ;;;; ___________________________________________________________________________
 ;;;;; ---- personal ----
 
-(when i-am-nomis?
+(when i-am-nomis-p
   (load nomis-personal-emacs-init-file))
 
 ;;;; ___________________________________________________________________________

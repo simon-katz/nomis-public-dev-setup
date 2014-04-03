@@ -16,12 +16,12 @@
 ;;;; General
 
 (defvar nomis-notes-directory
-  (if i-am-nomis?
+  (if i-am-nomis-p
       "~/development-100/repositories/nomis/notes"
     "you are not nomis so you don't have a nomis-notes-directory"))
 
 (setq org-directory
-      (if i-am-nomis?
+      (if i-am-nomis-p
           (concat nomis-notes-directory "/to-do-and-planning")
         "~/.emacs-org-dir"))
 
@@ -93,7 +93,7 @@
 ;;;; Agendas
 
 (setq org-agenda-files
-      (if i-am-nomis?
+      (if i-am-nomis-p
           (progn
             (load-library "find-lisp")
             (find-lisp-find-files nomis-notes-directory
