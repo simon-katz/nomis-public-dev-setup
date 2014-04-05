@@ -6,6 +6,7 @@
 (show-paren-mode 1)
 (setq line-move-visual nil) ; the default of T is annoying, and it
                             ; screws up keyboard macros
+(setq visual-line-fringe-indicators '(left-curly-arrow right-curly-arrow))
 
 (setq nomis-backup-directory (expand-file-name "~/.emacs-backups/"))
 (make-directory nomis-backup-directory t)
