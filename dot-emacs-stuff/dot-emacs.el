@@ -51,7 +51,9 @@
                         clojure-mode
                         clojure-test-mode
                         clj-refactor
-                        align-cljlet)
+                        align-cljlet
+                        js2-mode
+                        ac-js2)
     "A list of packages to ensure are installed at launch.")
 
   (dolist (p my-packages)
