@@ -1,3 +1,0 @@
-[submodule "dot-emacs-stuff/manually-installed/multi-web-mode"]
-	path = dot-emacs-stuff/manually-installed/multi-web-mode
-	url = git@github.com:fgallina/multi-web-mode.git
