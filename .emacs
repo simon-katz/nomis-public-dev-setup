@@ -69,7 +69,8 @@
 (defun nomis-load-file-directory ()
   (file-name-directory (nomis-load-file-name)))
 
-(let ((default-directory (nomis-load-file-directory)))
+(let ((default-directory (concat (nomis-load-file-directory)
+                                 "dot-emacs-stuff/")))
   (normal-top-level-add-subdirs-to-load-path))
 
 ;;;; ___________________________________________________________________________
@@ -91,11 +92,8 @@
 ;; (defun nomis-compile-dir (dir)
 ;;   (byte-recompile-directory dir 0 t))
 
-;; (defvar *this-dir*
-;;   (nomis-load-file-directory))
-
 ;; (defvar *emacs-config-dir*
-;;   (file-truename (concat *this-dir* "../")))
+;;   (nomis-load-file-directory))
 
 ;; (defun nomis-compile-emacs-config ()
 ;;   (interactive)
@@ -109,7 +107,7 @@
 
 (defvar nomis-personal-emacs-init-file
   (concat (nomis-load-file-directory)
-          "../../emacs-configuration-personal/nomis-personal-emacs-init.el"))
+          "../emacs-configuration-personal/nomis-personal-emacs-init.el"))
 
 (defvar i-am-nomis-p
   (file-exists-p nomis-personal-emacs-init-file))

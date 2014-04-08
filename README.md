@@ -12,6 +12,10 @@ or on different machines. That's caused me problems.
 
 Contents:
 
+* `.../.emacs`
+
+     My `.emacs`. This loads other stuff.
+
 *   `.../.emacs.d/`
 
      My .emacs.d stuff.
@@ -19,10 +23,6 @@ Contents:
 *   `.../dot-emacs-stuff/`
 
     My `.emacs` stuff.
-
-    * `.../dot-emacs-stuff/dot-emacs.el`
-
-        Essentially my `.emacs`. This loads other stuff.
 
     * `.../dot-emacs-stuff/for-anyone/`
 
@@ -43,6 +43,5 @@ or:
 
 * Really use it:
     * Create a symbolic link from `~/.emacs.d` to `.../.emacs.d/`.
-    * Create a symbolic link from `~/.emacs` to
-      `.../dot-emacs-stuff/dot-emacs.el`. (Or maybe load
-      `.../dot-emacs-stuff/dot-emacs.el` from your `~/.emacs`.)
+    * Create a symbolic link from `~/.emacs`   to `.../.emacs`.
+      (Or maybe load `.../.emacs` from your `~/.emacs`.)
