@@ -7,7 +7,7 @@
   (defvar *extra-ignored-directories*
     '(;; "labrepl*/public/javascripts/jquery.js"
       ;; "emacs-configuration/nomis-addons/cygwin-mount.el"
-      "dot-emacs-d-stuff"
+      ".emacs.d"
       ".worksheet"))
   (defvar *extra-ignored-files*
     '(;; ".jar"

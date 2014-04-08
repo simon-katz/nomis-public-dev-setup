@@ -12,7 +12,7 @@ or on different machines. That's caused me problems.
 
 Contents:
 
-*   `.../dot-emacs-d-stuff/`
+*   `.../.emacs.d/`
 
      My .emacs.d stuff.
 
@@ -42,7 +42,7 @@ To use:
 or:
 
 * Really use it:
-    * Create a symbolic link from `~/.emacs.d` to `.../dot-emacs-d-stuff/`.
+    * Create a symbolic link from `~/.emacs.d` to `.../.emacs.d/`.
     * Create a symbolic link from `~/.emacs` to
       `.../dot-emacs-stuff/dot-emacs.el`. (Or maybe load
       `.../dot-emacs-stuff/dot-emacs.el` from your `~/.emacs`.)
