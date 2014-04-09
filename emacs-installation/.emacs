@@ -1,67 +1,9 @@
-;;;; ---- Emacs init file ----
+;;;; ---- Emacs setup -- Tailor the installation ----
 
-(let ((expected-version "24.2.1")
-      (version emacs-version))
-  (unless (equal version expected-version)
-    (unless (y-or-n-p (format (concat
-                               "Things might not work. This Emacs init is"
-                               " expecting Emacs %s, but this is Emacs %s."
-                               " Type 'y' to continue or 'n' to exit.")
-                              expected-version
-                              version))
-      (kill-emacs))))
-
-;;;; ___________________________________________________________________________
-;;;; ---- Package setup ----
-
-(progn
-  (require 'package)
-
-  (add-to-list 'package-archives
-               '("marmalade" . "http://marmalade-repo.org/packages/")
-               t)
-
-  (add-to-list 'package-archives
-               '("melpa" . "http://melpa.milkbox.net/packages/")
-               t)
-
-  (package-initialize)
-
-  (when (null package-archive-contents)
-    (package-refresh-contents))
-
-  (defvar my-packages '(elisp-slime-nav
-                        cl-lib
-                        paredit
-                        rainbow-delimiters
-                        auto-complete
-                        saveplace
-                        workgroups
-                        fuzzy
-                        htmlize
-                        pos-tip
-                        magit
-                        ido-ubiquitous
-                        smex
-                        idle-highlight-mode
-                        scala-mode2
-                        undo-tree
-                        cider
-                        ac-nrepl
-                        clojure-mode
-                        clojure-test-mode
-                        clj-refactor
-                        align-cljlet
-                        js2-mode
-                        ac-js2)
-    "A list of packages to ensure are installed at launch.")
-
-  (dolist (p my-packages)
-    (when (not (package-installed-p p))
-      (package-install p))))
-
-;;;; ___________________________________________________________________________
-;;;; ---- load-path ----
+(load (concat (file-name-directory
+               (file-truename
+                (or load-file-name (buffer-file-name))))
+              "common-install-and-tailor-stuff.el"))
 
 (defun nomis-load-file-name ()
   (file-truename (or load-file-name (buffer-file-name))))
