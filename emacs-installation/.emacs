@@ -107,7 +107,7 @@
 
 (defvar nomis-personal-emacs-init-file
   (concat (nomis-load-file-directory)
-          "../emacs-configuration-personal/nomis-personal-emacs-init.el"))
+          "../../emacs-configuration-personal/nomis-personal-emacs-init.el"))
 
 (defvar i-am-nomis-p
   (file-exists-p nomis-personal-emacs-init-file))
