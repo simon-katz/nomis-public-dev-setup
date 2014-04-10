@@ -2,6 +2,7 @@
 # - See Nic Ferrier's http://www.emacsbites.com/episode/scratch-emacs.
 
 # emacs_exec="emacs -nw"
+# emacs_exec="emacs"
 emacs_exec="open -n -a /Applications/Emacs-24-2-1.app --args"
 
 function fake-emacs {
