@@ -24,8 +24,9 @@
      ;; by the system for dictionary lookup.
      ;; Use M-d instead.  (The default is paredit-foward-kill-word, which
      ;; I can do without.)
-     (define-key paredit-mode-map (kbd "M-d")
-       'paredit-forward-down)))
+     (when (equal system-type 'darwin)
+       (define-key paredit-mode-map (kbd "M-d")
+         'paredit-forward-down))))
 
 ;;;; ___________________________________________________________________________
 
