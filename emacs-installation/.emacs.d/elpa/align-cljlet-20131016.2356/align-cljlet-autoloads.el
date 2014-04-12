@@ -4,7 +4,7 @@
 
 
 ;;;### (autoloads (align-cljlet) "align-cljlet" "align-cljlet.el"
-;;;;;;  (21301 45648))
+;;;;;;  (21321 46026 0 0))
 ;;; Generated autoloads from align-cljlet.el
 
 (autoload 'align-cljlet "align-cljlet" "\
@@ -14,7 +14,8 @@ Align a let form so that the bindings neatly align into columns
 
 ;;;***
 
-;;;### (autoloads nil nil ("align-cljlet-pkg.el") (21301 45648 121029))
+;;;### (autoloads nil nil ("align-cljlet-pkg.el") (21321 46026 141196
+;;;;;;  0))
 
 ;;;***
 

@@ -4,9 +4,8 @@
 
 
 ;;;### (autoloads (scala-mode scala-mode:set-scala-syntax-mode) "scala-mode2"
-;;;;;;  "../../../../../../../.emacs.d/elpa/scala-mode2-20131115.2347/scala-mode2.el"
-;;;;;;  "3128ccb721834c39583f7c693cc06a70")
-;;; Generated autoloads from ../../../../../../../.emacs.d/elpa/scala-mode2-20131115.2347/scala-mode2.el
+;;;;;;  "scala-mode2.el" (21321 45940 0 0))
+;;; Generated autoloads from scala-mode2.el
 
 (autoload 'scala-mode:set-scala-syntax-mode "scala-mode2" "\
 Sets the syntax-table and other realted variables for the current buffer to those of scala-mode. Can be used to make some other major mode (such as sbt-mode) use scala syntax-table.
@@ -28,16 +27,10 @@ When started, runs `scala-mode-hook'.
 
 ;;;***
 
-;;;### (autoloads nil nil ("../../../../../../../.emacs.d/elpa/scala-mode2-20131115.2347/scala-mode2-fontlock.el"
-;;;;;;  "../../../../../../../.emacs.d/elpa/scala-mode2-20131115.2347/scala-mode2-indent.el"
-;;;;;;  "../../../../../../../.emacs.d/elpa/scala-mode2-20131115.2347/scala-mode2-lib.el"
-;;;;;;  "../../../../../../../.emacs.d/elpa/scala-mode2-20131115.2347/scala-mode2-map.el"
-;;;;;;  "../../../../../../../.emacs.d/elpa/scala-mode2-20131115.2347/scala-mode2-paragraph.el"
-;;;;;;  "../../../../../../../.emacs.d/elpa/scala-mode2-20131115.2347/scala-mode2-pkg.el"
-;;;;;;  "../../../../../../../.emacs.d/elpa/scala-mode2-20131115.2347/scala-mode2-sbt.el"
-;;;;;;  "../../../../../../../.emacs.d/elpa/scala-mode2-20131115.2347/scala-mode2-syntax.el"
-;;;;;;  "../../../../../../../.emacs.d/elpa/scala-mode2-20131115.2347/scala-mode2.el")
-;;;;;;  (21242 5102 283019))
+;;;### (autoloads nil nil ("scala-mode2-fontlock.el" "scala-mode2-indent.el"
+;;;;;;  "scala-mode2-lib.el" "scala-mode2-map.el" "scala-mode2-paragraph.el"
+;;;;;;  "scala-mode2-pkg.el" "scala-mode2-sbt.el" "scala-mode2-syntax.el")
+;;;;;;  (21321 45940 788994 0))
 
 ;;;***
 

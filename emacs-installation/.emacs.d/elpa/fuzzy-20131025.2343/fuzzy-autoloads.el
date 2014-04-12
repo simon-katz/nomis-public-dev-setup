@@ -3,8 +3,8 @@
 ;;; Code:
 
 
-;;;### (autoloads nil nil ("fuzzy-pkg.el" "fuzzy.el") (21242 5089
-;;;;;;  487082))
+;;;### (autoloads nil nil ("fuzzy-pkg.el" "fuzzy.el") (21321 45913
+;;;;;;  200078 0))
 
 ;;;***
 
