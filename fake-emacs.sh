@@ -3,7 +3,7 @@
 
 case "$OSTYPE" in
   darwin*)  emacs_exec="open -n -a /Applications/Emacs-24-2-1.app --args" ;; 
-  msys)     emacs_exec="emacs" ;;
+  msys)     emacs_exec="runemacs" ;;
   *)        emacs_exec="emacs -nw" ;;
 esac
 
