@@ -2,4 +2,4 @@
 
 source fake-emacs.sh
 
-fake-emacs emacs-installation $*
+fake_emacs emacs-installation $*

@@ -7,7 +7,7 @@ case "$OSTYPE" in
   *)        emacs_exec="emacs -nw" ;;
 esac
 
-function fake-emacs {
+function fake_emacs {
     [ "$1" != "" ] || { echo "missing arg -- need an installation name" ; return 1 ; }
     emacsd=$1
     shift
