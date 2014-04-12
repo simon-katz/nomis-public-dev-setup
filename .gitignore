@@ -7,3 +7,4 @@ places
 .emacs-places
 .ido.last
 .smex-items
+/emacs-installation/.lein/self-installs
