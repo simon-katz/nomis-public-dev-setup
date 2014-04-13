@@ -3,7 +3,7 @@
 (load (concat (file-name-directory
                (file-truename
                 (or load-file-name (buffer-file-name))))
-              "_common-install-and-tailor-stuff.el"))
+              "common-install-and-tailor-stuff.el"))
 
 (defun nomis-load-file-name ()
   (file-truename (or load-file-name (buffer-file-name))))

@@ -1,7 +1,7 @@
 ;;;; ---- Create an Emacs "installation" -- download packages ----
 
 (load (concat (file-name-directory load-file-name)
-              "emacs-installation/_common-install-and-tailor-stuff.el"))
+              "emacs-installation/common-install-and-tailor-stuff.el"))
 
 (package-refresh-contents)
 
