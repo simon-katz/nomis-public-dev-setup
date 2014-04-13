@@ -18,23 +18,27 @@ Contents:
 
 * `run-emacs-installation.sh`
 
-    A script to run Emacs. (You can run this Emacs config without having to set up .emacs and .emacs.d in your home directory.)
+    A script to run Emacs. (You can run this Emacs config from here without having to set up .emacs and .emacs.d in your home directory.)
     
-* `.../emacs-installation/.emacs`
+* `emacs-installation/`
 
-    My `.emacs`. This loads other stuff.
+    The Emacs installation.
 
-* `.../emacs-installation/.emacs.d/`
+* `emacs-installation/.emacs`
 
-    My .emacs.d stuff.
+    An init file that is automatically loaded by Emacs. This loads `dot-emacs.el`.
 
-* `.../emacs-installation/dot-emacs-stuff/`
+* `emacs-installation/.emacs.d/`
 
-    My `.emacs` stuff.
+    Emacs's .emacs.d directory. Amongst other things, this contains packages downloaded by Emacs.
 
-    * `.../emacs-installation/emacs-init-files`
+* `emacs-installation/dot-emacs.el`
 
-        A directory containing files to tailor the Emacs installation.
+    The top-level Emacs tailoring file. This loads other stuff.
+
+* `emacs-installation/emacs-init-files`
+
+    A directory containing files to tailor the Emacs installation.
 
 To use:
 
