@@ -3,8 +3,8 @@
 ;;; Code:
 
 
-;;;### (autoloads nil nil ("pos-tip-pkg.el" "pos-tip.el") (21321
-;;;;;;  45918 702229 0))
+;;;### (autoloads nil nil ("pos-tip-pkg.el" "pos-tip.el") (21323
+;;;;;;  5981 475490 0))
 
 ;;;***
 

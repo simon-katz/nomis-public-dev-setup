@@ -12,7 +12,7 @@
 ;;;;;;  cljr-replace-use cljr-add-import-to-ns cljr-add-use-to-ns
 ;;;;;;  cljr-add-require-to-ns cljr-remove-unused-requires cljr-sort-ns
 ;;;;;;  cljr-rename-file cljr-add-keybindings-with-modifier cljr-add-keybindings-with-prefix)
-;;;;;;  "clj-refactor" "clj-refactor.el" (21321 46023 0 0))
+;;;;;;  "clj-refactor" "clj-refactor.el" (21323 6082 0 0))
 ;;; Generated autoloads from clj-refactor.el
 
 (autoload 'cljr-add-keybindings-with-prefix "clj-refactor" "\
@@ -173,7 +173,7 @@ A mode to keep the clj-refactor keybindings.
 
 ;;;***
 
-;;;### (autoloads nil nil ("clj-refactor-pkg.el") (21321 46023 73593
+;;;### (autoloads nil nil ("clj-refactor-pkg.el") (21323 6082 19741
 ;;;;;;  0))
 
 ;;;***

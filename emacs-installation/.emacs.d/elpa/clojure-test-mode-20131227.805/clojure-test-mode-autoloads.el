@@ -4,7 +4,7 @@
 
 
 ;;;### (autoloads (clojure-find-clojure-test clojure-test-mode) "clojure-test-mode"
-;;;;;;  "clojure-test-mode.el" (21321 45971 0 0))
+;;;;;;  "clojure-test-mode.el" (21323 6031 0 0))
 ;;; Generated autoloads from clojure-test-mode.el
 
 (autoload 'clojure-test-mode "clojure-test-mode" "\
@@ -26,8 +26,8 @@ Enable clojure-test-mode if the current buffer contains a \"clojure.test\" bit i
 
 ;;;***
 
-;;;### (autoloads nil nil ("clojure-test-mode-pkg.el") (21321 45971
-;;;;;;  190817 0))
+;;;### (autoloads nil nil ("clojure-test-mode-pkg.el") (21323 6031
+;;;;;;  900974 0))
 
 ;;;***
 

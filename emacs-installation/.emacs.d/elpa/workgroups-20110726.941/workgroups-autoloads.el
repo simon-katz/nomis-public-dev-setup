@@ -3,8 +3,8 @@
 ;;; Code:
 
 
-;;;### (autoloads nil nil ("workgroups-pkg.el" "workgroups.el") (21321
-;;;;;;  45907 730362 0))
+;;;### (autoloads nil nil ("workgroups-pkg.el" "workgroups.el") (21323
+;;;;;;  5972 624590 0))
 
 ;;;***
 

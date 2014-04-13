@@ -4,7 +4,7 @@
 
 
 ;;;### (autoloads (ac-nrepl-popup-doc ac-nrepl-setup) "ac-nrepl"
-;;;;;;  "ac-nrepl.el" (21321 45970 0 0))
+;;;;;;  "ac-nrepl.el" (21323 6030 0 0))
 ;;; Generated autoloads from ac-nrepl.el
 
 (defface ac-nrepl-candidate-face '((t (:inherit ac-candidate-face))) "\
@@ -47,7 +47,7 @@ A popup alternative to `nrepl-doc'.
 
 ;;;***
 
-;;;### (autoloads nil nil ("ac-nrepl-pkg.el") (21321 45970 76024
+;;;### (autoloads nil nil ("ac-nrepl-pkg.el") (21323 6030 765093
 ;;;;;;  0))
 
 ;;;***
