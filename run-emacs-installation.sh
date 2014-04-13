@@ -1,5 +1,5 @@
 #!/bin/bash -e
 
-source fake-emacs.sh
+source _fake-emacs.sh
 
 fake_emacs emacs-installation $*
