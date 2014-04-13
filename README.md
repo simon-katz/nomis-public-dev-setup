@@ -8,13 +8,13 @@ Why combine `.emacs` stuff and `.emacs.d/` stuff in a single repo?
 Although this stuff would download `.emacs.d/` stuff if it didn't exist,
 that's a recipe for not knowing what versions of packages you have and
 having different versions if you download packages at different times
-or on different machines. That's caused me problems.
+or on different machines. That causes problems.
 
 Contents:
 
 * `make-emacs-installation.sh`
 
-    A script to download packages in to `.../emacs-installation/.emacs.d/`
+    A script to download packages in to `.../emacs-installation/.emacs.d/`. Typically you don't need to run this — it has already been run.
 
 * `run-emacs-installation.sh`
 
