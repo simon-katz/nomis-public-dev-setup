@@ -429,20 +429,24 @@ sub-subdirectories, etc."
   (interactive)
   (nomis-dirtree-expand 1000000))
 
+(defun collapse-recursively (widget)
+  ;; For some reason having this in a `labels` within
+  ;; `nomis-dirtree-collapse-all` doesn't work -- undefined function.
+  ;; Weird. Was ok in Emacs 24.2 but not in 24.3
+  (mapc 'collapse-recursively
+        (nomis-dirtree-widget-children widget))
+  (nomis-dirtree-collapse-node widget))
+
 (defun nomis-dirtree-collapse-all ()
   "Collapse directory under point and all of its subdirectories,
 sub-subdirectories, etc, so that subsequent expansion shows only one level."
   (interactive)
-  (labels ((collapse-recursively (widget)
-                                 (mapc 'collapse-recursively
-                                       (nomis-dirtree-widget-children widget))
-                                 (nomis-dirtree-collapse-node widget)))
-    (let* ((widget (nomis-dirtree-selected-widget)))
-      (if (nomis-dirtree-directory-widget-p widget)
-          (collapse-recursively widget)
-        (progn
-          (message "Not a directory, so can't collapse.")
-          (beep))))))
+  (let* ((widget (nomis-dirtree-selected-widget)))
+    (if (nomis-dirtree-directory-widget-p widget)
+        (collapse-recursively widget)
+      (progn
+        (message "Not a directory, so can't collapse.")
+        (beep)))))
 
 (defun nomis-dirtree-show-selection-info ()
   "Display some details of the file under point in a message dialog.
