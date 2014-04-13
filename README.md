@@ -32,17 +32,9 @@ Contents:
 
     My `.emacs` stuff.
 
-    * `.../emacs-installation/dot-emacs-stuff/for-anyone/`
+    * `.../emacs-installation/emacs-init-files`
 
-        A directory containing things that are probably good for anyone to use.
-
-    * `.../emacs-installation/dot-emacs-stuff/for-me/`
-
-        A directory containing things that may not be good for
-          anyone other than me to use, either because they are crap or
-          because they may change significantly or because I haven't
-          decided yet that they're ok. Of course, you can copy
-          anything you want or use what's here as a source of ideas.
+        A directory containing files to tailor the Emacs installation.
 
 To use:
 
