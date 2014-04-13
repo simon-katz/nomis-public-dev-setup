@@ -391,16 +391,16 @@ Then display contents of file under point in other window."
   "Expand directory under point, showing previous expansion of subdirectories.
 If <arg> is supplied, first collapse all and then expand to <arg> levels."
   (interactive "P")
-  (labels ((expand-recursively
-            (widget n-times &optional force-expand-p)
-            (when (and (nomis-dirtree-directory-widget-p widget)
-                       (>= n-times 1)
-                       (or force-expand-p
-                           (not (directory-to-keep-collapsed-p
-                                 (nomis-dirtree-widget-file widget)))))
-              (nomis-dirtree-expand-node widget)
-              (mapc (lambda (x) (expand-recursively x (1- n-times)))
-                    (nomis-dirtree-widget-children widget)))))
+  (cl-labels ((expand-recursively
+               (widget n-times &optional force-expand-p)
+               (when (and (nomis-dirtree-directory-widget-p widget)
+                          (>= n-times 1)
+                          (or force-expand-p
+                              (not (directory-to-keep-collapsed-p
+                                    (nomis-dirtree-widget-file widget)))))
+                 (nomis-dirtree-expand-node widget)
+                 (mapc (lambda (x) (expand-recursively x (1- n-times)))
+                       (nomis-dirtree-widget-children widget)))))
     (let* ((widget (nomis-dirtree-selected-widget)))
       (if (nomis-dirtree-directory-widget-p widget)
           (progn
@@ -468,8 +468,8 @@ Mostly for debugging purposes."
                  (loop for k in (rest widget) by 'cddr
                        collect k))))
 
-(labels ((dk (k f)
-             (define-key nomis-dirtree-mode-map k f)))
+(cl-labels ((dk (k f)
+                (define-key nomis-dirtree-mode-map k f)))
 
   (define-key widget-keymap (kbd "<RET>") nil)
   (dk (kbd "<RET>")       'nomis-dirtree-display-file)
