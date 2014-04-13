@@ -5,4 +5,4 @@
                           (buffer-file-name))))))
     (load (concat directory file-name))))
 
-(load-file-relative-to-this-file "dot-emacs.el")
+(load-file-relative-to-this-file "dot-emacs")

@@ -7,8 +7,8 @@
                           (buffer-file-name))))))
     (load (concat directory file-name))))
 
-(load-file-relative-to-this-file "emacs-installation/ensure-expected-emacs-version.el")
-(load-file-relative-to-this-file "emacs-installation/set-up-package-stuff.el")
+(load-file-relative-to-this-file "emacs-installation/ensure-expected-emacs-version")
+(load-file-relative-to-this-file "emacs-installation/set-up-package-stuff")
 
 (package-refresh-contents)
 

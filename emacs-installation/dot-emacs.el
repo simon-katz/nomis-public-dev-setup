@@ -1,7 +1,7 @@
 ;;;; ---- Emacs setup -- Tailor the installation ----
 
-(load-file-relative-to-this-file "ensure-expected-emacs-version.el")
-(load-file-relative-to-this-file "set-up-package-stuff.el")
+(load-file-relative-to-this-file "ensure-expected-emacs-version")
+(load-file-relative-to-this-file "set-up-package-stuff")
 
 (defun nomis-load-file-name ()
   (file-truename (or load-file-name (buffer-file-name))))
