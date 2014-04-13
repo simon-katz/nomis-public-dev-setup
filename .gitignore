@@ -1,6 +1,5 @@
 emacs-installation/.cider-history
-emacs-installation/.emacs-places
-emacs-installation/.emacs.d/ac-comphist.dat
 emacs-installation/.ido.last
 emacs-installation/.smex-items
-emacs-installation/.lein/self-installs/leiningen-2.3.4-standalone.jar
+emacs-installation/.emacs-places
+emacs-installation/.emacs.d/ac-comphist.dat
