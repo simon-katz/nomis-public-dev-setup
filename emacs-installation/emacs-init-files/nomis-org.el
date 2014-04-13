@@ -18,7 +18,7 @@
 (defvar nomis-notes-directory
   (if i-am-nomis-p
       (concat (nomis-load-file-directory)
-          "../../../../notes")
+              "../../../notes")
     "you are not nomis so you don't have a nomis-notes-directory"))
 
 (setq org-directory

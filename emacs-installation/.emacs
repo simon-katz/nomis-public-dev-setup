@@ -11,9 +11,14 @@
 (defun nomis-load-file-directory ()
   (file-name-directory (nomis-load-file-name)))
 
-(let ((default-directory (concat (nomis-load-file-directory)
-                                 "dot-emacs-stuff/")))
-  (normal-top-level-add-subdirs-to-load-path))
+(defun add-dir-and-normal-subdirs-to-load-path (dir)
+  (add-to-list 'load-path dir)
+  (let* ((default-directory dir))
+    (normal-top-level-add-subdirs-to-load-path)))
+
+(add-dir-and-normal-subdirs-to-load-path
+ (concat (nomis-load-file-directory)
+         "emacs-init-files"))
 
 ;;;; ___________________________________________________________________________
 ;;;; ---- Compilation ----
