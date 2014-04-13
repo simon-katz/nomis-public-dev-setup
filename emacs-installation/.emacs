@@ -1,9 +1,14 @@
 ;;;; ---- Emacs setup -- Tailor the installation ----
 
-(load (concat (file-name-directory
-               (file-truename
-                (or load-file-name (buffer-file-name))))
-              "common-install-and-tailor-stuff.el"))
+(defun load-file-relative-to-this-file (file-name)
+  (let* ((directory (file-name-directory
+                     (file-truename
+                      (or load-file-name
+                          (buffer-file-name))))))
+    (load (concat directory file-name))))
+
+(load-file-relative-to-this-file "ensure-expected-emacs-version.el")
+(load-file-relative-to-this-file "set-up-package-stuff.el")
 
 (defun nomis-load-file-name ()
   (file-truename (or load-file-name (buffer-file-name))))
