@@ -19,35 +19,6 @@
          "emacs-init-files"))
 
 ;;;; ___________________________________________________________________________
-;;;; ---- Compilation ----
-
-;; ;;;; It would be nice to compile things when necessary, but Emacs
-;; ;;;; relies on an "is source file newer than compiled file" check to
-;; ;;;; decide whether to recompile. This won't work with the way you
-;; ;;;; often replace source files with copies of old copies. But it's
-;; ;;;; nice to check for compilation errors every now and then.
-;; ;;;; 
-;; ;;;; For some reason, having these combined in a single function
-;; ;;;; means that deletion doesn't happen. So have two functions.
-
-;; (defun nomis-delete-elc-files (dir)
-;;   (shell-command (format "find \"%s\" -name *.elc -delete"
-;;                          dir)))
-
-;; (defun nomis-compile-dir (dir)
-;;   (byte-recompile-directory dir 0 t))
-
-;; (defvar *emacs-config-dir*
-;;   (nomis-load-file-directory))
-
-;; (defun nomis-compile-emacs-config ()
-;;   (interactive)
-;;   (nomis-compile-dir *emacs-config-dir*))
-
-;; ;;;; (nomis-delete-elc-files *emacs-config-dir*)
-;; ;;;; (nomis-compile-dir *emacs-config-dir*)
-
-;;;; ___________________________________________________________________________
 ;;;; ---- i-am-nomis-p ----
 
 (defvar nomis-personal-emacs-init-file
