@@ -26,7 +26,7 @@
                       ido-ubiquitous
                       smex
                       idle-highlight-mode
-                      ;; scala-mode2
+                      scala-mode2
                       undo-tree
                       cider
                       ac-nrepl
