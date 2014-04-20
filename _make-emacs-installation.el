@@ -26,7 +26,7 @@
                       ido-ubiquitous
                       smex
                       idle-highlight-mode
-                      scala-mode2
+                      ;; scala-mode2
                       undo-tree
                       cider
                       ac-nrepl
@@ -35,7 +35,8 @@
                       clj-refactor
                       align-cljlet
                       js2-mode
-                      ac-js2))
+                      ;; ac-js2
+		      ))
 
 (dolist (p my-packages)
   (when (not (package-installed-p p))
