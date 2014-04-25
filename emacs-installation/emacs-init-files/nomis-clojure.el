@@ -22,7 +22,7 @@
 (dolist (hook '(clojure-mode-hook
                 cider-repl-mode-hook))
   (dolist (hook-fun '(rainbow-delimiters-mode
-                      paredit-mode
+                      ;; paredit-mode
                       subword-mode
                       nomis-setup-clj-refactor-mode))
     (add-hook hook hook-fun)))

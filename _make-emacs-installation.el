@@ -15,6 +15,7 @@
 (defvar my-packages '(elisp-slime-nav
                       cl-lib
                       paredit
+                      smartparens
                       rainbow-delimiters
                       auto-complete
                       saveplace

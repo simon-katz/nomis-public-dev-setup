@@ -33,7 +33,8 @@
 
 ;;;; ---- Lisp and Clojure stuff probably good for anyone ----
 
-(require 'nomis-paredit)
+;; (require 'nomis-paredit)
+(require 'nomis-smartparens)
 (require 'nomis-emacs-lisp-and-ielm)
 (require 'nomis-clojure)
 
