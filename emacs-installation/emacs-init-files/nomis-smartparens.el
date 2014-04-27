@@ -24,11 +24,6 @@
     'sp-down-sexp))
 
 ;;;; ___________________________________________________________________________
-;;;; C-k is broken. So do my own thing.
-
-(define-key sp-keymap (kbd "C-k") 'paredit-kill)
-
-;;;; ___________________________________________________________________________
 ;;;; TAB is broken. I get this error:
 ;;;;   ac-yasnippet-candidates:
 ;;;;     Symbol's function definition is void: yas/current-snippet-table
