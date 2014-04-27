@@ -13,8 +13,9 @@
 ;;;;
 ;;;; Found at http://www.emacswiki.org/emacs/MetaKeyProblems.
 
-(setq mac-command-modifier 'meta) ; map command key to meta
-(setq mac-option-modifier nil)    ; do not map option key
+(setq mac-command-modifier 'meta)  ; map command key to meta
+(setq mac-option-modifier nil)     ; do not map option key
+(setq ns-function-modifier 'hyper) ; set Mac's Fn key to Hyper
 
 ;;;; ___________________________________________________________________________
 ;;;; ---- Experiment: Make some keys more "normal" ----
