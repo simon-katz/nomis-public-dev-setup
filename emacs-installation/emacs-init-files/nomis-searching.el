@@ -70,8 +70,8 @@
   (interactive (-nomis-rgrep-interactive-stuff t))
   (rgrep regexp files dir confirm))
 
-(define-key global-map (kbd "C-c C-x C-c") 'nomis-rgrep)
-(define-key global-map (kbd "C-c C-x C-s") 'nomis-rgrep-all-unignored-files)
+(define-key global-map (kbd "H-s g a") 'nomis-rgrep)
+(define-key global-map (kbd "H-s g g") 'nomis-rgrep-all-unignored-files)
 
 ;;;; ___________________________________________________________________________
 ;;;; ---- Stuff for rgrep and lgrep ----
