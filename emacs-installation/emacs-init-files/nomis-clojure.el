@@ -8,6 +8,8 @@
 (require 'nomis-clojure-indentation)
 (require 'nomis-cider-extras)
 
+(require 'align-cljlet)
+
 ;;;; ___________________________________________________________________________
 ;;;; clj-refactor
 
