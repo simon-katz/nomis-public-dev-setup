@@ -1,4 +1,4 @@
-;;;; Init stuff -- nrepl extras
+;;;; Init stuff -- CIDER extras
 
 ;;## ;;;; TODO: Look at all this in the light of:
 ;;## ;;;;       - Now have nrepl.el 0.1.8. (Hmmm, no, reverted to 0.1.7 because eldoc
@@ -71,7 +71,9 @@
 ;;;; namespace that has a long name.
 
 (cond
- ((equal (cider-version) "CIDER 0.6.0alpha (package: 20140210.622)")
+ ((member (cider-version)
+          '("0.5.0"
+            "CIDER 0.6.0alpha (package: 20140210.622)"))
   (defun cider-repl--insert-prompt (namespace)
     "Insert the prompt (before markers!), taking into account NAMESPACE.
 Set point after the prompt.
@@ -84,7 +86,7 @@ Return the position of the prompt beginning."
               (prompt (let ((original-prompt (format "%s> " namespace)))
                         ;; jsk: Added stuff here
                         (concatenate 'string
-                                     ;; (make-string 80 ?\_)
+                                     (make-string 80 ?\_)
                                      "\n"
                                      original-prompt
                                      "\n"))))
