@@ -5,7 +5,7 @@
 (dolist (hook '(emacs-lisp-mode-hook
                 ielm-mode-hook))
   (dolist (hook-fun '(rainbow-delimiters-mode
-                      ;; paredit-mode
+                      paredit-mode
                       turn-on-elisp-slime-nav-mode
                       turn-on-eldoc-mode))
           (add-hook hook hook-fun)))
