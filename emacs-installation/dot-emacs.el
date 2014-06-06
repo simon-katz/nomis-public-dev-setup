@@ -1,3 +1,9 @@
+;;;; ___________________________________________________________________________
+;;;; ---- Duh ----
+
+(add-to-list 'exec-path "/usr/local/bin")
+
+;;;; ___________________________________________________________________________
 ;;;; ---- Emacs setup -- Tailor the installation ----
 
 (load-file-relative-to-this-file "ensure-expected-emacs-version")
@@ -86,6 +92,8 @@
 (require 'nomis-multi-web-mode)
 
 (require 'nomis-javascript)
+
+(require 'nomis-rcirc)
 
 (require 'homeless)
 
