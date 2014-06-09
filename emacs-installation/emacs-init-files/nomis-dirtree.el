@@ -297,6 +297,14 @@ With prefix argument select `nomis-dirtree-buffer'"
       (when file
         (find-file-other-window file)))))
 
+(defun nomis-dirtree-display-file-in-new-frame ()
+  "Display contents of file under point in other window."
+  (interactive)
+  (save-selected-window
+    (let* ((file (nomis-dirtree-selected-file-or-dir)))
+      (when file
+        (find-file-other-frame file)))))
+
 (defun nomis-dirtree-open-in-default-app ()
   "Open file under point using its default app."
   (interactive)
@@ -474,6 +482,7 @@ Mostly for debugging purposes."
   (define-key widget-keymap (kbd "<RET>") nil)
   (dk (kbd "<RET>")       'nomis-dirtree-display-file)
   (dk (kbd "C-<return>")  'nomis-dirtree-display-file)
+  (dk (kbd "M-<return>")  'nomis-dirtree-display-file-in-new-frame)
 
   (dk (kbd "M-o")         'nomis-dirtree-open-in-default-app)
 
