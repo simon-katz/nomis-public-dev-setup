@@ -6,4 +6,8 @@
 ;;           (lambda ()
 ;;             (rcirc-track-minor-mode 1)))
 
+(add-hook 'rcirc-mode-hook
+          (lambda ()
+            (flyspell-mode 1)))
+
 (provide 'nomis-rcirc)
