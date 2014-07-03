@@ -3,9 +3,14 @@
 ;;; Code:
 
 
-;;;### (autoloads (cider cider-jack-in) "cider" "cider.el" (21331
-;;;;;;  55752 0 0))
+;;;### (autoloads (cider-connect cider-jack-in cider-version) "cider"
+;;;;;;  "cider.el" (21425 31480 0 0))
 ;;; Generated autoloads from cider.el
+
+(autoload 'cider-version "cider" "\
+Display CIDER's version.
+
+\(fn)" t nil)
 
 (autoload 'cider-jack-in "cider" "\
 Start a nREPL server for the current project and connect to it.
@@ -14,17 +19,28 @@ start the server.
 
 \(fn &optional PROMPT-PROJECT)" t nil)
 
-(autoload 'cider "cider" "\
+(autoload 'cider-connect "cider" "\
 Connect to an nREPL server identified by HOST and PORT.
 
 \(fn HOST PORT)" t nil)
 
-(eval-after-load 'clojure-mode '(progn (define-key clojure-mode-map (kbd "C-c M-j") 'cider-jack-in) (define-key clojure-mode-map (kbd "C-c M-c") 'cider)))
+(eval-after-load 'clojure-mode '(progn (define-key clojure-mode-map (kbd "C-c M-j") 'cider-jack-in) (define-key clojure-mode-map (kbd "C-c M-c") 'cider-connect)))
+
+;;;***
+
+;;;### (autoloads (cider-inspect) "cider-inspector" "cider-inspector.el"
+;;;;;;  (21425 31480 0 0))
+;;; Generated autoloads from cider-inspector.el
+
+(autoload 'cider-inspect "cider-inspector" "\
+Eval the string EXPRESSION and inspect the result.
+
+\(fn EXPRESSION)" t nil)
 
 ;;;***
 
 ;;;### (autoloads (cider-macroexpand-all cider-macroexpand-1) "cider-macroexpansion"
-;;;;;;  "cider-macroexpansion.el" (21331 55751 0 0))
+;;;;;;  "cider-macroexpansion.el" (21425 31480 0 0))
 ;;; Generated autoloads from cider-macroexpansion.el
 
 (autoload 'cider-macroexpand-1 "cider-macroexpansion" "\
@@ -41,8 +57,8 @@ Invoke 'clojure.walk/macroexpand-all' on the expression at point.
 
 ;;;***
 
-;;;### (autoloads (cider-mode) "cider-mode" "cider-mode.el" (21331
-;;;;;;  55751 0 0))
+;;;### (autoloads (cider-mode) "cider-mode" "cider-mode.el" (21425
+;;;;;;  31480 0 0))
 ;;; Generated autoloads from cider-mode.el
 
 (autoload 'cider-mode "cider-mode" "\
@@ -54,8 +70,19 @@ Minor mode for REPL interaction from a Clojure buffer.
 
 ;;;***
 
+;;;### (autoloads (cider-scratch) "cider-scratch" "cider-scratch.el"
+;;;;;;  (21425 31480 0 0))
+;;; Generated autoloads from cider-scratch.el
+
+(autoload 'cider-scratch "cider-scratch" "\
+Create a scratch buffer.
+
+\(fn)" t nil)
+
+;;;***
+
 ;;;### (autoloads (cider-selector) "cider-selector" "cider-selector.el"
-;;;;;;  (21331 55752 0 0))
+;;;;;;  (21425 31480 0 0))
 ;;; Generated autoloads from cider-selector.el
 
 (autoload 'cider-selector "cider-selector" "\
@@ -71,8 +98,8 @@ See `def-cider-selector-method' for defining new methods.
 ;;;***
 
 ;;;### (autoloads nil nil ("cider-client.el" "cider-eldoc.el" "cider-interaction.el"
-;;;;;;  "cider-pkg.el" "cider-repl.el" "cider-util.el" "cider-version.el"
-;;;;;;  "nrepl-client.el") (21331 55752 158937 0))
+;;;;;;  "cider-pkg.el" "cider-repl.el" "cider-stacktrace.el" "cider-util.el"
+;;;;;;  "nrepl-client.el") (21425 31480 563480 0))
 
 ;;;***
 
