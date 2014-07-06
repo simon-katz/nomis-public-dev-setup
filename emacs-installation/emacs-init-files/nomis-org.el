@@ -111,4 +111,16 @@
 
 ;;;; ___________________________________________________________________________
 
+(progn
+  ;; I want to train myself not to hit RETURN when in an agenda;
+  ;; hit SPACE instead to show in other window.
+  (defadvice org-agenda-switch-to (around nomis-org-agenda-switch-to (&rest args))
+    (message "Use org-agenda-show-and-scroll-up (SPACE) instead")
+    (beep)
+    ;; ad-do-it
+    )
+  (ad-activate 'org-agenda-switch-to))
+
+;;;; ___________________________________________________________________________
+
 (provide 'nomis-org)
