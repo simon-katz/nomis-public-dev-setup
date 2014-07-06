@@ -73,7 +73,8 @@
 (cond
  ((member (cider-version)
           '("0.5.0"
-            "CIDER 0.6.0alpha (package: 20140210.622)"))
+            "CIDER 0.6.0alpha (package: 20140210.622)"
+            "CIDER 0.6.0"))
   (defun cider-repl--insert-prompt (namespace)
     "Insert the prompt (before markers!), taking into account NAMESPACE.
 Set point after the prompt.
