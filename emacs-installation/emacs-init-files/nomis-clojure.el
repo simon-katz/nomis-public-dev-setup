@@ -19,6 +19,8 @@
   (clj-refactor-mode 1)
   (cljr-add-keybindings-with-prefix "M-R"))
 
+(add-hook 'clojure-mode-hook (lambda () (yas/minor-mode 1)))
+
 ;;;; ___________________________________________________________________________
 
 (dolist (hook '(clojure-mode-hook
