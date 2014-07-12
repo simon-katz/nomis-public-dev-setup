@@ -42,8 +42,13 @@
 ;;;; ___________________________________________________________________________
 ;;;; ---- Frame size ----
 
-(defvar single-window-frame-width 85)
-(defvar double-window-frame-width 176)
+(defvar nomis-extra-width-for-each-window 91)
+
+(defvar nomis-single-window-frame-width 85)
+(defvar nomis-double-window-frame-width (+ nomis-single-window-frame-width
+                                           nomis-extra-width-for-each-window))
+(defvar nomis-triple-window-frame-width (+ nomis-double-window-frame-width
+                                           nomis-extra-width-for-each-window))
 
 ;;;; ___________________________________________________________________________
 ;;;; ---- Cycle frames ----
@@ -86,7 +91,7 @@
         (t
          66)))
 
-(defvar nomis-frame-prefs `((width  . ,single-window-frame-width)
+(defvar nomis-frame-prefs `((width  . ,nomis-single-window-frame-width)
                             ;; (height . ,nomis-window-height) ; TODO: Broken when people have thingy bar at the bottom of the screen.  (Also, this depends on a particular font size.)
                             (top . 0)
                             ;; (left . 140)
@@ -133,11 +138,15 @@
    
   (defun nomis-w-single ()
     (interactive)
-    (nomis-set-frame-width* single-window-frame-width))
+    (nomis-set-frame-width* nomis-single-window-frame-width))
 
   (defun nomis-w-double ()
     (interactive)
-    (nomis-set-frame-width* double-window-frame-width))
+    (nomis-set-frame-width* nomis-double-window-frame-width))
+
+  (defun nomis-w-triple ()
+    (interactive)
+    (nomis-set-frame-width* nomis-triple-window-frame-width))
 
   (defun nomis-set-frame-height* (height)
     (set-frame-height (selected-frame) height))
@@ -163,6 +172,13 @@
   (interactive)
   (mapc (lambda (frame) (maximize-frame-vertically frame t))
         (frame-list)))
+
+;;;; ___________________________________________________________________________
+
+(define-key global-map (kbd "H-w w 1") 'nomis-w-single)
+(define-key global-map (kbd "H-w w 2") 'nomis-w-double)
+(define-key global-map (kbd "H-w w 3") 'nomis-w-triple)
+(define-key global-map (kbd "H-w h m") 'maximize-frame-vertically)
 
 ;;;; ___________________________________________________________________________
 
