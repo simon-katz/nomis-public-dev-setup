@@ -241,8 +241,8 @@ With prefix argument select `nomis-dirtree-buffer'"
       (widget-apply-action widget))))
 
 (defvar *dirs-to-keep-collapsed-unless-forced*
-  '(".git"
-    ".repl"
+  '("\\.git"
+    "\\.repl"
     "out"
     "target"))
 
