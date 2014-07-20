@@ -85,21 +85,26 @@
         ((member (system-name) ; this keeps changing --why? Ah! At the time of writing it's "188.28.48.230.threembb.co.uk", which mentions "three" and I'm on my data connection with 3connect
                  (list "unknown-70-56-81-a2-7a-0f.home"
                        "Perryman.local"
-                       "perryman.home"))
+                       "perryman.home"
+                       "lonmaclt002.home"))
          ;; 900 pixels - menu bar
          56)
         (t
          66)))
 
-(defvar nomis-frame-prefs `((width  . ,nomis-single-window-frame-width)
-                            ;; (height . ,nomis-window-height) ; TODO: Broken when people have thingy bar at the bottom of the screen.  (Also, this depends on a particular font size.)
-                            (top . 0)
-                            ;; (left . 140)
-                            ;; (font . "4.System VIO")
-                            ;; (foreground-color . "Black")
-                            (background-color . "#f5f5f5")
-                            ;;(cursor-color . "SkyBlue")
-                            ))
+(defvar nomis-frame-prefs (append
+                           (if i-am-nomis-p
+                               `((height . ,nomis-window-height) ; Broken when people have thingy bar at the bottom of the screen.  (Also, this depends on a particular font size.)
+                                 )
+                             '())
+                           `((width  . ,nomis-single-window-frame-width)
+                             (top . 0)
+                             ;; (left . 140)
+                             ;; (font . "4.System VIO")
+                             ;; (foreground-color . "Black")
+                             (background-color . "#f5f5f5")
+                             ;;(cursor-color . "SkyBlue")
+                             )))
 ;; (setq initial-frame-alist (append nomis-frame-prefs initial-frame-alist))
 (setq default-frame-alist (append nomis-frame-prefs default-frame-alist))
 
