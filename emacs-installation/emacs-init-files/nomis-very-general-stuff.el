@@ -33,6 +33,8 @@
 
 (defalias 'yes-or-no-p 'y-or-n-p)
 
+(put 'erase-buffer 'disabled nil)
+
 ;; Try not using defparameter, because:
 ;; - It's not Emacs Lisp.
 ;; - Lots of Emacs, I think, depends on being able to set values before
