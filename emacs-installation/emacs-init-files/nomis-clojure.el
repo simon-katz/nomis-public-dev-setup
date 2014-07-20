@@ -47,8 +47,8 @@
 (setq cider-repl-display-in-current-window t)
 (setq cider-repl-print-length 100)
 
-(setq cider-repl-history-file "~/.cider-history")
-(setq cider-repl-history-size 1000) ; the default is 500
+;; (setq cider-repl-history-file "~/.cider-history") ; I'm now hacking this in `cider-jack-in`
+(setq cider-repl-history-size 5000) ; the default is 500
 
 ;; (setq cider-repl-use-pretty-printing t) ; doesn't work with ClojureScript
 
