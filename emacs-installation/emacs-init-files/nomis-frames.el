@@ -86,7 +86,9 @@
                  (list "unknown-70-56-81-a2-7a-0f.home"
                        "Perryman.local"
                        "perryman.home"
-                       "lonmaclt002.home"))
+                       "lonmaclt002.home"
+                       "unknown-3c-15-c2-e6-e3-64.home" ; sheringham
+                       ))
          ;; 900 pixels - menu bar
          56)
         (t
