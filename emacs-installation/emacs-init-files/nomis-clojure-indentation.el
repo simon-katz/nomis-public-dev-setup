@@ -2,6 +2,8 @@
 
 (eval-after-load 'clojure-mode
   '(define-clojure-indent
+     ;; Clojure core
+     (cond-> 1)
      ;; Ring and Compojure
      ;; From https://github.com/weavejester/compojure/wiki/Emacs-indentation.
      (defroutes 'defun)
