@@ -43,7 +43,7 @@
 
 (setq nrepl-buffer-name-separator "--")
 
-(setq nrepl-buffer-name-show-port t)
+;; (setq nrepl-buffer-name-show-port t)
 (setq cider-repl-display-in-current-window t)
 (setq cider-repl-print-length 100)
 
