@@ -1,5 +1,14 @@
 ;;;; Init stuff -- Keyboard scrolling and movement.
 
+;;;; ___________________________________________________________________________
+
+;;;; See https://www.gnu.org/software/emacs/manual/html_node/emacs/Horizontal-Scrolling.html
+
+(setq hscroll-margin 0)
+(setq hscroll-step 1)
+
+;;;; ___________________________________________________________________________
+
 (defun nomis-scroll-down-in-place (&optional n)
   "Like scroll-down-line, except move point to keep it at the same position
 in the display."
