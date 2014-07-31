@@ -1,6 +1,7 @@
 ;;;; Init stuff -- Org Mode.
 
 ;;;; ___________________________________________________________________________
+;;;; ___________________________________________________________________________
 ;;;; The following lines are always needed. Choose your own keys.
 
 (add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))
@@ -10,9 +11,10 @@
 (global-set-key "\C-cb" 'org-iswitchb)
 
 ;;;; ___________________________________________________________________________
+;;;; ___________________________________________________________________________
 ;;;; Personal tailoring
 
-;;;; ---------------------------------------------------------------------------
+;;;; ___________________________________________________________________________
 ;;;; General
 
 (defvar nomis-notes-directory
@@ -34,14 +36,14 @@
 
 (setq org-startup-indented t)
 
-;;;; ---------------------------------------------------------------------------
+;;;; ___________________________________________________________________________
 ;;;; Priorities
 
 (setq org-highest-priority ?1)
 (setq org-lowest-priority  ?9)
 (setq org-default-priority ?2)
 
-;;;; ---------------------------------------------------------------------------
+;;;; ___________________________________________________________________________
 ;;;; Org mode hook function
 
 (defun nomis-org-mode ()
@@ -66,19 +68,19 @@
 
 (add-hook 'org-mode-hook 'nomis-org-mode)
 
-;;;; ---------------------------------------------------------------------------
+;;;; ___________________________________________________________________________
 ;;;; Dependencies
 
 (setq org-enforce-todo-dependencies t)
 ;; (setq org-agenda-dim-blocked-tasks 'invisible) ; actually the default dimmimg is nice -- you can see more info
 
-;;;; ---------------------------------------------------------------------------
+;;;; ___________________________________________________________________________
 ;;;; Capture
 
 (setq org-default-notes-file (concat org-directory "/___notes.org"))
 (define-key global-map "\C-cc" 'org-capture)
 
-;;;; ---------------------------------------------------------------------------
+;;;; ___________________________________________________________________________
 ;;;; Refiling
 
 ;; (progn org-use-fast-todo-selection)
@@ -90,7 +92,7 @@
 ;; (setq org-refile-allow-creating-parent-nodes 'confirm)
 ;; (setq org-completion-use-ido nil)
 
-;;;; ---------------------------------------------------------------------------
+;;;; ___________________________________________________________________________
 ;;;; Agendas
 
 (setq org-agenda-files
@@ -109,8 +111,6 @@
           (lambda () (remove-text-properties
                       (point-min) (point-max) '(mouse-face t))))
 
-;;;; ___________________________________________________________________________
-
 (progn
   ;; I want to train myself not to hit RETURN when in an agenda;
   ;; hit SPACE instead to show in other window.
@@ -120,6 +120,11 @@
     ;; ad-do-it
     )
   (ad-activate 'org-agenda-switch-to))
+
+;;;; ___________________________________________________________________________
+;;;; Fontify code in code blocks
+
+(setq org-src-fontify-natively t)
 
 ;;;; ___________________________________________________________________________
 
