@@ -1,5 +1,7 @@
 ;;;; Init stuff -- Clojure indentation.
 
+;; (setq clojure-defun-style-default-indent t) ; TODO: Do you like this? No.
+
 (eval-after-load 'clojure-mode
   '(define-clojure-indent
      ;; Clojure core
