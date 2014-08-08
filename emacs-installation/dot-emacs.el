@@ -1,7 +1,10 @@
 ;;;; ___________________________________________________________________________
 ;;;; ---- Duh ----
 
-(add-to-list 'exec-path "/usr/local/bin")
+;; Now using exec-path-from-shell
+
+;; (add-to-list 'exec-path "/usr/local/bin")
+;; (add-to-list 'exec-path "~/bin")
 
 ;;;; ___________________________________________________________________________
 ;;;; ---- Emacs setup -- Tailor the installation ----
@@ -23,6 +26,12 @@
 (add-dir-and-normal-subdirs-to-load-path
  (concat (nomis-load-file-directory)
          "emacs-init-files"))
+
+;;;; ___________________________________________________________________________
+;;;; ---- exec-path-from-shell ----
+
+(when (memq window-system '(mac ns))
+  (exec-path-from-shell-initialize))
 
 ;;;; ___________________________________________________________________________
 ;;;; ---- i-am-nomis-p ----

@@ -34,9 +34,10 @@
                       clojure-test-mode
                       clj-refactor
                       align-cljlet
+                      exec-path-from-shell
                       js2-mode
                       ;; ac-js2
-		      ))
+                      ))
 
 (dolist (p my-packages)
   (when (not (package-installed-p p))
