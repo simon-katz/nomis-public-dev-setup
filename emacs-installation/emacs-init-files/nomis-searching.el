@@ -8,11 +8,14 @@
     '(;; "labrepl*/public/javascripts/jquery.js"
       ;; "emacs-configuration/nomis-addons/cygwin-mount.el"
       ".emacs.d"
-      ".worksheet"))
+      ".worksheet"
+      "out"
+      "target"
+      ".repl"))
   (defvar *extra-ignored-files*
     '(;; ".jar"
       ;; ".exe"
-      ))
+      ".cider-repl-history"))
   (eval-after-load "grep"
     '(progn
        (mapc (lambda (x) (add-to-list 'grep-find-ignored-files x))
