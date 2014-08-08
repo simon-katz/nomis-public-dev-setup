@@ -74,7 +74,8 @@
  ((member (cider-version)
           '("0.5.0"
             "CIDER 0.6.0alpha (package: 20140210.622)"
-            "CIDER 0.6.0"))
+            "CIDER 0.6.0"
+            "CIDER 0.7.0"))
   (defun cider-repl--insert-prompt (namespace)
     "Insert the prompt (before markers!), taking into account NAMESPACE.
 Set point after the prompt.
@@ -471,11 +472,11 @@ start the server."
            (project-dir (nrepl-project-directory-for
                          (or project (nrepl-current-dir)))))
       (progn ; jsk: Added this stuff
-       (let ((nomis-cider-repl-history-file
-              (concat project-dir ".cider-repl-history")))
-         ;; (message-box (concat "Setting cider-repl-history-file to "
-         ;;                      nomis-cider-repl-history-file))
-         (setq cider-repl-history-file nomis-cider-repl-history-file)))
+        (let ((nomis-cider-repl-history-file
+               (concat project-dir ".cider-repl-history")))
+          ;; (message-box (concat "Setting cider-repl-history-file to "
+          ;;                      nomis-cider-repl-history-file))
+          (setq cider-repl-history-file nomis-cider-repl-history-file)))
       (when (nrepl-check-for-repl-buffer nil project-dir)
         (let* ((nrepl-project-dir project-dir)
                (cmd (if project
@@ -498,6 +499,50 @@ start the server."
           (with-current-buffer (process-buffer process)
             (setq nrepl-project-dir project-dir))
           (message "Starting nREPL server..."))))))
+ ((member (cider-version)
+          '("CIDER 0.7.0"))
+  (defun cider-jack-in (&optional prompt-project)
+    "Start a nREPL server for the current project and connect to it.
+If PROMPT-PROJECT is t, then prompt for the project for which to
+start the server."
+    (interactive "P")
+    (setq cider-current-clojure-buffer (current-buffer))
+    (if (cider--lein-present-p)
+        (let* ((project (when prompt-project
+                          (read-directory-name "Project: ")))
+               (project-dir (nrepl-project-directory-for
+                             (or project (nrepl-current-dir))))
+               (server-command (if prompt-project
+                                   (read-string (format "Server command: %s " cider-lein-command) cider-lein-parameters)
+                                 cider-lein-parameters)))
+          (progn ; jsk: Added this stuff
+            (let ((nomis-cider-repl-history-file
+                   (concat project-dir ".cider-repl-history")))
+              ;; (message-box (concat "Setting cider-repl-history-file to "
+              ;;                      nomis-cider-repl-history-file))
+              (setq cider-repl-history-file nomis-cider-repl-history-file)))
+          (when (nrepl-check-for-repl-buffer nil project-dir)
+            (let* ((nrepl-project-dir project-dir)
+                   (cmd (format "%s %s" cider-lein-command cider-lein-parameters))
+                   (default-directory (or project-dir default-directory))
+                   (nrepl-buffer-name (generate-new-buffer-name
+                                       (nrepl-server-buffer-name)))
+                   (process
+                    (progn
+                      ;; the buffer has to be created before the proc:
+                      (get-buffer-create nrepl-buffer-name)
+                      (start-file-process-shell-command
+                       "nrepl-server"
+                       nrepl-buffer-name
+                       cmd))))
+              (set-process-filter process 'nrepl-server-filter)
+              (set-process-sentinel process 'nrepl-server-sentinel)
+              (set-process-coding-system process 'utf-8-unix 'utf-8-unix)
+              (with-current-buffer (process-buffer process)
+                (setq nrepl-project-dir project-dir))
+              (message "Starting nREPL server via %s..."
+                       (propertize cmd 'face 'font-lock-keyword-face)))))
+      (message "The %s executable (specified by `cider-lein-command') isn't on your exec-path" cider-lein-command))))
  (t
   (message-box
    "You need to fix your Cider REPL history file stuff for this version of Cider.")))

@@ -31,7 +31,6 @@
                       cider
                       ac-nrepl
                       clojure-mode
-                      clojure-test-mode
                       clj-refactor
                       align-cljlet
                       exec-path-from-shell
