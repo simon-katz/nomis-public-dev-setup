@@ -56,7 +56,7 @@
 
 
 (eval-after-load "cider"
-  '(define-key cider-mode-map (kbd "C-c C-d") 'ac-nrepl-popup-doc))
+  '(define-key cider-mode-map (kbd "C-c C-d C-c") 'ac-nrepl-popup-doc))
 
 
 ;;;; ___________________________________________________________________________
