@@ -46,6 +46,12 @@
 ;;;; ___________________________________________________________________________
 ;;;; ---- Load various files ----
 
+(require 'nomis-org) ; When this was later in the file my setting of
+                     ; `org-replace-disputed-keys` wasn't working.
+                     ; Something must be loading org-mode.
+                     ; (That didn't used to happen. It's a change in the
+                     ; last few days.)
+
 ;;;; ---- Lisp and Clojure stuff probably good for anyone ----
 
 (require 'nomis-paredit)
@@ -87,8 +93,6 @@
 
 (require 'nomis-dired)
 (require 'nomis-dirtree)
-
-(require 'nomis-org)
 
 (require 'nomis-shell-stuff)
 
