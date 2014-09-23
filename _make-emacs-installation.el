@@ -36,7 +36,7 @@
                       exec-path-from-shell
                       js2-mode
                       ;; ac-js2
-                      ))
+                      projectile))
 
 (dolist (p my-packages)
   (when (not (package-installed-p p))
