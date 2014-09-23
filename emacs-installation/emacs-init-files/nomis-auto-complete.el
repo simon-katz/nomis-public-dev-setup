@@ -63,6 +63,8 @@
 
 (global-company-mode)
 
+(define-key cider-mode-map (kbd "TAB") 'company-complete)
+
 ;;;; ___________________________________________________________________________
 
 (provide 'nomis-auto-complete)
