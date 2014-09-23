@@ -52,6 +52,8 @@
 
 ;; (setq cider-repl-use-pretty-printing t) ; doesn't work with ClojureScript
 
+(setq cider-repl-use-clojure-font-lock t)
+
 ;; ;;;; ---------------------------------------------------------------------------
 ;; ;;;; ---- Stuff for when connected to nrepl       ----
 ;; ;;;; ---- (for REPL and for Clojure source files) ----
