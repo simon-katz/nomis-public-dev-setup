@@ -110,6 +110,8 @@
 
 (require 'nomis-magit)
 
+(require 'nomis-projectile)
+
 (require 'homeless)
 
 (progn
