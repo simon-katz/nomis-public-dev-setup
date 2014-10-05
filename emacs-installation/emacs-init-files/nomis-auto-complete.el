@@ -61,9 +61,31 @@
 
 ;;;; ___________________________________________________________________________
 
+;;;; There's more to sort out here.
+;;;; For ideas see e.g. https://gitlab.com/bodil/emacs-d/blob/6cd2e63ccc5412fa8474f6f1c38b13663f1c3bf3/bodil-bindings.el
+
 (global-company-mode)
 
-(define-key cider-mode-map (kbd "TAB") 'company-complete)
+;; From https://github.com/company-mode/company-mode/issues/94
+
+(setq tab-always-indent 'complete)
+
+(defvar completion-at-point-functions-saved nil)
+
+(defun company-indent-for-tab-command (&optional arg)
+  (interactive "P")
+  (let ((completion-at-point-functions-saved completion-at-point-functions)
+        (completion-at-point-functions '(company-complete-common-wrapper)))
+    (indent-for-tab-command arg)))
+
+(defun company-complete-common-wrapper ()
+  (let ((completion-at-point-functions completion-at-point-functions-saved))
+    (company-complete-common)))
+
+(global-set-key [tab] 'indent-for-tab-command)
+
+(define-key company-mode-map [remap indent-for-tab-command]
+  'company-indent-for-tab-command)
 
 ;;;; ___________________________________________________________________________
 
