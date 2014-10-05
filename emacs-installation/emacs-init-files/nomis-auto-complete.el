@@ -82,8 +82,6 @@
   (let ((completion-at-point-functions completion-at-point-functions-saved))
     (company-complete-common)))
 
-(global-set-key [tab] 'indent-for-tab-command)
-
 (define-key company-mode-map [remap indent-for-tab-command]
   'company-indent-for-tab-command)
 
