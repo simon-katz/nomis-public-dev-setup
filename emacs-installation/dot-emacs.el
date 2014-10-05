@@ -108,6 +108,8 @@
 
 (require 'nomis-rcirc)
 
+(require 'nomis-magit)
+
 (require 'homeless)
 
 (progn
