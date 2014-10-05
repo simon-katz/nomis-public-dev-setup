@@ -476,7 +476,7 @@ Mostly for debugging purposes."
                  (loop for k in (rest widget) by 'cddr
                        collect k))))
 
-(define-key global-map (kbd "H-d d t") 'nomis-dirtree)
+(define-key global-map (kbd "H-q d") 'nomis-dirtree)
 
 (cl-labels ((dk (k f)
                 (define-key nomis-dirtree-mode-map k f)))

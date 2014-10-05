@@ -19,10 +19,10 @@
 ;; projectile-remember-window-configs
 ;; projectile-switch-project-action
 
-;; (define-key projectile-mode-map (kbd "H-d") 'projectile-find-dir)
+(define-key projectile-mode-map (kbd "H-d") 'projectile-find-dir)
 ;; (define-key projectile-mode-map (kbd "H-p") 'projectile-switch-project)
-;; (define-key projectile-mode-map (kbd "H-f") 'projectile-find-file)
-;; (define-key projectile-mode-map (kbd "H-g") 'projectile-grep)
+(define-key projectile-mode-map (kbd "H-f") 'projectile-find-file)
+(define-key projectile-mode-map (kbd "H-g") 'projectile-grep)
 
 
 ;;;; ___________________________________________________________________________
