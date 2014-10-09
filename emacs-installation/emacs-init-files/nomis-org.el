@@ -77,7 +77,7 @@
 ;;;; ___________________________________________________________________________
 ;;;; Capture
 
-(setq org-default-notes-file (concat org-directory "/___notes.org"))
+(setq org-default-notes-file (concat org-directory "/___captured-notes.org"))
 (define-key global-map "\C-cc" 'org-capture)
 
 ;;;; ___________________________________________________________________________
