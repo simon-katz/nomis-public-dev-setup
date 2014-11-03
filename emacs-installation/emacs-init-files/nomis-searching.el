@@ -1,21 +1,26 @@
 ;;;; Init stuff -- Searching.
 
-;; ;;;; ___________________________________________________________________________
-;; ;;;; ---- Stuff for rgrep and lgrep ----
+;;;; ___________________________________________________________________________
+;;;; ---- Stuff for rgrep and lgrep ----
+
+(defvar logs-dir-name "logs")
 
 (progn
   (defvar *extra-ignored-directories*
-    '(;; "labrepl*/public/javascripts/jquery.js"
-      ;; "emacs-configuration/nomis-addons/cygwin-mount.el"
-      ".emacs.d"
-      ".worksheet"
-      "out"
-      "target"
-      ".repl"))
+    (list logs-dir-name
+          ".emacs.d"
+          ".worksheet"
+          "out"
+          "target"
+          ".repl"
+          ;; "labrepl*/public/javascripts/jquery.js"
+          ;; "emacs-configuration/nomis-addons/cygwin-mount.el"
+          ))
   (defvar *extra-ignored-files*
     '(;; ".jar"
       ;; ".exe"
-      ".cider-repl-history"))
+      ".cider-repl-history"
+      "*.zip"))
   (eval-after-load "grep"
     '(progn
        (mapc (lambda (x) (add-to-list 'grep-find-ignored-files x))
@@ -72,6 +77,18 @@
 - searches all (unignored) files."
   (interactive (-nomis-rgrep-interactive-stuff t))
   (rgrep regexp files dir confirm))
+
+(defun nomis-grep-logs-dirs-include ()
+  (interactive)
+  (setq grep-find-ignored-directories
+        (remove logs-dir-name
+                grep-find-ignored-directories)))
+
+(defun nomis-grep-logs-dirs-exclude ()
+  (interactive)
+  (setq grep-find-ignored-directories
+        (cons logs-dir-name
+              grep-find-ignored-directories)))
 
 ;; (define-key global-map (kbd "H-q g a") 'nomis-rgrep)
 ;; (define-key global-map (kbd "H-q g g") 'nomis-rgrep-all-unignored-files)
