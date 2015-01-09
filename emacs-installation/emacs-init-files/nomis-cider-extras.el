@@ -13,18 +13,28 @@
 
 (require 'cider)
 
-;;## ;;;; ___________________________________________________________________________
-;;## ;;;; ---- Wrappers for things in nrepl.el, to isolate dependencies and make ----
-;;## ;;;; ---- it easier to upgrade nrepl.el.                                    ----
-;;## 
-;;## (defun nomis-nrepl-find-or-create-repl-buffer ()
-;;##   (cond ((member nrepl-current-version '("0.1.7"))
-;;##          (nrepl-find-or-create-repl-buffer))
-;;##         (t
-;;##          (error "nomis-nrepl-find-or-create-repl-buffer: need to update for nrepl.el %s"
-;;##                 nrepl-current-version))))
-;;## 
-;;## 
+;;;; ___________________________________________________________________________
+;;;; ---- Wrappers for things in nrepl.el, to isolate dependencies and make ----
+;;;; ---- it easier to upgrade nrepl.el.                                    ----
+
+(cond
+ ((member (cider-version)
+          '("CIDER 0.7.0"))
+
+  (defun nomis-cider-find-ns ()
+    (cider-find-ns))
+
+  (defun nomis-cider-repl-namespace ()
+    (with-current-buffer (cider-current-repl-buffer)
+      nrepl-buffer-ns))
+  
+  (defun nomis-cider-find-or-create-repl-buffer ()
+    (cider-find-or-create-repl-buffer)))
+ (t
+  (message-box
+   "You need to fix wrapping of Cider functions for this version of Cider.")))
+
+
 ;;## ;;;; ___________________________________________________________________________
 ;;## ;;;; ---- Cause focus to go to stacktrace window when popped up -----
 ;;## 
@@ -152,14 +162,10 @@ Return the position of the prompt beginning."
 ;;## 
 ;;## ;;;; ___________________________________________________________________________
 ;;## ;;;; ---- Namespace functions ----
-;;## 
-;;## (defun nomis-nrepl-repl-namespace ()
-;;##   (with-current-buffer "*nrepl*"
-;;##     nrepl-buffer-ns))
-;;## 
-;;## (defun nomis-nrepl-buffer-namespace-is-repl-namespace-p ()
-;;##   (equal (nrepl-find-ns)
-;;##          (nomis-nrepl-repl-namespace)))
+
+(defun nomis-cider-buffer-namespace-is-repl-namespace-p ()
+  (equal (nomis-cider-find-ns)
+         (nomis-cider-repl-namespace)))
 
 ;;;; ___________________________________________________________________________
 ;;;; ---- Utility functions ----
@@ -227,74 +233,74 @@ Return the position of the prompt beginning."
               (funcall grab-function start end))))))))))
 
 ;;## ;;;; ___________________________________________________________________________
-;;## ;;;; ---- nomis-nrepl-send-to-repl ----
-;;## 
-;;## ;;;; Inspired by https://gist.github.com/4349847
-;;## ;;;; ...which says...
-;;## ;;;;     inspired by http://bc.tech.coop/blog/070424.html
-;;## 
-;;## (define-key nrepl-interaction-mode-map (kbd "C-x C-/")
-;;##   'nomis-nrepl-send-to-repl-selection-or-form-around-point)
-;;## (define-key nrepl-interaction-mode-map (kbd "C-M-g")
-;;##   'nomis-nrepl-send-to-repl-top-level-form)
-;;## 
-;;## (defun nomis-nrepl-send-to-repl-selection-or-form-around-point (arg)
-;;##   "Send text to the REPL.
-;;## The text to send:
-;;## - If a region is selected, use that text.
-;;## - Otherwise use the s-expression around point.
-;;## Control of evaluation:
-;;## - If no prefix argument is supplied, evaluate the form and do not
-;;##   change which window is active.
-;;## - If a prefix argument is supplied, do not evaluate the form and
-;;##   make the REPL window active."
-;;##   (interactive "P")
-;;##   (nomis-nrepl-send-to-repl-helper arg nil))
-;;## 
-;;## (defun nomis-nrepl-send-to-repl-top-level-form (arg)
-;;##   "Send text to the REPL.
-;;## The text to send:
-;;## - The top-level s-expression around point.
-;;## Control of evaluation:
-;;## - If no prefix argument is supplied, evaluate the form and do not
-;;##   change which window is active.
-;;## - If a prefix argument is supplied, do not evaluate the form and
-;;##   make the REPL window active."
-;;##   (interactive "P")
-;;##   (nomis-nrepl-send-to-repl-helper arg t))
-;;## 
-;;## (defvar *nrepl-send-to-buffer-print-newline-first* nil) ; because you always have a newline now -- you changed the prompt to have a newline at the end
-;;## 
-;;## (defun nomis-nrepl-send-to-repl-helper (arg top-level-p)
-;;##   (when (or (nomis-nrepl-buffer-namespace-is-repl-namespace-p)
-;;##             (y-or-n-p
-;;##              (format "Buffer ns (%s) and REPL ns (%s) are different.
-;;## Really send to REPL? "
-;;##                      (nrepl-find-ns)
-;;##                      (nomis-nrepl-repl-namespace))))
-;;##     (labels ((the-text
-;;##               ()
-;;##               (nomis-grab-text :top-level-p top-level-p :delete-p nil))
-;;##              (show-nrepl-buffer-and-send-text-to-it
-;;##               (text)
-;;##               (labels ((insert-text () (insert text)))
-;;##                 (let* ((original-window (selected-window)))
-;;##                   (set-buffer (nomis-nrepl-find-or-create-repl-buffer))
-;;##                   (unless (eq (current-buffer) (window-buffer))
-;;##                     (pop-to-buffer (current-buffer) t))
-;;##                   (goto-char (point-max))
-;;##                   (when *nrepl-send-to-buffer-print-newline-first*
-;;##                     (newline))
-;;##                   (insert-text)
-;;##                   (backward-sexp)
-;;##                   (indent-pp-sexp) ; (paredit-reindent-defun) ; nrepl doesn't indent (yet)
-;;##                   (forward-sexp)
-;;##                   (when (null arg)
-;;##                     (nrepl-return)
-;;##                     (select-window original-window))))))
-;;##       (show-nrepl-buffer-and-send-text-to-it (the-text)))))
-;;## 
-;;## 
+;;;; ---- nomis-nrepl-send-to-repl ----
+
+;;;; Inspired by https://gist.github.com/4349847
+;;;; ...which says...
+;;;;     inspired by http://bc.tech.coop/blog/070424.html
+
+(define-key clojure-mode-map (kbd "C-x C-.")
+  'nomis-nrepl-send-to-repl-selection-or-form-around-point)
+(define-key clojure-mode-map (kbd "C-x C-/")
+  'nomis-nrepl-send-to-repl-top-level-form)
+
+(defun nomis-nrepl-send-to-repl-selection-or-form-around-point (arg)
+  "Send text to the REPL.
+The text to send:
+- If a region is selected, use that text.
+- Otherwise use the s-expression around point.
+Control of evaluation:
+- If no prefix argument is supplied, evaluate the form and do not
+  change which window is active.
+- If a prefix argument is supplied, do not evaluate the form and
+  make the REPL window active."
+  (interactive "P")
+  (nomis-nrepl-send-to-repl-helper arg nil))
+
+(defun nomis-nrepl-send-to-repl-top-level-form (arg)
+  "Send text to the REPL.
+The text to send:
+- The top-level s-expression around point.
+Control of evaluation:
+- If no prefix argument is supplied, evaluate the form and do not
+  change which window is active.
+- If a prefix argument is supplied, do not evaluate the form and
+  make the REPL window active."
+  (interactive "P")
+  (nomis-nrepl-send-to-repl-helper arg t))
+
+(defvar *nomis-cider-send-to-buffer-print-newline-first* nil) ; because you always have a newline now -- you changed the prompt to have a newline at the end
+
+(defun nomis-nrepl-send-to-repl-helper (arg top-level-p)
+  (when (or (nomis-cider-buffer-namespace-is-repl-namespace-p)
+            (y-or-n-p
+             (format "Buffer ns (%s) and REPL ns (%s) are different.
+Really send to REPL? "
+                     (nomis-cider-find-ns)
+                     (nomis-cider-repl-namespace))))
+    (labels ((the-text
+              ()
+              (nomis-grab-text :top-level-p top-level-p :delete-p nil))
+             (show-cider-repl-buffer-and-send-text-to-it
+              (text)
+              (labels ((insert-text () (insert text)))
+                (let* ((original-window (selected-window)))
+                  (set-buffer (nomis-cider-find-or-create-repl-buffer))
+                  (unless (eq (current-buffer) (window-buffer))
+                    (pop-to-buffer (current-buffer) t))
+                  (goto-char (point-max))
+                  (when *nomis-cider-send-to-buffer-print-newline-first*
+                    (newline))
+                  (insert-text)
+                  (backward-sexp)
+                  (paredit-reindent-defun)
+                  (forward-sexp)
+                  (when (null arg)
+                    (cider-repl-return)
+                    (select-window original-window))))))
+      (show-cider-repl-buffer-and-send-text-to-it (the-text)))))
+
+
 ;;## ;;;; ___________________________________________________________________________
 ;;## ;;;; ---- nomis-cider-rearrange-string-into-lines ----
 ;;## 
