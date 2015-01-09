@@ -548,5 +548,34 @@ start the server."
    "You need to fix your Cider REPL history file stuff for this version of Cider.")))
 
 ;;;; ___________________________________________________________________________
+;;;; ---- Allow Emacs to quit when a project has been moved ----
+
+(cond
+ ((member (cider-version)
+          '("CIDER 0.7.0"))
+  (defun cider-repl--history-write (filename)
+    "Write history to FILENAME.
+Currently coding system for writing the contents is hardwired to
+utf-8-unix."
+    (let* ((mhist (cider-repl--histories-merge cider-repl-input-history
+                                               cider-repl-input-history-items-added
+                                               (cider-repl--history-read filename)))
+           ;; newest items are at the beginning of the list, thus 0
+           (hist (cl-subseq mhist 0 (min (length mhist) cider-repl-history-size))))
+      (if (not (file-writable-p filename))
+          (message-box "History file not writable: %s" filename)
+        (let ((print-length nil) (print-level nil))
+          (with-temp-file filename
+            ;; TODO: really set cs for output
+            ;; TODO: does cs need to be customizable?
+            (insert ";; -*- coding: utf-8-unix -*-\n")
+            (insert ";; Automatically written history of CIDER REPL session\n")
+            (insert ";; Edit at your own risk\n\n")
+            (prin1 (mapcar #'substring-no-properties hist) (current-buffer))))))))
+ (t
+  (message-box
+   "You need to fix your cider-repl--history-write stuff for this version of Cider.")))
+
+;;;; ___________________________________________________________________________
 
 (provide 'nomis-cider-extras)
