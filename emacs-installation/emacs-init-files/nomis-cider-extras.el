@@ -15,15 +15,15 @@
 (cond
  ((member (cider-version)
           '("CIDER 0.7.0"))
-  (defun nomis-cider-find-ns ()
+  (defun nomis-clojure-buffer-ns ()
     (cider-find-ns)))
  ((member (cider-version)
           '("CIDER 0.8.2"))
-  (defun nomis-cider-find-ns ()
+  (defun nomis-clojure-buffer-ns ()
     (clojure-find-ns)))
  (t
   (message-box
-   "You need to fix `nomis-cider-find-ns` for this version of Cider.")))
+   "You need to fix nomis-clojure-buffer-ns for this version of Cider.")))
 
 (cond
  ((member (cider-version)
@@ -199,13 +199,6 @@ Return the position of the prompt beginning."
 ;;##     (nrepl-mark-input-start)
 ;;##     (nrepl-mark-output-start)
 ;;##     (nrepl-send-string form (nrepl-handler (current-buffer)) nrepl-buffer-ns)))))
-;;## 
-;;## ;;;; ___________________________________________________________________________
-;;## ;;;; ---- Namespace functions ----
-
-(defun nomis-cider-buffer-namespace-is-repl-namespace-p ()
-  (equal (nomis-cider-find-ns)
-         (nomis-cider-repl-namespace)))
 
 ;;;; ___________________________________________________________________________
 ;;;; ---- Utility functions ----
@@ -279,10 +272,12 @@ Return the position of the prompt beginning."
 ;;;; ...which says...
 ;;;;     inspired by http://bc.tech.coop/blog/070424.html
 
-(define-key clojure-mode-map (kbd "C-x C-.")
+(define-key clojure-mode-map (kbd "C-x C-,")
   'nomis-cider-send-to-repl-selection-or-form-around-point)
-(define-key clojure-mode-map (kbd "C-x C-/")
+(define-key clojure-mode-map (kbd "C-x C-.")
   'nomis-cider-send-to-repl-top-level-form)
+(define-key clojure-mode-map (kbd "C-x C-/")
+  'nomis-cider-send-to-repl-top-level-form-after-forward-sexp)
 
 (defun nomis-cider-send-to-repl-selection-or-form-around-point (arg)
   "Send text to the REPL.
@@ -309,6 +304,17 @@ Control of evaluation:
   (interactive "P")
   (nomis-cider-send-to-repl-helper arg t))
 
+(defun nomis-cider-send-to-repl-top-level-form-after-forward-sexp (arg)
+  "Send next form to the REPL and move past it (so this
+command can be repeated usefully).
+Control of evaluation:
+- If no prefix argument is supplied, evaluate the form and do not
+  change which window is active.
+- If a prefix argument is supplied, do not evaluate the form and
+  make the REPL window active."
+  (interactive "P")
+  (forward-sexp)
+  (nomis-cider-send-to-repl-helper arg nil))
 
 (defcustom nomis-cider-send-to-repl-always-p nil
   "When sending forms to Cider REPL, whether to not check that buffer namespace is same as REPL namespace.")
@@ -318,11 +324,13 @@ Control of evaluation:
 
 (defun nomis-cider-send-to-repl-helper (arg top-level-p)
   (when (or nomis-cider-send-to-repl-always-p
-            (nomis-cider-buffer-namespace-is-repl-namespace-p)
+            (null (nomis-clojure-buffer-ns))
+            (equal (nomis-clojure-buffer-ns)
+                   (nomis-cider-repl-namespace))
             (y-or-n-p
              (format "Buffer ns (%s) and REPL ns (%s) are different.
 Really send to REPL? "
-                     (nomis-cider-find-ns)
+                     (nomis-clojure-buffer-ns)
                      (nomis-cider-repl-namespace))))
     (labels ((the-text
               ()
