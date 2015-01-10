@@ -269,12 +269,15 @@ Control of evaluation:
   (interactive "P")
   (nomis-nrepl-send-to-repl-helper arg t))
 
-(defvar *nomis-nrepl-send-to-repl-always-p* nil)
 
-(defvar *nomis-cider-send-to-buffer-print-newline-first* nil) ; because you always have a newline now -- you changed the prompt to have a newline at the end
+(defcustom nomis-nrepl-send-to-repl-always-p nil
+  "When sending forms to Cider REPL, whether to not check that buffer namespace is same as REPL namespace.")
+
+(defcustom nomis-cider-send-to-buffer-print-newline-first nil ; because you always have a newline now -- you changed the prompt to have a newline at the end
+  "When sending forms to Cider REPL, whether to send a newline first.")
 
 (defun nomis-nrepl-send-to-repl-helper (arg top-level-p)
-  (when (or *nomis-nrepl-send-to-repl-always-p*
+  (when (or nomis-nrepl-send-to-repl-always-p
             (nomis-cider-buffer-namespace-is-repl-namespace-p)
             (y-or-n-p
              (format "Buffer ns (%s) and REPL ns (%s) are different.
@@ -299,7 +302,7 @@ Really send to REPL? "
                             (select-window window))
                         (pop-to-buffer (current-buffer) t))))
                   (goto-char (point-max))
-                  (when *nomis-cider-send-to-buffer-print-newline-first*
+                  (when nomis-cider-send-to-buffer-print-newline-first
                     (newline))
                   (insert-text)
                   (backward-sexp)
