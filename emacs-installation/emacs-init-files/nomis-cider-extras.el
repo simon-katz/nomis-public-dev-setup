@@ -5,17 +5,12 @@
 ;;## ;;;;         doesn't hapen with 0.1.8.)
 ;;## ;;;;         See https://groups.google.com/forum/#!topic/nrepl-el/RZTitQyb6mo.
 ;;## ;;;;       - Did/does it all make sense anyway?
-;;## 
-;;## ;;;; TODO: Consider not doing this redefining of functions, and instead
-;;## ;;;;       having a file "nomis-nrepl.el" (under CM control) that
-;;## ;;;;       contains your hacks. (And have "nrepl.el" for comparison.)
-;;## ;;;;       (Same as you are considering for "workgroups.el".)
 
 (require 'cider)
 
 ;;;; ___________________________________________________________________________
-;;;; ---- Wrappers for things in nrepl.el, to isolate dependencies and make ----
-;;;; ---- it easier to upgrade nrepl.el.                                    ----
+;;;; ---- Wrappers for things in Cider, to isolate dependencies and make ----
+;;;; ---- it easier to upgrade Cider.                                    ----
 
 (cond
  ((member (cider-version)
@@ -328,8 +323,6 @@ Really send to REPL? "
 ;;## ;;;;
 ;;## ;;;; + Ensure `nomis-grab-text' has no free variables.
 ;;## ;;;;
-;;## ;;;; + Modularise `nomis-grab-text' and `nomis-nrepl-grab-and-delete-current-form'.
-;;## ;;;;
 ;;## ;;;; + Put all your code-manipulation Clojure functions in single file in
 ;;## ;;;;   a new project.
 ;;## ;;;;   And have proper tests of the code-manipulation code.
@@ -405,11 +398,11 @@ Really send to REPL? "
 ;;;;     ported from slime/contrib/slime-editing-commands.el
 
 (define-key clojure-mode-map (kbd "C-c ;")
-  'nomis-nrepl-insert-reader-comment)
+  'nomis-cider-insert-reader-comment)
 (define-key clojure-mode-map (kbd "C-c M-;")
-  'nomis-nrepl-remove-reader-comment)
+  'nomis-cider-remove-reader-comment)
 
-(defun nomis-nrepl-insert-reader-comment (prefix)
+(defun nomis-cider-insert-reader-comment (prefix)
   "Insert a reader comment (#_) around the s-expression containing the point.
 If this command is invoked repeatedly (without any other command
 occurring between invocations), the comment progressively moves outward
@@ -430,7 +423,7 @@ comments."
           (decf prefix))
         (insert "#_")))))
 
-(defun nomis-nrepl-remove-reader-comment ()
+(defun nomis-cider-remove-reader-comment ()
   "Remove a reader comment enclosing point."
   (interactive "*")
   (save-excursion
