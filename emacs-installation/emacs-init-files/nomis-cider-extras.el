@@ -269,10 +269,13 @@ Control of evaluation:
   (interactive "P")
   (nomis-nrepl-send-to-repl-helper arg t))
 
+(defvar *nomis-nrepl-send-to-repl-always-p* nil)
+
 (defvar *nomis-cider-send-to-buffer-print-newline-first* nil) ; because you always have a newline now -- you changed the prompt to have a newline at the end
 
 (defun nomis-nrepl-send-to-repl-helper (arg top-level-p)
-  (when (or (nomis-cider-buffer-namespace-is-repl-namespace-p)
+  (when (or *nomis-nrepl-send-to-repl-always-p*
+            (nomis-cider-buffer-namespace-is-repl-namespace-p)
             (y-or-n-p
              (format "Buffer ns (%s) and REPL ns (%s) are different.
 Really send to REPL? "
@@ -284,10 +287,17 @@ Really send to REPL? "
              (show-cider-repl-buffer-and-send-text-to-it
               (text)
               (labels ((insert-text () (insert text)))
-                (let* ((original-window (selected-window)))
+                (let* ((original-frame (selected-frame))
+                       (original-window (selected-window)))
                   (set-buffer (nomis-cider-find-or-create-repl-buffer))
                   (unless (eq (current-buffer) (window-buffer))
-                    (pop-to-buffer (current-buffer) t))
+                    (let* ((window (get-buffer-window (current-buffer)
+                                                      t)))
+                      (if window
+                          (progn
+                            (select-frame-set-input-focus (window-frame window))
+                            (select-window window))
+                        (pop-to-buffer (current-buffer) t))))
                   (goto-char (point-max))
                   (when *nomis-cider-send-to-buffer-print-newline-first*
                     (newline))
@@ -297,6 +307,7 @@ Really send to REPL? "
                   (forward-sexp)
                   (when (null arg)
                     (cider-repl-return)
+                    (select-frame-set-input-focus original-frame)
                     (select-window original-window))))))
       (show-cider-repl-buffer-and-send-text-to-it (the-text)))))
 
