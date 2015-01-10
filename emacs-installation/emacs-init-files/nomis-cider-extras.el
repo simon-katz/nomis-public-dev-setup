@@ -233,18 +233,18 @@ Return the position of the prompt beginning."
               (funcall grab-function start end))))))))))
 
 ;;## ;;;; ___________________________________________________________________________
-;;;; ---- nomis-nrepl-send-to-repl ----
+;;;; ---- nomis-cider-send-to-repl ----
 
 ;;;; Inspired by https://gist.github.com/4349847
 ;;;; ...which says...
 ;;;;     inspired by http://bc.tech.coop/blog/070424.html
 
 (define-key clojure-mode-map (kbd "C-x C-.")
-  'nomis-nrepl-send-to-repl-selection-or-form-around-point)
+  'nomis-cider-send-to-repl-selection-or-form-around-point)
 (define-key clojure-mode-map (kbd "C-x C-/")
-  'nomis-nrepl-send-to-repl-top-level-form)
+  'nomis-cider-send-to-repl-top-level-form)
 
-(defun nomis-nrepl-send-to-repl-selection-or-form-around-point (arg)
+(defun nomis-cider-send-to-repl-selection-or-form-around-point (arg)
   "Send text to the REPL.
 The text to send:
 - If a region is selected, use that text.
@@ -255,9 +255,9 @@ Control of evaluation:
 - If a prefix argument is supplied, do not evaluate the form and
   make the REPL window active."
   (interactive "P")
-  (nomis-nrepl-send-to-repl-helper arg nil))
+  (nomis-cider-send-to-repl-helper arg nil))
 
-(defun nomis-nrepl-send-to-repl-top-level-form (arg)
+(defun nomis-cider-send-to-repl-top-level-form (arg)
   "Send text to the REPL.
 The text to send:
 - The top-level s-expression around point.
@@ -267,17 +267,17 @@ Control of evaluation:
 - If a prefix argument is supplied, do not evaluate the form and
   make the REPL window active."
   (interactive "P")
-  (nomis-nrepl-send-to-repl-helper arg t))
+  (nomis-cider-send-to-repl-helper arg t))
 
 
-(defcustom nomis-nrepl-send-to-repl-always-p nil
+(defcustom nomis-cider-send-to-repl-always-p nil
   "When sending forms to Cider REPL, whether to not check that buffer namespace is same as REPL namespace.")
 
 (defcustom nomis-cider-send-to-buffer-print-newline-first nil ; because you always have a newline now -- you changed the prompt to have a newline at the end
   "When sending forms to Cider REPL, whether to send a newline first.")
 
-(defun nomis-nrepl-send-to-repl-helper (arg top-level-p)
-  (when (or nomis-nrepl-send-to-repl-always-p
+(defun nomis-cider-send-to-repl-helper (arg top-level-p)
+  (when (or nomis-cider-send-to-repl-always-p
             (nomis-cider-buffer-namespace-is-repl-namespace-p)
             (y-or-n-p
              (format "Buffer ns (%s) and REPL ns (%s) are different.
