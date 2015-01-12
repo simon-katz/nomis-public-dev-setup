@@ -277,7 +277,9 @@ Return the position of the prompt beginning."
 (define-key clojure-mode-map (kbd "C-x C-.")
   'nomis-cider-send-to-repl-top-level-form)
 (define-key clojure-mode-map (kbd "C-x C-/")
-  'nomis-cider-send-to-repl-top-level-form-after-forward-sexp)
+  'nomis-cider-send-to-repl-after-forward-sexp)
+(define-key clojure-mode-map (kbd "C-x C-<return>")
+  'nomis-cider-send-to-repl-return)
 
 (defun nomis-cider-send-to-repl-selection-or-form-around-point (arg)
   "Send text to the REPL.
@@ -290,7 +292,7 @@ Control of evaluation:
 - If a prefix argument is supplied, do not evaluate the form and
   make the REPL window active."
   (interactive "P")
-  (nomis-cider-send-to-repl-helper arg nil))
+  (nomis-cider-send-to-repl-helper arg :send-selection-or-form-around-point))
 
 (defun nomis-cider-send-to-repl-top-level-form (arg)
   "Send text to the REPL.
@@ -302,9 +304,9 @@ Control of evaluation:
 - If a prefix argument is supplied, do not evaluate the form and
   make the REPL window active."
   (interactive "P")
-  (nomis-cider-send-to-repl-helper arg t))
+  (nomis-cider-send-to-repl-helper arg :send-top-level-form))
 
-(defun nomis-cider-send-to-repl-top-level-form-after-forward-sexp (arg)
+(defun nomis-cider-send-to-repl-after-forward-sexp (arg)
   "Send next form to the REPL and move past it (so this
 command can be repeated usefully).
 Control of evaluation:
@@ -314,7 +316,12 @@ Control of evaluation:
   make the REPL window active."
   (interactive "P")
   (forward-sexp)
-  (nomis-cider-send-to-repl-helper arg nil))
+  (nomis-cider-send-to-repl-helper arg :send-selection-or-form-around-point))
+
+(defun nomis-cider-send-to-repl-return ()
+  "Send RETURN to the REPL."
+  (interactive)
+  (nomis-cider-send-to-repl-helper nil :send-return))
 
 (defcustom nomis-cider-send-to-repl-always-p nil
   "When sending forms to Cider REPL, whether to not check that buffer namespace is same as REPL namespace.")
@@ -322,7 +329,8 @@ Control of evaluation:
 (defcustom nomis-cider-send-to-buffer-print-newline-first nil ; because you always have a newline now -- you changed the prompt to have a newline at the end
   "When sending forms to Cider REPL, whether to send a newline first.")
 
-(defun nomis-cider-send-to-repl-helper (arg top-level-p)
+(defun nomis-cider-send-to-repl-helper (arg action)
+  ;; TODO: Maybe instead of ACTION, should have a function to do whatever.
   (when (or nomis-cider-send-to-repl-always-p
             (null (nomis-clojure-buffer-ns))
             (equal (nomis-clojure-buffer-ns)
@@ -332,9 +340,16 @@ Control of evaluation:
 Really send to REPL? "
                      (nomis-clojure-buffer-ns)
                      (nomis-cider-repl-namespace))))
-    (labels ((the-text
-              ()
+    (labels ((grab-text
+              (top-level-p)
               (nomis-grab-text :top-level-p top-level-p :delete-p nil))
+             (the-text
+              ()
+              (case action
+                ((:send-top-level-form) (grab-text t))
+                ((:send-selection-or-form-around-point) (grab-text nil))
+                ((:send-return) nil)
+                (t (error "Bad action")))) 
              (show-cider-repl-buffer-and-send-text-to-it
               (text)
               (labels ((insert-text () (insert text)))
@@ -350,12 +365,13 @@ Really send to REPL? "
                             (select-window window))
                         (pop-to-buffer (current-buffer) t))))
                   (goto-char (point-max))
-                  (when nomis-cider-send-to-buffer-print-newline-first
-                    (newline))
-                  (insert-text)
-                  (backward-sexp)
-                  (paredit-reindent-defun)
-                  (forward-sexp)
+                  (unless (null text)
+                    (when nomis-cider-send-to-buffer-print-newline-first
+                      (newline))
+                    (insert-text)
+                    (backward-sexp)
+                    (paredit-reindent-defun)
+                    (forward-sexp))
                   (when (null arg)
                     (cider-repl-return)
                     (select-frame-set-input-focus original-frame)
