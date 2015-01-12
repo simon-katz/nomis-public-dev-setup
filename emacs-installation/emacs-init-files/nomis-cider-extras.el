@@ -326,7 +326,7 @@ Control of evaluation:
 (defcustom nomis-cider-send-to-repl-always-p nil
   "When sending forms to Cider REPL, whether to not check that buffer namespace is same as REPL namespace.")
 
-(defcustom nomis-cider-send-to-buffer-print-newline-first nil ; because you always have a newline now -- you changed the prompt to have a newline at the end
+(defcustom nomis-cider-send-to-buffer-print-newline-first-p nil ; because you always have a newline now -- you changed the prompt to have a newline at the end
   "When sending forms to Cider REPL, whether to send a newline first.")
 
 (defcustom nomis-cider-send-to-buffer-do-return-first-p t
@@ -369,7 +369,7 @@ Really send to REPL? "
                         (pop-to-buffer (current-buffer) t))))
                   (goto-char (point-max))
                   (unless (null text)
-                    (when nomis-cider-send-to-buffer-print-newline-first
+                    (when nomis-cider-send-to-buffer-print-newline-first-p
                       (newline))
                     (when nomis-cider-send-to-buffer-do-return-first-p
                       (cider-repl-return)
