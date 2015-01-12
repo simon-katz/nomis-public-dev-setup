@@ -272,13 +272,13 @@ Return the position of the prompt beginning."
 ;;;; ...which says...
 ;;;;     inspired by http://bc.tech.coop/blog/070424.html
 
-(define-key clojure-mode-map (kbd "C-x C-,")
+(define-key clojure-mode-map (kbd "C-H-,")
   'nomis-cider-send-to-repl-selection-or-form-around-point)
-(define-key clojure-mode-map (kbd "C-x C-.")
+(define-key clojure-mode-map (kbd "C-H-.")
   'nomis-cider-send-to-repl-top-level-form)
-(define-key clojure-mode-map (kbd "C-x C-/")
+(define-key clojure-mode-map (kbd "C-H-/")
   'nomis-cider-send-to-repl-after-forward-sexp)
-(define-key clojure-mode-map (kbd "C-x C-<return>")
+(define-key clojure-mode-map (kbd "C-<kp-enter>")
   'nomis-cider-send-to-repl-return)
 
 (defun nomis-cider-send-to-repl-selection-or-form-around-point (arg)
