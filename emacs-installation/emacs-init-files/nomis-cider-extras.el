@@ -210,13 +210,13 @@ Return the position of the prompt beginning."
   (looking-at "[ \t\n]"))
 
 (defun nomis-looking-at-sexp-start ()
-  (looking-at "("))
+  (-some-p #'looking-at '("(" "\\[" "{" "#{")))
 
 (defun nomis-looking-at-sexp-end ()
   (and (not (nomis-looking-at-sexp-start))
        (save-excursion
          (backward-char 1)
-         (looking-at ")"))))
+         (-some-p #'looking-at '(")" "]" "}")))))
 
 (defun nomis-move-to-start-of-sexp-around-point ()
   (cond ((nomis-looking-at-sexp-start)
@@ -232,6 +232,13 @@ Return the position of the prompt beginning."
 (defun nomis-beginning-of-this-defun ()
   ;; this deals with most situations
   (while (ignore-errors (paredit-backward-up) t))
+  ;; Check for Clojure #{
+  (when (and (looking-at "{")
+             (ignore-errors
+               (save-excursion
+                 (backward-char 1)
+                 (looking-at "#"))))
+    (backward-char 1))
   ;; this handles the case when we are between top-level forms
   (when (not (nomis-looking-at-sexp-start))
     (backward-sexp)))
