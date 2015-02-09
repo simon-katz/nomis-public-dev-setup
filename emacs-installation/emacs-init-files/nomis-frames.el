@@ -57,7 +57,8 @@
 ;;;; give various different behaviours, including stack backtraces, going to
 ;;;; Emacs menus and even, in some cases (Lion and 24.2 IIRC), cycling frames.
 
-(when (equal system-configuration "x86_64-apple-darwin")
+(when (string/starts-with system-configuration
+                          "x86_64-apple-darwin")
 
   (defun other-frame-backwards ()
     (interactive)

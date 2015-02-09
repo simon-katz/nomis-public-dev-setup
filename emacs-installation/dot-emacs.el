@@ -68,6 +68,7 @@
 
 ;;;; ---- Other stuff ----
 
+(require 'nomis-string-utilities)
 (require 'nomis-very-general-stuff)
 (require 'nomis-mouse-scrolling)
 (require 'nomis-avoid-window-stealing)
