@@ -13,6 +13,7 @@
           "out"
           "target"
           ".repl"
+          "bundle"
           ;; "labrepl*/public/javascripts/jquery.js"
           ;; "emacs-configuration/nomis-addons/cygwin-mount.el"
           ))
