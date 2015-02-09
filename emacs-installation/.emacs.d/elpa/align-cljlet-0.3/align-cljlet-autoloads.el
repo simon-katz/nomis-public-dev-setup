@@ -1,18 +1,16 @@
 ;;; align-cljlet-autoloads.el --- automatically extracted autoloads
 ;;
 ;;; Code:
-
+(add-to-list 'load-path (or (file-name-directory #$) (car load-path)))
 
-;;;### (autoloads nil nil ("align-cljlet-pkg.el" "align-cljlet.el")
-;;;;;;  (21331 55794 891823 0))
+;;;### (autoloads nil nil ("align-cljlet.el") (21720 55410 51226
+;;;;;;  0))
 
 ;;;***
 
-(provide 'align-cljlet-autoloads)
 ;; Local Variables:
 ;; version-control: never
 ;; no-byte-compile: t
 ;; no-update-autoloads: t
-;; coding: utf-8
 ;; End:
 ;;; align-cljlet-autoloads.el ends here

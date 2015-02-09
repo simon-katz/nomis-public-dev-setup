@@ -1,18 +1,15 @@
 ;;; fuzzy-autoloads.el --- automatically extracted autoloads
 ;;
 ;;; Code:
-
+(add-to-list 'load-path (or (file-name-directory #$) (car load-path)))
 
-;;;### (autoloads nil nil ("fuzzy-pkg.el" "fuzzy.el") (21331 55714
-;;;;;;  760428 0))
+;;;### (autoloads nil nil ("fuzzy.el") (21720 54575 334685 0))
 
 ;;;***
 
-(provide 'fuzzy-autoloads)
 ;; Local Variables:
 ;; version-control: never
 ;; no-byte-compile: t
 ;; no-update-autoloads: t
-;; coding: utf-8
 ;; End:
 ;;; fuzzy-autoloads.el ends here

@@ -1,11 +1,10 @@
 ;;; multiple-cursors-autoloads.el --- automatically extracted autoloads
 ;;
 ;;; Code:
-
+(add-to-list 'load-path (or (file-name-directory #$) (car load-path)))
 
-;;;### (autoloads (mc/edit-beginnings-of-lines mc/edit-ends-of-lines
-;;;;;;  mc/edit-lines) "mc-edit-lines" "mc-edit-lines.el" (21331
-;;;;;;  55760 0 0))
+;;;### (autoloads nil "mc-edit-lines" "mc-edit-lines.el" (21720 54744
+;;;;;;  0 0))
 ;;; Generated autoloads from mc-edit-lines.el
 
 (autoload 'mc/edit-lines "mc-edit-lines" "\
@@ -13,14 +12,7 @@ Add one cursor to each line of the active region.
 Starts from mark and moves in straight down or up towards the
 line point is on.
 
-What is done with lines which are not long enough is governed by
-`mc/edit-lines-empty-lines'.  The prefix argument ARG can be used
-to override this.  If ARG is a symbol (when called from Lisp),
-that symbol is used instead of `mc/edit-lines-empty-lines'.
-Otherwise, if ARG negative, short lines will be ignored.  Any
-other non-nil value will cause short lines to be padded.
-
-\(fn &optional ARG)" t nil)
+\(fn)" t nil)
 
 (autoload 'mc/edit-ends-of-lines "mc-edit-lines" "\
 Add one cursor to the end of each line in the active region.
@@ -34,16 +26,8 @@ Add one cursor to the beginning of each line in the active region.
 
 ;;;***
 
-;;;### (autoloads (mc/mark-sgml-tag-pair mc/add-cursor-on-click mc/mark-all-symbols-like-this-in-defun
-;;;;;;  mc/mark-all-words-like-this-in-defun mc/mark-all-like-this-in-defun
-;;;;;;  mc/mark-all-dwim mc/mark-all-like-this-dwim mc/mark-more-like-this-extended
-;;;;;;  mc/mark-all-in-region mc/mark-all-symbols-like-this mc/mark-all-words-like-this
-;;;;;;  mc/mark-all-like-this mc/skip-to-previous-like-this mc/skip-to-next-like-this
-;;;;;;  mc/unmark-previous-like-this mc/unmark-next-like-this mc/mark-previous-lines
-;;;;;;  mc/mark-next-lines mc/mark-previous-symbol-like-this mc/mark-previous-word-like-this
-;;;;;;  mc/mark-previous-like-this mc/mark-next-symbol-like-this
-;;;;;;  mc/mark-next-word-like-this mc/mark-next-like-this) "mc-mark-more"
-;;;;;;  "mc-mark-more.el" (21331 55760 0 0))
+;;;### (autoloads nil "mc-mark-more" "mc-mark-more.el" (21720 54744
+;;;;;;  0 0))
 ;;; Generated autoloads from mc-mark-more.el
 
 (autoload 'mc/mark-next-like-this "mc-mark-more" "\
@@ -159,18 +143,6 @@ With prefix, it behaves the same as original `mc/mark-all-like-this'
 
 \(fn ARG)" t nil)
 
-(autoload 'mc/mark-all-dwim "mc-mark-more" "\
-Tries even harder to guess what you want to mark all of.
-
-If the region is active and spans multiple lines, it will behave
-as if `mc/mark-all-in-region'. With the prefix ARG, it will call
-`mc/edit-lines' instead.
-
-If the region is inactive or on a single line, it will behave like 
-`mc/mark-all-like-this-dwim'.
-
-\(fn ARG)" t nil)
-
 (autoload 'mc/mark-all-like-this-in-defun "mc-mark-more" "\
 Mark all like this in defun.
 
@@ -198,8 +170,8 @@ Mark the tag we're in and its pair for renaming.
 
 ;;;***
 
-;;;### (autoloads (mc/mark-pop) "mc-mark-pop" "mc-mark-pop.el" (21331
-;;;;;;  55760 0 0))
+;;;### (autoloads nil "mc-mark-pop" "mc-mark-pop.el" (21720 54744
+;;;;;;  0 0))
 ;;; Generated autoloads from mc-mark-pop.el
 
 (autoload 'mc/mark-pop "mc-mark-pop" "\
@@ -210,9 +182,8 @@ to the popped mark.
 
 ;;;***
 
-;;;### (autoloads (mc/sort-regions mc/reverse-regions mc/insert-numbers)
-;;;;;;  "mc-separate-operations" "mc-separate-operations.el" (21331
-;;;;;;  55760 0 0))
+;;;### (autoloads nil "mc-separate-operations" "mc-separate-operations.el"
+;;;;;;  (21720 54744 0 0))
 ;;; Generated autoloads from mc-separate-operations.el
 
 (autoload 'mc/insert-numbers "mc-separate-operations" "\
@@ -232,8 +203,8 @@ Insert increasing numbers for each cursor, starting at 0 or ARG.
 
 ;;;***
 
-;;;### (autoloads (set-rectangular-region-anchor) "rectangular-region-mode"
-;;;;;;  "rectangular-region-mode.el" (21331 55760 0 0))
+;;;### (autoloads nil "rectangular-region-mode" "rectangular-region-mode.el"
+;;;;;;  (21720 54744 0 0))
 ;;; Generated autoloads from rectangular-region-mode.el
 
 (autoload 'set-rectangular-region-anchor "rectangular-region-mode" "\
@@ -247,16 +218,14 @@ an exceedingly quick way of adding multiple cursors to multiple lines.
 ;;;***
 
 ;;;### (autoloads nil nil ("mc-cycle-cursors.el" "multiple-cursors-core.el"
-;;;;;;  "multiple-cursors-pkg.el" "multiple-cursors.el") (21331 55760
-;;;;;;  511420 0))
+;;;;;;  "multiple-cursors-pkg.el" "multiple-cursors.el") (21720 54744
+;;;;;;  725992 0))
 
 ;;;***
 
-(provide 'multiple-cursors-autoloads)
 ;; Local Variables:
 ;; version-control: never
 ;; no-byte-compile: t
 ;; no-update-autoloads: t
-;; coding: utf-8
 ;; End:
 ;;; multiple-cursors-autoloads.el ends here

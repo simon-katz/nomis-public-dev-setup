@@ -1,18 +1,15 @@
 ;;; workgroups-autoloads.el --- automatically extracted autoloads
 ;;
 ;;; Code:
-
+(add-to-list 'load-path (or (file-name-directory #$) (car load-path)))
 
-;;;### (autoloads nil nil ("workgroups-pkg.el" "workgroups.el") (21331
-;;;;;;  55710 475425 0))
+;;;### (autoloads nil nil ("workgroups.el") (21720 55405 493391 0))
 
 ;;;***
 
-(provide 'workgroups-autoloads)
 ;; Local Variables:
 ;; version-control: never
 ;; no-byte-compile: t
 ;; no-update-autoloads: t
-;; coding: utf-8
 ;; End:
 ;;; workgroups-autoloads.el ends here

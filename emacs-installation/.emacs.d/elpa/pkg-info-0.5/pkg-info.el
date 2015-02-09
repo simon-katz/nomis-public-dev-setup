@@ -6,6 +6,7 @@
 ;; URL: https://github.com/lunaryorn/pkg-info.el
 ;; Keywords: convenience
 ;; Version: 0.5
+;; X-Original-Version: 0.5
 ;; Package-Requires: ((dash "1.6.0") (epl "0.4"))
 
 ;; This file is not part of GNU Emacs.

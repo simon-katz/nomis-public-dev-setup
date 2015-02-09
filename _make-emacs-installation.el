@@ -18,9 +18,9 @@
                       rainbow-delimiters
                       auto-complete
                       saveplace
-                      workgroups
+                      workgroups ; Emacs 24.4 has something like this built in
                       fuzzy
-                      htmlize
+                      ;; htmlize
                       pos-tip
                       magit
                       ido-ubiquitous
@@ -29,14 +29,16 @@
                       scala-mode2
                       undo-tree
                       cider
-                      ac-nrepl
+                      ;; ac-nrepl
                       clojure-mode
                       clj-refactor
                       align-cljlet
                       exec-path-from-shell
                       js2-mode
                       ;; ac-js2
-                      projectile))
+                      projectile
+                      company
+                      rcirc-notify))
 
 (dolist (p my-packages)
   (when (not (package-installed-p p))
