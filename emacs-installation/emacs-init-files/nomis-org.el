@@ -1,8 +1,8 @@
-;;;; Init stuff -- Org Mode.
+;;;; ________ * Init stuff -- Org Mode.
 
-;;;; ___________________________________________________________________________
-;;;; ___________________________________________________________________________
-;;;; The following lines are always needed. Choose your own keys.
+;;;; ________ ** Stuff everyone needs
+
+;;; The following lines are always needed. Choose your own keys.
 
 (add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))
 (add-hook 'org-mode-hook 'turn-on-font-lock) ; not needed when global-font-lock-mode is on
@@ -10,12 +10,9 @@
 (global-set-key "\C-ca" 'org-agenda)
 (global-set-key "\C-cb" 'org-iswitchb)
 
-;;;; ___________________________________________________________________________
-;;;; ___________________________________________________________________________
-;;;; Personal tailoring
+;;;; ________ ** Personal tailoring
 
-;;;; ___________________________________________________________________________
-;;;; General
+;;;; ________ *** General
 
 (defvar nomis-notes-directory
   (if i-am-nomis-p
@@ -36,15 +33,13 @@
 
 (setq org-startup-indented t)
 
-;;;; ___________________________________________________________________________
-;;;; Priorities
+;;;; ________ *** Priorities
 
 (setq org-highest-priority ?1)
 (setq org-lowest-priority  ?9)
 (setq org-default-priority ?2)
 
-;;;; ___________________________________________________________________________
-;;;; Org mode hook function
+;;;; ________ *** Org mode hook function
 
 (defun nomis-org-mode ()
   ;; Layout
@@ -68,20 +63,17 @@
 
 (add-hook 'org-mode-hook 'nomis-org-mode)
 
-;;;; ___________________________________________________________________________
-;;;; Dependencies
+;;;; ________ *** Dependencies
 
 (setq org-enforce-todo-dependencies t)
 ;; (setq org-agenda-dim-blocked-tasks 'invisible) ; actually the default dimmimg is nice -- you can see more info
 
-;;;; ___________________________________________________________________________
-;;;; Capture
+;;;; ________ *** Capture
 
 (setq org-default-notes-file (concat org-directory "/___captured-notes.org"))
 (define-key global-map "\C-cc" 'org-capture)
 
-;;;; ___________________________________________________________________________
-;;;; Refiling
+;;;; ________ *** Refiling
 
 ;; (progn org-use-fast-todo-selection)
 
@@ -92,8 +84,7 @@
 ;; (setq org-refile-allow-creating-parent-nodes 'confirm)
 ;; (setq org-completion-use-ido nil)
 
-;;;; ___________________________________________________________________________
-;;;; Agendas
+;;;; ________ *** Agendas
 
 (setq org-agenda-files
       (if i-am-nomis-p
@@ -121,11 +112,16 @@
     )
   (ad-activate 'org-agenda-switch-to))
 
-;;;; ___________________________________________________________________________
-;;;; Fontify code in code blocks
+;;;; ________ *** Fontify code in code blocks
 
 (setq org-src-fontify-natively t)
 
-;;;; ___________________________________________________________________________
+;;;; ________ *** orgstruct
+
+;; To use, enable orgstruct-mode or orgstruct++-mode
+
+(setq orgstruct-heading-prefix-regexp ";* *_* ")
+
+;;;; ________ *** end
 
 (provide 'nomis-org)
