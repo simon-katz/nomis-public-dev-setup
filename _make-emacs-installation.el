@@ -28,10 +28,8 @@
                       idle-highlight-mode
                       scala-mode2
                       undo-tree
-                      cider
                       ;; ac-nrepl
                       clojure-mode
-                      clj-refactor
                       align-cljlet
                       exec-path-from-shell
                       js2-mode

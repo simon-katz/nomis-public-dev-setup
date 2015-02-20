@@ -2,6 +2,12 @@
 
 ;;;; ___________________________________________________________________________
 
+(dolist (p '("cider"
+             "clj-refactor"))
+  (add-to-list 'load-path (concat (nomis-load-file-directory)
+                                  "../../../"
+                                  p)))
+
 (require 'clojure-mode)
 (require 'cider)
 
