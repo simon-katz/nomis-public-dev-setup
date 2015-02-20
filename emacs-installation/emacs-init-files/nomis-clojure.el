@@ -4,6 +4,7 @@
 
 (dolist (p '("cider"
              "clj-refactor"))
+  ;; #### What about compiling?
   (add-to-list 'load-path (concat (nomis-load-file-directory)
                                   "../../../"
                                   p)))
