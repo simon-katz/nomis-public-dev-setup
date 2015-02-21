@@ -95,6 +95,13 @@
 ;;;; I want to enter my input on a fresh line. Nice when you are in a
 ;;;; namespace that has a long name.
 
+(defvar nomis-cider-repl--hack-prompt-p t)
+
+(defvar nomis-cider-repl--prompt-prefix (concatenate 'string
+                                                     (make-string 80 ?\_) "\n"))
+
+(defvar nomis-cider-repl--prompt-suffix "\n")
+
 (cond
  ((member (cider-version)
           '("0.5.0"
@@ -124,8 +131,10 @@ Return the position of the prompt beginning."
             (insert-before-markers prompt))
           (set-marker cider-repl-prompt-start-mark prompt-start)
           prompt-start)))))
- ((member (cider-version)
-          '("CIDER 0.8.2"))
+ ((and (member (cider-version)
+               '("CIDER 0.8.2"))
+       (not (boundp 'cider-repl--prompt-function)) ; without my modification
+       )
   (defun cider-repl--insert-prompt (namespace)
     "Insert the prompt (before markers!), taking into account NAMESPACE.
 Set point after the prompt.
@@ -149,6 +158,16 @@ Return the position of the prompt beginning."
             (insert-before-markers prompt))
           (set-marker cider-repl-prompt-start-mark prompt-start)
           prompt-start)))))
+ ((boundp 'cider-repl--prompt-function)
+  (setq cider-repl--prompt-function
+        (lambda (namespace)
+          (cl-labels ((do-it () (funcall 'cider-repl--default-prompt namespace)))
+            (if nomis-cider-repl--hack-prompt-p
+                (concatenate 'string
+                             nomis-cider-repl--prompt-prefix
+                             (do-it)
+                             nomis-cider-repl--prompt-suffix)
+              (do-it))))))
  (t
   (message-box
    "You need to fix your Cider prompt stuff for this version of Cider.")))
