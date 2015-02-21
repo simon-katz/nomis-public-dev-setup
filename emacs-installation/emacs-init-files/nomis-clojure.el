@@ -6,7 +6,8 @@
              "clj-refactor"))
   ;; #### What about compiling?
   (add-to-list 'load-path (concat (nomis-load-file-directory)
-                                  "../../../"
+                                  "../../../" ; #### I'm not happy with this
+                                              ; #### And what about other people?
                                   p)))
 
 (require 'clojure-mode)
