@@ -27,6 +27,12 @@
  (concat (nomis-load-file-directory)
          "emacs-init-files"))
 
+(dolist (d (directory-files (concat (nomis-load-file-directory)
+                                    "../../emacs-package-repos/")
+                            t
+                            "[^\\.].*"))
+  (add-to-list 'load-path d)) ; #### What about compiling?
+
 ;;;; ___________________________________________________________________________
 ;;;; ---- exec-path-from-shell ----
 
