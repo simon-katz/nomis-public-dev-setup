@@ -18,21 +18,6 @@
 (defun nomis-load-file-directory ()
   (file-name-directory (nomis-load-file-name)))
 
-(defun add-dir-and-normal-subdirs-to-load-path (dir)
-  (add-to-list 'load-path dir)
-  (let* ((default-directory dir))
-    (normal-top-level-add-subdirs-to-load-path)))
-
-(add-dir-and-normal-subdirs-to-load-path
- (concat (nomis-load-file-directory)
-         "emacs-init-files"))
-
-(dolist (d (directory-files (concat (nomis-load-file-directory)
-                                    "../../emacs-package-repos/")
-                            t
-                            "[^\\.].*"))
-  (add-to-list 'load-path d)) ; #### What about compiling?
-
 ;;;; ___________________________________________________________________________
 ;;;; ---- exec-path-from-shell ----
 
@@ -48,6 +33,24 @@
 
 (defvar i-am-nomis-p
   (file-exists-p nomis-personal-emacs-init-file))
+
+;;;; ___________________________________________________________________________
+
+(defun add-dir-and-normal-subdirs-to-load-path (dir)
+  (add-to-list 'load-path dir)
+  (let* ((default-directory dir))
+    (normal-top-level-add-subdirs-to-load-path)))
+
+(add-dir-and-normal-subdirs-to-load-path
+ (concat (nomis-load-file-directory)
+         "emacs-init-files"))
+
+(when i-am-nomis-p ; #### What about compiling?
+  (dolist (d (directory-files (concat (nomis-load-file-directory)
+                                      "../../emacs-package-repos/")
+                              t
+                              "[^\\.].*"))
+    (add-to-list 'load-path d)))
 
 ;;;; ___________________________________________________________________________
 ;;;; ---- Load various files ----
