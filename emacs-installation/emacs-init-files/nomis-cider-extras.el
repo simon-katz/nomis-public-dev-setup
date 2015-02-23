@@ -133,7 +133,7 @@ Return the position of the prompt beginning."
           prompt-start)))))
  ((and (member (cider-version)
                '("CIDER 0.8.2"))
-       (not (boundp 'cider-repl--prompt-function)) ; without my modification
+       (not (boundp 'cider-repl-prompt-function)) ; without my modification
        )
   (defun cider-repl--insert-prompt (namespace)
     "Insert the prompt (before markers!), taking into account NAMESPACE.
@@ -158,10 +158,10 @@ Return the position of the prompt beginning."
             (insert-before-markers prompt))
           (set-marker cider-repl-prompt-start-mark prompt-start)
           prompt-start)))))
- ((boundp 'cider-repl--prompt-function)
-  (setq cider-repl--prompt-function
+ ((boundp 'cider-repl-prompt-function)
+  (setq cider-repl-prompt-function
         (lambda (namespace)
-          (cl-labels ((do-it () (funcall 'cider-repl--default-prompt namespace)))
+          (cl-labels ((do-it () (funcall 'cider-repl-default-prompt namespace)))
             (if nomis-cider-repl--hack-prompt-p
                 (concatenate 'string
                              nomis-cider-repl--prompt-prefix
