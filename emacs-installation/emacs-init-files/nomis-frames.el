@@ -92,7 +92,8 @@
          56)
         ((member (system-name) ; this keeps changing --why? Ah! At the time of writing it's "188.28.48.230.threembb.co.uk", which mentions "three" and I'm on my data connection with 3connect
                  (list "unknown-3c-15-c2-e6-e3-64.home" ; sheringham sometimes
-                       "sheringham.local"))
+                       "sheringham.local"
+                       "sheringham.home"))
          ;; 900 pixels - menu bar
          60)
         (t
