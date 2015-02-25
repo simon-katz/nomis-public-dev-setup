@@ -3,7 +3,15 @@
 ;;;; ___________________________________________________________________________
 
 (require 'clojure-mode)
-(require 'cider)
+
+(progn
+  (require 'cider)
+  (unless (featurep 'cider-macroexpansion)
+    ;; Needed in:
+    ;; - 0.8.2
+    ;; - 0.9.0-snapshot (2015-02-23)
+    ;; Maybe a bug.
+    (require 'cider-macroexpansion)))
 
 (require 'nomis-clojure-indentation)
 (require 'nomis-cider-extras)
