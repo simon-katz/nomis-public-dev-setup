@@ -36,7 +36,8 @@
                       ;; ac-js2
                       projectile
                       company
-                      rcirc-notify))
+                      rcirc-notify
+                      markdown-mode))
 
 (dolist (p my-packages)
   (when (not (package-installed-p p))

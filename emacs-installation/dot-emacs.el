@@ -122,6 +122,8 @@
 
 (require 'nomis-projectile)
 
+(require 'nomis-markdown)
+
 (require 'homeless)
 
 (progn
