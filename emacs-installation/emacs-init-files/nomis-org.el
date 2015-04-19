@@ -102,15 +102,12 @@
           (lambda () (remove-text-properties
                       (point-min) (point-max) '(mouse-face t))))
 
-(progn
-  ;; I want to train myself not to hit RETURN when in an agenda;
-  ;; hit SPACE instead to show in other window.
-  (defadvice org-agenda-switch-to (around nomis-org-agenda-switch-to (&rest args))
-    (message "Use org-agenda-show-and-scroll-up (SPACE) instead")
-    (beep)
-    ;; ad-do-it
-    )
-  (ad-activate 'org-agenda-switch-to))
+(defun nomis-setup-org-keys ()
+  ;; I don't like RETURN in org agenda giving ORG-AGENDA-SWITCH-TO.
+  ;; I prefer this:
+  (org-defkey org-agenda-mode-map "\C-m" 'org-agenda-show-and-scroll-up))
+
+(add-hook 'org-mode-hook 'nomis-setup-org-keys)
 
 ;;;; ________ *** Fontify code in code blocks
 
