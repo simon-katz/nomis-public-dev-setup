@@ -13,6 +13,8 @@
     ;; Maybe a bug.
     (require 'cider-macroexpansion)))
 
+(require 'cider-grimoire)
+
 (require 'nomis-clojure-indentation)
 (require 'nomis-cider-extras)
 
