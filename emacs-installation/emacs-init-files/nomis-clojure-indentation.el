@@ -21,6 +21,8 @@
      (facts 'defun)
      (against-background 'defun)
      (provided 0)
+     ;; core.match
+     (match 1)
      ;; Om
      ;; (dom/li 1)
      ;; (dom/ul 1)
