@@ -86,6 +86,8 @@
 
 ;;;; ________ *** Agendas
 
+(require 'org-agenda)
+
 (setq org-agenda-files
       (if i-am-nomis-p
           (progn
