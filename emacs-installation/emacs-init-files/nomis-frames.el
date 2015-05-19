@@ -184,9 +184,9 @@
 
 ;;;; ___________________________________________________________________________
 
-(define-key global-map (kbd "H-1") 'nomis-w-single)
-(define-key global-map (kbd "H-2") 'nomis-w-double)
-(define-key global-map (kbd "H-3") 'nomis-w-triple)
+(define-key global-map (kbd "H-q 1") 'nomis-w-single)
+(define-key global-map (kbd "H-q 2") 'nomis-w-double)
+(define-key global-map (kbd "H-q 3") 'nomis-w-triple)
 (define-key global-map (kbd "H-q v") 'maximize-frame-vertically)
 (define-key global-map (kbd "H-q h") 'maximize-frame-horizontally)
 
