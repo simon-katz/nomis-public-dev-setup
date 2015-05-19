@@ -57,15 +57,12 @@
 ;;;; give various different behaviours, including stack backtraces, going to
 ;;;; Emacs menus and even, in some cases (Lion and 24.2 IIRC), cycling frames.
 
-(when (string/starts-with system-configuration
-                          "x86_64-apple-darwin")
-
-  (defun other-frame-backwards ()
+(defun other-frame-backwards ()
     (interactive)
     (other-frame -1))
 
-  (define-key global-map (kbd "M-`") 'other-frame)
-  (define-key global-map (kbd "M-~") 'other-frame-backwards))
+(define-key global-map (kbd "M-`") 'other-frame)
+(define-key global-map (kbd "M-~") 'other-frame-backwards)
 
 ;;;; ___________________________________________________________________________
 ;;;; ---- Default frame size ----
