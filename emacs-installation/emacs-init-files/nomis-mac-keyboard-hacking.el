@@ -17,7 +17,7 @@
 (setq mac-option-modifier nil)     ; do not map option key
 (setq ns-function-modifier 'hyper) ; set Mac's Fn key to Hyper
 
-(setq ws32-apps-modifer 'hyper)    ; set Window's Windows key to Hyper
+(setq w32-lwindow-modifier 'hyper) ; set Window's Left Windows key to Hyper
 
 ;;;; ___________________________________________________________________________
 ;;;; ---- Experiment: Make some keys more "normal" ----
