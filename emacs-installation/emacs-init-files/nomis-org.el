@@ -88,13 +88,17 @@
 
 (require 'org-agenda)
 
-(setq org-agenda-files
-      (if i-am-nomis-p
-          (progn
-            (load-library "find-lisp")
-            (find-lisp-find-files nomis-notes-directory
-                                  "\.org$"))
-        (list org-directory)))
+(defun nomis-org-reset-org-agenda-files ()
+  (interactive)
+  (setq org-agenda-files
+        (if i-am-nomis-p
+            (progn
+              (load-library "find-lisp")
+              (find-lisp-find-files nomis-notes-directory
+                                    "\.org$"))
+          (list org-directory))))
+
+(nomis-org-reset-org-agenda-files)
 
 ;;; From http://orgmode.org/worg/org-faq.html
 ;;;   How can I stop the mouse cursor from highlighting lines in the agenda?
