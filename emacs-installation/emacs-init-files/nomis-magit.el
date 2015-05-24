@@ -19,8 +19,9 @@
 ;;;; From http://whattheemacsd.com/setup-magit.el-02.html
 
 (eval-after-load 'magit
-  '(progn
-     
+  '(when (equal magit-version
+                "90150116")
+  
      (defun magit-toggle-whitespace ()
        (interactive)
        (if (member "-w" magit-diff-options)
