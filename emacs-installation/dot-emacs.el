@@ -105,6 +105,7 @@
 (require 'nomis-dirtree)
 
 (require 'nomis-shell-stuff)
+(require 'nomis-eshell)
 
 (require 'nomis-keyboard-macros)
 (require 'nomis-searching)
