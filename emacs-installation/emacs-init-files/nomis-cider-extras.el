@@ -303,7 +303,7 @@ Return the position of the prompt beginning."
 (define-key clojure-mode-map (kbd "C-H-.")
   'nomis-cider-send-to-repl-top-level-form)
 (define-key clojure-mode-map (kbd "C-H-/")
-  'nomis-cider-send-to-repl-then-forward-sexp)
+  'nomis-cider-send-to-repl-after-forward-sexp)
 (define-key clojure-mode-map (kbd "C-<kp-enter>")
   'nomis-cider-send-to-repl-return)
 
@@ -332,8 +332,8 @@ Control of evaluation:
   (interactive "P")
   (nomis-cider-send-to-repl-helper arg :send-top-level-form))
 
-(defun nomis-cider-send-to-repl-then-forward-sexp (arg)
-  "Send current form to the REPL and then move to the next form (so this
+(defun nomis-cider-send-to-repl-after-forward-sexp (arg)
+  "Send next form to the REPL and move past it (so this
 command can be repeated usefully).
 Control of evaluation:
 - If no prefix argument is supplied, evaluate the form and do not
@@ -341,8 +341,8 @@ Control of evaluation:
 - If a prefix argument is supplied, do not evaluate the form and
   make the REPL window active."
   (interactive "P")
-  (nomis-cider-send-to-repl-helper arg :send-selection-or-form-around-point)
-  (forward-sexp))
+  (forward-sexp)
+  (nomis-cider-send-to-repl-helper arg :send-selection-or-form-around-point))
 
 (defun nomis-cider-send-to-repl-return ()
   "Send RETURN to the REPL."
