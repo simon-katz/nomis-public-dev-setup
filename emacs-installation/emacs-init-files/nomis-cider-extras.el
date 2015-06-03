@@ -303,7 +303,7 @@ Return the position of the prompt beginning."
 (define-key clojure-mode-map (kbd "C-H-.")
   'nomis-cider-send-to-repl-top-level-form)
 (define-key clojure-mode-map (kbd "C-H-/")
-  'nomis-cider-send-to-repl-after-forward-sexp)
+  'nomis-cider-send-to-repl-then-forward-sexp)
 (define-key clojure-mode-map (kbd "C-<kp-enter>")
   'nomis-cider-send-to-repl-return)
 
@@ -332,8 +332,8 @@ Control of evaluation:
   (interactive "P")
   (nomis-cider-send-to-repl-helper arg :send-top-level-form))
 
-(defun nomis-cider-send-to-repl-after-forward-sexp (arg)
-  "Send next form to the REPL and move past it (so this
+(defun nomis-cider-send-to-repl-then-forward-sexp (arg)
+  "Send current form to the REPL and then move to the next form (so this
 command can be repeated usefully).
 Control of evaluation:
 - If no prefix argument is supplied, evaluate the form and do not
@@ -341,8 +341,8 @@ Control of evaluation:
 - If a prefix argument is supplied, do not evaluate the form and
   make the REPL window active."
   (interactive "P")
-  (forward-sexp)
-  (nomis-cider-send-to-repl-helper arg :send-selection-or-form-around-point))
+  (nomis-cider-send-to-repl-helper arg :send-selection-or-form-around-point)
+  (forward-sexp))
 
 (defun nomis-cider-send-to-repl-return ()
   "Send RETURN to the REPL."
@@ -364,11 +364,15 @@ Control of evaluation:
             (null (nomis-clojure-buffer-ns))
             (equal (nomis-clojure-buffer-ns)
                    (nomis-cider-repl-namespace))
-            (y-or-n-p
-             (format "Buffer ns (%s) and REPL ns (%s) are different.
+            (let ((user-happy-with-namespace-p
+                   (y-or-n-p
+                    (format "Buffer ns (%s) and REPL ns (%s) are different.
 Really send to REPL? "
-                     (nomis-clojure-buffer-ns)
-                     (nomis-cider-repl-namespace))))
+                            (nomis-clojure-buffer-ns)
+                            (nomis-cider-repl-namespace)))))
+              (if user-happy-with-namespace-p
+                  t
+                (error "Not in this namespace!"))))
     (labels ((grab-text
               (top-level-p)
               (nomis-grab-text :top-level-p top-level-p :delete-p nil))
