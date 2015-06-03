@@ -355,7 +355,7 @@ Control of evaluation:
 (defcustom nomis-cider-send-to-buffer-print-newline-first-p nil ; because you always have a newline now -- you changed the prompt to have a newline at the end
   "When sending forms to Cider REPL, whether to send a newline first.")
 
-(defcustom nomis-cider-send-to-buffer-do-return-first-p t
+(defcustom nomis-cider-send-to-buffer-do-return-first-p nil
   "When sending forms to Cider REPL, whether to send a RETURN first (to get a fresh prompt even after output appearing in the REPL buffer).")
 
 (defun nomis-cider-send-to-repl-helper (arg action)
