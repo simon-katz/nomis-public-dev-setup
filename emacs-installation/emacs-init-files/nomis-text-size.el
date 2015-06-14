@@ -1,41 +1,40 @@
 ;;;; Init stuff -- nomis-text-size
 
 ;;;; ___________________________________________________________________________
+;;;; ---- Globally change the font size. ----
 
-;;;; Pretty-much copied from http://emacs.stackexchange.com/questions/7583/transiently-adjust-text-size-in-mode-line-and-minibuffer/7584#7584
+;;;; Largely copied from http://emacs.stackexchange.com/questions/7583/transiently-adjust-text-size-in-mode-line-and-minibuffer/7584#7584 .
 
-(defvar default-font-size-pt 12)
+(defvar nomis/initial-point-size (face-attribute 'default :height))
 
-(defvar font-size-pt default-font-size-pt)
+(defvar nomis/point-size nomis/initial-point-size)
 
-(defun modi/font-size-adj (&optional arg)
-  "The default C-x C-0/-/= bindings do an excellent job of font resizing.
-They, though, do not change the font sizes for the text outside the buffer,
-example in mode-line. Below function changes the font size in those areas too.
-
-M-<NUM> M-x modi/font-size-adj increases font size by NUM points if NUM is +ve,
-                               decreases font size by NUM points if NUM is -ve
-                               resets    font size if NUM is 0."
+(defun nomis/font-size-adjust (&optional arg)
+  "Globally change the font size.
+M-<NUM> M-x nomis/font-size-adjust:
+- increases font size by (10% ^ NUM) if NUM is +ve
+- decreases font size by (10% ^ NUM) if NUM is -ve
+- resets    font size if NUM is 0."
   (interactive "p")
-  (if (= arg 0)
-      (setq font-size-pt default-font-size-pt)
-    (setq font-size-pt (+ font-size-pt arg)))
-  ;; The internal font size value is 10x the font size in points unit.
-  ;; So a 10pt font size is equal to 100 in internal font size value.
-  (set-face-attribute 'default nil :height (* font-size-pt 10)))
+  (setq nomis/point-size
+        (if (= arg 0)
+            nomis/initial-point-size
+          (round (* nomis/point-size
+                    (expt 1.1 arg)))))
+  (set-face-attribute 'default nil :height nomis/point-size))
 
-(defun modi/font-size-incr ()  (interactive) (modi/font-size-adj +1))
-(defun modi/font-size-decr ()  (interactive) (modi/font-size-adj -1))
-(defun modi/font-size-reset () (interactive) (modi/font-size-adj 0))
+(defun nomis/font-size-incr  () (interactive) (nomis/font-size-adjust +1)) 
+(defun nomis/font-size-decr  () (interactive) (nomis/font-size-adjust -1)) 
+(defun nomis/font-size-reset () (interactive) (nomis/font-size-adjust  0))
 
 (require 'hydra)
 
 (defhydra hydra-font-resize
   (global-map "C-M-=")
   "font-resize"
-  ("-"   modi/font-size-decr  "Decrease")
-  ("="   modi/font-size-incr  "Increase")
-  ("0"   modi/font-size-reset "Reset to default size"))
+  ("-"   nomis/font-size-decr  "Decrease")
+  ("="   nomis/font-size-incr  "Increase")
+  ("0"   nomis/font-size-reset "Reset to default size"))
 
 ;;;; ___________________________________________________________________________
 
