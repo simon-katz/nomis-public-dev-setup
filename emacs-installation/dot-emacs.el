@@ -125,6 +125,8 @@
 
 (require 'nomis-markdown)
 
+(require 'nomis-text-size)
+
 (require 'homeless)
 
 (progn

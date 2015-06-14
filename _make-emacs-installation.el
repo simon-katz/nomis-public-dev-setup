@@ -37,7 +37,8 @@
                       projectile
                       company
                       rcirc-notify
-                      markdown-mode))
+                      markdown-mode
+                      hydra))
 
 (dolist (p my-packages)
   (when (not (package-installed-p p))
