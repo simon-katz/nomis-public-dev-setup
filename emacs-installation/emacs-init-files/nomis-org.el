@@ -14,17 +14,7 @@
 
 ;;;; ________ *** General
 
-(defvar nomis-notes-directory
-  (if i-am-nomis-p
-      (concat (nomis-load-file-directory)
-              "../../../../notes")
-    "you are not nomis so you don't have a nomis-notes-directory"))
-
-(setq org-directory
-      (if i-am-nomis-p
-          (concat nomis-notes-directory "/to-do-and-planning")
-        "~/.emacs-org-dir"))
-
+(setq org-directory "~/org")
 
 (setq org-replace-disputed-keys t)
 (setq org-log-done nil)
@@ -91,12 +81,10 @@
 (defun nomis-org-reset-org-agenda-files ()
   (interactive)
   (setq org-agenda-files
-        (if i-am-nomis-p
-            (progn
-              (load-library "find-lisp")
-              (find-lisp-find-files nomis-notes-directory
-                                    "\.org$"))
-          (list org-directory))))
+        (progn
+          (load-library "find-lisp")
+          (find-lisp-find-files org-directory
+                                "\.org$"))))
 
 (nomis-org-reset-org-agenda-files)
 
