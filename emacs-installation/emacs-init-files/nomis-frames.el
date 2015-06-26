@@ -176,7 +176,7 @@
 (require 'hydra)
 
 (defhydra hydra-move-frame
-  (global-map "M-S-z")
+  (global-map "M-Z")
   "move-frame"
   ("M-S-<up>"    move-frame-up    "Up")
   ("M-S-<down>"  move-frame-down  "Down")
