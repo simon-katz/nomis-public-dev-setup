@@ -30,7 +30,7 @@ M-<NUM> M-x nomis/font-size-adjust:
 (require 'hydra)
 
 (defhydra hydra-font-resize
-  (global-map "C-M-=")
+  (global-map "M-+")
   "font-resize"
   ("-"   nomis/font-size-decr  "Decrease")
   ("="   nomis/font-size-incr  "Increase")
