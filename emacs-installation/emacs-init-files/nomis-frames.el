@@ -178,10 +178,10 @@
 (defhydra hydra-move-frame
   (global-map "M-Z")
   "move-frame"
-  ("M-S-<up>"    move-frame-up    "Up")
-  ("M-S-<down>"  move-frame-down  "Down")
-  ("M-S-<left>"  move-frame-left  "Left")
-  ("M-S-<right>" move-frame-right "Right"))
+  ("<up>"    move-frame-up    "Up")
+  ("<down>"  move-frame-down  "Down")
+  ("<left>"  move-frame-left  "Left")
+  ("<right>" move-frame-right "Right"))
 
 ;;;; ___________________________________________________________________________
 
