@@ -1,5 +1,10 @@
 ;;;; Init stuff -- Very general stuff.
 
+(defun nomis-no-op ()
+  (interactive))
+
+(define-key global-map (kbd "M-<return>") 'nomis-no-op)
+
 (setq-default indent-tabs-mode nil) ; use spaces, not tabs
 (setq sentence-end-double-space nil)
 (setq visible-bell t)
