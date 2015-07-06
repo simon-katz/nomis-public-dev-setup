@@ -58,8 +58,9 @@
 (setq nrepl-buffer-name-separator "--")
 
 ;; (setq nrepl-buffer-name-show-port t)
+
 (setq cider-repl-display-in-current-window t)
-(setq cider-repl-print-length 100)
+(setq cider-repl-pop-to-buffer-on-connect nil)
 
 ;; (setq cider-repl-history-file "~/.cider-repl-history") ; I'm now hacking this in `cider-jack-in`
 (setq cider-repl-history-size 5000) ; the default is 500
@@ -68,11 +69,13 @@
 
 (setq cider-repl-use-clojure-font-lock t)
 
+(setq nrepl-log-messages t)
+
 ;; ;;;; ---------------------------------------------------------------------------
 ;; ;;;; ---- Stuff for when connected to nrepl       ----
 ;; ;;;; ---- (for REPL and for Clojure source files) ----
 
-(add-hook 'cider-mode-hook 'cider-turn-on-eldoc-mode)
+(add-hook 'cider-mode-hook 'eldoc-mode)
 
 
 ;; ;;;; ---------------------------------------------------------------------------
