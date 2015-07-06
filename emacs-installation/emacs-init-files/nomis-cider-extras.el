@@ -18,7 +18,8 @@
   (defun nomis-clojure-buffer-ns ()
     (cider-find-ns)))
  ((member (cider-version)
-          '("CIDER 0.8.2"))
+          '("CIDER 0.8.2"
+            "CIDER 0.9.1"))
   (defun nomis-clojure-buffer-ns ()
     (clojure-find-ns)))
  (t
@@ -32,6 +33,11 @@
   (defun nomis-cider-repl-namespace ()
     (with-current-buffer (cider-current-repl-buffer)
       nrepl-buffer-ns)))
+ ((member (cider-version)
+          '("CIDER 0.9.1"))
+  (defun nomis-cider-repl-namespace ()
+    (with-current-buffer (cider-current-repl-buffer)
+      cider-buffer-ns)))
  (t
   (message-box
    "You need to fix `nomis-cider-repl-namespace` for this version of Cider.")))
@@ -42,7 +48,8 @@
   (defun nomis-cider-find-or-create-repl-buffer ()
     (cider-find-or-create-repl-buffer)))
  ((member (cider-version)
-          '("CIDER 0.8.2"))
+          '("CIDER 0.8.2"
+            "CIDER 0.9.1"))
   (defun nomis-cider-find-or-create-repl-buffer ()
     (cider-get-repl-buffer)))
  (t
@@ -97,8 +104,8 @@
 
 (defvar nomis-cider-repl--hack-prompt-p t)
 
-(defvar nomis-cider-repl--prompt-prefix (concatenate 'string
-                                                     (make-string 80 ?\_) "\n"))
+(defvar nomis-cider-repl--prompt-prefix (cl-concatenate 'string
+                                                        (make-string 80 ?\_) "\n"))
 
 (defvar nomis-cider-repl--prompt-suffix "\n")
 
@@ -119,11 +126,11 @@ Return the position of the prompt beginning."
         (let ((prompt-start (point))
               (prompt (let ((original-prompt (format "%s> " namespace)))
                         ;; jsk: Added stuff here
-                        (concatenate 'string
-                                     (make-string 80 ?\_)
-                                     "\n"
-                                     original-prompt
-                                     "\n"))))
+                        (cl-concatenate 'string
+                                        (make-string 80 ?\_)
+                                        "\n"
+                                        original-prompt
+                                        "\n"))))
           (cider-propertize-region
               '(face cider-repl-prompt-face read-only t intangible t
                      cider-prompt t
@@ -146,11 +153,11 @@ Return the position of the prompt beginning."
         (let ((prompt-start (point))
               (prompt (let ((original-prompt (format "%s> " namespace)))
                         ;; jsk: Added stuff here
-                        (concatenate 'string
-                                     (make-string 80 ?\_)
-                                     "\n"
-                                     original-prompt
-                                     "\n"))))
+                        (cl-concatenate 'string
+                                        (make-string 80 ?\_)
+                                        "\n"
+                                        original-prompt
+                                        "\n"))))
           (cider-propertize-region
               '(font-lock-face cider-repl-prompt-face read-only t intangible t
                                cider-repl-prompt t
@@ -163,10 +170,10 @@ Return the position of the prompt beginning."
         (lambda (namespace)
           (cl-labels ((do-it () (funcall 'cider-repl-default-prompt namespace)))
             (if nomis-cider-repl--hack-prompt-p
-                (concatenate 'string
-                             nomis-cider-repl--prompt-prefix
-                             (do-it)
-                             nomis-cider-repl--prompt-suffix)
+                (cl-concatenate 'string
+                                nomis-cider-repl--prompt-prefix
+                                (do-it)
+                                nomis-cider-repl--prompt-suffix)
               (do-it))))))
  (t
   (message-box
@@ -217,7 +224,7 @@ Return the position of the prompt beginning."
 ;;##     (goto-char (point-max))
 ;;##     (nrepl-mark-input-start)
 ;;##     (nrepl-mark-output-start)
-;;##     (nrepl-send-string form (nrepl-handler (current-buffer)) nrepl-buffer-ns)))))
+;;##     (nrepl-send-string form (nrepl-handler (current-buffer)) cider-buffer-ns)))))
 
 ;;;; ___________________________________________________________________________
 ;;;; ---- Utility functions ----
@@ -262,7 +269,7 @@ Return the position of the prompt beginning."
   (when (not (nomis-looking-at-sexp-start))
     (backward-sexp)))
 
-(defun* nomis-grab-text (&key top-level-p delete-p)
+(cl-defun nomis-grab-text (&key top-level-p delete-p)
   (let* ((grab-function (if delete-p
                             #'delete-and-extract-region
                           #'buffer-substring)))
@@ -485,7 +492,7 @@ Really send to REPL? "
                      (if prefix 0 1))
                   72))
          (string-value (cider-eval-and-get-value clojure-form-as-string
-                                                 nrepl-buffer-ns)))
+                                                 cider-buffer-ns)))
     (save-excursion
       (insert
        (format "\"%s\""
@@ -690,6 +697,38 @@ start the server."
             (nrepl-start-server-process project-dir cmd)))
       (message "The %s executable (specified by `cider-lein-command') isn't on your exec-path"
                cider-lein-command))))
+ ((member (cider-version)
+          '("CIDER 0.9.1"))
+  (defun cider-jack-in (&optional prompt-project)
+    "Start a nREPL server for the current project and connect to it.
+If PROMPT-PROJECT is t, then prompt for the project for which to
+start the server."
+    (interactive "P")
+    (setq cider-current-clojure-buffer (current-buffer))
+    (let ((project-type (or (cider-project-type) cider-default-repl-command)))
+      (if (funcall (cider-command-present-p project-type))
+          (let* ((project (when prompt-project
+                            (read-directory-name "Project: ")))
+                 (project-dir (nrepl-project-directory-for
+                               (or project (nrepl-current-dir))))
+                 (params (if prompt-project
+                             (read-string (format "nREPL server command: %s "
+                                                  (cider-jack-in-params project-type))
+                                          (cider-jack-in-params project-type))
+                           (cider-jack-in-params project-type)))
+                 (cmd (format "%s %s" (cider-jack-in-command project-type) params)))
+            (progn ; jsk: Added this stuff
+              (let ((nomis-cider-repl-history-file
+                     (concat project-dir ".cider-repl-history")))
+                ;; (message-box (concat "Setting cider-repl-history-file to "
+                ;;                      nomis-cider-repl-history-file))
+                (setq cider-repl-history-file nomis-cider-repl-history-file)))
+            (-when-let (repl-buff (nrepl-find-reusable-repl-buffer nil project-dir))
+              (let ((nrepl-create-client-buffer-function  #'cider-repl-create)
+                    (nrepl-use-this-as-repl-buffer repl-buff))
+                (nrepl-start-server-process project-dir cmd))))
+        (message "The %s executable (specified by `cider-lein-command' or `cider-boot-command') isn't on your exec-path"
+                 (cider-jack-in-command project-type))))))
  (t
   (message-box
    "You need to fix your Cider REPL history file stuff for this version of Cider.")))
@@ -700,7 +739,8 @@ start the server."
 (cond
  ((member (cider-version)
           '("CIDER 0.7.0"
-            "CIDER 0.8.2"))
+            "CIDER 0.8.2"
+            "CIDER 0.9.1"))
   (defun cider-repl--history-write (filename)
     "Write history to FILENAME.
 Currently coding system for writing the contents is hardwired to
