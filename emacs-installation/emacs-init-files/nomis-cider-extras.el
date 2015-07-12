@@ -380,45 +380,45 @@ Really send to REPL? "
               (if user-happy-with-namespace-p
                   t
                 (error "Not in this namespace!"))))
-    (labels ((grab-text
-              (top-level-p)
-              (nomis-grab-text :top-level-p top-level-p :delete-p nil))
-             (the-text
-              ()
-              (case action
-                ((:send-top-level-form) (grab-text t))
-                ((:send-selection-or-form-around-point) (grab-text nil))
-                ((:send-return) nil)
-                (t (error "Bad action")))) 
-             (show-cider-repl-buffer-and-send-text-to-it
-              (text)
-              (labels ((insert-text () (insert text)))
-                (let* ((original-frame (selected-frame))
-                       (original-window (selected-window)))
-                  (set-buffer (nomis-cider-find-or-create-repl-buffer))
-                  (unless (eq (current-buffer) (window-buffer))
-                    (let* ((window (get-buffer-window (current-buffer)
-                                                      t)))
-                      (if window
-                          (progn
-                            (select-frame-set-input-focus (window-frame window))
-                            (select-window window))
-                        (pop-to-buffer (current-buffer) t))))
-                  (goto-char (point-max))
-                  (unless (null text)
-                    (when nomis-cider-send-to-buffer-print-newline-first-p
-                      (newline))
-                    (when nomis-cider-send-to-buffer-do-return-first-p
-                      (cider-repl-return)
-                      (sleep-for 0.25))
-                    (insert-text)
-                    (backward-sexp)
-                    (paredit-reindent-defun)
-                    (forward-sexp))
-                  (when (null arg)
-                    (cider-repl-return)
-                    (select-frame-set-input-focus original-frame)
-                    (select-window original-window))))))
+    (cl-labels ((grab-text
+                 (top-level-p)
+                 (nomis-grab-text :top-level-p top-level-p :delete-p nil))
+                (the-text
+                 ()
+                 (case action
+                   ((:send-top-level-form) (grab-text t))
+                   ((:send-selection-or-form-around-point) (grab-text nil))
+                   ((:send-return) nil)
+                   (t (error "Bad action")))) 
+                (show-cider-repl-buffer-and-send-text-to-it
+                 (text)
+                 (cl-labels ((insert-text () (insert text)))
+                   (let* ((original-frame (selected-frame))
+                          (original-window (selected-window)))
+                     (set-buffer (nomis-cider-find-or-create-repl-buffer))
+                     (unless (eq (current-buffer) (window-buffer))
+                       (let* ((window (get-buffer-window (current-buffer)
+                                                         t)))
+                         (if window
+                             (progn
+                               (select-frame-set-input-focus (window-frame window))
+                               (select-window window))
+                           (pop-to-buffer (current-buffer) t))))
+                     (goto-char (point-max))
+                     (unless (null text)
+                       (when nomis-cider-send-to-buffer-print-newline-first-p
+                         (newline))
+                       (when nomis-cider-send-to-buffer-do-return-first-p
+                         (cider-repl-return)
+                         (sleep-for 0.25))
+                       (insert-text)
+                       (backward-sexp)
+                       (paredit-reindent-defun)
+                       (forward-sexp))
+                     (when (null arg)
+                       (cider-repl-return)
+                       (select-frame-set-input-focus original-frame)
+                       (select-window original-window))))))
       (show-cider-repl-buffer-and-send-text-to-it (the-text)))))
 
 
