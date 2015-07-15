@@ -57,45 +57,6 @@
    "You need to fix `nomis-cider-find-or-create-repl-buffer` for this version of Cider.")))
 
 
-;;## ;;;; ___________________________________________________________________________
-;;## ;;;; ---- Cause focus to go to stacktrace window when popped up -----
-;;## 
-;;## (cond
-;;## 
-;;##  ((equal nrepl-current-version "0.1.6")
-;;##   (defadvice nrepl-default-err-handler (after select-nrepl-error-buffer ())
-;;##     (when (or nrepl-popup-stacktraces
-;;##               (not (member (buffer-local-value 'major-mode buffer)
-;;##                            '(nrepl-mode clojure-mode))))
-;;##       (select-window (get-buffer-window nrepl-error-buffer))))
-;;##   (ad-activate 'nrepl-default-err-handler))
-;;## 
-;;##  ((equal nrepl-current-version "0.1.7")
-;;##   ;; Too hard to work out suitable advice, so redefine the function
-;;##   ;; with a change.
-;;##   (defun nrepl-default-err-handler (buffer ex root-ex session)
-;;##     "Make an error handler for BUFFER, EX, ROOT-EX and SESSION."
-;;##     ;; TODO: use ex and root-ex as fallback values to display when pst/print-stack-trace-not-found
-;;##     (let ((replp (equal 'nrepl-mode (buffer-local-value 'major-mode buffer))))
-;;##       (if (or (and nrepl-popup-stacktraces-in-repl replp)
-;;##               (and nrepl-popup-stacktraces (not replp)))
-;;##           (lexical-let ((nrepl-popup-on-error nrepl-popup-on-error))
-;;##             (with-current-buffer buffer
-;;##               (nrepl-send-string "(if-let [pst+ (clojure.core/resolve 'clj-stacktrace.repl/pst+)]
-;;##                         (pst+ *e) (clojure.stacktrace/print-stack-trace *e))"
-;;##                                  (nrepl-make-response-handler
-;;##                                   (nrepl-make-popup-buffer nrepl-error-buffer)
-;;##                                   nil
-;;##                                   (lambda (buffer value)
-;;##                                     (nrepl-emit-into-color-buffer buffer value)
-;;##                                     (when nrepl-popup-on-error
-;;##                                       (nrepl-popup-buffer-display buffer
-;;##                                                                   t ; jsk change
-;;##                                                                   )))
-;;##                                   nil nil) nil session))
-;;##             (with-current-buffer nrepl-error-buffer
-;;##               (compilation-minor-mode +1))))))))
-
 ;;;; ___________________________________________________________________________
 ;;;; ---- Prompt ----
 
@@ -178,53 +139,6 @@ Return the position of the prompt beginning."
  (t
   (message-box
    "You need to fix your Cider prompt stuff for this version of Cider.")))
-
-;;## ;;;; ___________________________________________________________________________
-;;## ;;;; ---- Pretty printing of results ----
-;;## 
-;;## ;;;; Pretty printing of results is broken, because:
-;;## ;;;; - It returns (and prints) nil.
-;;## 
-;;## ;;;; A hack to return the right value (and unfortunately print twice, once
-;;## ;;;; pretty and once not).
-;;## 
-;;## (cond
-;;##  ((equal nrepl-current-version "0.1.7")
-;;##   (defun nrepl-send-input (&optional newline)
-;;##   "Goto to the end of the input and send the current input.
-;;## If NEWLINE is true then add a newline at the end of the input."
-;;##   (unless (nrepl-in-input-area-p)
-;;##     (error "No input at point"))
-;;##   (goto-char (point-max))
-;;##   (let ((end (point)))             ; end of input, without the newline
-;;##     (nrepl-add-to-input-history (buffer-substring nrepl-input-start-mark end))
-;;##     (when newline
-;;##       (insert "\n")
-;;##       (nrepl-show-maximum-output))
-;;##     (let ((inhibit-modification-hooks t))
-;;##       (add-text-properties nrepl-input-start-mark
-;;##                            (point)
-;;##                            `(nrepl-old-input
-;;##                              ,(incf nrepl-old-input-counter))))
-;;##     (let ((overlay (make-overlay nrepl-input-start-mark end)))
-;;##       ;; These properties are on an overlay so that they won't be taken
-;;##       ;; by kill/yank.
-;;##       (overlay-put overlay 'read-only t)
-;;##       (overlay-put overlay 'face 'nrepl-input-face)))
-;;##   (let* ((input (nrepl-current-input))
-;;##          (form (if (and (not (string-match "\\`[ \t\r\n]*\\'" input)) nrepl-use-pretty-printing)
-;;##                    ;; jsk changes here:
-;;##                    ;; was: (format "(clojure.pprint/pprint %s)" input)
-;;##                    (format "(let [res %s]
-;;##                               (clojure.pprint/pprint res)
-;;##                               (print \"____\")
-;;##                               res)"
-;;##                            input)
-;;##                  input)))
-;;##     (goto-char (point-max))
-;;##     (nrepl-mark-input-start)
-;;##     (nrepl-mark-output-start)
-;;##     (nrepl-send-string form (nrepl-handler (current-buffer)) cider-buffer-ns)))))
 
 ;;;; ___________________________________________________________________________
 ;;;; ---- Utility functions ----
