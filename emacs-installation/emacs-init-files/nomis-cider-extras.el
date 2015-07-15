@@ -710,7 +710,7 @@ window."
           (goto-char pos))))))
  (t
   (message-box
-   "You need to fix your cider-repl--history-write stuff for this version of Cider.")))
+   "You need to fix your cider-jump-to stuff for this version of Cider.")))
 
 ;;;; ___________________________________________________________________________
 
