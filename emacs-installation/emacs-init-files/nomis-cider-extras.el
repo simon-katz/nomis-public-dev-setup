@@ -679,5 +679,39 @@ utf-8-unix."
    "You need to fix your cider-repl--history-write stuff for this version of Cider.")))
 
 ;;;; ___________________________________________________________________________
+;;;; ---- Have `cider-find-var`, `cider-find-ns` and similar always re-use
+;;;;      the selected window. ----
+
+(cond
+ ((member (cider-version)
+          '("CIDER 0.9.1"))
+  (defun cider-jump-to (buffer &optional pos other-window)
+    "Push current point onto marker ring, and jump to BUFFER and POS.
+POS can be either a numeric position in BUFFER or a cons (LINE . COLUMN)
+where COLUMN can be nil. If OTHER-WINDOW is non-nil don't reuse current
+window."
+    (ring-insert find-tag-marker-ring (point-marker))
+    (if other-window
+        (pop-to-buffer buffer)
+      ;; like switch-to-buffer, but reuse existing window if BUFFER is visible
+      ;; jsk: change `pop-to-buffer` to `switch-to-buffer`
+      (switch-to-buffer buffer '((display-buffer-reuse-window display-buffer-same-window))))
+    (with-current-buffer buffer
+      (widen)
+      (goto-char (point-min))
+      (cider-mode +1)
+      (if (consp pos)
+          (progn
+            (forward-line (1- (or (car pos) 1)))
+            (if (cdr pos)
+                (move-to-column (cdr pos))
+              (back-to-indentation)))
+        (when pos
+          (goto-char pos))))))
+ (t
+  (message-box
+   "You need to fix your cider-repl--history-write stuff for this version of Cider.")))
+
+;;;; ___________________________________________________________________________
 
 (provide 'nomis-cider-extras)
