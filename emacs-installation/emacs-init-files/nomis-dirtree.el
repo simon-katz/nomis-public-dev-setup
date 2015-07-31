@@ -244,6 +244,7 @@ With prefix argument select `nomis-dirtree-buffer'"
   '("\\.git"
     "\\.idea"
     "\\.repl"
+    "\\.vagrant"
     "checkouts"
     "out"
     "target"))
