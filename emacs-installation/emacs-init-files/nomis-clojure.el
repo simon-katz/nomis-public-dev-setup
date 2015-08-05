@@ -71,6 +71,8 @@
 
 (setq nrepl-log-messages t)
 
+(setq cider-repl-use-pretty-printing t)
+
 ;; ;;;; ---------------------------------------------------------------------------
 ;; ;;;; ---- Stuff for when connected to nrepl       ----
 ;; ;;;; ---- (for REPL and for Clojure source files) ----
