@@ -69,17 +69,11 @@
 
 (setq cider-repl-use-clojure-font-lock t)
 
-(setq nrepl-log-messages t)
-
-(setq cider-repl-use-pretty-printing t)
-
-;; ;;;; ---------------------------------------------------------------------------
-;; ;;;; ---- Stuff for when connected to nrepl       ----
-;; ;;;; ---- (for REPL and for Clojure source files) ----
-
 (add-hook 'cider-mode-hook 'eldoc-mode)
 
 (setq nrepl-log-messages t)
+
+(setq cider-repl-use-pretty-printing t)
 
 ;; ;;;; ---------------------------------------------------------------------------
 ;; ;;;; ---- Stack backtraces ----
