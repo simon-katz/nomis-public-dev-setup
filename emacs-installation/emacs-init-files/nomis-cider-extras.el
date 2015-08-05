@@ -65,8 +65,7 @@
 
 (defvar nomis-cider-repl--hack-prompt-p t)
 
-(defvar nomis-cider-repl--prompt-prefix (cl-concatenate 'string
-                                                        (make-string 80 ?\_) "\n"))
+(defvar nomis-cider-repl--prompt-prefix (concat (make-string 80 ?\_) "\n"))
 
 (defvar nomis-cider-repl--prompt-suffix "\n")
 
@@ -87,11 +86,10 @@ Return the position of the prompt beginning."
         (let ((prompt-start (point))
               (prompt (let ((original-prompt (format "%s> " namespace)))
                         ;; jsk: Added stuff here
-                        (cl-concatenate 'string
-                                        (make-string 80 ?\_)
-                                        "\n"
-                                        original-prompt
-                                        "\n"))))
+                        (concat (make-string 80 ?\_)
+                                "\n"
+                                original-prompt
+                                "\n"))))
           (cider-propertize-region
               '(face cider-repl-prompt-face read-only t intangible t
                      cider-prompt t
@@ -114,11 +112,10 @@ Return the position of the prompt beginning."
         (let ((prompt-start (point))
               (prompt (let ((original-prompt (format "%s> " namespace)))
                         ;; jsk: Added stuff here
-                        (cl-concatenate 'string
-                                        (make-string 80 ?\_)
-                                        "\n"
-                                        original-prompt
-                                        "\n"))))
+                        (concat (make-string 80 ?\_)
+                                "\n"
+                                original-prompt
+                                "\n"))))
           (cider-propertize-region
               '(font-lock-face cider-repl-prompt-face read-only t intangible t
                                cider-repl-prompt t
@@ -131,10 +128,9 @@ Return the position of the prompt beginning."
         (lambda (namespace)
           (cl-labels ((do-it () (funcall 'cider-repl-default-prompt namespace)))
             (if nomis-cider-repl--hack-prompt-p
-                (cl-concatenate 'string
-                                nomis-cider-repl--prompt-prefix
-                                (do-it)
-                                nomis-cider-repl--prompt-suffix)
+                (concat nomis-cider-repl--prompt-prefix
+                        (do-it)
+                        nomis-cider-repl--prompt-suffix)
               (do-it))))))
  (t
   (message-box
