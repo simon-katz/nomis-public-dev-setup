@@ -128,6 +128,8 @@
 
 (require 'nomis-text-size)
 
+(require 'nomis-hide-show)
+
 (require 'homeless)
 
 (progn
