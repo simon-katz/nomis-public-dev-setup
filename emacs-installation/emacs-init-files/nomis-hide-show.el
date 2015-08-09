@@ -4,16 +4,19 @@
 
 (defun nomis-hs-hide-block ()
   (interactive)
+  (hs-minor-mode 1)
   (hs-hide-block)
   (backward-char))
 
 (defun nomis-hs-show-block ()
   (interactive)
+  (hs-minor-mode 1)
   (hs-show-block)
   (backward-char))
 
 (defun nomis-hs-toggle-hiding ()
   (interactive)
+  (hs-minor-mode 1)
   (hs-toggle-hiding)
   (backward-char))
 
