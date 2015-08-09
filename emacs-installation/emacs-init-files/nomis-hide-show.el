@@ -120,6 +120,9 @@
   (global-map "H-q H-q")
   "Hide-show incremental"
   ("H-q"     nomis-hs-hydra-init "Init")
+  ("-"       nomis-hs-less       "Less")
+  ("<left>"  nomis-hs-less       "Less")
+  ("_"       nomis-hs-set-1      "1 level")
   ("1"       nomis-hs-set-1      "1 level")
   ("2"       nomis-hs-set-2      "2 levels")
   ("3"       nomis-hs-set-3      "3 levels")
@@ -130,11 +133,8 @@
   ("8"       nomis-hs-set-8      "8 levels")
   ("9"       nomis-hs-set-9      "9 levels")
   ("0"       nomis-hs-set-10     "10 levels")
-  ("-"       nomis-hs-less       "Less")
   ("="       nomis-hs-more       "More")
-  ("<left>"  nomis-hs-less       "Less")
   ("<right>" nomis-hs-more       "More")
-  ("_"       nomis-hs-set-1      "1 level")
   ("+"       nomis-hs-show-block "Show all"))
 
 (provide 'nomis-hide-show)
