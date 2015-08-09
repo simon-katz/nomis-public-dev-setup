@@ -30,7 +30,7 @@
 (key-chord-define-global "q'" 'nomis-hs-show-block)
 (key-chord-define-global "q/" 'nomis-hs-toggle-hiding)
 
-(defun display-code-line-counts (ov)
+(defun nomis-display-hs-hidden-stuff (ov)
   (when (eq 'code (overlay-get ov 'hs))
     (overlay-put ov 'help-echo
                  (buffer-substring (overlay-start ov)
@@ -40,7 +40,7 @@
                          (count-lines (overlay-start ov)
                                       (overlay-end ov))))))
 
-(setq hs-set-up-overlay 'display-code-line-counts)
+(setq hs-set-up-overlay 'nomis-display-hs-hidden-stuff)
 
 (defadvice goto-line (after expand-after-goto-line
                             activate compile)
