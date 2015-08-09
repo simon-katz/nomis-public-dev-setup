@@ -66,6 +66,7 @@
 
 (defun nomis-hs-hydra-init ()
   (interactive)
+  (hs-minor-mode 1)
   (nomis-hs-hydra-set-level 1))
 
 (defun nomis-hs-less ()
