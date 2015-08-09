@@ -61,6 +61,10 @@
                      ; (That didn't used to happen. It's a change in the
                      ; last few days.)
 
+;;;; ---- General stuff ----
+
+(require 'nomis-key-chord)
+
 ;;;; ---- Lisp and Clojure stuff probably good for anyone ----
 
 (require 'nomis-paredit)

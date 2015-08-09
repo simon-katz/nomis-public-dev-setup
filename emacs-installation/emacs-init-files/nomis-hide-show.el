@@ -21,9 +21,6 @@
 (define-key global-map (kbd "H-q H-'") 'nomis-hs-show-block)
 (define-key global-map (kbd "H-q H-/") 'nomis-hs-toggle-hiding)
 
-(require 'key-chord)
-(key-chord-mode 1)
-
 (key-chord-define-global "q[" 'hs-hide-all)
 (key-chord-define-global "q]" 'hs-show-all)
 (key-chord-define-global "q;" 'nomis-hs-hide-block)
