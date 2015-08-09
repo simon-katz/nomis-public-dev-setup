@@ -2,6 +2,16 @@
 
 ;;;; ___________________________________________________________________________
 
+(defun nomis-hs-hide-all ()
+  (interactive)
+  (hs-minor-mode 1)
+  (hs-hide-all))
+
+(defun nomis-hs-show-all ()
+  (interactive)
+  (hs-minor-mode 1)
+  (hs-show-all))
+
 (defun nomis-hs-hide-block ()
   (interactive)
   (hs-minor-mode 1)
@@ -20,14 +30,14 @@
   (hs-toggle-hiding)
   (backward-char))
 
-(define-key global-map (kbd "H-q H-[") 'hs-hide-all)
-(define-key global-map (kbd "H-q H-]") 'hs-show-all)
+(define-key global-map (kbd "H-q H-[") 'nomis-hs-hide-all)
+(define-key global-map (kbd "H-q H-]") 'nomis-hs-show-all)
 (define-key global-map (kbd "H-q H-;") 'nomis-hs-hide-block)
 (define-key global-map (kbd "H-q H-'") 'nomis-hs-show-block)
 (define-key global-map (kbd "H-q H-/") 'nomis-hs-toggle-hiding)
 
-(key-chord-define-global "q[" 'hs-hide-all)
-(key-chord-define-global "q]" 'hs-show-all)
+(key-chord-define-global "q[" 'nomis-hs-hide-all)
+(key-chord-define-global "q]" 'nomis-hs-show-all)
 (key-chord-define-global "q;" 'nomis-hs-hide-block)
 (key-chord-define-global "q'" 'nomis-hs-show-block)
 (key-chord-define-global "q/" 'nomis-hs-toggle-hiding)
