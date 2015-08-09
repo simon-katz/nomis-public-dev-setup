@@ -38,4 +38,10 @@
 
 (setq hs-set-up-overlay 'display-code-line-counts)
 
+(defadvice goto-line (after expand-after-goto-line
+                            activate compile)
+  "hideshow-expand affected block when using goto-line in a collapsed buffer"
+  (save-excursion
+    (hs-show-block)))
+
 (provide 'nomis-hide-show)
