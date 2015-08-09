@@ -34,7 +34,11 @@
   (when (eq 'code (overlay-get ov 'hs))
     (overlay-put ov 'help-echo
                  (buffer-substring (overlay-start ov)
-                                   (overlay-end ov)))))
+                                   (overlay-end ov)))
+    (overlay-put ov 'display
+                 (format "......... / %d"
+                         (count-lines (overlay-start ov)
+                                      (overlay-end ov))))))
 
 (setq hs-set-up-overlay 'display-code-line-counts)
 
