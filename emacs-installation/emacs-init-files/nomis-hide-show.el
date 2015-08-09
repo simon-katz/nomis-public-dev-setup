@@ -76,7 +76,9 @@
 (defhydra nomis-hs-hydra
   (global-map "H-q H-q")
   "Hide-show incremental"
-  ("H-/" nomis-hs-hydra-init "Init")
+  ("H-q" nomis-hs-hydra-init "Init")
+  ("H-." nomis-hs-less "Less")
+  ("H-/" nomis-hs-more "More")
   ("." nomis-hs-less "Less")
   ("/" nomis-hs-more "More"))
 
