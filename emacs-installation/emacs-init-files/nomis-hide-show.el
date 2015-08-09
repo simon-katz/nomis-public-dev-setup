@@ -33,9 +33,10 @@
                  (buffer-substring (overlay-start ov)
                                    (overlay-end ov)))
     (overlay-put ov 'display
-                 (format "......... / %d"
-                         (count-lines (overlay-start ov)
-                                      (overlay-end ov))))))
+                 (propertize (format "......... / %d"
+                                     (count-lines (overlay-start ov)
+                                                  (overlay-end ov)))
+                             'face 'font-lock-type-face))))
 
 (setq hs-set-up-overlay 'nomis-display-hs-hidden-stuff)
 
