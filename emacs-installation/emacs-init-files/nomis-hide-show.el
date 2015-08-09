@@ -1,5 +1,7 @@
 ;;;; Init stuff -- nomis-hide-show
 
+;;;; ___________________________________________________________________________
+
 (defun nomis-hs-hide-block ()
   (interactive)
   (hs-hide-block)
@@ -45,5 +47,37 @@
   "hideshow-expand affected block when using goto-line in a collapsed buffer"
   (save-excursion
     (hs-show-block)))
+
+;;;; ___________________________________________________________________________
+;;;; nomis-hs-hydra
+
+(require 'hydra)
+
+(defvar nomis-hs-hydra-level)
+
+(defun nomis-hs-hydra-adjust-level (n)
+  (setq nomis-hs-hydra-level (max 1
+                            (+ nomis-hs-hydra-level n)))
+  (hs-hide-level nomis-hs-hydra-level))
+
+(defun nomis-hs-hydra-init ()
+  (interactive)
+  (setq nomis-hs-hydra-level 1)
+  (nomis-hs-hydra-adjust-level 0))
+
+(defun nomis-hs-less ()
+  (interactive)
+  (nomis-hs-hydra-adjust-level -1))
+
+(defun nomis-hs-more ()
+  (interactive)
+  (nomis-hs-hydra-adjust-level 1))
+
+(defhydra nomis-hs-hydra
+  (global-map "H-q H-q")
+  "Hide-show incremental"
+  ("H-/" nomis-hs-hydra-init "Init")
+  ("." nomis-hs-less "Less")
+  ("/" nomis-hs-more "More"))
 
 (provide 'nomis-hide-show)
