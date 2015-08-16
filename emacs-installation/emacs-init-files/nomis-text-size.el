@@ -26,9 +26,17 @@ M-<NUM> M-x nomis/font-size-adjust:
                               (expt 1.1 arg))))))
     (nomis/set-default-point-size new-size)))
 
-(defun nomis/font-size-incr  () (interactive) (nomis/font-size-adjust +1)) 
-(defun nomis/font-size-decr  () (interactive) (nomis/font-size-adjust -1)) 
-(defun nomis/font-size-reset () (interactive) (nomis/font-size-adjust  0))
+(defun nomis/font-size-incr (n)
+  (interactive "p")
+  (nomis/font-size-adjust n))
+
+(defun nomis/font-size-decr (n)
+  (interactive "p")
+  (nomis/font-size-adjust (- n)))
+
+(defun nomis/font-size-reset ()
+  (interactive)
+  (nomis/font-size-adjust 0))
 
 (require 'nomis-hydra)
 
