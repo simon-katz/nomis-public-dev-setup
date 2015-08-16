@@ -30,13 +30,12 @@ M-<NUM> M-x nomis/font-size-adjust:
 (defun nomis/font-size-decr  () (interactive) (nomis/font-size-adjust -1)) 
 (defun nomis/font-size-reset () (interactive) (nomis/font-size-adjust  0))
 
-(defvar nomis/resize-font/initial-size)
-
 (require 'nomis-hydra)
 
 (define-nomis-hydra nomis/resize-font
   :name-as-string "Resize font"
   :key "M-+"
+  :vars (nomis/resize-font/initial-size)
   :init-form (setq nomis/resize-font/initial-size
                    (nomis/get-default-point-size))
   :cancel-form (nomis/set-default-point-size nomis/resize-font/initial-size)

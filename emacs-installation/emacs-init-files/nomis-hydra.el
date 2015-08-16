@@ -7,6 +7,7 @@
 (cl-defmacro define-nomis-hydra (name &key
                                       name-as-string
                                       key
+                                      vars
                                       init-form
                                       cancel-form
                                       hydra-heads)
@@ -19,6 +20,9 @@
                      quit-fun-name)
    
     `(progn
+
+       ,@(mapcar (lambda (var) `(defvar ,var))
+                 vars)
       
        (defvar ,initialised-p nil)
       
