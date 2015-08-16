@@ -96,7 +96,7 @@
   (interactive)
   (nomis/hs-adjust/set-level 0))
 
-(defun nomis/hs-adjust/set-0/exiting ()
+(defun nomis/hs-adjust/set-0/and-exit ()
   ;; This exists to overcome a bug in Hydra when you have both
   ;;     :exit t
   ;; and
@@ -112,7 +112,7 @@
   (nomis-hs-hide-block)
   (nomis-hs-show-block))
 
-(defun nomis/hs-adjust/show-all/exiting ()
+(defun nomis/hs-adjust/show-all/and-exit ()
   ;; This exists to overcome a bug in Hydra when you have both
   ;;     :exit t
   ;; and
@@ -132,8 +132,8 @@
                   (nomis/hs-adjust/init))
   :cancel-form (nomis/hs-adjust/set-level nomis/hs-adjust/saved-level)
   :hydra-heads
-  (("["         nomis/hs-adjust/set-0/exiting "Min and exit" :exit t)
-   (";"         nomis/hs-adjust/set-0/exiting "Min and exit" :exit t)
+  (("["         nomis/hs-adjust/set-0/and-exit "Min and exit" :exit t)
+   (";"         nomis/hs-adjust/set-0/and-exit "Min and exit" :exit t)
    ("H-q"       nomis/hs-adjust/set-0     "Min")
    ("<S-left>"  nomis/hs-adjust/set-0     "Min")
    ("_"         nomis/hs-adjust/set-0     "Min")
@@ -144,7 +144,7 @@
    ("<right>"   nomis/hs-adjust/more      "More")
    ("<S-right>" nomis/hs-adjust/show-all  "All")
    ("+"         nomis/hs-adjust/show-all  "All")
-   ("'"         nomis/hs-adjust/show-all/exiting "All and exit" :exit t)
-   ("]"         nomis/hs-adjust/show-all/exiting "All and exit" :exit t)))
+   ("'"         nomis/hs-adjust/show-all/and-exit "All and exit" :exit t)
+   ("]"         nomis/hs-adjust/show-all/and-exit "All and exit" :exit t)))
 
 (provide 'nomis-hide-show)
