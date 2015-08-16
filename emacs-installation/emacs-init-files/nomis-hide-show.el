@@ -126,7 +126,11 @@
 (define-nomis-hydra nomis/hs-adjust
   :name-as-string "Hide-show incremental"
   :key "H-q H-q"
-  :init-form   (nomis/hs-adjust/init)
+  :vars (nomis/hs-adjust/saved-level)
+  :init-form    (progn
+                  (setq nomis/hs-adjust/saved-level nomis/hs-adjust/level)
+                  (nomis/hs-adjust/init))
+  :cancel-form (nomis/hs-adjust/set-level nomis/hs-adjust/saved-level)
   :hydra-heads
   (("["         nomis/hs-adjust/set-0/exiting "Min and exit" :exit t)
    (";"         nomis/hs-adjust/set-0/exiting "Min and exit" :exit t)
