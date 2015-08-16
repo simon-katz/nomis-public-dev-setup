@@ -32,6 +32,8 @@ M-<NUM> M-x nomis/font-size-adjust:
 
 (defvar nomis/resize-font/initial-size)
 
+(require 'nomis-hydra)
+
 (define-nomis-hydra nomis/resize-font
   :name-as-string "Resize font"
   :key "M-+"
