@@ -81,6 +81,7 @@
 (defun nomis/hs-adjust/init ()
   (interactive)
   (hs-minor-mode 1)
+  ;; Set to last-set level. Useful when working on the same form a second time.
   (nomis/hs-adjust/set-level nomis/hs-adjust/level))
 
 (defun nomis/hs-adjust/less (n)
