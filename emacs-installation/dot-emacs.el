@@ -63,6 +63,7 @@
 
 ;;;; ---- General stuff ----
 
+(require 'mmt)
 (require 'nomis-key-chord)
 
 ;;;; ---- Lisp and Clojure stuff probably good for anyone ----
