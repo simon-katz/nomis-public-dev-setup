@@ -108,7 +108,8 @@
   :name-as-string "Hide-show incremental"
   :key "H-q H-q"
   :init-form   (nomis/hs-adjust/init)
-  :hydra-heads (("<S-left>"  nomis/hs-adjust/set-0     "Min")
+  :hydra-heads (("["         nomis/hs-adjust/set-0     "Min and exit" :exit t)
+                ("<S-left>"  nomis/hs-adjust/set-0     "Min")
                 ("_"         nomis/hs-adjust/set-0     "Min")
                 ("-"         nomis/hs-adjust/less      "Less")
                 ("<left>"    nomis/hs-adjust/less      "Less")
@@ -116,6 +117,7 @@
                 ("="         nomis/hs-adjust/more      "More")
                 ("<right>"   nomis/hs-adjust/more      "More")
                 ("<S-right>" nomis/hs-adjust/show-all  "All")
-                ("+"         nomis/hs-adjust/show-all  "All")))
+                ("+"         nomis/hs-adjust/show-all  "All")
+                ("]"         nomis/hs-adjust/show-all  "All and exit" :exit t)))
 
 (provide 'nomis-hide-show)
