@@ -173,11 +173,21 @@
     (interactive)
     (nomis-set-frame-height* 29)))
 
+(defvar nomis/move-frame/initial-position)
+
 (require 'nomis-hydra)
 
 (define-nomis-hydra nomis/move-frame
   :name-as-string "Move frame"
   :key "M-Z"
+  :init-form (setq nomis/move-frame/initial-position
+                   (list (frame-parameter nil 'left)
+                         (frame-parameter nil 'top)))
+  :cancel-form (progn
+                 (modify-frame-parameters
+                  nil
+                  `((left . ,(first nomis/move-frame/initial-position))
+                    (top  . ,(second nomis/move-frame/initial-position)))))
   :hydra-heads (("<up>"    move-frame-up    "Up")
                 ("<down>"  move-frame-down  "Down")
                 ("<left>"  move-frame-left  "Left")
