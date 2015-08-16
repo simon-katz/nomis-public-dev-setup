@@ -61,7 +61,7 @@ M-<NUM> M-x nomis/font-size-adjust:
        "font-resize"
        ("-"        nomis/font-size-decr     "Decrease")
        ("="        nomis/font-size-incr     "Increase")
-       ("0"        nomis/font-size-reset    "Reset to default size")
+       ("0"        nomis/font-size-reset    "Reset to default size" :exit t)
        ("<escape>" nomis/font-resize-cancel "Cancel" :exit t)
        ("<return>" nomis/font-resize-quit   "Quit"   :exit t)
        ("q"        nomis/font-resize-quit   "Quit"   :exit t))
