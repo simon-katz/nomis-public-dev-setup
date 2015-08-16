@@ -80,53 +80,17 @@
   (hs-minor-mode 1)
   (nomis-hs-set-level 1))
 
-(defun nomis-hs-less ()
-  (interactive)
+(defun nomis-hs-less (n)
+  (interactive "p")
   (nomis-hs-inc-level -1))
 
-(defun nomis-hs-more ()
-  (interactive)
+(defun nomis-hs-more (n)
+  (interactive "p")
   (nomis-hs-inc-level 1))
 
 (defun nomis-hs-set-1 ()
   (interactive)
   (nomis-hs-set-level 1))
-
-(defun nomis-hs-set-2 ()
-  (interactive)
-  (nomis-hs-set-level 2))
-
-(defun nomis-hs-set-3 ()
-  (interactive)
-  (nomis-hs-set-level 3))
-
-(defun nomis-hs-set-4 ()
-  (interactive)
-  (nomis-hs-set-level 4))
-
-(defun nomis-hs-set-5 ()
-  (interactive)
-  (nomis-hs-set-level 5))
-
-(defun nomis-hs-set-6 ()
-  (interactive)
-  (nomis-hs-set-level 6))
-
-(defun nomis-hs-set-7 ()
-  (interactive)
-  (nomis-hs-set-level 7))
-
-(defun nomis-hs-set-8 ()
-  (interactive)
-  (nomis-hs-set-level 8))
-
-(defun nomis-hs-set-9 ()
-  (interactive)
-  (nomis-hs-set-level 9))
-
-(defun nomis-hs-set-10 ()
-  (interactive)
-  (nomis-hs-set-level 10))
 
 (require 'nomis-hydra)
 
@@ -138,16 +102,6 @@
                 ("<left>"    nomis-hs-less       "Less")
                 ("<S-left>"  nomis-hs-set-1      "1 level")
                 ("_"         nomis-hs-set-1      "1 level")
-                ("1"         nomis-hs-set-1      "1 level")
-                ("2"         nomis-hs-set-2      "2 levels")
-                ("3"         nomis-hs-set-3      "3 levels")
-                ("4"         nomis-hs-set-4      "4 levels")
-                ("5"         nomis-hs-set-5      "5 levels")
-                ("6"         nomis-hs-set-6      "6 levels")
-                ("7"         nomis-hs-set-7      "7 levels")
-                ("8"         nomis-hs-set-8      "8 levels")
-                ("9"         nomis-hs-set-9      "9 levels")
-                ("0"         nomis-hs-set-10     "10 levels")
                 ("="         nomis-hs-more       "More")
                 ("<right>"   nomis-hs-more       "More")
                 ("<S-right>" nomis-hs-show-block "Show all")
