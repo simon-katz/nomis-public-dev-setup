@@ -175,7 +175,7 @@
 
 (require 'hydra)
 
-(defhydra hydra-move-frame
+(defhydra nomis-move-frame
   (global-map "M-Z")
   "move-frame"
   ("<up>"    move-frame-up    "Up")

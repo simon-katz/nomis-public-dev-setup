@@ -62,78 +62,78 @@
     (hs-show-block)))
 
 ;;;; ___________________________________________________________________________
-;;;; nomis-hs-hydra
+;;;; nomis-hs-adjust
 
-(require 'hydra)
+(defvar nomis-hs-level)
 
-(defvar nomis-hs-hydra-level)
+(defun nomis-hs-set-level (n)
+  (setq nomis-hs-level n)
+  (hs-hide-level nomis-hs-level))
 
-(defun nomis-hs-hydra-set-level (n)
-  (setq nomis-hs-hydra-level n)
-  (hs-hide-level nomis-hs-hydra-level))
+(defun nomis-hs-inc-level (n)
+  (setq nomis-hs-level (max 1
+                            (+ nomis-hs-level n)))
+  (nomis-hs-set-level nomis-hs-level))
 
-(defun nomis-hs-hydra-adjust-level (n)
-  (setq nomis-hs-hydra-level (max 1
-                                  (+ nomis-hs-hydra-level n)))
-  (nomis-hs-hydra-set-level nomis-hs-hydra-level))
-
-(defun nomis-hs-hydra-init ()
+(defun nomis-hs-adjust-init ()
   (interactive)
   (hs-minor-mode 1)
-  (nomis-hs-hydra-set-level 1))
+  (nomis-hs-set-level 1))
 
 (defun nomis-hs-less ()
   (interactive)
-  (nomis-hs-hydra-adjust-level -1))
+  (nomis-hs-inc-level -1))
 
 (defun nomis-hs-more ()
   (interactive)
-  (nomis-hs-hydra-adjust-level 1))
+  (nomis-hs-inc-level 1))
 
 (defun nomis-hs-set-1 ()
   (interactive)
-  (nomis-hs-hydra-set-level 1))
+  (nomis-hs-set-level 1))
 
 (defun nomis-hs-set-2 ()
   (interactive)
-  (nomis-hs-hydra-set-level 2))
+  (nomis-hs-set-level 2))
 
 (defun nomis-hs-set-3 ()
   (interactive)
-  (nomis-hs-hydra-set-level 3))
+  (nomis-hs-set-level 3))
 
 (defun nomis-hs-set-4 ()
   (interactive)
-  (nomis-hs-hydra-set-level 4))
+  (nomis-hs-set-level 4))
 
 (defun nomis-hs-set-5 ()
   (interactive)
-  (nomis-hs-hydra-set-level 5))
+  (nomis-hs-set-level 5))
 
 (defun nomis-hs-set-6 ()
   (interactive)
-  (nomis-hs-hydra-set-level 6))
+  (nomis-hs-set-level 6))
 
 (defun nomis-hs-set-7 ()
   (interactive)
-  (nomis-hs-hydra-set-level 7))
+  (nomis-hs-set-level 7))
 
 (defun nomis-hs-set-8 ()
   (interactive)
-  (nomis-hs-hydra-set-level 8))
+  (nomis-hs-set-level 8))
 
 (defun nomis-hs-set-9 ()
   (interactive)
-  (nomis-hs-hydra-set-level 9))
+  (nomis-hs-set-level 9))
 
 (defun nomis-hs-set-10 ()
   (interactive)
-  (nomis-hs-hydra-set-level 10))
+  (nomis-hs-set-level 10))
 
-(defhydra nomis-hs-hydra
+(require 'hydra)
+
+(defhydra nomis-hs-adjust
   (global-map "H-q H-q")
   "Hide-show incremental"
-  ("H-q"     nomis-hs-hydra-init "Init")
+  ("H-q"     nomis-hs-adjust-init "Init")
   ("-"       nomis-hs-less       "Less")
   ("<left>"  nomis-hs-less       "Less")
   ("_"       nomis-hs-set-1      "1 level")
