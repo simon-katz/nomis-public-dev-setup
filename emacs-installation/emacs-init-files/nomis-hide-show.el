@@ -64,7 +64,7 @@
 ;;;; ___________________________________________________________________________
 ;;;; nomis/hs-adjust
 
-(defvar nomis/hs-adjust/level)
+(defvar nomis/hs-adjust/level 0)
 
 (defun nomis/hs-adjust/set-level (n)
   (interactive "p")
@@ -81,7 +81,7 @@
 (defun nomis/hs-adjust/init ()
   (interactive)
   (hs-minor-mode 1)
-  (nomis/hs-adjust/set-level 0))
+  (nomis/hs-adjust/set-level nomis/hs-adjust/level))
 
 (defun nomis/hs-adjust/less (n)
   (interactive "p")
@@ -129,6 +129,7 @@
   :hydra-heads
   (("["         nomis/hs-adjust/set-0/exiting "Min and exit" :exit t)
    (";"         nomis/hs-adjust/set-0/exiting "Min and exit" :exit t)
+   ("H-q"       nomis/hs-adjust/set-0     "Min")
    ("<S-left>"  nomis/hs-adjust/set-0     "Min")
    ("_"         nomis/hs-adjust/set-0     "Min")
    ("-"         nomis/hs-adjust/less      "Less")
