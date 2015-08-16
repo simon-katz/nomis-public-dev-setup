@@ -92,19 +92,26 @@
   (interactive)
   (nomis/hs-adjust/set-level 1))
 
+(defun nomis/hs-adjust/show-all ()
+  (interactive)
+  ;; This exists to overcome a bug when showing all when level shown is 1,
+  ;; whereby the cursor moved weirdly and fucked things up.
+  (nomis/hs-adjust/more 1)
+  (nomis-hs-show-block))
+
 (require 'nomis-hydra)
 
 (define-nomis-hydra nomis/hs-adjust
   :name-as-string "Hide-show incremental"
   :key "H-q H-q"
   :init-form   (nomis/hs-adjust/init)
-  :hydra-heads (("-"         nomis/hs-adjust/less  "Less")
-                ("<left>"    nomis/hs-adjust/less  "Less")
-                ("<S-left>"  nomis/hs-adjust/set-1 "1 level")
-                ("_"         nomis/hs-adjust/set-1 "1 level")
-                ("="         nomis/hs-adjust/more  "More")
-                ("<right>"   nomis/hs-adjust/more  "More")
-                ("<S-right>" nomis-hs-show-block   "Show all")
-                ("+"         nomis-hs-show-block   "Show all")))
+  :hydra-heads (("-"         nomis/hs-adjust/less     "Less")
+                ("<left>"    nomis/hs-adjust/less     "Less")
+                ("<S-left>"  nomis/hs-adjust/set-1    "1 level")
+                ("_"         nomis/hs-adjust/set-1    "1 level")
+                ("="         nomis/hs-adjust/more     "More")
+                ("<right>"   nomis/hs-adjust/more     "More")
+                ("<S-right>" nomis/hs-adjust/show-all "Show all")
+                ("+"         nomis/hs-adjust/show-all "Show all")))
 
 (provide 'nomis-hide-show)
