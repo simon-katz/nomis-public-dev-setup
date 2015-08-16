@@ -95,6 +95,15 @@
   (interactive)
   (nomis/hs-adjust/set-level 0))
 
+(defun nomis/hs-adjust/set-0/exiting ()
+  ;; This exists to overcome a bug in Hydra when you have both
+  ;;     :exit t
+  ;; and
+  ;;     :exit nil
+  ;; for the same function.
+  (interactive)
+  (nomis/hs-adjust/set-0))
+
 (defun nomis/hs-adjust/show-all ()
   (interactive)
   ;; This exists to overcome a bug when showing all when level shown is 1,
@@ -102,24 +111,34 @@
   (nomis-hs-hide-block)
   (nomis-hs-show-block))
 
+(defun nomis/hs-adjust/show-all/exiting ()
+  ;; This exists to overcome a bug in Hydra when you have both
+  ;;     :exit t
+  ;; and
+  ;;     :exit nil
+  ;; for the same function.
+  (interactive)
+  (nomis/hs-adjust/show-all))
+
 (require 'nomis-hydra)
 
 (define-nomis-hydra nomis/hs-adjust
   :name-as-string "Hide-show incremental"
   :key "H-q H-q"
   :init-form   (nomis/hs-adjust/init)
-  :hydra-heads (("["         nomis/hs-adjust/set-0     "Min and exit" :exit t)
-                (";"         nomis/hs-adjust/set-0     "Min and exit" :exit t)
-                ("<S-left>"  nomis/hs-adjust/set-0     "Min")
-                ("_"         nomis/hs-adjust/set-0     "Min")
-                ("-"         nomis/hs-adjust/less      "Less")
-                ("<left>"    nomis/hs-adjust/less      "Less")
-                ("l"         nomis/hs-adjust/set-level "Choose")
-                ("="         nomis/hs-adjust/more      "More")
-                ("<right>"   nomis/hs-adjust/more      "More")
-                ("<S-right>" nomis/hs-adjust/show-all  "All")
-                ("+"         nomis/hs-adjust/show-all  "All")
-                ("'"         nomis/hs-adjust/show-all  "All and exit" :exit t)
-                ("]"         nomis/hs-adjust/show-all  "All and exit" :exit t)))
+  :hydra-heads
+  (("["         nomis/hs-adjust/set-0/exiting "Min and exit" :exit t)
+   (";"         nomis/hs-adjust/set-0/exiting "Min and exit" :exit t)
+   ("<S-left>"  nomis/hs-adjust/set-0     "Min")
+   ("_"         nomis/hs-adjust/set-0     "Min")
+   ("-"         nomis/hs-adjust/less      "Less")
+   ("<left>"    nomis/hs-adjust/less      "Less")
+   ("l"         nomis/hs-adjust/set-level "Choose")
+   ("="         nomis/hs-adjust/more      "More")
+   ("<right>"   nomis/hs-adjust/more      "More")
+   ("<S-right>" nomis/hs-adjust/show-all  "All")
+   ("+"         nomis/hs-adjust/show-all  "All")
+   ("'"         nomis/hs-adjust/show-all/exiting "All and exit" :exit t)
+   ("]"         nomis/hs-adjust/show-all/exiting "All and exit" :exit t)))
 
 (provide 'nomis-hide-show)
