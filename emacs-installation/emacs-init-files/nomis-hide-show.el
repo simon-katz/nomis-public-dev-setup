@@ -83,11 +83,11 @@
 
 (defun nomis/hs-adjust/less (n)
   (interactive "p")
-  (nomis/hs-adjust/inc-level -1))
+  (nomis/hs-adjust/inc-level (- n)))
 
 (defun nomis/hs-adjust/more (n)
   (interactive "p")
-  (nomis/hs-adjust/inc-level 1))
+  (nomis/hs-adjust/inc-level n))
 
 (defun nomis/hs-adjust/set-1 ()
   (interactive)
