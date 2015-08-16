@@ -173,15 +173,15 @@
     (interactive)
     (nomis-set-frame-height* 29)))
 
-(require 'hydra)
+(require 'nomis-hydra)
 
-(defhydra nomis-move-frame
-  (global-map "M-Z")
-  "move-frame"
-  ("<up>"    move-frame-up    "Up")
-  ("<down>"  move-frame-down  "Down")
-  ("<left>"  move-frame-left  "Left")
-  ("<right>" move-frame-right "Right"))
+(define-nomis-hydra nomis/move-frame
+  :name-as-string "Move frame"
+  :key "M-Z"
+  :hydra-heads (("<up>"    move-frame-up    "Up")
+                ("<down>"  move-frame-down  "Down")
+                ("<left>"  move-frame-left  "Left")
+                ("<right>" move-frame-right "Right")))
 
 ;;;; ___________________________________________________________________________
 
