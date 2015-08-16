@@ -67,6 +67,7 @@
 (defvar nomis/hs-adjust/level)
 
 (defun nomis/hs-adjust/set-level (n)
+  (interactive "p")
   (setq nomis/hs-adjust/level n)
   (hs-hide-level nomis/hs-adjust/level))
 
@@ -109,6 +110,7 @@
                 ("<left>"    nomis/hs-adjust/less     "Less")
                 ("<S-left>"  nomis/hs-adjust/set-1    "1 level")
                 ("_"         nomis/hs-adjust/set-1    "1 level")
+                ("l"         nomis/hs-adjust/set-level "Choose")
                 ("="         nomis/hs-adjust/more     "More")
                 ("<right>"   nomis/hs-adjust/more     "More")
                 ("<S-right>" nomis/hs-adjust/show-all "Show all")
