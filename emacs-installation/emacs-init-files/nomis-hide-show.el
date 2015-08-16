@@ -69,17 +69,19 @@
 (defun nomis/hs-adjust/set-level (n)
   (interactive "p")
   (setq nomis/hs-adjust/level n)
-  (hs-hide-level nomis/hs-adjust/level))
+  (if (zerop n)
+      (nomis-hs-hide-block)
+    (hs-hide-level nomis/hs-adjust/level)))
 
 (defun nomis/hs-adjust/inc-level (n)
-  (setq nomis/hs-adjust/level (max 1
+  (setq nomis/hs-adjust/level (max 0
                                    (+ nomis/hs-adjust/level n)))
   (nomis/hs-adjust/set-level nomis/hs-adjust/level))
 
 (defun nomis/hs-adjust/init ()
   (interactive)
   (hs-minor-mode 1)
-  (nomis/hs-adjust/set-level 1))
+  (nomis/hs-adjust/set-level 0))
 
 (defun nomis/hs-adjust/less (n)
   (interactive "p")
@@ -89,15 +91,15 @@
   (interactive "p")
   (nomis/hs-adjust/inc-level n))
 
-(defun nomis/hs-adjust/set-1 ()
+(defun nomis/hs-adjust/set-0 ()
   (interactive)
-  (nomis/hs-adjust/set-level 1))
+  (nomis/hs-adjust/set-level 0))
 
 (defun nomis/hs-adjust/show-all ()
   (interactive)
   ;; This exists to overcome a bug when showing all when level shown is 1,
   ;; whereby the cursor moved weirdly and fucked things up.
-  (nomis/hs-adjust/more 1)
+  (nomis-hs-hide-block)
   (nomis-hs-show-block))
 
 (require 'nomis-hydra)
@@ -108,8 +110,8 @@
   :init-form   (nomis/hs-adjust/init)
   :hydra-heads (("-"         nomis/hs-adjust/less      "Less")
                 ("<left>"    nomis/hs-adjust/less      "Less")
-                ("<S-left>"  nomis/hs-adjust/set-1     "Min")
-                ("_"         nomis/hs-adjust/set-1     "Min")
+                ("<S-left>"  nomis/hs-adjust/set-0     "Min")
+                ("_"         nomis/hs-adjust/set-0     "Min")
                 ("l"         nomis/hs-adjust/set-level "Choose")
                 ("="         nomis/hs-adjust/more      "More")
                 ("<right>"   nomis/hs-adjust/more      "More")
