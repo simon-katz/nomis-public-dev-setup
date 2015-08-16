@@ -3,7 +3,7 @@
 ;;;; ___________________________________________________________________________
 ;;;; ---- Globally change the font size. ----
 
-;;;; Largely copied from http://emacs.stackexchange.com/questions/7583/transiently-adjust-text-size-in-mode-line-and-minibuffer/7584#7584 .
+;;;; Underlying stuff copied from http://emacs.stackexchange.com/questions/7583/transiently-adjust-text-size-in-mode-line-and-minibuffer/7584#7584 .
 
 (defun nomis/get-default-point-size ()
   (face-attribute 'default :height))
@@ -30,44 +30,17 @@ M-<NUM> M-x nomis/font-size-adjust:
 (defun nomis/font-size-decr  () (interactive) (nomis/font-size-adjust -1)) 
 (defun nomis/font-size-reset () (interactive) (nomis/font-size-adjust  0))
 
-(require 'hydra)
+(defvar nomis/resize-font/initial-size)
 
-(defvar nomis/font-resize-initial-size)
-
-(defun nomis/font-resize-init ()
-  (interactive)
-  (setq nomis/font-resize-initial-size (nomis/get-default-point-size)))
-
-(defun nomis/font-resize-cancel ()
-  (interactive)
-  (nomis/set-default-point-size nomis/font-resize-initial-size))
-
-(defun nomis/font-resize-quit ()
-  (interactive)
-  (nomis-no-op))
-
-(defvar nomis/font-resize-initialised-p nil)
-
-(defmacro define-nomis/font-resize (key)
-  ;; The hacking with `key` and binding it to `nomis/font-resize/body`
-  ;; is to get the hints to appear when the command is first activated.
-  `(progn
-     (defhydra nomis/font-resize
-       (global-map ,key
-                   :pre (unless nomis/font-resize-initialised-p
-                          (nomis/font-resize-init)
-                          (setq nomis/font-resize-initialised-p t))
-                   :post (setq nomis/font-resize-initialised-p nil))
-       "font-resize"
-       ("-"        nomis/font-size-decr     "Decrease")
-       ("="        nomis/font-size-incr     "Increase")
-       ("0"        nomis/font-size-reset    "Reset to default size" :exit t)
-       ("<escape>" nomis/font-resize-cancel "Cancel" :exit t)
-       ("<return>" nomis/font-resize-quit   "Quit"   :exit t)
-       ("q"        nomis/font-resize-quit   "Quit"   :exit t))
-     (define-key global-map (kbd ,key) 'nomis/font-resize/body)))
-
-(define-nomis/font-resize "M-+")
+(define-nomis-hydra nomis/resize-font
+  :name-as-string "Resize font"
+  :key "M-+"
+  :init-form (setq nomis/resize-font/initial-size
+                   (nomis/get-default-point-size))
+  :cancel-form (nomis/set-default-point-size nomis/resize-font/initial-size)
+  :hydra-heads (("-" nomis/font-size-decr  "Decrease")
+                ("=" nomis/font-size-incr  "Increase")
+                ("0" nomis/font-size-reset "Reset to default size" :exit t)))
 
 ;;;; ___________________________________________________________________________
 
