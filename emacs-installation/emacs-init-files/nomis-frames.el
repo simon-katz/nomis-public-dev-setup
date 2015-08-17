@@ -173,6 +173,66 @@
     (interactive)
     (nomis-set-frame-height* 29)))
 
+(defun nomis/move-frame-up-10 (&optional n frame)
+  "Move selected frame up 10 * N times.
+Move it N * 10 times `frame-char-height', where N is the prefix arg.
+In Lisp code, FRAME is the frame to move."
+  (interactive "p")
+  (setq n (or n 1))
+  (move-frame-up (* n 10) frame))
+
+(defun nomis/move-frame-down-10 (&optional n frame)
+  "Move selected frame down 10 * N times.
+Move it N * 10 times `frame-char-height', where N is the prefix arg.
+In Lisp code, FRAME is the frame to move."
+  (interactive "p")
+  (setq n (or n 1))
+  (move-frame-down (* n 10) frame))
+
+(defun nomis/move-frame-left-10 (&optional n frame)
+  "Move selected frame left 10 * N times.
+Move it N * 10 times `frame-char-height', where N is the prefix arg.
+In Lisp code, FRAME is the frame to move."
+  (interactive "p")
+  (setq n (or n 1))
+  (move-frame-left (* n 10) frame))
+
+(defun nomis/move-frame-right-10 (&optional n frame)
+  "Move selected frame right 10 * N times.
+Move it N * 10 times `frame-char-height', where N is the prefix arg.
+In Lisp code, FRAME is the frame to move."
+  (interactive "p")
+  (setq n (or n 1))
+  (move-frame-right (* n 10) frame))
+
+(defun nomis/move-frame-to-screen-top (n)
+  (interactive (list (if current-prefix-arg
+                         (* (frame-char-height)
+                            (prefix-numeric-value current-prefix-arg))
+                       0)))
+  (move-frame-to-screen-top n))
+
+(defun nomis/move-frame-to-screen-bottom (n)
+  (interactive (list (if current-prefix-arg
+                         (* (frame-char-height)
+                            (prefix-numeric-value current-prefix-arg))
+                       0)))
+  (move-frame-to-screen-bottom n))
+
+(defun nomis/move-frame-to-screen-left (n)
+  (interactive (list (if current-prefix-arg
+                         (* (frame-char-width)
+                            (prefix-numeric-value current-prefix-arg))
+                       0)))
+  (move-frame-to-screen-left n))
+
+(defun nomis/move-frame-to-screen-right (n)
+  (interactive (list (if current-prefix-arg
+                         (* (frame-char-width)
+                            (prefix-numeric-value current-prefix-arg))
+                       0)))
+  (move-frame-to-screen-right n))
+
 (require 'nomis-hydra)
 
 (define-nomis-hydra nomis/move-frame
@@ -187,10 +247,18 @@
                   nil
                   `((left . ,(first nomis/move-frame/initial-position))
                     (top  . ,(second nomis/move-frame/initial-position)))))
-  :hydra-heads (("<up>"    move-frame-up    "Up")
-                ("<down>"  move-frame-down  "Down")
-                ("<left>"  move-frame-left  "Left")
-                ("<right>" move-frame-right "Right")))
+  :hydra-heads (("<up>"        move-frame-up                     "Up")
+                ("<down>"      move-frame-down                   "Down")
+                ("<left>"      move-frame-left                   "Left")
+                ("<right>"     move-frame-right                  "Right")
+                ("M-<up>"      nomis/move-frame-up-10            "Up 10 times")
+                ("M-<down>"    nomis/move-frame-down-10          "Down 10 times")
+                ("M-<left>"    nomis/move-frame-left-10          "Left 10 times")
+                ("M-<right>"   nomis/move-frame-right-10         "Right 10 times")
+                ("M-S-<up>"    nomis/move-frame-to-screen-top    "Top")
+                ("M-S-<down>"  nomis/move-frame-to-screen-bottom "Bottom")
+                ("M-S-<left>"  nomis/move-frame-to-screen-left   "Far left")
+                ("M-S-<right>" nomis/move-frame-to-screen-right  "Far right")))
 
 ;;;; ___________________________________________________________________________
 
