@@ -2,6 +2,11 @@
 
 ;;;; ___________________________________________________________________________
 
+(require 'nomis-key-chord)
+(require 'nomis-hydra)
+
+;;;; ___________________________________________________________________________
+
 (defun nomis-hs-hide-all ()
   (interactive)
   (hs-minor-mode 1)
@@ -120,8 +125,6 @@
   ;; for the same function.
   (interactive)
   (nomis/hs-adjust/show-all))
-
-(require 'nomis-hydra)
 
 (define-nomis-hydra nomis/hs-adjust
   :name-as-string "Hide-show incremental"
