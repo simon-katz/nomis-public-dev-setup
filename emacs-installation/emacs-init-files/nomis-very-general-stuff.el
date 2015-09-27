@@ -5,6 +5,14 @@
 
 (define-key global-map (kbd "M-<return>") 'nomis-no-op)
 
+(defun nomis-save-buffers-kill-terminal ()
+  (interactive)
+  (when (yes-or-no-p "Really do `save-buffers-kill-terminal`?")
+    (save-buffers-kill-terminal)))
+
+(define-key global-map (kbd "C-x C-c") 'nomis-save-buffers-kill-terminal)
+
+
 (setq-default indent-tabs-mode nil) ; use spaces, not tabs
 (setq sentence-end-double-space nil)
 (setq visible-bell t)
