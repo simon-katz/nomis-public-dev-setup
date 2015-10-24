@@ -14,6 +14,7 @@
           "target"
           ".repl"
           "bundle"
+          ".idea"
           ;; "labrepl*/public/javascripts/jquery.js"
           ;; "emacs-configuration/nomis-addons/cygwin-mount.el"
           ))
@@ -21,6 +22,7 @@
     '(;; ".jar"
       ;; ".exe"
       ".cider-repl-history"
+      "*.iml"
       "*.zip"))
   (eval-after-load "grep"
     '(progn
