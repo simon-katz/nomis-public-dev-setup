@@ -27,8 +27,6 @@
       `(("." . ,nomis-backup-directory)))
 (setq auto-save-file-name-transforms
       `((".*" ,nomis-backup-directory t)))
-(setq create-lockfiles nil) ; the default of T causes problems with autotest
-                            ; functionality
 
 (progn
   (defun nomis-turn-on-idle-highlight-mode ()
