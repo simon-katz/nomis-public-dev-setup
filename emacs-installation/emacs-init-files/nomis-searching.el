@@ -9,6 +9,7 @@
   (defvar *extra-ignored-directories*
     (list logs-dir-name
           ".emacs.d"
+          ".emacs-backups"
           ".worksheet"
           "out"
           "target"
