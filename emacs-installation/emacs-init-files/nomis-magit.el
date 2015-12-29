@@ -6,11 +6,12 @@
 
 (setq magit-completing-read-function 'magit-ido-completing-read)
 
-(eval-after-load 'magit
-  '(progn
-     (set-face-foreground 'magit-diff-add "green4")
-     (set-face-foreground 'magit-diff-del "orangered2")
-     (set-face-background 'magit-item-highlight "palegoldenrod")))
+;; (eval-after-load 'magit
+;;   '(progn
+;;      (set-face-foreground 'magit-diff-added "green4")
+;;      (set-face-foreground 'magit-diff-removed "orangered2")
+;;      ;; This has gone: (set-face-background 'magit-item-highlight "palegoldenrod")
+;;      ))
 
 (global-set-key (kbd "C-c g") 'magit-status)
 

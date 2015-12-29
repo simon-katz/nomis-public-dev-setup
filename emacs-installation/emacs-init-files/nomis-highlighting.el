@@ -24,7 +24,7 @@
 ;; (set-face-background 'hl-line "slategray1")
 ;; (set-face-background 'hl-line "palegreen")
 ;; (set-face-background 'hl-line "palegreen1")
-(set-face-background 'hl-line "darkseagreen1")
+(set-face-background 'hl-line "palegoldenrod") ; was "darkseagreen1", but that doesn't work nicely with magit, and the magit-item-highlight face has disappeared
 ;; (set-face-background 'hl-line "grey97")
 ;; (set-face-background 'hl-line "white")
 ;; (set-face-background 'hl-line "RGB:9999/9999/9999")
