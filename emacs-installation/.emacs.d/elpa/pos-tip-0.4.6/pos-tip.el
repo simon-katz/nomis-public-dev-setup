@@ -1,11 +1,11 @@
 ;;; pos-tip.el --- Show tooltip at point -*- coding: utf-8 -*-
-;; Version: 0.4.6
 
 ;; Copyright (C) 2010 S. Irie
 
 ;; Author: S. Irie
 ;; Maintainer: S. Irie
 ;; Keywords: Tooltip
+;; Package-Version: 0.4.6
 
 (defconst pos-tip-version "0.4.6")
 

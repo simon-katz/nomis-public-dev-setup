@@ -3,16 +3,23 @@
 ;;; Code:
 (add-to-list 'load-path (or (file-name-directory #$) (car load-path)))
 
-;;;### (autoloads nil "mc-edit-lines" "mc-edit-lines.el" (21720 54744
-;;;;;;  0 0))
-;;; Generated autoloads from mc-edit-lines.el
+;;;### (autoloads nil "mc-edit-lines" "../../../../../../../../../.emacs.d/elpa/multiple-cursors-1.3.0/mc-edit-lines.el"
+;;;;;;  "5d934922b9f9a3a5965a92fd7f58e807")
+;;; Generated autoloads from ../../../../../../../../../.emacs.d/elpa/multiple-cursors-1.3.0/mc-edit-lines.el
 
 (autoload 'mc/edit-lines "mc-edit-lines" "\
 Add one cursor to each line of the active region.
 Starts from mark and moves in straight down or up towards the
 line point is on.
 
-\(fn)" t nil)
+What is done with lines which are not long enough is governed by
+`mc/edit-lines-empty-lines'.  The prefix argument ARG can be used
+to override this.  If ARG is a symbol (when called from Lisp),
+that symbol is used instead of `mc/edit-lines-empty-lines'.
+Otherwise, if ARG negative, short lines will be ignored.  Any
+other non-nil value will cause short lines to be padded.
+
+\(fn &optional ARG)" t nil)
 
 (autoload 'mc/edit-ends-of-lines "mc-edit-lines" "\
 Add one cursor to the end of each line in the active region.
@@ -26,9 +33,9 @@ Add one cursor to the beginning of each line in the active region.
 
 ;;;***
 
-;;;### (autoloads nil "mc-mark-more" "mc-mark-more.el" (21720 54744
-;;;;;;  0 0))
-;;; Generated autoloads from mc-mark-more.el
+;;;### (autoloads nil "mc-mark-more" "../../../../../../../../../.emacs.d/elpa/multiple-cursors-1.3.0/mc-mark-more.el"
+;;;;;;  "c1741c182470dadfd7b78e4708f7f3a6")
+;;; Generated autoloads from ../../../../../../../../../.emacs.d/elpa/multiple-cursors-1.3.0/mc-mark-more.el
 
 (autoload 'mc/mark-next-like-this "mc-mark-more" "\
 Find and mark the next part of the buffer matching the currently active region
@@ -143,6 +150,18 @@ With prefix, it behaves the same as original `mc/mark-all-like-this'
 
 \(fn ARG)" t nil)
 
+(autoload 'mc/mark-all-dwim "mc-mark-more" "\
+Tries even harder to guess what you want to mark all of.
+
+If the region is active and spans multiple lines, it will behave
+as if `mc/mark-all-in-region'. With the prefix ARG, it will call
+`mc/edit-lines' instead.
+
+If the region is inactive or on a single line, it will behave like 
+`mc/mark-all-like-this-dwim'.
+
+\(fn ARG)" t nil)
+
 (autoload 'mc/mark-all-like-this-in-defun "mc-mark-more" "\
 Mark all like this in defun.
 
@@ -170,9 +189,9 @@ Mark the tag we're in and its pair for renaming.
 
 ;;;***
 
-;;;### (autoloads nil "mc-mark-pop" "mc-mark-pop.el" (21720 54744
-;;;;;;  0 0))
-;;; Generated autoloads from mc-mark-pop.el
+;;;### (autoloads nil "mc-mark-pop" "../../../../../../../../../.emacs.d/elpa/multiple-cursors-1.3.0/mc-mark-pop.el"
+;;;;;;  "d6ca90158891ee1716fda33be322cacd")
+;;; Generated autoloads from ../../../../../../../../../.emacs.d/elpa/multiple-cursors-1.3.0/mc-mark-pop.el
 
 (autoload 'mc/mark-pop "mc-mark-pop" "\
 Add a cursor at the current point, pop off mark ring and jump
@@ -182,9 +201,9 @@ to the popped mark.
 
 ;;;***
 
-;;;### (autoloads nil "mc-separate-operations" "mc-separate-operations.el"
-;;;;;;  (21720 54744 0 0))
-;;; Generated autoloads from mc-separate-operations.el
+;;;### (autoloads nil "mc-separate-operations" "../../../../../../../../../.emacs.d/elpa/multiple-cursors-1.3.0/mc-separate-operations.el"
+;;;;;;  "accf286ba4f022566929bd919cfef08a")
+;;; Generated autoloads from ../../../../../../../../../.emacs.d/elpa/multiple-cursors-1.3.0/mc-separate-operations.el
 
 (autoload 'mc/insert-numbers "mc-separate-operations" "\
 Insert increasing numbers for each cursor, starting at 0 or ARG.
@@ -203,9 +222,9 @@ Insert increasing numbers for each cursor, starting at 0 or ARG.
 
 ;;;***
 
-;;;### (autoloads nil "rectangular-region-mode" "rectangular-region-mode.el"
-;;;;;;  (21720 54744 0 0))
-;;; Generated autoloads from rectangular-region-mode.el
+;;;### (autoloads nil "rectangular-region-mode" "../../../../../../../../../.emacs.d/elpa/multiple-cursors-1.3.0/rectangular-region-mode.el"
+;;;;;;  "82342050c638f9a141d2cc6dbfb21dd1")
+;;; Generated autoloads from ../../../../../../../../../.emacs.d/elpa/multiple-cursors-1.3.0/rectangular-region-mode.el
 
 (autoload 'set-rectangular-region-anchor "rectangular-region-mode" "\
 Anchors the rectangular region at point.
@@ -217,9 +236,17 @@ an exceedingly quick way of adding multiple cursors to multiple lines.
 
 ;;;***
 
-;;;### (autoloads nil nil ("mc-cycle-cursors.el" "multiple-cursors-core.el"
-;;;;;;  "multiple-cursors-pkg.el" "multiple-cursors.el") (21720 54744
-;;;;;;  725992 0))
+;;;### (autoloads nil nil ("../../../../../../../../../.emacs.d/elpa/multiple-cursors-1.3.0/mc-cycle-cursors.el"
+;;;;;;  "../../../../../../../../../.emacs.d/elpa/multiple-cursors-1.3.0/mc-edit-lines.el"
+;;;;;;  "../../../../../../../../../.emacs.d/elpa/multiple-cursors-1.3.0/mc-mark-more.el"
+;;;;;;  "../../../../../../../../../.emacs.d/elpa/multiple-cursors-1.3.0/mc-mark-pop.el"
+;;;;;;  "../../../../../../../../../.emacs.d/elpa/multiple-cursors-1.3.0/mc-separate-operations.el"
+;;;;;;  "../../../../../../../../../.emacs.d/elpa/multiple-cursors-1.3.0/multiple-cursors-autoloads.el"
+;;;;;;  "../../../../../../../../../.emacs.d/elpa/multiple-cursors-1.3.0/multiple-cursors-core.el"
+;;;;;;  "../../../../../../../../../.emacs.d/elpa/multiple-cursors-1.3.0/multiple-cursors-pkg.el"
+;;;;;;  "../../../../../../../../../.emacs.d/elpa/multiple-cursors-1.3.0/multiple-cursors.el"
+;;;;;;  "../../../../../../../../../.emacs.d/elpa/multiple-cursors-1.3.0/rectangular-region-mode.el")
+;;;;;;  (22146 59014 241261 0))
 
 ;;;***
 

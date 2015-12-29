@@ -130,7 +130,6 @@ highlights the entire width of the window."
                                   mark-ring
                                   mark-active
                                   yank-undo-function
-                                  kill-ring-yank-pointer
                                   autopair-action
                                   autopair-wrap-action
                                   er/history)
@@ -679,6 +678,7 @@ for running commands with multiple cursors.")
                                         py-electric-backspace
                                         c-electric-backspace
                                         org-delete-backward-char
+                                        python-indent-dedent-line-backspace
                                         paredit-backward-delete
                                         autopair-backspace
                                         just-one-space

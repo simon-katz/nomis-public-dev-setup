@@ -2,9 +2,9 @@
 ;;
 ;; Author: Steve Purcell <steve@sanityinc.com>
 ;; Keywords: navigation slime elisp emacs-lisp
+;; Package-Version: 0.8
 ;; URL: https://github.com/purcell/elisp-slime-nav
-;; Version: 0.8
-;; X-Original-Version: DEV
+;; Version: DEV
 ;; Package-Requires: ((cl-lib "0.2"))
 ;;
 ;;; Commentary:

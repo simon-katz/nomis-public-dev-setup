@@ -4,7 +4,7 @@
 
 ;; Author: Taylor R. Campbell
 ;; Version: 24
-;; X-Original-Version: 24
+;; Package-Version: 24
 ;; Created: 2005-07-31
 ;; Keywords: lisp
 
