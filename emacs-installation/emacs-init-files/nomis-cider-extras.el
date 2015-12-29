@@ -54,10 +54,10 @@
             "CIDER 0.9.1"))
   (defun nomis-cider-find-or-create-repl-buffer ()
     (cider-get-repl-buffer)))
-((member (cider-version)
-         '("CIDER 0.10.0"))
- (defun nomis-cider-find-or-create-repl-buffer ()
-   (cider-current-connection)))
+ ((member (cider-version)
+          '("CIDER 0.10.0"))
+  (defun nomis-cider-find-or-create-repl-buffer ()
+    (cider-current-connection)))
  (t
   (message-box
    "You need to fix `nomis-cider-find-or-create-repl-buffer` for this version of Cider.")))
