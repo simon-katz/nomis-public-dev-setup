@@ -2,7 +2,7 @@
 
 (add-hook 'magit-mode-hook (lambda () (company-mode 0)))
 
-(setq magit-status-buffer-switch-function 'switch-to-buffer)
+(add-to-list 'same-window-regexps "\*magit: .*\*") ; was: (setq magit-status-buffer-switch-function 'switch-to-buffer) -- no longer works
 
 (setq magit-completing-read-function 'magit-ido-completing-read)
 
