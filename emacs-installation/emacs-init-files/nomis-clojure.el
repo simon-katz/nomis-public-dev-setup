@@ -69,6 +69,13 @@
 
 (setq cider-font-lock-dynamically t)
 
+(when (equal (cider-version) "CIDER 0.10.0")
+  ;; Fix curly braces bug.
+  (add-hook 'cider-repl-mode-hook
+            '(lambda ()
+               (define-key cider-repl-mode-map "{" #'paredit-open-curly)
+               (define-key cider-repl-mode-map "}" #'paredit-close-curly))))
+
 ;;;; ___________________________________________________________________________
 ;;;; cider-eval-sexp-fu
 
