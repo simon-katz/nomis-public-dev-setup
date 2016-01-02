@@ -49,11 +49,7 @@
 
 ;;;; ___________________________________________________________________________
 ;;;; Cider
-
 ;;;; See https://github.com/clojure-emacs/cider.
-
-;;;; ---------------------------------------------------------------------------
-;;;; ---- Stuff for the REPL ----
 
 (setq nrepl-buffer-name-separator "--")
 
@@ -65,23 +61,15 @@
 ;; (setq cider-repl-history-file "~/.cider-repl-history") ; I'm now hacking this in `cider-jack-in`
 (setq cider-repl-history-size 5000) ; the default is 500
 
-;; (setq cider-repl-use-pretty-printing t) ; doesn't work with ClojureScript
-
 (setq cider-repl-use-clojure-font-lock t)
 
 (add-hook 'cider-mode-hook 'eldoc-mode)
 
-(setq nrepl-log-messages t)
+(setq cider-interactive-eval-result-prefix ";; => ")
 
-(setq cider-repl-use-pretty-printing t)
+(setq cider-font-lock-dynamically t)
 
-;; ;;;; ---------------------------------------------------------------------------
-;; ;;;; ---- Stack backtraces ----
 
-;;;; TODO: I've seen this a lot. Do I want it?
-;; (setq cider-popup-stacktraces nil)
-;; (setq cider-repl-popup-stacktraces t)
-;; (setq cider-auto-select-error-buffer t)
 
 
 ;;;; ___________________________________________________________________________
