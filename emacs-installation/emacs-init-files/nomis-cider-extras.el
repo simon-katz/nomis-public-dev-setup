@@ -645,6 +645,10 @@ start the server."
                 (nrepl-start-server-process project-dir cmd))))
         (message "The %s executable (specified by `cider-lein-command' or `cider-boot-command') isn't on your exec-path"
                  (cider-jack-in-command project-type))))))
+ ((member (cider-version)
+          '("CIDER 0.10.0"))
+  ;; Maybe look at making Cider history work for multiple projects.
+  )
  (t
   (message-box
    "You need to fix your Cider REPL history file stuff for this version of Cider.")))
@@ -676,6 +680,10 @@ utf-8-unix."
             (insert ";; Automatically written history of CIDER REPL session\n")
             (insert ";; Edit at your own risk\n\n")
             (prin1 (mapcar #'substring-no-properties hist) (current-buffer))))))))
+ ((member (cider-version)
+          '("CIDER 0.10.0"))
+  ;; Maybe look at making Cider history work for multiple projects.
+  )
  (t
   (message-box
    "You need to fix your cider-repl--history-write stuff for this version of Cider.")))
