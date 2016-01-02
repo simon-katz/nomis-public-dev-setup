@@ -69,8 +69,13 @@
 
 (setq cider-font-lock-dynamically t)
 
+;;;; ___________________________________________________________________________
+;;;; cider-eval-sexp-fu
 
+(require 'cider-eval-sexp-fu)
 
+(setq eval-sexp-fu-flash-duration 0.5)
+(setq eval-sexp-fu-flash-error-duration 0.5)
 
 ;;;; ___________________________________________________________________________
 

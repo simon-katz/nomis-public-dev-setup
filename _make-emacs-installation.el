@@ -38,7 +38,8 @@
                       company
                       rcirc-notify
                       markdown-mode
-                      hydra))
+                      hydra
+                      cider-eval-sexp-fu))
 
 (dolist (p my-packages)
   (when (not (package-installed-p p))
