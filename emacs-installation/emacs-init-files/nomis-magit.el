@@ -8,7 +8,7 @@
 
   (setq magit-completing-read-function 'magit-ido-completing-read)
 
-  (setq magit-revert-buffers nil)
+  (setq magit-revert-buffers 'silent)
   (setq magit-push-always-verify nil)
   (setq magit-diff-refine-hunk t))
 
