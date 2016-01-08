@@ -93,6 +93,9 @@
                        "sheringham.home"))
          ;; 900 pixels - menu bar
          60)
+        ((equal system-type 'windows-nt)
+         ;; probably at the Windows work place
+         61)
         (t
          66)))
 
