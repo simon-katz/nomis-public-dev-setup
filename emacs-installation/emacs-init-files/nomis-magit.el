@@ -6,7 +6,10 @@
 
   (add-to-list 'same-window-regexps "\*magit: .*\*") ; was: (setq magit-status-buffer-switch-function 'switch-to-buffer) -- no longer works
 
-  (setq magit-completing-read-function 'magit-ido-completing-read))
+  (setq magit-completing-read-function 'magit-ido-completing-read)
+
+  (setq magit-revert-buffers nil)
+  (setq magit-push-always-verify nil))
 
 (add-hook 'magit-mode-hook 'nomis-init-magit)
 
