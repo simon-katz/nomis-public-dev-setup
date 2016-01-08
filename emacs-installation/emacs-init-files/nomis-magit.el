@@ -9,7 +9,9 @@
   (setq magit-completing-read-function 'magit-ido-completing-read)
 
   (setq magit-revert-buffers nil)
-  (setq magit-push-always-verify nil))
+  (setq magit-push-always-verify nil)
+  (setq magit-diff-refine-hunk t))
+
 
 (add-hook 'magit-mode-hook 'nomis-init-magit)
 
