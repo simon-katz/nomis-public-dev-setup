@@ -159,17 +159,8 @@
 
 (when (equal system-type 'windows-nt)
 
-  ;; (global-unset-key (kbd "M-SPC")) ; use M-x just-one-space
-  ;; (w32-unregister-hot-key [134217760])
-  ;; ;; (global-set-key (kbd "M-SPC") 'just-one-space)
-
   (setq find-program "unixfind.exe")
 
   (setq-default buffer-file-coding-system 'utf-8-unix)
 
-  (setq projectile-indexing-method 'alien)
-
-  (setq magit-highlight-whitespace nil)
-  (setq magit-highlight-trailing-whitespace nil)
-  ;; (setq magit-use-overlays nil)
-  )
+  (setq projectile-indexing-method 'alien))
