@@ -52,8 +52,8 @@
                                (if (= (user-uid) 0) "#" "$")
                                " ")))
           (propertize prompt
-                      'face `(:foreground ,nomis-eshell-prompt-foreground
-                                          :background ,nomis-eshell-prompt-background)))))
+                      'face (list :foreground nomis-eshell-prompt-foreground
+                                  :background nomis-eshell-prompt-background)))))
 
 ;;;; ___________________________________________________________________________
 
