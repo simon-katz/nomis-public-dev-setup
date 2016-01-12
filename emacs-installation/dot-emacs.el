@@ -77,7 +77,7 @@
 
 ;;;; ---- Lisp and Clojure stuff probably only for me ----
 
-;; (require 'nomis-indent-sexp)
+(require 'nomis-indent-sexp)
 
 ;; (require 'nomis-slime-eval)
 
