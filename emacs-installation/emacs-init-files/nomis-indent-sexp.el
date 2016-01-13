@@ -70,15 +70,15 @@
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-(defun nomis-prog-indent-sexp--top-level (&optional arg)
+(defun nomis-prog-indent-sexp--top-level ()
   "Indent the enclosing top-level form using `prog-indent-sexp`."
-  (interactive "P")
+  (interactive)
   (save-excursion
     (prog-indent-sexp t)))
 
-(defun nomis-prog-indent-sexp--form-after-point (&optional arg)
+(defun nomis-prog-indent-sexp--form-after-point ()
   "Indent the enclosing form after point using `prog-indent-sexp`."
-  (interactive "P")
+  (interactive)
   (save-excursion
     (prog-indent-sexp nil)))
 
