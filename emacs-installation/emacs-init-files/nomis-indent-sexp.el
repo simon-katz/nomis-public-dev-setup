@@ -70,13 +70,17 @@
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-(defun nomis-prog-indent-sexp (&optional arg)
-  "Indent the enclosing top-level form.
-When interactively called with prefix, indent the expression after point instead.
-(The opposite of `prog-indent-sexp`.)"
+(defun nomis-prog-indent-sexp--top-level (&optional arg)
+  "Indent the enclosing top-level form using `prog-indent-sexp`."
   (interactive "P")
   (save-excursion
-    (prog-indent-sexp (not arg))))
+    (prog-indent-sexp t)))
+
+(defun nomis-prog-indent-sexp--form-after-point (&optional arg)
+  "Indent the enclosing form after point using `prog-indent-sexp`."
+  (interactive "P")
+  (save-excursion
+    (prog-indent-sexp nil)))
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -91,15 +95,15 @@ When interactively called with prefix, indent the expression after point instead
 ;; WTF!
 ;; Let's rationalise:
 
-(define-key emacs-lisp-mode-map (kbd "C-M-q") 'nomis-prog-indent-sexp)
+(define-key emacs-lisp-mode-map (kbd "C-M-q") 'nomis-prog-indent-sexp--form-after-point)
 
 (eval-after-load 'clojure-mode
   '(progn
-     (define-key clojure-mode-map (kbd "C-M-q") 'nomis-prog-indent-sexp)))
+     (define-key clojure-mode-map (kbd "C-M-q") 'nomis-prog-indent-sexp--form-after-point)))
 
 (eval-after-load 'paredit
   '(progn
-     (define-key paredit-mode-map (kbd "M-q") 'nomis-prog-indent-sexp)))
+     (define-key paredit-mode-map (kbd "M-q") 'nomis-prog-indent-sexp--top-level)))
 
 ;;;; ___________________________________________________________________________
 
