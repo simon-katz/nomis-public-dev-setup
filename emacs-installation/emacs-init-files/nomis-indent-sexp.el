@@ -88,10 +88,10 @@
 ;; - C-M-q in elisp               indent-pp-sexp
 ;; - C-M-q in clojure             prog-indent-sexp
 ;; -   M-q in clojure and elisp   paredit-reindent-defun
-
+;; 
 ;; Clojure indentation seems to work properly with `prog-indent-sexp`, but
 ;; not with the others.
-
+;; 
 ;; WTF!
 ;; Let's rationalise:
 
