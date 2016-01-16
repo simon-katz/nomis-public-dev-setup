@@ -1,41 +1,29 @@
-TODO:
-
-- Search for TODOs.
-
-- Understand minor modes.
-  See `nomis-right-margin-mode`.
-  Compare with `fci-mode` and `whitespace-mode`.
-  Parameters?
-  Different ways of doing it?
-
-- Do you have other things that should be modes (like nomis-right-margin-mode)?
-
-+ Report this bug in Emacs 24.3:
-  + What's happened to repetition of keyboard macros? It used to do it
-    once; now it repeats until error (I think).
-  + Done.  See https://groups.google.com/forum/#!search/emacs$20bug$20keyboard$20macro$2015126/gnu.emacs.bug/i2DKFcWfzfY/9QMePrbxpiQJ
-
-- You have some manually-installed packages in "for-me/nomis-addons".
+* TODO Search for TODOs.
+* TODO Understand minor modes.
+**  See `nomis-right-margin-mode`.
+**  Compare with `fci-mode` and `whitespace-mode`.
+**  Parameters?
+**  Different ways of doing it?
+* TODO Do you have other things that should be modes (like nomis-right-margin-mode)?
+* DONE Report this bug in Emacs 24.3:
+**  + What's happened to repetition of keyboard macros?
+*** It used to do it once; now it repeats until error (I think).
+**  + Done.  See https://groups.google.com/forum/#!search/emacs$20bug$20keyboard$20macro$2015126/gnu.emacs.bug/i2DKFcWfzfY/9QMePrbxpiQJ
+* TODO You have some manually-installed packages in "for-me/nomis-addons".
+** 
   Instead, (after .emacs.d and .emacs are in the same repository (if
   you do that)), put the manually-installed packages in .emacs.d.
-
-- Move some stuff from "for-me" to "for-anyone".
-
-- Compiling
-  - Look into any compilation errors and warnings now, and do so when
-    you make changes.
-  - What about compiling these init files? And other ones you manually
-    install?
-    - Ah, Emacs uses a "newer" check to see if recompilation is needed.
-      This isn't going to work for you.
-
-- Consider Emacs Prelude (or parts of it, like the project thing
-  which allows grepping across a project).
-
-- Get your nrepl hacking working with new nrepl. Consider doing it properly
+* TODO Move some stuff from "for-me" to "for-anyone".
+* TODO Compiling
+** Look into any compilation errors and warnings now, and do so when you make changes
+** What about compiling these init files? And other ones you manually install?
+*** Ah, Emacs uses a "newer" check to see if recompilation is needed.
+**** This isn't going to work for you
+* TODO Consider Emacs Prelude
+** (or parts of it, like the project thing which allows grepping across a project)
+* TODO Get your nrepl hacking working with new nrepl. Consider doing it properly
   (fork the Git repository, etc) and creating pull requests.
-
-- Stuff from better-defaults:
+* TODO Stuff from better-defaults:
    ;; (progn
    ;; 
    ;;   (global-set-key (kbd "M-/") 'hippie-expand)
@@ -54,17 +42,13 @@ TODO:
    ;;         save-place-file (concat user-emacs-directory "places")
    ;;         backup-directory-alist `(("." . ,(concat user-emacs-directory
    ;;                                                  "backups")))))
-
-- Starter kit
-  - See "stuff-from-starter-kit-for-reference.el".
-
-- Need a command for adding `...` around things.
+* TODO Starter kit
+** See "stuff-from-starter-kit-for-reference.el".
+* TODO Need a command for adding `...` around things.
   (Or `...'? `foo` vs `foo' in lisp-mode.) 
-
-- `nomis-nrepl-rearrange-string-into-lines`:
-  - Not available everywhere with C-c C-f. Is there a good reason?
-  - You want different behaviour from Clojure and everywhere else.
-    - Not so: even within Clojure, doc strings and your HTML strings are different.
-    - Maybe the command can see what mode is active? (I like this.)
-    - Maybe C-c C-f should handle the difference by being bound to different
-      commands for Clojure and other things? (I don't like this.)
+* TODO `nomis-nrepl-rearrange-string-into-lines`:
+** Not available everywhere with C-c C-f. Is there a good reason?
+** You want different behaviour from Clojure and everywhere else.
+*** Not so: even within Clojure, doc strings and your HTML strings are different.
+*** Maybe the command can see what mode is active? (I like this.)
+*** Maybe C-c C-f should handle the difference by being bound to different commands for Clojure and other things? (I don't like this.)
