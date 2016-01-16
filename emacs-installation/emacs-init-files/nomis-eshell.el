@@ -17,7 +17,7 @@
                                          (1 "black")
                                          (2 "purple")))
 
-(defvar nomis-eshell-prompt-background (case 6
+(defvar nomis-eshell-prompt-background (case 1
                                          (1 "grey80")
                                          (2 "burlywood")
                                          (3 "SandyBrown")
