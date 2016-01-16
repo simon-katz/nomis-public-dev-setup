@@ -77,7 +77,7 @@
     (prog-indent-sexp t)))
 
 (defun nomis-prog-indent-sexp--form-after-point ()
-  "Indent the enclosing form after point using `prog-indent-sexp`."
+  "Indent the form after point using `prog-indent-sexp`."
   (interactive)
   (save-excursion
     (prog-indent-sexp nil)))
