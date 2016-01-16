@@ -1,4 +1,4 @@
-* TODO Search for TODOs.
+* TODO Search for TODOs and FIXMEs
 * TODO Understand minor modes.
 **  See `nomis-right-margin-mode`.
 **  Compare with `fci-mode` and `whitespace-mode`.
@@ -9,11 +9,6 @@
 **  + What's happened to repetition of keyboard macros?
 *** It used to do it once; now it repeats until error (I think).
 **  + Done.  See https://groups.google.com/forum/#!search/emacs$20bug$20keyboard$20macro$2015126/gnu.emacs.bug/i2DKFcWfzfY/9QMePrbxpiQJ
-* TODO You have some manually-installed packages in "for-me/nomis-addons".
-** 
-  Instead, (after .emacs.d and .emacs are in the same repository (if
-  you do that)), put the manually-installed packages in .emacs.d.
-* TODO Move some stuff from "for-me" to "for-anyone".
 * TODO Compiling
 ** Look into any compilation errors and warnings now, and do so when you make changes
 ** What about compiling these init files? And other ones you manually install?
@@ -21,8 +16,6 @@
 **** This isn't going to work for you
 * TODO Consider Emacs Prelude
 ** (or parts of it, like the project thing which allows grepping across a project)
-* TODO Get your nrepl hacking working with new nrepl. Consider doing it properly
-  (fork the Git repository, etc) and creating pull requests.
 * TODO Stuff from better-defaults:
    ;; (progn
    ;; 
@@ -42,9 +35,8 @@
    ;;         save-place-file (concat user-emacs-directory "places")
    ;;         backup-directory-alist `(("." . ,(concat user-emacs-directory
    ;;                                                  "backups")))))
-* TODO Starter kit
-** See "stuff-from-starter-kit-for-reference.el".
-* TODO Need a command for adding `...` around things.
+* TODO See "stuff-from-starter-kit-for-reference.el"
+* TODO Need a command for adding `...` around things
   (Or `...'? `foo` vs `foo' in lisp-mode.) 
 * TODO `nomis-nrepl-rearrange-string-into-lines`:
 ** Not available everywhere with C-c C-f. Is there a good reason?
