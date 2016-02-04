@@ -14,6 +14,12 @@
 
 (setq confirm-kill-emacs 'y-or-n-p)
 
+(define-key global-map (kbd "C-x C-z")
+  (lambda ()
+    (interactive)
+    (beep)
+    (message "Nope! -- Use M-x suspend-frame if you need this")))
+
 (setq-default indent-tabs-mode nil) ; use spaces, not tabs
 (setq sentence-end-double-space nil)
 (setq visible-bell t)
