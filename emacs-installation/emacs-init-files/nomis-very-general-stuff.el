@@ -1,5 +1,7 @@
 ;;;; Init stuff -- Very general stuff.
 
+(setq initial-scratch-message "")
+
 (defun nomis-no-op ()
   (interactive))
 
