@@ -9,7 +9,8 @@
     "R\\EMAINING-ISSUE"
     "H\\ACK"
     "R\\EFACTOR"
-    "N\\OCOMMIT"))
+    "N\\OCOMMIT"
+    "Q\\UESTION/ACTION"))
 
 (defun nomis-make-regex-from-watchwords-helper (words beginning-of-word-p)
   (with-output-to-string
@@ -44,6 +45,7 @@
 (add-hook 'prog-mode-hook 'add-nomis-watch-words)
 
 ;;;; Temp stuff for testing the above:
+;;;; - QUESTION/ACTION
 ;;;; - [FIXME]aaa
 ;;;; - FIXMEaaa
 ;;;; - [FIX]aaa
