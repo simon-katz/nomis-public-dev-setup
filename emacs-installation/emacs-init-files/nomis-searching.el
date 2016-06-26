@@ -24,7 +24,8 @@
       ;; ".exe"
       ".cider-repl-history"
       "*.iml"
-      "*.zip"))
+      "*.zip"
+      "figwheel_server.log"))
   (eval-after-load "grep"
     '(progn
        (mapc (lambda (x) (add-to-list 'grep-find-ignored-files x))
