@@ -10,7 +10,8 @@
 
   (setq magit-revert-buffers 'silent)
   (setq magit-push-always-verify nil)
-  (setq magit-diff-refine-hunk 'all))
+  (setq magit-diff-refine-hunk 'all)
+  (setq magit-diff-highlight-trailing nil))
 
 
 (add-hook 'magit-mode-hook 'nomis-init-magit)
