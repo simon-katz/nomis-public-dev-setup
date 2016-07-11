@@ -94,6 +94,7 @@
 (require 'nomis-ido)
 (require 'nomis-smex)
 (require 'nomis-frames)
+(require 'nomis-frame-style)
 (require 'nomis-windows)
 (require 'nomis-uniquify)
 (require 'nomis-remember-desktop-using-workgroups)
