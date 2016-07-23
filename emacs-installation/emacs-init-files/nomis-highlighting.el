@@ -81,22 +81,22 @@
   
   (defadvice idle-highlight-word-at-point
       (around work-with-clojure-@ ())
-    (if (not (equal emacs-version "24.5.1"))
-        ad-do-it
-      (if idle-highlight-mode
-          (let* ((target-symbol (symbol-at-point))
-                 (target (symbol-name target-symbol)))
-            (idle-highlight-unhighlight)
-            (when (and target-symbol
-                       (not (in-string-p))
-                       (looking-at-p "\\s_\\|\\sw") ;; Symbol characters
-                       (not (member target idle-highlight-exceptions)))
-              (setq idle-highlight-regexp (concat nomis-symbol-regex
-                                                  (regexp-quote target)
-                                                  "\\>"))
-              (highlight-regexp idle-highlight-regexp
-                                ;; jsk hacking
-                                nomis-idle-highlight))))))
+    ;; This works with idle-highlight-mode 1.1.3.
+    ;; It will probably fail with any other version.
+    (if idle-highlight-mode
+        (let* ((target-symbol (symbol-at-point))
+               (target (symbol-name target-symbol)))
+          (idle-highlight-unhighlight)
+          (when (and target-symbol
+                     (not (in-string-p))
+                     (looking-at-p "\\s_\\|\\sw") ;; Symbol characters
+                     (not (member target idle-highlight-exceptions)))
+            (setq idle-highlight-regexp (concat nomis-symbol-regex
+                                                (regexp-quote target)
+                                                "\\>"))
+            (highlight-regexp idle-highlight-regexp
+                              ;; jsk hacking
+                              nomis-idle-highlight)))))
 
   (ad-activate 'idle-highlight-word-at-point))
 
