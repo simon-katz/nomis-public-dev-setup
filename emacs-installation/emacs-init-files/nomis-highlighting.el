@@ -66,6 +66,11 @@
       (1 "\\<")
       (2 "\\(@\\|\\<\\)")))
 
+  (defvar nomis-idle-highlight
+    (case 1
+      (1 'idle-highlight)
+      (2 'hi-green)
+      (3 'hi-blue-b)))
   
   (defadvice idle-highlight-word-at-point
       (around work-with-clojure-@ ())
@@ -82,7 +87,9 @@
               (setq idle-highlight-regexp (concat nomis-symbol-regex
                                                   (regexp-quote target)
                                                   "\\>"))
-              (highlight-regexp idle-highlight-regexp 'idle-highlight))))))
+              (highlight-regexp idle-highlight-regexp
+                                ;; jsk hacking
+                                nomis-idle-highlight))))))
 
   (ad-activate 'idle-highlight-word-at-point))
 
