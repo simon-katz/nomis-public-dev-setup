@@ -67,10 +67,17 @@
       (2 "\\(@\\|\\<\\)")))
 
   (defvar nomis-idle-highlight
-    (case 1
-      (1 'idle-highlight)
-      (2 'hi-green)
-      (3 'hi-blue-b)))
+    (case 7
+      ( 1 'idle-highlight)
+      ( 2 'hi-yellow)
+      ( 3 'hi-pink)
+      ( 4 'hi-green)
+      ( 5 'hi-blue)
+      ( 6 'hi-black-b)
+      ( 7 'hi-blue-b)
+      ( 8 'hi-red-b)
+      ( 9 'hi-green-b)
+      (10 'hi-black-hb)))
   
   (defadvice idle-highlight-word-at-point
       (around work-with-clojure-@ ())
