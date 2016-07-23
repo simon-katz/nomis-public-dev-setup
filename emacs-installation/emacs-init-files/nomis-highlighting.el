@@ -1,4 +1,4 @@
-;;;; Init stuff -- Line highlighting.
+;;;; Init stuff -- Misc highlighting.
 
 ;;;; ___________________________________________________________________________
 ;;;; Mode line
@@ -55,5 +55,31 @@
 
 (add-hook 'text-mode-hook 'nomis-highlight-symbol-quoting-in-text)
 (add-hook 'prog-mode-hook 'nomis-highlight-symbol-quoting-in-text)
+
+;;;; ___________________________________________________________________________
+;;;; Symbol highlighting
+
+(progn
+  
+  (defadvice idle-highlight-word-at-point
+      (around work-with-clojure-@ ())
+    (if (not (equal emacs-version "24.5.1"))
+        ad-do-it
+      (if idle-highlight-mode
+          (let* ((target-symbol (symbol-at-point))
+                 (target (symbol-name target-symbol)))
+            (idle-highlight-unhighlight)
+            (when (and target-symbol
+                       (not (in-string-p))
+                       (looking-at-p "\\s_\\|\\sw") ;; Symbol characters
+                       (not (member target idle-highlight-exceptions)))
+              (setq idle-highlight-regexp (concat (case 2 ; jsk hacking
+                                                    (1 "\\<")
+                                                    (2 "\\(@\\|\\<\\)"))
+                                                  (regexp-quote target)
+                                                  "\\>"))
+              (highlight-regexp idle-highlight-regexp 'idle-highlight))))))
+
+  (ad-activate 'idle-highlight-word-at-point))
 
 (provide 'nomis-highlighting)
