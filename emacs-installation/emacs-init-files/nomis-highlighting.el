@@ -60,6 +60,12 @@
 ;;;; Symbol highlighting
 
 (progn
+
+  (defvar nomis-symbol-regex
+    (case 2 ; jsk hacking
+      (1 "\\<")
+      (2 "\\(@\\|\\<\\)")))
+
   
   (defadvice idle-highlight-word-at-point
       (around work-with-clojure-@ ())
@@ -73,9 +79,7 @@
                        (not (in-string-p))
                        (looking-at-p "\\s_\\|\\sw") ;; Symbol characters
                        (not (member target idle-highlight-exceptions)))
-              (setq idle-highlight-regexp (concat (case 2 ; jsk hacking
-                                                    (1 "\\<")
-                                                    (2 "\\(@\\|\\<\\)"))
+              (setq idle-highlight-regexp (concat nomis-symbol-regex
                                                   (regexp-quote target)
                                                   "\\>"))
               (highlight-regexp idle-highlight-regexp 'idle-highlight))))))
