@@ -65,7 +65,7 @@
 
 (add-hook 'cider-mode-hook 'eldoc-mode)
 
-(setq cider-interactive-eval-result-prefix ";; => ")
+(setq cider-eval-result-prefix ";; => ")
 
 (setq cider-font-lock-dynamically t)
 
