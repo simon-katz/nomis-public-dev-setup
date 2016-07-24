@@ -46,11 +46,8 @@
          "emacs-init-files"))
 
 (when i-am-nomis-p ; #### What about compiling?
-  (dolist (d (directory-files (concat (nomis-load-file-directory)
-                                      "../../emacs-package-repos/")
-                              t
-                              "[^\\.].*"))
-    (add-to-list 'load-path d)))
+  (add-to-list 'load-path (concat (nomis-load-file-directory)
+                                  "../../emacs-package-repos/clj-refactor")))
 
 ;;;; ___________________________________________________________________________
 ;;;; ---- Load various files ----

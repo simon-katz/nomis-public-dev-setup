@@ -30,6 +30,7 @@
                       undo-tree
                       ;; ac-nrepl
                       clojure-mode
+                      cider
                       align-cljlet
                       exec-path-from-shell
                       js2-mode

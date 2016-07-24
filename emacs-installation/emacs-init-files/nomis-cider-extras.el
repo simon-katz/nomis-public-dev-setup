@@ -20,7 +20,8 @@
  ((member (cider-version)
           '("CIDER 0.8.2"
             "CIDER 0.9.1"
-            "CIDER 0.10.0"))
+            "CIDER 0.10.0"
+            "CIDER 0.12.0 (Seattle)"))
   (defun nomis-clojure-buffer-ns ()
     (clojure-find-ns)))
  (t
@@ -36,7 +37,8 @@
       nrepl-buffer-ns)))
  ((member (cider-version)
           '("CIDER 0.9.1"
-            "CIDER 0.10.0"))
+            "CIDER 0.10.0"
+            "CIDER 0.12.0 (Seattle)"))
   (defun nomis-cider-repl-namespace ()
     (with-current-buffer (cider-current-repl-buffer)
       cider-buffer-ns)))
@@ -55,7 +57,8 @@
   (defun nomis-cider-find-or-create-repl-buffer ()
     (cider-get-repl-buffer)))
  ((member (cider-version)
-          '("CIDER 0.10.0"))
+          '("CIDER 0.10.0"
+            "CIDER 0.12.0 (Seattle)"))
   (defun nomis-cider-find-or-create-repl-buffer ()
     (cider-current-connection)))
  (t
@@ -132,7 +135,15 @@ Return the position of the prompt beginning."
  ((boundp 'cider-repl-prompt-function)
   (setq cider-repl-prompt-function
         (lambda (namespace)
-          (cl-labels ((do-it () (funcall 'cider-repl-default-prompt namespace)))
+          (cl-labels ((do-it ()
+                             (funcall 
+                              (cond
+                               ((member (cider-version)
+                                        '("CIDER 0.10.0"))
+                                'cider-repl-default-prompt)
+                               (t
+                                'cider-repl-prompt-default))
+                              namespace)))
             (if nomis-cider-repl--hack-prompt-p
                 (concat nomis-cider-repl--prompt-prefix
                         (do-it)
@@ -646,7 +657,8 @@ start the server."
         (message "The %s executable (specified by `cider-lein-command' or `cider-boot-command') isn't on your exec-path"
                  (cider-jack-in-command project-type))))))
  ((member (cider-version)
-          '("CIDER 0.10.0"))
+          '("CIDER 0.10.0"
+            "CIDER 0.12.0 (Seattle)"))
   ;; Maybe look at making Cider history work for multiple projects.
   )
  (t
@@ -681,7 +693,8 @@ utf-8-unix."
             (insert ";; Edit at your own risk\n\n")
             (prin1 (mapcar #'substring-no-properties hist) (current-buffer))))))))
  ((member (cider-version)
-          '("CIDER 0.10.0"))
+          '("CIDER 0.10.0"
+            "CIDER 0.12.0 (Seattle)"))
   ;; Maybe look at making Cider history work for multiple projects.
   )
  (t
@@ -720,7 +733,8 @@ window."
           (goto-char pos))))))
 
  ((member (cider-version)
-          '("CIDER 0.10.0"))
+          '("CIDER 0.10.0"
+            "CIDER 0.12.0 (Seattle)"))
   (defun cider-jump-to (buffer &optional pos other-window)
     "Push current point onto marker ring, and jump to BUFFER and POS.
 POS can be either a number, a cons, or a symbol.
