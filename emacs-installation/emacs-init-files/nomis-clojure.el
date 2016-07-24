@@ -67,7 +67,7 @@
 
 (setq cider-eval-result-prefix ";; => ")
 
-(setq cider-font-lock-dynamically t)
+;; (setq cider-font-lock-dynamically t)
 
 (when (equal (cider-version) "CIDER 0.10.0")
   ;; Fix curly braces bug.
