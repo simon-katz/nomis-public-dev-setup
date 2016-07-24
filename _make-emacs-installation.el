@@ -25,7 +25,7 @@
                       magit
                       ido-ubiquitous
                       smex
-                      idle-highlight-mode
+                      ;; idle-highlight-mode -- moved to "emacs-installation/emacs-init-files/manually-installed/idle-highlight-mode.el"
                       scala-mode2
                       undo-tree
                       ;; ac-nrepl
