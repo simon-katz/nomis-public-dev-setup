@@ -59,4 +59,10 @@
 ;;;; ___________________________________________________________________________
 ;;;; Symbol highlighting
 
+(progn
+  (require 'idle-highlight-mode)
+  (defun nomis-turn-on-idle-highlight-mode ()
+    (idle-highlight-mode t))
+  (add-hook 'prog-mode-hook 'nomis-turn-on-idle-highlight-mode))
+
 (provide 'nomis-highlighting)
