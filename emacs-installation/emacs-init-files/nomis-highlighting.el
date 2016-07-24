@@ -61,10 +61,10 @@
 
 (progn
 
-  (defvar nomis-symbol-regex
+  (defvar nomis-start-of-symbol-regex
     (case 2 ; jsk hacking
       (1 "\\<")
-      (2 "\\(@\\|\\<\\)")))
+      (2 "\\<@?")))
 
   (defvar nomis-idle-highlight
     (case 7
@@ -91,7 +91,7 @@
                      (not (in-string-p))
                      (looking-at-p "\\s_\\|\\sw") ;; Symbol characters
                      (not (member target idle-highlight-exceptions)))
-            (setq idle-highlight-regexp (concat nomis-symbol-regex
+            (setq idle-highlight-regexp (concat nomis-start-of-symbol-regex
                                                 (regexp-quote target)
                                                 "\\>"))
             (highlight-regexp idle-highlight-regexp
