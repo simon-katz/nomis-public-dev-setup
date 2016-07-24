@@ -59,45 +59,4 @@
 ;;;; ___________________________________________________________________________
 ;;;; Symbol highlighting
 
-(progn
-
-  (defvar nomis-start-of-symbol-regex
-    (case 2 ; jsk hacking
-      (1 "\\<")
-      (2 "\\<@?")))
-
-  (defvar nomis-idle-highlight
-    (case 7
-      ( 1 'idle-highlight)
-      ( 2 'hi-yellow)
-      ( 3 'hi-pink)
-      ( 4 'hi-green)
-      ( 5 'hi-blue)
-      ( 6 'hi-black-b)
-      ( 7 'hi-blue-b)
-      ( 8 'hi-red-b)
-      ( 9 'hi-green-b)
-      (10 'hi-black-hb)))
-  
-  (defadvice idle-highlight-word-at-point
-      (around work-with-clojure-@ ())
-    ;; This works with idle-highlight-mode 1.1.3.
-    ;; It will probably fail with any other version.
-    (if idle-highlight-mode
-        (let* ((target-symbol (symbol-at-point))
-               (target (symbol-name target-symbol)))
-          (idle-highlight-unhighlight)
-          (when (and target-symbol
-                     (not (in-string-p))
-                     (looking-at-p "\\s_\\|\\sw") ;; Symbol characters
-                     (not (member target idle-highlight-exceptions)))
-            (setq idle-highlight-regexp (concat nomis-start-of-symbol-regex
-                                                (regexp-quote target)
-                                                "\\>"))
-            (highlight-regexp idle-highlight-regexp
-                              ;; jsk hacking
-                              nomis-idle-highlight)))))
-
-  (ad-activate 'idle-highlight-word-at-point))
-
 (provide 'nomis-highlighting)

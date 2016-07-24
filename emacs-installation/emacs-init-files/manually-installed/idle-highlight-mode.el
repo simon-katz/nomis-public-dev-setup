@@ -1,14 +1,23 @@
 ;;; idle-highlight-mode.el --- highlight the word the point is on
 
+
+
+;; Modifications Copyright (C) 2016 Simon Katz
+;; Original licence terms apply. See below.
+
+
+
 ;; Copyright (C) 2008-2011 Phil Hagelberg, Cornelius Mika
 
-;; Author: Phil Hagelberg, Cornelius Mika
-;; URL: http://www.emacswiki.org/cgi-bin/wiki/IdleHighlight
-;; Package-Version: 1.1.3
-;; Version: 1.1.3
-;; Created: 2008-05-13
-;; Keywords: convenience
-;; EmacsWiki: IdleHighlight
+
+;; Hack the following in case it might be used by something:
+;; A_uthor: Phil Hagelberg, Cornelius Mika
+;; U_RL: http://www.emacswiki.org/cgi-bin/wiki/IdleHighlight
+;; P_ackage-Version: 1.1.3
+;; V_ersion: 1.1.3
+;; C_reated: 2008-05-13
+;; K_eywords: convenience
+;; E_macsWiki: IdleHighlight
 
 ;; This file is NOT part of GNU Emacs.
 
@@ -81,6 +90,24 @@
 (defvar idle-highlight-global-timer nil
  "Timer to trigger highlighting.")
 
+(defvar nomis-start-of-symbol-regex
+  (case 2
+    (1 "\\<")
+    (2 "\\<@?")))
+
+(defvar nomis-idle-highlight
+  (case 7
+    ( 1 'idle-highlight)
+    ( 2 'hi-yellow)
+    ( 3 'hi-pink)
+    ( 4 'hi-green)
+    ( 5 'hi-blue)
+    ( 6 'hi-black-b)
+    ( 7 'hi-blue-b)
+    ( 8 'hi-red-b)
+    ( 9 'hi-green-b)
+    (10 'hi-black-hb)))
+
 (defun idle-highlight-word-at-point ()
   "Highlight the word under the point."
   (if idle-highlight-mode
@@ -91,8 +118,11 @@
                    (not (in-string-p))
                    (looking-at-p "\\s_\\|\\sw") ;; Symbol characters
                    (not (member target idle-highlight-exceptions)))
-          (setq idle-highlight-regexp (concat "\\<" (regexp-quote target) "\\>"))
-          (highlight-regexp idle-highlight-regexp 'idle-highlight)))))
+          (setq idle-highlight-regexp (concat nomis-start-of-symbol-regex
+                                              (regexp-quote target)
+                                              "\\>"))
+          (highlight-regexp idle-highlight-regexp
+                            nomis-idle-highlight)))))
 
 (defsubst idle-highlight-unhighlight ()
   (when idle-highlight-regexp
