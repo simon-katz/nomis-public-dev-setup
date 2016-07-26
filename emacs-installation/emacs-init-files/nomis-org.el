@@ -103,6 +103,8 @@
 
 (add-hook 'org-mode-hook 'nomis-setup-org-keys)
 
+(add-hook 'org-mode-hook 'nomis-turn-on-idle-highlight-mode)
+
 ;;;; ________ *** Fontify code in code blocks
 
 (setq org-src-fontify-natively t)
