@@ -17,8 +17,10 @@
 ;;;; ___________________________________________________________________________
 ;;;; Highlighting of the current line
 
+(require 'hl-line)
+
 ;; (global-hl-line-mode 1)
-;; (set-face-background 'hl-line "palegoldenrod") ; was "darkseagreen1", but that doesn't work nicely with magit, and the magit-item-highlight face has disappeared
+(set-face-background 'hl-line "palegoldenrod") ; was "darkseagreen1", but that doesn't work nicely with magit, and the magit-item-highlight face has disappeared
 
 ;; (set-face-background 'hl-line "lightcyan")
 ;; (set-face-background 'hl-line "lightcyan1")

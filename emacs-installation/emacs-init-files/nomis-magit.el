@@ -3,6 +3,7 @@
 (defun nomis-init-magit ()
 
   (company-mode 0)
+  (hl-line-mode)
 
   (add-to-list 'same-window-regexps "\*magit: .*\*") ; was: (setq magit-status-buffer-switch-function 'switch-to-buffer) -- no longer works
 

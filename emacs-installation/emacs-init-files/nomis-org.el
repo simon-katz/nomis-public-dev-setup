@@ -88,13 +88,8 @@
 
 (nomis-org-reset-org-agenda-files)
 
-;;; From http://orgmode.org/worg/org-faq.html
-;;;   How can I stop the mouse cursor from highlighting lines in the agenda?
-;;;     You can add the following to your .emacs:
-
 (add-hook 'org-finalize-agenda-hook
-          (lambda () (remove-text-properties
-                      (point-min) (point-max) '(mouse-face t))))
+          'hl-line-mode)
 
 (defun nomis-setup-org-keys ()
   ;; I don't like RETURN in org agenda giving ORG-AGENDA-SWITCH-TO.
