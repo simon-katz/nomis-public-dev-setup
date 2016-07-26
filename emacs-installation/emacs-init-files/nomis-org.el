@@ -88,8 +88,17 @@
 
 (nomis-org-reset-org-agenda-files)
 
+(defun nomis-org-finalize-agenda-hook ()
+  (hl-line-mode)
+  ;; From http://orgmode.org/worg/org-faq.html
+  ;;   How can I stop the mouse cursor from highlighting lines
+  ;;   in the agenda?
+  ;;     You can add the following to your .emacs:
+  (remove-text-properties
+   (point-min) (point-max) '(mouse-face t)))
+
 (add-hook 'org-finalize-agenda-hook
-          'hl-line-mode)
+          'nomis-org-finalize-agenda-hook)
 
 (defun nomis-setup-org-keys ()
   ;; I don't like RETURN in org agenda giving ORG-AGENDA-SWITCH-TO.
