@@ -92,7 +92,7 @@
 
 (progn
   (defvar nomis-idle-highlight-colon-at-start-matters-p
-    t)
+    nil)
 
   (defun nomis-idle-highlight-toggle-colon-at-start-matters-p ()
     (interactive)
@@ -102,7 +102,7 @@
            (not nomis-idle-highlight-colon-at-start-matters-p))))
 
   (defvar nomis-idle-highlight-at-at-start-matters-p
-    t)
+    nil)
 
   (defun nomis-idle-highlight-toggle-at-at-start-matters-p ()
     (interactive)
@@ -138,18 +138,41 @@
     ( 9 'hi-green-b)
     (10 'hi-black-hb)))
 
+(defun forward-nomis-idle-highlight-thing (arg)
+  "#### Fix doc string.
+Move point to the next position that is the end of a symbol.
+A symbol is any sequence of characters that are in either the
+word constituent or symbol constituent syntax class.
+With prefix argument ARG, do it ARG times if positive, or move
+backwards ARG times if negative."
+  (interactive "^p")
+  (if (natnump arg)
+      (re-search-forward "\\(\\sw\\|\\s_\\)+" nil 'move arg)
+    (progn
+      (while (< arg 0)
+        (if (re-search-backward "\\(\\sw\\|\\s_\\)+" nil 'move)
+            (skip-syntax-backward "w_"))
+        (setq arg (1+ arg)))
+      (when (and (not nomis-idle-highlight-colon-at-start-matters-p)
+                 (looking-at-p ":"))
+        (forward-char)))))
+
 (defun idle-highlight-word-at-point ()
   "Highlight the word under the point."
   (if idle-highlight-mode
-      (let* ((target-symbol (symbol-at-point))
-             (target (symbol-name target-symbol)))
+      (let* ((target (thing-at-point 'nomis-idle-highlight-thing t)))
         (idle-highlight-unhighlight)
-        (when (and target-symbol
-                   (looking-at-p "\\s_\\|\\sw") ;; Symbol characters
+        ;; (message "target = %s" target)
+        (when (and target
                    (not (member target idle-highlight-exceptions)))
           (setq idle-highlight-regexp (concat (nomis-start-of-symbol-regex)
                                               (regexp-quote target)
                                               "\\>"))
+          ;; (message "colon-matters-p = %s & at-matters-p = %s & target = %s and idle-highlight-regexp = %s"
+          ;;          nomis-idle-highlight-colon-at-start-matters-p
+          ;;          nomis-idle-highlight-at-at-start-matters-p
+          ;;          target
+          ;;          idle-highlight-regexp)
           (highlight-regexp idle-highlight-regexp
                             nomis-idle-highlight)))))
 
