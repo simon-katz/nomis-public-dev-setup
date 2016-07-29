@@ -158,37 +158,36 @@
 (defvar nomis-idle-highlight-global-timer nil
   "Timer to trigger highlighting.")
 
-(progn
-  (defvar nomis-idle-highlight-colon-at-start-matters-p
-    nil)
+(defvar nomis-idle-highlight-colon-at-start-matters-p
+  nil)
 
-  (defun nomis-idle-highlight-toggle-colon-at-start-matters ()
-    (interactive)
-    (message
-     "nomis-idle-highlight-colon-at-start-matters-p = %s"
-     (setq nomis-idle-highlight-colon-at-start-matters-p
-           (not nomis-idle-highlight-colon-at-start-matters-p))))
+(defun nomis-idle-highlight-toggle-colon-at-start-matters ()
+  (interactive)
+  (message
+   "nomis-idle-highlight-colon-at-start-matters-p = %s"
+   (setq nomis-idle-highlight-colon-at-start-matters-p
+         (not nomis-idle-highlight-colon-at-start-matters-p))))
 
-  (defun nomis-start-of-symbol-regex ()
-    (apply 'concatenate
-           'string
-           (list "\\_<"
-                 (progn
-                   ;; There seems to be a bug in `highlight-regexp`.
-                   ;; In Clojure Mode, a regexp search for `\<_` finds
-                   ;; the foo in @foo, but `highlight-regexp` does not
-                   ;; find it.
-                   ;; Ah! And also `highlight-symbol-at-point` doesn't
-                   ;; find it.
-                   ;; So:
-                   "@?")
-                 (if nomis-idle-highlight-colon-at-start-matters-p
-                     ;; If there is a leading colon, our captured target
-                     ;; will have it.
-                     ""
+(defun nomis-start-of-symbol-regex ()
+  (apply 'concatenate
+         'string
+         (list "\\_<"
+               (progn
+                 ;; There seems to be a bug in `highlight-regexp`.
+                 ;; In Clojure Mode, a regexp search for `\<_` finds
+                 ;; the foo in @foo, but `highlight-regexp` does not
+                 ;; find it.
+                 ;; Ah! And also `highlight-symbol-at-point` doesn't
+                 ;; find it.
+                 ;; So:
+                 "@?")
+               (if nomis-idle-highlight-colon-at-start-matters-p
                    ;; If there is a leading colon, our captured target
-                   ;; won't have it. But we want to allow one.
-                   ":?")))))
+                   ;; will have it.
+                   ""
+                 ;; If there is a leading colon, our captured target
+                 ;; won't have it. But we want to allow one.
+                 ":?"))))
 
 (defun forward-nomis-idle-highlight-thing (arg)
   "Like `forward-symbol`, but, if we land on a colon and
