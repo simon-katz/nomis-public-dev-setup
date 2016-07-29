@@ -208,15 +208,15 @@
                    (save-excursion
                      (backward-char)
                      (nomis-looking-at-whitespace)))
-              (and (nomis-looking-at-sexp-end)
+              (and (nomis-looking-after-sexp-end)
                    (or (nomis-looking-at-whitespace)
-                       (nomis-looking-at-sexp-end*))))
+                       (nomis-looking-at-sexp-end))))
     (let* ((bounds (ignore-errors
                      (save-excursion
                        ;; Move forward then back to get to start.
                        ;; This may skip over an initial colon.
                        (unless (or (nomis-looking-at-whitespace)
-                                   (nomis-looking-at-sexp-end*))
+                                   (nomis-looking-at-sexp-end))
                          (forward-nomis-idle-highlight-thing 1))
                        (forward-nomis-idle-highlight-thing -1)
                        (let* ((beg (point))

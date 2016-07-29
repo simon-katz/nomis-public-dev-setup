@@ -203,7 +203,7 @@ If NEWLINE is true then add a newline at the end of the input."
   (looking-at "(")
   )
 
-(defun nomis-looking-at-sexp-end ()
+(defun nomis-looking-after-sexp-end ()
   (and (not (nomis-looking-at-sexp-start))
        (save-excursion
          (backward-char 1)
@@ -214,7 +214,7 @@ If NEWLINE is true then add a newline at the end of the input."
          ;; stay here
          )
         ((or (nomis-looking-at-whitespace)
-             (nomis-looking-at-sexp-end))
+             (nomis-looking-after-sexp-end))
          (backward-sexp 1))
         (t
          (ignore-errors (forward-sexp 1))

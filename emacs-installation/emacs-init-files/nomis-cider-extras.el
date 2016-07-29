@@ -165,21 +165,21 @@ Return the position of the prompt beginning."
 (defun nomis-looking-at-sexp-start ()
   (-some-p #'looking-at '("(" "\\[" "{" "#{")))
 
-(defun nomis-looking-at-sexp-end* ()
+(defun nomis-looking-at-sexp-end ()
   (-some-p #'looking-at '(")" "]" "}")))
 
-(defun nomis-looking-at-sexp-end ()
+(defun nomis-looking-after-sexp-end ()
   (and (not (nomis-looking-at-sexp-start))
        (save-excursion
          (backward-char 1)
-         (nomis-looking-at-sexp-end*))))
+         (nomis-looking-at-sexp-end))))
 
 (defun nomis-move-to-start-of-sexp-around-point ()
   (cond ((nomis-looking-at-sexp-start)
          ;; stay here
          )
         ((or (nomis-looking-at-whitespace)
-             (nomis-looking-at-sexp-end))
+             (nomis-looking-after-sexp-end))
          (backward-sexp 1))
         (t
          (ignore-errors (forward-sexp 1))
