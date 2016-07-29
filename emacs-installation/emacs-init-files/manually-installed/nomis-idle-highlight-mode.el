@@ -64,15 +64,86 @@
 
 (require 'thingatpt)
 
+;;;; ___________________________________________________________________________
 
 (defgroup nomis-idle-highlight nil
   "Highlight other occurrences of the word at point."
   :group 'faces)
 
-(defface nomis-idle-highlight
+;;;; ___________________________________________________________________________
+;;;; Faces
+
+(defface idle-highlight-original
   '((t (:inherit region)))
   "Face used to highlight other occurrences of the word at point."
   :group 'nomis-idle-highlight)
+
+(defvar muted-yellow "#fefd90")
+
+(defface nomis-idle-highlight-muted
+  `((((min-colors 88) (background dark))
+     (:background ,muted-yellow :foreground "black"))
+    (((background dark)) (:background ,muted-yellow :foreground "black"))
+    (((min-colors 88)) (:background ,muted-yellow))
+    (t (:background ,muted-yellow)))
+  "Default face for hi-lock mode."
+  :group 'hi-lock-faces)
+
+(defvar nomis-idle-highlight-faces
+  '(nomis-idle-highlight-muted
+    hi-yellow
+    idle-highlight-original ; clashes with region marking
+    hi-pink
+    hi-green
+    hi-blue
+    hi-black-b
+    hi-blue-b
+    hi-red-b
+    hi-green-b
+    hi-black-hb))
+
+(defvar nomis-idle-highlight-face
+  (first nomis-idle-highlight-faces))
+
+(defun nomis-idle-highlight-report-face ()
+  (interactive)
+  (message "nomis-idle-highlight-face = %s"
+           nomis-idle-highlight-face))
+
+(defun nomis-idle-highlight-set-face (face)
+  (setq nomis-idle-highlight-face face)
+  (nomis-idle-highlight-report-face))
+
+(defun nomis-idle-highlight-set-face-muted ()
+  (interactive)
+  (nomis-idle-highlight-set-face 'nomis-idle-highlight-muted))
+
+(defun nomis-idle-highlight-set-face-bright ()
+  (interactive)
+  (nomis-idle-highlight-set-face 'hi-yellow))
+
+(defun nomis-idle-highlight-cycle-highlight-face ()
+  (interactive)
+  (let* ((current-index (position nomis-idle-highlight-face
+                                  nomis-idle-highlight-faces))
+         (new-index (mod (1+ current-index)
+                         (length nomis-idle-highlight-faces)))
+         (new-face (elt nomis-idle-highlight-faces
+                        new-index)))
+    (nomis-idle-highlight-set-face new-face)))
+
+(require 'nomis-hydra)
+
+(define-nomis-hydra nomis/set-idle-highlight-face
+  :name-as-string "Set Idle Highlight Face"
+  :key "H-q H-h"
+  :init-form    (progn
+                  (nomis-idle-highlight-report-face))
+  :hydra-heads (("c" nomis-idle-highlight-cycle-highlight-face "Cycle")
+                ("m" nomis-idle-highlight-set-face-muted  "Muted" :exit t)
+                ("b" nomis-idle-highlight-set-face-bright "Bright" :exit t)))
+
+;;;; ___________________________________________________________________________
 
 (defcustom nomis-idle-highlight-exceptions '()
   "List of words to be excepted from highlighting."
@@ -122,19 +193,6 @@
                    ;; won't have it. But we want to allow one.
                    ":?")))))
 
-(defvar nomis-idle-highlight
-  (case 2
-    ( 1 'nomis-idle-highlight)
-    ( 2 'hi-yellow)
-    ( 3 'hi-pink)
-    ( 4 'hi-green)
-    ( 5 'hi-blue)
-    ( 6 'hi-black-b)
-    ( 7 'hi-blue-b)
-    ( 8 'hi-red-b)
-    ( 9 'hi-green-b)
-    (10 'hi-black-hb)))
-
 (defun forward-nomis-idle-highlight-thing (arg)
   "Like `forward-symbol`, but, if we land on a colon and
    `nomis-idle-highlight-colon-at-start-matters-p` is nil,
@@ -161,7 +219,7 @@
           ;;          captured-target
           ;;          nomis-idle-highlight-regexp)
           (highlight-regexp nomis-idle-highlight-regexp
-                            nomis-idle-highlight)))))
+                            nomis-idle-highlight-face)))))
 
 (defsubst nomis-idle-highlight-unhighlight ()
   (when nomis-idle-highlight-regexp
