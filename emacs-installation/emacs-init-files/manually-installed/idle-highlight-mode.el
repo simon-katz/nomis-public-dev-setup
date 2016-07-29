@@ -102,28 +102,25 @@
            (not nomis-idle-highlight-colon-at-start-matters-p))))
 
   (defun nomis-start-of-symbol-regex ()
-    (case 3
-      (1 "\\<")
-      (2 "\\<@?")
-      (3 (apply 'concatenate
-                'string
-                (list "\\_<"
-                      (progn
-                        ;; There seems to be a bug in `highlight-regexp`.
-                        ;; In Clojure Mode, a regexp search for `\<_` finds
-                        ;; the foo in @foo, but `highlight-regexp` does not
-                        ;; find it.
-                        ;; Ah! And also `highlight-symbol-at-point` doesn't
-                        ;; find it.
-                        ;; So:
-                        "@?")
-                      (if nomis-idle-highlight-colon-at-start-matters-p
-                          ;; If there is a leading colon, our captured target
-                          ;; will have it.
-                          ""
-                        ;; If there is a leading colon, our captured target
-                        ;; won't have it. But we want to allow one.
-                        ":?")))))))
+    (apply 'concatenate
+           'string
+           (list "\\_<"
+                 (progn
+                   ;; There seems to be a bug in `highlight-regexp`.
+                   ;; In Clojure Mode, a regexp search for `\<_` finds
+                   ;; the foo in @foo, but `highlight-regexp` does not
+                   ;; find it.
+                   ;; Ah! And also `highlight-symbol-at-point` doesn't
+                   ;; find it.
+                   ;; So:
+                   "@?")
+                 (if nomis-idle-highlight-colon-at-start-matters-p
+                     ;; If there is a leading colon, our captured target
+                     ;; will have it.
+                     ""
+                   ;; If there is a leading colon, our captured target
+                   ;; won't have it. But we want to allow one.
+                   ":?")))))
 
 (defvar nomis-idle-highlight
   (case 2
