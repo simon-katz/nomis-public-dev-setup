@@ -145,7 +145,7 @@
              (target (symbol-name target-symbol)))
         (idle-highlight-unhighlight)
         (when (and target-symbol
-                   (not (in-string-p))
+                   ;; (not (in-string-p))
                    (looking-at-p "\\s_\\|\\sw") ;; Symbol characters
                    (not (member target idle-highlight-exceptions)))
           (setq idle-highlight-regexp (concat (nomis-start-of-symbol-regex)
