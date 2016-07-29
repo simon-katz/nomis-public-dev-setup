@@ -18,6 +18,22 @@
          (backward-char 1)
          (nomis-looking-at-sexp-end))))
 
+(defun nomis-looking-at-space-between-things ()
+  (and (nomis-looking-at-whitespace)
+       (save-excursion
+         (backward-char)
+         (nomis-looking-at-whitespace))))
+
+(defun nomis-looking-after-sexp-end-at-sexp-end-or-whitespace ()
+  (and (nomis-looking-after-sexp-end)
+       (or (nomis-looking-at-whitespace)
+           (nomis-looking-at-sexp-end))))
+
+(defun nomis-looking-at-interesting-place ()
+  (and (not (nomis-looking-at-sexp-start))
+       (not (nomis-looking-at-space-between-things))
+       (not (nomis-looking-after-sexp-end-at-sexp-end-or-whitespace))))
+
 (defun nomis-move-to-start-of-sexp-around-point ()
   (cond ((nomis-looking-at-sexp-start)
          ;; stay here

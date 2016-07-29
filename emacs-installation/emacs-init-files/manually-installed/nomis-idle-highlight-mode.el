@@ -203,14 +203,7 @@
 (require 'nomis-sexp-utils)
 
 (defun nomis-idle-highlight-thing ()
-  (unless (or (nomis-looking-at-sexp-start)
-              (and (nomis-looking-at-whitespace)
-                   (save-excursion
-                     (backward-char)
-                     (nomis-looking-at-whitespace)))
-              (and (nomis-looking-after-sexp-end)
-                   (or (nomis-looking-at-whitespace)
-                       (nomis-looking-at-sexp-end))))
+  (when (nomis-looking-at-interesting-place)
     (let* ((bounds (ignore-errors
                      (save-excursion
                        ;; Move forward then back to get to start.
