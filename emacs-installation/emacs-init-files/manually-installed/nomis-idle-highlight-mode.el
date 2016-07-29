@@ -1,4 +1,4 @@
-;;; idle-highlight-mode.el --- highlight the word the point is on
+;;; nomis-idle-highlight-mode.el --- highlight the word the point is on
 
 
 
@@ -42,7 +42,7 @@
 
 ;; Based on some snippets by fledermaus from the #emacs channel.
 
-;; M-x idle-highlight-mode sets an idle timer that highlights all
+;; M-x nomis-idle-highlight-mode sets an idle timer that highlights all
 ;; occurences in the buffer of the word under the point.
 
 ;; Enabling it in a hook is recommended. But you don't want it enabled
@@ -54,7 +54,7 @@
 ;;   (make-local-variable 'column-number-mode)
 ;;   (column-number-mode t)
 ;;   (if window-system (hl-line-mode t))
-;;   (idle-highlight-mode t))
+;;   (nomis-idle-highlight-mode t))
 ;;
 ;; (add-hook 'emacs-lisp-mode-hook 'my-coding-hook)
 ;; (add-hook 'ruby-mode-hook 'my-coding-hook)
@@ -147,7 +147,7 @@
 
 (defun idle-highlight-word-at-point ()
   "Highlight the word under the point."
-  (if idle-highlight-mode
+  (if nomis-idle-highlight-mode
       (let* ((captured-target (thing-at-point 'nomis-idle-highlight-thing t)))
         (idle-highlight-unhighlight)
         ;; (message "captured-target = %s" captured-target)
@@ -169,10 +169,10 @@
     (setq idle-highlight-regexp nil)))
 
 ;;;###autoload
-(define-minor-mode idle-highlight-mode
+(define-minor-mode nomis-idle-highlight-mode
   "Idle-Highlight Minor Mode"
   :group 'idle-highlight
-  (if idle-highlight-mode
+  (if nomis-idle-highlight-mode
       (progn (unless idle-highlight-global-timer
                (setq idle-highlight-global-timer
                      (run-with-idle-timer idle-highlight-idle-time
@@ -180,5 +180,5 @@
              (set (make-local-variable 'idle-highlight-regexp) nil))
     (idle-highlight-unhighlight)))
 
-(provide 'idle-highlight-mode)
-;;; idle-highlight-mode.el ends here
+(provide 'nomis-idle-highlight-mode)
+;;; nomis-idle-highlight-mode.el ends here
