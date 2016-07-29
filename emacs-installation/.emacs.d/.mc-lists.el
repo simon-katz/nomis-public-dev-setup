@@ -8,7 +8,10 @@
         down-list
         forward-sexp
         kill-region
+        mark-sexp
+        nomis-prog-indent-sexp--top-level
         paredit-backward-up
+        paredit-open-round
         ))
 
 (setq mc/cmds-to-run-once
