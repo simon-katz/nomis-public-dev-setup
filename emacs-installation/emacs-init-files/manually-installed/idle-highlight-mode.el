@@ -110,7 +110,11 @@
                 (list "\\_<"
                       "@?"
                       (if nomis-idle-highlight-colon-at-start-matters-p
+                          ;; If there is a leading colon, our captured target
+                          ;; will have it.
                           ""
+                        ;; If there is a leading colon, our captured target
+                        ;; won't have it. But we want to allow one.
                         ":?")))))))
 
 (defvar nomis-idle-highlight
@@ -148,17 +152,17 @@ backwards ARG times if negative."
 (defun idle-highlight-word-at-point ()
   "Highlight the word under the point."
   (if idle-highlight-mode
-      (let* ((target (thing-at-point 'nomis-idle-highlight-thing t)))
+      (let* ((captured-target (thing-at-point 'nomis-idle-highlight-thing t)))
         (idle-highlight-unhighlight)
-        ;; (message "target = %s" target)
-        (when (and target
-                   (not (member target idle-highlight-exceptions)))
+        ;; (message "captured-target = %s" captured-target)
+        (when (and captured-target
+                   (not (member captured-target idle-highlight-exceptions)))
           (setq idle-highlight-regexp (concat (nomis-start-of-symbol-regex)
-                                              (regexp-quote target)
+                                              (regexp-quote captured-target)
                                               "\\>"))
-          ;; (message "colon-matters-p = %s & target = %s and idle-highlight-regexp = %s"
+          ;; (message "colon-matters-p = %s & captured-target = %s and idle-highlight-regexp = %s"
           ;;          nomis-idle-highlight-colon-at-start-matters-p
-          ;;          target
+          ;;          captured-target
           ;;          idle-highlight-regexp)
           (highlight-regexp idle-highlight-regexp
                             nomis-idle-highlight)))))
