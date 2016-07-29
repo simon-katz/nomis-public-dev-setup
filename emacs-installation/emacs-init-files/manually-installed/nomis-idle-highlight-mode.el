@@ -142,26 +142,6 @@
   (interactive)
   (nomis-idle-highlight-cycle-highlight-face -1))
 
-(require 'nomis-hydra)
-
-(defvar nomis/set-idle-highlight-face/initial-value)
-
-(define-nomis-hydra nomis/set-idle-highlight-face
-  :name-as-string "Set Idle Highlight Face"
-  :key "H-q H-h"
-  :init-form   (progn
-                 (setq nomis/set-idle-highlight-face/initial-value
-                       nomis-idle-highlight-face)
-                 (nomis-idle-highlight-report-face))
-  :cancel-form (progn
-                 (setq nomis-idle-highlight-face
-                       nomis/set-idle-highlight-face/initial-value)
-                 (nomis-idle-highlight-report-face))
-  :hydra-heads (("<up>" nomis-idle-highlight-cycle-up-highlight-face "Cycle up")
-                ("<down>" nomis-idle-highlight-cycle-down-highlight-face "Cycle down")
-                ("M-<up>" nomis-idle-highlight-set-face-bright  "Bright")
-                ("M-<down>" nomis-idle-highlight-set-face-muted "Muted")))
-
 ;;;; ___________________________________________________________________________
 
 (defcustom nomis-idle-highlight-exceptions '()
@@ -184,10 +164,10 @@
   (defvar nomis-idle-highlight-colon-at-start-matters-p
     nil)
 
-  (defun nomis-idle-highlight-toggle-colon-at-start-matters-p ()
+  (defun nomis-idle-highlight-toggle-colon-at-start-matters ()
     (interactive)
     (message
-     "nomis-idle-highlight-toggle-colon-at-start-matters-p = %s"
+     "nomis-idle-highlight-colon-at-start-matters-p = %s"
      (setq nomis-idle-highlight-colon-at-start-matters-p
            (not nomis-idle-highlight-colon-at-start-matters-p))))
 
@@ -256,6 +236,36 @@
                                           :repeat 'nomis-idle-highlight-word-at-point)))
              (set (make-local-variable 'nomis-idle-highlight-regexp) nil))
     (nomis-idle-highlight-unhighlight)))
+
+;;;; ___________________________________________________________________________
+
+(require 'nomis-hydra)
+
+(defvar nomis/set-idle-highlight-face/initial-face-value)
+(defvar nomis/set-idle-highlight-face/initial-toggle-colon-value)
+
+(define-nomis-hydra nomis/set-idle-highlight-face
+  :name-as-string "Set Idle Highlight Face"
+  :key "H-q H-h"
+  :init-form   (progn
+                 (setq nomis/set-idle-highlight-face/initial-face-value
+                       nomis-idle-highlight-face)
+                 (setq nomis/set-idle-highlight-face/initial-toggle-colon-value
+                       nomis-idle-highlight-colon-at-start-matters-p)
+                 (nomis-idle-highlight-report-face))
+  :cancel-form (progn
+                 (setq nomis-idle-highlight-face
+                       nomis/set-idle-highlight-face/initial-face-value)
+                 (setq nomis-idle-highlight-colon-at-start-matters-p
+                       nomis/set-idle-highlight-face/initial-toggle-colon-value)
+                 (nomis-idle-highlight-report-face))
+  :hydra-heads
+  (("t" nomis-idle-highlight-toggle-colon-at-start-matters
+    "Toggle colon matters")
+   ("<up>"     nomis-idle-highlight-cycle-up-highlight-face   "Cycle up")
+   ("<down>"   nomis-idle-highlight-cycle-down-highlight-face "Cycle down")
+   ("M-<up>"   nomis-idle-highlight-set-face-bright           "Bright")
+   ("M-<down>" nomis-idle-highlight-set-face-muted            "Muted")))
 
 (provide 'nomis-idle-highlight-mode)
 ;;; nomis-idle-highlight-mode.el ends here
