@@ -62,6 +62,8 @@
 ;;      (defvar ,symbol nil ,docstring)
 ;;      (setq   ,symbol ,initvalue)))
 
+(column-number-mode)
+
 ;;;; ___________________________________________________________________________
 
 (provide 'nomis-very-general-stuff)
