@@ -117,7 +117,7 @@
       (2 "\\<@?")
       (3 (apply 'concatenate
                 'string
-                (list "\\<"
+                (list "\\_<"
                       (if nomis-idle-highlight-include-at-at-start
                           "@?"
                         "")
