@@ -65,30 +65,30 @@
 (require 'thingatpt)
 
 
-(defgroup idle-highlight nil
- "Highlight other occurrences of the word at point."
- :group 'faces)
+(defgroup nomis-idle-highlight nil
+  "Highlight other occurrences of the word at point."
+  :group 'faces)
 
-(defface idle-highlight
- '((t (:inherit region)))
- "Face used to highlight other occurrences of the word at point."
- :group 'idle-highlight)
+(defface nomis-idle-highlight
+  '((t (:inherit region)))
+  "Face used to highlight other occurrences of the word at point."
+  :group 'nomis-idle-highlight)
 
-(defcustom idle-highlight-exceptions '()
+(defcustom nomis-idle-highlight-exceptions '()
   "List of words to be excepted from highlighting."
-  :group 'idle-highlight
+  :group 'nomis-idle-highlight
   :type '(repeat string))
 
-(defcustom idle-highlight-idle-time 0.5
+(defcustom nomis-idle-highlight-idle-time 0.5
   "Time after which to highlight the word at point."
-  :group 'idle-highlight
+  :group 'nomis-idle-highlight
   :type 'float)
 
-(defvar idle-highlight-regexp nil
- "Buffer-local regexp to be idle-highlighted.")
+(defvar nomis-idle-highlight-regexp nil
+  "Buffer-local regexp to be nomis-idle-highlighted.")
 
-(defvar idle-highlight-global-timer nil
- "Timer to trigger highlighting.")
+(defvar nomis-idle-highlight-global-timer nil
+  "Timer to trigger highlighting.")
 
 (progn
   (defvar nomis-idle-highlight-colon-at-start-matters-p
@@ -124,7 +124,7 @@
 
 (defvar nomis-idle-highlight
   (case 2
-    ( 1 'idle-highlight)
+    ( 1 'nomis-idle-highlight)
     ( 2 'hi-yellow)
     ( 3 'hi-pink)
     ( 4 'hi-green)
@@ -145,40 +145,40 @@
              (looking-at-p ":"))
     (forward-char)))
 
-(defun idle-highlight-word-at-point ()
+(defun nomis-idle-highlight-word-at-point ()
   "Highlight the word under the point."
   (if nomis-idle-highlight-mode
       (let* ((captured-target (thing-at-point 'nomis-idle-highlight-thing t)))
-        (idle-highlight-unhighlight)
+        (nomis-idle-highlight-unhighlight)
         ;; (message "captured-target = %s" captured-target)
         (when (and captured-target
-                   (not (member captured-target idle-highlight-exceptions)))
-          (setq idle-highlight-regexp (concat (nomis-start-of-symbol-regex)
-                                              (regexp-quote captured-target)
-                                              "\\>"))
-          ;; (message "colon-matters-p = %s & captured-target = %s and idle-highlight-regexp = %s"
+                   (not (member captured-target nomis-idle-highlight-exceptions)))
+          (setq nomis-idle-highlight-regexp (concat (nomis-start-of-symbol-regex)
+                                                    (regexp-quote captured-target)
+                                                    "\\>"))
+          ;; (message "colon-matters-p = %s & captured-target = %s and nomis-idle-highlight-regexp = %s"
           ;;          nomis-idle-highlight-colon-at-start-matters-p
           ;;          captured-target
-          ;;          idle-highlight-regexp)
-          (highlight-regexp idle-highlight-regexp
+          ;;          nomis-idle-highlight-regexp)
+          (highlight-regexp nomis-idle-highlight-regexp
                             nomis-idle-highlight)))))
 
-(defsubst idle-highlight-unhighlight ()
-  (when idle-highlight-regexp
-    (unhighlight-regexp idle-highlight-regexp)
-    (setq idle-highlight-regexp nil)))
+(defsubst nomis-idle-highlight-unhighlight ()
+  (when nomis-idle-highlight-regexp
+    (unhighlight-regexp nomis-idle-highlight-regexp)
+    (setq nomis-idle-highlight-regexp nil)))
 
 ;;;###autoload
 (define-minor-mode nomis-idle-highlight-mode
-  "Idle-Highlight Minor Mode"
-  :group 'idle-highlight
+  "Nomis-Idle-Highlight Minor Mode"
+  :group 'nomis-idle-highlight
   (if nomis-idle-highlight-mode
-      (progn (unless idle-highlight-global-timer
-               (setq idle-highlight-global-timer
-                     (run-with-idle-timer idle-highlight-idle-time
-                                          :repeat 'idle-highlight-word-at-point)))
-             (set (make-local-variable 'idle-highlight-regexp) nil))
-    (idle-highlight-unhighlight)))
+      (progn (unless nomis-idle-highlight-global-timer
+               (setq nomis-idle-highlight-global-timer
+                     (run-with-idle-timer nomis-idle-highlight-idle-time
+                                          :repeat 'nomis-idle-highlight-word-at-point)))
+             (set (make-local-variable 'nomis-idle-highlight-regexp) nil))
+    (nomis-idle-highlight-unhighlight)))
 
 (provide 'nomis-idle-highlight-mode)
 ;;; nomis-idle-highlight-mode.el ends here
