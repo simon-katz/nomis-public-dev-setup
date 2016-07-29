@@ -96,7 +96,7 @@
     (2 "\\<@?")))
 
 (defvar nomis-idle-highlight
-  (case 7
+  (case 2
     ( 1 'idle-highlight)
     ( 2 'hi-yellow)
     ( 3 'hi-pink)
