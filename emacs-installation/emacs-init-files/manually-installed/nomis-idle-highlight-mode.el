@@ -107,8 +107,10 @@
 
 (defun nomis-idle-highlight-report-face ()
   (interactive)
-  (message "nomis-idle-highlight-face = %s"
-           nomis-idle-highlight-face))
+  (message "nomis-idle-highlight-face = %s (index = %s)"
+           nomis-idle-highlight-face
+           (position nomis-idle-highlight-face
+                     nomis-idle-highlight-faces)))
 
 (defun nomis-idle-highlight-set-face (face)
   (setq nomis-idle-highlight-face face)
@@ -122,26 +124,43 @@
   (interactive)
   (nomis-idle-highlight-set-face 'hi-yellow))
 
-(defun nomis-idle-highlight-cycle-highlight-face ()
+(defun nomis-idle-highlight-cycle-highlight-face (n)
   (interactive)
   (let* ((current-index (position nomis-idle-highlight-face
                                   nomis-idle-highlight-faces))
-         (new-index (mod (1+ current-index)
+         (new-index (mod (+ current-index n)
                          (length nomis-idle-highlight-faces)))
          (new-face (elt nomis-idle-highlight-faces
                         new-index)))
     (nomis-idle-highlight-set-face new-face)))
 
+(defun nomis-idle-highlight-cycle-up-highlight-face ()
+  (interactive)
+  (nomis-idle-highlight-cycle-highlight-face 1))
+
+(defun nomis-idle-highlight-cycle-down-highlight-face ()
+  (interactive)
+  (nomis-idle-highlight-cycle-highlight-face -1))
+
 (require 'nomis-hydra)
+
+(defvar nomis/set-idle-highlight-face/initial-value)
 
 (define-nomis-hydra nomis/set-idle-highlight-face
   :name-as-string "Set Idle Highlight Face"
   :key "H-q H-h"
-  :init-form    (progn
-                  (nomis-idle-highlight-report-face))
-  :hydra-heads (("c" nomis-idle-highlight-cycle-highlight-face "Cycle")
-                ("m" nomis-idle-highlight-set-face-muted  "Muted" :exit t)
-                ("b" nomis-idle-highlight-set-face-bright "Bright" :exit t)))
+  :init-form   (progn
+                 (setq nomis/set-idle-highlight-face/initial-value
+                       nomis-idle-highlight-face)
+                 (nomis-idle-highlight-report-face))
+  :cancel-form (progn
+                 (setq nomis-idle-highlight-face
+                       nomis/set-idle-highlight-face/initial-value)
+                 (nomis-idle-highlight-report-face))
+  :hydra-heads (("<up>" nomis-idle-highlight-cycle-up-highlight-face "Cycle up")
+                ("<down>" nomis-idle-highlight-cycle-down-highlight-face "Cycle down")
+                ("M-<up>" nomis-idle-highlight-set-face-bright  "Bright")
+                ("M-<down>" nomis-idle-highlight-set-face-muted "Muted")))
 
 ;;;; ___________________________________________________________________________
 
