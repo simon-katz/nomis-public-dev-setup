@@ -90,11 +90,40 @@
 (defvar idle-highlight-global-timer nil
  "Timer to trigger highlighting.")
 
-(defvar nomis-start-of-symbol-regex
-  (case 3
-    (1 "\\<")
-    (2 "\\<@?")
-    (3 "\\<@?:?")))
+(progn
+  (defvar nomis-idle-highlight-include-colon-at-start
+    t)
+
+  (defun nomis-idle-highlight-toggle-include-colon-at-start ()
+    (interactive)
+    (message
+     "New value = %s"
+     (setq nomis-idle-highlight-include-colon-at-start
+           (not nomis-idle-highlight-include-colon-at-start))))
+
+  (defvar nomis-idle-highlight-include-at-at-start
+    t)
+
+  (defun nomis-idle-highlight-toggle-include-at-at-start ()
+    (interactive)
+    (message
+     "New value = %s"
+     (setq nomis-idle-highlight-include-at-at-start
+           (not nomis-idle-highlight-include-at-at-start))))
+
+  (defun nomis-start-of-symbol-regex ()
+    (case 3
+      (1 "\\<")
+      (2 "\\<@?")
+      (3 (apply 'concatenate
+                'string
+                (list "\\<"
+                      (if nomis-idle-highlight-include-at-at-start
+                          "@?"
+                        "")
+                      (if nomis-idle-highlight-include-colon-at-start
+                          ":?"
+                        "")))))))
 
 (defvar nomis-idle-highlight
   (case 2
@@ -119,7 +148,7 @@
                    (not (in-string-p))
                    (looking-at-p "\\s_\\|\\sw") ;; Symbol characters
                    (not (member target idle-highlight-exceptions)))
-          (setq idle-highlight-regexp (concat nomis-start-of-symbol-regex
+          (setq idle-highlight-regexp (concat (nomis-start-of-symbol-regex)
                                               (regexp-quote target)
                                               "\\>"))
           (highlight-regexp idle-highlight-regexp
