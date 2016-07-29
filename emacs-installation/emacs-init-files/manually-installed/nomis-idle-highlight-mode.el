@@ -62,8 +62,6 @@
 
 ;;; Code:
 
-(require 'thingatpt)
-
 ;;;; ___________________________________________________________________________
 
 (defgroup nomis-idle-highlight nil
@@ -202,10 +200,42 @@
              (looking-at-p ":"))
     (forward-char)))
 
+(require 'nomis-cider-extras)
+
+(defun nomis-idle-highlight-thing ()
+  (unless (or (nomis-looking-at-sexp-start)
+              (and (nomis-looking-at-whitespace)
+                   (save-excursion
+                     (backward-char)
+                     (nomis-looking-at-whitespace)))
+              (and (nomis-looking-at-sexp-end)
+                   (or (nomis-looking-at-whitespace)
+                       (nomis-looking-at-sexp-end*))))
+    (let* ((bounds (ignore-errors
+                     (save-excursion
+                       ;; Move forward then back to get to start.
+                       ;; This may skip over an initial colon.
+                       (unless (or (nomis-looking-at-whitespace)
+                                   (nomis-looking-at-sexp-end*))
+                         (forward-nomis-idle-highlight-thing 1))
+                       (forward-nomis-idle-highlight-thing -1)
+                       (let* ((beg (point))
+                              (end (progn
+                                     (forward-nomis-idle-highlight-thing 1)
+                                     (point))))
+                         (when (< beg end)
+                           (cons beg end))))))
+           (text
+            (when bounds
+              (buffer-substring (car bounds) (cdr bounds)))))
+      (when text
+        (set-text-properties 0 (length text) nil text))
+      text)))
+
 (defun nomis-idle-highlight-word-at-point ()
   "Highlight the word under the point."
   (if nomis-idle-highlight-mode
-      (let* ((captured-target (thing-at-point 'nomis-idle-highlight-thing t)))
+      (let* ((captured-target (nomis-idle-highlight-thing)))
         (nomis-idle-highlight-unhighlight)
         ;; (message "captured-target = %s" captured-target)
         (when (and captured-target
