@@ -225,7 +225,6 @@
     (unhighlight-regexp nomis-idle-highlight-regexp)
     (setq nomis-idle-highlight-regexp nil)))
 
-;;;###autoload
 (define-minor-mode nomis-idle-highlight-mode
   "Nomis-Idle-Highlight Minor Mode"
   :group 'nomis-idle-highlight
