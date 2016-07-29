@@ -97,7 +97,7 @@
   (defun nomis-idle-highlight-toggle-colon-at-start-matters-p ()
     (interactive)
     (message
-     "New value = %s"
+     "nomis-idle-highlight-toggle-colon-at-start-matters-p = %s"
      (setq nomis-idle-highlight-colon-at-start-matters-p
            (not nomis-idle-highlight-colon-at-start-matters-p))))
 
