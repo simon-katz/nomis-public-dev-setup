@@ -91,25 +91,25 @@
  "Timer to trigger highlighting.")
 
 (progn
-  (defvar nomis-idle-highlight-include-colon-at-start
+  (defvar nomis-idle-highlight-colon-at-start-matters-p
     t)
 
-  (defun nomis-idle-highlight-toggle-include-colon-at-start ()
+  (defun nomis-idle-highlight-toggle-colon-at-start-matters-p ()
     (interactive)
     (message
      "New value = %s"
-     (setq nomis-idle-highlight-include-colon-at-start
-           (not nomis-idle-highlight-include-colon-at-start))))
+     (setq nomis-idle-highlight-colon-at-start-matters-p
+           (not nomis-idle-highlight-colon-at-start-matters-p))))
 
-  (defvar nomis-idle-highlight-include-at-at-start
+  (defvar nomis-idle-highlight-at-at-start-matters-p
     t)
 
-  (defun nomis-idle-highlight-toggle-include-at-at-start ()
+  (defun nomis-idle-highlight-toggle-at-at-start-matters-p ()
     (interactive)
     (message
      "New value = %s"
-     (setq nomis-idle-highlight-include-at-at-start
-           (not nomis-idle-highlight-include-at-at-start))))
+     (setq nomis-idle-highlight-at-at-start-matters-p
+           (not nomis-idle-highlight-at-at-start-matters-p))))
 
   (defun nomis-start-of-symbol-regex ()
     (case 3
@@ -118,12 +118,12 @@
       (3 (apply 'concatenate
                 'string
                 (list "\\_<"
-                      (if nomis-idle-highlight-include-at-at-start
-                          "@?"
-                        "")
-                      (if nomis-idle-highlight-include-colon-at-start
-                          ":?"
-                        "")))))))
+                      (if nomis-idle-highlight-at-at-start-matters-p
+                          ""
+                        "@?")
+                      (if nomis-idle-highlight-colon-at-start-matters-p
+                          ""
+                        ":?")))))))
 
 (defvar nomis-idle-highlight
   (case 2
