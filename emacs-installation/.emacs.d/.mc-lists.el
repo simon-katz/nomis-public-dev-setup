@@ -5,6 +5,7 @@
       '(
         backward-sexp
         delete-indentation
+        down-list
         forward-sexp
         kill-region
         paredit-backward-up
