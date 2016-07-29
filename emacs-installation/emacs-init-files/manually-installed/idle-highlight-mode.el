@@ -101,16 +101,6 @@
      (setq nomis-idle-highlight-colon-at-start-matters-p
            (not nomis-idle-highlight-colon-at-start-matters-p))))
 
-  (defvar nomis-idle-highlight-at-at-start-matters-p
-    nil)
-
-  (defun nomis-idle-highlight-toggle-at-at-start-matters-p ()
-    (interactive)
-    (message
-     "New value = %s"
-     (setq nomis-idle-highlight-at-at-start-matters-p
-           (not nomis-idle-highlight-at-at-start-matters-p))))
-
   (defun nomis-start-of-symbol-regex ()
     (case 3
       (1 "\\<")
@@ -118,9 +108,7 @@
       (3 (apply 'concatenate
                 'string
                 (list "\\_<"
-                      (if nomis-idle-highlight-at-at-start-matters-p
-                          ""
-                        "@?")
+                      "@?"
                       (if nomis-idle-highlight-colon-at-start-matters-p
                           ""
                         ":?")))))))
@@ -168,9 +156,8 @@ backwards ARG times if negative."
           (setq idle-highlight-regexp (concat (nomis-start-of-symbol-regex)
                                               (regexp-quote target)
                                               "\\>"))
-          ;; (message "colon-matters-p = %s & at-matters-p = %s & target = %s and idle-highlight-regexp = %s"
+          ;; (message "colon-matters-p = %s & target = %s and idle-highlight-regexp = %s"
           ;;          nomis-idle-highlight-colon-at-start-matters-p
-          ;;          nomis-idle-highlight-at-at-start-matters-p
           ;;          target
           ;;          idle-highlight-regexp)
           (highlight-regexp idle-highlight-regexp
