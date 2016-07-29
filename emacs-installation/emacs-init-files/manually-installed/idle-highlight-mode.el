@@ -91,9 +91,10 @@
  "Timer to trigger highlighting.")
 
 (defvar nomis-start-of-symbol-regex
-  (case 2
+  (case 3
     (1 "\\<")
-    (2 "\\<@?")))
+    (2 "\\<@?")
+    (3 "\\<@?:?")))
 
 (defvar nomis-idle-highlight
   (case 2
