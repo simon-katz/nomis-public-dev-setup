@@ -200,7 +200,7 @@
              (looking-at-p ":"))
     (forward-char)))
 
-(require 'nomis-cider-extras)
+(require 'nomis-sexp-utils)
 
 (defun nomis-idle-highlight-thing ()
   (unless (or (nomis-looking-at-sexp-start)
