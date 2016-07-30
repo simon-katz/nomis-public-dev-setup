@@ -222,7 +222,8 @@
   (interactive "^p")
   (forward-sexp arg) ; not `forward-symbol`, because that is weird with ^
   (when (and (equal major-mode 'clojure-mode)
-             (looking-at-p "\\^"))
+             (or (looking-at-p "\\^")
+                 (looking-at-p "\\@")))
     (forward-char))
   (when (not nomis-idle-highlight-colon-at-start-matters-p)
     (while (looking-at-p ":")
