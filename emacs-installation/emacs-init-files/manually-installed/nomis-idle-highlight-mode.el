@@ -24,7 +24,7 @@
 ;; - The default highlight face is nicer (IMO).
 ;; 
 ;; - All the functionality is available from a single Hydra command,
-;;   `nomis/idle-highlight-stuff`.
+;;   `nomis/idle-highlight-stuff` (bound to H-q H-h).
 
 ;;;; ___________________________________________________________________________
 
