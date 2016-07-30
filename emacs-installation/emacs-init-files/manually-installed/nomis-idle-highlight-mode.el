@@ -1,11 +1,32 @@
 ;;; nomis-idle-highlight-mode.el --- highlight the word the point is on
 
+;;;; ___________________________________________________________________________
 
-
+;; Based on idle-highlight-mode.
 ;; Modifications Copyright (C) 2016 Simon Katz
 ;; Original licence terms apply. See below.
 
 
+;; The main differences between this and the original are:
+;; 
+;; - You can toggle whether colons at the start of a symbol are ignored. This is
+;;   useful in Clojure, where sometimes a keyword and a non-keyword refer to the
+;;   same thing.
+;;   Use `nomis-idle-highlight-toggle-colon-at-start-matters`.
+;; 
+;; - You can easily switch the highlight face using:
+;;   - `nomis-idle-highlight-set-face-muted`
+;;   - `nomis-idle-highlight-set-face-bright`
+;;   - `nomis-idle-highlight-cycle-highlight-face`
+;;   - `nomis-idle-highlight-cycle-up-highlight-face`
+;;   - `nomis-idle-highlight-cycle-down-highlight-face`
+;; 
+;; - The default highlight face is nicer (IMO).
+;; 
+;; - All the functionality is available from a single Hydra command,
+;;   `nomis/set-idle-highlight-face`.
+
+;;;; ___________________________________________________________________________
 
 ;; Copyright (C) 2008-2011 Phil Hagelberg, Cornelius Mika
 
