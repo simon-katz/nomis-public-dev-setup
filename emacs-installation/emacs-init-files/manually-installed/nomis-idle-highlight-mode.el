@@ -231,6 +231,8 @@
 (require 'nomis-sexp-utils)
 
 (defun nomis-idle-highlight-thing ()
+  ;; (message "(nomis-looking-at-interesting-place) = %s"
+  ;;          (nomis-looking-at-interesting-place))
   (when (nomis-looking-at-interesting-place)
     (let* ((bounds (ignore-errors
                      (save-excursion
@@ -261,9 +263,14 @@
         ;; (message "captured-target = %s" captured-target)
         (when (and captured-target
                    (not (member captured-target nomis-idle-highlight-exceptions)))
-          (setq nomis-idle-highlight-regexp (concat (nomis-start-of-symbol-regex)
-                                                    (regexp-quote captured-target)
-                                                    "\\>"))
+          (setq nomis-idle-highlight-regexp
+                (cond ((eq (string-to-char captured-target)
+                           ?\")
+                       (regexp-quote captured-target))
+                      (t
+                       (concat (nomis-start-of-symbol-regex)
+                               (regexp-quote captured-target)
+                               "\\>"))))
           ;; (message "colon-matters-p = %s & captured-target = %s and nomis-idle-highlight-regexp = %s"
           ;;          nomis-idle-highlight-colon-at-start-matters-p
           ;;          captured-target
