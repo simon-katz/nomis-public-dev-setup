@@ -220,7 +220,7 @@
    `nomis-idle-highlight-colon-at-start-matters-p` is nil,
    move forward a character."
   (interactive "^p")
-  (forward-sexp arg) ; not `forward-symbol`, because that is weird with ^
+  (forward-symbol arg)
   (when (and (equal major-mode 'clojure-mode)
              (or (looking-at-p "\\^")
                  (looking-at-p "\\@")))
