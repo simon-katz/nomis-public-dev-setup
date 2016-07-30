@@ -203,12 +203,12 @@
                  ;; So:
                  "@?")
                (if nomis-idle-highlight-colon-at-start-matters-p
-                   ;; If there is a leading colon, our captured target
+                   ;; If there are leading colons, our captured target
                    ;; will have it.
                    ""
-                 ;; If there is a leading colon, our captured target
-                 ;; won't have it. But we want to allow one.
-                 ":?"))))
+                 ;; If there are leading colons, our captured target
+                 ;; won't have it. But we want to allow them.
+                 ":*"))))
 
 (defun forward-nomis-idle-highlight-thing (arg)
   "Like `forward-symbol`, but, if we land on a colon and
@@ -216,9 +216,9 @@
    move forward a character."
   (interactive "^p")
   (forward-symbol arg)
-  (when (and (not nomis-idle-highlight-colon-at-start-matters-p)
-             (looking-at-p ":"))
-    (forward-char)))
+  (when (not nomis-idle-highlight-colon-at-start-matters-p)
+    (while (looking-at-p ":")
+      (forward-char))))
 
 (require 'nomis-sexp-utils)
 
