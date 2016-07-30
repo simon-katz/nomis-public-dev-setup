@@ -193,15 +193,16 @@
   (apply 'concatenate
          'string
          (list "\\_<"
-               (progn
-                 ;; There seems to be a bug in `highlight-regexp`.
-                 ;; In Clojure Mode, a regexp search for `\<_` finds
-                 ;; the foo in @foo, but `highlight-regexp` does not
-                 ;; find it.
-                 ;; Ah! And also `highlight-symbol-at-point` doesn't
-                 ;; find it.
-                 ;; So:
-                 "@?")
+               (if (equal major-mode 'clojure-mode)
+                   ;; There seems to be a bug in `highlight-regexp`.
+                   ;; In Clojure Mode, a regexp search for `\<_` finds
+                   ;; the foo in @foo, but `highlight-regexp` does not
+                   ;; find it.
+                   ;; Ah! And also `highlight-symbol-at-point` doesn't
+                   ;; find it.
+                   ;; So:
+                   "@?"
+                 "")
                (if nomis-idle-highlight-colon-at-start-matters-p
                    ;; If there are leading colons, our captured target
                    ;; will have it.
