@@ -203,6 +203,10 @@
                    ;; So:
                    "@?"
                  "")
+               (if (equal major-mode 'clojure-mode)
+                   ;; Allow ^ before a Clojure symbol.
+                   "\\^?"
+                 "")
                (if nomis-idle-highlight-colon-at-start-matters-p
                    ;; If there are leading colons, our captured target
                    ;; will have it.
@@ -216,7 +220,10 @@
    `nomis-idle-highlight-colon-at-start-matters-p` is nil,
    move forward a character."
   (interactive "^p")
-  (forward-symbol arg)
+  (forward-sexp arg) ; not `forward-symbol`, because that is weird with ^
+  (when (and (equal major-mode 'clojure-mode)
+             (looking-at-p "\\^"))
+    (forward-char))
   (when (not nomis-idle-highlight-colon-at-start-matters-p)
     (while (looking-at-p ":")
       (forward-char))))
