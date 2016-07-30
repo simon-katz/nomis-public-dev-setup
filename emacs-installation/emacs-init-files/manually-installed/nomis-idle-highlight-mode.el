@@ -24,7 +24,7 @@
 ;; - The default highlight face is nicer (IMO).
 ;; 
 ;; - All the functionality is available from a single Hydra command,
-;;   `nomis/set-idle-highlight-face`.
+;;   `nomis/idle-highlight-stuff`.
 
 ;;;; ___________________________________________________________________________
 
@@ -283,23 +283,23 @@
 
 (require 'nomis-hydra)
 
-(defvar nomis/set-idle-highlight-face/initial-face-value)
-(defvar nomis/set-idle-highlight-face/initial-toggle-colon-value)
+(defvar nomis/idle-highlight-stuff/initial-face-value)
+(defvar nomis/idle-highlight-stuff/initial-toggle-colon-value)
 
-(define-nomis-hydra nomis/set-idle-highlight-face
-  :name-as-string "Set Idle Highlight Face"
+(define-nomis-hydra nomis/idle-highlight-stuff
+  :name-as-string "Idle Highlight Stuff"
   :key "H-q H-h"
   :init-form   (progn
-                 (setq nomis/set-idle-highlight-face/initial-face-value
+                 (setq nomis/idle-highlight-stuff/initial-face-value
                        nomis-idle-highlight-face)
-                 (setq nomis/set-idle-highlight-face/initial-toggle-colon-value
+                 (setq nomis/idle-highlight-stuff/initial-toggle-colon-value
                        nomis-idle-highlight-colon-at-start-matters-p)
                  (nomis-idle-highlight-report-face))
   :cancel-form (progn
                  (setq nomis-idle-highlight-face
-                       nomis/set-idle-highlight-face/initial-face-value)
+                       nomis/idle-highlight-stuff/initial-face-value)
                  (setq nomis-idle-highlight-colon-at-start-matters-p
-                       nomis/set-idle-highlight-face/initial-toggle-colon-value)
+                       nomis/idle-highlight-stuff/initial-toggle-colon-value)
                  (nomis-idle-highlight-report-face))
   :hydra-heads
   (("t" nomis-idle-highlight-toggle-colon-at-start-matters
