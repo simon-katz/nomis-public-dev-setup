@@ -188,7 +188,13 @@
   (message
    "nomis-idle-highlight-colon-at-start-matters-p = %s"
    (setq nomis-idle-highlight-colon-at-start-matters-p
-         (not nomis-idle-highlight-colon-at-start-matters-p))))
+         (not nomis-idle-highlight-colon-at-start-matters-p)))
+  ;; When invoked with M-x, there is a delay before things change.
+  ;; Something to do with waiting for idle time, I think.
+  ;; (But I didn't notice this until late in th dev cycle, so maybe I changed
+  ;; something.)
+  ;; Anyway, force an immediate update.
+  (nomis-idle-highlight-word-at-point))
 
 (defun nomis-start-of-symbol-regex ()
   (apply 'concatenate
