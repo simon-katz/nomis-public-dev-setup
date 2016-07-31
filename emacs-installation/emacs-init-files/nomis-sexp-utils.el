@@ -6,17 +6,17 @@
   ;; Neither of the above work, but IIUC they should.
   (looking-at "[ \t\n]"))
 
-(defvar regexp-for-sexp-start
+(defvar *regexp-for-sexp-start*
   "(\\|\\[\\|{\\|#{")
 
-(defvar regexp-for-sexp-end
+(defvar *regexp-for-sexp-end*
   ")\\|]\\|}")
 
 (defun nomis-looking-at-sexp-start ()
-  (looking-at regexp-for-sexp-start))
+  (looking-at *regexp-for-sexp-start*))
 
 (defun nomis-looking-at-sexp-end ()
-  (looking-at regexp-for-sexp-end))
+  (looking-at *regexp-for-sexp-end*))
 
 (defun nomis-looking-after-sexp-end ()
   (and (not (nomis-looking-at-sexp-start))
@@ -48,7 +48,7 @@
 (defun nomis-looking-at-regexp-before-sexp-start (regexp)
   (looking-at (concatenate 'string
                            regexp
-                           regexp-for-sexp-start)))
+                           *regexp-for-sexp-start*)))
 
 (defun nomis-looking-at-interesting-place-p ()
   (and (not (nomis-looking-at-sexp-start))
