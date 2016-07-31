@@ -247,7 +247,7 @@
                        ;; Move forward then back to get to start.
                        ;; This may skip over an initial colon.
                        (unless (or (nomis-looking-at-whitespace)
-                                   (nomis-looking-at-sexp-end))
+                                   (nomis-looking-at-bracketed-sexp-end))
                          (forward-nomis-idle-highlight-thing 1))
                        (forward-nomis-idle-highlight-thing -1)
                        (let* ((beg (point))

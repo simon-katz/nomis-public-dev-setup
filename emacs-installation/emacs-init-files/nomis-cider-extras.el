@@ -180,7 +180,7 @@ Return the position of the prompt beginning."
            (region-selected?
             (funcall grab-function (mark) (point)))
            (t
-            (nomis-move-to-start-of-sexp-around-point)
+            (nomis-move-to-start-of-bracketed-sexp-around-point)
             (let ((start (point))
                   (end (save-excursion
                          (forward-sexp 1)
@@ -418,7 +418,7 @@ comments."
           (backward-up-list)
           (insert "#_"))
       (progn
-        (nomis-move-to-start-of-sexp-around-point)
+        (nomis-move-to-start-of-bracketed-sexp-around-point)
         (dotimes (i (1- prefix))
           (backward-up-list)
           (decf prefix))
