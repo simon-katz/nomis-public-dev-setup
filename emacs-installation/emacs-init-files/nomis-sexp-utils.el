@@ -45,6 +45,13 @@
        (or (nomis-looking-at-whitespace)
            (nomis-looking-at-bracketed-sexp-end))))
 
+(defun nomis-looking-at-whitespace-after-bracketed-sexp-start ()
+  (and (nomis-looking-at-whitespace)
+       (and (not (= (point) 1))
+            (save-excursion
+              (backward-char)
+              (nomis-looking-at-bracketed-sexp-start)))))
+
 (defun nomis-looking-at-regexp-before-bracketed-sexp-start (regexp)
   (looking-at (concatenate 'string
                            regexp
@@ -55,6 +62,7 @@
        (not (nomis-looking-at-end-of-empty-bracketed-sexp))
        (not (nomis-looking-at-multiple-whitespace))
        (not (nomis-looking-after-bracketed-sexp-end-at-bracketed-sexp-end-or-whitespace))
+       (not (nomis-looking-at-whitespace-after-bracketed-sexp-start))
        (not (looking-at ";"))
        (not (nomis-looking-at-regexp-before-bracketed-sexp-start "'"))
        (not (nomis-looking-at-regexp-before-bracketed-sexp-start "`"))

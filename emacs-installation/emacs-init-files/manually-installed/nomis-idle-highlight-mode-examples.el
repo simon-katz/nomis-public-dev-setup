@@ -34,12 +34,15 @@
 
 ;; More to run through:
 
-(defn foo ()
+(defn foo-1 ()
   (let ((aaaa (goo 42 42))
         (bbbb (goo aaaa 42)))
     ;; Position cursor at start of this comment, on the first semicolon.
     ;; Ensure no highlighting.
     (goo aaaa bbbb)))
+
+(defn foo-2 (   )
+  42)
 
 ;; After the following symbol, check highlighting for all following points.
 ;; (There was a bug when at end of file, when highlighting would incorrectly
