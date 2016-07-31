@@ -144,7 +144,7 @@
   (nomis-idle-highlight-set-face 'hi-yellow))
 
 (defun nomis-idle-highlight-cycle-highlight-face (n)
-  (interactive)
+  (interactive "p")
   (let* ((current-index (position nomis-idle-highlight-face
                                   nomis-idle-highlight-faces))
          (new-index (mod (+ current-index n)
