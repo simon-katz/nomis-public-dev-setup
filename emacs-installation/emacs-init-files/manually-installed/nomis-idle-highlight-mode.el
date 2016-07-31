@@ -13,7 +13,7 @@
 ;;   useful in Clojure, where sometimes a keyword and a non-keyword refer to the
 ;;   same thing.
 ;;   Use `nomis-idle-highlight-toggle-colon-at-start-matters` (bound to
-;;   H-q H-h H-t).
+;;   H-q H-h H-;).
 ;; 
 ;; - You can easily switch the highlight face using:
 ;;   - `nomis-idle-highlight-set-face-muted`
@@ -297,7 +297,7 @@
 
 ;;;; ___________________________________________________________________________
 
-(define-key global-map (kbd "H-q H-h H-t")
+(define-key global-map (kbd "H-q H-h H-;")
   'nomis-idle-highlight-toggle-colon-at-start-matters)
 
 ;;;; ___________________________________________________________________________
