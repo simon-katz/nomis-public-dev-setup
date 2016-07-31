@@ -20,7 +20,8 @@
               (nomis-looking-at-sexp-end)))))
 
 (defun nomis-looking-at-space-between-things ()
-  (and (nomis-looking-at-whitespace)
+  (and (or (nomis-looking-at-whitespace)
+           (= (point) (point-max)))
        (and (not (= (point) 1))
             (save-excursion
               (backward-char)
