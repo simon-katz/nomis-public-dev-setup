@@ -12,7 +12,8 @@
 ;; - You can toggle whether colons at the start of a symbol are ignored. This is
 ;;   useful in Clojure, where sometimes a keyword and a non-keyword refer to the
 ;;   same thing.
-;;   Use `nomis-idle-highlight-toggle-colon-at-start-matters`.
+;;   Use `nomis-idle-highlight-toggle-colon-at-start-matters` (bound to
+;;   H-q H-h H-t).
 ;; 
 ;; - You can easily switch the highlight face using:
 ;;   - `nomis-idle-highlight-set-face-muted`
@@ -24,7 +25,7 @@
 ;; - The default highlight face is nicer (IMO).
 ;; 
 ;; - All the functionality is available from a single Hydra command,
-;;   `nomis/idle-highlight-stuff` (bound to H-q H-h).
+;;   `nomis/idle-highlight-stuff` (bound to H-q H-h H-h).
 
 ;;;; ___________________________________________________________________________
 
@@ -296,6 +297,11 @@
 
 ;;;; ___________________________________________________________________________
 
+(define-key global-map (kbd "H-q H-h H-t")
+  'nomis-idle-highlight-toggle-colon-at-start-matters)
+
+;;;; ___________________________________________________________________________
+
 (require 'nomis-hydra)
 
 (defvar nomis/idle-highlight-stuff/initial-face-value)
@@ -303,7 +309,7 @@
 
 (define-nomis-hydra nomis/idle-highlight-stuff
   :name-as-string "Idle Highlight Stuff"
-  :key "H-q H-h"
+  :key "H-q H-h H-h"
   :init-form   (progn
                  (setq nomis/idle-highlight-stuff/initial-face-value
                        nomis-idle-highlight-face)
