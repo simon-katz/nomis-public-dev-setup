@@ -29,7 +29,7 @@
        (or (nomis-looking-at-whitespace)
            (nomis-looking-at-sexp-end))))
 
-(defun nomis-looking-at-interesting-place ()
+(defun nomis-looking-at-interesting-place-p ()
   (and (not (nomis-looking-at-sexp-start))
        (not (nomis-looking-at-space-between-things))
        (not (nomis-looking-after-sexp-end-at-sexp-end-or-whitespace))

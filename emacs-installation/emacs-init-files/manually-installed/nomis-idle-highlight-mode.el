@@ -233,9 +233,7 @@
 (require 'nomis-sexp-utils)
 
 (defun nomis-idle-highlight-thing ()
-  ;; (message "(nomis-looking-at-interesting-place) = %s"
-  ;;          (nomis-looking-at-interesting-place))
-  (when (nomis-looking-at-interesting-place)
+  (when (nomis-looking-at-interesting-place-p)
     (let* ((bounds (ignore-errors
                      (save-excursion
                        ;; Move forward then back to get to start.
