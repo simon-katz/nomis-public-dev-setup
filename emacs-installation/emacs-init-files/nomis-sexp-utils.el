@@ -14,15 +14,17 @@
 
 (defun nomis-looking-after-sexp-end ()
   (and (not (nomis-looking-at-sexp-start))
-       (save-excursion
-         (backward-char 1)
-         (nomis-looking-at-sexp-end))))
+       (and (not (= (point) 1))
+            (save-excursion
+              (backward-char 1)
+              (nomis-looking-at-sexp-end)))))
 
 (defun nomis-looking-at-space-between-things ()
   (and (nomis-looking-at-whitespace)
-       (save-excursion
-         (backward-char)
-         (nomis-looking-at-whitespace))))
+       (and (not (= (point) 1))
+            (save-excursion
+              (backward-char)
+              (nomis-looking-at-whitespace)))))
 
 (defun nomis-looking-after-sexp-end-at-sexp-end-or-whitespace ()
   (and (nomis-looking-after-sexp-end)
