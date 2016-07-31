@@ -19,7 +19,7 @@
               (backward-char 1)
               (nomis-looking-at-sexp-end)))))
 
-(defun nomis-looking-at-space-between-things ()
+(defun nomis-looking-at-multiple-whitespace ()
   (and (or (nomis-looking-at-whitespace)
            (= (point) (point-max)))
        (and (not (= (point) 1))
@@ -34,7 +34,7 @@
 
 (defun nomis-looking-at-interesting-place-p ()
   (and (not (nomis-looking-at-sexp-start))
-       (not (nomis-looking-at-space-between-things))
+       (not (nomis-looking-at-multiple-whitespace))
        (not (nomis-looking-after-sexp-end-at-sexp-end-or-whitespace))
        (not (looking-at-p ";"))))
 
