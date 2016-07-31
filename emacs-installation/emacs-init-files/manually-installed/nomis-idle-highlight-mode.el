@@ -224,6 +224,7 @@
   (interactive "^p")
   (forward-symbol arg)
   (when (and (equal major-mode 'clojure-mode)
+             (< arg 0)
              (or (looking-at-p "\\^")
                  (looking-at-p "\\@")))
     (forward-char))
