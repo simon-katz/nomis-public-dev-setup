@@ -19,6 +19,13 @@
               (backward-char 1)
               (nomis-looking-at-sexp-end)))))
 
+(defun nomis-looking-at-end-of-empty-sexp ()
+  (and (nomis-looking-at-sexp-end)
+       (and (not (= (point) 1))
+            (save-excursion
+              (backward-char 1)
+              (nomis-looking-at-sexp-start)))))
+
 (defun nomis-looking-at-multiple-whitespace ()
   (and (or (nomis-looking-at-whitespace)
            (= (point) (point-max)))
@@ -37,6 +44,7 @@
 
 (defun nomis-looking-at-interesting-place-p ()
   (and (not (nomis-looking-at-sexp-start))
+       (not (nomis-looking-at-end-of-empty-sexp))
        (not (nomis-looking-at-multiple-whitespace))
        (not (nomis-looking-after-sexp-end-at-sexp-end-or-whitespace))
        (not (member (char-after)
