@@ -6,11 +6,17 @@
   ;; Neither of the above work, but IIUC they should.
   (looking-at "[ \t\n]"))
 
+(defvar regexp-for-sexp-start
+  "(\\|\\[\\|{\\|#{")
+
+(defvar regexp-for-sexp-end
+  ")\\|]\\|}")
+
 (defun nomis-looking-at-sexp-start ()
-  (-some-p #'looking-at '("(" "\\[" "{" "#{")))
+  (looking-at regexp-for-sexp-start))
 
 (defun nomis-looking-at-sexp-end ()
-  (-some-p #'looking-at '(")" "]" "}")))
+  (looking-at regexp-for-sexp-end))
 
 (defun nomis-looking-after-sexp-end ()
   (and (not (nomis-looking-at-sexp-start))
@@ -39,16 +45,21 @@
        (or (nomis-looking-at-whitespace)
            (nomis-looking-at-sexp-end))))
 
-(defvar nomis-looking-at-interesting-place-boring-chars
-  '(?\; ?' ?`))
-
 (defun nomis-looking-at-interesting-place-p ()
   (and (not (nomis-looking-at-sexp-start))
        (not (nomis-looking-at-end-of-empty-sexp))
        (not (nomis-looking-at-multiple-whitespace))
        (not (nomis-looking-after-sexp-end-at-sexp-end-or-whitespace))
-       (not (member (char-after)
-                    nomis-looking-at-interesting-place-boring-chars))))
+       (not (looking-at ";"))
+       (not (looking-at (concatenate 'string
+                                     "'"
+                                     regexp-for-sexp-start)))
+       (not (looking-at (concatenate 'string
+                                     "`"
+                                     regexp-for-sexp-start)))
+       (not (looking-at (concatenate 'string
+                                     "#'"
+                                     regexp-for-sexp-start)))))
 
 (defun nomis-move-to-start-of-sexp-around-point ()
   (cond ((nomis-looking-at-sexp-start)

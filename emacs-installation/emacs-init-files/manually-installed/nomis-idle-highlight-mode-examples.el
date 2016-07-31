@@ -9,7 +9,13 @@
  @fred ; This is Elisp, not Clojure, so @ is not treated specially.
  :fred
  ^:fred foo ; This is Elisp, not Clojure, so ^ is not treated specially.
- )
+ #'fred
+ 'fred
+ `fred
+ `fred`
+ '''```fred
+ "fred"
+ "fred")
 
 ;; Run `nomis-idle-highlight-toggle-colon-at-start-matters`.
 ;; Check the above again.
@@ -20,6 +26,7 @@
 ;(fred @fred :fred ^:fred foo)
 '(fred @fred :fred ^:fred foo)
 `(fred @fred :fred ^:fred foo)
+#'(fred @fred :fred ^:fred foo)
 
 ;; Highlighting happens in comments.
 ;; fred @fred :fred ^:fred
