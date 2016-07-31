@@ -216,9 +216,10 @@
                  ":*"))))
 
 (defun forward-nomis-idle-highlight-thing (arg)
-  "Like `forward-symbol`, but, if we land on a colon and
-   `nomis-idle-highlight-colon-at-start-matters-p` is nil,
-   move forward a character."
+  "Like `forward-symbol`, but:
+   - If in Clojure mode, if we land on a ^ or @, skip over it.
+   - If we land on a colon and `nomis-idle-highlight-colon-at-start-matters-p`
+     is nil, skip over all colons."
   (interactive "^p")
   (forward-symbol arg)
   (when (and (equal major-mode 'clojure-mode)
