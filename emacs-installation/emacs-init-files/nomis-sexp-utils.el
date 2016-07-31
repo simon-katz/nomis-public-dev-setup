@@ -45,21 +45,20 @@
        (or (nomis-looking-at-whitespace)
            (nomis-looking-at-sexp-end))))
 
+(defun nomis-looking-at-regexp-before-sexp-start (regexp)
+  (looking-at (concatenate 'string
+                           regexp
+                           regexp-for-sexp-start)))
+
 (defun nomis-looking-at-interesting-place-p ()
   (and (not (nomis-looking-at-sexp-start))
        (not (nomis-looking-at-end-of-empty-sexp))
        (not (nomis-looking-at-multiple-whitespace))
        (not (nomis-looking-after-sexp-end-at-sexp-end-or-whitespace))
        (not (looking-at ";"))
-       (not (looking-at (concatenate 'string
-                                     "'"
-                                     regexp-for-sexp-start)))
-       (not (looking-at (concatenate 'string
-                                     "`"
-                                     regexp-for-sexp-start)))
-       (not (looking-at (concatenate 'string
-                                     "#'"
-                                     regexp-for-sexp-start)))))
+       (not (nomis-looking-at-regexp-before-sexp-start "'"))
+       (not (nomis-looking-at-regexp-before-sexp-start "`"))
+       (not (nomis-looking-at-regexp-before-sexp-start "#'"))))
 
 (defun nomis-move-to-start-of-sexp-around-point ()
   (cond ((nomis-looking-at-sexp-start)
