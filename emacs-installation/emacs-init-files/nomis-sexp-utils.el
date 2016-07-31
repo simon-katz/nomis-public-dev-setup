@@ -32,11 +32,15 @@
        (or (nomis-looking-at-whitespace)
            (nomis-looking-at-sexp-end))))
 
+(defvar nomis-looking-at-interesting-place-boring-chars
+  '(?\; ?' ?`))
+
 (defun nomis-looking-at-interesting-place-p ()
   (and (not (nomis-looking-at-sexp-start))
        (not (nomis-looking-at-multiple-whitespace))
        (not (nomis-looking-after-sexp-end-at-sexp-end-or-whitespace))
-       (not (looking-at-p ";"))))
+       (not (member (char-after)
+                    nomis-looking-at-interesting-place-boring-chars))))
 
 (defun nomis-move-to-start-of-sexp-around-point ()
   (cond ((nomis-looking-at-sexp-start)
