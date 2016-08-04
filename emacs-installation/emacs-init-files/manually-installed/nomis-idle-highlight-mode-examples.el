@@ -44,6 +44,31 @@
 (defn foo-2 (   )
   42)
 
+;; TODO: Fix the things below:
+;;       - when on the closing parentheses
+;;       - when on some of the quotes
+;;       - when on some of the spaces
+
+' fred
+
+(fred  )
+(fred (   ) )
+(fred
+
+ )
+(fred  ')
+(fred  ' )
+(fred  '  )
+(fred  '   )
+(fred  ' )
+
+
+~fred
+
+
+;;
+;;^above after the ;; (and after this one too)
+
 ;; After the following symbol, check highlighting for all following points.
 ;; (There was a bug when at end of file, when highlighting would incorrectly
 ;; happen.)
