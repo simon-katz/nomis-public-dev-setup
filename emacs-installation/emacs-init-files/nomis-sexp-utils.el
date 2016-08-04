@@ -57,7 +57,7 @@
                            regexp
                            *regexp-for-bracketed-sexp-start*)))
 
-(defun nomis-looking-at-boring-place-p ()
+(defun nomis-looking-at-boring-place-p () ; TODO: Add tests for these.
   (or (nomis-looking-at-bracketed-sexp-start)
       (nomis-looking-at-end-of-empty-bracketed-sexp)
       (nomis-looking-at-multiple-whitespace)
