@@ -241,7 +241,7 @@
 (require 'nomis-sexp-utils)
 
 (defun nomis-idle-highlight-thing ()
-  (when (nomis-looking-at-interesting-place-p)
+  (unless (nomis-looking-at-boring-place-p)
     (let* ((bounds (ignore-errors
                      (save-excursion
                        ;; Move forward then back to get to start.
