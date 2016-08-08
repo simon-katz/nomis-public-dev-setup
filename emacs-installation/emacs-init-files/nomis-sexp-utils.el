@@ -57,7 +57,14 @@
                            regexp
                            *regexp-for-bracketed-sexp-start*)))
 
-(defun nomis-looking-at-boring-place-p () ; TODO: Add tests for these.
+(defun nomis-looking-at-boring-place-p ()
+  ;; TODO: Add tests for these.
+  ;;       But how?
+  ;;       Can you set up a buffer, put text in it, set a position
+  ;;       and then make it current?
+  ;;       If you can, setting the position will be fiddly.
+  ;;       Ah! Can have a function that processes a string and looks for ^ or ^^
+  ;;       or something.
   (or (nomis-looking-at-bracketed-sexp-start)
       (nomis-looking-at-end-of-empty-bracketed-sexp)
       (nomis-looking-at-multiple-whitespace)
