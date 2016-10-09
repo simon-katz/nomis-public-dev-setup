@@ -10,6 +10,7 @@
         kill-region
         mark-sexp
         nomis-prog-indent-sexp--top-level
+        org-self-insert-command
         paredit-backward-up
         paredit-open-round
         ))
