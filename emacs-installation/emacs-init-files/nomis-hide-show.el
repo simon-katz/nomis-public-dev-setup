@@ -64,6 +64,7 @@
                             activate compile)
   "hideshow-expand affected block when using goto-line in a collapsed buffer"
   (save-excursion
+    (hs-minor-mode 1)
     (hs-show-block)))
 
 ;;;; ___________________________________________________________________________
