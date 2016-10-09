@@ -35,20 +35,6 @@
 (add-hook 'clojure-mode-hook (lambda () (yas/minor-mode 1)))
 
 ;;;; ___________________________________________________________________________
-
-(defvar nomis-clojure-mode-hook-functions
-  `(rainbow-delimiters-mode
-    paredit-mode
-    ,(lambda () (set (make-local-variable 'comment-column) 0))
-    subword-mode
-    nomis-setup-clj-refactor-mode))
-
-(dolist (hook '(clojure-mode-hook
-                cider-repl-mode-hook))
-  (dolist (hook-fun nomis-clojure-mode-hook-functions)
-    (add-hook hook hook-fun)))
-
-;;;; ___________________________________________________________________________
 ;;;; Cider
 ;;;; See https://github.com/clojure-emacs/cider.
 
@@ -64,8 +50,6 @@
 
 (setq cider-repl-use-clojure-font-lock t)
 
-(add-hook 'cider-mode-hook 'eldoc-mode)
-
 (setq cider-eval-result-prefix ";; => ")
 
 ;; (setq cider-font-lock-dynamically t)
@@ -76,6 +60,32 @@
             '(lambda ()
                (define-key cider-repl-mode-map "{" #'paredit-open-curly)
                (define-key cider-repl-mode-map "}" #'paredit-close-curly))))
+
+;;;; ___________________________________________________________________________
+;;;; Hooks
+
+(defun nomis-set-comment-column-to-zero ()
+  (set (make-local-variable 'comment-column)
+       0))
+
+(let ((hook-funs-when-repl-exists `(eldoc-mode))
+      (hook-funs-always `(rainbow-delimiters-mode
+                          paredit-mode
+                          nomis-set-comment-column-to-zero
+                          subword-mode
+                          nomis-setup-clj-refactor-mode))
+      (hooks-when-repl-exists '(cider-mode-hook
+                                cider-repl-mode-hook))
+      (hooks-always '(clojure-mode-hook
+                      cider-repl-mode-hook)))
+  (labels ((add-hook** (hooks functions)
+                       (dolist (h hooks)
+                         (dolist (f functions)
+                           (add-hook h f)))))
+    (add-hook** hooks-when-repl-exists
+                hook-funs-when-repl-exists)
+    (add-hook** hooks-always
+                hook-funs-always)))
 
 ;;;; ___________________________________________________________________________
 ;;;; cider-eval-sexp-fu
