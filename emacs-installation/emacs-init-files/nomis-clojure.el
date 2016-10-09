@@ -1,6 +1,7 @@
 ;;;; Init stuff -- Clojure mode.
 
 ;;;; ___________________________________________________________________________
+;;;; Misc
 
 (require 'clojure-mode)
 
@@ -19,6 +20,8 @@
 (require 'nomis-cider-extras)
 
 (require 'align-cljlet)
+
+(define-key clojure-mode-map (kbd "RET") 'newline-and-indent)
 
 ;;;; ___________________________________________________________________________
 ;;;; clj-refactor
@@ -44,8 +47,6 @@
                 cider-repl-mode-hook))
   (dolist (hook-fun nomis-clojure-mode-hook-functions)
     (add-hook hook hook-fun)))
-
-(define-key clojure-mode-map (kbd "RET") 'newline-and-indent)
 
 ;;;; ___________________________________________________________________________
 ;;;; Cider
