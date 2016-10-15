@@ -40,16 +40,16 @@ M-<NUM> M-x nomis/font-size-adjust:
 
 (require 'nomis-hydra)
 
-(define-nomis-hydra nomis/resize-font
-  :name-as-string "Resize font"
+(define-nomis-hydra nomis/text-scale-adjust
+  :name-as-string "Nomis / Text Scale Adjust"
   :key "M-+"
-  :vars (nomis/resize-font/initial-size)
-  :init-form (setq nomis/resize-font/initial-size
+  :vars (nomis/text-scale-adjust/initial-size)
+  :init-form (setq nomis/text-scale-adjust/initial-size
                    (nomis/get-default-point-size))
-  :cancel-form (nomis/set-default-point-size nomis/resize-font/initial-size)
+  :cancel-form (nomis/set-default-point-size nomis/text-scale-adjust/initial-size)
   :hydra-heads (("-" nomis/font-size-decr  "Decrease")
                 ("=" nomis/font-size-incr  "Increase")
-                ("0" nomis/font-size-reset "Reset to default size" :exit t)))
+                ("0" nomis/font-size-reset "Reset to default size")))
 
 ;;;; ___________________________________________________________________________
 
