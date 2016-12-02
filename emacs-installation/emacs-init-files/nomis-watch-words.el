@@ -5,6 +5,7 @@
   '("F\\IXME"
     "F\\IX"
     "T\\ODO-THINK"
+    "T\\ODO-with-Picasso-on-site"
     "T\\ODO"
     "R\\EMAINING-ISSUE"
     "H\\ACK"
@@ -54,6 +55,7 @@
 ;;;; - TODO-THINKaaa
 ;;;; - [TODO]aaa
 ;;;; - TODOaaa
+;;;; - TODO-with-Picasso-on-site
 ;;;; - [HACK]aaa
 ;;;; - HACKaaa
 ;;;; - [REFACTOR]aaa
