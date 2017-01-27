@@ -1,6 +1,11 @@
 ;;;; Init stuff -- Windows.
 
 ;;;; ___________________________________________________________________________
+
+(setq split-width-threshold  nil)
+(setq split-height-threshold nil)
+
+;;;; ___________________________________________________________________________
 ;;;; ---- winner-mode ----
 ;;;; winner-mode has `winner-undo` to restore windows after you accidentally
 ;;;; close them with e.g. C-x 1.  Also `winner-redo`.
