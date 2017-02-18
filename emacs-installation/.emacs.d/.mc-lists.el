@@ -9,10 +9,12 @@
         forward-sexp
         kill-region
         mark-sexp
+        markdown-exdent-or-delete
         nomis-prog-indent-sexp--top-level
         org-self-insert-command
         paredit-backward-up
         paredit-open-round
+        wdired-finish-edit
         ))
 
 (setq mc/cmds-to-run-once
