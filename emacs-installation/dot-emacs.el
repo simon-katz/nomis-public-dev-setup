@@ -49,7 +49,9 @@
   (add-to-list 'load-path (concat (nomis-load-file-directory)
                                   "../../emacs-package-repos/clj-refactor"))
   (add-to-list 'load-path (concat (nomis-load-file-directory)
-                                  "../../emacs-package-repos/cider-eval-sexp-fu")))
+                                  "../../emacs-package-repos/cider-eval-sexp-fu"))
+  (add-to-list 'load-path (concat (nomis-load-file-directory)
+                                  "../../emacs-package-repos/multi-web-mode")))
 
 ;;;; ___________________________________________________________________________
 ;;;; ---- Load various files ----
