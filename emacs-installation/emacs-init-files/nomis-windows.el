@@ -2,7 +2,7 @@
 
 ;;;; ___________________________________________________________________________
 
-(setq split-width-threshold  0)
+;; (setq split-width-threshold  160) ; Have tried nil, 0, 160
 (setq split-height-threshold nil)
 
 ;;;; ___________________________________________________________________________
