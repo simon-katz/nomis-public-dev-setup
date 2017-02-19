@@ -18,7 +18,6 @@
                       rainbow-delimiters
                       auto-complete
                       saveplace
-                      workgroups ; Emacs 24.4 has something like this built in
                       fuzzy
                       ;; htmlize
                       pos-tip
