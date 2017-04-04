@@ -173,7 +173,7 @@
     (interactive "P")
     (maximize-frame-vertically)
     (redisplay)
-    (nomis-set-frame-height* (- (frame-height) (or arg 3))))
+    (nomis-set-frame-height* (- (frame-height) (or arg 2))))
 
   (defun nomis-h62 ()
     (interactive)
