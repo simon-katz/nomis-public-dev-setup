@@ -10,6 +10,7 @@
         kill-region
         mark-sexp
         markdown-exdent-or-delete
+        nomis-meta-w
         nomis-prog-indent-sexp--top-level
         org-self-insert-command
         paredit-backward-up
