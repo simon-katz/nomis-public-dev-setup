@@ -6,19 +6,26 @@
 
 (require 'nomis-whitespace)
 (require 'nomis-fci-mode)
+(require 'column-marker)
+
+(defface nomis-column-marker-1 '((t (:background "magenta")))
+  "Face used for a column marker.  Usually a background color."
+  :group 'faces)
+
+(setq column-marker-1-face 'nomis-column-marker-1)
 
 (define-minor-mode nomis-right-margin-mode
   "A minor mode that combines whitespace-mode and fci-mode."
   nil nil nil
   (if nomis-right-margin-mode
       (progn
-        (whitespace-mode)
+        ;; (whitespace-mode)
         ;; (fci-mode) ; See `nomis-fci-mode-issues`.
-        )
+        (column-marker-1 nomis-right-margin-column))
     (progn
-      (whitespace-mode-off)
+      ;; (whitespace-mode-off)
       ;; (fci-mode-off) ; See `nomis-fci-mode-issues`.
-      )))
+      (column-marker-1 '(4)))))
 
 (defun turn-on-nomis-right-margin-mode ()
   "Turn on nomis-right-margin-mode unconditionally."
