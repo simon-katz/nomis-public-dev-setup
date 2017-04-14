@@ -1,6 +1,10 @@
 ;;;; Init stuff -- Frames.
 
 ;;;; ___________________________________________________________________________
+
+(require 'frame-cmds)
+
+;;;; ___________________________________________________________________________
 ;;;; ---- Sort out menu bars, tools bars and scroll bars ----
 
 (if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
@@ -324,8 +328,6 @@ In Lisp code, FRAME is the frame to move."
                 ("r"           nomis/modify-frame/resize/body    "Resize" :exit t)))
 
 ;;;; ___________________________________________________________________________
-
-(require 'frame-cmds)
 
 (defun nomis-maximize-all-frame-heights ()
   (interactive)
