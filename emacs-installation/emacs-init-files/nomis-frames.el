@@ -295,8 +295,8 @@ In Lisp code, FRAME is the frame to move."
                 ("M-S-<down>"  restore-frame-vertically          "Max or restore vertically")
                 ("M-S-<left>"  restore-frame-horizontally        "Max or restore horizontally")
                 ("M-S-<right>" restore-frame-horizontally        "Max or restore horizontally")
-                ("M-M"         nomis/modify-frame/move/body      "Move" :exit t)
-                ("m"           nomis/modify-frame/move/body      "Move" :exit t)
+                ("M-M"         nomis/modify-frame/move/body      "Move"   :exit t)
+                ("m"           nomis/modify-frame/move/body      "Move"   :exit t)
                 ("M-R"         nomis/modify-frame/resize/body    "Resize" :exit t)
                 ("r"           nomis/modify-frame/resize/body    "Resize" :exit t)))
 
@@ -318,8 +318,8 @@ In Lisp code, FRAME is the frame to move."
                 ("M-S-<down>"  nomis/move-frame-to-screen-bottom "Bottom")
                 ("M-S-<left>"  nomis/move-frame-to-screen-left   "Far left")
                 ("M-S-<right>" nomis/move-frame-to-screen-right  "Far right")
-                ("M-M"         nomis/modify-frame/move/body      "Move" :exit t)
-                ("m"           nomis/modify-frame/move/body      "Move" :exit t)
+                ("M-M"         nomis/modify-frame/move/body      "Move"   :exit t)
+                ("m"           nomis/modify-frame/move/body      "Move"   :exit t)
                 ("M-R"         nomis/modify-frame/resize/body    "Resize" :exit t)
                 ("r"           nomis/modify-frame/resize/body    "Resize" :exit t)))
 
