@@ -243,20 +243,69 @@ In Lisp code, FRAME is the frame to move."
                        0)))
   (move-frame-to-screen-right n))
 
+;;;; ___________________________________________________________________________
+
+(defun nomis/frame-l-t-w-h ()
+  (list (frame-parameter nil 'left)
+        (frame-parameter nil 'top)
+        (frame-parameter nil 'width)
+        (frame-parameter nil 'height)))
+
+(defun nomis/modify-frame-l-t-w-h (l-t-w-h)
+  (modify-frame-parameters
+   nil
+   `((left   . ,(first l-t-w-h))
+     (top    . ,(second l-t-w-h))
+     (width  . ,(third l-t-w-h))
+     (height . ,(fourth l-t-w-h)))))
+
+;;;; ___________________________________________________________________________
+
 (require 'nomis-hydra)
 
-(define-nomis-hydra nomis/move-frame
+(defvar nomis/modify-frame/initial-state nil)
+
+(defun nomis/modify-frame/init-state-if-unset ()
+  (when (null nomis/modify-frame/initial-state)
+    (setq nomis/modify-frame/initial-state
+          (nomis/frame-l-t-w-h))))
+
+(defun nomis/modify-frame/handle-quit ()
+  (setq nomis/modify-frame/initial-state nil))
+
+(defun nomis/modify-frame/handle-cancel ()
+  (nomis/modify-frame-l-t-w-h nomis/modify-frame/initial-state)
+  (setq nomis/modify-frame/initial-state nil))
+
+(define-nomis-hydra nomis/modify-frame/resize
+  :name-as-string "Resize frame"
+  :key "M-R"
+  :init-form   (nomis/modify-frame/init-state-if-unset)
+  :cancel-form (nomis/modify-frame/handle-cancel)
+  :quit-form   (nomis/modify-frame/handle-quit)
+  :hydra-heads (("<up>"        shrink-frame                      "Shrink vertically")
+                ("<down>"      enlarge-frame                     "Enlarge vertically")
+                ("<left>"      shrink-frame-horizontally         "Shrink horizontally")
+                ("<right>"     enlarge-frame-horizontally        "Enlarge horizontally")
+                ("M-<up>"      (shrink-frame 10)                 "Shrink vertically 10 times")
+                ("M-<down>"    (enlarge-frame 10)                "Enlarge vertically 10 times")
+                ("M-<left>"    (shrink-frame-horizontally 10)    "Shrink horizontally 10 times")
+                ("M-<right>"   (enlarge-frame-horizontally 10)   "Enlarge horizontally 10 times")
+                ("M-S-<up>"    restore-frame-vertically          "Max or restore vertically")
+                ("M-S-<down>"  restore-frame-vertically          "Max or restore vertically")
+                ("M-S-<left>"  restore-frame-horizontally        "Max or restore horizontally")
+                ("M-S-<right>" restore-frame-horizontally        "Max or restore horizontally")
+                ("M-M"         nomis/modify-frame/move/body      "Move" :exit t)
+                ("m"           nomis/modify-frame/move/body      "Move" :exit t)
+                ("M-R"         nomis/modify-frame/resize/body    "Resize" :exit t)
+                ("r"           nomis/modify-frame/resize/body    "Resize" :exit t)))
+
+(define-nomis-hydra nomis/modify-frame/move
   :name-as-string "Move frame"
-  :key "M-Z"
-  :vars (nomis/move-frame/initial-position)
-  :init-form (setq nomis/move-frame/initial-position
-                   (list (frame-parameter nil 'left)
-                         (frame-parameter nil 'top)))
-  :cancel-form (progn
-                 (modify-frame-parameters
-                  nil
-                  `((left . ,(first nomis/move-frame/initial-position))
-                    (top  . ,(second nomis/move-frame/initial-position)))))
+  :key "M-M"
+  :init-form   (nomis/modify-frame/init-state-if-unset)
+  :cancel-form (nomis/modify-frame/handle-cancel)
+  :quit-form   (nomis/modify-frame/handle-quit)
   :hydra-heads (("<up>"        move-frame-up                     "Up")
                 ("<down>"      move-frame-down                   "Down")
                 ("<left>"      move-frame-left                   "Left")
@@ -268,7 +317,11 @@ In Lisp code, FRAME is the frame to move."
                 ("M-S-<up>"    nomis/move-frame-to-screen-top    "Top")
                 ("M-S-<down>"  nomis/move-frame-to-screen-bottom "Bottom")
                 ("M-S-<left>"  nomis/move-frame-to-screen-left   "Far left")
-                ("M-S-<right>" nomis/move-frame-to-screen-right  "Far right")))
+                ("M-S-<right>" nomis/move-frame-to-screen-right  "Far right")
+                ("M-M"         nomis/modify-frame/move/body      "Move" :exit t)
+                ("m"           nomis/modify-frame/move/body      "Move" :exit t)
+                ("M-R"         nomis/modify-frame/resize/body    "Resize" :exit t)
+                ("r"           nomis/modify-frame/resize/body    "Resize" :exit t)))
 
 ;;;; ___________________________________________________________________________
 

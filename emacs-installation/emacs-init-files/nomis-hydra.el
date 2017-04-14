@@ -10,6 +10,7 @@
                                       vars
                                       init-form
                                       cancel-form
+                                      quit-form
                                       hydra-heads)
   (declare (indent 1))
   ;; The hacking with `key` and binding it to `.../body`
@@ -32,7 +33,7 @@
       
        (defun ,quit-fun-name ()
          (interactive)
-         (nomis-no-op))
+         ,quit-form)
       
        (defhydra ,name
          (global-map ,key
