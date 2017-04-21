@@ -327,6 +327,8 @@ In Lisp code, FRAME is the frame to move."
                 ("M-R"         nomis/modify-frame/resize/body    "Resize" :exit t)
                 ("r"           nomis/modify-frame/resize/body    "Resize" :exit t)))
 
+(define-key global-map (kbd "M-Z") 'nomis/modify-frame/move/body)
+
 ;;;; ___________________________________________________________________________
 
 (defun nomis-maximize-all-frame-heights ()
