@@ -21,7 +21,8 @@
           '("CIDER 0.8.2"
             "CIDER 0.9.1"
             "CIDER 0.10.0"
-            "CIDER 0.12.0 (Seattle)"))
+            "CIDER 0.12.0 (Seattle)"
+            "CIDER 0.14.0 (Berlin)"))
   (defun nomis-clojure-buffer-ns ()
     (clojure-find-ns)))
  (t
@@ -38,7 +39,8 @@
  ((member (cider-version)
           '("CIDER 0.9.1"
             "CIDER 0.10.0"
-            "CIDER 0.12.0 (Seattle)"))
+            "CIDER 0.12.0 (Seattle)"
+            "CIDER 0.14.0 (Berlin)"))
   (defun nomis-cider-repl-namespace ()
     (with-current-buffer (cider-current-repl-buffer)
       cider-buffer-ns)))
@@ -58,7 +60,8 @@
     (cider-get-repl-buffer)))
  ((member (cider-version)
           '("CIDER 0.10.0"
-            "CIDER 0.12.0 (Seattle)"))
+            "CIDER 0.12.0 (Seattle)"
+            "CIDER 0.14.0 (Berlin)"))
   (defun nomis-cider-find-or-create-repl-buffer ()
     (cider-current-connection)))
  (t
@@ -620,7 +623,8 @@ start the server."
                  (cider-jack-in-command project-type))))))
  ((member (cider-version)
           '("CIDER 0.10.0"
-            "CIDER 0.12.0 (Seattle)"))
+            "CIDER 0.12.0 (Seattle)"
+            "CIDER 0.14.0 (Berlin)"))
   ;; Maybe look at making Cider history work for multiple projects.
   )
  (t
@@ -656,7 +660,8 @@ utf-8-unix."
             (prin1 (mapcar #'substring-no-properties hist) (current-buffer))))))))
  ((member (cider-version)
           '("CIDER 0.10.0"
-            "CIDER 0.12.0 (Seattle)"))
+            "CIDER 0.12.0 (Seattle)"
+            "CIDER 0.14.0 (Berlin)"))
   ;; Maybe look at making Cider history work for multiple projects.
   )
  (t
@@ -693,10 +698,10 @@ window."
               (back-to-indentation)))
         (when pos
           (goto-char pos))))))
-
  ((member (cider-version)
           '("CIDER 0.10.0"
-            "CIDER 0.12.0 (Seattle)"))
+            "CIDER 0.12.0 (Seattle)"
+            "CIDER 0.14.0 (Berlin)"))
   (defun cider-jump-to (buffer &optional pos other-window)
     "Push current point onto marker ring, and jump to BUFFER and POS.
 POS can be either a number, a cons, or a symbol.
