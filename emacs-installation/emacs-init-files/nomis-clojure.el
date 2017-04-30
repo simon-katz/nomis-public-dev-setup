@@ -30,9 +30,8 @@
 
 (defun nomis-setup-clj-refactor-mode ()
   (clj-refactor-mode 1)
+  (yas-minor-mode 1) ; for adding require/use/import statements
   (cljr-add-keybindings-with-prefix "M-R"))
-
-(add-hook 'clojure-mode-hook (lambda () (yas/minor-mode 1)))
 
 ;;;; ___________________________________________________________________________
 ;;;; Cider
