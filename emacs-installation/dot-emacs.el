@@ -96,6 +96,7 @@
 (require 'nomis-smex)
 (when (display-graphic-p)
   (require 'nomis-frames))
+(require 'nomis-buffers)
 (require 'nomis-frame-style)
 (require 'nomis-windows)
 (require 'nomis-uniquify)
