@@ -187,70 +187,6 @@
     (interactive)
     (nomis-set-frame-height* 29)))
 
-(defun nomis/move-frame-up-5 (&optional n frame)
-  "Move selected frame up 5 * N times.
-Move it N * 5 times `frame-char-height', where N is the prefix arg.
-In Lisp code, FRAME is the frame to move."
-  (interactive "p")
-  (setq n (or n 1))
-  (move-frame-up (* n 5) frame))
-
-(defun nomis/move-frame-down-5 (&optional n frame)
-  "Move selected frame down 5 * N times.
-Move it N * 5 times `frame-char-height', where N is the prefix arg.
-In Lisp code, FRAME is the frame to move."
-  (interactive "p")
-  (setq n (or n 1))
-  (move-frame-down (* n 5) frame))
-
-(defun nomis/move-frame-left-5 (&optional n frame)
-  "Move selected frame left 5 * N times.
-Move it N * 5 times `frame-char-height', where N is the prefix arg.
-In Lisp code, FRAME is the frame to move."
-  (interactive "p")
-  (setq n (or n 1))
-  (move-frame-left (* n 5) frame))
-
-(defun nomis/move-frame-right-5 (&optional n frame)
-  "Move selected frame right 5 * N times.
-Move it N * 5 times `frame-char-height', where N is the prefix arg.
-In Lisp code, FRAME is the frame to move."
-  (interactive "p")
-  (setq n (or n 1))
-  (move-frame-right (* n 5) frame))
-
-(defun nomis/move-frame-up-10 (&optional n frame)
-  "Move selected frame up 10 * N times.
-Move it N * 10 times `frame-char-height', where N is the prefix arg.
-In Lisp code, FRAME is the frame to move."
-  (interactive "p")
-  (setq n (or n 1))
-  (move-frame-up (* n 10) frame))
-
-(defun nomis/move-frame-down-10 (&optional n frame)
-  "Move selected frame down 10 * N times.
-Move it N * 10 times `frame-char-height', where N is the prefix arg.
-In Lisp code, FRAME is the frame to move."
-  (interactive "p")
-  (setq n (or n 1))
-  (move-frame-down (* n 10) frame))
-
-(defun nomis/move-frame-left-10 (&optional n frame)
-  "Move selected frame left 10 * N times.
-Move it N * 10 times `frame-char-height', where N is the prefix arg.
-In Lisp code, FRAME is the frame to move."
-  (interactive "p")
-  (setq n (or n 1))
-  (move-frame-left (* n 10) frame))
-
-(defun nomis/move-frame-right-10 (&optional n frame)
-  "Move selected frame right 10 * N times.
-Move it N * 10 times `frame-char-height', where N is the prefix arg.
-In Lisp code, FRAME is the frame to move."
-  (interactive "p")
-  (setq n (or n 1))
-  (move-frame-right (* n 10) frame))
-
 (defun nomis/move-frame-to-screen-top (n)
   (interactive (list (if current-prefix-arg
                          (* (frame-char-height)
@@ -347,14 +283,14 @@ In Lisp code, FRAME is the frame to move."
                 ("<down>"      move-frame-down                   "Down")
                 ("<left>"      move-frame-left                   "Left")
                 ("<right>"     move-frame-right                  "Right")
-                ("M-<up>"      nomis/move-frame-up-5             "Up 5 times")
-                ("M-<down>"    nomis/move-frame-down-5           "Down 5 times")
-                ("M-<left>"    nomis/move-frame-left-5           "Left 5 times")
-                ("M-<right>"   nomis/move-frame-right-5          "Right 5 times")
-                ("C-<up>"      nomis/move-frame-up-10            "Up 10 times")
-                ("C-<down>"    nomis/move-frame-down-10          "Down 10 times")
-                ("C-<left>"    nomis/move-frame-left-10          "Left 10 times")
-                ("C-<right>"   nomis/move-frame-right-10         "Right 10 times")
+                ("M-<up>"      (move-frame-up 5)                 "Up 5 times")
+                ("M-<down>"    (move-frame-down 5)               "Down 5 times")
+                ("M-<left>"    (move-frame-left 5)               "Left 5 times")
+                ("M-<right>"   (move-frame-right 5)              "Right 5 times")
+                ("C-<up>"      (move-frame-up 10)                "Up 10 times")
+                ("C-<down>"    (move-frame-down 10)              "Down 10 times")
+                ("C-<left>"    (move-frame-left 10)              "Left 10 times")
+                ("C-<right>"   (move-frame-right 10)             "Right 10 times")
                 ("M-S-<up>"    nomis/move-frame-to-screen-top    "Top")
                 ("M-S-<down>"  nomis/move-frame-to-screen-bottom "Bottom")
                 ("M-S-<left>"  nomis/move-frame-to-screen-left   "Far left")
