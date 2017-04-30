@@ -283,7 +283,7 @@ In Lisp code, FRAME is the frame to move."
 
 (define-nomis-hydra nomis/modify-frame/resize
   :name-as-string "Resize frame"
-  :key "M-R"
+  :key "H-M-Z" ; Want no key, but not sure if Hydra allows that. So use a ridiculous key chord.
   :init-form   (nomis/modify-frame/init-state-if-unset)
   :cancel-form (nomis/modify-frame/handle-cancel)
   :quit-form   (nomis/modify-frame/handle-quit)
@@ -299,14 +299,11 @@ In Lisp code, FRAME is the frame to move."
                 ("M-S-<down>"  restore-frame-vertically          "Max or restore vertically")
                 ("M-S-<left>"  restore-frame-horizontally        "Max or restore horizontally")
                 ("M-S-<right>" restore-frame-horizontally        "Max or restore horizontally")
-                ("M-M"         nomis/modify-frame/move/body      "Move"   :exit t)
-                ("m"           nomis/modify-frame/move/body      "Move"   :exit t)
-                ("M-R"         nomis/modify-frame/resize/body    "Resize" :exit t)
-                ("r"           nomis/modify-frame/resize/body    "Resize" :exit t)))
+                ("M-Z"         nomis/modify-frame/move/body      "Move"   :exit t)))
 
 (define-nomis-hydra nomis/modify-frame/move
   :name-as-string "Move frame"
-  :key "M-M"
+  :key "M-Z"
   :init-form   (nomis/modify-frame/init-state-if-unset)
   :cancel-form (nomis/modify-frame/handle-cancel)
   :quit-form   (nomis/modify-frame/handle-quit)
@@ -322,12 +319,7 @@ In Lisp code, FRAME is the frame to move."
                 ("M-S-<down>"  nomis/move-frame-to-screen-bottom "Bottom")
                 ("M-S-<left>"  nomis/move-frame-to-screen-left   "Far left")
                 ("M-S-<right>" nomis/move-frame-to-screen-right  "Far right")
-                ("M-M"         nomis/modify-frame/move/body      "Move"   :exit t)
-                ("m"           nomis/modify-frame/move/body      "Move"   :exit t)
-                ("M-R"         nomis/modify-frame/resize/body    "Resize" :exit t)
-                ("r"           nomis/modify-frame/resize/body    "Resize" :exit t)))
-
-(define-key global-map (kbd "M-Z") 'nomis/modify-frame/move/body)
+                ("M-Z"         nomis/modify-frame/resize/body    "Resize" :exit t)))
 
 ;;;; ___________________________________________________________________________
 
