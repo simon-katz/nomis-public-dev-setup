@@ -187,6 +187,38 @@
     (interactive)
     (nomis-set-frame-height* 29)))
 
+(defun nomis/move-frame-up-5 (&optional n frame)
+  "Move selected frame up 5 * N times.
+Move it N * 5 times `frame-char-height', where N is the prefix arg.
+In Lisp code, FRAME is the frame to move."
+  (interactive "p")
+  (setq n (or n 1))
+  (move-frame-up (* n 5) frame))
+
+(defun nomis/move-frame-down-5 (&optional n frame)
+  "Move selected frame down 5 * N times.
+Move it N * 5 times `frame-char-height', where N is the prefix arg.
+In Lisp code, FRAME is the frame to move."
+  (interactive "p")
+  (setq n (or n 1))
+  (move-frame-down (* n 5) frame))
+
+(defun nomis/move-frame-left-5 (&optional n frame)
+  "Move selected frame left 5 * N times.
+Move it N * 5 times `frame-char-height', where N is the prefix arg.
+In Lisp code, FRAME is the frame to move."
+  (interactive "p")
+  (setq n (or n 1))
+  (move-frame-left (* n 5) frame))
+
+(defun nomis/move-frame-right-5 (&optional n frame)
+  "Move selected frame right 5 * N times.
+Move it N * 5 times `frame-char-height', where N is the prefix arg.
+In Lisp code, FRAME is the frame to move."
+  (interactive "p")
+  (setq n (or n 1))
+  (move-frame-right (* n 5) frame))
+
 (defun nomis/move-frame-up-10 (&optional n frame)
   "Move selected frame up 10 * N times.
 Move it N * 10 times `frame-char-height', where N is the prefix arg.
@@ -291,6 +323,10 @@ In Lisp code, FRAME is the frame to move."
                 ("<down>"      enlarge-frame                     "Enlarge vertically")
                 ("<left>"      shrink-frame-horizontally         "Shrink horizontally")
                 ("<right>"     enlarge-frame-horizontally        "Enlarge horizontally")
+                ("C-<up>"      (shrink-frame 5)                  "Shrink vertically 5 times")
+                ("C-<down>"    (enlarge-frame 5)                 "Enlarge vertically 5 times")
+                ("C-<left>"    (shrink-frame-horizontally 5)     "Shrink horizontally 5 times")
+                ("C-<right>"   (enlarge-frame-horizontally 5)    "Enlarge horizontally 5 times")
                 ("M-<up>"      (shrink-frame 10)                 "Shrink vertically 10 times")
                 ("M-<down>"    (enlarge-frame 10)                "Enlarge vertically 10 times")
                 ("M-<left>"    (shrink-frame-horizontally 10)    "Shrink horizontally 10 times")
@@ -311,6 +347,10 @@ In Lisp code, FRAME is the frame to move."
                 ("<down>"      move-frame-down                   "Down")
                 ("<left>"      move-frame-left                   "Left")
                 ("<right>"     move-frame-right                  "Right")
+                ("C-<up>"      nomis/move-frame-up-5             "Up 5 times")
+                ("C-<down>"    nomis/move-frame-down-5           "Down 5 times")
+                ("C-<left>"    nomis/move-frame-left-5           "Left 5 times")
+                ("C-<right>"   nomis/move-frame-right-5          "Right 5 times")
                 ("M-<up>"      nomis/move-frame-up-10            "Up 10 times")
                 ("M-<down>"    nomis/move-frame-down-10          "Down 10 times")
                 ("M-<left>"    nomis/move-frame-left-10          "Left 10 times")
