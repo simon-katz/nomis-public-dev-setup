@@ -47,9 +47,9 @@
 ;;;; ___________________________________________________________________________
 ;;;; ---- Frame size ----
 
-(defvar nomis-extra-width-for-each-window 91)
+(defvar nomis-extra-width-for-each-window 90)
 
-(defvar nomis-single-window-frame-width 85)
+(defvar nomis-single-window-frame-width 84)
 (defvar nomis-double-window-frame-width (+ nomis-single-window-frame-width
                                            nomis-extra-width-for-each-window))
 (defvar nomis-triple-window-frame-width (+ nomis-double-window-frame-width
