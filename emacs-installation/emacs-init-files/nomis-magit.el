@@ -12,7 +12,8 @@
   (setq magit-revert-buffers 'silent)
   (setq magit-push-always-verify nil)
   (setq magit-diff-refine-hunk 'all)
-  (setq magit-diff-highlight-trailing nil))
+  (setq magit-diff-highlight-trailing nil)
+  (setq git-commit-summary-max-length 999))
 
 
 (add-hook 'magit-mode-hook 'nomis-init-magit)
