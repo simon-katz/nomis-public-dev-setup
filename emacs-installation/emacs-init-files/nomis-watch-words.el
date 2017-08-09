@@ -1,6 +1,6 @@
 ;;;; Init stuff -- Watch words.
 
-(defvar nomis-watch-words
+(defvar nomis/watch-words/high-priority
   ;; Use \\ in the strings below so you don't get the highlighting here.
   '("F\\IXME"
     "F\\IX"
@@ -13,7 +13,21 @@
     "N\\OCOMMIT"
     "Q\\UESTION/ACTION"))
 
-(defun nomis-make-regex-from-watchwords-helper (words beginning-of-word-p)
+(defvar nomis/watch-words/low-priority-prefix "x")
+
+(defvar nomis/watch-words/low-priority
+  ;; Use \\ in the strings below so you don't get the highlighting here.
+  (append '()
+          (mapcar #'(lambda (string)
+                      (concat nomis/watch-words/low-priority-prefix
+                              string))
+                  nomis/watch-words/high-priority)))
+
+(defface nomis/watch-word-face/low-priority
+  '((t (:foreground "#FF6EB4" :bold t)))
+  "Face for low priority watch words.")
+
+(defun nomis/make-regex-from-watchwords-helper (words beginning-of-word-p)
   (with-output-to-string
     (when beginning-of-word-p (princ "\\<"))
     (princ "\\(")
@@ -23,29 +37,38 @@
       (princ w))
     (princ "\\)")))
 
-(defun nomis-make-regex-from-watchwords/simple ()
-  (nomis-make-regex-from-watchwords-helper nomis-watch-words
+(defun nomis/make-regex-from-watchwords/simple (watch-words)
+  (nomis/make-regex-from-watchwords-helper watch-words
                                            t))
 
-(defun nomis-make-regex-from-watchwords/bracketed ()
+(defun nomis/make-regex-from-watchwords/bracketed (watch-words)
   (let* ((bracketed-watch-words
           (mapcar (lambda (word) (concat "\\[" word "]"))
-                  nomis-watch-words)))
-    (nomis-make-regex-from-watchwords-helper bracketed-watch-words
+                  watch-words)))
+    (nomis/make-regex-from-watchwords-helper bracketed-watch-words
                                              nil)))
 
-(defun add-nomis-watch-words ()
+(defun nomis/add-watch-words* (watch-words face)
   (font-lock-add-keywords
    nil
-   `((,(nomis-make-regex-from-watchwords/simple)
-      0 font-lock-warning-face t)
-     (,(nomis-make-regex-from-watchwords/bracketed)
-      0 font-lock-warning-face t))))
+   `((,(nomis/make-regex-from-watchwords/simple watch-words)
+      0 ',face t)
+     (,(nomis/make-regex-from-watchwords/bracketed watch-words)
+      0 ',face t))))
 
-(add-hook 'text-mode-hook 'add-nomis-watch-words)
-(add-hook 'prog-mode-hook 'add-nomis-watch-words)
+(defun nomis/add-watch-words ()
+  (nomis/add-watch-words* nomis/watch-words/low-priority
+                          'nomis/watch-word-face/low-priority)
+  (nomis/add-watch-words* nomis/watch-words/high-priority
+                          font-lock-warning-face))
 
-;;;; Temp stuff for testing the above:
+(add-hook 'text-mode-hook 'nomis/add-watch-words)
+(add-hook 'prog-mode-hook 'nomis/add-watch-words)
+
+;;;; ___________________________________________________________________________
+;;;; Stuff for testing the above:
+
+;;;; - [QUESTION/ACTION]aaa
 ;;;; - QUESTION/ACTION
 ;;;; - [FIXME]aaa
 ;;;; - FIXMEaaa
@@ -55,6 +78,7 @@
 ;;;; - TODO-THINKaaa
 ;;;; - [TODO]aaa
 ;;;; - TODOaaa
+;;;; - [TODO-with-Picasso-on-site]/aaa
 ;;;; - TODO-with-Picasso-on-site
 ;;;; - [HACK]aaa
 ;;;; - HACKaaa
@@ -64,6 +88,27 @@
 ;;;; - NOCOMMITaaa
 ;;;; - [REMAINING-ISSUE]aaa
 ;;;; - REMAINING-ISSUEaaa
+
+;;;; - [xQUESTION/ACTION]aaa
+;;;; - xQUESTION/ACTION
+;;;; - [xFIXME]aaa
+;;;; - xFIXMEaaa
+;;;; - [xFIX]aaa
+;;;; - xFIXaaa
+;;;; - [xTODO-THINK]aaa
+;;;; - xTODO-THINKaaa
+;;;; - [xTODO]aaa
+;;;; - xTODOaaa
+;;;; - [xTODO-with-Picasso-on-site]/aaa
+;;;; - xTODO-with-Picasso-on-site
+;;;; - [xHACK]aaa
+;;;; - xHACKaaa
+;;;; - [xREFACTOR]aaa
+;;;; - xREFACTORaaa
+;;;; - [xNOCOMMIT]aaa
+;;;; - xNOCOMMITaaa
+;;;; - [xREMAINING-ISSUE]aaa
+;;;; - xREMAINING-ISSUEaaa
 
 ;;;; ___________________________________________________________________________
 
