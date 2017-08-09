@@ -1,5 +1,8 @@
 ;;;; ________ * Init stuff -- Org Mode.
 
+(require 'cl)
+(require 'org)
+
 ;;;; ________ ** Stuff everyone needs
 
 ;;; The following lines are always needed. Choose your own keys.
@@ -11,6 +14,11 @@
 (global-set-key "\C-cb" 'org-iswitchb)
 
 ;;;; ________ ** Personal tailoring
+
+(setq org-link-frame-setup
+      (acons 'file
+             'find-file
+             org-link-frame-setup))
 
 ;;;; ________ *** General
 
