@@ -1,7 +1,10 @@
 ;;;; ________ * Init stuff -- Org Mode.
 
+(progn
+  (setq org-replace-disputed-keys t) ; must be done before requiring org
+  (require 'org))
+
 (require 'cl)
-(require 'org)
 
 ;;;; ________ ** Stuff everyone needs
 
@@ -15,16 +18,17 @@
 
 ;;;; ________ ** Personal tailoring
 
-(setq org-link-frame-setup
-      (acons 'file
-             'find-file
-             org-link-frame-setup))
+(progn
+  ;; Use current window when clicking links.
+  (setq org-link-frame-setup
+        (acons 'file
+               'find-file
+               org-link-frame-setup)))
 
 ;;;; ________ *** General
 
 (setq org-directory "~/org")
 
-(setq org-replace-disputed-keys t)
 (setq org-log-done nil)
 
 (setq org-return-follows-link t)
