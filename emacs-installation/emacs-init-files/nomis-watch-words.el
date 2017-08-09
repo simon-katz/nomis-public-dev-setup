@@ -24,7 +24,9 @@
                   nomis/watch-words/high-priority)))
 
 (defface nomis/watch-word-face/low-priority
-  '((t (:foreground "DarkGoldenrod4" :bold t)))
+  '((t (:foreground "DarkGoldenrod4"
+                    :bold t
+                    :italic t)))
   "Face for low priority watch words.")
 
 (defun nomis/make-regex-from-watchwords-helper (words beginning-of-word-p)
