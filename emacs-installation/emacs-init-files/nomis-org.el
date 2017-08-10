@@ -49,7 +49,7 @@
   ;; Layout
   (linum-mode 0) ; see "Linum-mode + org-indent-mode gives strange graphical refresh bugs" at http://orgmode.org/worg/org-issues.html
   ;; (setq org-indent-fix-section-after-idle-time nil)
-  (setq org-indent-indentation-per-level 3) ; the default of 2 is too small; 4 screws up auto indentation in large files
+  ;; (setq org-indent-indentation-per-level 3) ; the default of 2 is too small; 4 screws up auto indentation in large files
   ;; (setq org-indent-max 60)
   ;; (setq org-indent-max-levels 80)
 
