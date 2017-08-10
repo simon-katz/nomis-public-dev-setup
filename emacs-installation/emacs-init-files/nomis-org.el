@@ -79,6 +79,13 @@
 
 ;;;; ________ *** Refiling
 
+;;;; - I haven't quite got this nice (or maybe I did).
+;;;; - BUT:
+;;;;   After a refile, undo only undoes what happened in one buffer, even
+;;;;   though two buffers have been modified. That's crappy.
+
+;;;; ________ **** Play #1
+
 ;; (progn org-use-fast-todo-selection)
 
 ;; (setf org-refile-targets '((nil :maxlevel . 9)
@@ -87,6 +94,30 @@
 ;; (setf org-outline-path-complete-in-steps t)
 ;; (setq org-refile-allow-creating-parent-nodes 'confirm)
 ;; (setq org-completion-use-ido nil)
+
+;;;; ________ **** Play #2 -- 2017-08-10
+
+;; (defun nomis/org-refile-values ()
+;;   (list org-refile-targets
+;;         org-refile-use-outline-path
+;;         org-outline-path-complete-in-steps
+;;         org-refile-allow-creating-parent-nodes
+;;         org-completion-use-ido))
+
+;; (defun nomis/org-refile-reset ()
+;;   (setq org-refile-targets nil
+;;         org-refile-use-outline-path nil
+;;         org-outline-path-complete-in-steps t
+;;         org-refile-allow-creating-parent-nodes nil
+;;         org-completion-use-ido nil))
+
+;; (defun nomis/org-refile-setup ()
+;;   (setq org-refile-targets '((nil :maxlevel . 9)
+;;                              (org-agenda-files :maxlevel . 9)) 
+;;         org-refile-use-outline-path nil ; 'file 
+;;         org-outline-path-complete-in-steps nil 
+;;         org-refile-allow-creating-parent-nodes nil
+;;         org-completion-use-ido t))
 
 ;;;; ________ *** Agendas
 
