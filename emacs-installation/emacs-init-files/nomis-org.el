@@ -1,5 +1,7 @@
 ;;;; ________ * Init stuff -- Org Mode.
 
+;;;; ________ ** Require things
+
 (progn
   (setq org-replace-disputed-keys t) ; must be done before requiring org
   (require 'org))
@@ -18,13 +20,6 @@
 
 ;;;; ________ ** Personal tailoring
 
-(progn
-  ;; Use current window when clicking links.
-  (setq org-link-frame-setup
-        (acons 'file
-               'find-file
-               org-link-frame-setup)))
-
 ;;;; ________ *** General
 
 (setq org-directory "~/org")
@@ -34,6 +29,13 @@
 (setq org-return-follows-link t)
 
 (setq org-startup-indented t)
+
+(progn
+  ;; Use current window when clicking links.
+  (setq org-link-frame-setup
+        (acons 'file
+               'find-file
+               org-link-frame-setup)))
 
 ;;;; ________ *** Priorities
 
