@@ -11,7 +11,8 @@
     "H\\ACK"
     "R\\EFACTOR"
     "N\\OCOMMIT"
-    "Q\\UESTION/ACTION"))
+    "Q\\UESTION/ACTION"
+    "L\\EARNING-NOW"))
 
 (defvar nomis/watch-words/low-priority-prefix "x")
 
