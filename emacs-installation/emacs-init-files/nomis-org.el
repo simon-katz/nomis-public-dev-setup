@@ -74,7 +74,13 @@
 
 ;;;; ________ *** Capture
 
-(setq org-default-notes-file (concat org-directory "/___captured-notes.org"))
+(setq org-default-notes-file
+      (concat org-directory
+              "/___captured-notes-from-"
+              (substring (symbol-name nomis/system-name)
+                         1)
+              ".org"))
+
 (define-key global-map "\C-cc" 'org-capture)
 
 ;;;; ________ *** Refiling
