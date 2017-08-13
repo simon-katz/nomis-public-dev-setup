@@ -73,39 +73,36 @@
 ;;;; ---- Default frame size ----
 
 (defvar nomis-window-height
-  (cond ((string-equal (system-name) "CHIVERS")
-         ;; 1200 pixels
-         72)
-        ((string-equal (system-name) "GILZEAN2")
-         ;; 1050 pixels
-         62)
-        ((string-equal (system-name) "JENNINGS")
-         ;; 800 pixels
-         47)
-        ((string-equal (system-name) "Simon-Katzs-MacBook-Pro.local")
-         ;; 1050 pixels - menu bar
-         66)
-        ((member (system-name) ; this keeps changing --why? Ah! At the time of writing it's "188.28.48.230.threembb.co.uk", which mentions "three" and I'm on my data connection with 3connect
-                 (list "unknown-70-56-81-a2-7a-0f.home"
-                       "Perryman.local"
-                       "perryman.home"
-                       "lonmaclt002.home"))
-         ;; 900 pixels - menu bar
-         56)
-        ((member (system-name) ; this keeps changing --why? Ah! At the time of writing it's "188.28.48.230.threembb.co.uk", which mentions "three" and I'm on my data connection with 3connect
-                 (list "unknown-3c-15-c2-e6-e3-64.home" ; sheringham sometimes
-                       "sheringham.local"
-                       "sheringham.home"))
-         ;; 900 pixels - menu bar
-         60)
-        ((equal system-type 'windows-nt)
-         ;; probably at the Windows work place
-         61)
-        (t
-         66)))
+  (cl-case nomis/system-name
+    (:chivers
+     ;; 1200 pixels
+     72)
+    (:gilzean2
+     ;; 1050 pixels
+     62)
+    (:jennings
+     ;; 800 pixels
+     47)
+    (:simon-katzs-macbook-pro.local
+     ;; 1050 pixels - menu bar
+     66)
+    (:perryman
+     ;; 900 pixels - menu bar
+     56)
+    (:sheringham
+     ;; 900 pixels - menu bar
+     60)
+    (:probably-windows-at-work-place
+     ;; probably at the Windows work place
+     61)
+    (:termux-on-android
+     nil)
+    (t
+     66)))
 
 (defvar nomis-frame-prefs (append
-                           (if i-am-nomis-p
+                           (if (and i-am-nomis-p
+                                    nomis-window-height)
                                `((height . ,nomis-window-height) ; Broken when people have thingy bar at the bottom of the screen.  (Also, this depends on a particular font size.)
                                  )
                              '())

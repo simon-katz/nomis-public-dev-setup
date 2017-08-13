@@ -53,6 +53,38 @@
   (add-to-list 'load-path (concat (nomis-load-file-directory)
                                   "../../emacs-package-repos/multi-web-mode")))
 
+
+;;;; ___________________________________________________________________________
+
+(defvar nomis/system-name
+  (cond ((string-equal (system-name) "CHIVERS")
+         :chivers)
+        ((string-equal (system-name) "GILZEAN2")
+         :gilzean2)
+        ((string-equal (system-name) "JENNINGS")
+         :jennings)
+        ((string-equal (system-name) "Simon-Katzs-MacBook-Pro.local")
+         :simon-katzs-macbook-pro.local)
+        ((member (system-name) ; this keeps changing --why? Ah! At the time of writing it's "188.28.48.230.threembb.co.uk", which mentions "three" and I'm on my data connection with 3connect
+                 (list "unknown-70-56-81-a2-7a-0f.home"
+                       "Perryman.local"
+                       "perryman.home"
+                       "lonmaclt002.home"))
+         :perryman)
+        ((member (system-name) ; this keeps changing --why? Ah! At the time of writing it's "188.28.48.230.threembb.co.uk", which mentions "three" and I'm on my data connection with 3connect
+                 (list "unknown-3c-15-c2-e6-e3-64.home" ; sheringham sometimes
+                       "sheringham.local"
+                       "sheringham.home"))
+         :sheringham)
+        ((equal system-type 'windows-nt)
+         :probably-windows-at-work-place)
+        ((and (equal system-type "localhost")
+              (string-match-p (regexp-quote "termux")
+                              (getenv "HOME")))
+         :termux-on-android)
+        (t
+         nil)))
+
 ;;;; ___________________________________________________________________________
 ;;;; ---- Load various files ----
 
