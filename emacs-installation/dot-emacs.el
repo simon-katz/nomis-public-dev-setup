@@ -78,7 +78,7 @@
          :sheringham)
         ((equal system-type 'windows-nt)
          :probably-windows-at-work-place)
-        ((and (equal system-type "localhost")
+        ((and (equal system-type 'gnu/linux)
               (string-match-p (regexp-quote "termux")
                               (getenv "HOME")))
          :termux-on-android)
