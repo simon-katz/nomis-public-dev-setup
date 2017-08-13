@@ -166,6 +166,17 @@
 
 (setq orgstruct-heading-prefix-regexp ";* *_* ")
 
-;;;; ________ *** end
+;;;; ________ *** Display
+
+(defun nomis/org-show-link-destination ()
+  ;; Copied from https://stackoverflow.com/questions/30312638/is-there-a-package-or-setting-to-show-an-org-mode-link-under-cursor-destinatio
+  (let ((object (org-element-context)))
+    (when (eq (car object) 'link)
+      (message "%s"
+           (org-element-property :raw-link object)))))
+
+(add-hook 'post-command-hook 'nomis/org-show-link-destination)
+
+;;;; ________ ** end
 
 (provide 'nomis-org)
