@@ -61,6 +61,7 @@
                      ; Something must be loading org-mode.
                      ; (That didn't used to happen. It's a change in the
                      ; last few days.)
+                     ; -- jsk 2014-08-13
 
 ;;;; ---- General stuff ----
 
