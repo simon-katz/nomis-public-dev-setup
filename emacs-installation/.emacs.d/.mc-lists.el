@@ -12,6 +12,7 @@
         markdown-exdent-or-delete
         nomis-meta-w
         nomis-prog-indent-sexp--top-level
+        org-beginning-of-line
         org-self-insert-command
         paredit-backward-up
         paredit-doublequote
