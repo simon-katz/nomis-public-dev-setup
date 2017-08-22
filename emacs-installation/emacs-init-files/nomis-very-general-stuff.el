@@ -1,5 +1,7 @@
 ;;;; Init stuff -- Very general stuff.
 
+(put 'downcase-region 'disabled nil)
+
 (setq initial-scratch-message "")
 
 (defun nomis-no-op ()
