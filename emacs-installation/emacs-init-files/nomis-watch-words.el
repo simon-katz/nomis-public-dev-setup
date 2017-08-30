@@ -25,7 +25,8 @@
                   nomis/watch-words/high-priority)))
 
 (defface nomis/watch-word-face/low-priority
-  '((t (:foreground "DarkGoldenrod4"
+  '((t (:foreground "White"
+                    :background "Pink4"
                     :bold t
                     :italic t)))
   "Face for low priority watch words.")
