@@ -59,7 +59,7 @@
 
 ;;;; ___________________________________________________________________________
 
-(defvar nomis/-nail-idle-secs (* 2 60))
+(defvar nomis/-nail-idle-secs (* 1 60))
 
 (def-nomis/timer nomis/nail-timer
   1
