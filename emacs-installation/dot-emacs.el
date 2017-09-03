@@ -119,6 +119,8 @@
 
 (require 'nomis-string-utilities)
 (require 'nomis-very-general-stuff) ; TODO: Move this to beginning, and check all is ok
+(require 'nomis-timers)
+(require 'nomis-beep)
 (require 'nomis-mouse-scrolling)
 (require 'nomis-avoid-window-stealing)
 (require 'nomis-right-margin)

@@ -26,7 +26,7 @@
 
 (setq-default indent-tabs-mode nil) ; use spaces, not tabs
 (setq sentence-end-double-space nil)
-(setq visible-bell t)
+
 (show-paren-mode 1)
 (setq line-move-visual nil) ; the default of T is annoying, and it
                             ; screws up keyboard macros
