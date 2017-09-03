@@ -45,11 +45,25 @@
 
 ;;;; ___________________________________________________________________________
 
-(defun timestamp (p)
+(defun nomis/timestamp (kind)
+  (case kind
+    (:date
+     (format-time-string "%Y-%m-%d"))
+    (:date-time
+     (format-time-string "%Y-%m-%dT%H:%M:%S"))
+    ((:date-time-zone t)
+     (let ((timezone (format-time-string "%z")))
+       (format "%s%s:%s"
+               (format-time-string "%Y-%m-%dT%H:%M:%S")
+               (substring timezone 0 3)
+               (substring timezone 3 5))))))
+
+(defun nomis/insert-timestamp (p)
   (interactive "P")
-  (insert (if p
-              (format-time-string "%Y-%m-%dT%H:%M:%S")
-            (format-time-string "%Y-%m-%d"))))
+  (insert (nomis/timestamp (case (prefix-numeric-value p)
+                             (1 :date)
+                             (4 :date-time)
+                             (t t)))))
 
 ;;;; ___________________________________________________________________________
 
