@@ -17,7 +17,9 @@
         paredit-backward-up
         paredit-doublequote
         paredit-forward-delete
+        paredit-forward-slurp-sexp
         paredit-open-round
+        paredit-raise-sexp
         paredit-semicolon
         wdired-finish-edit
         ))
