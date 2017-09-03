@@ -6,24 +6,30 @@
 (defvar nomis/-flash-face 'mode-line)
 ;; or (defvar nomis/-flash-face 'default) -- but repeated c-G causes crashes
 
-(defvar nomis/-flash-old-bgs
+(defvar nomis/-flash-old-colours
   ;; Note: You need this rather than using lexical bindings to store the
   ;; old values, because if you have two flashes happening at once the
   ;; first parts and second parts can run out of sync, leading to the
   ;; first flash's colours sticking.
   '())
 
-(cl-defun nomis/-flash-bg (&key bg secs)
-  (push (face-background nomis/-flash-face)
-        nomis/-flash-old-bgs)
-  (let ((bg (or bg "IndianRed1"))
+(cl-defun nomis/-flash-fg-and-bg (&key fg bg secs)
+  (push `(,(face-foreground nomis/-flash-face)
+          ,(face-background nomis/-flash-face))
+        nomis/-flash-old-colours)
+  (let ((fg (or fg "grey90"))
+        (bg (or bg "IndianRed1"))
         (secs (or secs 0.25)))
+    (set-face-foreground nomis/-flash-face fg)
     (set-face-background nomis/-flash-face bg)
     (run-at-time secs
                  nil
                  (lambda ()
-                   (set-face-background nomis/-flash-face
-                                        (pop nomis/-flash-old-bgs))))))
+                   (let* ((fg-and-bg (pop nomis/-flash-old-colours))
+                          (fg (first fg-and-bg))
+                          (bg (second fg-and-bg)))
+                     (set-face-foreground nomis/-flash-face fg)
+                     (set-face-background nomis/-flash-face bg))))))
 
 (defun nomis/-flash-mode-line ()
   (invert-face 'mode-line)
@@ -43,10 +49,10 @@
         nomis/-flash-attention-grabbing-string
       (sleep-for 0.5))))
 
-(defun nomis/flash ()
+(cl-defun nomis/flash (&key fg bg)
   (ignore-errors
     (case 0
-      (0 (nomis/-flash-bg))
+      (0 (nomis/-flash-fg-and-bg :fg fg :bg bg))
       (1 (nomis/-flash-mode-line))
       (2 (nomis/-flash-show-dialog))
       (3 (nomis/-flash-temp-message)))))
@@ -60,7 +66,7 @@
   nomis/-nail-idle-secs
   (when (> (second (current-idle-time))
            nomis/-nail-idle-secs)
-    (nomis/flash)
+    (nomis/flash :bg "blue")
     (message "Don't pick or bite your nails!")))
 
 ;;;; ___________________________________________________________________________
