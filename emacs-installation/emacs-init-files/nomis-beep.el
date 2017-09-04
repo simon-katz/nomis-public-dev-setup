@@ -49,25 +49,30 @@
         nomis/-flash-attention-grabbing-string
       (sleep-for 0.5))))
 
-(cl-defun nomis/flash (&key fg bg)
+(cl-defun nomis/flash (&key fg bg secs)
   (ignore-errors
     (case 0
-      (0 (nomis/-flash-fg-and-bg :fg fg :bg bg))
+      (0 (nomis/-flash-fg-and-bg :fg fg :bg bg :secs secs))
       (1 (nomis/-flash-mode-line))
       (2 (nomis/-flash-show-dialog))
       (3 (nomis/-flash-temp-message)))))
 
 ;;;; ___________________________________________________________________________
 
-(defvar nomis/-nail-idle-secs (* 1 60))
+(defvar nomis/-nail-warning/n-idle-secs-for-warning 50)
+(defvar nomis/-nail-warning/check-frequency-secs 60)
 
-(def-nomis/timer nomis/nail-timer
-  1
-  nomis/-nail-idle-secs
-  (when (> (second (current-idle-time))
-           nomis/-nail-idle-secs)
-    (nomis/flash :bg "blue")
-    (message "Don't pick or bite your nails!")))
+(def-nomis/timer-with-relative-repeats
+  nomis/nail-warnings-timer
+  0
+  nomis/-nail-warning/check-frequency-secs
+  (let ((idle-time (current-idle-time)))
+    ;; (message "idle-time = %s" idle-time)
+    (when (and idle-time
+               (>= (second idle-time)
+                   nomis/-nail-warning/n-idle-secs-for-warning))
+      (nomis/flash :bg "blue" :secs 1)
+      (message "Don't pick or bite your nails!"))))
 
 ;;;; ___________________________________________________________________________
 
@@ -82,7 +87,8 @@
 
 ;;;; ___________________________________________________________________________
 
-(def-nomis/timer nomis/ensure-ring-bell-function-not-nil
+(def-nomis/timer-with-relative-repeats
+  nomis/ensure-ring-bell-function-not-nil
   ;; With one of your flash functions, repeated C-g can cause
   ;; `ring-bell-function` to be set to nil. Not sure when this happens.
   ;; This fixes things.
