@@ -54,7 +54,7 @@
     ((:date-time-zone t)
      (let ((timezone (format-time-string "%z")))
        (format "%s%s:%s"
-               (format-time-string "%Y-%m-%dT%H:%M:%S")
+               (nomis/timestamp :date-time)
                (substring timezone 0 3)
                (substring timezone 3 5))))))
 
