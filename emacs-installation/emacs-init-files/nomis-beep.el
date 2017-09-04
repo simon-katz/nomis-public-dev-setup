@@ -59,20 +59,23 @@
 
 ;;;; ___________________________________________________________________________
 
-(defvar nomis/-nail-warning/n-idle-secs-for-warning 50)
-(defvar nomis/-nail-warning/check-frequency-secs 60)
+(defvar nomis/-nail-warning/check-frequency-secs 10)
+(defvar nomis/-nail-warning/n-idle-secs-for-warning 60)
+(defvar nomis/-nail-warning/min-secs-between-warnings 60)
 
 (def-nomis/timer-with-relative-repeats
   nomis/nail-warnings-timer
   0
-  nomis/-nail-warning/check-frequency-secs
   (let ((idle-time (current-idle-time)))
     ;; (message "idle-time = %s" idle-time)
-    (when (and idle-time
-               (>= (second idle-time)
-                   nomis/-nail-warning/n-idle-secs-for-warning))
-      (nomis/flash :bg "blue" :secs 1)
-      (message "Don't pick or bite your nails!"))))
+    (if (and idle-time
+             (>= (second idle-time)
+                 nomis/-nail-warning/n-idle-secs-for-warning))
+        (progn
+          (nomis/flash :bg "magenta" :secs 1)
+          (message "Don't pick or bite your nails!")
+          `(:repeat ,nomis/-nail-warning/min-secs-between-warnings))
+      `(:repeat ,nomis/-nail-warning/check-frequency-secs))))
 
 ;;;; ___________________________________________________________________________
 
@@ -87,7 +90,7 @@
 
 ;;;; ___________________________________________________________________________
 
-(def-nomis/timer-with-relative-repeats
+(def-nomis/timer-with-fixed-repeats
   nomis/ensure-ring-bell-function-not-nil
   ;; With one of your flash functions, repeated C-g can cause
   ;; `ring-bell-function` to be set to nil. Not sure when this happens.
@@ -95,7 +98,7 @@
   10
   10
   (when (null ring-bell-function) ; 
-    (message "#### `ring-bell-function` is nil. Resetting.")
+    (message "`ring-bell-function` is nil. Resetting.")
     (nomis/set-ring-bell-function)))
 
 ;;;; ___________________________________________________________________________

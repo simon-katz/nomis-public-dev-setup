@@ -21,7 +21,6 @@
 
 (defmacro def-nomis/timer-with-relative-repeats (var
                                                  time
-                                                 repeat
                                                  &rest body)
   ;; Allow this file to be reloaded without creating multiple timers.
   (let ((fun-name (intern (concat "____unlikely-prefix/nomis-timer/"
@@ -37,8 +36,11 @@
                (run-at-time next-time
                             nil
                             (lambda ()
-                              ,@body
-                              (,fun-name ,repeat)))))
+                              (let ((res ,@body))
+                                (when (and (listp res)
+                                           (eql (first res) :repeat)
+                                           (numberp (second res)))
+                                  (,fun-name (second res))))))))
        (,fun-name ,time))))
 
 ;;;; ___________________________________________________________________________
