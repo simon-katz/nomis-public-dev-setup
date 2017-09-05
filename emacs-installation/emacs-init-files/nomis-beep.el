@@ -63,7 +63,7 @@
 (defvar nomis/-nail-warning/n-idle-secs-for-warning 60)
 (defvar nomis/-nail-warning/min-secs-between-warnings 60)
 
-(def-nomis/timer-with-relative-repeats
+(nomis/def-timer-with-relative-repeats
     nomis/nail-warnings-timer
     0
   (let ((idle-time (current-idle-time)))
@@ -90,7 +90,7 @@
 
 ;;;; ___________________________________________________________________________
 
-(def-nomis/timer-with-fixed-repeats
+(nomis/def-timer-with-fixed-repeats
     nomis/ensure-ring-bell-function-not-nil
     ;; With one of your flash functions, repeated C-g can cause
     ;; `ring-bell-function` to be set to nil. Not sure when this happens.

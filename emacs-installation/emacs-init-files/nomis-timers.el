@@ -2,7 +2,7 @@
 
 ;;;; ___________________________________________________________________________
 
-(defmacro def-nomis/timer-with-fixed-repeats (var
+(defmacro nomis/def-timer-with-fixed-repeats (var
                                               time
                                               repeat
                                               &rest body)
@@ -20,7 +20,7 @@
                         (lambda ()
                           ,@body)))))
 
-(defmacro def-nomis/timer-with-relative-repeats (var
+(defmacro nomis/def-timer-with-relative-repeats (var
                                                  time
                                                  &rest body)
   ;; Allow this file to be reloaded without creating multiple timers.
