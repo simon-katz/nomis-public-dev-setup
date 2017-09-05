@@ -14,9 +14,11 @@
         nomis-prog-indent-sexp--top-level
         org-beginning-of-line
         org-self-insert-command
+        paredit-backslash
         paredit-backward-up
         paredit-doublequote
         paredit-forward-delete
+        paredit-forward-down
         paredit-forward-slurp-sexp
         paredit-open-round
         paredit-raise-sexp
