@@ -7,6 +7,7 @@
                                               repeat
                                               &rest body)
   ;; Allow this file to be reloaded without creating multiple timers.
+  (declare (indent 3))
   `(progn
      (defvar ,var)
      (when (and (boundp ',var)
@@ -23,6 +24,7 @@
                                                  time
                                                  &rest body)
   ;; Allow this file to be reloaded without creating multiple timers.
+  (declare (indent 2))
   (let ((fun-name (intern (concat "____unlikely-prefix/nomis-timer/"
                                   (symbol-name var)))))
     `(progn
