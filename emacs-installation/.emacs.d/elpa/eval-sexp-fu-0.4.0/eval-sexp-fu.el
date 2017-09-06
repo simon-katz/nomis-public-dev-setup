@@ -395,11 +395,11 @@ such that ignores any prefix arguments."
 ;;; initialize.
 (defun esf-initialize ()
   (define-eval-sexp-fu-flash-command eval-last-sexp
-    (eval-sexp-fu-flash (when (ignore-errors (preceding-sexp))
+    (eval-sexp-fu-flash (when (ignore-errors (elisp--preceding-sexp))
                           (with-esf-end-of-sexp
                             (bounds-of-thing-at-point 'sexp)))))
   (define-eval-sexp-fu-flash-command eval-defun
-    (eval-sexp-fu-flash (when (ignore-errors (preceding-sexp))
+    (eval-sexp-fu-flash (when (ignore-errors (elisp--preceding-sexp))
                           (save-excursion
                             (end-of-defun)
                             (beginning-of-defun)

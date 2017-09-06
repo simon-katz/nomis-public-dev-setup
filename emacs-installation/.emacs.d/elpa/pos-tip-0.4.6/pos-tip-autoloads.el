@@ -1,9 +1,9 @@
 ;;; pos-tip-autoloads.el --- automatically extracted autoloads
 ;;
 ;;; Code:
-(add-to-list 'load-path (or (file-name-directory #$) (car load-path)))
+(add-to-list 'load-path (directory-file-name (or (file-name-directory #$) (car load-path))))
 
-;;;### (autoloads nil nil ("pos-tip.el") (22146 57601 264083 0))
+;;;### (autoloads nil nil ("pos-tip.el") (22961 20858 0 0))
 
 ;;;***
 

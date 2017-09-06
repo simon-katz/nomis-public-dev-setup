@@ -25,20 +25,24 @@
                       ido-ubiquitous
                       smex
                       ;; idle-highlight-mode -- see "emacs-installation/emacs-init-files/manually-installed/nomis-idle-highlight-mode.el"
-                      scala-mode2
+                      ;; scala-mode2
                       undo-tree
                       ;; ac-nrepl
                       clojure-mode
                       cider
-                      align-cljlet
+                      cider-eval-sexp-fu ; causes failure to download `highlight` -- I installed my old version manually
+                      ;; align-cljlet -- you have cloned this repo yourself
                       exec-path-from-shell
                       js2-mode
                       ;; ac-js2
                       projectile
                       company
-                      rcirc-notify
+                      ;; rcirc-notify
                       markdown-mode
-                      hydra))
+                      hydra
+                      key-chord
+                      yasnippet
+                      multiple-cursors))
 
 (dolist (p my-packages)
   (when (not (package-installed-p p))

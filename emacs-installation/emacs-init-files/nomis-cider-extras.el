@@ -22,7 +22,8 @@
             "CIDER 0.9.1"
             "CIDER 0.10.0"
             "CIDER 0.12.0 (Seattle)"
-            "CIDER 0.14.0 (Berlin)"))
+            "CIDER 0.14.0 (Berlin)"
+            "CIDER 0.15.0 (London)"))
   (defun nomis-clojure-buffer-ns ()
     (clojure-find-ns)))
  (t
@@ -40,7 +41,8 @@
           '("CIDER 0.9.1"
             "CIDER 0.10.0"
             "CIDER 0.12.0 (Seattle)"
-            "CIDER 0.14.0 (Berlin)"))
+            "CIDER 0.14.0 (Berlin)"
+            "CIDER 0.15.0 (London)"))
   (defun nomis-cider-repl-namespace ()
     (with-current-buffer (cider-current-repl-buffer)
       cider-buffer-ns)))
@@ -61,7 +63,8 @@
  ((member (cider-version)
           '("CIDER 0.10.0"
             "CIDER 0.12.0 (Seattle)"
-            "CIDER 0.14.0 (Berlin)"))
+            "CIDER 0.14.0 (Berlin)"
+            "CIDER 0.15.0 (London)"))
   (defun nomis-cider-find-or-create-repl-buffer ()
     (cider-current-connection)))
  (t
@@ -624,7 +627,8 @@ start the server."
  ((member (cider-version)
           '("CIDER 0.10.0"
             "CIDER 0.12.0 (Seattle)"
-            "CIDER 0.14.0 (Berlin)"))
+            "CIDER 0.14.0 (Berlin)"
+            "CIDER 0.15.0 (London)"))
   ;; Maybe look at making Cider history work for multiple projects.
   )
  (t
@@ -661,7 +665,8 @@ utf-8-unix."
  ((member (cider-version)
           '("CIDER 0.10.0"
             "CIDER 0.12.0 (Seattle)"
-            "CIDER 0.14.0 (Berlin)"))
+            "CIDER 0.14.0 (Berlin)"
+            "CIDER 0.15.0 (London)"))
   ;; Maybe look at making Cider history work for multiple projects.
   )
  (t
@@ -701,7 +706,8 @@ window."
  ((member (cider-version)
           '("CIDER 0.10.0"
             "CIDER 0.12.0 (Seattle)"
-            "CIDER 0.14.0 (Berlin)"))
+            "CIDER 0.14.0 (Berlin)"
+            "CIDER 0.15.0 (London)"))
   (defun cider-jump-to (buffer &optional pos other-window)
     "Push current point onto marker ring, and jump to BUFFER and POS.
 POS can be either a number, a cons, or a symbol.
