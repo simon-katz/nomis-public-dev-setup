@@ -31,6 +31,7 @@
                       clojure-mode
                       cider
                       cider-eval-sexp-fu ; causes failure to download `highlight` -- I installed my old version manually
+                      clj-refactor
                       ;; align-cljlet -- you have cloned this repo yourself
                       exec-path-from-shell
                       js2-mode
