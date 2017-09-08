@@ -77,10 +77,10 @@
                                 cider-repl-mode-hook))
       (hooks-always '(clojure-mode-hook
                       cider-repl-mode-hook)))
-  (labels ((add-hook** (hooks functions)
-                       (dolist (h hooks)
-                         (dolist (f functions)
-                           (add-hook h f)))))
+  (cl-labels ((add-hook** (hooks functions)
+                          (dolist (h hooks)
+                            (dolist (f functions)
+                              (add-hook h f)))))
     (add-hook** hooks-when-repl-exists
                 hook-funs-when-repl-exists)
     (add-hook** hooks-always
