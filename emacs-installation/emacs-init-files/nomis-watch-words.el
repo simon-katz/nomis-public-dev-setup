@@ -7,6 +7,7 @@
     "T\\ODO-THINK"
     "T\\ODO-with-Picasso-on-site"
     "T\\ODO"
+    "T\\O-CHECK"
     "R\\EMAINING-ISSUE"
     "H\\ACK"
     "R\\EFACTOR"
