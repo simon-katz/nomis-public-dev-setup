@@ -64,6 +64,10 @@ See: https://github.com/clojure-emacs/clj-refactor.el/wiki/cljr-cycle-privacy"
   (cljr-add-keybindings-with-prefix "C-c C-m")
   (cljr-add-keybindings-with-prefix "M-R"))
 
+(define-key clojure-mode-map (kbd "C-c C-c C-m") 'cljr-helm)
+
+(setq cljr-use-multiple-cursors nil) ; t is broken with hydra and helm
+
 ;; cljr-auto-sort-ns is t, but doesn't work when I type "set/".
 
 ;; (setq cljr-magic-requires :prompt) ; Doesn't seem to work
