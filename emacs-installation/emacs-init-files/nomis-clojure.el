@@ -61,7 +61,12 @@ See: https://github.com/clojure-emacs/clj-refactor.el/wiki/cljr-cycle-privacy"
 (defun nomis-setup-clj-refactor-mode ()
   (clj-refactor-mode 1)
   (yas-minor-mode 1) ; for adding require/use/import statements
+  (cljr-add-keybindings-with-prefix "C-c C-m")
   (cljr-add-keybindings-with-prefix "M-R"))
+
+;; cljr-auto-sort-ns is t, but doesn't work when I type "set/".
+
+;; (setq cljr-magic-requires :prompt) ; Doesn't seem to work
 
 ;;;; ___________________________________________________________________________
 ;;;; Cider
