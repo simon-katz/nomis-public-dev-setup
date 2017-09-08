@@ -100,4 +100,8 @@
   (when (not (nomis-looking-at-bracketed-sexp-start))
     (backward-sexp)))
 
+(defun nomis-end-of-this-defun ()
+  (nomis-beginning-of-this-defun)
+  (forward-sexp))
+
 (provide 'nomis-sexp-utils)
