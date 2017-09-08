@@ -95,7 +95,9 @@
 
 ;;;; ---- General stuff ----
 
+(require 'cl)
 (require 'mmt)
+
 (require 'nomis-key-chord)
 (require 'nomis-hydra)
 
