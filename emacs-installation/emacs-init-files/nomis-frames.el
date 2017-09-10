@@ -2,14 +2,6 @@
 
 ;;;; ___________________________________________________________________________
 
-(defvar *nomis/-do-frame-info-debug-p* nil)
-
-(defun nomis/frame-info-debug (&rest args)
-  (when *nomis/-do-frame-info-debug-p*
-    (apply 'message args)))
-
-;;;; ___________________________________________________________________________
-
 (require 'frame-cmds)
 
 ;;;; ___________________________________________________________________________
@@ -213,15 +205,10 @@
                               (if (eq window-system 'mac)
                                   0
                                 (cdr (assq 'menu-bar-lines (frame-parameters)))))))
-       (nomis/frame-info-debug "borders = %s" borders)
-       (nomis/frame-info-debug "avail-height = %s" avail-height)
-       (nomis/frame-info-debug "(+ avail-height n-pixels) = %s"
-                               (+ avail-height n-pixels))
        (let ((top-pixel (+ 10 ; we have more available space than we computed
                            (- (* avail-height (frame-char-height))
                               (frame-pixel-height)
                               n-pixels))))
-         (nomis/frame-info-debug "top-pixel = %s" top-pixel)
          (modify-frame-parameters nil `((top . ,top-pixel))))))))
 
 ;;;; ___________________________________________________________________________
@@ -244,10 +231,6 @@
   (let* ((n-pixels (* n-chars (frame-char-height)))
          (n-pixels-v2 (+ n-pixels
                          (alist-get :top nomis/-screen-pixel-adjustments))))
-    (nomis/frame-info-debug "nomis/move-frame-to-screen-top: n-pixels =  %s"
-                            n-pixels)
-    (nomis/frame-info-debug "nomis/move-frame-to-screen-top: n-pixels-v2 =  %s"
-                            n-pixels-v2)
     (move-frame-to-screen-top n-pixels-v2)))
 
 (defun nomis/move-frame-to-screen-bottom (n-chars)
@@ -257,10 +240,6 @@
   (let* ((n-pixels (* n-chars (frame-char-height)))
          (n-pixels-v2 (- n-pixels
                          (alist-get :bottom nomis/-screen-pixel-adjustments))))
-    (nomis/frame-info-debug "nomis/move-frame-to-screen-bottom: n-pixels =  %s"
-                            n-pixels)
-    (nomis/frame-info-debug "nomis/move-frame-to-screen-bottom: n-pixels-v2 =  %s"
-                            n-pixels-v2)
     (move-frame-to-screen-bottom/nomis-hacked n-pixels-v2)))
 
 (defun nomis/move-frame-to-screen-left (n-chars)
@@ -270,10 +249,6 @@
   (let* ((n-pixels (* n-chars (frame-char-width)))
          (n-pixels-v2 (+ n-pixels
                          (alist-get :left nomis/-screen-pixel-adjustments))))
-    (nomis/frame-info-debug "nomis/move-frame-to-screen-left n-pixels =  %s"
-                            n-pixels)
-    (nomis/frame-info-debug "nomis/move-frame-to-screen-left n-pixels-v2 =  %s"
-                            n-pixels-v2)
     (move-frame-to-screen-left n-pixels-v2)))
 
 (defun nomis/move-frame-to-screen-right (n-chars)
@@ -283,10 +258,6 @@
   (let* ((n-pixels (* n-chars (frame-char-width)))
          (n-pixels-v2 (- n-pixels
                          (alist-get :right nomis/-screen-pixel-adjustments))))
-    (nomis/frame-info-debug "nomis/move-frame-to-screen-right n-pixels =  %s"
-                            n-pixels)
-    (nomis/frame-info-debug "nomis/move-frame-to-screen-right n-pixels-v2 =  %s"
-                            n-pixels-v2)
     (move-frame-to-screen-right n-pixels-v2)))
 
 ;;;; ___________________________________________________________________________
