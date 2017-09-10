@@ -63,13 +63,16 @@ See: https://github.com/clojure-emacs/clj-refactor.el/wiki/cljr-cycle-privacy"
   (clj-refactor-mode 1)
   (yas-minor-mode 1) ; for adding require/use/import statements
   (cljr-add-keybindings-with-prefix "C-c C-m")
-  (cljr-add-keybindings-with-prefix "M-R"))
+  (cljr-add-keybindings-with-prefix "M-R") ; keep this until I stop using it
+  )
 
 (define-key clojure-mode-map (kbd "C-c m") 'cljr-helm)
 
 (setq cljr-use-multiple-cursors nil) ; t is broken with hydra and helm
 
-;; cljr-auto-sort-ns is t, but doesn't work when I type "set/".
+;; cljr-auto-sort-ns is t, but doesn't work when I type "set/"
+;; - Ah, I think sorting isn't invoked, because cleaning ns requires that
+;;   the file is syntactically good (and it isn't when you type that slash).
 
 (setq cljr-magic-requires :prompt)
 
