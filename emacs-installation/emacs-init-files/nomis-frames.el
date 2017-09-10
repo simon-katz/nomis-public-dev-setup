@@ -241,41 +241,53 @@
   (interactive (list (if current-prefix-arg
                          (prefix-numeric-value current-prefix-arg)
                        0)))
-  (let* ((n-pixels (+ (* n-chars (frame-char-height))
-                      (alist-get :top nomis/-screen-pixel-adjustments))))
+  (let* ((n-pixels (* n-chars (frame-char-height)))
+         (n-pixels-v2 (+ n-pixels
+                         (alist-get :top nomis/-screen-pixel-adjustments))))
     (nomis/frame-info-debug "nomis/move-frame-to-screen-top: n-pixels =  %s"
                             n-pixels)
-    (move-frame-to-screen-top n-pixels)))
+    (nomis/frame-info-debug "nomis/move-frame-to-screen-top: n-pixels-v2 =  %s"
+                            n-pixels-v2)
+    (move-frame-to-screen-top n-pixels-v2)))
 
 (defun nomis/move-frame-to-screen-bottom (n-chars)
   (interactive (list (if current-prefix-arg
                          (prefix-numeric-value current-prefix-arg)
                        0)))
-  (let ((n-pixels (- (* n-chars (frame-char-height))
-                     (alist-get :bottom nomis/-screen-pixel-adjustments))))
+  (let* ((n-pixels (* n-chars (frame-char-height)))
+         (n-pixels-v2 (- n-pixels
+                         (alist-get :bottom nomis/-screen-pixel-adjustments))))
     (nomis/frame-info-debug "nomis/move-frame-to-screen-bottom: n-pixels =  %s"
                             n-pixels)
-    (move-frame-to-screen-bottom/nomis-hacked n-pixels)))
+    (nomis/frame-info-debug "nomis/move-frame-to-screen-bottom: n-pixels-v2 =  %s"
+                            n-pixels-v2)
+    (move-frame-to-screen-bottom/nomis-hacked n-pixels-v2)))
 
 (defun nomis/move-frame-to-screen-left (n-chars)
   (interactive (list (if current-prefix-arg
                          (prefix-numeric-value current-prefix-arg)
                        0)))
-  (let ((n-pixels (+ (* n-chars (frame-char-width))
-                     (alist-get :left nomis/-screen-pixel-adjustments))))
+  (let* ((n-pixels (* n-chars (frame-char-width)))
+         (n-pixels-v2 (+ n-pixels
+                         (alist-get :left nomis/-screen-pixel-adjustments))))
     (nomis/frame-info-debug "nomis/move-frame-to-screen-left n-pixels =  %s"
                             n-pixels)
-    (move-frame-to-screen-left n-pixels)))
+    (nomis/frame-info-debug "nomis/move-frame-to-screen-left n-pixels-v2 =  %s"
+                            n-pixels-v2)
+    (move-frame-to-screen-left n-pixels-v2)))
 
 (defun nomis/move-frame-to-screen-right (n-chars)
   (interactive (list (if current-prefix-arg
                          (prefix-numeric-value current-prefix-arg)
                        0)))
-  (let* ((n-pixels (- (* n-chars (frame-char-width))
-                      (alist-get :right nomis/-screen-pixel-adjustments))))
+  (let* ((n-pixels (* n-chars (frame-char-width)))
+         (n-pixels-v2 (- n-pixels
+                         (alist-get :right nomis/-screen-pixel-adjustments))))
     (nomis/frame-info-debug "nomis/move-frame-to-screen-right n-pixels =  %s"
                             n-pixels)
-    (move-frame-to-screen-right n-pixels)))
+    (nomis/frame-info-debug "nomis/move-frame-to-screen-right n-pixels-v2 =  %s"
+                            n-pixels-v2)
+    (move-frame-to-screen-right n-pixels-v2)))
 
 ;;;; ___________________________________________________________________________
 
