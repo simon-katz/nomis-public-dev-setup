@@ -3,18 +3,12 @@
 ;;;; ___________________________________________________________________________
 
 (defun nomis-init-magit ()
-
-  ;; FIXME: Much of this is no longer A Thing.
-
   (company-mode 0)
   (hl-line-mode)
-
   (add-to-list 'same-window-regexps "\*magit: .*\*") ; was: (setq magit-status-buffer-switch-function 'switch-to-buffer) -- no longer works
-
   (setq magit-completing-read-function 'magit-ido-completing-read)
-
-  (setq magit-revert-buffers 'silent)
-  (setq magit-push-always-verify nil)
+  ;; (setq magit-revert-buffers 'silent) obsolete
+  ;; (setq magit-push-always-verify nil) ; no longer exists
   (setq magit-diff-refine-hunk 'all)
   (setq magit-diff-highlight-trailing nil)
   (setq git-commit-summary-max-length 999))
