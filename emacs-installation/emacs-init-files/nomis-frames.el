@@ -184,33 +184,33 @@
     (interactive)
     (nomis-set-frame-height* 29)))
 
-(defun nomis/move-frame-to-screen-top (n)
+(defun nomis/move-frame-to-screen-top (n-chars)
   (interactive (list (if current-prefix-arg
-                         (* (frame-char-height)
-                            (prefix-numeric-value current-prefix-arg))
+                         (prefix-numeric-value current-prefix-arg)
                        0)))
-  (move-frame-to-screen-top n))
+  (let ((n-pixels (* n-chars (frame-char-width))))
+    (move-frame-to-screen-top n-pixels)))
 
-(defun nomis/move-frame-to-screen-bottom (n)
+(defun nomis/move-frame-to-screen-bottom (n-chars)
   (interactive (list (if current-prefix-arg
-                         (* (frame-char-height)
-                            (prefix-numeric-value current-prefix-arg))
+                         (prefix-numeric-value current-prefix-arg)
                        0)))
-  (move-frame-to-screen-bottom n))
+  (let ((n-pixels (* n-chars (frame-char-width))))
+    (move-frame-to-screen-bottom n-pixels)))
 
-(defun nomis/move-frame-to-screen-left (n)
+(defun nomis/move-frame-to-screen-left (n-chars)
   (interactive (list (if current-prefix-arg
-                         (* (frame-char-width)
-                            (prefix-numeric-value current-prefix-arg))
+                         (prefix-numeric-value current-prefix-arg)
                        0)))
-  (move-frame-to-screen-left n))
+  (let ((n-pixels (* n-chars (frame-char-width))))
+    (move-frame-to-screen-left n-pixels)))
 
-(defun nomis/move-frame-to-screen-right (n)
+(defun nomis/move-frame-to-screen-right (n-chars)
   (interactive (list (if current-prefix-arg
-                         (* (frame-char-width)
-                            (prefix-numeric-value current-prefix-arg))
+                         (prefix-numeric-value current-prefix-arg)
                        0)))
-  (move-frame-to-screen-right n))
+  (let ((n-pixels (* n-chars (frame-char-width))))
+    (move-frame-to-screen-right n-pixels)))
 
 ;;;; ___________________________________________________________________________
 
