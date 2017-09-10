@@ -57,6 +57,7 @@ See: https://github.com/clojure-emacs/clj-refactor.el/wiki/cljr-cycle-privacy"
 ;;;; clj-refactor
 
 (require 'clj-refactor)
+(require 'nomis-clj-refactor-fixes)
 
 (defun nomis-setup-clj-refactor-mode ()
   (clj-refactor-mode 1)
@@ -70,7 +71,7 @@ See: https://github.com/clojure-emacs/clj-refactor.el/wiki/cljr-cycle-privacy"
 
 ;; cljr-auto-sort-ns is t, but doesn't work when I type "set/".
 
-;; (setq cljr-magic-requires :prompt) ; Doesn't seem to work
+(setq cljr-magic-requires :prompt)
 
 ;;;; ___________________________________________________________________________
 ;;;; Cider
