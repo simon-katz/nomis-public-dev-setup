@@ -2,20 +2,6 @@
 
 ;;;; ___________________________________________________________________________
 
-(defun nomis/magit-display-buffer-function (buffer)
-  ;; Have Magit status buffer open in same window
-  ;; See https://github.com/magit/magit/issues/2541
-  (display-buffer buffer
-                  (if (and (derived-mode-p 'magit-mode)
-                           (memq (with-current-buffer buffer major-mode)
-                                 '(magit-process-mode
-                                   magit-revision-mode
-                                   magit-diff-mode
-                                   magit-stash-mode
-                                   magit-status-mode)))
-                      nil
-                    '(display-buffer-same-window))))
-
 (defun nomis-init-magit ()
 
   ;; FIXME: Much of this is no longer A Thing.
@@ -31,11 +17,7 @@
   (setq magit-push-always-verify nil)
   (setq magit-diff-refine-hunk 'all)
   (setq magit-diff-highlight-trailing nil)
-  (setq git-commit-summary-max-length 999)
-
-  (when (equal magit-version "2.10.3")
-    (setq magit-display-buffer-function
-          'nomis/magit-display-buffer-function)))
+  (setq git-commit-summary-max-length 999))
 
 
 (add-hook 'magit-mode-hook 'nomis-init-magit)
