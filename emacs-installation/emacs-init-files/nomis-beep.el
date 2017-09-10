@@ -5,6 +5,9 @@
 (defvar *nomis/grab-user-attention/high/background*
   "IndianRed1")
 
+(defvar *nomis/grab-user-attention/low/background*
+  "magenta")
+
 ;;;; ___________________________________________________________________________
 ;;;; Flashing
 
@@ -18,27 +21,48 @@
   ;; first flash's colours sticking.
   '())
 
-(cl-defun nomis/-flash-fg-and-bg (&key fg bg secs)
+(defun nomis/-set-fg-and-bg (fg bg)
   (push `(,(face-foreground nomis/-flash-face)
           ,(face-background nomis/-flash-face))
         nomis/-flash-old-colours)
   (let ((fg (or fg "grey90"))
-        (bg (or bg *nomis/grab-user-attention/high/background*))
-        (secs (or secs 0.25)))
+        (bg (or bg *nomis/grab-user-attention/high/background*)))
     (set-face-foreground nomis/-flash-face fg)
-    (set-face-background nomis/-flash-face bg)
+    (set-face-background nomis/-flash-face bg)))
+
+(defun nomis/-clear-fg-and-bg ()
+  (let* ((fg-and-bg (pop nomis/-flash-old-colours))
+         (fg (first fg-and-bg))
+         (bg (second fg-and-bg)))
+    (set-face-foreground nomis/-flash-face fg)
+    (set-face-background nomis/-flash-face bg)))
+
+;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+(cl-defun nomis/-flash-fg-and-bg (&key fg bg secs)
+  (nomis/-set-fg-and-bg fg bg)
+  (let ((secs (or secs 0.25)))
     (run-at-time secs
                  nil
-                 (lambda ()
-                   (let* ((fg-and-bg (pop nomis/-flash-old-colours))
-                          (fg (first fg-and-bg))
-                          (bg (second fg-and-bg)))
-                     (set-face-foreground nomis/-flash-face fg)
-                     (set-face-background nomis/-flash-face bg))))))
+                 'nomis/-clear-fg-and-bg)))
 
 (cl-defun nomis/flash (&key fg bg secs)
   (ignore-errors
     (nomis/-flash-fg-and-bg :fg fg :bg bg :secs secs)))
+
+;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+(defun nomis/-with-fg-and-bg (fg bg f)
+  (nomis/-set-fg-and-bg fg bg)
+  (unwind-protect (funcall f)
+    (nomis/-clear-fg-and-bg)))
+
+(cl-defmacro nomis/with-fg-and-bg ((&rest options) &body body)
+  (declare (indent 1))
+  (mmt-once-only (options) 
+    `(nomis/-with-fg-and-bg (plist-get ,options :fg)
+                            (plist-get ,options :bg)
+                            #'(lambda () ,@body))))
 
 ;;;; ___________________________________________________________________________
 
@@ -51,20 +75,37 @@
                :secs 2))
 
 (defun nomis/grab-user-attention/low ()
-  (nomis/flash :bg "magenta"
+  (nomis/flash :bg *nomis/grab-user-attention/low/background*
                :secs 1))
 
-(progn
-  (defadvice y-or-n-p (before grab-user-attention)
-    ;; Would be better to leave highlighting in place until answer is given.
-    (nomis/grab-user-attention/high))
-  (ad-activate 'y-or-n-p))
+(cl-defmacro nomis/with-grab-user-attention/high (() &body body)
+  (declare (indent 1))
+  `(nomis/with-fg-and-bg
+       (list :bg *nomis/grab-user-attention/high/background*)
+     ,@body))
+
+(cl-defmacro nomis/with-grab-user-attention/low (() &body body)
+  (declare (indent 1))
+  `(nomis/with-fg-and-bg
+       (list :bg *nomis/grab-user-attention/low/background*)
+     ,@body))
+
 
 (progn
-  (defadvice yes-or-no-p (before grab-user-attention)
-    ;; Would be better to leave highlighting in place until answer is given.
-    (nomis/grab-user-attention/high))
-  (ad-activate 'yes-or-no-p))
+  (defadvice y-or-n-p (around y-or-n-p/grab-user-attention
+                              (&rest args-to-ignore))
+    (nomis/with-grab-user-attention/high ()
+      ad-do-it))
+  (ad-activate 'y-or-n-p))
+
+;; (nomis/with-fg-and-bg (list :fg "green" :bg "yellow") (message-box "Hello"))
+;; (nomis/beep)
+;; (nomis/grab-user-attention/high)
+;; (nomis/grab-user-attention/low)
+;; (nomis/with-grab-user-attention/high () (message-box "hello"))
+;; (nomis/with-grab-user-attention/low () (message-box "hello"))
+;; (y-or-n-p "cccccccccccccc")
+;; (yes-or-no-p "bbbbbbbbbbb")
 
 ;;;; ___________________________________________________________________________
 
