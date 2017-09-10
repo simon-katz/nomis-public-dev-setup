@@ -130,6 +130,7 @@
 (require 'nomis-ido)
 (require 'nomis-smex)
 (when (display-graphic-p)
+  (require 'nomis-screens)
   (require 'nomis-frames))
 (require 'nomis-buffers)
 (require 'nomis-frame-style)

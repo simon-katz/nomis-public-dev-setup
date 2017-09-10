@@ -2,6 +2,14 @@
 
 ;;;; ___________________________________________________________________________
 
+(defvar *nomis/-do-frame-info-debug-p* nil)
+
+(defun nomis/frame-info-debug (&rest args)
+  (when *nomis/-do-frame-info-debug-p*
+    (apply 'message args)))
+
+;;;; ___________________________________________________________________________
+
 (require 'frame-cmds)
 
 ;;;; ___________________________________________________________________________
@@ -118,7 +126,7 @@
 (setq default-frame-alist (append nomis-frame-prefs default-frame-alist))
 
 ;;;; ___________________________________________________________________________
-;;;; ---- Commands to adjust frames ----
+;;;; ---- Commands to adjust frames -- misc ----
 
 (require 'cl)
 
@@ -184,32 +192,83 @@
     (interactive)
     (nomis-set-frame-height* 29)))
 
+;;;; ___________________________________________________________________________
+;;;; ---- Commands to adjust frames -- move to top, bottom, left, right ----
+
+(defvar nomis/-screen-pixel-adjustments
+  `((:top . ,window-mgr-title-bar-pixel-height)
+    (:bottom . 0)
+    (:left . 0)
+    (:right .
+            ;; Seems that `move-frame-to-screen-right` is a bit broken, or at
+            ;; least not what I want -- it leaves a 1-character space at the
+            ;; right of the screen.
+            ,(frame-char-width))))
+
 (defun nomis/move-frame-to-screen-top (n-chars)
   (interactive (list (if current-prefix-arg
                          (prefix-numeric-value current-prefix-arg)
                        0)))
-  (let ((n-pixels (* n-chars (frame-char-width))))
+  (let* ((n-pixels (+ (* n-chars (frame-char-height))
+                      (alist-get :top nomis/-screen-pixel-adjustments))))
+    (nomis/frame-info-debug "nomis/move-frame-to-screen-top: n-pixels =  %s"
+                            n-pixels)
     (move-frame-to-screen-top n-pixels)))
 
 (defun nomis/move-frame-to-screen-bottom (n-chars)
   (interactive (list (if current-prefix-arg
                          (prefix-numeric-value current-prefix-arg)
                        0)))
-  (let ((n-pixels (* n-chars (frame-char-width))))
-    (move-frame-to-screen-bottom n-pixels)))
+  (let ((n-pixels (- (* n-chars (frame-char-height))
+                     (alist-get :bottom nomis/-screen-pixel-adjustments))))
+    (nomis/frame-info-debug "nomis/move-frame-to-screen-bottom: n-pixels =  %s"
+                            n-pixels)
+    (case 2
+      (1
+       (move-frame-to-screen-bottom n-pixels))
+      (2
+       ;; `move-frame-to-screen-bottom` seems to be broken, so do things
+       ;; yourself.
+       ;; Much of the following is copied from `move-frame-to-screen-bottom`.
+       (let* ((borders       (* 2 (cdr (assq 'border-width (frame-parameters)))))
+              (avail-height  (- (/ (- (available-screen-pixel-height) borders
+                                      (frame-extra-pixels-height nil)
+                                      window-mgr-title-bar-pixel-height
+                                      (smart-tool-bar-pixel-height))
+                                   (frame-char-height))
+                                ;; Subtract menu bar unless on Carbon Emacs (menu bar not in the frame).
+                                (if (eq window-system 'mac)
+                                    0
+                                  (cdr (assq 'menu-bar-lines (frame-parameters)))))))
+         (nomis/frame-info-debug "borders = %s" borders)
+         (nomis/frame-info-debug "avail-height = %s" avail-height)
+         (nomis/frame-info-debug "(+ avail-height n-pixels) = %s"
+                                 (+ avail-height n-pixels))
+         (let ((top-pixel (+ 10 ; we have more available space than we computed
+                             (- (* avail-height (frame-char-height))
+                                (frame-pixel-height)
+                                n-pixels))))
+           (nomis/frame-info-debug "top-pixel = %s" top-pixel)
+           (modify-frame-parameters nil `((top . ,top-pixel)))))))))
 
 (defun nomis/move-frame-to-screen-left (n-chars)
   (interactive (list (if current-prefix-arg
                          (prefix-numeric-value current-prefix-arg)
                        0)))
-  (let ((n-pixels (* n-chars (frame-char-width))))
+  (let ((n-pixels (+ (* n-chars (frame-char-width))
+                     (alist-get :left nomis/-screen-pixel-adjustments))))
+    (nomis/frame-info-debug "nomis/move-frame-to-screen-left n-pixels =  %s"
+                            n-pixels)
     (move-frame-to-screen-left n-pixels)))
 
 (defun nomis/move-frame-to-screen-right (n-chars)
   (interactive (list (if current-prefix-arg
                          (prefix-numeric-value current-prefix-arg)
                        0)))
-  (let ((n-pixels (* n-chars (frame-char-width))))
+  (let* ((n-pixels (- (* n-chars (frame-char-width))
+                      (alist-get :right nomis/-screen-pixel-adjustments))))
+    (nomis/frame-info-debug "nomis/move-frame-to-screen-right n-pixels =  %s"
+                            n-pixels)
     (move-frame-to-screen-right n-pixels)))
 
 ;;;; ___________________________________________________________________________
