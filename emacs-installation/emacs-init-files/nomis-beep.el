@@ -6,7 +6,7 @@
   "IndianRed1")
 
 ;;;; ___________________________________________________________________________
-;;;; Various approaches to flashing
+;;;; Flashing
 
 (defvar nomis/-flash-face 'mode-line)
 ;; or (defvar nomis/-flash-face 'default) -- but repeated c-G causes crashes
@@ -36,31 +36,9 @@
                      (set-face-foreground nomis/-flash-face fg)
                      (set-face-background nomis/-flash-face bg))))))
 
-(defun nomis/-flash-mode-line ()
-  (invert-face 'mode-line)
-  (run-with-timer 1 nil 'invert-face 'mode-line))
-
-(defvar nomis/-flash-attention-grabbing-string
-  (make-string 200 ?#))
-
-(defun nomis/-flash-show-dialog ()
-  (let ((last-nonmenu-event nil) ; force `y-or-n-p-with-timeout` to use a dialog
-        )
-    (y-or-n-p-with-timeout nomis/-flash-attention-grabbing-string 0.5 nil)))
-
-(defun nomis/-flash-temp-message ()
-  (let ((message-log-max nil))
-    (with-temp-message
-        nomis/-flash-attention-grabbing-string
-      (sleep-for 0.5))))
-
 (cl-defun nomis/flash (&key fg bg secs)
   (ignore-errors
-    (case 0
-      (0 (nomis/-flash-fg-and-bg :fg fg :bg bg :secs secs))
-      (1 (nomis/-flash-mode-line))
-      (2 (nomis/-flash-show-dialog))
-      (3 (nomis/-flash-temp-message)))))
+    (nomis/-flash-fg-and-bg :fg fg :bg bg :secs secs)))
 
 ;;;; ___________________________________________________________________________
 
