@@ -1,6 +1,11 @@
 ;;;; Beeping
 
 ;;;; ___________________________________________________________________________
+
+(defvar *nomis/grab-user-attention/high/background*
+  "IndianRed1")
+
+;;;; ___________________________________________________________________________
 ;;;; Various approaches to flashing
 
 (defvar nomis/-flash-face 'mode-line)
@@ -18,7 +23,7 @@
           ,(face-background nomis/-flash-face))
         nomis/-flash-old-colours)
   (let ((fg (or fg "grey90"))
-        (bg (or bg "IndianRed1"))
+        (bg (or bg *nomis/grab-user-attention/high/background*))
         (secs (or secs 0.25)))
     (set-face-foreground nomis/-flash-face fg)
     (set-face-background nomis/-flash-face bg)
@@ -59,6 +64,32 @@
 
 ;;;; ___________________________________________________________________________
 
+(defun nomis/beep ()
+  (nomis/flash :bg *nomis/grab-user-attention/high/background*
+               :secs 0.25))
+
+(defun nomis/grab-user-attention/high ()
+  (nomis/flash :bg *nomis/grab-user-attention/high/background*
+               :secs 2))
+
+(defun nomis/grab-user-attention/low ()
+  (nomis/flash :bg "magenta"
+               :secs 1))
+
+(progn
+  (defadvice y-or-n-p (before grab-user-attention)
+    ;; Would be better to leave highlighting in place until answer is given.
+    (nomis/grab-user-attention/high))
+  (ad-activate 'y-or-n-p))
+
+(progn
+  (defadvice yes-or-no-p (before grab-user-attention)
+    ;; Would be better to leave highlighting in place until answer is given.
+    (nomis/grab-user-attention/high))
+  (ad-activate 'yes-or-no-p))
+
+;;;; ___________________________________________________________________________
+
 (defvar nomis/-nail-warning/check-frequency-secs 10)
 (defvar nomis/-nail-warning/n-idle-secs-for-warning 60)
 (defvar nomis/-nail-warning/min-secs-between-warnings 60)
@@ -72,7 +103,7 @@
              (>= (second idle-time)
                  nomis/-nail-warning/n-idle-secs-for-warning))
         (progn
-          (nomis/flash :bg "magenta" :secs 1)
+          (nomis/grab-user-attention/low)
           (message "Don't pick or bite your nails!")
           `(:repeat ,nomis/-nail-warning/min-secs-between-warnings))
       `(:repeat ,nomis/-nail-warning/check-frequency-secs))))
@@ -84,7 +115,7 @@
 (setq visible-bell t)
 
 (defun nomis/set-ring-bell-function ()
-  (setq ring-bell-function 'nomis/flash))
+  (setq ring-bell-function 'nomis/beep))
 
 (nomis/set-ring-bell-function)
 
