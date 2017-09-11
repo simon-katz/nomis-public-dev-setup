@@ -8,6 +8,9 @@
 (defvar *nomis/grab-user-attention/low/background*
   "magenta")
 
+(defvar *nomis/grab-user-attention/input-required/background*
+  "SeaGreen")
+
 ;;;; ___________________________________________________________________________
 ;;;; Flashing
 
@@ -78,6 +81,10 @@
   (nomis/flash :bg *nomis/grab-user-attention/low/background*
                :secs 1))
 
+(defun nomis/grab-user-attention/input-required ()
+  (nomis/flash :bg *nomis/grab-user-attention/input-required/background*
+               :secs 1))
+
 (cl-defmacro nomis/with-grab-user-attention/high (() &body body)
   (declare (indent 1))
   `(nomis/with-fg-and-bg
@@ -90,11 +97,17 @@
        (list :bg *nomis/grab-user-attention/low/background*)
      ,@body))
 
+(cl-defmacro nomis/with-grab-user-attention/input-required (() &body body)
+  (declare (indent 1))
+  `(nomis/with-fg-and-bg
+       (list :bg *nomis/grab-user-attention/input-required/background*)
+     ,@body))
+
 
 (progn
   (defadvice y-or-n-p (around y-or-n-p/grab-user-attention
                               (&rest args-to-ignore))
-    (nomis/with-grab-user-attention/high ()
+    (nomis/with-grab-user-attention/input-required ()
       ad-do-it))
   (ad-activate 'y-or-n-p))
 
@@ -102,8 +115,10 @@
 ;; (nomis/beep)
 ;; (nomis/grab-user-attention/high)
 ;; (nomis/grab-user-attention/low)
+;; (nomis/grab-user-attention/input-required)
 ;; (nomis/with-grab-user-attention/high () (message-box "hello"))
 ;; (nomis/with-grab-user-attention/low () (message-box "hello"))
+;; (nomis/with-grab-user-attention/input-required () (message-box "hello"))
 ;; (y-or-n-p "cccccccccccccc")
 ;; (yes-or-no-p "bbbbbbbbbbb")
 
