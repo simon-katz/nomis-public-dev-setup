@@ -6,6 +6,7 @@
         backward-sexp
         delete-indentation
         down-list
+        eval-last-sexp
         forward-sexp
         kill-region
         mark-sexp
@@ -20,6 +21,7 @@
         paredit-forward-delete
         paredit-forward-down
         paredit-forward-slurp-sexp
+        paredit-kill
         paredit-open-round
         paredit-raise-sexp
         paredit-semicolon
