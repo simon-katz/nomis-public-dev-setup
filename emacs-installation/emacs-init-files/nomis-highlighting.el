@@ -6,30 +6,30 @@
 ;;; Defaults:
 
 (progn
-  (defvar zzzz-nomis/untailored-mode-line-face-foreground-zzzz          (face-foreground 'mode-line))           ; "black"
-  (defvar zzzz-nomis/untailored-mode-line-face-background-zzzz          (face-background 'mode-line))           ; "grey75"
-  (defvar zzzz-nomis/untailored-mode-line-inactive-face-foreground-zzzz (face-foreground 'mode-line-inactive))  ; "grey20"
-  (defvar zzzz-nomis/untailored-mode-line-inactive-face-background-zzzz (face-background 'mode-line-inactive))) ; "grey90"
+  (defvar *nomis/untailored-mode-line-face-foreground*          (face-foreground 'mode-line))           ; "black"
+  (defvar *nomis/untailored-mode-line-face-background*          (face-background 'mode-line))           ; "grey75"
+  (defvar *nomis/untailored-mode-line-inactive-face-foreground* (face-foreground 'mode-line-inactive))  ; "grey20"
+  (defvar *nomis/untailored-mode-line-inactive-face-background* (face-background 'mode-line-inactive))) ; "grey90"
 
 (defun nomis/reset-untailored-mode-line-fgs-and-bgs ()
-  (set-face-foreground 'mode-line          zzzz-nomis/untailored-mode-line-face-foreground-zzzz)
-  (set-face-background 'mode-line          zzzz-nomis/untailored-mode-line-face-background-zzzz)
-  (set-face-foreground 'mode-line-inactive zzzz-nomis/untailored-mode-line-inactive-face-foreground-zzzz)
-  (set-face-background 'mode-line-inactive zzzz-nomis/untailored-mode-line-inactive-face-background-zzzz))
+  (set-face-foreground 'mode-line          *nomis/untailored-mode-line-face-foreground*)
+  (set-face-background 'mode-line          *nomis/untailored-mode-line-face-background*)
+  (set-face-foreground 'mode-line-inactive *nomis/untailored-mode-line-inactive-face-foreground*)
+  (set-face-background 'mode-line-inactive *nomis/untailored-mode-line-inactive-face-background*))
 
 ;;; Tailoring
 
 (progn
-  (defvar zzzz-nomis/mode-line-face-foreground-zzzz          zzzz-nomis/untailored-mode-line-face-foreground-zzzz)
-  (defvar zzzz-nomis/mode-line-face-background-zzzz          "#ccccff")
-  (defvar zzzz-nomis/mode-line-inactive-face-foreground-zzzz zzzz-nomis/untailored-mode-line-inactive-face-foreground-zzzz)
-  (defvar zzzz-nomis/mode-line-inactive-face-background-zzzz "grey75"))
+  (defvar *nomis/mode-line-face-foreground*          *nomis/untailored-mode-line-face-foreground*)
+  (defvar *nomis/mode-line-face-background*          "#ccccff")
+  (defvar *nomis/mode-line-inactive-face-foreground* *nomis/untailored-mode-line-inactive-face-foreground*)
+  (defvar *nomis/mode-line-inactive-face-background* "grey75"))
 
 (defun nomis/set-mode-line-fgs-and-bgs ()
-  (set-face-foreground 'mode-line          zzzz-nomis/mode-line-face-foreground-zzzz)
-  (set-face-background 'mode-line          zzzz-nomis/mode-line-face-background-zzzz)
-  (set-face-foreground 'mode-line-inactive zzzz-nomis/mode-line-inactive-face-foreground-zzzz)
-  (set-face-background 'mode-line-inactive zzzz-nomis/mode-line-inactive-face-background-zzzz))
+  (set-face-foreground 'mode-line          *nomis/mode-line-face-foreground*)
+  (set-face-background 'mode-line          *nomis/mode-line-face-background*)
+  (set-face-foreground 'mode-line-inactive *nomis/mode-line-inactive-face-foreground*)
+  (set-face-background 'mode-line-inactive *nomis/mode-line-inactive-face-background*))
 
 (nomis/set-mode-line-fgs-and-bgs)
 
