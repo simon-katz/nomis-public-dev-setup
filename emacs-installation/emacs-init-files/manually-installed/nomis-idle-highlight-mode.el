@@ -197,8 +197,7 @@
   (nomis-idle-highlight-word-at-point))
 
 (defun nomis-start-of-symbol-regex ()
-  (apply 'concatenate
-         'string
+  (apply 'concat
          (list "\\_<"
                (if (equal major-mode 'clojure-mode)
                    ;; There seems to be a bug in `highlight-regexp`.
@@ -278,7 +277,7 @@
                       (t
                        (concat (nomis-start-of-symbol-regex)
                                (regexp-quote captured-target)
-                               "\\>"))))
+                               "\\_>"))))
           ;; (message "colon-matters-p = %s & captured-target = %s and nomis-idle-highlight-regexp = %s"
           ;;          nomis-idle-highlight-colon-at-start-matters-p
           ;;          captured-target
