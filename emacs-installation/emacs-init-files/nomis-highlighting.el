@@ -3,16 +3,35 @@
 ;;;; ___________________________________________________________________________
 ;;;; Mode line
 
-;; Defaults:
-;; (set-face-background 'mode-line          "grey75")
-;; (set-face-background 'mode-line-inactive "grey90")
-;; (set-face-foreground 'mode-line          "black")
-;; (set-face-foreground 'mode-line-inactive "grey20")
+;;; Defaults:
 
-;; Tailoring
 (progn
-  (set-face-background 'mode-line "#ccccff")
-  (set-face-background 'mode-line-inactive "grey75"))
+  (defvar zzzz-nomis/untailored-mode-line-face-foreground-zzzz          (face-foreground 'mode-line))           ; "black"
+  (defvar zzzz-nomis/untailored-mode-line-face-background-zzzz          (face-background 'mode-line))           ; "grey75"
+  (defvar zzzz-nomis/untailored-mode-line-inactive-face-foreground-zzzz (face-foreground 'mode-line-inactive))  ; "grey20"
+  (defvar zzzz-nomis/untailored-mode-line-inactive-face-background-zzzz (face-background 'mode-line-inactive))) ; "grey90"
+
+(defun nomis/reset-untailored-mode-line-fgs-and-bgs ()
+  (set-face-foreground 'mode-line          zzzz-nomis/untailored-mode-line-face-foreground-zzzz)
+  (set-face-background 'mode-line          zzzz-nomis/untailored-mode-line-face-background-zzzz)
+  (set-face-foreground 'mode-line-inactive zzzz-nomis/untailored-mode-line-inactive-face-foreground-zzzz)
+  (set-face-background 'mode-line-inactive zzzz-nomis/untailored-mode-line-inactive-face-background-zzzz))
+
+;;; Tailoring
+
+(progn
+  (defvar zzzz-nomis/mode-line-face-foreground-zzzz          zzzz-nomis/untailored-mode-line-face-foreground-zzzz)
+  (defvar zzzz-nomis/mode-line-face-background-zzzz          "#ccccff")
+  (defvar zzzz-nomis/mode-line-inactive-face-foreground-zzzz zzzz-nomis/untailored-mode-line-inactive-face-foreground-zzzz)
+  (defvar zzzz-nomis/mode-line-inactive-face-background-zzzz "grey75"))
+
+(defun nomis/set-mode-line-fgs-and-bgs ()
+  (set-face-foreground 'mode-line          zzzz-nomis/mode-line-face-foreground-zzzz)
+  (set-face-background 'mode-line          zzzz-nomis/mode-line-face-background-zzzz)
+  (set-face-foreground 'mode-line-inactive zzzz-nomis/mode-line-inactive-face-foreground-zzzz)
+  (set-face-background 'mode-line-inactive zzzz-nomis/mode-line-inactive-face-background-zzzz))
+
+(nomis/set-mode-line-fgs-and-bgs)
 
 ;;;; ___________________________________________________________________________
 ;;;; Highlighting of the current line

@@ -168,14 +168,13 @@
 
 ;;;; ___________________________________________________________________________
 
-(defun reset-fg-and-bg-if-buggered ()
+(defun nomis/reset-fg-and-bg-if-buggered ()
   ;; useful for recovering from bugs when developing this stuff
-  (set-face-foreground 'default "Black")
-  (set-face-background 'default "#f5f5f5")
-  (set-face-foreground 'mode-line "Black")
-  (set-face-background 'mode-line "#ccccff"))
+  ;; (set-face-foreground 'default "Black")
+  ;; (set-face-background 'default "#f5f5f5")
+  (nomis/set-mode-line-fgs-and-bgs))
 
-;; (reset-fg-and-bg-if-buggered)
+;; (nomis/reset-fg-and-bg-if-buggered)
 
 ;;;; ___________________________________________________________________________
 
