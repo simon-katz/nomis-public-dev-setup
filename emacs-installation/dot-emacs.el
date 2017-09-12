@@ -86,6 +86,8 @@
 ;;;; ___________________________________________________________________________
 ;;;; ---- Load various files ----
 
+(require 'nomis-very-general-stuff-new)
+
 (require 'nomis-org) ; When this was later in the file my setting of
                      ; `org-replace-disputed-keys` wasn't working.
                      ; Something must be loading org-mode.
