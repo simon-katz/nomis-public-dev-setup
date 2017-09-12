@@ -1,9 +1,9 @@
 :Elisp
 ;;;; Elisp examples for testing nomis-idle-highlight-mode.
 
-;; Ensure no problem at start of buffer.
+;;; Ensure no problem at start of buffer.
 
-;; Move cursor through the following and check all is good.
+;;; Move cursor through the following and check all is good.
 
 (fred
  @fred ; This is Elisp, not Clojure, so @ is not treated specially.
@@ -17,22 +17,25 @@
  "fred"
  "fred")
 
-;; Run `nomis-idle-highlight-toggle-colon-at-start-matters`.
-;; Check the above again.
-;; Run `nomis-idle-highlight-toggle-colon-at-start-matters`.
+fred() ; FIXME No highlighting when on open parenthesis.
 
-;; Put cursor at the start of the following lines. Should be no highlighting.
+
+;;; Run `nomis-idle-highlight-toggle-colon-at-start-matters`.
+;;; Check the above again.
+;;; Run `nomis-idle-highlight-toggle-colon-at-start-matters`.
+
+;;; Put cursor at the start of the following lines. Should be no highlighting.
 
 ;(fred @fred :fred ^:fred foo)
 '(fred @fred :fred ^:fred foo)
 `(fred @fred :fred ^:fred foo)
 #'(fred @fred :fred ^:fred foo)
 
-;; Highlighting happens in comments.
-;; fred @fred :fred ^:fred
-;; `fred` too.
+;;; Highlighting happens in comments.
+;;; fred @fred :fred ^:fred
+;;; `fred` too.
 
-;; More to run through:
+;;; More to run through:
 
 (defn foo-1 ()
   (let ((aaaa (goo 42 42))
@@ -41,13 +44,10 @@
     ;; Ensure no highlighting.
     (goo aaaa bbbb)))
 
-(defn foo-2 (   )
-  42)
-
-;; TODO: Fix the things below:
-;;       - when on the closing parentheses
-;;       - when on some of the quotes
-;;       - when on some of the spaces
+;;; FIXME: Fix the things below:
+;;;        - when on the closing parentheses
+;;;        - when on some of the quotes
+;;;        - when on some of the spaces
 
 ' fred
 
@@ -66,8 +66,27 @@
 ~fred
 
 
+;;; Ensure that cursor on `fred` doesn't highlight `fred-bloggs`
+fred
+fred-bloggs
+fred-bloggs
+
+
+;;; Asterisks
+
+*fred*
+*fred*
+
+*fred *fred()
+xxxx *fred xxxx
+
+fred* fred*()
+xxxx fred* xxxx
+
+;
 ;;
-;;^above after the ;; (and after this one too)
+;;; FIXME
+;;;^above after the semicolons ; (and after this one too)
 
 ;; After the following symbol, check highlighting for all following points.
 ;; (There was a bug when at end of file, when highlighting would incorrectly
