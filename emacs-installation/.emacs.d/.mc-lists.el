@@ -22,6 +22,7 @@
         paredit-forward-down
         paredit-forward-slurp-sexp
         paredit-kill
+        paredit-newline
         paredit-open-round
         paredit-raise-sexp
         paredit-semicolon
