@@ -83,6 +83,43 @@
 
 (define-key global-map "\C-cc" 'org-capture)
 
+;;;; ________ *** Navigation
+
+(defun nomis/org-show-point ()
+  (interactive)
+  (case 1
+    (1
+     (nomis/with-temporary-invisible-changes ()
+       (org-meta-return) ; this does what it does and also makes point visible
+       ))
+    (2
+     ;; This makes lots of stuff visible, but seems to be the "official" way.
+     ;; Leave this here as a point of interest.
+     (let ((org-catch-invisible-edits 'show))
+       (org-check-before-invisible-edit 'insert)))))
+
+(defun nomis/org-previous-heading ()
+  (interactive)
+  (outline-previous-heading)
+  (nomis/org-show-point))
+
+(defun nomis/org-backward-heading-same-level-with-extras ()
+  "A replacement for `org-backward-heading-same-level`.
+Move backward one subheading at same level as this one.
+Works when the target is invisible (and makes it visible).
+If this is the first subheading within its parent, move to the last
+subheading at this level in the previous parent."
+  (interactive)
+  (org-beginning-of-line)
+  (let ((x (thing-at-point 'symbol)))
+    (re-search-backward (concat "^\\(?:" (regexp-quote (concat x " ")) "\\)")
+                        nil 'move))
+  (nomis/org-show-point))
+
+(define-key org-mode-map [remap org-backward-heading-same-level]
+  'nomis/org-backward-heading-same-level-with-extras)
+
+
 ;;;; ________ *** Refiling
 
 ;;;; - I haven't quite got this nice (or maybe I did).
