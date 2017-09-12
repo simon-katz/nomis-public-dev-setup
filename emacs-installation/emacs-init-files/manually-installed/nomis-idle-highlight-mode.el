@@ -262,28 +262,44 @@
         (set-text-properties 0 (length text) nil text))
       text)))
 
-(defun nomis-idle-highlight-word-at-point ()
+(defun nomis-idle-highlight-word-at-point* ()
   "Highlight the word under the point."
   (if nomis-idle-highlight-mode
       (let* ((captured-target (nomis-idle-highlight-thing)))
         (nomis-idle-highlight-unhighlight)
         ;; (message "captured-target = %s" captured-target)
-        (when (and captured-target
-                   (not (member captured-target nomis-idle-highlight-exceptions)))
-          (setq nomis-idle-highlight-regexp
-                (cond ((eq (string-to-char captured-target)
-                           ?\")
-                       (regexp-quote captured-target))
-                      (t
-                       (concat (nomis-start-of-symbol-regex)
-                               (regexp-quote captured-target)
-                               "\\_>"))))
-          ;; (message "colon-matters-p = %s & captured-target = %s and nomis-idle-highlight-regexp = %s"
-          ;;          nomis-idle-highlight-colon-at-start-matters-p
-          ;;          captured-target
-          ;;          nomis-idle-highlight-regexp)
-          (highlight-regexp nomis-idle-highlight-regexp
-                            nomis-idle-highlight-face)))))
+        (if (or (not captured-target)
+                (member captured-target
+                        nomis-idle-highlight-exceptions)
+                (and (eq major-mode 'org-mode)
+                     (string-match-p "^\\*+$" captured-target)))
+            (progn
+              ;; (message "Not highlighting")
+              )
+          (progn
+            (setq nomis-idle-highlight-regexp
+                  (cond ((eq (string-to-char captured-target)
+                             ?\")
+                         (regexp-quote captured-target))
+                        (t
+                         ;; (message "Looking for %s" captured-target)
+                         (concat (nomis-start-of-symbol-regex)
+                                 (regexp-quote captured-target)
+                                 "\\_>"))))
+            ;; (message "colon-matters-p = %s & captured-target = %s and nomis-idle-highlight-regexp = %s"
+            ;;          nomis-idle-highlight-colon-at-start-matters-p
+            ;;          captured-target
+            ;;          nomis-idle-highlight-regexp)
+            (when nomis-idle-highlight-regexp
+              (highlight-regexp nomis-idle-highlight-regexp
+                                nomis-idle-highlight-face)))))))
+
+(defun nomis-idle-highlight-word-at-point ()
+  (condition-case e
+      (nomis-idle-highlight-word-at-point*)
+    (error
+     (message "nomis-idle-highlight-word-at-point: %s"
+              e))))
 
 (defsubst nomis-idle-highlight-unhighlight ()
   (when nomis-idle-highlight-regexp
