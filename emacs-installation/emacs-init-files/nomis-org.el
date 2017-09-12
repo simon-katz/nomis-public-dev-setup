@@ -103,6 +103,58 @@
   (outline-previous-heading)
   (nomis/org-show-point))
 
+(defun nomis/org-next-heading ()
+  (interactive)
+  (outline-next-heading)
+  (nomis/org-show-point))
+
+(defun nomis/-org-heading-same-level-with-extras/helper (direction)
+  (let ((start-position-fun (case direction
+                              (:forward 'org-end-of-line)
+                              (:backward 'org-beginning-of-line)))
+        (re-search-function (case direction
+                              (:forward 're-search-forward)
+                              (:backward 're-search-backward)))
+        (post-search-adjust-function (case direction
+                                       (:forward 'org-beginning-of-line)
+                                       (:backward #'(lambda ())))))
+    (let* ((text-to-look-for (save-excursion
+                               (org-beginning-of-line)
+                               (concat (thing-at-point 'symbol)
+                                       " "))))
+      (funcall start-position-fun)
+      (let ((found-p (condition-case nil
+                         (progn
+                           (funcall re-search-function
+                                    (concat "^" (regexp-quote text-to-look-for))
+                                    nil
+                                    nil ;t
+                                    )
+                           t)
+                       (error nil))))
+        (if found-p
+            (progn
+              (nomis/org-show-point)
+              (funcall post-search-adjust-function))
+          (progn
+            (org-beginning-of-line)
+            (message (concat "No more headings at this level"
+                             (when (eql direction :forward)
+                               " (but there's a bug so maybe there are...)")))
+            (beep)))))))
+
+(defun nomis/org-forward-heading-same-level-with-extras ()
+  "A replacement for `org-forward-heading-same-level`.
+Move forward one subheading at same level as this one.
+Works when the target is invisible (and makes it visible).
+If this is the first subheading within its parent, move to the first
+subheading at this level in the next parent."
+  (interactive)
+  (nomis/-org-heading-same-level-with-extras/helper :forward))
+
+(define-key org-mode-map [remap org-forward-heading-same-level]
+  'nomis/org-forward-heading-same-level-with-extras)
+
 (defun nomis/org-backward-heading-same-level-with-extras ()
   "A replacement for `org-backward-heading-same-level`.
 Move backward one subheading at same level as this one.
@@ -110,11 +162,7 @@ Works when the target is invisible (and makes it visible).
 If this is the first subheading within its parent, move to the last
 subheading at this level in the previous parent."
   (interactive)
-  (org-beginning-of-line)
-  (let ((x (thing-at-point 'symbol)))
-    (re-search-backward (concat "^\\(?:" (regexp-quote (concat x " ")) "\\)")
-                        nil 'move))
-  (nomis/org-show-point))
+  (nomis/-org-heading-same-level-with-extras/helper :backward))
 
 (define-key org-mode-map [remap org-backward-heading-same-level]
   'nomis/org-backward-heading-same-level-with-extras)
