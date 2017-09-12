@@ -2,6 +2,10 @@
 
 ;;;; ___________________________________________________________________________
 
+(setq magit-log-margin
+      ;; (INIT STYLE WIDTH AUTHOR AUTHOR-WIDTH)
+      '(t "%Y-%m-%d %H:%M:%S" magit-log-margin-width t 18))
+
 (defun nomis-init-magit ()
   (company-mode 0)
   (hl-line-mode)
