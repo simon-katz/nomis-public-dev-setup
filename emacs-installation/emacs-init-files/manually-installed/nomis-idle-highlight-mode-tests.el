@@ -8,12 +8,17 @@
 ;;;; ___________________________________________________________________________
 ;;;; ---- Support ----
 
-(defun nomis/funcall-with-temp-buffer (mode-fun string position fun)
+(defun nomis/map-over-positions-in-temp-buffer (mode-fun
+                                                string
+                                                fun
+                                                positions)
   (with-temp-buffer
     (funcall mode-fun)
     (insert string)
-    (goto-char position)
-    (funcall fun)))
+    (mapcar (lambda (p)
+              (goto-char p)
+              (funcall fun))
+            positions)))
 
 (defun nomis/string->all-buffer-positions (string)
   "All the positions in a buffer whose contents are STRING.
@@ -23,13 +28,12 @@ position in the buffer)."
   (number-sequence 1
                    (1+ (length string))))
 
-(defun nomis/run-fun-in-all-positions-in-temp-buffer (mode-fun string fun)
-  (mapcar (lambda (position)
-            (nomis/funcall-with-temp-buffer mode-fun
-                                            string
-                                            position
-                                            fun))
-          (nomis/string->all-buffer-positions string)))
+(defun nomis/map-over-temp-buffer (mode-fun string fun)
+  (let ((positions (nomis/string->all-buffer-positions string)))
+    (nomis/map-over-positions-in-temp-buffer mode-fun
+                                             string
+                                             fun
+                                             positions)))
 
 (defmacro nomis/pairs->list (&rest pairs)
   "Create a list as specified by PAIRS.
@@ -50,9 +54,9 @@ The result is the concatenation of:
 ;;;; ___________________________________________________________________________
 
 (defun niht/run-basic-test (mode-fun string)
-  (nomis/run-fun-in-all-positions-in-temp-buffer mode-fun
-                                                 string
-                                                 'nomis-idle-highlight-thing))
+  (nomis/map-over-temp-buffer mode-fun
+                              string
+                              'nomis-idle-highlight-thing))
 
 ;;;; ___________________________________________________________________________
 ;;;; ---- niht/basic-test ----
