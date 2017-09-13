@@ -8,7 +8,7 @@
 ;;;; ___________________________________________________________________________
 ;;;; ---- Support ----
 
-(defun string->position-sequence (string)
+(defun nomis/string->all-positions (string)
   "All the positions in a buffer whose contents are STRING.
 That's a list of successive integers starting at 1 (the first position in the
 buffer) and going up to one greater than the length of the string (the last
@@ -42,7 +42,6 @@ position in the buffer)."
 
 (ert-deftest niht/basic-test ()
   (should (equal (mapcar 'niht/run-basic-test
-                         (string->position-sequence niht/basic-test/string))
                  '(nil nil
                    "foo" "foo" "foo" "foo"
                    nil
@@ -50,6 +49,7 @@ position in the buffer)."
                    nil
                    "baz" "baz" "baz" "baz"
                    nil nil nil))))
+                         (nomis/string->all-positions niht/basic-test/string))
 
 ;;;; ___________________________________________________________________________
 
