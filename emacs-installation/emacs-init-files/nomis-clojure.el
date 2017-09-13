@@ -66,7 +66,7 @@ See: https://github.com/clojure-emacs/clj-refactor.el/wiki/cljr-cycle-privacy"
   (cljr-add-keybindings-with-prefix "M-R") ; keep this until I stop using it
   )
 
-(define-key clojure-mode-map (kbd "C-c m") 'cljr-helm)
+(define-key clj-refactor-map (kbd "C-c m") 'cljr-helm)
 
 (setq cljr-use-multiple-cursors nil) ; t is broken with hydra and helm
 
