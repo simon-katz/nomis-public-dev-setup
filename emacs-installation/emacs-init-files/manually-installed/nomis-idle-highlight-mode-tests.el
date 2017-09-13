@@ -3,11 +3,18 @@
 ;;;; ___________________________________________________________________________
 ;;;; ---- Notes ----
 ;;;;
-;;;; - (?) Use dash.
 ;;;; - `insert-file-contents-literally` may be useful.
 
 ;;;; ___________________________________________________________________________
 ;;;; ---- Support ----
+
+(defun string->position-sequence (string)
+  "All the positions in a buffer whose contents are STRING.
+That's a list of successive integers starting at 1 (the first position in the
+buffer) and going up to one greater than the length of the string (the last
+position in the buffer)."
+  (number-sequence 1
+                   (1+ (length string))))
 
 (defun nomis/with-temp-buffer-etc (mode-fun string position fun)
   (with-temp-buffer
@@ -39,7 +46,7 @@
 
 (ert-deftest niht/basic-test ()
   (should (equal (mapcar 'niht/run-basic-test
-                         '(1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19))
+                         (string->position-sequence niht/basic-test/string))
                  '("  foo" ; bug -- see `niht/basic-test/first-char-whitespace/bug
                    nil
                    "foo" "foo" "foo" "foo"
