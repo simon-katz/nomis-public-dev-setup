@@ -44,7 +44,8 @@
                       hydra
                       key-chord
                       yasnippet
-                      multiple-cursors))
+                      multiple-cursors
+                      ht))
 
 (dolist (p my-packages)
   (when (not (package-installed-p p))
