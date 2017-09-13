@@ -86,6 +86,10 @@
 
 ;;;; ___________________________________________________________________________
 
+(require 'nomis-rx)
+
+;;;; ___________________________________________________________________________
+
 (defgroup nomis-idle-highlight nil
   "Highlight other occurrences of the word at point."
   :group 'faces)
@@ -262,6 +266,19 @@
         (set-text-properties 0 (length text) nil text))
       text)))
 
+(defun nomis-idle-highlight-regexp-quote (string)
+  ;; Maybe this could be simplified by using `case-fold-search` to control
+  ;; the search, but I couldn't make it work.
+  ;; Perhaps a bug -- see https://lists.gnu.org/archive/html/bug-gnu-emacs/2016-02/msg02002.html
+  ;; JSK 2017-09-13
+  (if (eq major-mode 'emacs-lisp-mode)
+      (nomis/rx/or
+       ;; This is only approximately correct. It doesn't work for mixed-case
+       ;; things. Never mind.
+       (regexp-quote (upcase string))
+       (regexp-quote (downcase string)))
+    (regexp-quote string)))
+
 (defun nomis-idle-highlight-word-at-point* ()
   "Highlight the word under the point."
   (if nomis-idle-highlight-mode
@@ -280,11 +297,14 @@
             (setq nomis-idle-highlight-regexp
                   (cond ((eq (string-to-char captured-target)
                              ?\")
+                         (message "nomis-idle-highlight-word-at-point*: Pretty sure we can't get here.")
+                         (beep)
                          (regexp-quote captured-target))
                         (t
                          ;; (message "Looking for %s" captured-target)
                          (concat (nomis-start-of-symbol-regex)
-                                 (regexp-quote captured-target)
+                                 (nomis-idle-highlight-regexp-quote
+                                  captured-target)
                                  "\\_>"))))
             ;; (message "colon-matters-p = %s & captured-target = %s and nomis-idle-highlight-regexp = %s"
             ;;          nomis-idle-highlight-colon-at-start-matters-p

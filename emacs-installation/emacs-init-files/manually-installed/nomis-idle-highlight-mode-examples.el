@@ -19,7 +19,11 @@
  ~fred ; This is Elisp, not Clojure, so ~ is not treated specially.
  ~fred
  "fred"
- "fred")
+ "fred"
+ FRED
+ FRED
+ FrEd
+ FrEd)
 
 fred() ; FIXME No highlighting when on open parenthesis.
 

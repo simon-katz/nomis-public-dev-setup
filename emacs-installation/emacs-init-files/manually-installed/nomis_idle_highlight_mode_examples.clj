@@ -19,7 +19,11 @@
  ~fred
  ~fred
  "fred"
- "fred")
+ "fred"
+ FRED
+ FRED
+ FrEd
+ FrEd)
 
 fred() ; FIXME No highlighting when on open parenthesis.
 
