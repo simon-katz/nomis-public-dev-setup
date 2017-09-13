@@ -1,4 +1,13 @@
-;;;; Init stuff -- Fix bugs in clj-refactor.
+;;;; Init stuff -- Fix bugs in clj-refactor, and add things.
+
+;;;; ___________________________________________________________________________
+
+(defun nomis/cljr-add-command (command-spec)
+  (setq cljr--all-helpers
+        (sort (cons command-spec
+                    cljr--all-helpers)
+              (lambda (x y)
+                (string-lessp (first x) (first y))))))
 
 ;;;; ___________________________________________________________________________
 
@@ -10,7 +19,7 @@
     ad-do-it)
   (ad-activate 'cider-eval-ns-form))
 
-;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+;;;; ___________________________________________________________________________
 
 (when (equal (cljr--version)
              "2.3.1")
@@ -46,6 +55,21 @@ form."
                   (ignore-errors (cljr--maybe-eval-ns-form))
                   (cljr--indent-defun)
                   (cljr--post-command-message "Required %s" libspec))))))))))
+
+;;;; ___________________________________________________________________________
+
+(when (equal (cljr--version)
+             "2.3.1")
+  
+  (defun nomis/cljr-clean-ns-no-prune ()
+    "Clean the ns form for the current buffer, without pruning."
+    (interactive)
+    (cljr--ensure-op-supported "clean-ns")
+    (cider-eval-ns-form :sync)
+    (cljr--clean-ns nil t))
+  
+  (nomis/cljr-add-command
+   '("sn" . (nomis/cljr-clean-ns-no-prune "Clean ns no prune" ?c ("ns")))))
 
 ;;;; ___________________________________________________________________________
 
