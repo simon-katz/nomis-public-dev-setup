@@ -14,26 +14,31 @@
  `fred
  `fred`
  '''```fred
+ ,fred
+ ,fred
+ ~fred
+ ~fred
  "fred"
  "fred")
 
 fred() ; FIXME No highlighting when on open parenthesis.
 
 
-;;; Bug exploration:
-
-;;; (1)
-
-fred-bloggs
+;;; Ensure that cursor on `fred` doesn't highlight `fred-bloggs`
 fred
 fred-bloggs
+fred-bloggs
 
-;;; (2)
 
-*fred
-*fred
+;;; Asterisks
 
 *fred*
 *fred*
+
+*fred *fred()
+xxxx *fred xxxx
+
+fred* fred*()
+xxxx fred* xxxx
 
 

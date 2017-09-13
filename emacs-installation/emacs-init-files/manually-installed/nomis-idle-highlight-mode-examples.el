@@ -14,6 +14,10 @@
  `fred
  `fred`
  '''```fred
+ ,fred
+ ,fred
+ ~fred ; This is Elisp, not Clojure, so ~ is not treated specially.
+ ~fred
  "fred"
  "fred")
 
@@ -34,6 +38,9 @@ fred() ; FIXME No highlighting when on open parenthesis.
 ;;; Highlighting happens in comments.
 ;;; fred @fred :fred ^:fred
 ;;; `fred` too.
+
+;;; FIXME Bug when on closing ` in `fred`
+;;; FIXME Bug when on closing ` in `fred`.
 
 ;;; More to run through:
 
@@ -61,9 +68,6 @@ fred() ; FIXME No highlighting when on open parenthesis.
 (fred  '  )
 (fred  '   )
 (fred  ' )
-
-
-~fred
 
 
 ;;; Ensure that cursor on `fred` doesn't highlight `fred-bloggs`
