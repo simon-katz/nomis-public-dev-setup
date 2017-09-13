@@ -8,13 +8,28 @@
 ;;;; ___________________________________________________________________________
 ;;;; ---- Support ----
 
-(defun nomis/string->all-positions (string)
+(defun nomis/funcall-with-temp-buffer (mode-fun string position fun)
+  (with-temp-buffer
+    (funcall mode-fun)
+    (insert string)
+    (goto-char position)
+    (funcall fun)))
+
+(defun nomis/string->all-buffer-positions (string)
   "All the positions in a buffer whose contents are STRING.
 That's a list of successive integers starting at 1 (the first position in the
 buffer) and going up to one greater than the length of the string (the last
 position in the buffer)."
   (number-sequence 1
                    (1+ (length string))))
+
+(defun nomis/run-fun-in-all-positions-in-temp-buffer (mode-fun string fun)
+  (mapcar (lambda (position)
+            (nomis/funcall-with-temp-buffer mode-fun
+                                            string
+                                            position
+                                            fun))
+          (nomis/string->all-buffer-positions string)))
 
 (defmacro nomis/pairs->list (&rest pairs)
   "Create a list as specified by PAIRS.
@@ -32,18 +47,12 @@ The result is the concatenation of:
                                     ,(second pair)))
                       pairs)))
 
-(defun nomis/with-temp-buffer-etc (mode-fun string position fun)
-  (with-temp-buffer
-    (funcall mode-fun)
-    (insert string)
-    (goto-char position)
-    (funcall fun)))
+;;;; ___________________________________________________________________________
 
-(defun niht/test (mode-fun string position)
-  (nomis/with-temp-buffer-etc mode-fun
-                              string
-                              position
-                              'nomis-idle-highlight-thing))
+(defun niht/run-basic-test (mode-fun string)
+  (nomis/run-fun-in-all-positions-in-temp-buffer mode-fun
+                                                 string
+                                                 'nomis-idle-highlight-thing))
 
 ;;;; ___________________________________________________________________________
 ;;;; ---- niht/basic-test ----
@@ -52,14 +61,9 @@ The result is the concatenation of:
   "  foo  bar-x
 baz-yy   ")
 
-(defun niht/run-basic-test (position)
-  (niht/test 'emacs-lisp-mode
-             niht/basic-test/string
-             position))
-
 (ert-deftest niht/basic-test ()
-  (should (equal (mapcar 'niht/run-basic-test
-                         (nomis/string->all-positions niht/basic-test/string))
+  (should (equal (niht/run-basic-test 'emacs-lisp-mode
+                                      niht/basic-test/string)
                  (nomis/pairs->list (2 nil)
                                     (4 "foo")
                                     (1 nil)
