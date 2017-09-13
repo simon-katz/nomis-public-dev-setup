@@ -49,7 +49,8 @@ The result is the concatenation of:
 ;;;; ---- niht/basic-test ----
 
 (defvar niht/basic-test/string
-  "  foo  bar  baz   ")
+  "  foo  bar-x
+baz-yy   ")
 
 (defun niht/run-basic-test (position)
   (niht/test 'emacs-lisp-mode
@@ -62,9 +63,8 @@ The result is the concatenation of:
                  (nomis/pairs->list (2 nil)
                                     (4 "foo")
                                     (1 nil)
-                                    (4 "bar")
-                                    (1 nil)
-                                    (4 "baz")
+                                    (6 "bar-x")
+                                    (7 "baz-yy")
                                     (3 nil)))))
 
 ;;;; ___________________________________________________________________________
