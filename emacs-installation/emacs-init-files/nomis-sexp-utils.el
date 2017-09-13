@@ -32,8 +32,13 @@
               (backward-char 1)
               (nomis-looking-at-bracketed-sexp-start)))))
 
+(defun nomis-looking-at-char-1-whitespace-p ()
+  (and (= (point) 1)
+       (nomis-looking-at-whitespace)))
+
 (defun nomis-looking-at-multiple-whitespace ()
   (and (or (nomis-looking-at-whitespace)
+           ;; FIXME What is this next bit for? When you have tests, try removing it.
            (= (point) (point-max)))
        (and (not (= (point) 1))
             (save-excursion
@@ -67,6 +72,7 @@
   ;;       or something.
   (or (nomis-looking-at-bracketed-sexp-start)
       (nomis-looking-at-end-of-empty-bracketed-sexp)
+      (nomis-looking-at-char-1-whitespace-p)
       (nomis-looking-at-multiple-whitespace)
       (nomis-looking-after-bracketed-sexp-end-at-bracketed-sexp-end-or-whitespace)
       (nomis-looking-at-whitespace-after-bracketed-sexp-start)

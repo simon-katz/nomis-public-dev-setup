@@ -40,15 +40,10 @@ position in the buffer)."
              niht/basic-test/string
              position))
 
-(ert-deftest niht/basic-test/first-char-whitespace/bug ()
-  :expected-result :failed ; The fix is `nomis-looking-at-char-1-whitespace-p`
-  (should (equal (niht/run-basic-test 1) nil)))
-
 (ert-deftest niht/basic-test ()
   (should (equal (mapcar 'niht/run-basic-test
                          (string->position-sequence niht/basic-test/string))
-                 '("  foo" ; bug -- see `niht/basic-test/first-char-whitespace/bug
-                   nil
+                 '(nil nil
                    "foo" "foo" "foo" "foo"
                    nil
                    "bar" "bar" "bar" "bar"
