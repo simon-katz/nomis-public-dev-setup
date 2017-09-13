@@ -26,6 +26,7 @@
         paredit-open-round
         paredit-raise-sexp
         paredit-semicolon
+        transpose-sexps
         wdired-finish-edit
         ))
 
