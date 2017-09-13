@@ -8,12 +8,15 @@
 ;;;; ___________________________________________________________________________
 ;;;; ---- Support ----
 
-(defun nomis/map-over-positions-in-temp-buffer (mode-fun
+(defun nomis/map-over-positions-in-temp-buffer (set-mode-fun
                                                 string
                                                 fun
                                                 positions)
+  "Create a temporary buffer, call SET-MODE-FUN, insert STRING, and return
+a list of the results of calling FUN when in the supplied POSITIONS in
+the buffer."
   (with-temp-buffer
-    (funcall mode-fun)
+    (funcall set-mode-fun)
     (insert string)
     (mapcar (lambda (p)
               (goto-char p)
@@ -21,16 +24,18 @@
             positions)))
 
 (defun nomis/string->all-buffer-positions (string)
-  "All the positions in a buffer whose contents are STRING.
-That's a list of successive integers starting at 1 (the first position in the
-buffer) and going up to one greater than the length of the string (the last
+  "A sequence of all the positions in a buffer whose contents are STRING.
+That's a sequence of successive integers starting at 1 (the first position in
+the buffer) and going up to one greater than the length of the string (the last
 position in the buffer)."
   (number-sequence 1
                    (1+ (length string))))
 
-(defun nomis/map-over-temp-buffer (mode-fun string fun)
+(defun nomis/map-over-temp-buffer (set-mode-fun string fun)
+  "Create a temporary buffer, call SET-MODE-FUN, insert STRING, and return
+a list of the results of calling FUN in each position in the buffer."
   (let ((positions (nomis/string->all-buffer-positions string)))
-    (nomis/map-over-positions-in-temp-buffer mode-fun
+    (nomis/map-over-positions-in-temp-buffer set-mode-fun
                                              string
                                              fun
                                              positions)))
@@ -53,8 +58,8 @@ The result is the concatenation of:
 
 ;;;; ___________________________________________________________________________
 
-(defun niht/run-basic-test (mode-fun string)
-  (nomis/map-over-temp-buffer mode-fun
+(defun niht/run-basic-test (set-mode-fun string)
+  (nomis/map-over-temp-buffer set-mode-fun
                               string
                               'nomis-idle-highlight-thing))
 
