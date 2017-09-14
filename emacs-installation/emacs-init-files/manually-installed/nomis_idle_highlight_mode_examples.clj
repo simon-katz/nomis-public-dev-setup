@@ -46,3 +46,11 @@ fred* fred*()
 xxxx fred* xxxx
 
 
+;;; FIXME Weird bug: Move cursor up on down on first char of lines below.
+;;;                  Sometimes get highlighting of `defn` and `as->` (but
+;;;                  it depends on where you came from!).
+(defn ^:private THIS-WAS-nsn->pieces [nsn]
+  (as-> nsn __
+    (name __)
+    (str/split __ #"\.")
+    (map symbol __)))
