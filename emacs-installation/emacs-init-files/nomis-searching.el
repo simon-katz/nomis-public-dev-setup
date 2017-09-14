@@ -33,6 +33,19 @@
        (mapc (lambda (x) (add-to-list 'grep-find-ignored-directories x))
              *extra-ignored-directories*))))
 
+(defun nomis/toggle-include-emacs.d-in-searches ()
+  (interactive)
+  (let ((dir-name ".emacs.d"))
+    (setq grep-find-ignored-directories
+          (if (member dir-name grep-find-ignored-directories)
+              (remove dir-name grep-find-ignored-directories)
+            (cons dir-name grep-find-ignored-directories)))
+    (message "%s %s -- NOTE: THIS WILL APPLY ONLY TO NEW GREP BUFFERS"
+             (if (member dir-name grep-find-ignored-directories)
+                 (message "Excluding")
+               (message "Including"))
+             dir-name)))
+
 ;;;; ___________________________________________________________________________
 
 (progn
