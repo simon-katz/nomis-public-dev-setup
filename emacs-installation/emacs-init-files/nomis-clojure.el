@@ -103,6 +103,13 @@ See: https://github.com/clojure-emacs/clj-refactor.el/wiki/cljr-cycle-privacy"
                (define-key cider-repl-mode-map "{" #'paredit-open-curly)
                (define-key cider-repl-mode-map "}" #'paredit-close-curly))))
 
+
+;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+;;;; Company mode for Cider
+
+(add-hook 'cider-repl-mode-hook #'cider-company-enable-fuzzy-completion)
+(add-hook 'cider-mode-hook #'cider-company-enable-fuzzy-completion)
+
 ;;;; ___________________________________________________________________________
 ;;;; Hooks
 
