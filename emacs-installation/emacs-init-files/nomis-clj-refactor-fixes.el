@@ -73,4 +73,21 @@ form."
 
 ;;;; ___________________________________________________________________________
 
+(when (equal (cljr--version)
+             "2.3.1")  
+  
+  (defun nomis/cljr-cycle-collection-type ()
+    "Display a message that describes the replacements for cycle collection."
+    (interactive)
+    (message (s-join " "
+                     '("Use C-c C-r xxxx"
+                      " where xxxx is one of x or C-x where x is one of"
+                      " (  '  {  [  #")))
+    (beep))
+  
+  (nomis/cljr-add-command
+   '("cc" . (nomis/cljr-cycle-collection-type "Describe replacements for cycle collection." ?y ("code")))))
+
+;;;; ___________________________________________________________________________
+
 (provide 'nomis-clj-refactor-fixes)
