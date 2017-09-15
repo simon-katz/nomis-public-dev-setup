@@ -33,7 +33,8 @@ See: https://github.com/clojure-emacs/clj-refactor.el/wiki/cljr-cycle-privacy"
 (setq clojure-use-metadata-for-privacy t)
 
 ;;;; ___________________________________________________________________________
-;;;; Misc
+;;;; Cider
+;;;; See https://github.com/clojure-emacs/cider.
 
 (progn
   (require 'cider)
@@ -43,6 +44,39 @@ See: https://github.com/clojure-emacs/clj-refactor.el/wiki/cljr-cycle-privacy"
     ;; - 0.9.0-snapshot (2015-02-23)
     ;; Maybe a bug.
     (require 'cider-macroexpansion)))
+
+(setq nrepl-buffer-name-separator "--")
+
+;; (setq nrepl-buffer-name-show-port t)
+
+(setq cider-repl-display-in-current-window t)
+(setq cider-repl-pop-to-buffer-on-connect nil)
+
+(setq cider-repl-history-file "~/.cider-repl-history")
+(setq cider-repl-history-size 5000) ; the default is 500
+
+(setq cider-repl-use-clojure-font-lock t)
+
+(setq cider-eval-result-prefix ";; => ")
+
+;; (setq cider-font-lock-dynamically t)
+
+(when (equal (cider-version) "CIDER 0.10.0")
+  ;; Fix curly braces bug.
+  (add-hook 'cider-repl-mode-hook
+            '(lambda ()
+               (define-key cider-repl-mode-map "{" #'paredit-open-curly)
+               (define-key cider-repl-mode-map "}" #'paredit-close-curly))))
+
+
+;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+;;;; Company mode for Cider
+
+(add-hook 'cider-repl-mode-hook #'cider-company-enable-fuzzy-completion)
+(add-hook 'cider-mode-hook #'cider-company-enable-fuzzy-completion)
+
+;;;; ___________________________________________________________________________
+;;;; Misc
 
 (require 'cider-grimoire)
 
@@ -75,40 +109,6 @@ See: https://github.com/clojure-emacs/clj-refactor.el/wiki/cljr-cycle-privacy"
 ;;   the file is syntactically good (and it isn't when you type that slash).
 
 (setq cljr-magic-requires :prompt)
-
-;;;; ___________________________________________________________________________
-;;;; Cider
-;;;; See https://github.com/clojure-emacs/cider.
-
-(setq nrepl-buffer-name-separator "--")
-
-;; (setq nrepl-buffer-name-show-port t)
-
-(setq cider-repl-display-in-current-window t)
-(setq cider-repl-pop-to-buffer-on-connect nil)
-
-(setq cider-repl-history-file "~/.cider-repl-history")
-(setq cider-repl-history-size 5000) ; the default is 500
-
-(setq cider-repl-use-clojure-font-lock t)
-
-(setq cider-eval-result-prefix ";; => ")
-
-;; (setq cider-font-lock-dynamically t)
-
-(when (equal (cider-version) "CIDER 0.10.0")
-  ;; Fix curly braces bug.
-  (add-hook 'cider-repl-mode-hook
-            '(lambda ()
-               (define-key cider-repl-mode-map "{" #'paredit-open-curly)
-               (define-key cider-repl-mode-map "}" #'paredit-close-curly))))
-
-
-;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-;;;; Company mode for Cider
-
-(add-hook 'cider-repl-mode-hook #'cider-company-enable-fuzzy-completion)
-(add-hook 'cider-mode-hook #'cider-company-enable-fuzzy-completion)
 
 ;;;; ___________________________________________________________________________
 ;;;; Hooks
@@ -145,6 +145,7 @@ See: https://github.com/clojure-emacs/clj-refactor.el/wiki/cljr-cycle-privacy"
 (setq eval-sexp-fu-flash-error-duration 0.5)
 
 ;;;; ___________________________________________________________________________
+;;;; Windows nrepl timeout
 
 (when (equal system-type 'windows-nt)
   (setq nrepl-sync-request-timeout 30))
