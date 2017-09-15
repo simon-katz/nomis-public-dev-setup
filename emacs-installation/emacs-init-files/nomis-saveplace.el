@@ -3,12 +3,19 @@
 ;;;; ___________________________________________________________________________
 ;;;; ---- saveplace ----
 
-;;;; I'm not sure, but this may be need to be done before the windows
-;;;; stuff below in order for things under the control of windows to
-;;;; work.
+;;;; See https://www.emacswiki.org/emacs/SavePlace
 
-(require 'saveplace)
-(setq-default save-place t)
+;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+;;;; For GNU Emacs 24.5 and older versions
+
+;; (require 'saveplace)
+;; (setq-default save-place t)
+
+;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+;;;; For GNU Emacs 25.1 and newer versions
+
+(save-place-mode 1) 
+(setq save-place-forget-unreadable-files nil)
 
 ;;;; ___________________________________________________________________________
 
