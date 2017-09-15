@@ -97,6 +97,8 @@
 
 ;;;; ---- General stuff ----
 
+(require 's)
+(require 'dash)
 (require 'cl)
 (require 'mmt)
 
