@@ -8,7 +8,7 @@
 (progn
   (defvar *extra-ignored-directories*
     (list logs-dir-name
-          ".emacs.d"
+          ;; ".emacs.d"
           ".emacs-backups"
           ".worksheet"
           "out"
