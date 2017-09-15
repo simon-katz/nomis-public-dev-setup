@@ -68,7 +68,7 @@ See: https://github.com/clojure-emacs/clj-refactor.el/wiki/cljr-cycle-privacy"
 
 (define-key clj-refactor-map (kbd "C-c m") 'cljr-helm)
 
-(setq cljr-use-multiple-cursors nil) ; t is broken with hydra and helm
+;; (setq cljr-use-multiple-cursors nil) ; t is broken with hydra and helm -- ah, I think I have fixed it with heml
 
 ;; cljr-auto-sort-ns is t, but doesn't work when I type "set/"
 ;; - Ah, I think sorting isn't invoked, because cleaning ns requires that
