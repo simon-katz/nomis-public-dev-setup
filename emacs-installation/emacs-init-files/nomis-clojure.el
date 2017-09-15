@@ -63,7 +63,7 @@ See: https://github.com/clojure-emacs/clj-refactor.el/wiki/cljr-cycle-privacy"
   (clj-refactor-mode 1)
   (yas-minor-mode 1) ; for adding require/use/import statements
   (cljr-add-keybindings-with-prefix "C-c C-m")
-  (cljr-add-keybindings-with-prefix "M-R") ; keep this until I stop using it
+  ;; (cljr-add-keybindings-with-prefix "M-R") ; keep this until I stop using it
   )
 
 (define-key clj-refactor-map (kbd "C-c m") 'cljr-helm)
