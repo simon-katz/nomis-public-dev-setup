@@ -8,7 +8,16 @@
 
 (defun nomis-init-magit ()
   (company-mode 0)
-  (hl-line-mode)
+  (set-face-background 'magit-section-highlight
+                       ;; default is "grey95", which is pretty much the same as
+                       ;; my default background colour ("#f5f5f5")
+                       (case 5
+                         (1 "palegoldenrod")
+                         (2 "skyblue")
+                         (3 "lightblue")
+                         (4 "lightcyan")
+                         (5 "lavender")
+                         (6 "white"))) 
   (add-to-list 'same-window-regexps "\*magit: .*\*") ; was: (setq magit-status-buffer-switch-function 'switch-to-buffer) -- no longer works
   (setq magit-completing-read-function 'magit-ido-completing-read)
   ;; (setq magit-revert-buffers 'silent) obsolete
