@@ -138,7 +138,8 @@
                  nomis/-nail-warning/n-idle-secs-for-warning))
         (progn
           (nomis/grab-user-attention/low)
-          (message "Don't pick or bite your nails!")
+          (unless (active-minibuffer-window)
+            (message "Don't pick or bite your nails!"))
           `(:repeat ,nomis/-nail-warning/min-secs-between-warnings))
       `(:repeat ,nomis/-nail-warning/check-frequency-secs))))
 
