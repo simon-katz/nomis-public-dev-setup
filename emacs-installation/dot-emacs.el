@@ -102,6 +102,10 @@
 (require 'cl)
 (require 'mmt)
 
+(require 'nomis-ido)
+(require 'nomis-smex)
+(require 'nomis-auto-complete)
+
 (require 'nomis-key-chord)
 (require 'nomis-hydra)
 
@@ -110,8 +114,6 @@
 (require 'nomis-paredit)
 (require 'nomis-emacs-lisp-and-ielm)
 (require 'nomis-clojure)
-
-(require 'nomis-auto-complete)
 
 ;;;; ---- Lisp and Clojure stuff probably only for me ----
 
@@ -131,8 +133,6 @@
 (require 'nomis-highlighting)
 (require 'nomis-line-numbering)
 (require 'nomis-saveplace)
-(require 'nomis-ido)
-(require 'nomis-smex)
 (when (display-graphic-p)
   (require 'nomis-screens)
   (require 'nomis-frames))
