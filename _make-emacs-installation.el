@@ -45,7 +45,8 @@
                       key-chord
                       yasnippet
                       multiple-cursors
-                      ht))
+                      ht
+                      helm))
 
 (dolist (p my-packages)
   (when (not (package-installed-p p))
