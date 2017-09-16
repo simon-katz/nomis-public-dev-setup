@@ -23,6 +23,20 @@
 ;; (setq ido-handle-duplicate-virtual-buffers 2)
 ;; (setq ido-max-prospects 10)
 
+(progn ; see https://github.com/creichert/ido-vertical-mode.el
+  (ido-vertical-mode 1)
+  (setq ido-vertical-show-count t)
+  (setq ido-vertical-define-keys 'C-n-C-p-up-down-left-right)
+  (setq ido-use-faces t)
+  (set-face-attribute 'ido-vertical-first-match-face nil
+                      :background nil
+                      :foreground "blue")
+  (set-face-attribute 'ido-vertical-only-match-face nil
+                      :background nil
+                      :foreground nil)
+  (set-face-attribute 'ido-vertical-match-face nil
+                      :foreground nil))
+
 ;;;; ___________________________________________________________________________
 ;;;; ---- smex ----
 

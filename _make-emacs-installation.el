@@ -46,7 +46,8 @@
                       yasnippet
                       multiple-cursors
                       ht
-                      helm))
+                      helm
+                      ido-vertical-mode))
 
 (dolist (p my-packages)
   (when (not (package-installed-p p))
