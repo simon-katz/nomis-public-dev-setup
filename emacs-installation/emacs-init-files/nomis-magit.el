@@ -2,10 +2,6 @@
 
 ;;;; ___________________________________________________________________________
 
-(setq magit-log-margin
-      ;; (INIT STYLE WIDTH AUTHOR AUTHOR-WIDTH)
-      '(t "%Y-%m-%d %H:%M:%S" magit-log-margin-width t 18))
-
 (defun nomis-init-magit ()
   (company-mode 0)
   (set-face-background 'magit-section-highlight
@@ -17,7 +13,10 @@
                          (3 "lightblue")
                          (4 "lightcyan")
                          (5 "lavender")
-                         (6 "white"))) 
+                         (6 "white")))
+  (setq magit-log-margin
+        ;; (INIT STYLE WIDTH AUTHOR AUTHOR-WIDTH)
+        '(t "%Y-%m-%d %H:%M:%S" magit-log-margin-width t 18)) 
   (add-to-list 'same-window-regexps "\*magit: .*\*") ; was: (setq magit-status-buffer-switch-function 'switch-to-buffer) -- no longer works
   (setq magit-completing-read-function 'magit-ido-completing-read)
   ;; (setq magit-revert-buffers 'silent) obsolete
