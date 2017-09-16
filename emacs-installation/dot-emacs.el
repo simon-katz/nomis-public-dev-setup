@@ -102,8 +102,7 @@
 (require 'cl)
 (require 'mmt)
 
-(require 'nomis-ido)
-(require 'nomis-smex)
+(require 'nomis-ido-and-smex)
 (require 'nomis-auto-complete)
 
 (require 'nomis-key-chord)
