@@ -3,6 +3,11 @@
 ;;;; ___________________________________________________________________________
 
 (defun nomis/cljr-add-command (command-spec)
+  "Add a cljr command. See the entries in `cljr--all-helpers` to see what
+COMMAND-SPEC is.
+This does the necessary for the cljr key binding prefix and for `cljr-helm`.
+cljr's hydra menus aren't built from `cljr--all-helpers`, so the cljr hydra
+menus are not changed."
   (setq cljr--all-helpers
         (sort (cons command-spec
                     cljr--all-helpers)
