@@ -5,6 +5,7 @@
 
 (require 'clojure-mode)
 (require 'nomis-clojure-mode-fixes)
+(require 'nomis-clojure-mode-extras)
 
 (define-key clojure-mode-map (kbd "RET") 'newline-and-indent)
 
