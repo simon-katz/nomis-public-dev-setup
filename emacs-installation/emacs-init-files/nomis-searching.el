@@ -20,7 +20,8 @@
           ;; "emacs-configuration/nomis-addons/cygwin-mount.el"
           ))
   (defvar *extra-ignored-files*
-    '(;; ".jar"
+    '(".ido.last"
+      ;; ".jar"
       ;; ".exe"
       ".cider-repl-history"
       "*.iml"
