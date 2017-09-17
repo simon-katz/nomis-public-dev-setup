@@ -21,6 +21,7 @@
           ))
   (defvar *extra-ignored-files*
     '(".ido.last"
+      ".smex-items"
       ;; ".jar"
       ;; ".exe"
       ".cider-repl-history"
