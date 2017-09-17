@@ -52,8 +52,16 @@ See: https://github.com/clojure-emacs/clj-refactor.el/wiki/cljr-cycle-privacy"
 (setq cider-repl-display-in-current-window t)
 (setq cider-repl-pop-to-buffer-on-connect nil)
 
-(setq cider-repl-history-file "~/.cider-repl-history")
-(setq cider-repl-history-size 5000) ; the default is 500
+
+(progn
+  ;; In projects, you can create a directory-local variable for
+  ;; `cider-repl-history-file` in `cider-repl-mode`, as follows:
+  ;; - create a file called ".dir-locals.el" with this content:
+  ;;     ((cider-repl-mode
+  ;;       (cider-repl-history-file . ".cider-repl-history")))
+  (setq cider-repl-history-file "~/.cider-repl-history")
+  (setq cider-repl-history-size 5000) ; the default is 500
+  )
 
 (setq cider-repl-use-clojure-font-lock t)
 
