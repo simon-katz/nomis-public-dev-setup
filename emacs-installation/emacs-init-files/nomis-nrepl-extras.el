@@ -469,7 +469,7 @@ Ring the bell if there's an error in the Clojure world."
 
 (define-key clojure-mode-map (kbd "C-c ;")
   'nomis-nrepl-insert-reader-comment)
-(define-key clojure-mode-map (kbd "C-c M-;")
+(define-key clojure-mode-map (kbd "C-c :")
   'nomis-nrepl-remove-reader-comment)
 
 (defun nomis-nrepl-insert-reader-comment (prefix)
@@ -496,8 +496,10 @@ comments."
 (defun nomis-nrepl-remove-reader-comment ()
   "Remove a reader comment enclosing point."
   (interactive "*")
+  ;; wrong -- not structure-aware
   (save-excursion
-    (when (search-backward "#_" nil t) ; wrong -- not structure-aware
+    (forward-char 2)
+    (when (search-backward "#_" nil t)
       (delete-char 2))))
 
 ;;;; ___________________________________________________________________________
