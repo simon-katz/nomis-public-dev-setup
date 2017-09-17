@@ -63,6 +63,21 @@ form."
 
 ;;;; ___________________________________________________________________________
 
+(require 'browse-url)
+
+(when (equal (cljr--version)
+             "2.3.1")
+  
+  (defun nomis/cljr-cheatsheet ()
+    "Open a cljr cheatsheet."
+    (interactive)
+    (browse-url "https://www.cheatography.com/bilus/cheat-sheets/clj-refactor/pdf/"))
+
+  (nomis/cljr-add-command
+   '("zz" . (nomis/cljr-cheatsheet "cljr cheatsheet" ?h ("zz")))))
+
+;;;; ___________________________________________________________________________
+
 (when (equal (cljr--version)
              "2.3.1")
   
