@@ -6,6 +6,8 @@
 (require 'clojure-mode)
 (require 'nomis-clojure-mode-fixes)
 
+(define-key clojure-mode-map (kbd "RET") 'newline-and-indent)
+
 (setq clojure-use-metadata-for-privacy t)
 
 ;;;; ___________________________________________________________________________
@@ -68,8 +70,6 @@
 (require 'nomis-cider-extras)
 
 (require 'align-cljlet)
-
-(define-key clojure-mode-map (kbd "RET") 'newline-and-indent)
 
 ;;;; ___________________________________________________________________________
 ;;;; clj-refactor
