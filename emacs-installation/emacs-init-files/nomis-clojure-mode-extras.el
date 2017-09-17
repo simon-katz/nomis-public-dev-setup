@@ -9,11 +9,11 @@
 ;;;;     ported from slime/contrib/slime-editing-commands.el
 
 (define-key clojure-mode-map (kbd "C-c ;")
-  'nomis-nrepl-insert-reader-comment)
+  'nomis-clojure/insert-reader-comment)
 (define-key clojure-mode-map (kbd "C-c :")
-  'nomis-nrepl-remove-reader-comment)
+  'nomis-clojure/remove-reader-comment)
 
-(defun nomis-nrepl-insert-reader-comment (prefix)
+(defun nomis-clojure/insert-reader-comment (prefix)
   "Insert a reader comment (#_) around the s-expression containing the point.
 If this command is invoked repeatedly (without any other command
 occurring between invocations), the comment progressively moves outward
@@ -34,7 +34,7 @@ comments."
           (decf prefix))
         (insert "#_")))))
 
-(defun nomis-nrepl-remove-reader-comment ()
+(defun nomis-clojure/remove-reader-comment ()
   "Remove a reader comment enclosing point."
   (interactive "*")
   ;; wrong -- not structure-aware
