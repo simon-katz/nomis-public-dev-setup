@@ -23,6 +23,7 @@
     ;; - 0.9.0-snapshot (2015-02-23)
     ;; Maybe a bug.
     (require 'cider-macroexpansion)))
+(require 'nomis-cider-extras)
 
 (setq nrepl-buffer-name-separator "--")
 
@@ -68,7 +69,6 @@
 (require 'cider-grimoire)
 
 (require 'nomis-clojure-indentation)
-(require 'nomis-cider-extras)
 
 (require 'align-cljlet)
 
@@ -87,7 +87,7 @@
 
 (define-key clj-refactor-map (kbd "C-c m") 'cljr-helm)
 
-;; (setq cljr-use-multiple-cursors nil) ; t is broken with hydra and helm -- ah, I think I have fixed it with heml
+;; (setq cljr-use-multiple-cursors nil) ; t is broken with hydra and helm -- ah, I think I have fixed it with helm at least
 
 ;; cljr-auto-sort-ns is t, but doesn't work when I type "set/"
 ;; - Ah, I think sorting isn't invoked, because cleaning ns requires that
