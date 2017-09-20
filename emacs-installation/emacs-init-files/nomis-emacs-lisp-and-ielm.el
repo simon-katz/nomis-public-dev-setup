@@ -7,7 +7,8 @@
     paredit-mode
     ,(lambda () (set (make-local-variable 'comment-column) 0))
     turn-on-elisp-slime-nav-mode
-    turn-on-eldoc-mode))
+    turn-on-eldoc-mode
+    aggressive-indent-mode))
 
 (dolist (hook '(emacs-lisp-mode-hook
                 ielm-mode-hook))

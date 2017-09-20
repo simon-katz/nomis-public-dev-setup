@@ -47,7 +47,8 @@
                       multiple-cursors
                       ht
                       helm
-                      ido-vertical-mode))
+                      ido-vertical-mode
+                      aggressive-indent))
 
 (dolist (p my-packages)
   (when (not (package-installed-p p))
