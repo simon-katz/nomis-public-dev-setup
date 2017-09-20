@@ -352,9 +352,9 @@ Really send to REPL? "
 ")
 
 (defun transform-string-value (value)
-  (replace-regexp-in-string
-   "\\\\n" nomis-newline-string ; replace all \n with newline
-   value))
+  (s-replace "\\n"
+             nomis-newline-string
+             value))
 
 ;;## (defun get-string-from-file (filePath)
 ;;##   "Return FILEPATH's file content."
@@ -376,22 +376,33 @@ Really send to REPL? "
    character less as is the convention for Clojure doc strings
    (which is stupid)."
   (interactive "*P")
-  (let* ((string (nomis-grab-text
-                  :top-level-p nil
-                  :delete-p t))
-         (clojure-form-as-string
-          (format "(do (require '[com.nomistech.emacs-hacks-in-clojure :as ehic])
-                  (ehic/rearrange-string-into-lines '%s %s %s))"
-                  string
-                  (+ (current-column)
-                     (if prefix 0 1))
-                  72))
-         (string-value (cider-eval-and-get-value clojure-form-as-string
-                                                 cider-buffer-ns)))
-    (save-excursion
-      (insert
-       (format "\"%s\""
-               (transform-string-value string-value))))))
+  (if (y-or-n-p "Use `fill-paragraph` instead?")
+      (fill-paragraph)
+    (let* ((string (nomis-grab-text
+                    :top-level-p nil
+                    :delete-p t))
+           (clojure-form-as-string
+            (format "(do (require '[com.nomistech.emacs-hacks-in-clojure :as ehic])
+                         (ehic/rearrange-string-into-lines '%s %s %s))"
+                    string
+                    (+ (current-column)
+                       (if prefix 0 1))
+                    72)))
+      (cider-interactive-eval clojure-form-as-string
+                              (nrepl-make-response-handler
+                               (current-buffer)
+                               (lambda (buffer value)
+                                 (let ((value (transform-string-value value)))
+                                   (with-current-buffer buffer
+                                     (insert
+                                      (if (derived-mode-p 'cider-clojure-interaction-mode)
+                                          (format "\n%s\n" value)
+                                        value)))))
+                               (lambda (_buffer out)
+                                 (cider-emit-interactive-eval-output out))
+                               (lambda (_buffer err)
+                                 (cider-emit-interactive-eval-err-output err))
+                               '())))))
 
 (define-key cider-mode-map (kbd "C-c C-g")
   'nomis-cider-rearrange-string-into-lines)
