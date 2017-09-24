@@ -23,16 +23,18 @@
     ;; (setq magit-revert-buffers 'silent) obsolete
     )
   (progn ; New auto-revert stuff
-    ;; Magit now sets up auto-revert-mode on buffers it knows about (or something).
-    ;; Sheesh!
+    ;; Magit now sets up auto-revert-mode on buffers it knows about (or
+    ;; something). Sheesh!
+    ;; I want reverting only when I do a Magit operation, but that has been
+    ;; broken.
     ;; See https://emacs.stackexchange.com/questions/35701/magit-sets-auto-revert-mode-annoying
+    ;; FIXME Maybe you can turn off the reverting when refreshing a
+    ;;       Magit Status buffer.
     (with-eval-after-load 'magit-autorevert
-      (when (equal magit-version "2.10.3") ; FIXME Move this to a "fixes" file
-        ;; I want reverting only when I do a Magit operation, but that has been
-        ;; broken. Better to have auto-revert completely off.
+      (when (equal magit-version "2.10.3")
         (magit-auto-revert-mode 0)
-        ;; Maybe good to revert buffers when Magit makes changes:
-        (defalias 'magit-auto-revert-buffers 'revert-all-unmodified-buffers))))
+        (defalias 'magit-auto-revert-buffers
+          'revert-all-unmodified-buffers-in-git-repo))))
   ;; (setq magit-push-always-verify nil) ; no longer exists
   (setq magit-diff-refine-hunk 'all)
   (setq magit-diff-highlight-trailing nil)
