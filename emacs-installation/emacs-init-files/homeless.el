@@ -25,6 +25,14 @@
   (when (y-or-n-p "Really revert modified buffers? You will lose stuff.")
     (_revert-all-buffers 'buffer-modified-p)) )
 
+(defun revert-all-unmodified-buffers-in-git-repo ()
+  "Refreshes all open modified buffers in current buffer's Git repo
+ from their files."
+  (interactive)
+  (_revert-all-buffers (lambda (b)
+                         (and (not (buffer-modified-p b))
+                              (magit-auto-revert-repository-buffer-p b)))))
+
 ;;;; ___________________________________________________________________________
 
 (defun nomis-untabify-buffer ()
