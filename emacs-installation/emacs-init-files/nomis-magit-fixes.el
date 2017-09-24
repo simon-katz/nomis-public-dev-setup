@@ -1,7 +1,7 @@
 ;;;; Init stuff -- Fix problems with Magit.
 
 ;;;; ___________________________________________________________________________
-;;;; ---- nomis/fix-magit-auto-revert ----
+;;;; ---- -nomis/fix-magit-auto-revert ----
 ;;;; Don't revert buffers other than after performing a Magit operation that
 ;;;; changes files.
 ;;;; See https://emacs.stackexchange.com/questions/35701/magit-sets-auto-revert-mode-annoying
@@ -10,19 +10,19 @@
 ;;;; (eg by discarding changes to the file) causes all buffers in the repo
 ;;;; to be reverted.
 
-(defun nomis/fix-magit-auto-revert/2.10.3 ()
+(defun -nomis/fix-magit-auto-revert/2.10.3 ()
 
   (with-eval-after-load 'magit-autorevert
 
     (magit-auto-revert-mode 0)
 
-    (defvar *nomis/magit-auto-revert-buffers/do-it?* t)
+    (defvar *nomis/magit-revert-buffers?* t)
 
     (defun nomis/magit-refresh ()
       "A replacement for the \"g\" key binding in `magit-mode-map`. This does
 not revert buffers."
       (interactive)
-      (let* ((*nomis/magit-auto-revert-buffers/do-it?* nil))
+      (let* ((*nomis/magit-revert-buffers?* nil))
         (magit-refresh)))
     
     (define-key magit-mode-map "g" 'nomis/magit-refresh)
@@ -30,20 +30,20 @@ not revert buffers."
     (advice-add 'magit-auto-revert-buffers
                 :around
                 (lambda (_)
-                  (when *nomis/magit-auto-revert-buffers/do-it?*
+                  (when *nomis/magit-revert-buffers?*
                     (revert-all-unmodified-buffers-in-git-repo)))
-                '((name . nomis/hack-auto-refresh)))))
+                '((name . -nomis/hack-auto-refresh)))))
 
-(defun nomis/fix-magit-auto-revert ()
+(defun -nomis/fix-magit-auto-revert ()
   (cond
    ((equal magit-version "2.10.3")
-    (nomis/fix-magit-auto-revert/2.10.3))
+    (-nomis/fix-magit-auto-revert/2.10.3))
    (t
     (message-box (s-join " "
-                         '("Revisit `nomis/fix-magit-auto-revert`"
+                         '("Revisit `-nomis/fix-magit-auto-revert`"
                            "for this version of Magit."))))))
 
-(add-hook 'magit-mode-hook 'nomis/fix-magit-auto-revert)
+(add-hook 'magit-mode-hook '-nomis/fix-magit-auto-revert)
 
 ;;;; ___________________________________________________________________________
 
