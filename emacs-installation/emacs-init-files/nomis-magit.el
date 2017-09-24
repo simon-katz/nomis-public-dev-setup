@@ -30,8 +30,8 @@
     ;; See https://emacs.stackexchange.com/questions/35701/magit-sets-auto-revert-mode-annoying
     ;; FIXME Maybe you can turn off the reverting when refreshing a
     ;;       Magit Status buffer.
-    (with-eval-after-load 'magit-autorevert
-      (when (equal magit-version "2.10.3")
+    (when (equal magit-version "2.10.3")
+      (with-eval-after-load 'magit-autorevert
         (magit-auto-revert-mode 0)
         (defvar *nomis/magit-auto-revert-buffers/do-it?* t)
         (defun nomis/magit-refresh ()
