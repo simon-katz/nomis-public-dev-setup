@@ -29,7 +29,7 @@
     (_revert-all-buffers 'buffer-modified-p)) )
 
 (defun revert-all-unmodified-buffers-in-git-repo ()
-  "Refreshes all open modified buffers in current buffer's Git repo
+  "Refreshes all open unmodified buffers in current buffer's Git repo
  from their files."
   (interactive)
   (_revert-all-buffers (lambda (b)
