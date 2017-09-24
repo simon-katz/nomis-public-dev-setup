@@ -33,8 +33,18 @@
     (with-eval-after-load 'magit-autorevert
       (when (equal magit-version "2.10.3")
         (magit-auto-revert-mode 0)
-        (defalias 'magit-auto-revert-buffers
-          'revert-all-unmodified-buffers-in-git-repo))))
+        (defvar *nomis/magit-auto-revert-buffers/do-it?* t)
+        (defun nomis/magit-refresh ()
+          (interactive)
+          (let ((*nomis/magit-auto-revert-buffers/do-it?* nil))
+            (magit-refresh)))
+        (define-key magit-mode-map "g" 'nomis/magit-refresh)
+        (advice-add 'magit-auto-revert-buffers
+                    :around
+                    (lambda (_)
+                      (when *nomis/magit-auto-revert-buffers/do-it?*
+                        (revert-all-unmodified-buffers-in-git-repo)))
+                    '((name . nomis/hack-auto-refresh))))))
   ;; (setq magit-push-always-verify nil) ; no longer exists
   (setq magit-diff-refine-hunk 'all)
   (setq magit-diff-highlight-trailing nil)
