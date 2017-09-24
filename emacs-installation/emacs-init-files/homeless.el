@@ -10,7 +10,10 @@
   (dolist (buf (buffer-list))
     (with-current-buffer buf
       (when (and (buffer-file-name) (funcall buffer-predicate buf))
-        (revert-buffer t t t) )))
+        (condition-case e
+            (revert-buffer t t t)
+          (error
+           (message "%s" e))))))
   (message "Refreshed open files."))
 
 (defun revert-all-unmodified-buffers ()
