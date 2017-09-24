@@ -2,6 +2,8 @@
 
 ;;;; ___________________________________________________________________________
 
+(require 'nomis-magit-fixes)
+
 (defun nomis-init-magit ()
   (company-mode 0)
   (set-face-background 'magit-section-highlight
@@ -22,29 +24,6 @@
   (progn ; Old auto-revert stuff
     ;; (setq magit-revert-buffers 'silent) obsolete
     )
-  (progn ; New auto-revert stuff
-    ;; Magit now sets up auto-revert-mode on buffers it knows about (or
-    ;; something). Sheesh!
-    ;; I want reverting only when I do a Magit operation, but that has been
-    ;; broken.
-    ;; See https://emacs.stackexchange.com/questions/35701/magit-sets-auto-revert-mode-annoying
-    ;; FIXME Maybe you can turn off the reverting when refreshing a
-    ;;       Magit Status buffer.
-    (when (equal magit-version "2.10.3")
-      (with-eval-after-load 'magit-autorevert
-        (magit-auto-revert-mode 0)
-        (defvar *nomis/magit-auto-revert-buffers/do-it?* t)
-        (defun nomis/magit-refresh ()
-          (interactive)
-          (let ((*nomis/magit-auto-revert-buffers/do-it?* nil))
-            (magit-refresh)))
-        (define-key magit-mode-map "g" 'nomis/magit-refresh)
-        (advice-add 'magit-auto-revert-buffers
-                    :around
-                    (lambda (_)
-                      (when *nomis/magit-auto-revert-buffers/do-it?*
-                        (revert-all-unmodified-buffers-in-git-repo)))
-                    '((name . nomis/hack-auto-refresh))))))
   ;; (setq magit-push-always-verify nil) ; no longer exists
   (setq magit-diff-refine-hunk 'all)
   (setq magit-diff-highlight-trailing nil)
