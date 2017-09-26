@@ -6,10 +6,10 @@
   "~/org/public-persona/blog-using-jekyll")
 
 (defvar nomis/org-publish-base-directory
-  (concat nomis/org-jekyll-base-directory "/in"))
+  (concat nomis/org-jekyll-base-directory "/001-in"))
 
 (defvar nomis/org-publish-publishing-directory
-  (concat nomis/org-jekyll-base-directory "/public_html/"))
+  (concat nomis/org-jekyll-base-directory "/002-for-jekyll/"))
 
 (setq org-publish-project-alist
       `(("org-notes"
