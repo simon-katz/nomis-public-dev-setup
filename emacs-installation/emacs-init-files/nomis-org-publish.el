@@ -28,9 +28,9 @@
          :publishing-function org-publish-attachment)
         ("nomis-jekyll-blog" :components ("org-notes" "org-static"))))
 
-(defun nomis/publish-blog/jekyll ()
-  (interactive)
-  (org-publish-project "nomis-jekyll-blog"))
+(defun nomis/publish-blog/jekyll (force?)
+  (interactive "P")
+  (org-publish-project "nomis-jekyll-blog" force?))
 
 ;;;; ___________________________________________________________________________
 
