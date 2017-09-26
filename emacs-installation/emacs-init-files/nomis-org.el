@@ -273,6 +273,10 @@ subheading at this level in the previous parent."
 
 (add-hook 'post-command-hook 'nomis/org-show-link-destination)
 
+;;;; ________ *** Publishing
+
+(require 'nomis-org-publish)
+
 ;;;; ________ ** end
 
 (provide 'nomis-org)
