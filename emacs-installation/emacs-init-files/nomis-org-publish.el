@@ -2,6 +2,8 @@
 
 (require 'ox-publish)
 
+(setq org-export-with-toc nil)
+
 (defvar nomis/org-jekyll-base-directory
   "~/org/public-persona/blog-using-jekyll")
 
