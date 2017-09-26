@@ -19,7 +19,7 @@
          :recursive t
          :publishing-function org-html-publish-to-html
          :headline-levels 4 ; Just the default for this project.
-         :auto-preamble t)
+         :body-only t)
         ("org-static"
          :base-directory ,nomis/org-publish-base-directory
          :base-extension "css\\|js\\|png\\|jpg\\|gif\\|pdf\\|mp3\\|ogg\\|swf"
