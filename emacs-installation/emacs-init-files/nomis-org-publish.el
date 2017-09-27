@@ -6,28 +6,30 @@
 
 (setq org-export-with-toc nil)
 
-(defvar nomis/org-jekyll-base-directory
-  "~/development-100/repositories/nomis/blog-play-using-jekyll")
+(defvar nomis/repos-directory "~/development-100/repositories/nomis/")
 
-(defvar nomis/org-publish-base-directory
-  (concat nomis/org-jekyll-base-directory "/001-in"))
+(defvar nomis/jekyll-blog/base-directory
+  (concat nomis/repos-directory "blog-play-using-jekyll/"))
 
-(defvar nomis/org-publish-publishing-directory
-  (concat nomis/org-jekyll-base-directory "/002-for-jekyll/"))
+(defvar nomis/jekyll-blog/org-directory
+  (concat nomis/jekyll-blog/base-directory "001-org/"))
+
+(defvar nomis/jekyll-blog/jekyll-input-directory
+  (concat nomis/jekyll-blog/base-directory "002-jekyll-input/"))
 
 (setq org-publish-project-alist
       `(("org-notes"
-         :base-directory ,nomis/org-publish-base-directory
+         :base-directory ,nomis/jekyll-blog/org-directory
          :base-extension "org"
-         :publishing-directory ,nomis/org-publish-publishing-directory
+         :publishing-directory ,nomis/jekyll-blog/jekyll-input-directory
          :recursive t
          :publishing-function org-html-publish-to-html
          :headline-levels 4 ; Just the default for this project.
          :body-only t)
         ("org-static"
-         :base-directory ,nomis/org-publish-base-directory
+         :base-directory ,nomis/jekyll-blog/org-directory
          :base-extension "css\\|js\\|png\\|jpg\\|gif\\|pdf\\|mp3\\|ogg\\|swf"
-         :publishing-directory ,nomis/org-publish-publishing-directory
+         :publishing-directory ,nomis/jekyll-blog/jekyll-input-directory
          :recursive t
          :publishing-function org-publish-attachment)
         ("nomis-jekyll-blog" :components ("org-notes" "org-static"))))
