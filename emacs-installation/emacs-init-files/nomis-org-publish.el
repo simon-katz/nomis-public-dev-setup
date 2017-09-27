@@ -17,6 +17,9 @@
 (defvar nomis/jekyll-blog/jekyll-input-directory
   (concat nomis/jekyll-blog/base-directory "002-jekyll-input/"))
 
+(defvar nomis/jekyll-blog/site-directory
+  (concat nomis/jekyll-blog/base-directory "003-site/"))
+
 (setq org-publish-project-alist
       `(("org-notes"
          :base-directory ,nomis/jekyll-blog/org-directory
@@ -36,7 +39,13 @@
 
 (defun nomis/publish-blog/jekyll (force?)
   (interactive "P")
-  (org-publish-project "nomis-jekyll-blog" force?))
+  (org-publish-project "nomis-jekyll-blog" force?)
+  (shell-command (s-join " "
+                         `("jekyll build"
+                           "--source"
+                           ,nomis/jekyll-blog/jekyll-input-directory
+                           "--destination"
+                           ,nomis/jekyll-blog/site-directory))))
 
 ;;;; ___________________________________________________________________________
 
