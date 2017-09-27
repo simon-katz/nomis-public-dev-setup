@@ -1,11 +1,13 @@
-;;;; ________ * Init stuff -- Org Mode.
+;;;; Init stuff -- Org Mode.
+
+;;;; ___________________________________________________________________________
 
 (require 'ox-publish)
 
 (setq org-export-with-toc nil)
 
 (defvar nomis/org-jekyll-base-directory
-  "~/org/public-persona/blog-using-jekyll")
+  "~/development-100/repositories/nomis/blog-play-using-jekyll")
 
 (defvar nomis/org-publish-base-directory
   (concat nomis/org-jekyll-base-directory "/001-in"))
