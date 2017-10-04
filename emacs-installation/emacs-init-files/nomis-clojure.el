@@ -78,6 +78,7 @@
 (require 'clj-refactor)
 (require 'nomis-clj-refactor-deduce-hydras)
 (require 'nomis-clj-refactor-fixes)
+(require 'cljr-helm)
 
 (defun nomis-setup-clj-refactor-mode ()
   (clj-refactor-mode 1)
