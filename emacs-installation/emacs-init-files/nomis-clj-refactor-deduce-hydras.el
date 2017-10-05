@@ -6,12 +6,18 @@
 (require 'dash)
 (require 'ht)
 
+(defconst nomis/cljr--hydra/type->command-key/alist
+  '(("ns"            . "n")
+    ("code"          . "c")
+    ("project"       . "p")
+    ("toplevel-form" . "t")
+    ("cljr"          . "s")))
+
+(defconst nomis/cljr--hydra/types
+  (-map 'car nomis/cljr--hydra/type->command-key/alist))
+
 (defconst nomis/cljr--hydra/type->command-key/ht
-  (ht ("ns"            "n")
-      ("code"          "c")
-      ("project"       "p")
-      ("toplevel-form" "t")
-      ("cljr"          "s")))
+  (ht<-alist nomis/cljr--hydra/type->command-key/alist))
 
 (defconst nomis/cljr--hydra/doc-string-separator
   (make-string 60 ?-))
@@ -21,7 +27,10 @@
        (-map (lambda (cljr-helper) (-last-item (cdr cljr-helper))))
        (-flatten)
        (-distinct)
-       (-remove-item "hydra")))
+       (-remove-item "hydra")
+       (-sort (lambda (x y)
+                (< (position x nomis/cljr--hydra/types :test 'equal)
+                   (position y nomis/cljr--hydra/types :test 'equal))))))
 
 (defun nomis/cljr--hydra/type->name-string (type)
   (concat "nomis/cljr--hydra/" type "-menu"))
@@ -46,6 +55,7 @@
                           (-last-item (cdr cljr-helper)))))))
 
 ;;;; ___________________________________________________________________________
+;;;; Hydras for individual refactoring types
 
 (defun nomis/cljr--hydra/cljr-helpers->hydra-doc-string (cljr-helpers)
   (s-join "\n"
@@ -65,7 +75,7 @@
                (-map (lambda (cljr-helper)
                        (list (car cljr-helper)
                              (cadr cljr-helper)
-                             ;; #### FIXME
+                             ;; #### FIXME Maybe a bug you've not copied from clj-refactor
                              :exit t))))
           '(("q" nil "quit"))))
 
@@ -77,15 +87,20 @@
        ,@(nomis/cljr--hydra/cljr-helpers->hydra-heads cljr-helpers))))
 
 ;;;; ___________________________________________________________________________
+;;;; Top-level Hydra
 
-(defun nomis/cljr--hydra/cljr-helpers->top-level-hydra-doc-string ()
-  "
-#### MAKE DOC STRING
-Available refactoring types
------------------------------------------------------------------------------
-_n_: Ns related refactorings      _c_: Code related refactorings
-_p_: Project related refactorings _t_: Top level forms related refactorings
-_s_: Refactor related functions")
+(defun nomis/cljr--hydra/cljr-helpers->top-level-hydra-doc-string (all-types)
+  (s-join "\n"
+          (list
+           ""
+           "#### MAKE DOC STRING"
+           "Available refactoring types"
+           "-----------------------------------------------------------------------------"
+           "_n_: Ns related refactorings"
+           "_c_: Code related refactorings"
+           "_p_: Project related refactorings"
+           "_t_: Top level forms related refactorings"
+           "_s_: Refactor related functions")))
 
 (defun nomis/cljr--hydra/cljr-helpers->top-level-hydra-heads (all-types)
   (append (->> all-types
@@ -98,8 +113,10 @@ _s_: Refactor related functions")
 (defun nomis/cljr--hydra/top-level-hydra-defining-form (all-types)
   `(defhydra nomis/cljr--hydra/help-menu
      (:color pink :hint nil)
-     ,(nomis/cljr--hydra/cljr-helpers->top-level-hydra-doc-string)
+     ,(nomis/cljr--hydra/cljr-helpers->top-level-hydra-doc-string all-types)
      ,@(nomis/cljr--hydra/cljr-helpers->top-level-hydra-heads all-types)))
+
+;;;; ___________________________________________________________________________
 
 (defmacro nomis/cljr--hydra/def-hydras ()
   (let ((all-types (nomis/cljr--hydra/all-types)))
@@ -108,13 +125,10 @@ _s_: Refactor related functions")
                all-types)
        ,(nomis/cljr--hydra/top-level-hydra-defining-form all-types))))
 
-;;;; ___________________________________________________________________________
-
 (nomis/cljr--hydra/def-hydras)
 
-
-;;;; FIXME #### Define the top-level hydra.
 ;;;; FIXME #### Deal with updating `cljr--all-helpers`.
+;;;;            (That was how you got started on this!)
 
 
 (define-key global-map (kbd "C-M-}") 'nomis/cljr--hydra/help-menu/body) ; FIXME #### Temp

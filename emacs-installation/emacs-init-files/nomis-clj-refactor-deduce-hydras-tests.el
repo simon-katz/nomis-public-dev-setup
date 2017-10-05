@@ -28,6 +28,45 @@ _sr_: Stop referring
                       ("rm" cljr-require-macro :exit t)
                       ("sr" cljr-stop-referring :exit t)
                       ("q" nil "quit"))
+                    (defhydra nomis/cljr--hydra/code-menu
+                      (:color pink :hint nil)
+                      "
+code-related refactorings
+------------------------------------------------------------
+_ci_: Cycle if
+_ct_: Cycle thread
+_dk_: Destructure keys
+_el_: Expand let
+_fu_: Find usages
+_il_: Introduce let
+_is_: Inline symbol
+_ml_: Move to let
+_pf_: Promote function
+_rl_: Remove let
+_rs_: Rename symbol
+_tf_: Thread first all
+_th_: Thread
+_tl_: Thread last all
+_ua_: Unwind all
+_uw_: Unwind
+"
+                      ("ci" clojure-cycle-if :exit t)
+                      ("ct" cljr-cycle-thread :exit t)
+                      ("dk" cljr-destructure-keys :exit t)
+                      ("el" cljr-expand-let :exit t)
+                      ("fu" cljr-find-usages :exit t)
+                      ("il" cljr-introduce-let :exit t)
+                      ("is" cljr-inline-symbol :exit t)
+                      ("ml" cljr-move-to-let :exit t)
+                      ("pf" cljr-promote-function :exit t)
+                      ("rl" cljr-remove-let :exit t)
+                      ("rs" cljr-rename-symbol :exit t)
+                      ("tf" clojure-thread-first-all :exit t)
+                      ("th" clojure-thread :exit t)
+                      ("tl" clojure-thread-last-all :exit t)
+                      ("ua" clojure-unwind-all :exit t)
+                      ("uw" clojure-unwind :exit t)
+                      ("q" nil "quit"))
                     (defhydra nomis/cljr--hydra/project-menu
                       (:color pink :hint nil)
                       "
@@ -88,45 +127,6 @@ _ad_: Add declaration
                       ("rf" cljr-rename-file-or-dir :exit t)
                       ("ad" cljr-add-declaration :exit t)
                       ("q" nil "quit"))
-                    (defhydra nomis/cljr--hydra/code-menu
-                      (:color pink :hint nil)
-                      "
-code-related refactorings
-------------------------------------------------------------
-_ci_: Cycle if
-_ct_: Cycle thread
-_dk_: Destructure keys
-_el_: Expand let
-_fu_: Find usages
-_il_: Introduce let
-_is_: Inline symbol
-_ml_: Move to let
-_pf_: Promote function
-_rl_: Remove let
-_rs_: Rename symbol
-_tf_: Thread first all
-_th_: Thread
-_tl_: Thread last all
-_ua_: Unwind all
-_uw_: Unwind
-"
-                      ("ci" clojure-cycle-if :exit t)
-                      ("ct" cljr-cycle-thread :exit t)
-                      ("dk" cljr-destructure-keys :exit t)
-                      ("el" cljr-expand-let :exit t)
-                      ("fu" cljr-find-usages :exit t)
-                      ("il" cljr-introduce-let :exit t)
-                      ("is" cljr-inline-symbol :exit t)
-                      ("ml" cljr-move-to-let :exit t)
-                      ("pf" cljr-promote-function :exit t)
-                      ("rl" cljr-remove-let :exit t)
-                      ("rs" cljr-rename-symbol :exit t)
-                      ("tf" clojure-thread-first-all :exit t)
-                      ("th" clojure-thread :exit t)
-                      ("tl" clojure-thread-last-all :exit t)
-                      ("ua" clojure-unwind-all :exit t)
-                      ("uw" clojure-unwind :exit t)
-                      ("q" nil "quit"))
                     (defhydra nomis/cljr--hydra/cljr-menu
                       (:color pink :hint nil)
                       "
@@ -144,13 +144,15 @@ _?_: Describe refactoring
 #### MAKE DOC STRING
 Available refactoring types
 -----------------------------------------------------------------------------
-_n_: Ns related refactorings      _c_: Code related refactorings
-_p_: Project related refactorings _t_: Top level forms related refactorings
+_n_: Ns related refactorings
+_c_: Code related refactorings
+_p_: Project related refactorings
+_t_: Top level forms related refactorings
 _s_: Refactor related functions"
                       ("n" nomis/cljr--hydra/ns-menu/body :exit t)
+                      ("c" nomis/cljr--hydra/code-menu/body :exit t)
                       ("p" nomis/cljr--hydra/project-menu/body :exit t)
                       ("t" nomis/cljr--hydra/toplevel-form-menu/body :exit t)
-                      ("c" nomis/cljr--hydra/code-menu/body :exit t)
                       ("s" nomis/cljr--hydra/cljr-menu/body :exit t)
                       ("q" nil "quit" :color blue))))))
 
