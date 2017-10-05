@@ -3,9 +3,9 @@
 ;;;; ___________________________________________________________________________
 
 (ert-deftest nomis/cljr--def-hydras/works ()
-  (should (equal (macroexpand-1 '(nomis/cljr--def-hydras))
+  (should (equal (macroexpand-1 '(nomis/cljr--hydra/def-hydras))
                  '(progn
-                    (defhydra nomis/hydra-cljr-ns-menu
+                    (defhydra nomis/cljr--hydra/ns-menu
                       (:color pink :hint nil)
                       "
 ns-related refactorings
@@ -28,7 +28,7 @@ _sr_: Stop referring
                       ("rm" cljr-require-macro :exit t)
                       ("sr" cljr-stop-referring :exit t)
                       ("q" nil "quit"))
-                    (defhydra nomis/hydra-cljr-project-menu
+                    (defhydra nomis/cljr--hydra/project-menu
                       (:color pink :hint nil)
                       "
 project-related refactorings
@@ -57,7 +57,7 @@ _up_: Update project dependencies
                       ("sp" cljr-sort-project-dependencies :exit t)
                       ("up" cljr-update-project-dependencies :exit t)
                       ("q" nil "quit"))
-                    (defhydra nomis/hydra-cljr-toplevel-form-menu
+                    (defhydra nomis/cljr--hydra/toplevel-form-menu
                       (:color pink :hint nil)
                       "
 toplevel-form-related refactorings
@@ -88,7 +88,7 @@ _ad_: Add declaration
                       ("rf" cljr-rename-file-or-dir :exit t)
                       ("ad" cljr-add-declaration :exit t)
                       ("q" nil "quit"))
-                    (defhydra nomis/hydra-cljr-code-menu
+                    (defhydra nomis/cljr--hydra/code-menu
                       (:color pink :hint nil)
                       "
 code-related refactorings
@@ -127,7 +127,7 @@ _uw_: Unwind
                       ("ua" clojure-unwind-all :exit t)
                       ("uw" clojure-unwind :exit t)
                       ("q" nil "quit"))
-                    (defhydra nomis/hydra-cljr-cljr-menu
+                    (defhydra nomis/cljr--hydra/cljr-menu
                       (:color pink :hint nil)
                       "
 cljr-related refactorings
@@ -138,7 +138,7 @@ _?_: Describe refactoring
                       ("sc" cljr-show-changelog :exit t)
                       ("?" cljr-describe-refactoring :exit t)
                       ("q" nil "quit"))
-                    (defhydra nomis/hydra-cljr-help-menu
+                    (defhydra nomis/cljr--hydra/help-menu
                       (:color pink :hint nil)
                       "
 #### MAKE DOC STRING
@@ -147,11 +147,11 @@ Available refactoring types
 _n_: Ns related refactorings      _c_: Code related refactorings
 _p_: Project related refactorings _t_: Top level forms related refactorings
 _s_: Refactor related functions"
-                      ("n" nomis/hydra-cljr-ns-menu/body :exit t)
-                      ("p" nomis/hydra-cljr-project-menu/body :exit t)
-                      ("t" nomis/hydra-cljr-toplevel-form-menu/body :exit t)
-                      ("c" nomis/hydra-cljr-code-menu/body :exit t)
-                      ("s" nomis/hydra-cljr-cljr-menu/body :exit t)
+                      ("n" nomis/cljr--hydra/ns-menu/body :exit t)
+                      ("p" nomis/cljr--hydra/project-menu/body :exit t)
+                      ("t" nomis/cljr--hydra/toplevel-form-menu/body :exit t)
+                      ("c" nomis/cljr--hydra/code-menu/body :exit t)
+                      ("s" nomis/cljr--hydra/cljr-menu/body :exit t)
                       ("q" nil "quit" :color blue))))))
 
 ;;;; ___________________________________________________________________________
