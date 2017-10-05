@@ -16,7 +16,7 @@
 (defconst nomis/cljr--hydra/doc-string-separator
   (make-string 60 ?-))
 
-(defconst nomis/cljr--hydra/all-types
+(defun nomis/cljr--hydra/all-types ()
   (->> cljr--all-helpers
        (-map (lambda (cljr-helper) (-last-item (cdr cljr-helper))))
        (-flatten)
@@ -45,7 +45,9 @@
                   (member type
                           (-last-item (cdr cljr-helper)))))))
 
-(defun nomis/cljr--hydra/cljr-helpers->doc-string (cljr-helpers)
+;;;; ___________________________________________________________________________
+
+(defun nomis/cljr--hydra/cljr-helpers->hydra-doc-string (cljr-helpers)
   (s-join "\n"
           (list ""
                 (concat type "-related refactorings")
@@ -71,28 +73,42 @@
   (let* ((cljr-helpers (nomis/cljr--hydra/type->cljr-helpers type)))
     `(defhydra ,(nomis/cljr--hydra/type->name type)
        (:color pink :hint nil)
-       ,(nomis/cljr--hydra/cljr-helpers->doc-string cljr-helpers)
+       ,(nomis/cljr--hydra/cljr-helpers->hydra-doc-string cljr-helpers)
        ,@(nomis/cljr--hydra/cljr-helpers->hydra-heads cljr-helpers))))
 
-(defmacro nomis/cljr--hydra/def-hydras ()
-  `(progn
-     ,@(-map 'nomis/cljr--hydra/type->hydra-defining-form
-             nomis/cljr--hydra/all-types)
-     (defhydra nomis/cljr--hydra/help-menu
-       (:color pink :hint nil)
-       "
+;;;; ___________________________________________________________________________
+
+(defun nomis/cljr--hydra/cljr-helpers->top-level-hydra-doc-string ()
+  "
 #### MAKE DOC STRING
 Available refactoring types
 -----------------------------------------------------------------------------
 _n_: Ns related refactorings      _c_: Code related refactorings
 _p_: Project related refactorings _t_: Top level forms related refactorings
-_s_: Refactor related functions"
-       ,@(append (->> nomis/cljr--hydra/all-types
-                      (-map (lambda (type)
-                              (list (nomis/cljr--hydra/type->command-key type)
-                                    (nomis/cljr--hydra/type->name-incl-body type)
-                                    :exit t))))
-                 '(("q" nil "quit" :color blue))))))
+_s_: Refactor related functions")
+
+(defun nomis/cljr--hydra/cljr-helpers->top-level-hydra-heads (all-types)
+  (append (->> all-types
+               (-map (lambda (type)
+                       (list (nomis/cljr--hydra/type->command-key type)
+                             (nomis/cljr--hydra/type->name-incl-body type)
+                             :exit t))))
+          '(("q" nil "quit" :color blue))))
+
+(defun nomis/cljr--hydra/top-level-hydra-defining-form (all-types)
+  `(defhydra nomis/cljr--hydra/help-menu
+     (:color pink :hint nil)
+     ,(nomis/cljr--hydra/cljr-helpers->top-level-hydra-doc-string)
+     ,@(nomis/cljr--hydra/cljr-helpers->top-level-hydra-heads all-types)))
+
+(defmacro nomis/cljr--hydra/def-hydras ()
+  (let ((all-types (nomis/cljr--hydra/all-types)))
+    `(progn
+       ,@(-map 'nomis/cljr--hydra/type->hydra-defining-form
+               all-types)
+       ,(nomis/cljr--hydra/top-level-hydra-defining-form all-types))))
+
+;;;; ___________________________________________________________________________
 
 (nomis/cljr--hydra/def-hydras)
 
