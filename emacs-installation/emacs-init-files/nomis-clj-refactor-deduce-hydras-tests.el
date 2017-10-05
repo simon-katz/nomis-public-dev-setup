@@ -148,7 +148,8 @@ _n_: Ns related refactorings
 _c_: Code related refactorings
 _p_: Project related refactorings
 _t_: Top level forms related refactorings
-_s_: Refactor related functions"
+_s_: Refactor related functions
+"
                       ("n" nomis/cljr--hydra/ns-menu/body :exit t)
                       ("c" nomis/cljr--hydra/code-menu/body :exit t)
                       ("p" nomis/cljr--hydra/project-menu/body :exit t)

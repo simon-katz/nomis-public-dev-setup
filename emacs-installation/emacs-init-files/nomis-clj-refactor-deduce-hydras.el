@@ -100,7 +100,8 @@
            "_c_: Code related refactorings"
            "_p_: Project related refactorings"
            "_t_: Top level forms related refactorings"
-           "_s_: Refactor related functions")))
+           "_s_: Refactor related functions"
+           "")))
 
 (defun nomis/cljr--hydra/cljr-helpers->top-level-hydra-heads (all-types)
   (append (->> all-types
@@ -130,8 +131,7 @@
 ;;;; FIXME #### Deal with updating `cljr--all-helpers`.
 ;;;;            (That was how you got started on this!)
 
-
-(define-key global-map (kbd "C-M-}") 'nomis/cljr--hydra/help-menu/body) ; FIXME #### Temp
+(defalias 'hydra-cljr-help-menu/body 'nomis/cljr--hydra/help-menu/body)
 
 ;;;; ___________________________________________________________________________
 
