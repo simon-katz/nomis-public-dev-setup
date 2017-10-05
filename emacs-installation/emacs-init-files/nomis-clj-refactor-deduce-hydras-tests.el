@@ -9,7 +9,7 @@
                       (:color pink :hint nil)
                       "
 ns-related refactorings
-------------------------------------------------------------
+-----------------------
 _ai_: Add import to ns
 _am_: Add missing libspec
 _ap_: Add project dependency
@@ -32,7 +32,7 @@ _sr_: Stop referring
                       (:color pink :hint nil)
                       "
 code-related refactorings
-------------------------------------------------------------
+-------------------------
 _ci_: Cycle if
 _ct_: Cycle thread
 _dk_: Destructure keys
@@ -71,7 +71,7 @@ _uw_: Unwind
                       (:color pink :hint nil)
                       "
 project-related refactorings
-------------------------------------------------------------
+----------------------------
 _ap_: Add project dependency
 _cs_: Change function signature
 _fu_: Find usages
@@ -100,7 +100,7 @@ _up_: Update project dependencies
                       (:color pink :hint nil)
                       "
 toplevel-form-related refactorings
-------------------------------------------------------------
+----------------------------------
 _as_: Add stubs for the interface/protocol at point
 _cp_: Cycle privacy
 _cs_: Change function signature
@@ -131,7 +131,7 @@ _ad_: Add declaration
                       (:color pink :hint nil)
                       "
 cljr-related refactorings
-------------------------------------------------------------
+-------------------------
 _sc_: Show the project's changelog
 _?_: Describe refactoring
 "
@@ -142,7 +142,7 @@ _?_: Describe refactoring
                       (:color pink :hint nil)
                       "
 Available refactoring types
-------------------------------------------------------------
+---------------------------
 _n_: ns-related refactorings
 _c_: code-related refactorings
 _p_: project-related refactorings

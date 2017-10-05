@@ -19,8 +19,10 @@
 (defconst nomis/cljr--hydra/type->command-key/ht
   (ht<-alist nomis/cljr--hydra/type->command-key/alist))
 
-(defconst nomis/cljr--hydra/doc-string-separator
-  (make-string 60 ?-))
+(defun nomis/cljr--hydra/str->hyphens (str)
+  "Return a string of hyphens which is the same length as `str`."
+  (make-string (length str)
+               ?-))
 
 (defun nomis/cljr--hydra/all-types ()
   (->> cljr--all-helpers
@@ -59,16 +61,17 @@
 
 (defun nomis/cljr--hydra/cljr-helpers->hydra-doc-string (cljr-helpers)
   (s-join "\n"
-          (list ""
-                (concat type "-related refactorings")
-                nomis/cljr--hydra/doc-string-separator
-                (s-join "\n"
-                        (->> cljr-helpers
-                             (-map (lambda (cljr-helper)
-                                     (format "_%s_: %s"
-                                             (car cljr-helper)
-                                             (caddr cljr-helper))))))
-                "")))
+          (let ((heading (concat type "-related refactorings")))
+            (list ""
+                  heading
+                  (nomis/cljr--hydra/str->hyphens heading)
+                  (s-join "\n"
+                          (->> cljr-helpers
+                               (-map (lambda (cljr-helper)
+                                       (format "_%s_: %s"
+                                               (car cljr-helper)
+                                               (caddr cljr-helper))))))
+                  ""))))
 
 (defun nomis/cljr--hydra/cljr-helpers->hydra-heads (cljr-helpers)
   (append (->> cljr-helpers
@@ -91,18 +94,19 @@
 
 (defun nomis/cljr--hydra/cljr-helpers->top-level-hydra-doc-string (all-types)
   (s-join "\n"
-          (list
-           ""
-           "Available refactoring types"
-           nomis/cljr--hydra/doc-string-separator
-           (s-join "\n"
-                   (->> all-types
-                        (-map (lambda (type)
-                                (format "_%s_: %s-related refactorings"
-                                        (nomis/cljr--hydra/type->command-key
-                                         type)
-                                        type)))))
-           "")))
+          (let ((heading "Available refactoring types"))
+            (list
+             ""
+             heading
+             (nomis/cljr--hydra/str->hyphens heading)
+             (s-join "\n"
+                     (->> all-types
+                          (-map (lambda (type)
+                                  (format "_%s_: %s-related refactorings"
+                                          (nomis/cljr--hydra/type->command-key
+                                           type)
+                                          type)))))
+             ""))))
 
 (defun nomis/cljr--hydra/cljr-helpers->top-level-hydra-heads (all-types)
   (append (->> all-types
