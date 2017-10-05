@@ -56,8 +56,9 @@
                                                    (-map (lambda (fn-description)
                                                            (list (car fn-description)
                                                                  (cadr fn-description)
-                                                                 :exit
-                                                                 t))))
+                                                                 ;; :exit
+                                                                 ;; t
+                                                                 ))))
                                               '(("q" nil "quit")))))
                  `(defhydra ,(nomis/cljr--hydra-type->name type)
                     (:color pink :hint nil)
