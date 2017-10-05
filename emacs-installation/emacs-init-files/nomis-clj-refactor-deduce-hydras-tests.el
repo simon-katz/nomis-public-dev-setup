@@ -141,14 +141,13 @@ _?_: Describe refactoring
                     (defhydra nomis/cljr--hydra/help-menu
                       (:color pink :hint nil)
                       "
-#### MAKE DOC STRING
 Available refactoring types
------------------------------------------------------------------------------
-_n_: Ns related refactorings
-_c_: Code related refactorings
-_p_: Project related refactorings
-_t_: Top level forms related refactorings
-_s_: Refactor related functions
+------------------------------------------------------------
+_n_: ns-related refactorings
+_c_: code-related refactorings
+_p_: project-related refactorings
+_t_: toplevel-form-related refactorings
+_s_: cljr-related refactorings
 "
                       ("n" nomis/cljr--hydra/ns-menu/body :exit t)
                       ("c" nomis/cljr--hydra/code-menu/body :exit t)

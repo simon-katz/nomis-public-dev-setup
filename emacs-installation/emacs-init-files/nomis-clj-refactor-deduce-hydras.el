@@ -93,14 +93,15 @@
   (s-join "\n"
           (list
            ""
-           "#### MAKE DOC STRING"
            "Available refactoring types"
-           "-----------------------------------------------------------------------------"
-           "_n_: Ns related refactorings"
-           "_c_: Code related refactorings"
-           "_p_: Project related refactorings"
-           "_t_: Top level forms related refactorings"
-           "_s_: Refactor related functions"
+           nomis/cljr--hydra/doc-string-separator
+           (s-join "\n"
+                   (->> all-types
+                        (-map (lambda (type)
+                                (format "_%s_: %s-related refactorings"
+                                        (nomis/cljr--hydra/type->command-key
+                                         type)
+                                        type)))))
            "")))
 
 (defun nomis/cljr--hydra/cljr-helpers->top-level-hydra-heads (all-types)
@@ -128,12 +129,12 @@
 
 (nomis/cljr--hydra/def-hydras)
 
-;;;; FIXME #### Deal with updating `cljr--all-helpers`.
-;;;;            (That was how you got started on this!)
-
 (defalias 'hydra-cljr-help-menu/body 'nomis/cljr--hydra/help-menu/body)
 
 ;;;; ___________________________________________________________________________
+
+;;;; FIXME #### Deal with updating `cljr--all-helpers`.
+;;;;            (That was how you got started on this!)
 
 (require 'nomis-clj-refactor-deduce-hydras-tests)
 
