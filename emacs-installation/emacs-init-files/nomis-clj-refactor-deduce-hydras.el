@@ -4,6 +4,14 @@
 
 (require 's)
 (require 'dash)
+(require 'ht)
+
+(defconst nomis/cljr--hydra/type->command-key/ht
+  (ht ("ns"            "n")
+      ("code"          "c")
+      ("project"       "p")
+      ("toplevel-form" "t")
+      ("cljr"          "s")))
 
 (defvar nomis/cljr--all-types
   (->> cljr--all-helpers
@@ -12,20 +20,21 @@
        (-distinct)
        (-remove-item "hydra")))
 
-(defun nomis/cljr--hydra-type->name (type)
-  (intern (concat "nomis/hydra-cljr-" type "-menu")))
+(defun nomis/cljr--hydra/type->name-string (type)
+  (concat "nomis/hydra-cljr-" type "-menu"))
 
-(defun nomis/cljr--type->hydra-entry-RENAME (type)
-  (cond ((equal type "ns")
-         '("n" nomis/hydra-cljr-ns-menu/body :exit t))
-        ((equal type "code")
-         '("c" nomis/hydra-cljr-code-menu/body :exit t))
-        ((equal type "project")
-         '("p" nomis/hydra-cljr-project-menu/body :exit t))
-        ((equal type "toplevel-form")
-         '("t" nomis/hydra-cljr-toplevel-form-menu/body :exit t))
-        ((equal type "cljr")
-         '("s" nomis/hydra-cljr-cljr-menu/body :exit t))))
+(defun nomis/cljr--hydra/type->name (type)
+  (intern (nomis/cljr--hydra/type->name-string type)))
+
+(defun nomis/cljr--hydra/type->name-incl-body (type)
+  (intern (concat (nomis/cljr--hydra/type->name-string type)
+                  "/body")))
+
+(defun nomis/cljr--hydra/type->command-key (type)
+  (or (ht-get nomis/cljr--hydra/type->command-key/ht
+              type)
+      (error "Bad type for `nomis/cljr--hydra/type->command-key`: %s"
+             type)))
 
 (defun nomis/cljr--type->helpers-RENAME (type)
   (->> cljr--all-helpers
@@ -59,7 +68,7 @@
                                                                  ;; #### FIXME
                                                                  :exit t))))
                                               '(("q" nil "quit")))))
-                 `(defhydra ,(nomis/cljr--hydra-type->name type)
+                 `(defhydra ,(nomis/cljr--hydra/type->name type)
                     (:color pink :hint nil)
                     ,doc-string
                     ,@entries-RENAME)))
@@ -75,14 +84,19 @@ _p_: Project related refactorings _t_: Top level forms related refactorings
 _s_: Refactor related functions"
        ,@(append (->> nomis/cljr--all-types
                       (-map (lambda (type)
-                              (nomis/cljr--type->hydra-entry-RENAME type))))
+                              (list (nomis/cljr--hydra/type->command-key type)
+                                    (nomis/cljr--hydra/type->name-incl-body type)
+                                    :exit t))))
                  '(("q" nil "quit" :color blue))))))
 
 (nomis/cljr--def-hydras)
 
 
-;;;; #### Define the top-level hydra.
-;;;; #### Deal with updating `cljr--all-helpers`.
+;;;; FIXME #### Define the top-level hydra.
+;;;; FIXME #### Deal with updating `cljr--all-helpers`.
+
+
+(define-key global-map (kbd "C-M-}") 'nomis/hydra-cljr-help-menu/body) ; FIXME #### Temp
 
 ;;;; ___________________________________________________________________________
 
