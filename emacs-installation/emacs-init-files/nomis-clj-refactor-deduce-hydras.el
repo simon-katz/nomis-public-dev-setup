@@ -58,6 +58,9 @@
                   (member type
                           (-last-item (cdr cljr-helper)))))))
 
+(defun nomis/cljr--hydra/type->heading (type)
+  (concat type "-related refactorings"))
+
 ;;;; ___________________________________________________________________________
 ;;;; Hydras for individual refactoring types
 
@@ -65,7 +68,7 @@
     (type
      cljr-helpers
      use-ruby-style-doc-strings?)
-  (let ((heading (concat type "-related refactorings")))
+  (let ((heading (nomis/cljr--hydra/type->heading type)))
     (if use-ruby-style-doc-strings?
         (s-join "\n"
                 (list ""
@@ -121,10 +124,10 @@
                       (s-join
                        "\n"
                        (-map (lambda (type)
-                               (format "_%s_: %s-related refactorings"
+                               (format "_%s_: %s"
                                        (nomis/cljr--hydra/type->command-key
                                         type)
-                                       type))
+                                       (nomis/cljr--hydra/type->heading type)))
                              all-types))
                       ""))
       heading)))
@@ -138,7 +141,7 @@
                         (list (nomis/cljr--hydra/type->command-key type)
                               (nomis/cljr--hydra/type->name-incl-body type))
                         (unless use-ruby-style-doc-strings?
-                          (list (concat type "-related refactorings")))
+                          (list (nomis/cljr--hydra/type->heading type)))
                         (list :exit t)))))
           '(("q" nil "quit" :color blue))))
 
