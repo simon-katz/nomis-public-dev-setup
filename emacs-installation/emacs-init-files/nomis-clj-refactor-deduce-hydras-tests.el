@@ -2,8 +2,9 @@
 
 ;;;; ___________________________________________________________________________
 
-(ert-deftest nomis/cljr--def-hydras/works ()
-  (should (equal (macroexpand-1 '(nomis/cljr--hydra/def-hydras))
+(ert-deftest nomis/cljr--def-hydras/works-with-ruby-style-doc-strings ()
+  (should (equal (let* ((nomis/cljr--hydra/use-ruby-style-doc-strings? t))
+                   (macroexpand-1 '(nomis/cljr--hydra/def-hydras)))
                  '(progn
                     (defhydra nomis/cljr--hydra/ns-menu
                       (:color pink :hint nil)
@@ -154,6 +155,89 @@ _s_: cljr-related refactorings
                       ("p" nomis/cljr--hydra/project-menu/body :exit t)
                       ("t" nomis/cljr--hydra/toplevel-form-menu/body :exit t)
                       ("s" nomis/cljr--hydra/cljr-menu/body :exit t)
+                      ("q" nil "quit" :color blue))))))
+
+(ert-deftest nomis/cljr--def-hydras/works-with-simple-doc-strings ()
+  (should (equal (let* ((nomis/cljr--hydra/use-ruby-style-doc-strings? nil))
+                   (macroexpand-1 '(nomis/cljr--hydra/def-hydras)))
+                 '(progn
+                    (defhydra nomis/cljr--hydra/ns-menu
+                      (:color pink :hint nil)
+                      "ns-related refactorings"
+                      ("ai" cljr-add-import-to-ns "Add import to ns" :exit t)
+                      ("am" cljr-add-missing-libspec "Add missing libspec" :exit t)
+                      ("ap" cljr-add-project-dependency "Add project dependency" :exit t)
+                      ("ar" cljr-add-require-to-ns "Add require to ns" :exit t)
+                      ("au" cljr-add-use-to-ns "Add use to ns" :exit t)
+                      ("cn" cljr-clean-ns "Clean ns" :exit t)
+                      ("rm" cljr-require-macro "Add to or extend the require-macros form" :exit t)
+                      ("sr" cljr-stop-referring "Stop referring" :exit t)
+                      ("q" nil "quit"))
+                    (defhydra nomis/cljr--hydra/code-menu
+                      (:color pink :hint nil)
+                      "code-related refactorings"
+                      ("ci" clojure-cycle-if "Cycle if" :exit t)
+                      ("ct" cljr-cycle-thread "Cycle thread" :exit t)
+                      ("dk" cljr-destructure-keys "Destructure keys" :exit t)
+                      ("el" cljr-expand-let "Expand let" :exit t)
+                      ("fu" cljr-find-usages "Find usages" :exit t)
+                      ("il" cljr-introduce-let "Introduce let" :exit t)
+                      ("is" cljr-inline-symbol "Inline symbol" :exit t)
+                      ("ml" cljr-move-to-let "Move to let" :exit t)
+                      ("pf" cljr-promote-function "Promote function" :exit t)
+                      ("rl" cljr-remove-let "Remove let" :exit t)
+                      ("rs" cljr-rename-symbol "Rename symbol" :exit t)
+                      ("tf" clojure-thread-first-all "Thread first all" :exit t)
+                      ("th" clojure-thread "Thread" :exit t)
+                      ("tl" clojure-thread-last-all "Thread last all" :exit t)
+                      ("ua" clojure-unwind-all "Unwind all" :exit t)
+                      ("uw" clojure-unwind "Unwind" :exit t)
+                      ("q" nil "quit"))
+                    (defhydra nomis/cljr--hydra/project-menu
+                      (:color pink :hint nil)
+                      "project-related refactorings"
+                      ("ap" cljr-add-project-dependency "Add project dependency" :exit t)
+                      ("cs" cljr-change-function-signature "Change function signature" :exit t)
+                      ("fu" cljr-find-usages "Find usages" :exit t)
+                      ("hd" cljr-hotload-dependency "Hotload dependency" :exit t)
+                      ("is" cljr-inline-symbol "Inline symbol" :exit t)
+                      ("mf" cljr-move-form "Move form" :exit t)
+                      ("pc" cljr-project-clean "Project clean" :exit t)
+                      ("rf" cljr-rename-file-or-dir "Rename file-or-dir" :exit t)
+                      ("rs" cljr-rename-symbol "Rename symbol" :exit t)
+                      ("sp" cljr-sort-project-dependencies "Sort project dependencies" :exit t)
+                      ("up" cljr-update-project-dependencies "Update project dependencies" :exit t)
+                      ("q" nil "quit"))
+                    (defhydra nomis/cljr--hydra/toplevel-form-menu
+                      (:color pink :hint nil)
+                      "toplevel-form-related refactorings"
+                      ("as" cljr-add-stubs "Add stubs for the interface/protocol at point" :exit t)
+                      ("cp" clojure-cycle-privacy "Cycle privacy" :exit t)
+                      ("cs" cljr-change-function-signature "Change function signature" :exit t)
+                      ("ec" cljr-extract-constant "Extract constant" :exit t)
+                      ("ed" cljr-extract-def "Extract form as def" :exit t)
+                      ("ef" cljr-extract-function "Extract function" :exit t)
+                      ("fe" cljr-create-fn-from-example "Create function from example" :exit t)
+                      ("is" cljr-inline-symbol "Inline symbol" :exit t)
+                      ("mf" cljr-move-form "Move form" :exit t)
+                      ("pf" cljr-promote-function "Promote function" :exit t)
+                      ("rf" cljr-rename-file-or-dir "Rename file-or-dir" :exit t)
+                      ("ad" cljr-add-declaration "Add declaration" :exit t)
+                      ("q" nil "quit"))
+                    (defhydra nomis/cljr--hydra/cljr-menu
+                      (:color pink :hint nil)
+                      "cljr-related refactorings"
+                      ("sc" cljr-show-changelog "Show the project's changelog" :exit t)
+                      ("?" cljr-describe-refactoring "Describe refactoring" :exit t)
+                      ("q" nil "quit"))
+                    (defhydra nomis/cljr--hydra/help-menu
+                      (:color pink :hint nil)
+                      "Available refactoring types"
+                      ("n" nomis/cljr--hydra/ns-menu/body "ns-related refactorings" :exit t)
+                      ("c" nomis/cljr--hydra/code-menu/body "code-related refactorings" :exit t)
+                      ("p" nomis/cljr--hydra/project-menu/body "project-related refactorings" :exit t)
+                      ("t" nomis/cljr--hydra/toplevel-form-menu/body "toplevel-form-related refactorings" :exit t)
+                      ("s" nomis/cljr--hydra/cljr-menu/body "cljr-related refactorings" :exit t)
                       ("q" nil "quit" :color blue))))))
 
 ;;;; ___________________________________________________________________________

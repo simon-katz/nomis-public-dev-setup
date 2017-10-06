@@ -1,3 +1,5 @@
+;;;; nomis-clj-refactor-deduce-hydras.el ---  -*- lexical-binding: t -*-
+
 ;;;; Init stuff -- clj-refactor -- deduce hydras
 
 ;;;; ___________________________________________________________________________
@@ -5,6 +7,8 @@
 (require 's)
 (require 'dash)
 (require 'ht)
+
+(defconst nomis/cljr--hydra/use-ruby-style-doc-strings? nil)
 
 (defconst nomis/cljr--hydra/type->command-key/alist
   '(("ns"            . "n")
@@ -59,61 +63,70 @@
 ;;;; ___________________________________________________________________________
 ;;;; Hydras for individual refactoring types
 
-(defun nomis/cljr--hydra/cljr-helpers->hydra-doc-string (cljr-helpers)
-  (s-join "\n"
-          (let ((heading (concat type "-related refactorings")))
-            (list ""
-                  heading
-                  (nomis/cljr--hydra/str->hyphens heading)
-                  (s-join "\n"
-                          (->> cljr-helpers
-                               (-map (lambda (cljr-helper)
-                                       (format "_%s_: %s"
-                                               (car cljr-helper)
-                                               (caddr cljr-helper))))))
-                  ""))))
+(defun nomis/cljr--hydra/cljr-helpers->hydra-doc-string (type cljr-helpers)
+  (let ((heading (concat type "-related refactorings")))
+    (if nomis/cljr--hydra/use-ruby-style-doc-strings?
+        (s-join "\n"
+                (list ""
+                      heading
+                      (nomis/cljr--hydra/str->hyphens heading)
+                      (s-join "\n"
+                              (->> cljr-helpers
+                                   (-map (lambda (cljr-helper)
+                                           (format "_%s_: %s"
+                                                   (car cljr-helper)
+                                                   (caddr cljr-helper))))))
+                      ""))
+      heading)))
 
 (defun nomis/cljr--hydra/cljr-helpers->hydra-heads (cljr-helpers)
   (append (->> cljr-helpers
                (-map (lambda (cljr-helper)
-                       (list (car cljr-helper)
-                             (cadr cljr-helper)
-                             ;; #### FIXME Maybe a bug you've not copied from clj-refactor
-                             :exit t))))
+                       (append (list (car cljr-helper)
+                                     (cadr cljr-helper))
+                               (unless nomis/cljr--hydra/use-ruby-style-doc-strings?
+                                 (list (caddr cljr-helper)))
+                               (list 
+                                
+                                ;; #### FIXME Maybe a bug you've not copied from clj-refactor
+                                :exit t)))))
           '(("q" nil "quit"))))
 
 (defun nomis/cljr--hydra/type->hydra-defining-form (type)
   (let* ((cljr-helpers (nomis/cljr--hydra/type->cljr-helpers type)))
     `(defhydra ,(nomis/cljr--hydra/type->name type)
        (:color pink :hint nil)
-       ,(nomis/cljr--hydra/cljr-helpers->hydra-doc-string cljr-helpers)
+       ,(nomis/cljr--hydra/cljr-helpers->hydra-doc-string type cljr-helpers)
        ,@(nomis/cljr--hydra/cljr-helpers->hydra-heads cljr-helpers))))
 
 ;;;; ___________________________________________________________________________
 ;;;; Top-level Hydra
 
 (defun nomis/cljr--hydra/cljr-helpers->top-level-hydra-doc-string (all-types)
-  (s-join "\n"
-          (let ((heading "Available refactoring types"))
-            (list
-             ""
-             heading
-             (nomis/cljr--hydra/str->hyphens heading)
-             (s-join "\n"
-                     (->> all-types
-                          (-map (lambda (type)
-                                  (format "_%s_: %s-related refactorings"
-                                          (nomis/cljr--hydra/type->command-key
-                                           type)
-                                          type)))))
-             ""))))
+  (let ((heading "Available refactoring types"))
+    (if nomis/cljr--hydra/use-ruby-style-doc-strings?
+        (s-join "\n"
+                (list ""
+                      heading
+                      (nomis/cljr--hydra/str->hyphens heading)
+                      (s-join "\n"
+                              (->> all-types
+                                   (-map (lambda (type)
+                                           (format "_%s_: %s-related refactorings"
+                                                   (nomis/cljr--hydra/type->command-key
+                                                    type)
+                                                   type)))))
+                      ""))
+      heading)))
 
 (defun nomis/cljr--hydra/cljr-helpers->top-level-hydra-heads (all-types)
   (append (->> all-types
                (-map (lambda (type)
-                       (list (nomis/cljr--hydra/type->command-key type)
-                             (nomis/cljr--hydra/type->name-incl-body type)
-                             :exit t))))
+                       (append (list (nomis/cljr--hydra/type->command-key type)
+                                     (nomis/cljr--hydra/type->name-incl-body type))
+                               (unless nomis/cljr--hydra/use-ruby-style-doc-strings?
+                                 (list (concat type "-related refactorings")))
+                               (list :exit t)))))
           '(("q" nil "quit" :color blue))))
 
 (defun nomis/cljr--hydra/top-level-hydra-defining-form (all-types)
