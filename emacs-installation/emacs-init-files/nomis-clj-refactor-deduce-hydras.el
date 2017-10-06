@@ -8,8 +8,6 @@
 (require 'dash)
 (require 'ht)
 
-(defconst nomis/cljr--hydra/use-ruby-style-doc-strings? nil)
-
 (defconst nomis/cljr--hydra/type->command-key/alist
   '(("ns"            . "n")
     ("code"          . "c")
@@ -63,9 +61,12 @@
 ;;;; ___________________________________________________________________________
 ;;;; Hydras for individual refactoring types
 
-(defun nomis/cljr--hydra/cljr-helpers->hydra-doc-string (type cljr-helpers)
+(defun nomis/cljr--hydra/cljr-helpers->hydra-doc-string
+    (type
+     cljr-helpers
+     use-ruby-style-doc-strings?)
   (let ((heading (concat type "-related refactorings")))
-    (if nomis/cljr--hydra/use-ruby-style-doc-strings?
+    (if use-ruby-style-doc-strings?
         (s-join "\n"
                 (list ""
                       heading
@@ -79,72 +80,96 @@
                       ""))
       heading)))
 
-(defun nomis/cljr--hydra/cljr-helpers->hydra-heads (cljr-helpers)
+(defun nomis/cljr--hydra/cljr-helpers->hydra-heads (cljr-helpers
+                                                    use-ruby-style-doc-strings?)
   (append (->> cljr-helpers
                (-map (lambda (cljr-helper)
                        (append (list (car cljr-helper)
                                      (cadr cljr-helper))
-                               (unless nomis/cljr--hydra/use-ruby-style-doc-strings?
+                               (unless use-ruby-style-doc-strings?
                                  (list (caddr cljr-helper)))
                                (list 
-                                
                                 ;; #### FIXME Maybe a bug you've not copied from clj-refactor
                                 :exit t)))))
           '(("q" nil "quit"))))
 
-(defun nomis/cljr--hydra/type->hydra-defining-form (type)
+(defun nomis/cljr--hydra/type->hydra-defining-form (type
+                                                    use-ruby-style-doc-strings?)
   (let* ((cljr-helpers (nomis/cljr--hydra/type->cljr-helpers type)))
     `(defhydra ,(nomis/cljr--hydra/type->name type)
        (:color pink :hint nil)
-       ,(nomis/cljr--hydra/cljr-helpers->hydra-doc-string type cljr-helpers)
-       ,@(nomis/cljr--hydra/cljr-helpers->hydra-heads cljr-helpers))))
+       ,(nomis/cljr--hydra/cljr-helpers->hydra-doc-string
+         type
+         cljr-helpers
+         use-ruby-style-doc-strings?)
+       ,@(nomis/cljr--hydra/cljr-helpers->hydra-heads
+          cljr-helpers
+          use-ruby-style-doc-strings?))))
 
 ;;;; ___________________________________________________________________________
 ;;;; Top-level Hydra
 
-(defun nomis/cljr--hydra/cljr-helpers->top-level-hydra-doc-string (all-types)
+(defun nomis/cljr--hydra/cljr-helpers->top-level-hydra-doc-string
+    (all-types
+     use-ruby-style-doc-strings?)
   (let ((heading "Available refactoring types"))
-    (if nomis/cljr--hydra/use-ruby-style-doc-strings?
+    (if use-ruby-style-doc-strings?
         (s-join "\n"
                 (list ""
                       heading
                       (nomis/cljr--hydra/str->hyphens heading)
-                      (s-join "\n"
-                              (->> all-types
-                                   (-map (lambda (type)
-                                           (format "_%s_: %s-related refactorings"
-                                                   (nomis/cljr--hydra/type->command-key
-                                                    type)
-                                                   type)))))
+                      (s-join
+                       "\n"
+                       (-map (lambda (type)
+                               (format "_%s_: %s-related refactorings"
+                                       (nomis/cljr--hydra/type->command-key
+                                        type)
+                                       type))
+                             all-types))
                       ""))
       heading)))
 
-(defun nomis/cljr--hydra/cljr-helpers->top-level-hydra-heads (all-types)
+(defun nomis/cljr--hydra/cljr-helpers->top-level-hydra-heads
+    (all-types
+     use-ruby-style-doc-strings?)
   (append (->> all-types
                (-map (lambda (type)
-                       (append (list (nomis/cljr--hydra/type->command-key type)
-                                     (nomis/cljr--hydra/type->name-incl-body type))
-                               (unless nomis/cljr--hydra/use-ruby-style-doc-strings?
-                                 (list (concat type "-related refactorings")))
-                               (list :exit t)))))
+                       (append
+                        (list (nomis/cljr--hydra/type->command-key type)
+                              (nomis/cljr--hydra/type->name-incl-body type))
+                        (unless use-ruby-style-doc-strings?
+                          (list (concat type "-related refactorings")))
+                        (list :exit t)))))
           '(("q" nil "quit" :color blue))))
 
-(defun nomis/cljr--hydra/top-level-hydra-defining-form (all-types)
+(defun nomis/cljr--hydra/top-level-hydra-defining-form
+    (all-types
+     use-ruby-style-doc-strings?)
   `(defhydra nomis/cljr--hydra/help-menu
      (:color pink :hint nil)
-     ,(nomis/cljr--hydra/cljr-helpers->top-level-hydra-doc-string all-types)
-     ,@(nomis/cljr--hydra/cljr-helpers->top-level-hydra-heads all-types)))
+     ,(nomis/cljr--hydra/cljr-helpers->top-level-hydra-doc-string
+       all-types
+       use-ruby-style-doc-strings?)
+     ,@(nomis/cljr--hydra/cljr-helpers->top-level-hydra-heads
+        all-types
+        use-ruby-style-doc-strings?)))
 
 ;;;; ___________________________________________________________________________
 
-(defmacro nomis/cljr--hydra/def-hydras ()
-  (let ((all-types (nomis/cljr--hydra/all-types)))
+(defmacro nomis/cljr--hydra/def-hydras (use-ruby-style-doc-strings?)
+  (let* ((use-ruby-style-doc-strings? `,use-ruby-style-doc-strings?)
+         (all-types (nomis/cljr--hydra/all-types)))
     `(progn
-       ,@(-map 'nomis/cljr--hydra/type->hydra-defining-form
+       ,@(-map (lambda (type)
+                 (nomis/cljr--hydra/type->hydra-defining-form
+                  type
+                  use-ruby-style-doc-strings?))
                all-types)
-       ,(nomis/cljr--hydra/top-level-hydra-defining-form all-types))))
+       ,(nomis/cljr--hydra/top-level-hydra-defining-form
+         all-types
+         use-ruby-style-doc-strings?))))
 
-(nomis/cljr--hydra/def-hydras)
+(nomis/cljr--hydra/def-hydras nil)
 
 (defalias 'hydra-cljr-help-menu/body 'nomis/cljr--hydra/help-menu/body)
 

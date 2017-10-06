@@ -3,8 +3,7 @@
 ;;;; ___________________________________________________________________________
 
 (ert-deftest nomis/cljr--def-hydras/works-with-ruby-style-doc-strings ()
-  (should (equal (let* ((nomis/cljr--hydra/use-ruby-style-doc-strings? t))
-                   (macroexpand-1 '(nomis/cljr--hydra/def-hydras)))
+  (should (equal (macroexpand-1 '(nomis/cljr--hydra/def-hydras t))
                  '(progn
                     (defhydra nomis/cljr--hydra/ns-menu
                       (:color pink :hint nil)
@@ -158,8 +157,7 @@ _s_: cljr-related refactorings
                       ("q" nil "quit" :color blue))))))
 
 (ert-deftest nomis/cljr--def-hydras/works-with-simple-doc-strings ()
-  (should (equal (let* ((nomis/cljr--hydra/use-ruby-style-doc-strings? nil))
-                   (macroexpand-1 '(nomis/cljr--hydra/def-hydras)))
+  (should (equal (macroexpand-1 '(nomis/cljr--hydra/def-hydras nil))
                  '(progn
                     (defhydra nomis/cljr--hydra/ns-menu
                       (:color pink :hint nil)
