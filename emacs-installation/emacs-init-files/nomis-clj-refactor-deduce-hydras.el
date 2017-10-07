@@ -2,6 +2,9 @@
 
 ;;;; Init stuff -- clj-refactor -- deduce hydras
 
+
+(defvar nomis/cljr--all-helpers-before-nomis-hacks cljr--all-helpers)
+
 ;;;; ___________________________________________________________________________
 
 (require 's)
