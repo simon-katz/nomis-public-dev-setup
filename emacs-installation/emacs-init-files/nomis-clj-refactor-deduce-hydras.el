@@ -3,7 +3,8 @@
 ;;;; Init stuff -- clj-refactor -- deduce hydras
 
 
-(defvar nomis/cljr--all-helpers-before-nomis-hacks cljr--all-helpers)
+(defvar nomis/cljr--all-helpers-before-nomis-hacks cljr--all-helpers
+  "The original value of `cljr--all-helpers`, used in tests.")
 
 ;;;; ___________________________________________________________________________
 
@@ -164,7 +165,7 @@
 
 ;;;; ___________________________________________________________________________
 
-(defmacro nomis/cljr--hydra/def-hydras (use-ruby-style-doc-strings?)
+(defmacro nomis/cljr--hydra/def-hydras/macro (use-ruby-style-doc-strings?)
   (let* ((use-ruby-style-doc-strings? `,use-ruby-style-doc-strings?)
          (all-types (nomis/cljr--hydra/all-types)))
     `(progn
@@ -176,6 +177,16 @@
        ,(nomis/cljr--hydra/top-level-hydra-defining-form
          all-types
          use-ruby-style-doc-strings?))))
+
+(defun nomis/cljr--hydra/def-hydras (use-ruby-style-doc-strings?)
+  (eval
+   ;; `eval` used because we need the macroexpansion to happen at the time of
+   ;; this call (because enrtries might be added to `cljr--all-helpers`). Nasty.
+   ;; A better approach might be to:
+   ;; - not produce a great big macroexpansion
+   ;; - instead, pass the value of `cljr--all-helpers` in as a parameter, and
+   ;;   create and eval individual `defhydra` forms one at a time.
+   `(nomis/cljr--hydra/def-hydras/macro ,use-ruby-style-doc-strings?)))
 
 (nomis/cljr--hydra/def-hydras nil)
 

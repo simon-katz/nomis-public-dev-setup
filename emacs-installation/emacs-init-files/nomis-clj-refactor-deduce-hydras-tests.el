@@ -5,7 +5,7 @@
 (ert-deftest nomis/cljr--def-hydras/works-with-ruby-style-doc-strings ()
   (should (equal (let* ((cljr--all-helpers
                          nomis/cljr--all-helpers-before-nomis-hacks))
-                   (macroexpand-1 '(nomis/cljr--hydra/def-hydras t)))
+                   (macroexpand-1 '(nomis/cljr--hydra/def-hydras/macro t)))
                  '(progn
                     (defhydra nomis/cljr--hydra/ns-menu
                       (:color pink :hint nil)
@@ -161,7 +161,7 @@ _s_: cljr-related refactorings
 (ert-deftest nomis/cljr--def-hydras/works-with-simple-doc-strings ()
   (should (equal (let* ((cljr--all-helpers
                          nomis/cljr--all-helpers-before-nomis-hacks))
-                   (macroexpand-1 '(nomis/cljr--hydra/def-hydras nil)))
+                   (macroexpand-1 '(nomis/cljr--hydra/def-hydras/macro nil)))
                  '(progn
                     (defhydra nomis/cljr--hydra/ns-menu
                       (:color pink :hint nil)

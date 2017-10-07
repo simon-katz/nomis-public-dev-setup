@@ -3,10 +3,7 @@
 ;;;; ___________________________________________________________________________
 
 (defun nomis/cljr-define-keybindings-and-hydras ()
-  (eval
-   ;; `eval` used because we need the macroexpansion to happen at the time of
-   ;; this call. Nasty.
-   '(nomis/cljr--hydra/def-hydras nil))
+  (nomis/cljr--hydra/def-hydras nil)
   (nomis/cljr-add-keybindings))
 
 (defun nomis/cljr-add-command (command-spec)
