@@ -186,6 +186,7 @@
    ;; - not produce a great big macroexpansion
    ;; - instead, pass the value of `cljr--all-helpers` in as a parameter, and
    ;;   create and eval individual `defhydra` forms one at a time.
+   ;; But that might make testing harder.
    `(nomis/cljr--hydra/def-hydras/macro ,use-ruby-style-doc-strings?)))
 
 (nomis/cljr--hydra/def-hydras nil)
