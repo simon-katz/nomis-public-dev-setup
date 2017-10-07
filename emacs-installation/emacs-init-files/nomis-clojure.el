@@ -77,15 +77,19 @@
 
 (require 'clj-refactor)
 (require 'nomis-clj-refactor-deduce-hydras)
+
+(defun nomis/cljr-add-keybindings ()
+  (cljr-add-keybindings-with-prefix "C-c C-m")
+  ;; (cljr-add-keybindings-with-prefix "M-R") ; keep this until I stop using it
+  )
+
 (require 'nomis-clj-refactor-fixes)
 (require 'cljr-helm)
 
 (defun nomis-setup-clj-refactor-mode ()
   (clj-refactor-mode 1)
   (yas-minor-mode 1) ; for adding require/use/import statements
-  (cljr-add-keybindings-with-prefix "C-c C-m")
-  ;; (cljr-add-keybindings-with-prefix "M-R") ; keep this until I stop using it
-  )
+  (nomis/cljr-add-keybindings))
 
 (define-key clj-refactor-map (kbd "C-c m") 'cljr-helm)
 
