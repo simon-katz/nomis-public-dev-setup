@@ -27,8 +27,8 @@ menus are not changed."
 
 ;;;; ___________________________________________________________________________
 
-(when (equal (cljr--version)
-             "2.3.1")
+(when (member (cljr--version)
+              '("2.3.1"))
   ;; `cider-eval-ns-form` is called with arguments, but it doesn't take any.
   (defadvice cider-eval-ns-form (around fix-broken-arg-list
                                         (&rest args-to-ignore))
@@ -37,8 +37,9 @@ menus are not changed."
 
 ;;;; ___________________________________________________________________________
 
-(when (equal (cljr--version)
-             "2.3.1")
+(when (member (cljr--version)
+              '("2.3.1"
+                "2.4.0-SNAPSHOT"))
   ;; `cljr-slash` doesn't respect `cljr-magic-requires` being `:prompt`.
   (defun cljr-slash ()
     "Inserts / as normal, but also checks for common namespace shorthands to require.
@@ -76,8 +77,9 @@ form."
 
 (require 'browse-url)
 
-(when (equal (cljr--version)
-             "2.3.1")
+(when (member (cljr--version)
+              '("2.3.1"
+                "2.4.0-SNAPSHOT"))
   
   (defun nomis/cljr-cheatsheet ()
     "Open a cljr cheatsheet."
@@ -85,18 +87,19 @@ form."
     (browse-url "https://www.cheatography.com/bilus/cheat-sheets/clj-refactor/pdf/"))
 
   (nomis/cljr-add-command
-   '("zz" . (nomis/cljr-cheatsheet "cljr cheatsheet" ?h ("zz")))))
+   '("ch" . (nomis/cljr-cheatsheet "clj-refactor cheatsheet" ?h ("cljr")))))
 
 ;;;; ___________________________________________________________________________
 
-(when (equal (cljr--version)
-             "2.3.1")
+(when (member (cljr--version)
+              '("2.3.1"
+                "2.4.0-SNAPSHOT"))
   
   (defun nomis/cljr-clean-ns-no-prune ()
     "Clean the ns form for the current buffer, without pruning."
     (interactive)
     (cljr--ensure-op-supported "clean-ns")
-    (cider-eval-ns-form :sync)
+    (cider-eval-ns-form)
     (cljr--clean-ns nil t))
   
   (nomis/cljr-add-command
@@ -104,16 +107,17 @@ form."
 
 ;;;; ___________________________________________________________________________
 
-(when (equal (cljr--version)
-             "2.3.1")  
+(when (member (cljr--version)
+              '("2.3.1"
+                "2.4.0-SNAPSHOT"))  
   
   (defun nomis/cljr-cycle-collection-type ()
     "Display a message that describes the replacements for cycle collection."
     (interactive)
     (message (s-join " "
-                     '("Use C-c C-r xxxx"
-                      " where xxxx is one of x or C-x where x is one of"
-                      " (  '  {  [  #")))
+                     '("Use C-c C-r <x>"
+                       "where <x> is one of <y> or C-<y> where <y> is one of"
+                       " (  '  {  [  #")))
     (beep))
   
   (nomis/cljr-add-command
