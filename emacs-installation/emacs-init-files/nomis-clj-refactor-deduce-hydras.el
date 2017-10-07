@@ -36,6 +36,8 @@
        (-distinct)
        (-remove-item "hydra")
        (-sort (lambda (x y)
+                (assert (member x nomis/cljr--hydra/types) t)
+                (assert (member y nomis/cljr--hydra/types) t)
                 (< (position x nomis/cljr--hydra/types :test 'equal)
                    (position y nomis/cljr--hydra/types :test 'equal))))))
 
