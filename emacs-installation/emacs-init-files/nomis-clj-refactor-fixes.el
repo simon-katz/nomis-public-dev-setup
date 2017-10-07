@@ -2,6 +2,13 @@
 
 ;;;; ___________________________________________________________________________
 
+(defun nomis/cljr-define-keybindings-and-hydras ()
+  (eval
+   ;; `eval` used because we need the macroexpansion to happen at the time of
+   ;; this call. Nasty.
+   '(nomis/cljr--hydra/def-hydras nil))
+  (nomis/cljr-add-keybindings))
+
 (defun nomis/cljr-add-command (command-spec)
   "Add a cljr command. See the entries in `cljr--all-helpers` to see what
 COMMAND-SPEC is.
@@ -9,10 +16,14 @@ This does the necessary for the cljr key binding prefix and for `cljr-helm`.
 cljr's hydra menus aren't built from `cljr--all-helpers`, so the cljr hydra
 menus are not changed."
   (setq cljr--all-helpers
-        (sort (cons command-spec
-                    cljr--all-helpers)
-              (lambda (x y)
-                (string-lessp (first x) (first y))))))
+        (-remove (lambda (helper)
+                   (equal (cadr command-spec)
+                          (cadr helper)))
+                 cljr--all-helpers))
+  (setq cljr--all-helpers
+        (-snoc cljr--all-helpers
+               command-spec))
+  (nomis/cljr-define-keybindings-and-hydras))
 
 ;;;; ___________________________________________________________________________
 
