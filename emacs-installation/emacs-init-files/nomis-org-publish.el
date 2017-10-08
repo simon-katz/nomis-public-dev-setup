@@ -2,11 +2,13 @@
 
 ;;;; ___________________________________________________________________________
 
+(defvar nomis/repos-directory "~/development-100/repositories/nomis/")
+
+;;;; ___________________________________________________________________________
+
 (require 'ox-publish)
 
 (setq org-export-with-toc nil)
-
-(defvar nomis/repos-directory "~/development-100/repositories/nomis/")
 
 (defvar nomis/jekyll-blog/base-directory
   (concat nomis/repos-directory "blog-play-using-jekyll/"))
@@ -46,6 +48,74 @@
                            ,nomis/jekyll-blog/jekyll-input-directory
                            "--destination"
                            ,nomis/jekyll-blog/site-directory))))
+
+;;;; ___________________________________________________________________________
+;;;; Using Hugo.
+;;;; Copied and modified from http://www.modernemacs.com/post/org-mode-blogging/
+
+(progn ; Hugo stuff
+  
+  (require 'cl)
+  (require 'dash)
+
+  (defvar nomis/hugo-blog/base-directory
+    (concat nomis/repos-directory "blog-play-using-hugo/"))
+
+  (defvar nomis/hugo-blog/org-directory
+    (concat nomis/hugo-blog/base-directory "001-org/"))
+
+  (defvar nomis/hugo-blog/site-directory
+    (concat nomis/hugo-blog/base-directory "002-site/"))
+
+  (defvar nomis/hugo-process "Hugo Server")
+  (defvar nomis/hugo-server-site "http://localhost:1313/")
+
+  (defmacro nomis/with-dir (DIR &rest FORMS)
+    "Execute FORMS in DIR."
+    (declare (indent 1))
+    (let ((orig-dir (gensym)))
+      `(progn (setq ,orig-dir default-directory)
+              (cd ,DIR) ,@FORMS (cd ,orig-dir))))
+
+  (defun nomis/publish-blog/hugo ()
+    "Run hugo and push changes upstream."
+    (interactive)
+    (nomis/with-dir nomis/hugo-blog/site-directory
+      (shell-command "rm -rf ./*")
+      ;; (shell-command "git rm -rf ./*")
+      ;; (shell-command "git clean -fxd")
+
+      (nomis/with-dir nomis/hugo-blog/org-directory
+        (->> nomis/hugo-blog/site-directory
+             (concat "hugo -d ")
+             shell-command))
+
+      ;; (shell-command "git add .")
+      ;; (--> (current-time-string)
+      ;;      (concat "git commit -m \"" it "\"")
+      ;;      (shell-command it))
+      ;; (magit-push-current-to-upstream nil)
+      ))
+
+  (defun nomis/start-blog-server ()
+    "Run hugo server if not already running and open its webpage."
+    (interactive)
+    (nomis/with-dir nomis/hugo-blog/org-directory
+      
+      (unless (get-process nomis/hugo-process)
+        (start-process nomis/hugo-process nil "hugo" "server"))
+      (browse-url nomis/hugo-server-site)))
+
+  (defun nomis/end-blog-server ()
+    "End hugo server process if running."
+    (interactive)
+    (--when-let (get-process nomis/hugo-process)
+      (delete-process it)))
+
+  ;; (spacemacs/set-leader-keys (kbd "ab") 'nomis/publish-blog/hugo)
+  ;; (spacemacs/set-leader-keys (kbd "aa") 'nomis/start-blog-server)
+  ;; (spacemacs/set-leader-keys (kbd "ae") 'nomis/end-blog-server)
+  )
 
 ;;;; ___________________________________________________________________________
 
