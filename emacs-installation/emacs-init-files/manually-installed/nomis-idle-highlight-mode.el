@@ -302,10 +302,16 @@
                          (regexp-quote captured-target))
                         (t
                          ;; (message "Looking for %s" captured-target)
-                         (concat (nomis-start-of-symbol-regex)
-                                 (nomis-idle-highlight-regexp-quote
-                                  captured-target)
-                                 "\\_>"))))
+                         (let* ((prefix (concat (nomis-start-of-symbol-regex)
+                                                (nomis-idle-highlight-regexp-quote
+                                                 captured-target)))
+                                (regex-for-symbol (concat prefix "\\_>")))
+                           (if (not (eq major-mode 'clojure-mode))
+                               regex-for-symbol
+                             (let* ((regex-for-use-of-ns-or-ns-alias
+                                     (concat prefix "/")))
+                               (nomis/rx/or regex-for-symbol
+                                            regex-for-use-of-ns-or-ns-alias)))))))
             ;; (message "colon-matters-p = %s & captured-target = %s and nomis-idle-highlight-regexp = %s"
             ;;          nomis-idle-highlight-colon-at-start-matters-p
             ;;          captured-target
