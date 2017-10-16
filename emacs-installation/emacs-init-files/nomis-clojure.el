@@ -114,7 +114,8 @@
                           nomis-set-comment-column-to-zero
                           subword-mode
                           nomis-setup-clj-refactor-mode
-                          aggressive-indent-mode))
+                          ;; aggressive-indent-mode
+                          ))
       (hooks-when-repl-exists '(cider-mode-hook
                                 cider-repl-mode-hook))
       (hooks-always '(clojure-mode-hook
