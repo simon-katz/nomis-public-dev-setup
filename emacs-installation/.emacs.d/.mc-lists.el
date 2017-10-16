@@ -4,9 +4,11 @@
 (setq mc/cmds-to-run-for-all
       '(
         backward-sexp
+        cljr-slash
         delete-indentation
         down-list
         eval-last-sexp
+        forward-sentence
         forward-sexp
         kill-region
         mark-sexp
