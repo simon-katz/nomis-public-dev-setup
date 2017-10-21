@@ -26,6 +26,7 @@
         paredit-kill
         paredit-newline
         paredit-open-round
+        paredit-open-square
         paredit-raise-sexp
         paredit-semicolon
         transpose-sexps
