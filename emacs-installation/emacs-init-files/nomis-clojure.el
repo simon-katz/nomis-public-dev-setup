@@ -57,6 +57,14 @@
                (define-key cider-repl-mode-map "}" #'paredit-close-curly))))
 
 
+(defun nomis/cider-repl-mode-c-c-c-r-replacement (arg)
+  (interactive "p")
+  (beep)
+  (message "No, when you try to refactor I won't evaluate some huge region."))
+
+(define-key cider-repl-mode-map (kbd "C-c C-r")
+  'nomis/cider-repl-mode-c-c-c-r-replacement) ; default was `cider-eval-region` or something
+
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ;;;; Company mode for Cider
 
