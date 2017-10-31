@@ -7,14 +7,20 @@
 ;;;; Copy-and-hack of http://www.emacswiki.org/emacs/RevertBuffer.
 
 (defun _revert-all-buffers (buffer-predicate)
-  (dolist (buf (buffer-list))
-    (with-current-buffer buf
-      (when (and (buffer-file-name) (funcall buffer-predicate buf))
-        (condition-case e
-            (revert-buffer t t t)
-          (error
-           (message "%s" e))))))
-  (message "Refreshed open files."))
+  (let (failures '())
+    (dolist (buf (buffer-list))
+      (with-current-buffer buf
+        (when (and (buffer-file-name) (funcall buffer-predicate buf))
+          (condition-case e
+              (revert-buffer t t t)
+            (error
+             (push (buffer-file-name) failures)
+             (message "%s" e)
+             (beep))))))
+    (message "Refreshed open files. %s"
+             (if failures
+                 (s-join " " (cons "Failures: " failures))
+               ""))))
 
 (defun revert-all-unmodified-buffers ()
   "Refreshes all open unmodified buffers from their files."
