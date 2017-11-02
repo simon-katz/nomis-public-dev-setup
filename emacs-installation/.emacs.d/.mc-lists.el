@@ -5,6 +5,7 @@
       '(
         backward-sexp
         cljr-slash
+        company-indent-or-complete-common
         delete-indentation
         down-list
         eval-last-sexp
