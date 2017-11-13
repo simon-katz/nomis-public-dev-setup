@@ -30,4 +30,31 @@ in the display."
 
 ;;;; ___________________________________________________________________________
 
+(defconst go-left-right-amount 20)
+
+(defun nomis-go-right-lots ()
+  (interactive)
+  (let ((current (point))
+        (line-end (line-end-position)))
+    (if (= current line-end)
+        (beep)
+      (let ((new (min line-end
+                      (+ current go-left-right-amount))))
+        (goto-char new)))))
+
+(defun nomis-go-left-lots ()
+  (interactive)
+  (let ((current (point))
+        (line-end (line-beginning-position)))
+    (if (= current line-end)
+        (beep)
+      (let ((new (max line-end
+                      (- current go-left-right-amount))))
+        (goto-char new)))))
+
+(define-key global-map (kbd "C-S-<right>") 'nomis-go-right-lots)
+(define-key global-map (kbd "C-S-<left>") 'nomis-go-left-lots)
+
+;;;; ___________________________________________________________________________
+
 (provide 'nomis-keyboard-scrolling-and-movement)
