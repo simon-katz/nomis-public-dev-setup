@@ -59,7 +59,7 @@
   
   ;; Exporting
   ;; (setq org-export-headline-levels 3)
-  (setq org-export-initial-scope 'subtree)
+  ;; (setq org-export-initial-scope 'subtree) ; you can set this when running `org-export-dispatch`
 
   ;; Scrolling
   (setq org-cycle-hook
@@ -301,6 +301,31 @@ subheading at this level in the previous parent."
                   face-remapping-alist)))
   (setq nomis/org-blog-stuff-on-p
         (not nomis/org-blog-stuff-on-p)))
+
+
+;;;; ________ *** Publishing
+
+(defun nomis/org-export-before-parsing-stuff (backend)
+  (org-map-entries
+   (lambda ()
+     (when (eql backend 'latex)
+       (progn ; Non-breaking spaces hack:
+         (let ((eol (progn (end-of-line) (point))))
+           (beginning-of-line)
+           (while (re-search-forward "&nbsp;" eol t)
+             (replace-match "\\nbsp{}" t t)))))
+     (progn ; My special paragraphs:
+       (beginning-of-line)
+       (when (looking-at-p "\*.* :p ")
+         (delete-region (point)
+                        (progn (forward-word)
+                               (forward-char)
+                               (point)))
+         (end-of-line)
+         (insert "\n"))))))
+
+(add-hook 'org-export-before-parsing-hook
+          'nomis/org-export-before-parsing-stuff)
 
 
 ;;;; ________ *** Publishing
