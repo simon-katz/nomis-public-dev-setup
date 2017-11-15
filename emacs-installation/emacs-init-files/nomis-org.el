@@ -303,30 +303,57 @@ subheading at this level in the previous parent."
         (not nomis/org-blog-stuff-on-p)))
 
 
-;;;; ________ *** Publishing
+;;;; ________ *** Export
 
-(defun nomis/org-export-before-parsing-stuff (backend)
-  (org-map-entries
-   (lambda ()
-     (when (eql backend 'latex)
-       (progn ; Non-breaking spaces hack:
-         (let ((eol (progn (end-of-line) (point))))
-           (beginning-of-line)
-           (while (re-search-forward "&nbsp;" eol t)
-             (replace-match "\\nbsp{}" t t)))))
-     (progn ; My special paragraphs:
-       (beginning-of-line)
-       (when (looking-at-p "\\*+ :p ")
-         (delete-region (point)
-                        (progn (forward-word)
-                               (forward-char)
-                               (point)))
-         (end-of-line)
-         (insert "\n"))))))
+(defun nomis/replace-in-buffer (regexp &rest replace-match-args)
+  (goto-char (point-min))
+  (while (re-search-forward regexp (point-max) t)
+    (apply 'replace-match replace-match-args)))
 
-(add-hook 'org-export-before-parsing-hook
-          'nomis/org-export-before-parsing-stuff)
+(defun nomis/replace-in-buffer/non-breaking-spaces ()
+  (nomis/replace-in-buffer "&nbsp;"
+                           "\\nbsp{}"
+                           t t))
 
+(defun nomis/replace-in-buffer/my-special-paragraphs ()
+  (nomis/replace-in-buffer "^\\*+ :p "
+                           "\n"
+                           t t))
+
+(defun nomis/replace-in-buffer/em () ; FIXME doesn't work when nested
+  (nomis/replace-in-buffer "<em>\\(.*\\)</em>"
+                           "\\\\textit{\\1}"
+                           t))
+
+(defun nomis/org-export-apply-hacks ()
+  (nomis/replace-in-buffer/non-breaking-spaces)
+  (nomis/replace-in-buffer/my-special-paragraphs)
+  (nomis/replace-in-buffer/em))
+
+(defun nomis/org-export ()
+  (interactive)  
+  (let* ((old-buffer (current-buffer))
+         (name (-> old-buffer
+                   buffer-file-name
+                   file-name-nondirectory))
+         (temp-name (concat "__nomis-org-export--" name))
+         (new-buffer (generate-new-buffer temp-name)))
+    (progn ; I did have `unwind-protect`, but that meant I didn't see errors
+      (with-current-buffer new-buffer
+        (insert-buffer-substring old-buffer)
+        (nomis/org-export-apply-hacks)
+        (write-file temp-name)
+        (org-export-dispatch) ; user must select "latex", then "pdf"
+        )
+      (kill-buffer new-buffer)
+      (delete-file temp-name)
+      (delete-file (concat (file-name-sans-extension temp-name)
+                           ".tex"))
+      (rename-file (concat (file-name-sans-extension temp-name)
+                           ".pdf")
+                   (concat (file-name-sans-extension name)
+                           ".pdf")
+                   t))))
 
 ;;;; ________ *** Publishing
 
