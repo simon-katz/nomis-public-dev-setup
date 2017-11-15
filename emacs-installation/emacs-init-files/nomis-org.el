@@ -316,7 +316,7 @@ subheading at this level in the previous parent."
              (replace-match "\\nbsp{}" t t)))))
      (progn ; My special paragraphs:
        (beginning-of-line)
-       (when (looking-at-p "\*.* :p ")
+       (when (looking-at-p "\\*+ :p ")
          (delete-region (point)
                         (progn (forward-word)
                                (forward-char)
