@@ -347,13 +347,14 @@ subheading at this level in the previous parent."
         )
       (kill-buffer new-buffer)
       (delete-file temp-name)
-      (delete-file (concat (file-name-sans-extension temp-name)
-                           ".tex"))
-      (rename-file (concat (file-name-sans-extension temp-name)
-                           ".pdf")
-                   (concat (file-name-sans-extension name)
-                           ".pdf")
-                   t))))
+      (let ((temp-name-sans-extension (file-name-sans-extension temp-name))
+            (name-sans-extension (file-name-sans-extension name)))
+        (rename-file (concat temp-name-sans-extension ".tex")
+                     (concat name-sans-extension ".tex")
+                     t)
+        (rename-file (concat temp-name-sans-extension ".pdf")
+                     (concat name-sans-extension ".pdf")
+                     t)))))
 
 ;;;; ________ *** Publishing
 
