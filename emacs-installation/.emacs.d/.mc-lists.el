@@ -17,6 +17,7 @@
         nomis-meta-w
         nomis-prog-indent-sexp--top-level
         org-beginning-of-line
+        org-meta-return
         org-self-insert-command
         paredit-backslash
         paredit-backward-up
