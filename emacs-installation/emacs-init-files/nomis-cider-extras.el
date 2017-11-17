@@ -7,6 +7,7 @@
 ;;## ;;;;       - Did/does it all make sense anyway?
 
 (require 'cider)
+(require 'nomis-run-clojure)
 
 ;;;; ___________________________________________________________________________
 ;;;; ---- Wrappers for things in Cider, to isolate dependencies and make ----
@@ -321,40 +322,12 @@ Really send to REPL? "
 ;;## ;;;; ---- nomis-cider-rearrange-string-into-lines ----
 ;;## 
 ;;## ;;;; ****
-;;## ;;;; + Ring bell when you get a Clojure error.
-;;## ;;;;   Need to write something a bit different to `nrepl-eval-print'.
-;;## ;;;;
-;;## ;;;; + Either understand Elisp `format' or find a `cl-format' for Emacs.
-;;## ;;;;   There is a CL format, but using it changed the current buffer to
-;;## ;;;;   *scratch*.  Bad.  Got rid of it.
-;;## ;;;;
 ;;## ;;;; + Ensure `nomis-grab-text' has no free variables.
 ;;## ;;;;
 ;;## ;;;; + Put all your code-manipulation Clojure functions in single file in
 ;;## ;;;;   a new project.
 ;;## ;;;;   And have proper tests of the code-manipulation code.
 ;;## ;;;;
-;;## ;;;; - When to load this file the Clojure file?
-;;## ;;;;   - The Right Thing
-;;## ;;;;     - How do you set up dev dependencies?
-;;## ;;;;       (If you could do this, you could have Leiningen load up the Clojure
-;;## ;;;;       code.)
-;;## ;;;;       A :user profile in "~/.lein/profiles.clj'.
-;;## ;;;;       Do I need to set up a local repository? (Or put things somewhere
-;;## ;;;;       remote?)
-;;## ;;;;   x Ignore the following.  Do The Right Thing.
-;;## ;;;;     x For now you are sending the Clojure code to the Clojure world every
-;;## ;;;;       time.
-;;## ;;;;     x I had wanted to load it in some after advice to `nrepl-jack-in',
-;;## ;;;;       but you'd have to wait somehow for the server to finish starting.
-
-(defvar nomis-newline-string "
-")
-
-(defun transform-string-value (value)
-  (s-replace "\\n"
-             nomis-newline-string
-             value))
 
 ;;## (defun get-string-from-file (filePath)
 ;;##   "Return FILEPATH's file content."
@@ -388,21 +361,7 @@ Really send to REPL? "
                     (+ (current-column)
                        (if prefix 0 1))
                     72)))
-      (cider-interactive-eval clojure-form-as-string
-                              (nrepl-make-response-handler
-                               (current-buffer)
-                               (lambda (buffer value)
-                                 (let ((value (transform-string-value value)))
-                                   (with-current-buffer buffer
-                                     (insert
-                                      (if (derived-mode-p 'cider-clojure-interaction-mode)
-                                          (format "\n%s\n" value)
-                                        value)))))
-                               (lambda (_buffer out)
-                                 (cider-emit-interactive-eval-output out))
-                               (lambda (_buffer err)
-                                 (cider-emit-interactive-eval-err-output err))
-                               '())))))
+      (nomis/run-clojure clojure-form-as-string))))
 
 (define-key cider-mode-map (kbd "C-c C-g")
   'nomis-cider-rearrange-string-into-lines)
