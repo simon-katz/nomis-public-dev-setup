@@ -305,43 +305,60 @@ subheading at this level in the previous parent."
 
 ;;;; ________ *** Export
 
-(defun nomis/replace-in-buffer (regexp &rest replace-match-args)
-  (goto-char (point-min))
-  (while (re-search-forward regexp (point-max) t)
-    (apply 'replace-match replace-match-args)))
+(defun get-string-from-file (path)
+  "Return filePath's file content."
+  (with-temp-buffer
+    (insert-file-contents path)
+    (buffer-string)))
 
-(defun nomis/replace-in-buffer/non-breaking-spaces ()
-  (nomis/replace-in-buffer "&nbsp;"
-                           "\\nbsp{}"
-                           t t))
+(defconst nomis/org-export-apply-hacks-max-read-attempts 20)
+(defconst nomis/org-export-apply-hacks-sleep-ms 100)
 
-(defun nomis/replace-in-buffer/my-special-paragraphs ()
-  (nomis/replace-in-buffer "^\\*+ :p "
-                           "\n"
-                           t t))
+(cl-defun get-output-xxxx (output-path &optional (n-attempts 1))
+  (condition-case nil
+      (get-string-from-file output-path)
+    (error
+     (if (<= n-attempts nomis/org-export-apply-hacks-max-read-attempts)
+         (progn
+           (sleep-for 0 nomis/org-export-apply-hacks-sleep-ms)
+           (get-output-xxxx output-path (1+ n-attempts)))
+       (progn
+         (beep)
+         (error "FAILED: Tried %s times to read %s"
+                nomis/org-export-apply-hacks-max-read-attempts
+                output-path))))))
 
-(defun nomis/replace-in-buffer/em () ; FIXME doesn't work when nested
-  (nomis/replace-in-buffer "<em>\\(.*\\)</em>"
-                           "\\\\textit{\\1}"
-                           t))
-
-(defun nomis/org-export-apply-hacks ()
-  (nomis/replace-in-buffer/non-breaking-spaces)
-  (nomis/replace-in-buffer/my-special-paragraphs)
-  (nomis/replace-in-buffer/em))
+(cl-defun nomis/org-export-apply-hacks (&optional s)
+  (let ((input-path (make-temp-file "__nomis-org-export--input-"))
+        (output-path (make-temp-file "__nomis-org-export--output-")))
+    (delete-file output-path) ; we will create it later
+    (write-region s nil input-path)
+    (unwind-protect
+        (progn
+          (nomis/run-clojure-no-insert
+           (format "(do (require '[nomis-blog.layer-2-domain.content.org-mode.pre-parse-transforms :as ppt])
+                         (ppt/org-export-apply-hacks-to-file :latex
+                                                              \"%s\"
+                                                              \"%s\"))"
+                   input-path
+                   output-path))
+          (get-output-xxxx output-path))
+      (delete-file input-path)
+      (delete-file output-path))))
 
 (defun nomis/org-export ()
   (interactive)  
-  (let* ((old-buffer (current-buffer))
+  (let* ((s (buffer-string))
+         (old-buffer (current-buffer))
          (name (-> old-buffer
                    buffer-file-name
                    file-name-nondirectory))
-         (temp-name (concat "__nomis-org-export--" name))
+         (temp-name (concat "__zzzz--temp--nomis-org-export--" name))
          (new-buffer (generate-new-buffer temp-name)))
     (progn ; I did have `unwind-protect`, but that meant I didn't see errors
       (with-current-buffer new-buffer
-        (insert-buffer-substring old-buffer)
-        (nomis/org-export-apply-hacks)
+        (let ((new-s (nomis/org-export-apply-hacks s)))
+          (insert new-s))
         (write-file temp-name)
         (org-export-dispatch) ; user must select "latex", then "pdf"
         )

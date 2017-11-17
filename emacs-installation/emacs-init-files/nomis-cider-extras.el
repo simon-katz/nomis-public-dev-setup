@@ -361,7 +361,7 @@ Really send to REPL? "
                     (+ (current-column)
                        (if prefix 0 1))
                     72)))
-      (nomis/run-clojure clojure-form-as-string))))
+      (nomis/run-clojure-and-insert-result clojure-form-as-string))))
 
 (define-key cider-mode-map (kbd "C-c C-g")
   'nomis-cider-rearrange-string-into-lines)

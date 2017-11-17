@@ -14,7 +14,7 @@
              nomis-newline-string
              value))
 
-(defun nomis/run-clojure (clojure-form-as-string)
+(defun nomis/run-clojure-and-insert-result (clojure-form-as-string)
   (cider-interactive-eval clojure-form-as-string
                           (nrepl-make-response-handler
                            (current-buffer)
@@ -25,6 +25,19 @@
                                   (if (derived-mode-p 'cider-clojure-interaction-mode)
                                       (format "\n%s\n" value)
                                     value)))))
+                           (lambda (_buffer out)
+                             (cider-emit-interactive-eval-output out))
+                           (lambda (_buffer err)
+                             (cider-emit-interactive-eval-err-output err))
+                           '())))
+
+(defun nomis/run-clojure-no-insert (clojure-form-as-string)
+  (cider-interactive-eval clojure-form-as-string
+                          (nrepl-make-response-handler
+                           (current-buffer)
+                           (lambda (buffer value)
+                             ;; no-op
+                             )
                            (lambda (_buffer out)
                              (cider-emit-interactive-eval-output out))
                            (lambda (_buffer err)
