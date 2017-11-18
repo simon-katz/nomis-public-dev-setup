@@ -334,7 +334,7 @@ subheading at this level in the previous parent."
 (cl-defun nomis/org-export-apply-hacks (&optional s)
   (let ((input-path (make-temp-file "__nomis-org-export--input-"))
         (output-path (make-temp-file "__nomis-org-export--output-")))
-    (delete-file output-path) ; we will create it later
+    (delete-file output-path) ; later we will wait for it to be created
     (write-region s nil input-path)
     (unwind-protect
         (progn
