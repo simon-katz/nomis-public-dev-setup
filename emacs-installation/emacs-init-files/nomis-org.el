@@ -315,18 +315,20 @@ subheading at this level in the previous parent."
 (defconst nomis/org-export-apply-hacks-sleep-ms 100)
 
 (cl-defun get-output-xxxx (output-path &optional (n-attempts 1))
-  (condition-case nil
-      (get-string-from-file output-path)
-    (error
-     (if (<= n-attempts nomis/org-export-apply-hacks-max-read-attempts)
-         (progn
-           (sleep-for 0 nomis/org-export-apply-hacks-sleep-ms)
+  (cl-flet ((sleep-a-bit
+             ()
+             (sleep-for 0 nomis/org-export-apply-hacks-sleep-ms)))
+    (cond ((file-exists-p output-path)
+           (sleep-a-bit) ; in case file exists but writing hasn't finished
+           (get-string-from-file output-path))
+          ((<= n-attempts nomis/org-export-apply-hacks-max-read-attempts)
+           (sleep-a-bit)
            (get-output-xxxx output-path (1+ n-attempts)))
-       (progn
-         (beep)
-         (error "FAILED: Tried %s times to read %s"
-                nomis/org-export-apply-hacks-max-read-attempts
-                output-path))))))
+          (t
+           (beep)
+           (error "FAILED: Tried %s times to read %s"
+                  nomis/org-export-apply-hacks-max-read-attempts
+                  output-path)))))
 
 (cl-defun nomis/org-export-apply-hacks (&optional s)
   (let ((input-path (make-temp-file "__nomis-org-export--input-"))
@@ -343,11 +345,11 @@ subheading at this level in the previous parent."
                    input-path
                    output-path))
           (get-output-xxxx output-path))
-      (delete-file input-path)
-      (delete-file output-path))))
+      (ignore-errors (delete-file input-path))
+      (ignore-errors (delete-file output-path)))))
 
 (defun nomis/org-export ()
-  (interactive)  
+  (interactive)
   (let* ((s (buffer-string))
          (old-buffer (current-buffer))
          (name (-> old-buffer
