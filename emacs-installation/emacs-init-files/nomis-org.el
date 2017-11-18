@@ -314,7 +314,8 @@ subheading at this level in the previous parent."
 (defconst nomis/org-export-apply-hacks-max-read-attempts 20)
 (defconst nomis/org-export-apply-hacks-sleep-ms 100)
 
-(cl-defun get-output-xxxx (output-path &optional (n-attempts 1))
+(cl-defun nomis/org-export-read-hacked-file
+    (output-path &optional (n-attempts 1))
   (cl-flet ((sleep-a-bit
              ()
              (sleep-for 0 nomis/org-export-apply-hacks-sleep-ms)))
@@ -323,7 +324,7 @@ subheading at this level in the previous parent."
            (get-string-from-file output-path))
           ((<= n-attempts nomis/org-export-apply-hacks-max-read-attempts)
            (sleep-a-bit)
-           (get-output-xxxx output-path (1+ n-attempts)))
+           (nomis/org-export-read-hacked-file output-path (1+ n-attempts)))
           (t
            (beep)
            (error "FAILED: Tried %s times to read %s"
@@ -344,7 +345,7 @@ subheading at this level in the previous parent."
                                                               \"%s\"))"
                    input-path
                    output-path))
-          (get-output-xxxx output-path))
+          (nomis/org-export-read-hacked-file output-path))
       (ignore-errors (delete-file input-path))
       (ignore-errors (delete-file output-path)))))
 
