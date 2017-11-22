@@ -339,7 +339,7 @@ subheading at this level in the previous parent."
     (unwind-protect
         (progn
           (nomis/run-clojure-no-insert
-           (format "(do (require '[nomis-blog.layer-2-domain.content.org-mode.pre-parse-transforms :as ppt])
+           (format "(do (require '[nomis-blog.layer-2-domain.content.source.org-mode-source.pre-parse-transforms :as ppt])
                          (ppt/org-export-apply-hacks-to-file :latex
                                                               \"%s\"
                                                               \"%s\"))"
