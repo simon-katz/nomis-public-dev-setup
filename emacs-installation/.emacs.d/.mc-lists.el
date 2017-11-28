@@ -4,7 +4,10 @@
 (setq mc/cmds-to-run-for-all
       '(
         backward-sexp
+        cljr-raise-sexp
         cljr-slash
+        clojure-convert-collection-to-map
+        clojure-convert-collection-to-vector
         company-indent-or-complete-common
         delete-indentation
         down-list
@@ -27,6 +30,7 @@
         paredit-forward-slurp-sexp
         paredit-kill
         paredit-newline
+        paredit-open-curly
         paredit-open-round
         paredit-open-square
         paredit-raise-sexp
