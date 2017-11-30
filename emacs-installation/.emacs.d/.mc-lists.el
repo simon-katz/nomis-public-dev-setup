@@ -18,6 +18,7 @@
         mark-sexp
         markdown-exdent-or-delete
         nomis-meta-w
+        nomis-meta-x
         nomis-prog-indent-sexp--top-level
         org-beginning-of-line
         org-meta-return
