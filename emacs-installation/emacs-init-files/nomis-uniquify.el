@@ -1,7 +1,7 @@
 ;;;; Init stuff -- uniquify
 
 (require 'uniquify)
-(setq uniquify-buffer-name-style 'forward)
+;; (setq uniquify-buffer-name-style 'forward)
 
 ;;;; ___________________________________________________________________________
 
