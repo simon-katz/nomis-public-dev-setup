@@ -376,9 +376,51 @@ subheading at this level in the previous parent."
                      (concat name-sans-extension ".pdf")
                      t)))))
 
-;;;; ________ *** Publishing
+;;;; Publishing
 
-(require 'nomis-org-publish)
+;;;; This doesn't work particularly well. Do it in a terminal window instead.
+
+;; (defun nomis/ordinary-insertion-filter (proc string)
+;;   ;; Copied, with changes, from
+;;   ;; https://www.gnu.org/software/emacs/manual/html_node/elisp/Filter-Functions.html#Filter-Functions
+;;   (when (buffer-live-p (process-buffer proc))
+;;     (with-current-buffer (process-buffer proc)
+;;       (let ((moving (case 2
+;;                       (1 (= (point) (process-mark proc)))
+;;                       (2 t))))
+;;         (save-excursion
+;;           ;; Insert the text, advancing the process marker.
+;;           (goto-char (process-mark proc))
+;;           (insert (s-replace "" "\n" string))
+;;           (set-marker (process-mark proc) (point)))
+;;         (if moving (goto-char (process-mark proc)))))))
+
+;; (defun nomis/org-publish-filter-function (proc string)
+;;   (nomis/ordinary-insertion-filter proc string))
+
+;; (defun nomis/org-publish ()
+;;   (interactive)
+;;   (let (;; (password (read-passwd "Enter password: "))
+;;         (output-buffer (get-buffer-create "nomis-org-publish")))
+;;     (display-buffer output-buffer)
+;;     (with-current-buffer output-buffer
+;;       (goto-char (point-max))
+;;       (insert "\n____________________________________\n"))
+;;     (case 2
+;;       (1 (call-process "/Users/simonkatz/development-100/repositories/nomis/nomis-blog/_scripts/publish.sh"
+;;                        nil
+;;                        output-buffer
+;;                        t
+;;                        ;; (concat "\"" password "\"")
+;;                        ))
+;;       (2 (make-process :name "nomis-org-publish"
+;;                        :buffer output-buffer
+;;                        :filter 'nomis/org-publish-filter-function
+;;                        :command (list "/Users/simonkatz/development-100/repositories/nomis/nomis-blog/_scripts/publish.sh"
+;;                                       ;; (concat "\"" password "\"")
+;;                                       )
+;;                        ;; :stderr output-buffer
+;;                        )))))
 
 ;;;; ________ ** end
 
