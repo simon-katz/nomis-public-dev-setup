@@ -142,6 +142,8 @@
 (require 'nomis-buffers)
 (require 'nomis-frame-style)
 (require 'nomis-windows)
+(require 'nomis-faces)
+
 (require 'nomis-uniquify)
 
 (require 'nomis-mac-keyboard-hacking)
