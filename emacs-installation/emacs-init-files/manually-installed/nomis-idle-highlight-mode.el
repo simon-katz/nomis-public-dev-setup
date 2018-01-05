@@ -233,12 +233,19 @@
 
 (defun symbol-name->end-of-symbol-regex (symbol-name)
   (case 2
-    (1 end-of-symbol-re)
-    (2 (if (s-ends-with? "'" symbol-name)
+    (1
+     end-of-symbol-re)
+    (2
+     (cond ((not (equal major-mode 'clojure-mode))
+            end-of-symbol-re)
            ;; :trailing-single-quotes
-           eob-or-not-sq-re
-         (concat end-of-symbol-re
-                 eob-or-not-sq-re)))))
+           ;; Emacs doesn't have lookahead regexes, so unfortunately we are going
+           ;; to highlight the char after the symbol.
+           ((s-ends-with? "'" symbol-name)
+            eob-or-not-sq-re)
+           (t
+            (concat end-of-symbol-re
+                    eob-or-not-sq-re))))))
 
 (defun backward-nomis-idle-highlight-thing ()
   "Like `forward-symbol -1`, but:
