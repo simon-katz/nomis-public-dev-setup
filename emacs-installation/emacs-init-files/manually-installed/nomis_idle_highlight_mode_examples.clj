@@ -23,7 +23,18 @@
  FRED
  FRED
  FrEd
- FrEd)
+ FrEd
+
+ fred
+ freddy
+ alfred
+ fred
+ fred'
+ fred''
+ fred'''
+ fred'
+ fred''
+ fred''')
 
 fred() ; FIXME No highlighting when on open parenthesis.
 
@@ -54,3 +65,5 @@ xxxx fred* xxxx
     (name __)
     (str/split __ #"\.")
     (map symbol __)))
+
+fred'    fred    fred

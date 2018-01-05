@@ -88,6 +88,8 @@
 
 (require 'nomis-rx)
 
+(require 'nomis-sexp-utils)
+
 ;;;; ___________________________________________________________________________
 
 (defgroup nomis-idle-highlight nil
@@ -225,15 +227,27 @@
                  ;; won't have it. But we want to allow them.
                  ":*"))))
 
-(defun forward-nomis-idle-highlight-thing (arg)
-  "Like `forward-symbol`, but:
+(defconst end-of-symbol-re "\\_>")
+(defconst eob-or-not-sq-re (nomis/rx/or "\\'"
+                                        "[^']"))
+
+(defun symbol-name->end-of-symbol-regex (symbol-name)
+  (case 2
+    (1 end-of-symbol-re)
+    (2 (if (s-ends-with? "'" symbol-name)
+           ;; :trailing-single-quotes
+           eob-or-not-sq-re
+         (concat end-of-symbol-re
+                 eob-or-not-sq-re)))))
+
+(defun backward-nomis-idle-highlight-thing ()
+  "Like `forward-symbol -1`, but:
    - If in Clojure mode, if we land on a ^ or @, skip over it.
    - If we land on a colon and `nomis-idle-highlight-colon-at-start-matters-p`
      is nil, skip over all colons."
-  (interactive "^p")
-  (forward-symbol arg)
+  (interactive)
+  (forward-symbol -1)
   (when (and (equal major-mode 'clojure-mode)
-             (< arg 0)
              (or (looking-at-p "\\^")
                  (looking-at-p "\\@")))
     (forward-char))
@@ -241,7 +255,14 @@
     (while (looking-at-p ":")
       (forward-char))))
 
-(require 'nomis-sexp-utils)
+(defun forward-nomis-idle-highlight-thing ()
+  "Like `forward-symbol`, but:
+   - If in Clojure mode, if we land on trailing single quotes, skip over them."
+  (interactive)
+  (forward-symbol 1)
+  (when (equal major-mode 'clojure-mode)
+    (while (looking-at-p "'") ; :trailing-single-quotes
+      (forward-char))))
 
 (defun nomis-idle-highlight-thing ()
   (unless (nomis-looking-at-boring-place-p)
@@ -249,13 +270,15 @@
                      (save-excursion
                        ;; Move forward then back to get to start.
                        ;; This may skip over an initial colon.
+                       (while (looking-at-p "'") ; :trailing-single-quotes
+                         (forward-char))
                        (unless (or (nomis-looking-at-whitespace)
                                    (nomis-looking-at-bracketed-sexp-end))
-                         (forward-nomis-idle-highlight-thing 1))
-                       (forward-nomis-idle-highlight-thing -1)
+                         (forward-nomis-idle-highlight-thing))
+                       (backward-nomis-idle-highlight-thing)
                        (let* ((beg (point))
                               (end (progn
-                                     (forward-nomis-idle-highlight-thing 1)
+                                     (forward-nomis-idle-highlight-thing)
                                      (point))))
                          (when (< beg end)
                            (cons beg end))))))
@@ -301,11 +324,14 @@
                          (beep)
                          (regexp-quote captured-target))
                         (t
-                         ;; (message "Looking for %s" captured-target)
+                         ;; (message "Looking for captured-target %s" captured-target)
                          (let* ((prefix (concat (nomis-start-of-symbol-regex)
                                                 (nomis-idle-highlight-regexp-quote
                                                  captured-target)))
-                                (regex-for-symbol (concat prefix "\\_>")))
+                                (regex-for-symbol
+                                 (concat prefix
+                                         (-> captured-target
+                                             symbol-name->end-of-symbol-regex))))
                            (if (not (eq major-mode 'clojure-mode))
                                regex-for-symbol
                              (let* ((regex-for-use-of-ns-or-ns-alias
@@ -317,6 +343,7 @@
             ;;          captured-target
             ;;          nomis-idle-highlight-regexp)
             (when nomis-idle-highlight-regexp
+              ;; (message "Looking for regexp %s" nomis-idle-highlight-regexp)
               (highlight-regexp nomis-idle-highlight-regexp
                                 nomis-idle-highlight-face)))))))
 
