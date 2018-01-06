@@ -1,3 +1,5 @@
+;; -*- require-final-newline: nil; -*-
+
 :Elisp
 ;;;; Elisp examples for testing nomis-idle-highlight-mode.
 

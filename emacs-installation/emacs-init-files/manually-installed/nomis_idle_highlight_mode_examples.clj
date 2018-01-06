@@ -1,3 +1,5 @@
+;; -*- require-final-newline: nil; -*-
+
 :Clojure
 ;;;; Clojure examples for testing nomis-idle-highlight-mode.
 
@@ -34,7 +36,13 @@
  fred'''
  fred'
  fred''
- fred''')
+ fred'''
+ fred'a
+ fred'a
+ fred'b
+ fred'a'
+ fred'a'b
+ fred'&)
 
 fred() ; FIXME No highlighting when on open parenthesis.
 

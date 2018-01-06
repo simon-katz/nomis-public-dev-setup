@@ -228,8 +228,14 @@
                  ":*"))))
 
 (defconst end-of-symbol-re "\\_>")
-(defconst eob-or-not-sq-re (nomis/rx/or "\\'"
-                                        "[^']"))
+(defconst eob-or-not-symbol-constituent-re
+  (nomis/rx/or "\\'"
+               (case 2
+                 (1 "[^']")
+                 (2
+                  ;; [:word:] seems to include symbol
+                  ;; chars such as $&*+-_<>.
+                  "[^'[:word:]]"))))
 
 (defun symbol-name->end-of-symbol-regex (symbol-name)
   (case 2
@@ -242,18 +248,18 @@
            ;; Emacs doesn't have lookahead regexes, so unfortunately we are going
            ;; to highlight the char after the symbol.
            ((s-ends-with? "'" symbol-name)
-            eob-or-not-sq-re)
+            eob-or-not-symbol-constituent-re)
            (t
             (concat end-of-symbol-re
-                    eob-or-not-sq-re))))))
+                    eob-or-not-symbol-constituent-re))))))
 
 (defun backward-nomis-idle-highlight-thing ()
-  "Like `forward-symbol -1`, but:
+  "Like `backward-sexp`, but:
    - If in Clojure mode, if we land on a ^ or @, skip over it.
    - If we land on a colon and `nomis-idle-highlight-colon-at-start-matters-p`
      is nil, skip over all colons."
   (interactive)
-  (forward-symbol -1)
+  (backward-sexp)
   (when (and (equal major-mode 'clojure-mode)
              (or (looking-at-p "\\^")
                  (looking-at-p "\\@")))
@@ -263,10 +269,10 @@
       (forward-char))))
 
 (defun forward-nomis-idle-highlight-thing ()
-  "Like `forward-symbol`, but:
+  "Like `forward-sexp`, but:
    - If in Clojure mode, if we land on trailing single quotes, skip over them."
   (interactive)
-  (forward-symbol 1)
+  (forward-sexp)
   (when (equal major-mode 'clojure-mode)
     (while (looking-at-p "'") ; :trailing-single-quotes
       (forward-char))))
