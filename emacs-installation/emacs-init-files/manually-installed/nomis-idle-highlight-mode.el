@@ -12,7 +12,7 @@
 ;; - You can toggle whether colons at the start of a symbol are ignored. This is
 ;;   useful in Clojure, where sometimes a keyword and a non-keyword refer to the
 ;;   same thing.
-;;   Use `nomis-idle-highlight-toggle-colon-at-start-matters` (bound to
+;;   Use `nomis/toggle-idle-highlight-colon-at-start-matters` (bound to
 ;;   H-q H-h H-;).
 ;; 
 ;; - You can easily switch the highlight face using:
@@ -83,6 +83,21 @@
 ;; (add-hook 'js2-mode-hook 'my-coding-hook)
 
 ;;; Code:
+
+(defconst nomis/highlight-debug? nil)
+
+(defun nomis/report-char-at-point (&optional msg)
+  (when nomis/highlight-debug?
+    (message "looking at `%s` (point = %s) [%s]"
+             (let ((c (char-after)))
+               (cond ((eql c ?\n)
+                      "newline")
+                     ((eql c nil)
+                      "eof")
+                     (t
+                      (format "%c" c))))
+             (point)
+             (or msg "dunno"))))
 
 ;;;; ___________________________________________________________________________
 
@@ -189,7 +204,7 @@
 (defvar nomis-idle-highlight-colon-at-start-matters-p
   nil)
 
-(defun nomis-idle-highlight-toggle-colon-at-start-matters ()
+(defun nomis/toggle-idle-highlight-colon-at-start-matters ()
   (interactive)
   (message
    "nomis-idle-highlight-colon-at-start-matters-p = %s"
@@ -201,6 +216,68 @@
   ;; something.)
   ;; Anyway, force an immediate update.
   (nomis-idle-highlight-word-at-point))
+
+;;;; ___________________________________________________________________________
+;;;; Regular expressions for symbols
+
+(defun nomis/make-char-match-regexp (str)
+  (concat "["
+          str
+          "]"))
+
+(defconst nomis/symbol-prefix-chars/default
+  "'`#,")
+
+(defconst nomis/symbol-prefix-chars/clojure-mode
+  (concat nomis/symbol-prefix-chars/default "@^~"))
+
+
+(defconst nomis/symbol-prefix-char-regexp/default
+  (nomis/make-char-match-regexp nomis/symbol-prefix-chars/default))
+
+(defconst nomis/symbol-prefix-char-regexp/incl-colon/default
+  (nomis/make-char-match-regexp (concat nomis/symbol-prefix-chars/default
+                                        ":")))
+
+(defconst nomis/symbol-prefix-char-regexp/clojure-mode
+  (nomis/make-char-match-regexp nomis/symbol-prefix-chars/clojure-mode))
+
+(defconst nomis/symbol-prefix-char-regexp/incl-colon/clojure-mode
+  (nomis/make-char-match-regexp (concat nomis/symbol-prefix-chars/clojure-mode
+                                        ":")))
+
+(defun nomis/symbol-prefix-char-regexp ()
+  (case major-mode
+    (clojure-mode
+     (if nomis-idle-highlight-colon-at-start-matters-p
+         nomis/symbol-prefix-char-regexp/clojure-mode
+       nomis/symbol-prefix-char-regexp/incl-colon/clojure-mode))
+    (t
+     (if nomis-idle-highlight-colon-at-start-matters-p
+         nomis/symbol-prefix-char-regexp/default
+       nomis/symbol-prefix-char-regexp/incl-colon/default))))
+
+(defconst nomis/symbol-body-chars/default
+  "[:alnum:]$&*+-_<>/'")
+
+(defconst nomis/symbol-body-chars/clojure-mode
+  (concat nomis/symbol-body-chars/default ""))
+
+
+(defconst nomis/symbol-body-char-regexp/default
+  (nomis/make-char-match-regexp nomis/symbol-body-chars/default))
+
+(defconst nomis/symbol-body-char-regexp/clojure-mode
+  (nomis/make-char-match-regexp nomis/symbol-body-chars/clojure-mode))
+
+(defun nomis/symbol-body-char-regexp ()
+  (case major-mode
+    (clojure-mode
+     nomis/symbol-body-char-regexp/clojure-mode)
+    (t
+     nomis/symbol-body-char-regexp/default)))
+
+;;;; ___________________________________________________________________________
 
 (defun nomis-start-of-symbol-regex ()
   (apply 'concat
@@ -242,8 +319,8 @@
     (1
      end-of-symbol-re)
     (2
-     (cond ((not (equal major-mode 'clojure-mode))
-            end-of-symbol-re)
+     (cond ;; ((not (equal major-mode 'clojure-mode))
+           ;;  end-of-symbol-re)
            ;; :trailing-single-quotes
            ;; Emacs doesn't have lookahead regexes, so unfortunately we are going
            ;; to highlight the char after the symbol.
@@ -253,54 +330,67 @@
             (concat end-of-symbol-re
                     eob-or-not-symbol-constituent-re))))))
 
-(defun backward-nomis-idle-highlight-thing ()
-  "Like `backward-sexp`, but:
-   - If in Clojure mode, if we land on a ^ or @, skip over it.
-   - If we land on a colon and `nomis-idle-highlight-colon-at-start-matters-p`
-     is nil, skip over all colons."
-  (interactive)
-  (backward-sexp)
-  (when (and (equal major-mode 'clojure-mode)
-             (or (looking-at-p "\\^")
-                 (looking-at-p "\\@")))
-    (forward-char))
-  (when (not nomis-idle-highlight-colon-at-start-matters-p)
-    (while (looking-at-p ":")
-      (forward-char))))
 
-(defun forward-nomis-idle-highlight-thing ()
-  "Like `forward-sexp`, but:
-   - If in Clojure mode, if we land on trailing single quotes, skip over them."
-  (interactive)
-  (forward-sexp)
-  (when (equal major-mode 'clojure-mode)
-    (while (looking-at-p "'") ; :trailing-single-quotes
-      (forward-char))))
+(cl-defun nomis/skip-chars-forward (&rest regexps)
+  (while (-any? #'looking-at-p regexps)
+    (forward-char)))
+
+(cl-defun nomis/skip-chars-backward (&rest regexps)
+  (while (-any? #'looking-at-p regexps)
+    (backward-char)))
 
 (defun nomis-idle-highlight-thing ()
-  (unless (nomis-looking-at-boring-place-p)
-    (let* ((bounds (ignore-errors
-                     (save-excursion
-                       ;; Move forward then back to get to start.
-                       ;; This may skip over an initial colon.
-                       (while (looking-at-p "'") ; :trailing-single-quotes
-                         (forward-char))
-                       (unless (or (nomis-looking-at-whitespace)
-                                   (nomis-looking-at-bracketed-sexp-end))
-                         (forward-nomis-idle-highlight-thing))
-                       (backward-nomis-idle-highlight-thing)
-                       (let* ((beg (point))
-                              (end (progn
-                                     (forward-nomis-idle-highlight-thing)
-                                     (point))))
-                         (when (< beg end)
-                           (cons beg end))))))
-           (text
-            (when bounds
-              (buffer-substring (car bounds) (cdr bounds)))))
-      (when text
-        (set-text-properties 0 (length text) nil text))
-      text)))
+  (nomis/report-char-at-point "before")
+  (if (nomis-looking-at-boring-place-p)
+      (progn
+        (nomis/report-char-at-point "boring char -- not highlighting")
+        nil)
+    (let* ((prefix-regexp (nomis/symbol-prefix-char-regexp))
+           (body-regexp   (nomis/symbol-body-char-regexp)))
+      (cl-flet ((skip-forward-prefix () (nomis/skip-chars-forward prefix-regexp))
+                (skip-forward-body () (nomis/skip-chars-forward body-regexp))
+                (skip-backward-all () (nomis/skip-chars-backward prefix-regexp
+                                                                 body-regexp)))
+        (let* ((bounds (ignore-errors
+                         (save-excursion
+                           ;; Move forward then back to get to start.
+                           ;; This may skip over an initial colon.
+                           (nomis/report-char-at-point "before")
+                           
+                           (unless (or (nomis-looking-at-whitespace)
+                                       (nomis-looking-at-bracketed-sexp-end))
+                             (skip-forward-prefix)
+                             (nomis/report-char-at-point "after skip prefix")
+                             (skip-forward-body)
+                             (nomis/report-char-at-point "after skip body"))
+                           
+                           (backward-char) ; FIXME fix beginning of buffer
+                           (skip-backward-all)
+                           (forward-char)
+                           (nomis/report-char-at-point "after going back")
+                           
+                           (skip-forward-prefix)
+                           (nomis/report-char-at-point "after skipping prefix")
+                           
+                           (let* ((beg (point))
+                                  (end (progn
+                                         (skip-forward-prefix)
+                                         (skip-forward-body)
+                                         (point))))
+                             (when (< beg end)
+                               (cons beg end))))))
+               (text
+                (when bounds
+                  (buffer-substring (car bounds) (cdr bounds)))))
+          (when text
+            (set-text-properties 0 (length text) nil text))
+          text)))))
+
+
+
+;; FIXME Don't look for strings.
+;; FIXME Bug for L1 L2 L1'L2 (which was there before the new changes).
+
 
 (defun nomis-idle-highlight-regexp-quote (string)
   ;; Maybe this could be simplified by using `case-fold-search` to control
@@ -317,27 +407,31 @@
 
 (defun nomis-idle-highlight-word-at-point* ()
   "Highlight the word under the point."
+  (nomis/report-char-at-point "In `nomis-idle-highlight-word-at-point*`")
   (if nomis-idle-highlight-mode
       (let* ((captured-target (nomis-idle-highlight-thing)))
         (nomis-idle-highlight-unhighlight)
-        ;; (message "captured-target = %s" captured-target)
+        (when nomis/highlight-debug?
+          (message "captured-target = %s" captured-target))
         (if (or (not captured-target)
                 (member captured-target
                         nomis-idle-highlight-exceptions)
                 (and (eq major-mode 'org-mode)
                      (string-match-p "^\\*+$" captured-target)))
             (progn
-              ;; (message "Not highlighting")
-              )
+              (when nomis/highlight-debug?
+                (message "Not highlighting")))
           (progn
             (setq nomis-idle-highlight-regexp
                   (cond ((eq (string-to-char captured-target)
                              ?\")
-                         (message "nomis-idle-highlight-word-at-point*: Pretty sure we can't get here.")
+                         (when nomis/highlight-debug?
+                           (message "nomis-idle-highlight-word-at-point*: Pretty sure we can't get here."))
                          (beep)
                          (regexp-quote captured-target))
                         (t
-                         ;; (message "Looking for captured-target %s" captured-target)
+                         (when nomis/highlight-debug?
+                           (message "Looking for captured-target %s" captured-target))
                          (let* ((prefix (concat (nomis-start-of-symbol-regex)
                                                 (nomis-idle-highlight-regexp-quote
                                                  captured-target)))
@@ -356,11 +450,14 @@
             ;;          captured-target
             ;;          nomis-idle-highlight-regexp)
             (when nomis-idle-highlight-regexp
-              ;; (message "Looking for regexp %s" nomis-idle-highlight-regexp)
+              (when nomis/highlight-debug?
+                (message "Looking for regexp %s" nomis-idle-highlight-regexp))
               (highlight-regexp nomis-idle-highlight-regexp
                                 nomis-idle-highlight-face)))))))
 
 (defun nomis-idle-highlight-word-at-point ()
+  (when nomis/highlight-debug?
+    (message "_____"))
   (condition-case e
       (nomis-idle-highlight-word-at-point*)
     (error
@@ -386,7 +483,7 @@
 ;;;; ___________________________________________________________________________
 
 (define-key global-map (kbd "H-q H-h H-;")
-  'nomis-idle-highlight-toggle-colon-at-start-matters)
+  'nomis/toggle-idle-highlight-colon-at-start-matters)
 
 ;;;; ___________________________________________________________________________
 
@@ -411,7 +508,7 @@
                        nomis/idle-highlight-stuff/initial-toggle-colon-value)
                  (nomis-idle-highlight-report-face))
   :hydra-heads
-  (("t" nomis-idle-highlight-toggle-colon-at-start-matters
+  (("t" nomis/toggle-idle-highlight-colon-at-start-matters
     "Toggle colon matters")
    ("<up>"     nomis-idle-highlight-cycle-up-highlight-face   "Cycle up")
    ("<down>"   nomis-idle-highlight-cycle-down-highlight-face "Cycle down")

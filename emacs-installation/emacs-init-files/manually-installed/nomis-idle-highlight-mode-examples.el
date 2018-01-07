@@ -10,6 +10,8 @@
 (fred
  @fred ; This is Elisp, not Clojure, so @ is not treated specially.
  :fred
+ @fred
+ :fred
  ^:fred foo ; This is Elisp, not Clojure, so ^ is not treated specially.
  #'fred
  'fred
@@ -25,14 +27,37 @@
  FRED
  FRED
  FrEd
- FrEd)
+ FrEd
+
+ fred
+ freddy
+ alfred
+ fred
+ fred'
+ fred''
+ fred'''
+ fred'
+ fred''
+ fred'''
+ fred'a
+ fred'b
+ fred'a'
+ fred'a'b
+ fred'&
+ jim'fred
+ fred'a
+ fred'b
+ fred'a'
+ fred'a'b
+ fred'&
+ jim'fred)
 
 fred() ; FIXME No highlighting when on open parenthesis.
 
 
-;;; Run `nomis-idle-highlight-toggle-colon-at-start-matters`.
+;;; Run `nomis/toggle-idle-highlight-colon-at-start-matters`.
 ;;; Check the above again.
-;;; Run `nomis-idle-highlight-toggle-colon-at-start-matters`.
+;;; Run `nomis/toggle-idle-highlight-colon-at-start-matters`.
 
 ;;; Put cursor at the start of the following lines. Should be no highlighting.
 
@@ -44,9 +69,8 @@ fred() ; FIXME No highlighting when on open parenthesis.
 ;;; Highlighting happens in comments.
 ;;; fred @fred :fred ^:fred
 ;;; `fred` too.
-
-;;; FIXME Bug when on closing ` in `fred`
-;;; FIXME Bug when on closing ` in `fred`.
+(defvar nomis/highlight-example/dajsbjsgfhsg
+  "Highlighting happens in backquotes in comments -- `fred`.")
 
 ;;; More to run through:
 
@@ -57,7 +81,8 @@ fred() ; FIXME No highlighting when on open parenthesis.
     ;; Ensure no highlighting.
     (goo aaaa bbbb)))
 
-;;; FIXME: Fix the things below:
+;;; Fix the things below: (there were bugs; fixed when you changed to finding
+;;; symbols using your own idea of symbols prefixes and bodies)
 ;;;        - when on the closing parentheses
 ;;;        - when on some of the quotes
 ;;;        - when on some of the spaces
@@ -95,11 +120,11 @@ xxxx fred* xxxx
 
 ;
 ;;
-;;; FIXME
 ;;;^above after the semicolons ; (and after this one too)
 
 ;; After the following symbol, check highlighting for all following points.
 ;; (There was a bug when at end of file, when highlighting would incorrectly
 ;; happen.)
 final-stuff-with-blank-lines-following
+
 

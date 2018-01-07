@@ -10,8 +10,10 @@
 (fred
  @fred
  :fred
+ @fred
+ :fred
  ^:fred foo
- #'fred ; FIXME Doesn't highlight `fred` when cursor is on the hash. (Does in Elisp, though.) (Note that the hash is highlighted.)
+ #'fred
  'fred
  `fred
  `fred`
@@ -38,11 +40,17 @@
  fred''
  fred'''
  fred'a
+ fred'b
+ fred'a'
+ fred'a'b
+ fred'&
+ jim'fred
  fred'a
  fred'b
  fred'a'
  fred'a'b
- fred'&)
+ fred'&
+ jim'fred)
 
 fred() ; FIXME No highlighting when on open parenthesis.
 
@@ -64,14 +72,4 @@ xxxx *fred xxxx
 fred* fred*()
 xxxx fred* xxxx
 
-
-;;; FIXME Weird bug: Move cursor up on down on first char of lines below.
-;;;                  Sometimes get highlighting of `defn` and `as->` (but
-;;;                  it depends on where you came from!).
-(defn ^:private THIS-WAS-nsn->pieces [nsn]
-  (as-> nsn __
-    (name __)
-    (str/split __ #"\.")
-    (map symbol __)))
-
-fred'    fred    fred
+fred fred' fred'' fred''' fred
