@@ -101,6 +101,20 @@
 
 ;;;; ___________________________________________________________________________
 
+(defconst nomis/symbol-prefix-chars/base
+  "'`#,")
+
+(defconst nomis/symbol-prefix-chars/clojure-mode-extras
+  "@^~")
+
+(defconst nomis/symbol-body-chars/base
+  "-[:alnum:]$&*+_<>/'.=?^")
+
+(defconst nomis/symbol-body-chars/clojure-mode-extras
+  "")
+
+;;;; ___________________________________________________________________________
+
 (require 'nomis-rx)
 
 (require 'nomis-sexp-utils)
@@ -231,14 +245,14 @@
           "]"))
 
 (defun nomis/symbol-prefix-chars/default ()
-  (let ((base "'`#,"))
+  (let ((base nomis/symbol-prefix-chars/base))
     (if nomis-idle-highlight-colon-at-start-matters-p
         base
       (concat base ":"))))
 
 (defun nomis/symbol-prefix-chars/clojure-mode ()
-  (concat (nomis/symbol-prefix-chars/default) "@^~"))
-
+  (concat (nomis/symbol-prefix-chars/default)
+          nomis/symbol-prefix-chars/clojure-mode-extras))
 
 (defun nomis/symbol-prefix-char-regexp/default ()
   (nomis/make-char-match-regexp (nomis/symbol-prefix-chars/default)))
@@ -257,13 +271,14 @@
   ;; Note the position of the "-" at the beginning. So when augmenting this,
   ;; you must add at the end (otherwise you will introduce a range).
   ;; Horrible.
-  (let ((base "-[:alnum:]$&*+_<>/'.=?^"))
+  (let ((base nomis/symbol-body-chars/base))
     (if nomis-idle-highlight-colon-at-start-matters-p
         (concat base ":")
       base)))
 
 (defun nomis/symbol-body-chars/clojure-mode ()
-  (concat (nomis/symbol-body-chars/default) ""))
+  (concat (nomis/symbol-body-chars/default)
+          nomis/symbol-body-chars/clojure-mode-extras))
 
 (defun nomis/symbol-body-char-regexp/default ()
   (nomis/make-char-match-regexp (nomis/symbol-body-chars/default)))
