@@ -231,7 +231,10 @@
           "]"))
 
 (defun nomis/symbol-prefix-chars/default ()
-  "'`#,")
+  (let ((base "'`#,"))
+    (if nomis-idle-highlight-colon-at-start-matters-p
+        base
+      (concat base ":"))))
 
 (defun nomis/symbol-prefix-chars/clojure-mode ()
   (concat (nomis/symbol-prefix-chars/default) "@^~"))
@@ -240,35 +243,24 @@
 (defun nomis/symbol-prefix-char-regexp/default ()
   (nomis/make-char-match-regexp (nomis/symbol-prefix-chars/default)))
 
-(defun nomis/symbol-prefix-char-regexp/incl-colon/default ()
-  (nomis/make-char-match-regexp (concat (nomis/symbol-prefix-chars/default)
-                                        ":")))
-
 (defun nomis/symbol-prefix-char-regexp/clojure-mode ()
   (nomis/make-char-match-regexp (nomis/symbol-prefix-chars/clojure-mode)))
-
-(defun nomis/symbol-prefix-char-regexp/incl-colon/clojure-mode ()
-  (nomis/make-char-match-regexp (concat (nomis/symbol-prefix-chars/clojure-mode)
-                                        ":")))
 
 (defun nomis/symbol-prefix-char-regexp ()
   (case major-mode
     (clojure-mode
-     (if nomis-idle-highlight-colon-at-start-matters-p
-         (nomis/symbol-prefix-char-regexp/clojure-mode)
-       (nomis/symbol-prefix-char-regexp/incl-colon/clojure-mode)))
+     (nomis/symbol-prefix-char-regexp/clojure-mode))
     (t
-     (if nomis-idle-highlight-colon-at-start-matters-p
-         (nomis/symbol-prefix-char-regexp/default)
-       (nomis/symbol-prefix-char-regexp/incl-colon/default)))))
+     (nomis/symbol-prefix-char-regexp/default))))
 
 (defun nomis/symbol-body-chars/default ()
   ;; Note the position of the "-" at the beginning. So when augmenting this,
   ;; you must add at the end (otherwise you will introduce a range).
   ;; Horrible.
-
-  ;; FIXME-NOW Get rid of the colon.
-  "-[:alnum:]$&*+_<>/':.=?^")
+  (let ((base "-[:alnum:]$&*+_<>/'.=?^"))
+    (if nomis-idle-highlight-colon-at-start-matters-p
+        (concat base ":")
+      base)))
 
 (defun nomis/symbol-body-chars/clojure-mode ()
   (concat (nomis/symbol-body-chars/default) ""))
@@ -302,40 +294,7 @@
 ;;;; ___________________________________________________________________________
 
 (defun nomis-start-of-symbol-regex ()
-  ;; FIXME-NOW check this new stuff
-  (case 1
-    (1 (apply 'concat
-              (list "\\_<"
-                    (if (equal major-mode 'clojure-mode)
-                        ;; There seems to be a bug in `highlight-regexp`.
-                        ;; In Clojure Mode, a regexp search for `\<_` finds
-                        ;; the foo in @foo, but `highlight-regexp` does not
-                        ;; find it.
-                        ;; Ah! And also `highlight-symbol-at-point` doesn't
-                        ;; find it.
-                        ;; So:
-                        "@?"
-                      "")
-                    (if (equal major-mode 'clojure-mode)
-                        ;; Allow ^ before a Clojure symbol.
-                        "\\^?"
-                      "")
-                    (if nomis-idle-highlight-colon-at-start-matters-p
-                        ;; If there are leading colons, our captured target
-                        ;; will have it.
-                        ""
-                      ;; If there are leading colons, our captured target
-                      ;; won't have it. But we want to allow them.
-                      ":*"))))
-    (2 (apply 'concat
-              (list (nomis/not-symbol-body-char-regexp)
-                    (if nomis-idle-highlight-colon-at-start-matters-p
-                        ;; If there are leading colons, our captured target
-                        ;; will have it.
-                        ""
-                      ;; If there are leading colons, our captured target
-                      ;; won't have it. But we want to allow them.
-                      ":*"))))))
+  (nomis/not-symbol-body-char-regexp))
 
 (defconst end-of-symbol-re "\\_>")
 (defconst eob-or-not-symbol-constituent-re
