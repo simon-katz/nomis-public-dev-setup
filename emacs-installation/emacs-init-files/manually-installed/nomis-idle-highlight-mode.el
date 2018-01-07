@@ -261,11 +261,10 @@
   ;; Note the position of the "-" at the beginning. So when augmenting this,
   ;; you must add at the end (otherwise you will introduce a range).
   ;; Horrible.
-  "-[:alnum:]$&*+_<>/'")
+  "-[:alnum:]$&*+_<>/':.=?^")
 
 (defconst nomis/symbol-body-chars/clojure-mode
   (concat nomis/symbol-body-chars/default ""))
-
 
 (defconst nomis/symbol-body-char-regexp/default
   (nomis/make-char-match-regexp nomis/symbol-body-chars/default))
@@ -391,7 +390,6 @@
 
 
 
-;; FIXME Don't look for strings.
 ;; FIXME Bug for L1 L2 L1'L2 (which was there before the new changes).
 
 

@@ -118,6 +118,18 @@ xxxx *fred xxxx
 fred* fred*()
 xxxx fred* xxxx
 
+
+;;; Other chars
+
+a.b
+a=b
+a?b
+a^b
+a.b
+a=b
+a?b
+a^b
+
 ;
 ;;
 ;;;^above after the semicolons ; (and after this one too)
