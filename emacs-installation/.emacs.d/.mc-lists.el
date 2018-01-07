@@ -9,6 +9,7 @@
         clojure-convert-collection-to-map
         clojure-convert-collection-to-vector
         company-indent-or-complete-common
+        dabbrev-expand
         delete-indentation
         down-list
         eval-last-sexp
@@ -23,6 +24,7 @@
         org-beginning-of-line
         org-meta-return
         org-self-insert-command
+        org-shiftmetaleft
         paredit-backslash
         paredit-backward-up
         paredit-doublequote
