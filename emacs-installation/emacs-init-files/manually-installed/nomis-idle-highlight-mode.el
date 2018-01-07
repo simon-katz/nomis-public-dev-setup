@@ -293,35 +293,15 @@
 
 ;;;; ___________________________________________________________________________
 
-(defun nomis-start-of-symbol-regex ()
+(defun nomis/eob-regex ()
+  "\\'")
+
+(defun nomis/start-of-symbol-regex ()
   (nomis/not-symbol-body-char-regexp))
 
-(defconst end-of-symbol-re "\\_>")
-(defconst eob-or-not-symbol-constituent-re
-  (nomis/rx/or "\\'"
-               (case 2
-                 (1 "[^']")
-                 (2
-                  ;; [:word:] seems to include symbol
-                  ;; chars such as $&*+-_<>.
-                  "[^'[:word:]]"))))
-
-(defun symbol-name->end-of-symbol-regex (symbol-name)
-  (case 2
-    (1
-     end-of-symbol-re)
-    (2
-     (cond ;; ((not (equal major-mode 'clojure-mode))
-           ;;  end-of-symbol-re)
-           ;; :trailing-single-quotes
-           ;; Emacs doesn't have lookahead regexes, so unfortunately we are going
-           ;; to highlight the char after the symbol.
-           ((s-ends-with? "'" symbol-name)
-            eob-or-not-symbol-constituent-re)
-           (t
-            (concat end-of-symbol-re
-                    eob-or-not-symbol-constituent-re))))))
-
+(defun nomis/end-of-symbol-regex ()
+  (nomis/rx/or (nomis/eob-regex)
+               (nomis/not-symbol-body-char-regexp)))
 
 (cl-defun nomis/skip-chars-forward (&rest regexps)
   (while (-any? #'looking-at-p regexps)
@@ -378,7 +358,7 @@
             (set-text-properties 0 (length text) nil text))
           text)))))
 
-(defun nomis-idle-highlight-regexp-quote (string)
+(defun nomis/ih/regexp-quote (string)
   ;; Maybe this could be simplified by using `case-fold-search` to control
   ;; the search, but I couldn't make it work.
   ;; Perhaps a bug -- see https://lists.gnu.org/archive/html/bug-gnu-emacs/2016-02/msg02002.html
@@ -418,19 +398,12 @@
                         (t
                          (when nomis/highlight-debug?
                            (message "Looking for captured-target %s" captured-target))
-                         (let* ((prefix (concat (nomis-start-of-symbol-regex)
-                                                (nomis-idle-highlight-regexp-quote
-                                                 captured-target)))
-                                (regex-for-symbol
-                                 (concat prefix
-                                         (-> captured-target
-                                             symbol-name->end-of-symbol-regex))))
-                           (if (not (eq major-mode 'clojure-mode))
-                               regex-for-symbol
-                             (let* ((regex-for-use-of-ns-or-ns-alias
-                                     (concat prefix "/")))
-                               (nomis/rx/or regex-for-symbol
-                                            regex-for-use-of-ns-or-ns-alias)))))))
+                         (concat (nomis/start-of-symbol-regex)
+                                 (nomis/ih/regexp-quote captured-target)
+                                 (when (eq major-mode 'clojure-mode)
+                                   (nomis/rx/or ""
+                                                "/.*?"))
+                                 (nomis/end-of-symbol-regex)))))
             ;; (message "colon-matters-p = %s & captured-target = %s and nomis-idle-highlight-regexp = %s"
             ;;          nomis-idle-highlight-colon-at-start-matters-p
             ;;          captured-target
