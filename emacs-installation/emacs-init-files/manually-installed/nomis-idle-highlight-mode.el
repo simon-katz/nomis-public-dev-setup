@@ -258,7 +258,10 @@
        nomis/symbol-prefix-char-regexp/incl-colon/default))))
 
 (defconst nomis/symbol-body-chars/default
-  "[:alnum:]$&*+-_<>/'")
+  ;; Note the position of the "-" at the beginning. So when augmenting this,
+  ;; you must add at the end (otherwise you will introduce a range).
+  ;; Horrible.
+  "-[:alnum:]$&*+_<>/'")
 
 (defconst nomis/symbol-body-chars/clojure-mode
   (concat nomis/symbol-body-chars/default ""))
