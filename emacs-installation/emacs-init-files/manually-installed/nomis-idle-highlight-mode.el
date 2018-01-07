@@ -225,6 +225,11 @@
           str
           "]"))
 
+(defun nomis/make-char-mismatch-regexp (str)
+  (concat "[^"
+          str
+          "]"))
+
 (defconst nomis/symbol-prefix-chars/default
   "'`#,")
 
@@ -261,6 +266,8 @@
   ;; Note the position of the "-" at the beginning. So when augmenting this,
   ;; you must add at the end (otherwise you will introduce a range).
   ;; Horrible.
+
+  ;; FIXME-NOW Get rid of the colon.
   "-[:alnum:]$&*+_<>/':.=?^")
 
 (defconst nomis/symbol-body-chars/clojure-mode
@@ -279,32 +286,66 @@
     (t
      nomis/symbol-body-char-regexp/default)))
 
+
+
+
+
+
+
+(defconst nomis/not-symbol-body-char-regexp/default
+  (nomis/make-char-mismatch-regexp nomis/symbol-body-chars/default))
+
+(defconst nomis/not-symbol-body-char-regexp/clojure-mode
+  (nomis/make-char-mismatch-regexp nomis/symbol-body-chars/clojure-mode))
+
+(defun nomis/not-symbol-body-char-regexp ()
+  (case major-mode
+    (clojure-mode
+     nomis/not-symbol-body-char-regexp/clojure-mode)
+    (t
+     nomis/not-symbol-body-char-regexp/default)))
+
+
+
+
+
 ;;;; ___________________________________________________________________________
 
 (defun nomis-start-of-symbol-regex ()
-  (apply 'concat
-         (list "\\_<"
-               (if (equal major-mode 'clojure-mode)
-                   ;; There seems to be a bug in `highlight-regexp`.
-                   ;; In Clojure Mode, a regexp search for `\<_` finds
-                   ;; the foo in @foo, but `highlight-regexp` does not
-                   ;; find it.
-                   ;; Ah! And also `highlight-symbol-at-point` doesn't
-                   ;; find it.
-                   ;; So:
-                   "@?"
-                 "")
-               (if (equal major-mode 'clojure-mode)
-                   ;; Allow ^ before a Clojure symbol.
-                   "\\^?"
-                 "")
-               (if nomis-idle-highlight-colon-at-start-matters-p
-                   ;; If there are leading colons, our captured target
-                   ;; will have it.
-                   ""
-                 ;; If there are leading colons, our captured target
-                 ;; won't have it. But we want to allow them.
-                 ":*"))))
+  ;; FIXME-NOW check this new stuff
+  (case 1
+    (1 (apply 'concat
+              (list "\\_<"
+                    (if (equal major-mode 'clojure-mode)
+                        ;; There seems to be a bug in `highlight-regexp`.
+                        ;; In Clojure Mode, a regexp search for `\<_` finds
+                        ;; the foo in @foo, but `highlight-regexp` does not
+                        ;; find it.
+                        ;; Ah! And also `highlight-symbol-at-point` doesn't
+                        ;; find it.
+                        ;; So:
+                        "@?"
+                      "")
+                    (if (equal major-mode 'clojure-mode)
+                        ;; Allow ^ before a Clojure symbol.
+                        "\\^?"
+                      "")
+                    (if nomis-idle-highlight-colon-at-start-matters-p
+                        ;; If there are leading colons, our captured target
+                        ;; will have it.
+                        ""
+                      ;; If there are leading colons, our captured target
+                      ;; won't have it. But we want to allow them.
+                      ":*"))))
+    (2 (apply 'concat
+              (list (nomis/not-symbol-body-char-regexp)
+                    (if nomis-idle-highlight-colon-at-start-matters-p
+                        ;; If there are leading colons, our captured target
+                        ;; will have it.
+                        ""
+                      ;; If there are leading colons, our captured target
+                      ;; won't have it. But we want to allow them.
+                      ":*"))))))
 
 (defconst end-of-symbol-re "\\_>")
 (defconst eob-or-not-symbol-constituent-re
