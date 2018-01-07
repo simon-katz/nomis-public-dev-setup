@@ -378,11 +378,6 @@
             (set-text-properties 0 (length text) nil text))
           text)))))
 
-
-
-;; FIXME Bug for L1 L2 L1'L2 (which was there before the new changes).
-
-
 (defun nomis-idle-highlight-regexp-quote (string)
   ;; Maybe this could be simplified by using `case-fold-search` to control
   ;; the search, but I couldn't make it work.
