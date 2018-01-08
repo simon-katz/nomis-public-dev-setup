@@ -263,16 +263,18 @@
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 (defun nomis/symbol-prefix-chars/current-mode ()
-  (-> (case major-mode
-        (clojure-mode nomis/symbol-prefix-chars/clojure-mode/base)
-        (t            nomis/symbol-prefix-chars/default/base))
-      nomis/hi/base-chars->prefix-chars))
+  (let* ((chars (case major-mode
+                  (clojure-mode nomis/symbol-prefix-chars/clojure-mode/base)
+                  (t            nomis/symbol-prefix-chars/default/base))))
+    (-> chars
+        nomis/hi/base-chars->prefix-chars)))
 
 (defun nomis/symbol-body-chars/current-mode ()
-  (-> (case major-mode
-        (clojure-mode nomis/symbol-body-chars/clojure-mode/base)
-        (t            nomis/symbol-body-chars/default/base))
-      nomis/hi/base-chars->body-chars))
+  (let* ((chars (case major-mode
+                  (clojure-mode nomis/symbol-body-chars/clojure-mode/base)
+                  (t            nomis/symbol-body-chars/default/base))))
+    (-> chars
+        nomis/hi/base-chars->body-chars)))
 
 ;;;; ___________________________________________________________________________
 ;;;; Regular expressions for symbols
@@ -289,17 +291,19 @@
   (-> (nomis/symbol-body-chars/current-mode)
       nomis/rx/make-char-mismatch-regexp/broken))
 
-;;;; ___________________________________________________________________________
+;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-(defun nomis/eob-regex ()
+(defun nomis/eob-regexp ()
   "\\'")
 
-(defun nomis/start-of-symbol-regex ()
+(defun nomis/start-of-symbol-regexp ()
   (nomis/not-symbol-body-char-regexp))
 
-(defun nomis/end-of-symbol-regex ()
-  (nomis/rx/or (nomis/eob-regex)
+(defun nomis/end-of-symbol-regexp ()
+  (nomis/rx/or (nomis/eob-regexp)
                (nomis/not-symbol-body-char-regexp)))
+
+;;;; ___________________________________________________________________________
 
 (cl-defun nomis/skip-chars-forward (&rest regexps)
   (while (-any? #'looking-at-p regexps)
@@ -317,10 +321,11 @@
         nil)
     (let* ((prefix-regexp (nomis/symbol-prefix-char-regexp))
            (body-regexp   (nomis/symbol-body-char-regexp)))
-      (cl-flet ((skip-forward-prefix () (nomis/skip-chars-forward prefix-regexp))
-                (skip-forward-body () (nomis/skip-chars-forward body-regexp))
-                (skip-backward-all () (nomis/skip-chars-backward prefix-regexp
-                                                                 body-regexp)))
+      (cl-flet
+          ((skip-forward-prefix () (nomis/skip-chars-forward prefix-regexp))
+           (skip-forward-body   () (nomis/skip-chars-forward body-regexp))
+           (skip-backward-all   () (nomis/skip-chars-backward prefix-regexp
+                                                              body-regexp)))
         (let* ((bounds (ignore-errors
                          (save-excursion
                            ;; Move forward then back to get to start.
@@ -396,12 +401,12 @@
                         (t
                          (when nomis/highlight-debug?
                            (message "Looking for captured-target %s" captured-target))
-                         (concat (nomis/start-of-symbol-regex)
+                         (concat (nomis/start-of-symbol-regexp)
                                  (nomis/ih/regexp-quote captured-target)
                                  (when (eq major-mode 'clojure-mode)
                                    (nomis/rx/or ""
                                                 "/.*?"))
-                                 (nomis/end-of-symbol-regex)))))
+                                 (nomis/end-of-symbol-regexp)))))
             ;; (message "colon-matters-p = %s & captured-target = %s and nomis-idle-highlight-regexp = %s"
             ;;          nomis-idle-highlight-colon-at-start-matters-p
             ;;          captured-target
