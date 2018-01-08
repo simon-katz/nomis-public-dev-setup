@@ -51,6 +51,7 @@
  fred'a'b
  fred'&
  jim'fred
+ jim
 
  fred/a
  fred/b

@@ -293,18 +293,19 @@
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-(defun nomis/sob-regexp ()
-  "\\`")
-
-(defun nomis/eob-regexp ()
-  "\\'")
-
 (defun nomis/start-of-symbol-regexp ()
-  (nomis/rx/or (nomis/sob-regexp)
-               (nomis/not-symbol-body-char-regexp)))
+  ;; We would like to use "\\_<", but that doesn't work well with symbols
+  ;; that contain single quotes.
+  (nomis/rx/or "^"
+               (nomis/not-symbol-body-char-regexp)
+               ;; We allow single quotes in symbol bodies, so:
+               (concat (nomis/not-symbol-body-char-regexp)
+                       "'")))
 
 (defun nomis/end-of-symbol-regexp ()
-  (nomis/rx/or (nomis/eob-regexp)
+  ;; We would like to use "\\_>", but that doesn't work well with symbols
+  ;; that contain single quotes.
+  (nomis/rx/or "$"
                (nomis/not-symbol-body-char-regexp)))
 
 ;;;; ___________________________________________________________________________

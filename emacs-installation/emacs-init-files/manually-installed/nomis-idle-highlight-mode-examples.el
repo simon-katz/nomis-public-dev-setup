@@ -50,7 +50,8 @@
  fred'a'
  fred'a'b
  fred'&
- jim'fred)
+ jim'fred
+ jim)
 
 fred() ; FIXME No highlighting when on open parenthesis.
 
