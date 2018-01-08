@@ -320,7 +320,7 @@
     (backward-char)))
 
 (defun nomis-idle-highlight-thing ()
-  (nomis/report-char-at-point "before")
+  (nomis/report-char-at-point "2 before")
   (if (nomis-looking-at-boring-place-p)
       (progn
         (nomis/report-char-at-point "boring char -- not highlighting")
@@ -336,15 +336,15 @@
                          (save-excursion
                            ;; Move forward then back to get to start.
                            ;; This may skip over an initial colon.
-                           (nomis/report-char-at-point "before")
+                           (nomis/report-char-at-point "3 before")
                            
                            (progn ; skip forward over current symbol
                              (unless (or (nomis-looking-at-whitespace)
                                          (nomis-looking-at-bracketed-sexp-end))
                                (skip-forward-prefix)
-                               (nomis/report-char-at-point "after skip prefix ")
+                               (nomis/report-char-at-point "4 after skip prefix")
                                (skip-forward-body)
-                               (nomis/report-char-at-point "after skip body")))
+                               (nomis/report-char-at-point "5 after skip body")))
 
                            (progn ; go to beginning of symbol
                              (unless (= (point) (point-min))
@@ -353,10 +353,10 @@
                              (unless (or (looking-at-p prefix-regexp)
                                          (looking-at-p body-regexp))
                                (forward-char))
-                             (nomis/report-char-at-point "after going back"))
+                             (nomis/report-char-at-point "6 after go back"))
                            
                            (skip-forward-prefix)
-                           (nomis/report-char-at-point "after skipping prefix")
+                           (nomis/report-char-at-point "7 after skip prefix")
                            
                            (let* ((beg (point))
                                   (end (progn
@@ -386,7 +386,7 @@
 
 (defun nomis-idle-highlight-word-at-point* ()
   "Highlight the word under the point."
-  (nomis/report-char-at-point "In `nomis-idle-highlight-word-at-point*`")
+  (nomis/report-char-at-point "1 In `nomis-idle-highlight-word-at-point*`")
   (if nomis-idle-highlight-mode
       (let* ((captured-target (nomis-idle-highlight-thing)))
         (nomis-idle-highlight-unhighlight)
