@@ -24,6 +24,11 @@
                              regexes))
           "\\)"))
 
+(defun nomis/rx/one-or-more (regexp)
+  (concat "\\(?:"
+          regexp
+          "\\)+"))
+
 ;;;; ___________________________________________________________________________
 
 (provide 'nomis-rx)

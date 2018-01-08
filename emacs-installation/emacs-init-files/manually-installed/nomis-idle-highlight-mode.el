@@ -413,11 +413,16 @@
                          (when nomis/highlight-debug?
                            (message "Looking for captured-target \"%s\"" captured-target))
                          (concat (nomis/start-of-symbol-regexp)
-                                 (nomis/ih/regexp-quote captured-target)
-                                 (when (eq major-mode 'clojure-mode)
-                                   (nomis/rx/or ""
-                                                "/.*?"))
-                                 (nomis/end-of-symbol-regexp)))))
+                                 (nomis/rx/one-or-more
+                                  ;; Need `nomis/rx/one-or-more` because our
+                                  ;; regexps use up extra chars at start and
+                                  ;; end.
+                                  (concat
+                                   (nomis/ih/regexp-quote captured-target)
+                                   (when (eq major-mode 'clojure-mode)
+                                     (nomis/rx/or ""
+                                                  "/.*?"))
+                                   (nomis/end-of-symbol-regexp)))))))
             ;; (message "colon-matters-p = %s & captured-target = %s and nomis-idle-highlight-regexp = %s"
             ;;          nomis-idle-highlight-colon-at-start-matters-p
             ;;          captured-target
