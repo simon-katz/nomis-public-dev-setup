@@ -293,11 +293,15 @@
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+(defun nomis/sob-regexp ()
+  "\\`")
+
 (defun nomis/eob-regexp ()
   "\\'")
 
 (defun nomis/start-of-symbol-regexp ()
-  (nomis/not-symbol-body-char-regexp))
+  (nomis/rx/or (nomis/sob-regexp)
+               (nomis/not-symbol-body-char-regexp)))
 
 (defun nomis/end-of-symbol-regexp ()
   (nomis/rx/or (nomis/eob-regexp)
@@ -306,11 +310,13 @@
 ;;;; ___________________________________________________________________________
 
 (cl-defun nomis/skip-chars-forward (&rest regexps)
-  (while (-any? #'looking-at-p regexps)
+  (while (and (not (= (point) (point-max)))
+              (-any? #'looking-at-p regexps))
     (forward-char)))
 
 (cl-defun nomis/skip-chars-backward (&rest regexps)
-  (while (-any? #'looking-at-p regexps)
+  (while (and (not (= (point) (point-min)))
+              (-any? #'looking-at-p regexps))
     (backward-char)))
 
 (defun nomis-idle-highlight-thing ()
@@ -332,24 +338,28 @@
                            ;; This may skip over an initial colon.
                            (nomis/report-char-at-point "before")
                            
-                           (unless (or (nomis-looking-at-whitespace)
-                                       (nomis-looking-at-bracketed-sexp-end))
-                             (skip-forward-prefix)
-                             (nomis/report-char-at-point "after skip prefix")
-                             (skip-forward-body)
-                             (nomis/report-char-at-point "after skip body"))
-                           
-                           (backward-char) ; FIXME fix beginning of buffer
-                           (skip-backward-all)
-                           (forward-char)
-                           (nomis/report-char-at-point "after going back")
+                           (progn ; skip forward over current symbol
+                             (unless (or (nomis-looking-at-whitespace)
+                                         (nomis-looking-at-bracketed-sexp-end))
+                               (skip-forward-prefix)
+                               (nomis/report-char-at-point "after skip prefix ")
+                               (skip-forward-body)
+                               (nomis/report-char-at-point "after skip body")))
+
+                           (progn ; go to beginning of symbol
+                             (unless (= (point) (point-min))
+                               (backward-char))
+                             (skip-backward-all)
+                             (unless (or (looking-at-p prefix-regexp)
+                                         (looking-at-p body-regexp))
+                               (forward-char))
+                             (nomis/report-char-at-point "after going back"))
                            
                            (skip-forward-prefix)
                            (nomis/report-char-at-point "after skipping prefix")
                            
                            (let* ((beg (point))
                                   (end (progn
-                                         (skip-forward-prefix)
                                          (skip-forward-body)
                                          (point))))
                              (when (< beg end)
