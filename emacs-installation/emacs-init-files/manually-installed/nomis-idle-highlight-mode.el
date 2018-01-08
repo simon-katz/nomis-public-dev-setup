@@ -391,7 +391,7 @@
       (let* ((captured-target (nomis-idle-highlight-thing)))
         (nomis-idle-highlight-unhighlight)
         (when nomis/highlight-debug?
-          (message "captured-target = %s" captured-target))
+          (message "captured-target = \"%s\"" captured-target))
         (if (or (not captured-target)
                 (member captured-target
                         nomis-idle-highlight-exceptions)
@@ -410,7 +410,7 @@
                          (regexp-quote captured-target))
                         (t
                          (when nomis/highlight-debug?
-                           (message "Looking for captured-target %s" captured-target))
+                           (message "Looking for captured-target \"%s\"" captured-target))
                          (concat (nomis/start-of-symbol-regexp)
                                  (nomis/ih/regexp-quote captured-target)
                                  (when (eq major-mode 'clojure-mode)
@@ -423,7 +423,7 @@
             ;;          nomis-idle-highlight-regexp)
             (when nomis-idle-highlight-regexp
               (when nomis/highlight-debug?
-                (message "Looking for regexp %s" nomis-idle-highlight-regexp))
+                (message "Looking for regexp \"%s\"" nomis-idle-highlight-regexp))
               (highlight-regexp nomis-idle-highlight-regexp
                                 nomis-idle-highlight-face)))))))
 
