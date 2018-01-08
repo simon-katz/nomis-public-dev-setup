@@ -296,11 +296,12 @@
 (defun nomis/start-of-symbol-regexp ()
   ;; We would like to use "\\_<", but that doesn't work well with symbols
   ;; that contain single quotes.
-  (nomis/rx/or "^"
-               (nomis/not-symbol-body-char-regexp)
-               ;; We allow single quotes in symbol bodies, so:
-               (concat (nomis/not-symbol-body-char-regexp)
-                       "'")))
+  (let* ((simple-start (nomis/rx/or "^"
+                                    (nomis/not-symbol-body-char-regexp))))
+    (nomis/rx/or simple-start
+                 ;; We allow single quotes in symbol bodies, so:
+                 (concat simple-start
+                         "'"))))
 
 (defun nomis/end-of-symbol-regexp ()
   ;; We would like to use "\\_>", but that doesn't work well with symbols
