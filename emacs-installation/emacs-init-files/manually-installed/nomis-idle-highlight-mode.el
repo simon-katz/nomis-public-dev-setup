@@ -309,6 +309,34 @@
                (nomis/not-symbol-body-char-regexp)))
 
 ;;;; ___________________________________________________________________________
+;;;; Regular expressions for searching
+
+(defun nomis/ih/regexp-quote (string)
+  ;; Maybe this could be simplified by using `case-fold-search` to control
+  ;; the search, but I couldn't make it work.
+  ;; Perhaps a bug -- see https://lists.gnu.org/archive/html/bug-gnu-emacs/2016-02/msg02002.html
+  ;; JSK 2017-09-13
+  (if (eq major-mode 'emacs-lisp-mode)
+      (nomis/rx/or
+       ;; This is only approximately correct. It doesn't work for mixed-case
+       ;; things. Never mind.
+       (regexp-quote (upcase string))
+       (regexp-quote (downcase string)))
+    (regexp-quote string)))
+
+(defun symbol-name->regexp-for-highlighting (symbol-name)
+  (concat (nomis/start-of-symbol-regexp)
+          (nomis/rx/one-or-more
+           ;; Need `nomis/rx/one-or-more` because, unfortunately, our regexps
+           ;; use up extra chars at start and end.
+           (concat (nomis/ih/regexp-quote symbol-name)
+                   (when (eq major-mode 'clojure-mode)
+                     (nomis/rx/or ""
+                                  "/.*?" ; for namespace names or aliases
+                                  ))
+                   (nomis/end-of-symbol-regexp)))))
+
+;;;; ___________________________________________________________________________
 
 (cl-defun nomis/skip-chars-forward (&rest regexps)
   (while (and (not (= (point) (point-max)))
@@ -372,19 +400,6 @@
             (set-text-properties 0 (length text) nil text))
           text)))))
 
-(defun nomis/ih/regexp-quote (string)
-  ;; Maybe this could be simplified by using `case-fold-search` to control
-  ;; the search, but I couldn't make it work.
-  ;; Perhaps a bug -- see https://lists.gnu.org/archive/html/bug-gnu-emacs/2016-02/msg02002.html
-  ;; JSK 2017-09-13
-  (if (eq major-mode 'emacs-lisp-mode)
-      (nomis/rx/or
-       ;; This is only approximately correct. It doesn't work for mixed-case
-       ;; things. Never mind.
-       (regexp-quote (upcase string))
-       (regexp-quote (downcase string)))
-    (regexp-quote string)))
-
 (defun nomis-idle-highlight-word-at-point* ()
   "Highlight the word under the point."
   (nomis/report-char-at-point "1 In `nomis-idle-highlight-word-at-point*`")
@@ -412,17 +427,8 @@
                         (t
                          (when nomis/highlight-debug?
                            (message "Looking for captured-target \"%s\"" captured-target))
-                         (concat (nomis/start-of-symbol-regexp)
-                                 (nomis/rx/one-or-more
-                                  ;; Need `nomis/rx/one-or-more` because our
-                                  ;; regexps use up extra chars at start and
-                                  ;; end.
-                                  (concat
-                                   (nomis/ih/regexp-quote captured-target)
-                                   (when (eq major-mode 'clojure-mode)
-                                     (nomis/rx/or ""
-                                                  "/.*?"))
-                                   (nomis/end-of-symbol-regexp)))))))
+                         (-> captured-target
+                             symbol-name->regexp-for-highlighting))))
             ;; (message "colon-matters-p = %s & captured-target = %s and nomis-idle-highlight-regexp = %s"
             ;;          nomis-idle-highlight-colon-at-start-matters-p
             ;;          captured-target
