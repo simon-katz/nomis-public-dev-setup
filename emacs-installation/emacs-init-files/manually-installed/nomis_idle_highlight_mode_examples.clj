@@ -69,13 +69,13 @@ fred-bloggs
 
 ;;; Asterisks
 
-*fred*
-*fred*
+(*fred*
+ *fred*
 
-*fred *fred()
-xxxx *fred xxxx
+ *fred *fred()
+ xxxx *fred xxxx
 
-fred* fred*()
-xxxx fred* xxxx
+ fred* fred*()
+ xxxx fred* xxxx)
 
-fred fred' fred'' fred''' fred
+ fred fred' fred'' fred''' fred

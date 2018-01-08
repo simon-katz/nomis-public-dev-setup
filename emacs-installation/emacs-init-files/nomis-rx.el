@@ -5,6 +5,18 @@
 
 ;;;; ___________________________________________________________________________
 
+(defun nomis/rx/make-char-match-regexp/broken (str)
+  (concat "["
+          str
+          "]"))
+
+(defun nomis/rx/make-char-mismatch-regexp/broken (str)
+  (concat "[^"
+          str
+          "]"))
+
+;;;; ___________________________________________________________________________
+
 (defun nomis/rx/or (&rest regexes)
   (concat "\\(?:"
           (apply 'concat

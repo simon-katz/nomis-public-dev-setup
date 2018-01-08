@@ -84,6 +84,36 @@
 
 ;;; Code:
 
+;;;; ___________________________________________________________________________
+
+(defconst nomis/symbol-prefix-chars/default/base
+  "'`#,")
+
+(defconst nomis/symbol-body-chars/default/base
+  ;; Note the position of the "-" at the beginning. So when augmenting this,
+  ;; you must add at the end (otherwise you will introduce a range when creating
+  ;; regexps using `nomis/rx/make-char-match-regexp/broken`).
+  ;; Horrible.
+  "-[:alnum:]$&*+_<>/'.=?^")
+
+;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+(defconst nomis/symbol-prefix-chars/clojure-mode/extras
+  "@^~")
+
+(defconst nomis/symbol-body-chars/clojure-mode/extras
+  "")
+
+(defconst nomis/symbol-prefix-chars/clojure-mode/base
+  (concat nomis/symbol-prefix-chars/default/base
+          nomis/symbol-prefix-chars/clojure-mode/extras))
+
+(defconst nomis/symbol-body-chars/clojure-mode/base
+  (concat nomis/symbol-body-chars/default/base
+          nomis/symbol-body-chars/clojure-mode/extras))
+
+;;;; ___________________________________________________________________________
+
 (defconst nomis/highlight-debug? nil)
 
 (defun nomis/report-char-at-point (&optional msg)
@@ -98,20 +128,6 @@
                       (format "%c" c))))
              (point)
              (or msg "dunno"))))
-
-;;;; ___________________________________________________________________________
-
-(defconst nomis/symbol-prefix-chars/base
-  "'`#,")
-
-(defconst nomis/symbol-prefix-chars/clojure-mode-extras
-  "@^~")
-
-(defconst nomis/symbol-body-chars/base
-  "-[:alnum:]$&*+_<>/'.=?^")
-
-(defconst nomis/symbol-body-chars/clojure-mode-extras
-  "")
 
 ;;;; ___________________________________________________________________________
 
@@ -232,79 +248,46 @@
   (nomis-idle-highlight-word-at-point))
 
 ;;;; ___________________________________________________________________________
+;;;; Chars for symbols
+
+(defun nomis/hi/base-chars->prefix-chars (chars)
+  (if nomis-idle-highlight-colon-at-start-matters-p
+      chars
+    (concat chars ":")))
+
+(defun nomis/hi/base-chars->body-chars (chars)
+  (if nomis-idle-highlight-colon-at-start-matters-p
+      (concat chars ":")
+    chars))
+
+;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+(defun nomis/symbol-prefix-chars/current-mode ()
+  (-> (case major-mode
+        (clojure-mode nomis/symbol-prefix-chars/clojure-mode/base)
+        (t            nomis/symbol-prefix-chars/default/base))
+      nomis/hi/base-chars->prefix-chars))
+
+(defun nomis/symbol-body-chars/current-mode ()
+  (-> (case major-mode
+        (clojure-mode nomis/symbol-body-chars/clojure-mode/base)
+        (t            nomis/symbol-body-chars/default/base))
+      nomis/hi/base-chars->body-chars))
+
+;;;; ___________________________________________________________________________
 ;;;; Regular expressions for symbols
 
-(defun nomis/make-char-match-regexp (str)
-  (concat "["
-          str
-          "]"))
-
-(defun nomis/make-char-mismatch-regexp (str)
-  (concat "[^"
-          str
-          "]"))
-
-(defun nomis/symbol-prefix-chars/default ()
-  (let ((base nomis/symbol-prefix-chars/base))
-    (if nomis-idle-highlight-colon-at-start-matters-p
-        base
-      (concat base ":"))))
-
-(defun nomis/symbol-prefix-chars/clojure-mode ()
-  (concat (nomis/symbol-prefix-chars/default)
-          nomis/symbol-prefix-chars/clojure-mode-extras))
-
-(defun nomis/symbol-prefix-char-regexp/default ()
-  (nomis/make-char-match-regexp (nomis/symbol-prefix-chars/default)))
-
-(defun nomis/symbol-prefix-char-regexp/clojure-mode ()
-  (nomis/make-char-match-regexp (nomis/symbol-prefix-chars/clojure-mode)))
-
 (defun nomis/symbol-prefix-char-regexp ()
-  (case major-mode
-    (clojure-mode
-     (nomis/symbol-prefix-char-regexp/clojure-mode))
-    (t
-     (nomis/symbol-prefix-char-regexp/default))))
-
-(defun nomis/symbol-body-chars/default ()
-  ;; Note the position of the "-" at the beginning. So when augmenting this,
-  ;; you must add at the end (otherwise you will introduce a range).
-  ;; Horrible.
-  (let ((base nomis/symbol-body-chars/base))
-    (if nomis-idle-highlight-colon-at-start-matters-p
-        (concat base ":")
-      base)))
-
-(defun nomis/symbol-body-chars/clojure-mode ()
-  (concat (nomis/symbol-body-chars/default)
-          nomis/symbol-body-chars/clojure-mode-extras))
-
-(defun nomis/symbol-body-char-regexp/default ()
-  (nomis/make-char-match-regexp (nomis/symbol-body-chars/default)))
-
-(defun nomis/symbol-body-char-regexp/clojure-mode ()
-  (nomis/make-char-match-regexp (nomis/symbol-body-chars/clojure-mode)))
+  (-> (nomis/symbol-prefix-chars/current-mode)
+      nomis/rx/make-char-match-regexp/broken))
 
 (defun nomis/symbol-body-char-regexp ()
-  (case major-mode
-    (clojure-mode
-     (nomis/symbol-body-char-regexp/clojure-mode))
-    (t
-     (nomis/symbol-body-char-regexp/default))))
-
-(defun nomis/not-symbol-body-char-regexp/default ()
-  (nomis/make-char-mismatch-regexp (nomis/symbol-body-chars/default)))
-
-(defun nomis/not-symbol-body-char-regexp/clojure-mode ()
-  (nomis/make-char-mismatch-regexp (nomis/symbol-body-chars/clojure-mode)))
+  (-> (nomis/symbol-body-chars/current-mode)
+      nomis/rx/make-char-match-regexp/broken))
 
 (defun nomis/not-symbol-body-char-regexp ()
-  (case major-mode
-    (clojure-mode
-     (nomis/not-symbol-body-char-regexp/clojure-mode))
-    (t
-     (nomis/not-symbol-body-char-regexp/default))))
+  (-> (nomis/symbol-body-chars/current-mode)
+      nomis/rx/make-char-mismatch-regexp/broken))
 
 ;;;; ___________________________________________________________________________
 

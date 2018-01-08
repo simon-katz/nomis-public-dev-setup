@@ -102,33 +102,33 @@ fred() ; FIXME No highlighting when on open parenthesis.
 
 
 ;;; Ensure that cursor on `fred` doesn't highlight `fred-bloggs`
-fred
-fred-bloggs
-fred-bloggs
+(fred
+ fred-bloggs
+ fred-bloggs)
 
 
 ;;; Asterisks
 
-*fred*
-*fred*
+(*fred*
+ *fred*
 
-*fred *fred()
-xxxx *fred xxxx
+ *fred *fred()
+ xxxx *fred xxxx
 
-fred* fred*()
-xxxx fred* xxxx
+ fred* fred*()
+ xxxx fred* xxxx)
 
 
 ;;; Other chars
 
-a.b
-a=b
-a?b
-a^b
-a.b
-a=b
-a?b
-a^b
+(a.b
+ a=b
+ a?b
+ a^b
+ a.b
+ a=b
+ a?b
+ a^b)
 
 ;
 ;;
