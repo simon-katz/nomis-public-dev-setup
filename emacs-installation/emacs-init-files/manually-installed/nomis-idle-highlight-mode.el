@@ -411,46 +411,46 @@
 
 (defun nomis-idle-highlight-word-at-point* ()
   "Highlight the word under the point."
-  (nomis/report-char-at-point "1 In `nomis-idle-highlight-word-at-point*`")
-  (if nomis-idle-highlight-mode
-      (let* ((captured-target (nomis-idle-highlight-thing)))
-        (nomis-idle-highlight-unhighlight)
-        (when nomis/highlight-debug?
-          (message "captured-target = \"%s\"" captured-target))
-        (if (or (not captured-target)
-                (member captured-target
-                        nomis-idle-highlight-exceptions)
-                (and (eq major-mode 'org-mode)
-                     (string-match-p "^\\*+$" captured-target)))
-            (progn
-              (when nomis/highlight-debug?
-                (message "Not highlighting")))
+  (when nomis-idle-highlight-mode
+    (when nomis/highlight-debug?
+      (message "_____"))
+    (nomis/report-char-at-point "1 In `nomis-idle-highlight-word-at-point*`")
+    (let* ((captured-target (nomis-idle-highlight-thing)))
+      (nomis-idle-highlight-unhighlight)
+      (when nomis/highlight-debug?
+        (message "captured-target = \"%s\"" captured-target))
+      (if (or (not captured-target)
+              (member captured-target
+                      nomis-idle-highlight-exceptions)
+              (and (eq major-mode 'org-mode)
+                   (string-match-p "^\\*+$" captured-target)))
           (progn
-            (setq nomis-idle-highlight-regexp
-                  (cond ((eq (string-to-char captured-target)
-                             ?\")
-                         (when nomis/highlight-debug?
-                           (message "nomis-idle-highlight-word-at-point*: Pretty sure we can't get here."))
-                         (beep)
-                         (regexp-quote captured-target))
-                        (t
-                         (when nomis/highlight-debug?
-                           (message "Looking for captured-target \"%s\"" captured-target))
-                         (-> captured-target
-                             symbol-name->regexp-for-highlighting))))
-            ;; (message "colon-matters-p = %s & captured-target = %s and nomis-idle-highlight-regexp = %s"
-            ;;          nomis-idle-highlight-colon-at-start-matters-p
-            ;;          captured-target
-            ;;          nomis-idle-highlight-regexp)
-            (when nomis-idle-highlight-regexp
-              (when nomis/highlight-debug?
-                (message "Looking for regexp \"%s\"" nomis-idle-highlight-regexp))
-              (highlight-regexp nomis-idle-highlight-regexp
-                                nomis-idle-highlight-face)))))))
+            (when nomis/highlight-debug?
+              (message "Not highlighting")))
+        (progn
+          (setq nomis-idle-highlight-regexp
+                (cond ((eq (string-to-char captured-target)
+                           ?\")
+                       (when nomis/highlight-debug?
+                         (message "nomis-idle-highlight-word-at-point*: Pretty sure we can't get here."))
+                       (beep)
+                       (regexp-quote captured-target))
+                      (t
+                       (when nomis/highlight-debug?
+                         (message "Looking for captured-target \"%s\"" captured-target))
+                       (-> captured-target
+                           symbol-name->regexp-for-highlighting))))
+          ;; (message "colon-matters-p = %s & captured-target = %s and nomis-idle-highlight-regexp = %s"
+          ;;          nomis-idle-highlight-colon-at-start-matters-p
+          ;;          captured-target
+          ;;          nomis-idle-highlight-regexp)
+          (when nomis-idle-highlight-regexp
+            (when nomis/highlight-debug?
+              (message "Looking for regexp \"%s\"" nomis-idle-highlight-regexp))
+            (highlight-regexp nomis-idle-highlight-regexp
+                              nomis-idle-highlight-face)))))))
 
 (defun nomis-idle-highlight-word-at-point ()
-  (when nomis/highlight-debug?
-    (message "_____"))
   (condition-case e
       (nomis-idle-highlight-word-at-point*)
     (error
