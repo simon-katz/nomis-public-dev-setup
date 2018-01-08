@@ -8,6 +8,8 @@
 ;;; Move cursor through the following and check all is good.
 
 (fred
+ fred fred fred ; bug because of your regexps using up extra chars at start and end
+ fred  fred
  @fred
  :fred
  @fred
