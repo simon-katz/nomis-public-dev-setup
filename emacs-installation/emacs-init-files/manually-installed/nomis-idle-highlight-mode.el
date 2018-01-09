@@ -351,18 +351,31 @@
 
 (defun nomis-idle-highlight-thing ()
   (nomis/report-char-at-point "2 before")
-  (if (nomis-looking-at-boring-place-p)
-      (progn
-        (nomis/report-char-at-point "boring char -- not highlighting")
-        nil)
-    (let* ((prefix-regexp (nomis/symbol-prefix-char-regexp))
-           (body-regexp   (nomis/symbol-body-char-regexp)))
-      (cl-flet
-          ((skip-forward-prefix () (nomis/skip-chars-forward prefix-regexp))
-           (skip-forward-body   () (nomis/skip-chars-forward body-regexp))
-           (skip-backward-all   () (nomis/skip-chars-backward prefix-regexp
-                                                              body-regexp)))
-        (let* ((bounds (ignore-errors
+  (let* ((prefix-regexp (nomis/symbol-prefix-char-regexp))
+         (body-regexp   (nomis/symbol-body-char-regexp)))
+    (cl-labels
+        ((looking-at-symbol-prefix? () (looking-at-p prefix-regexp))
+         (looking-at-symbol-body?   () (looking-at-p body-regexp))
+         (looking-at-symbol-p-or-b? () (or (looking-at-symbol-prefix?)
+                                           (looking-at-symbol-body?)))
+         (looking-at-symbol-p-or-b-or-just-after?
+          ()
+          (or (looking-at-symbol-p-or-b?)
+              (unless (= (point) (point-min))
+                (save-excursion
+                  (backward-char)
+                  (looking-at-symbol-p-or-b?)))))
+         (skip-forward-prefix () (nomis/skip-chars-forward prefix-regexp))
+         (skip-forward-body   () (nomis/skip-chars-forward body-regexp))
+         (skip-backward-all   () (nomis/skip-chars-backward prefix-regexp
+                                                            body-regexp)))
+      (if (case 2
+            (1 (nomis-looking-at-boring-place-p))
+            (2 (not (looking-at-symbol-p-or-b-or-just-after?))))
+          (progn
+            (nomis/report-char-at-point "boring char -- not highlighting")
+            nil)
+        (let* ((bounds (progn ; ignore-errors
                          (save-excursion
                            ;; Move forward then back to get to start.
                            ;; This may skip over an initial colon.
@@ -383,8 +396,7 @@
                              (unless (= (point) (point-min))
                                (backward-char))
                              (skip-backward-all)
-                             (if (or (looking-at-p prefix-regexp)
-                                     (looking-at-p body-regexp))
+                             (if (looking-at-symbol-p-or-b?)
                                  (progn
                                    ;; We are on a symbol at the beginning of
                                    ;; the buffer.
