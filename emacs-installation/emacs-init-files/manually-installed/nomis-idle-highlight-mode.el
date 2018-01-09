@@ -368,45 +368,40 @@
          (skip-forward-prefix () (nomis/skip-chars-forward prefix-regexp))
          (skip-forward-body   () (nomis/skip-chars-forward body-regexp))
          (skip-backward-all   () (nomis/skip-chars-backward prefix-regexp
-                                                            body-regexp)))
-      (if (case 2
-            (1 (nomis-looking-at-boring-place-p))
-            (2 (not (looking-at-symbol-p-or-b-or-just-after?))))
-          (progn
-            (nomis/report-char-at-point "boring char -- not highlighting")
-            nil)
-        (let* ((bounds (progn ; ignore-errors
-                         (save-excursion
-                           (nomis/report-char-at-point "3 before")
-
-                           (progn ; go to beginning of symbol
-                             (unless (= (point) (point-min))
-                               (backward-char))
-                             (skip-backward-all)
-                             (if (looking-at-symbol-p-or-b?)
-                                 (progn
-                                   ;; We are on a symbol at the beginning of
-                                   ;; the buffer.
-                                   ;; Stay there.
-                                   )
-                               (forward-char))
-                             (nomis/report-char-at-point "4 after go back"))
-                           
-                           (skip-forward-prefix)
-                           (nomis/report-char-at-point "5 after skip prefix")
-                           
-                           (let* ((beg (point))
-                                  (end (progn
-                                         (skip-forward-body)
-                                         (point))))
-                             (when (< beg end)
-                               (cons beg end))))))
-               (text
-                (when bounds
-                  (buffer-substring (car bounds) (cdr bounds)))))
-          (when text
-            (set-text-properties 0 (length text) nil text))
-          text)))))
+                                                            body-regexp))
+         (go-to-beginning-of-symbol
+          ()
+          (unless (= (point) (point-min))
+            (backward-char))
+          (skip-backward-all)
+          (if (looking-at-symbol-p-or-b?)
+              (progn
+                ;; We are on a symbol at the beginning of
+                ;; the buffer.
+                ;; Stay there.
+                )
+            (forward-char)))
+         (grab-symbol-name
+          ()
+          (save-excursion
+            (nomis/report-char-at-point "3 before")
+            (go-to-beginning-of-symbol)
+            (nomis/report-char-at-point "4 after go back")
+            (skip-forward-prefix)
+            (nomis/report-char-at-point "5 after skip prefix")
+            (let* ((beg (point))
+                   (end (progn
+                          (skip-forward-body)
+                          (point))))
+              (when (< beg end)
+                (let* ((text (buffer-substring beg end)))
+                  (set-text-properties 0 (length text) nil text)
+                  text))))))
+      (if (looking-at-symbol-p-or-b-or-just-after?)
+          (grab-symbol-name)
+        (progn
+          (nomis/report-char-at-point "boring char -- not highlighting")
+          nil)))))
 
 (defun nomis-idle-highlight-word-at-point* ()
   "Highlight the word under the point."
