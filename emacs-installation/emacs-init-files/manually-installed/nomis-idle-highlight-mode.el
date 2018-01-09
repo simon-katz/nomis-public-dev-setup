@@ -377,20 +377,7 @@
             nil)
         (let* ((bounds (progn ; ignore-errors
                          (save-excursion
-                           ;; Move forward then back to get to start.
-                           ;; This may skip over an initial colon.
                            (nomis/report-char-at-point "3 before")
-                           
-                           (case 2
-                             (1 (progn ; skip forward over current symbol
-                                  (unless (or (nomis-looking-at-whitespace)
-                                              (nomis-looking-at-bracketed-sexp-end))
-                                    (skip-forward-prefix)
-                                    (nomis/report-char-at-point "4 after skip prefix")
-                                    (skip-forward-body)
-                                    (nomis/report-char-at-point "5 after skip body"))))
-                             (2 ;; We don't need to go forward.
-                              ))
 
                            (progn ; go to beginning of symbol
                              (unless (= (point) (point-min))
@@ -403,10 +390,10 @@
                                    ;; Stay there.
                                    )
                                (forward-char))
-                             (nomis/report-char-at-point "6 after go back"))
+                             (nomis/report-char-at-point "4 after go back"))
                            
                            (skip-forward-prefix)
-                           (nomis/report-char-at-point "7 after skip prefix")
+                           (nomis/report-char-at-point "5 after skip prefix")
                            
                            (let* ((beg (point))
                                   (end (progn
