@@ -60,7 +60,6 @@
  fred/a
  fred/b)
 
-
 fred() ; FIXME No highlighting when on open parenthesis.
 
 
