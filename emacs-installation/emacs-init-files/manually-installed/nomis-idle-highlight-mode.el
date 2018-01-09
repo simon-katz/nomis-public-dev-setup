@@ -365,7 +365,6 @@
                  #'backward-char))
 
 (defun nomis-idle-highlight-thing ()
-  (nomis/report-char-at-point "2 before")
   (let* ((prefix-regexp (nomis/symbol-prefix-char-regexp))
          (body-regexp   (nomis/symbol-body-char-regexp)))
     (cl-labels
@@ -397,11 +396,11 @@
          (grab-symbol-name
           ()
           (save-excursion
-            (nomis/report-char-at-point "3 before")
+            (nomis/report-char-at-point "1 before")
             (go-to-beginning-of-symbol)
-            (nomis/report-char-at-point "4 after go back")
+            (nomis/report-char-at-point "2 after go back")
             (skip-forward-prefix)
-            (nomis/report-char-at-point "5 after skip prefix")
+            (nomis/report-char-at-point "3 after skip prefix")
             (let* ((beg (point))
                    (end (progn
                           (skip-forward-body)
@@ -421,7 +420,6 @@
   (when nomis-idle-highlight-mode
     (when nomis/highlight-debug?
       (message "_____"))
-    (nomis/report-char-at-point "1 In `nomis-idle-highlight-word-at-point*`")
     (let* ((captured-target (nomis-idle-highlight-thing)))
       (nomis-idle-highlight-unhighlight)
       (when nomis/highlight-debug?
