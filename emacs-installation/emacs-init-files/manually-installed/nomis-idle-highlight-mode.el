@@ -339,15 +339,30 @@
 
 ;;;; ___________________________________________________________________________
 
+(defun nomis/ih/start-of-buffer? ()
+  (= (point) (point-min)))
+
+(defun nomis/ih/end-of-buffer? ()
+  (= (point) (point-max)))
+
+(defun nomis/ih/loop (while-pred
+                      stop-pred
+                      action-fun)
+  (cl-loop do (if (funcall while-pred)
+                  (if (funcall stop-pred)
+                      (cl-return :cannot-move-further)
+                    (funcall action-fun))
+                (cl-return nil))))
+
 (cl-defun nomis/skip-chars-forward (&rest regexps)
-  (while (and (not (= (point) (point-max)))
-              (-any? #'looking-at-p regexps))
-    (forward-char)))
+  (nomis/ih/loop (lambda () (-any? #'looking-at-p regexps))
+                 #'nomis/ih/end-of-buffer?
+                 #'forward-char))
 
 (cl-defun nomis/skip-chars-backward (&rest regexps)
-  (while (and (not (= (point) (point-min)))
-              (-any? #'looking-at-p regexps))
-    (backward-char)))
+  (nomis/ih/loop (lambda () (-any? #'looking-at-p regexps))
+                 #'nomis/ih/start-of-buffer?
+                 #'backward-char))
 
 (defun nomis-idle-highlight-thing ()
   (nomis/report-char-at-point "2 before")
@@ -361,26 +376,24 @@
          (looking-at-symbol-p-or-b-or-just-after?
           ()
           (or (looking-at-symbol-p-or-b?)
-              (unless (= (point) (point-min))
+              (unless (nomis/ih/start-of-buffer?)
                 (save-excursion
                   (backward-char)
                   (looking-at-symbol-p-or-b?)))))
-         (skip-forward-prefix () (nomis/skip-chars-forward prefix-regexp))
-         (skip-forward-body   () (nomis/skip-chars-forward body-regexp))
-         (skip-backward-all   () (nomis/skip-chars-backward prefix-regexp
-                                                            body-regexp))
+         (skip-forward-prefix   () (nomis/skip-chars-forward prefix-regexp))
+         (skip-forward-body     () (nomis/skip-chars-forward body-regexp))
+         (skip-backward-p-and-b () (nomis/skip-chars-backward prefix-regexp
+                                                              body-regexp))
+         (go-to-before-symbol-or-start-of-buffer
+          ()
+          (unless (nomis/ih/start-of-buffer?)
+            (backward-char))
+          (skip-backward-p-and-b))
          (go-to-beginning-of-symbol
           ()
-          (unless (= (point) (point-min))
-            (backward-char))
-          (skip-backward-all)
-          (if (looking-at-symbol-p-or-b?)
-              (progn
-                ;; We are on a symbol at the beginning of
-                ;; the buffer.
-                ;; Stay there.
-                )
-            (forward-char)))
+          (let* ((pos-info (go-to-before-symbol-or-start-of-buffer)))
+            (unless (eql pos-info :cannot-move-further)
+              (forward-char))))
          (grab-symbol-name
           ()
           (save-excursion
