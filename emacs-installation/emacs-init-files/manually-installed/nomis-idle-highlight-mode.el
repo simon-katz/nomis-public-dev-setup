@@ -262,6 +262,9 @@
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+;; FIXME Pass the major mode into these functions and through the call chain
+;;       above, and memoise the top-level functions.
+
 (defun nomis/symbol-prefix-chars/current-mode ()
   (let* ((chars (case major-mode
                   (clojure-mode nomis/symbol-prefix-chars/clojure-mode/base)
