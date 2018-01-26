@@ -90,6 +90,14 @@
 ;;;; ___________________________________________________________________________
 ;;;; ---- Load various files ----
 
+(when (version< emacs-version "25.3")
+  ;; See https://lists.gnu.org/archive/html/info-gnu/2017-09/msg00006.html
+  ;; - Version 25.3 is a emergency release to fix a security vulnerability.
+  ;; - This code works around the vulnerability.
+  (eval-after-load "enriched"
+    '(defun enriched-decode-display-prop (start end &optional param)
+       (list start end))))
+
 (require 'nomis-very-general-stuff-new)
 
 (require 'nomis-org) ; When this was later in the file my setting of
