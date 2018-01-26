@@ -31,6 +31,8 @@
                       clojure-mode
                       cider
                       cider-eval-sexp-fu ; causes failure to download `highlight` -- I installed my old version manually
+                      edn ; needed by clj-refactor, I think
+                      inflections ; needed by clj-refactor, I think
                       ;; clj-refactor -- you have cloned this repo yourself
                       ;; cljr-helm -- you have cloned this repo yourself
                       ;; align-cljlet -- you have cloned this repo yourself

@@ -24,7 +24,8 @@
             "CIDER 0.10.0"
             "CIDER 0.12.0 (Seattle)"
             "CIDER 0.14.0 (Berlin)"
-            "CIDER 0.15.0 (London)"))
+            "CIDER 0.15.0 (London)"
+            "CIDER 0.16.0 (Riga)"))
   (defun nomis-clojure-buffer-ns ()
     (clojure-find-ns)))
  (t
@@ -43,7 +44,8 @@
             "CIDER 0.10.0"
             "CIDER 0.12.0 (Seattle)"
             "CIDER 0.14.0 (Berlin)"
-            "CIDER 0.15.0 (London)"))
+            "CIDER 0.15.0 (London)"
+            "CIDER 0.16.0 (Riga)"))
   (defun nomis-cider-repl-namespace ()
     (with-current-buffer (cider-current-repl-buffer)
       cider-buffer-ns)))
@@ -65,7 +67,8 @@
           '("CIDER 0.10.0"
             "CIDER 0.12.0 (Seattle)"
             "CIDER 0.14.0 (Berlin)"
-            "CIDER 0.15.0 (London)"))
+            "CIDER 0.15.0 (London)"
+            "CIDER 0.16.0 (Riga)"))
   (defun nomis-cider-find-or-create-repl-buffer ()
     (cider-current-connection)))
  (t
@@ -435,7 +438,8 @@ window."
           '("CIDER 0.10.0"
             "CIDER 0.12.0 (Seattle)"
             "CIDER 0.14.0 (Berlin)"
-            "CIDER 0.15.0 (London)"))
+            "CIDER 0.15.0 (London)"
+            "CIDER 0.16.0 (Riga)"))
   (defun cider-jump-to (buffer &optional pos other-window)
     "Push current point onto marker ring, and jump to BUFFER and POS.
 POS can be either a number, a cons, or a symbol.
