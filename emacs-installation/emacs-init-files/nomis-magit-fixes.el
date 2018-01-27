@@ -12,6 +12,7 @@
 
 
 ;;;; FIXME After a stash pop, you have no updates to buffers.
+;;;;       Hmmm. Not true. What was it you saw?
 
 (defun -nomis/fix-magit-auto-revert/2.10.3 ()
 
