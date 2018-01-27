@@ -10,6 +10,9 @@
 ;;;; (eg by discarding changes to the file) causes all buffers in the repo
 ;;;; to be reverted.
 
+
+;;;; FIXME After a stash pop, you have no updates to buffers.
+
 (defun -nomis/fix-magit-auto-revert/2.10.3 ()
 
   (with-eval-after-load 'magit-autorevert
