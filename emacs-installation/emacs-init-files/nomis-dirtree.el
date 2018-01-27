@@ -187,33 +187,82 @@ With prefix argument select `nomis-dirtree-buffer'"
     :open t
     :nomis-root t))
 
+(defconst nomis-dirtree/approach-to-children :new)
+(defconst nomis-dirtree/dirs-at-top? nil)
+
 (defun nomis-dirtree-setup-children (tree)
   "expand directory"
-  (or (widget-get tree :args)
-      (let ((directory (widget-get tree :file))
-            (re (dired-omit-regexp))
-            dirs files basename)
-        (dolist (file (directory-files directory t))
-          (setq basename (file-name-nondirectory file))
-          (unless (string-match re basename)
-            (if (file-directory-p file)
-                (push (cons file basename) dirs)
-              (push (cons file basename) files))))
-        (setq dirs (sort dirs (lambda (a b) (string< (cdr a) (cdr b)))))
-        (setq files (sort files (lambda (a b) (string< (cdr a) (cdr b)))))
-        (append
-         (mapcar (lambda (file)
-                   `(nomis-dirtree-directory-widget
-                     :file ,(car file)
-                     :node (nomis-dirtree-file-widget-for-directory
-                            :tag ,(cdr file)
-                            :file ,(car file))))
-                 dirs)
-         (mapcar (lambda (file)
-                   `(nomis-dirtree-file-widget-for-file
-                     :file ,(car file)
-                     :tag ,(cdr file)))
-                 files)))))
+  (case nomis-dirtree/approach-to-children
+    (:old
+     (or (widget-get tree :args)
+         (let ((directory (widget-get tree :file))
+               (re (dired-omit-regexp))
+               dirs files basename)
+           (dolist (file (directory-files directory t))
+             (setq basename (file-name-nondirectory file))
+             (unless (string-match re basename)
+               (if (file-directory-p file)
+                   (push (cons file basename) dirs)
+                 (push (cons file basename) files))))
+           (setq dirs (sort dirs (lambda (a b) (string< (cdr a) (cdr b)))))
+           (setq files (sort files (lambda (a b) (string< (cdr a) (cdr b)))))
+           (append
+            (mapcar (lambda (file)
+                      `(nomis-dirtree-directory-widget
+                        :file ,(car file)
+                        :node (nomis-dirtree-file-widget-for-directory
+                               :tag ,(cdr file)
+                               :file ,(car file))))
+                    dirs)
+            (mapcar (lambda (file)
+                      `(nomis-dirtree-file-widget-for-file
+                        :file ,(car file)
+                        :tag ,(cdr file)))
+                    files)))))
+    (:new
+     (or (widget-get tree :args)
+         (let* ((directory (widget-get tree :file))
+                (re (dired-omit-regexp))
+                (file-&-basename-pairs
+                 (->> (directory-files directory t)
+                      (-map (lambda (f)
+                              (let* ((basename (file-name-nondirectory f)))
+                                (unless (string-match re basename)
+                                  (cons f basename)))))
+                      (-remove #'null))))
+           (cl-labels ((make-directory-widget
+                        (file-&-basename)
+                        `(nomis-dirtree-directory-widget
+                          :file ,(car file-&-basename)
+                          :node (nomis-dirtree-file-widget-for-directory
+                                 :tag ,(cdr file-&-basename)
+                                 :file ,(car file-&-basename))))
+                       (make-file-widget
+                        (file-&-basename)
+                        `(nomis-dirtree-file-widget-for-file
+                          :file ,(car file-&-basename)
+                          :tag ,(cdr file-&-basename)))
+                       (make-widget
+                        (file-&-basename)
+                        (if (directory? file-&-basename)
+                            (make-directory-widget file-&-basename)
+                          (make-file-widget file-&-basename)))
+                       (directory?
+                        (file-&-basename)
+                        (file-directory-p (car file-&-basename)))
+                       (sort-files-or-dirs
+                        (file-&-basename-pairs)
+                        (sort file-&-basename-pairs
+                              (lambda (a b) (string< (cdr a) (cdr b))))))
+             (if nomis-dirtree/dirs-at-top?
+                 (let ((dirs  (-filter #'directory? file-&-basename-pairs))
+                       (files (-remove #'directory? file-&-basename-pairs)))
+                   (->> (append (sort-files-or-dirs dirs)
+                                (sort-files-or-dirs files))
+                        (-map #'make-widget)))
+               (->> file-&-basename-pairs
+                    sort-files-or-dirs
+                    (-map #'make-widget)))))))))
 
 ;;;; ___________________________________________________________________________
 ;;;; My stuff.
