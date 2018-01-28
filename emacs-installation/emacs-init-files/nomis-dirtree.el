@@ -195,10 +195,21 @@ With prefix argument select `nomis-dirtree-buffer'"
                    (widget-get :node)
                    (widget-get :file))))
     (funcall fun)
-    (while (not (equal file
-                       (-> (nomis-dirtree-selected-widget)
-                           (widget-get :file))))
-      (nomis-dirtree-next-line 1))))
+    (while (not (nomis-dirtree-root-p (nomis-dirtree-selected-widget)))
+      (tree-mode-goto-parent arg))
+    (let* ((root-file (-> (nomis-dirtree-selected-widget)
+                          (widget-get :file))))
+      (while (not (equal file
+                         (-> (nomis-dirtree-selected-widget)
+                             (widget-get :file))))
+        (nomis-dirtree-next-line 1)
+        ;; Be defensive, in case you cycle around forever nor finding the file.
+        ;; (I think this is unnecesary -- I think `nomis-dirtree-next-line`
+        ;; throws an exception on wrapping to start of buffer/tree.)
+        (when (equal root-file
+                     (-> (nomis-dirtree-selected-widget)
+                         (widget-get :file)))
+          (error "Couldn't find file %s" file))))))
 
 (defmacro nomis-dirtree/with-return-to-file (&rest body)
   `(nomis-dirtree/with-return-to-file-fun (lambda () ,@body)))
