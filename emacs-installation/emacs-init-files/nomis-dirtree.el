@@ -350,7 +350,7 @@ With prefix argument select `nomis-dirtree-buffer'"
   (while (not (nomis-dirtree-root-p (nomis-dirtree-selected-widget)))
     (tree-mode-goto-parent 1)))
 
-(defun nomis-dirtree/with-return-to-file-fun (fun)
+(defun nomis-dirtree/with-return-to-selected-file-fun (fun)
   (let* ((file (-> (tree-mode-icon-current-line)
                    (widget-get :node)
                    (widget-get :file))))
@@ -371,8 +371,8 @@ With prefix argument select `nomis-dirtree-buffer'"
                          (widget-get :file)))
           (error "Couldn't find file %s" file))))))
 
-(defmacro nomis-dirtree/with-return-to-file (&rest body)
-  `(nomis-dirtree/with-return-to-file-fun (lambda () ,@body)))
+(defmacro nomis-dirtree/with-return-to-selected-file (&rest body)
+  `(nomis-dirtree/with-return-to-selected-file-fun (lambda () ,@body)))
 
 ;;;; ---------------------------------------------------------------------------
 ;;;; User-visible commands.
@@ -548,7 +548,7 @@ sub-subdirectories, etc, so that subsequent expansion shows only one level."
   (interactive)
   (setq nomis-dirtree/dirs-at-top?
         (not nomis-dirtree/dirs-at-top?))
-  (nomis-dirtree/with-return-to-file
+  (nomis-dirtree/with-return-to-selected-file
    (mapc #'tree-mode-reflesh-tree
          tree-mode-list)))
 
