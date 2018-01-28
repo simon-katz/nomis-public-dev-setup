@@ -190,6 +190,27 @@ With prefix argument select `nomis-dirtree-buffer'"
 (defconst nomis-dirtree/approach-to-children :new)
 (defconst nomis-dirtree/dirs-at-top? nil)
 
+(defun nomis-dirtree/with-return-to-file-fun (fun)
+  (let* ((file (-> (tree-mode-icon-current-line)
+                   (widget-get :node)
+                   (widget-get :file))))
+    (funcall fun)
+    (while (not (equal file
+                       (-> (nomis-dirtree-selected-widget)
+                           (widget-get :file))))
+      (nomis-dirtree-next-line 1))))
+
+(defmacro nomis-dirtree/with-return-to-file (&rest body)
+  `(nomis-dirtree/with-return-to-file-fun (lambda () ,@body)))
+
+(defun nomis/toggle-dirtree-dirs-at-top ()
+  (interactive)
+  (setq nomis-dirtree/dirs-at-top?
+        (not nomis-dirtree/dirs-at-top?))
+  (nomis-dirtree/with-return-to-file
+    (mapc #'tree-mode-reflesh-tree
+          tree-mode-list)))
+
 (defun nomis-dirtree-setup-children (tree)
   "expand directory"
   (case nomis-dirtree/approach-to-children
