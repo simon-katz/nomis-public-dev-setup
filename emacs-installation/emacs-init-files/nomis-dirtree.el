@@ -402,14 +402,16 @@ With prefix argument select `nomis-dirtree-buffer'"
 (defvar *nomis-dirtree-previous-up-from-positions* '())
 
 (defun nomis-dirtree-note-previous-up-from-position ()
-  (push (point) *nomis-dirtree-previous-up-from-positions*))
+  (push (nomis-dirtree-selected-file-or-dir)
+        *nomis-dirtree-previous-up-from-positions*))
 
 (defun no-previous-up-from-position-p? ()
   (null *nomis-dirtree-previous-up-from-positions*))
 
 (defun pop-to-previous-up-from-position ()
   (assert (not (no-previous-up-from-position-p?)))
-  (goto-char (first *nomis-dirtree-previous-up-from-positions*))
+  (let* ((file (first *nomis-dirtree-previous-up-from-positions*)))
+    (nomis-dirtree-goto-file-that-is-displayed-in-tree file))
   (pop *nomis-dirtree-previous-up-from-positions*))
 
 ;;;; ---------------------------------------------------------------------------
