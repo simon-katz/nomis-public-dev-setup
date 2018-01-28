@@ -363,9 +363,18 @@ With prefix argument select `nomis-dirtree-buffer'"
       (error "No parent!"))))
 
 (defun nomis-dirtree-goto-root ()
-  (while (not (nomis-dirtree-root-p (nomis-dirtree-selected-widget)))
-    ;; FIXME Why is there "No parent!" when on "test" dir
-    ;;       in "clojure-the-language"?
+  (while (and (not (nomis-dirtree-root-p (nomis-dirtree-selected-widget)))
+              (progn
+                ;; Without this, when:
+                ;; - on "test" dir in the "clojure-the-language" project
+                ;; - that dir is in the expanded state
+                ;; - we do a `nomis/toggle-dirtree-dirs-at-top` to set
+                ;;   `nomis-dirtree/dirs-at-top?` to true
+                ;; we get a "No parent!" error.
+                ;; I wonder why that's different to other dirs in the project.
+                ;; - Here's a clue: the cursor position is different for "test"
+                ;;   after you do a `nomis/toggle-dirtree-dirs-at-top`.
+                (tree-mode-parent-current-line)))
     (nomis-dirtree-tree-mode-goto-parent 1)))
 
 (defun nomis-dirtree/with-return-to-selected-file-fun (fun)
