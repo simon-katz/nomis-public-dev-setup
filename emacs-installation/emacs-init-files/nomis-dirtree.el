@@ -44,6 +44,11 @@
 ;;;; - Tidy.
 
 ;;;; ___________________________________________________________________________
+;;;; Some definitions that need to come early.
+
+(defvar *nomis-dirtree-inhibit-history?* nil)
+
+;;;; ___________________________________________________________________________
 ;;;; Initially we have, more-or-less, the original dirtree.
 ;;;; I don't have a deep understanding of this, but I've hacked it a bit.
 
@@ -347,12 +352,6 @@ With prefix argument select `nomis-dirtree-buffer'"
                (s-replace (nomis-dirtree-root-file)
                           ""
                           s)))))
-
-;;;; ---------------------------------------------------------------------------
-
-;;;; FIXME Move the related stuff to here.
-
-(defvar *nomis-dirtree-inhibit-history?* nil)
 
 ;;;; ---------------------------------------------------------------------------
 ;;;; Navigation
