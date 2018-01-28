@@ -446,18 +446,20 @@ With prefix argument select `nomis-dirtree-buffer'"
 ;;;; ---------------------------------------------------------------------------
 ;;;; History
 
-;;;; FIXME Limit history growth.
-
 ;;;; FIXME You have these as buffer local, but they need to be per tree.
 (defvar *nomis-dirtree/paths/current* nil)
 (defvar *nomis-dirtree/paths/history-list* '())
 (defvar *nomis-dirtree/paths/future-list* '())
 
+(defvar *nomis-dirtree/max-history-size* 100)
+
 (defun nomis-dirtree-note-current-selection ()
   (unless *nomis-dirtree-inhibit-history?*
     (when *nomis-dirtree/paths/current*
-      (push *nomis-dirtree/paths/current*
-            *nomis-dirtree/paths/history-list*))
+      (setq *nomis-dirtree/paths/history-list*
+            (seq-take (cons *nomis-dirtree/paths/current*
+                            *nomis-dirtree/paths/history-list*)
+                      *nomis-dirtree/max-history-size*)))
     (setq *nomis-dirtree/paths/current* (nomis-dirtree-file-path))
     (setq *nomis-dirtree/paths/future-list* '())))
 
