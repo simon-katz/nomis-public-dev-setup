@@ -20,6 +20,10 @@
 
 ;;;; TODO:
 
+;;;; - When recording positions in the history, record file names rather than
+;;;;   points. (But think about how to deal with files that are no longer
+;;;;   visible.)
+
 ;;;; - Bug: `nomis-dirtree-goto-previous-up-from-position-and-display`
 ;;;;        does the display part when the first part fails.
 ;;;;        We need to be thowing errors, probably at all places
