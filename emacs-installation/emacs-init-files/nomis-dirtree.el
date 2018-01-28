@@ -128,7 +128,8 @@ With prefix argument select `nomis-dirtree-buffer'"
         (if (string= (widget-get atree :file) root)
             (setq tree atree)))
       (or tree
-          (setq tree (tree-mode-insert (nomis-dirtree-root-widget root)))))
+          (setq tree (tree-mode-insert
+                      (nomis-dirtree-make-root-widget-spec root)))))
     ;; (setq win (get-buffer-window nomis-dirtree-buffer))
     (unless win
       ;;(setq win (get-buffer-window nomis-dirtree-buffer))
@@ -155,7 +156,8 @@ With prefix argument select `nomis-dirtree-buffer'"
         (if (string= (widget-get atree :file) root)
             (setq tree atree)))
       (or tree
-          (setq tree (tree-mode-insert (nomis-dirtree-root-widget root)))))
+          (setq tree (tree-mode-insert
+                      (nomis-dirtree-make-root-widget-spec root)))))
     (if select
         (switch-to-buffer nomis-dirtree-buffer))))
 
@@ -163,7 +165,7 @@ With prefix argument select `nomis-dirtree-buffer'"
   "A mode to display tree of directory"
   (tree-widget-set-theme "folder"))
 
-(defun nomis-dirtree-root-widget (directory)
+(defun nomis-dirtree-make-root-widget-spec (directory)
   "create the root directory"
   `(nomis-dirtree-directory-widget
     :node (nomis-dirtree-file-widget-for-directory
@@ -254,15 +256,6 @@ With prefix argument select `nomis-dirtree-buffer'"
 ;;;; My stuff.
 
 ;;;; ---------------------------------------------------------------------------
-;;;; Widget stuff.
-
-(defun nomis-dirtree-widget-file (widget)
-  (widget-get widget :file))
-
-(defun nomis-dirtree-widget-children (widget)
-  (widget-get widget :children))
-
-;;;; ---------------------------------------------------------------------------
 ;;;; Support for expand/collapse.
 
 (defun nomis-dirtree-expand-node (widget)
@@ -292,9 +285,15 @@ With prefix argument select `nomis-dirtree-buffer'"
         *dirs-to-keep-collapsed-unless-forced*))
 
 ;;;; ---------------------------------------------------------------------------
-;;;; Helper functions to do with the selection.
+;;;; Widget and file stuff.
 
 ;;;; FIXME This mixes the domains of widgets and files.
+
+(defun nomis-dirtree-widget-file (widget)
+  (widget-get widget :file))
+
+(defun nomis-dirtree-widget-children (widget)
+  (widget-get widget :children))
 
 (defun nomis-dirtree-selected-widget ()
   (let* ((widget (widget-at (1- (line-end-position)))))
@@ -302,18 +301,60 @@ With prefix argument select `nomis-dirtree-buffer'"
         (widget-get widget :parent)
       widget)))
 
-(defun nomis-dirtree-selected-file-or-dir ()
+(defun nomis-dirtree-selected-file-or-dir () ; FIXME Use `nomis-dirtree-selected-file` instead
+  (nomis-dirtree-selected-file))
+
+(defun nomis-dirtree-selected-file ()
   (-> (nomis-dirtree-selected-widget)
-      (widget-get :file)))
+      nomis-dirtree-widget-file))
 
 (defun nomis-dirtree-root-p (widget)
   (plist-get (rest widget)
              :nomis-root))
 
+(defun nomis-dirtree-parent-widget (widget)
+  (widget-get widget :parent))
+
+(defun nomis-dirtree-widget-path (widget)
+  ;; FIXME This sometimes returns things in a mixed up order. WTF?
+  (cl-labels ((helper
+               (w)
+               (if (nomis-dirtree-root-p w)
+                   (list w)
+                 (cons w
+                       (-> (nomis-dirtree-parent-widget w)
+                           nomis-dirtree-widget-path)))))
+    (-> (helper widget)
+        reverse)))
+
+(defun nomis-dirtree-root-widget (widget)
+  (if (nomis-dirtree-root-p widget)
+      widget
+    (-> widget
+        nomis-dirtree-parent-widget
+        nomis-dirtree-root-widget)))
+
+(defun nomis-dirtree-file-path ()
+  (->> (nomis-dirtree-selected-widget)
+       nomis-dirtree-widget-path
+       (-map #'nomis-dirtree-widget-file)))
+
+(defun nomis-dirtree-file-path-filenames ()
+  (->> (nomis-dirtree-file-path)
+       (-map #'file-name-nondirectory)))
+
+(defun nomis-dirtree-root-file ()
+  (-> (nomis-dirtree-selected-widget)
+      nomis-dirtree-root-widget
+      nomis-dirtree-widget-file))
+
 ;;;; ---------------------------------------------------------------------------
 ;;;; Navigation
 
-(defun nomis-dirtree-tree-mode-goto-parent (arg)
+(defun nomis-dirtree-goto-widget (widget)
+  (goto-char (widget-get widget :from)))
+
+(defun nomis-dirtree-tree-mode-goto-parent-CAN-DELETE-ME (arg)
   "Move to parent node.
    Like `tree-mode-goto-parent`, but throws an exception when there's no parent."
   (interactive "p")
@@ -321,30 +362,39 @@ With prefix argument select `nomis-dirtree-buffer'"
     (setq arg (1- arg))
     (if parent
         (progn
-          (goto-char (widget-get parent :from))
           (while (and (> arg 0)
                       (setq parent (widget-get parent :parent))
-                      (goto-char (widget-get parent :from))
-                      (setq arg (1- arg)))))
+                      (setq arg (1- arg))))
+          (nomis-dirtree-goto-widget parent))
       (error "No parent!"))))
 
 (defun nomis-dirtree-goto-root ()
-  (while (and (not (nomis-dirtree-root-p (nomis-dirtree-selected-widget)))
-              (progn
-                ;; Without this, when:
-                ;; - on "test" dir in the "clojure-the-language" project
-                ;; - that dir is in the expanded state
-                ;; - we do a `nomis/toggle-dirtree-dirs-at-top` to set
-                ;;   `nomis-dirtree/dirs-at-top?` to true
-                ;; we get a "No parent!" error.
-                ;; I wonder why that's different to other dirs in the project.
-                ;; - Here's a clue: the cursor position is different for "test"
-                ;;   after you do a `nomis/toggle-dirtree-dirs-at-top`.
-                ;; - I added a new directory called "zzzz", and then that was
-                ;;   bad and "test" was OK -- so the problem is with the last
-                ;;   directory (alphabetically).
-                (tree-mode-parent-current-line)))
-    (nomis-dirtree-tree-mode-goto-parent 1)))
+  ;; Sometimes we don't find the selected widget. I noticed it with:
+  ;; - on "test" dir in the "clojure-the-language" project
+  ;; - that dir is in the expanded state
+  ;; - we do a `nomis/toggle-dirtree-dirs-at-top` to set
+  ;;   `nomis-dirtree/dirs-at-top?` to true
+  ;; I wonder why that's different to other dirs in the project.
+  ;; - If I call `nomis-dirtree-root-file` from M-: it always finds
+  ;;   the selection. Ah, but the difference is that you have recreated the
+  ;;   tree when you toggle.
+  ;; - Here's a clue: the cursor position is different for "test"
+  ;;   after you do a `nomis/toggle-dirtree-dirs-at-top`.
+  ;; - I added a new directory called "zzzz", and then that was
+  ;;   bad and "test" was OK -- so the problem is with the last
+  ;;   directory (alphabetically).
+  (case 2
+    (1
+     (while (and (not (nomis-dirtree-root-p (nomis-dirtree-selected-widget)))
+                 (tree-mode-parent-current-line))
+       (nomis-dirtree-tree-mode-goto-parent-CAN-DELETE-ME 1)))
+    (2
+     (let* ((selected-widget (nomis-dirtree-selected-widget)))
+       (if selected-widget
+           (let* ((root-widget (-> selected-widget
+                                   nomis-dirtree-root-widget)))
+             (nomis-dirtree-goto-widget root-widget))
+         (message "Didn't find selected widget."))))))
 
 (defun nomis-dirtree-goto-file-that-is-displayed-in-tree (target-file)
   ;; FIXME Make this work when `target-file` is not in the expanded tree.
@@ -364,9 +414,12 @@ With prefix argument select `nomis-dirtree-buffer'"
         (error "Couldn't find target-file %s" target-file)))))
 
 (defun nomis-dirtree/with-return-to-selected-file-fun (fun)
-  (let* ((file-to-return-to (-> (tree-mode-icon-current-line)
-                                (widget-get :node)
-                                (widget-get :file))))
+  (let* ((file-to-return-to
+          (case 2
+            (1 (-> (tree-mode-icon-current-line)
+                   (widget-get :node)
+                   nomis-dirtree-widget-file))
+            (2 (nomis-dirtree-selected-file)))))
     (funcall fun)
     (nomis-dirtree-goto-file-that-is-displayed-in-tree file-to-return-to)))
 
