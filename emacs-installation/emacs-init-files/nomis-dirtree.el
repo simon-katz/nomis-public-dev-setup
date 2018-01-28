@@ -367,24 +367,31 @@ With prefix argument select `nomis-dirtree-buffer'"
                 (tree-mode-parent-current-line)))
     (nomis-dirtree-tree-mode-goto-parent 1)))
 
+(defun nomis-dirtree-goto-file-that-is-displayed-in-tree (target-file)
+  ;; With current usage, we can assume the file is in the expanded tree.
+  ;; The name of this function tries to make that clear.
+  ;; But it's not very clear.
+  ;; Hence this comment.
+  (nomis-dirtree-goto-root)
+  (let* ((root-file (nomis-dirtree-selected-file-or-dir)))
+    (while (not (equal target-file
+                       (nomis-dirtree-selected-file-or-dir)))
+      ;; Be defensive: we should always find the file, but, in case we screw
+      ;; something up, take care not to cycle around forever not finding it.
+      ;; We could rely on an error thrown by `nomis-dirtree-next-line` when
+      ;; it wraps, but we prefer not to.
+      (ignore-errors (nomis-dirtree-next-line 1))
+      (when (equal root-file
+                   (nomis-dirtree-selected-file-or-dir))
+        ;; We looped around. This shouldn't happen.
+        (error "Couldn't find target-file %s" target-file)))))
+
 (defun nomis-dirtree/with-return-to-selected-file-fun (fun)
   (let* ((file-to-return-to (-> (tree-mode-icon-current-line)
                                 (widget-get :node)
                                 (widget-get :file))))
     (funcall fun)
-    (nomis-dirtree-goto-root)
-    (let* ((root-file (nomis-dirtree-selected-file-or-dir)))
-      (while (not (equal file-to-return-to
-                         (nomis-dirtree-selected-file-or-dir)))
-        ;; Be defensive: we should always find the file, but, in case we screw
-        ;; something up, take care not to cycle around forever not finding it.
-        ;; We could rely on an error thrown by `nomis-dirtree-next-line` when
-        ;; it wraps, but we prefer not to.
-        (ignore-errors (nomis-dirtree-next-line 1))
-        (when (equal root-file
-                     (nomis-dirtree-selected-file-or-dir))
-          ;; We looped around. This shouldn't happen.
-          (error "Couldn't find file-to-return-to %s" file-to-return-to))))))
+    (nomis-dirtree-goto-file-that-is-displayed-in-tree file-to-return-to)))
 
 (defmacro nomis-dirtree/with-return-to-selected-file (&rest body)
   `(nomis-dirtree/with-return-to-selected-file-fun (lambda () ,@body)))
