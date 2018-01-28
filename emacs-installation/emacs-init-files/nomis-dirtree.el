@@ -301,9 +301,6 @@ With prefix argument select `nomis-dirtree-buffer'"
         (widget-get widget :parent)
       widget)))
 
-(defun nomis-dirtree-selected-file-or-dir () ; FIXME Use `nomis-dirtree-selected-file` instead
-  (nomis-dirtree-selected-file))
-
 (defun nomis-dirtree-selected-file ()
   (-> (nomis-dirtree-selected-widget)
       nomis-dirtree-widget-file))
@@ -400,16 +397,16 @@ With prefix argument select `nomis-dirtree-buffer'"
   ;; FIXME Make this work when `target-file` is not in the expanded tree.
   ;;       Probably non-trivial.
   (nomis-dirtree-goto-root)
-  (let* ((root-file (nomis-dirtree-selected-file-or-dir)))
+  (let* ((root-file (nomis-dirtree-selected-file)))
     (while (not (equal target-file
-                       (nomis-dirtree-selected-file-or-dir)))
+                       (nomis-dirtree-selected-file)))
       ;; Be defensive: we should always find the file, but, in case we screw
       ;; something up, take care not to cycle around forever not finding it.
       ;; We could rely on an error thrown by `nomis-dirtree-next-line` when
       ;; it wraps, but we prefer not to.
       (ignore-errors (nomis-dirtree-next-line 1))
       (when (equal root-file
-                   (nomis-dirtree-selected-file-or-dir))
+                   (nomis-dirtree-selected-file))
         ;; We looped around. This shouldn't happen.
         (error "Couldn't find target-file %s" target-file)))))
 
@@ -432,7 +429,7 @@ With prefix argument select `nomis-dirtree-buffer'"
 (defvar *nomis-dirtree-previous-up-from-files* '())
 
 (defun nomis-dirtree-note-previous-up-from-file ()
-  (push (nomis-dirtree-selected-file-or-dir)
+  (push (nomis-dirtree-selected-file)
         *nomis-dirtree-previous-up-from-files*))
 
 (defun no-previous-up-from-file-p? ()
@@ -450,7 +447,7 @@ With prefix argument select `nomis-dirtree-buffer'"
   "Display contents of file under point in other window."
   (interactive)
   (save-selected-window
-    (let* ((file (nomis-dirtree-selected-file-or-dir)))
+    (let* ((file (nomis-dirtree-selected-file)))
       (when file
         (find-file-other-window file)))))
 
@@ -458,14 +455,14 @@ With prefix argument select `nomis-dirtree-buffer'"
   "Display contents of file under point in other window."
   (interactive)
   (save-selected-window
-    (let* ((file (nomis-dirtree-selected-file-or-dir)))
+    (let* ((file (nomis-dirtree-selected-file)))
       (when file
         (find-file-other-frame file)))))
 
 (defun nomis-dirtree-open-in-default-app ()
   "Open file under point using its default app."
   (interactive)
-  (let* ((file (nomis-dirtree-selected-file-or-dir)))
+  (let* ((file (nomis-dirtree-selected-file)))
     (when file
       (shell-command (concat "open \"" file "\"")))))
 
