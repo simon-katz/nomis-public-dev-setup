@@ -194,39 +194,6 @@ With prefix argument select `nomis-dirtree-buffer'"
 (defconst nomis-dirtree/approach-to-children :new)
 (defconst nomis-dirtree/dirs-at-top? nil)
 
-(defun nomis-dirtree/with-return-to-file-fun (fun)
-  (let* ((file (-> (tree-mode-icon-current-line)
-                   (widget-get :node)
-                   (widget-get :file))))
-    (funcall fun)
-    (while (not (nomis-dirtree-root-p (nomis-dirtree-selected-widget)))
-      (tree-mode-goto-parent 1))
-    (let* ((root-file (-> (nomis-dirtree-selected-widget)
-                          (widget-get :file))))
-      (while (not (equal file
-                         (-> (nomis-dirtree-selected-widget)
-                             (widget-get :file))))
-        ;; Be defensive: we should always find the file, but, in case we screw
-        ;; something up, take care not to cycle around forever not finding it.
-        ;; We could rely on an error thrown by `nomis-dirtree-next-line` when
-        ;; it wraps, but we prefer not to.
-        (ignore-errors (nomis-dirtree-next-line 1))
-        (when (equal root-file
-                     (-> (nomis-dirtree-selected-widget)
-                         (widget-get :file)))
-          (error "Couldn't find file %s" file))))))
-
-(defmacro nomis-dirtree/with-return-to-file (&rest body)
-  `(nomis-dirtree/with-return-to-file-fun (lambda () ,@body)))
-
-(defun nomis/toggle-dirtree-dirs-at-top ()
-  (interactive)
-  (setq nomis-dirtree/dirs-at-top?
-        (not nomis-dirtree/dirs-at-top?))
-  (nomis-dirtree/with-return-to-file
-   (mapc #'tree-mode-reflesh-tree
-         tree-mode-list)))
-
 (defun nomis-dirtree-setup-children (tree)
   "expand directory"
   (case nomis-dirtree/approach-to-children
@@ -375,6 +342,37 @@ With prefix argument select `nomis-dirtree-buffer'"
 (defun nomis-dirtree-root-p (widget)
   (plist-get (rest widget)
              :nomis-root))
+
+;;;; ---------------------------------------------------------------------------
+;;;; Navigation
+
+(defun nomis-dirtree-goto-root ()
+  (while (not (nomis-dirtree-root-p (nomis-dirtree-selected-widget)))
+    (tree-mode-goto-parent 1)))
+
+(defun nomis-dirtree/with-return-to-file-fun (fun)
+  (let* ((file (-> (tree-mode-icon-current-line)
+                   (widget-get :node)
+                   (widget-get :file))))
+    (funcall fun)
+    (nomis-dirtree-goto-root)
+    (let* ((root-file (-> (nomis-dirtree-selected-widget)
+                          (widget-get :file))))
+      (while (not (equal file
+                         (-> (nomis-dirtree-selected-widget)
+                             (widget-get :file))))
+        ;; Be defensive: we should always find the file, but, in case we screw
+        ;; something up, take care not to cycle around forever not finding it.
+        ;; We could rely on an error thrown by `nomis-dirtree-next-line` when
+        ;; it wraps, but we prefer not to.
+        (ignore-errors (nomis-dirtree-next-line 1))
+        (when (equal root-file
+                     (-> (nomis-dirtree-selected-widget)
+                         (widget-get :file)))
+          (error "Couldn't find file %s" file))))))
+
+(defmacro nomis-dirtree/with-return-to-file (&rest body)
+  `(nomis-dirtree/with-return-to-file-fun (lambda () ,@body)))
 
 ;;;; ---------------------------------------------------------------------------
 ;;;; User-visible commands.
@@ -545,6 +543,14 @@ sub-subdirectories, etc, so that subsequent expansion shows only one level."
       (progn
         (message "Not a directory, so can't collapse.")
         (beep)))))
+
+(defun nomis/toggle-dirtree-dirs-at-top ()
+  (interactive)
+  (setq nomis-dirtree/dirs-at-top?
+        (not nomis-dirtree/dirs-at-top?))
+  (nomis-dirtree/with-return-to-file
+   (mapc #'tree-mode-reflesh-tree
+         tree-mode-list)))
 
 (defun nomis-dirtree-show-selection-info ()
   "Display some details of the file under point in a message dialog.
