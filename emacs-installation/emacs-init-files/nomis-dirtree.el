@@ -224,8 +224,8 @@ With prefix argument select `nomis-dirtree-buffer'"
   (setq nomis-dirtree/dirs-at-top?
         (not nomis-dirtree/dirs-at-top?))
   (nomis-dirtree/with-return-to-file
-    (mapc #'tree-mode-reflesh-tree
-          tree-mode-list)))
+   (mapc #'tree-mode-reflesh-tree
+         tree-mode-list)))
 
 (defun nomis-dirtree-setup-children (tree)
   "expand directory"
