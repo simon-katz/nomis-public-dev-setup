@@ -593,6 +593,8 @@ Mostly for debugging purposes."
   (dk (kbd "M-<left>")    'nomis-dirtree-collapse)
   (dk (kbd "M-S-<right>") 'nomis-dirtree-expand-all)
   (dk (kbd "M-S-<left>")  'nomis-dirtree-collapse-all)
+
+  (dk (kbd "t")           'nomis/toggle-dirtree-dirs-at-top)
   
   (dk (kbd "M-d")         'nomis-dirtree-show-selection-info))
 
