@@ -313,14 +313,13 @@ With prefix argument select `nomis-dirtree-buffer'"
   (widget-get widget :parent))
 
 (defun nomis-dirtree-widget-path (widget)
-  ;; FIXME This sometimes returns things in a mixed up order. WTF?
   (cl-labels ((helper
                (w)
                (if (nomis-dirtree-root-p w)
                    (list w)
                  (cons w
                        (-> (nomis-dirtree-parent-widget w)
-                           nomis-dirtree-widget-path)))))
+                           helper)))))
     (-> (helper widget)
         reverse)))
 
@@ -336,9 +335,12 @@ With prefix argument select `nomis-dirtree-buffer'"
        nomis-dirtree-widget-path
        (-map #'nomis-dirtree-widget-file)))
 
-(defun nomis-dirtree-file-path-filenames ()
+(defun nomis-dirtree-file-path-filenames-FOR-DEBUG ()
   (->> (nomis-dirtree-file-path)
-       (-map #'file-name-nondirectory)))
+       (-map (lambda (s)
+               (s-replace "/Users/simonkatz/development-100/repositories/nomis/_teaching-and-demoing/clojure-the-language/"
+                          ""
+                          s)))))
 
 (defun nomis-dirtree-root-file ()
   (-> (nomis-dirtree-selected-widget)
