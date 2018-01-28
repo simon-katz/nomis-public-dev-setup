@@ -348,6 +348,7 @@ With prefix argument select `nomis-dirtree-buffer'"
 
 (defun nomis-dirtree-goto-file-that-is-displayed-in-tree (target-file)
   ;; FIXME Make this work when `target-file` is not in the expanded tree.
+  ;;       Probably non-trivial.
   (nomis-dirtree-goto-root)
   (let* ((root-file (nomis-dirtree-selected-file-or-dir)))
     (while (not (equal target-file
