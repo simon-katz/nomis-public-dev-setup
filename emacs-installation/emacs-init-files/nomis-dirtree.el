@@ -428,19 +428,21 @@ With prefix argument select `nomis-dirtree-buffer'"
 ;;;; ---------------------------------------------------------------------------
 ;;;; The stack of previous up-from files.
 
-(defvar *nomis-dirtree-previous-up-from-files* '())
+(defvar *nomis-dirtree-previous-up-from-paths* '())
 
-(defun nomis-dirtree-note-previous-up-from-file ()
-  (push (nomis-dirtree-selected-file)
-        *nomis-dirtree-previous-up-from-files*))
+(defun nomis-dirtree-note-previous-up-from-path ()
+  (push (nomis-dirtree-file-path)
+        *nomis-dirtree-previous-up-from-paths*))
 
-(defun no-previous-up-from-file-p? ()
-  (null *nomis-dirtree-previous-up-from-files*))
+(defun no-previous-up-from-path-p? ()
+  (null *nomis-dirtree-previous-up-from-paths*))
 
-(defun pop-to-previous-up-from-file ()
-  (assert (not (no-previous-up-from-file-p?)))
-  (let* ((file (pop *nomis-dirtree-previous-up-from-files*)))
-    (nomis-dirtree-goto-file-that-is-displayed-in-tree file)))
+(defun pop-to-previous-up-from-path ()
+  (assert (not (no-previous-up-from-path-p?)))
+  (cl-loop for (f . r) on (pop *nomis-dirtree-previous-up-from-paths*)
+           do (when r
+                (nomis-dirtree-expand nil))
+           finally (nomis-dirtree-goto-file-that-is-displayed-in-tree f)))
 
 ;;;; ---------------------------------------------------------------------------
 ;;;; User-visible commands.
@@ -521,7 +523,7 @@ positions."
         (message "Already at root.")
         (beep))
     (progn
-      (nomis-dirtree-note-previous-up-from-file)
+      (nomis-dirtree-note-previous-up-from-path)
       (tree-mode-goto-parent arg))))
 
 (defun nomis-dirtree-up-directory-and-display (arg)
@@ -537,11 +539,11 @@ Then display contents of file under point in other window."
   "Return to the line at the front of the stack of previous up-from
 positions, popping the stack."
   (interactive)
-  (if (no-previous-up-from-file-p?)
+  (if (no-previous-up-from-path-p?)
       (progn
         (beep)
         (message "There is no previous up-from position."))
-    (pop-to-previous-up-from-file)))
+    (pop-to-previous-up-from-path)))
 
 (defun nomis-dirtree-goto-previous-up-from-file-and-display ()
   "Return to the line at the front of the stack of previous up-from
