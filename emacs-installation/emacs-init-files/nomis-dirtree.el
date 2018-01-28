@@ -27,7 +27,7 @@
 ;;;;   has stuff for looking at file names and navigating to files, so
 ;;;;   this should be easy now.
 
-;;;; - Bug: `nomis-dirtree-goto-previous-up-from-position-and-display`
+;;;; - Bug: `nomis-dirtree-goto-previous-up-from-file-and-display`
 ;;;;        does the display part when the first part fails.
 ;;;;        We need to be thowing errors, probably at all places
 ;;;;        where we currenty beep.
@@ -55,7 +55,7 @@
 ;;;; Probably won't do the following:
 
 ;;;; - Could add backward and forward navigation (to previous and next selections).
-;;;;   - You have `nomis-dirtree-goto-previous-up-from-position`.
+;;;;   - You have `nomis-dirtree-goto-previous-up-from-file`.
 ;;;;     Maybe that's good enough.
 ;;;;     It's broken after collapsing/expanding/refreshing, though.
 ;;;;   - Using positions would be no good.
@@ -399,20 +399,20 @@ With prefix argument select `nomis-dirtree-buffer'"
 ;;;; ---------------------------------------------------------------------------
 ;;;; The stack of previous up-from positions.
 
-(defvar *nomis-dirtree-previous-up-from-positions* '())
+(defvar *nomis-dirtree-previous-up-from-files* '())
 
-(defun nomis-dirtree-note-previous-up-from-position ()
+(defun nomis-dirtree-note-previous-up-from-file ()
   (push (nomis-dirtree-selected-file-or-dir)
-        *nomis-dirtree-previous-up-from-positions*))
+        *nomis-dirtree-previous-up-from-files*))
 
-(defun no-previous-up-from-position-p? ()
-  (null *nomis-dirtree-previous-up-from-positions*))
+(defun no-previous-up-from-file-p? ()
+  (null *nomis-dirtree-previous-up-from-files*))
 
-(defun pop-to-previous-up-from-position ()
-  (assert (not (no-previous-up-from-position-p?)))
-  (let* ((file (first *nomis-dirtree-previous-up-from-positions*)))
+(defun pop-to-previous-up-from-file ()
+  (assert (not (no-previous-up-from-file-p?)))
+  (let* ((file (first *nomis-dirtree-previous-up-from-files*)))
     (nomis-dirtree-goto-file-that-is-displayed-in-tree file))
-  (pop *nomis-dirtree-previous-up-from-positions*))
+  (pop *nomis-dirtree-previous-up-from-files*))
 
 ;;;; ---------------------------------------------------------------------------
 ;;;; User-visible commands.
@@ -493,7 +493,7 @@ positions."
         (message "Already at root.")
         (beep))
     (progn
-      (nomis-dirtree-note-previous-up-from-position)
+      (nomis-dirtree-note-previous-up-from-file)
       (tree-mode-goto-parent arg))))
 
 (defun nomis-dirtree-up-directory-and-display (arg)
@@ -505,22 +505,22 @@ Then display contents of file under point in other window."
   (nomis-dirtree-up-directory arg)
   (nomis-dirtree-display-file))
 
-(defun nomis-dirtree-goto-previous-up-from-position ()
+(defun nomis-dirtree-goto-previous-up-from-file ()
   "Return to the line at the front of the stack of previous up-from
 positions, popping the stack."
   (interactive)
-  (if (no-previous-up-from-position-p?)
+  (if (no-previous-up-from-file-p?)
       (progn
         (beep)
         (message "There is no previous up-from position."))
-    (pop-to-previous-up-from-position)))
+    (pop-to-previous-up-from-file)))
 
-(defun nomis-dirtree-goto-previous-up-from-position-and-display ()
+(defun nomis-dirtree-goto-previous-up-from-file-and-display ()
   "Return to the line at the front of the stack of previous up-from
 positions, popping the stack.
 Then display contents of file under point in other window."
   (interactive)
-  (nomis-dirtree-goto-previous-up-from-position)
+  (nomis-dirtree-goto-previous-up-from-file)
   (nomis-dirtree-display-file))
 
 (defun nomis-dirtree-expand (arg)
@@ -632,8 +632,8 @@ Mostly for debugging purposes."
   (dk (kbd "C-<right>")   'nomis-dirtree-next-line-with-expansion-and-display)
   (dk (kbd "<left>")      'nomis-dirtree-up-directory)
   (dk (kbd "C-<left>")    'nomis-dirtree-up-directory-and-display)
-  (dk (kbd "M-[")         'nomis-dirtree-goto-previous-up-from-position)
-  (dk (kbd "C-M-[")       'nomis-dirtree-goto-previous-up-from-position-and-display)
+  (dk (kbd "M-[")         'nomis-dirtree-goto-previous-up-from-file)
+  (dk (kbd "C-M-[")       'nomis-dirtree-goto-previous-up-from-file-and-display)
 
   (dk (kbd "M-<right>")   'nomis-dirtree-expand)
   (dk (kbd "M-<left>")    'nomis-dirtree-collapse)
