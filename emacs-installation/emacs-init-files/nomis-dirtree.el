@@ -328,6 +328,8 @@ With prefix argument select `nomis-dirtree-buffer'"
 ;;;; ---------------------------------------------------------------------------
 ;;;; Helper functions to do with the selection.
 
+;;;; FIXME This mixes the domains of widgets and files.
+
 (defun nomis-dirtree-selected-widget ()
   (let* ((widget (widget-at (1- (line-end-position)))))
     (if (nomis-dirtree-file-widget-for-directory-p widget)
@@ -335,9 +337,8 @@ With prefix argument select `nomis-dirtree-buffer'"
       widget)))
 
 (defun nomis-dirtree-selected-file-or-dir ()
-  (let* ((widget (nomis-dirtree-selected-widget))
-         (file (widget-get widget :file)))
-    file))
+  (-> (nomis-dirtree-selected-widget)
+      (widget-get :file)))
 
 (defun nomis-dirtree-root-p (widget)
   (plist-get (rest widget)
@@ -367,26 +368,22 @@ With prefix argument select `nomis-dirtree-buffer'"
     ;;       in "clojure-the-language"?
     (nomis-dirtree-tree-mode-goto-parent 1)))
 
-(defun nomis-dirtree-selected-file ()
-  (-> (nomis-dirtree-selected-widget)
-      (widget-get :file)))
-
 (defun nomis-dirtree/with-return-to-selected-file-fun (fun)
   (let* ((file (-> (tree-mode-icon-current-line)
                    (widget-get :node)
                    (widget-get :file))))
     (funcall fun)
     (nomis-dirtree-goto-root)
-    (let* ((root-file (nomis-dirtree-selected-file)))
+    (let* ((root-file (nomis-dirtree-selected-file-or-dir)))
       (while (not (equal file
-                         (nomis-dirtree-selected-file)))
+                         (nomis-dirtree-selected-file-or-dir)))
         ;; Be defensive: we should always find the file, but, in case we screw
         ;; something up, take care not to cycle around forever not finding it.
         ;; We could rely on an error thrown by `nomis-dirtree-next-line` when
         ;; it wraps, but we prefer not to.
         (ignore-errors (nomis-dirtree-next-line 1))
         (when (equal root-file
-                     (nomis-dirtree-selected-file))
+                     (nomis-dirtree-selected-file-or-dir))
           (error "Couldn't find file %s" file))))))
 
 (defmacro nomis-dirtree/with-return-to-selected-file (&rest body)
