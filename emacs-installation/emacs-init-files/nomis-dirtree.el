@@ -20,22 +20,19 @@
 
 ;;;; TODO:
 
-;;;; - Bug: `nomis-dirtree-goto-previous-up-from-file-and-display`
+;;;; - Bug: `nomis-dirtree-history-step-back-and-display`
 ;;;;        does the display part when the first part fails.
 ;;;;        We need to be thowing errors, probably at all places
 ;;;;        where we currenty beep.
 
-;;;; - Could add backward and forward navigation.
-;;;;   - You have `nomis-dirtree-goto-previous-up-from-file`.
-;;;;     Maybe that's good enough.
-;;;;   - Why did you get rid of generalised back navigation?
-;;;;     Were there difficulties?
-;;;;     General back navigation, with control key skipping to only files
-;;;;     that were displayed, would be good.  (Right?)
+;;;; - Navigation with (eg) control key skipping to only files
+;;;;   that were displayed would be good.  (Right?)
 
 ;;;; - When hitting up and down arrow keys, when you hit directories
 ;;;;   there are messages saying "Expand" and "Collapse" (depending on
 ;;;;   whether the directory is collapsed or expanded).
+;;;;   - I've looked, but I can't even work out where the messages are
+;;;;     coming from.
 
 ;;;; - Navigate to node in tree from a file.
 
@@ -139,7 +136,8 @@ With prefix argument select `nomis-dirtree-buffer'"
       (unless (widget-get tree :open)
         (widget-apply-action tree))
       (goto-char (widget-get tree :from))
-      (recenter 1))
+      (recenter 1)
+      (nomis-dirtree-note-current-selection))
     (if select
         (select-window win))))
 
@@ -163,6 +161,9 @@ With prefix argument select `nomis-dirtree-buffer'"
 
 (define-derived-mode nomis-dirtree-mode tree-mode "Dir-Tree"
   "A mode to display tree of directory"
+  (make-local-variable '*nomis-dirtree/paths/current*)
+  (make-local-variable '*nomis-dirtree/paths/history-list*)
+  (make-local-variable '*nomis-dirtree/paths/future-list*)
   (tree-widget-set-theme "folder"))
 
 (defun nomis-dirtree-make-root-widget-spec (directory)
@@ -348,6 +349,12 @@ With prefix argument select `nomis-dirtree-buffer'"
       nomis-dirtree-widget-file))
 
 ;;;; ---------------------------------------------------------------------------
+
+;;;; FIXME Move the related stuff to here.
+
+(defvar *nomis-dirtree-inhibit-history?* nil)
+
+;;;; ---------------------------------------------------------------------------
 ;;;; Navigation
 
 (defun nomis-dirtree-goto-widget (widget)
@@ -396,21 +403,20 @@ With prefix argument select `nomis-dirtree-buffer'"
          (message "Didn't find selected widget."))))))
 
 (defun nomis-dirtree-goto-file-that-is-displayed-in-tree (target-file)
-  ;; FIXME Make this work when `target-file` is not in the expanded tree.
-  ;;       Probably non-trivial.
-  (nomis-dirtree-goto-root)
-  (let* ((root-file (nomis-dirtree-selected-file)))
-    (while (not (equal target-file
-                       (nomis-dirtree-selected-file)))
-      ;; Be defensive: we should always find the file, but, in case we screw
-      ;; something up, take care not to cycle around forever not finding it.
-      ;; We could rely on an error thrown by `nomis-dirtree-next-line` when
-      ;; it wraps, but we prefer not to.
-      (ignore-errors (nomis-dirtree-next-line 1))
-      (when (equal root-file
-                   (nomis-dirtree-selected-file))
-        ;; We looped around. This shouldn't happen.
-        (error "Couldn't find target-file %s" target-file)))))
+  (let* ((*nomis-dirtree-inhibit-history?* t))
+    (nomis-dirtree-goto-root)
+    (let* ((root-file (nomis-dirtree-selected-file)))
+      (while (not (equal target-file
+                         (nomis-dirtree-selected-file)))
+        ;; Be defensive: we should always find the file, but, in case we screw
+        ;; something up, take care not to cycle around forever not finding it.
+        ;; We could rely on an error thrown by `nomis-dirtree-next-line` when
+        ;; it wraps, but we prefer not to.
+        (ignore-errors (nomis-dirtree-next-line 1))
+        (when (equal root-file
+                     (nomis-dirtree-selected-file))
+          ;; We looped around. This shouldn't happen.
+          (error "Couldn't find target-file %s" target-file))))))
 
 (defun nomis-dirtree/with-return-to-selected-file-fun (fun)
   (let* ((file-to-return-to
@@ -418,31 +424,74 @@ With prefix argument select `nomis-dirtree-buffer'"
             (1 (-> (tree-mode-icon-current-line)
                    (widget-get :node)
                    nomis-dirtree-widget-file))
-            (2 (nomis-dirtree-selected-file)))))
-    (funcall fun)
-    (nomis-dirtree-goto-file-that-is-displayed-in-tree file-to-return-to)))
+            (2 (nomis-dirtree-selected-file))))
+         (res (funcall fun)))
+    (nomis-dirtree-goto-file-that-is-displayed-in-tree file-to-return-to)
+    res))
 
 (defmacro nomis-dirtree/with-return-to-selected-file (&rest body)
   `(nomis-dirtree/with-return-to-selected-file-fun (lambda () ,@body)))
 
-;;;; ---------------------------------------------------------------------------
-;;;; The stack of previous up-from files.
-
-(defvar *nomis-dirtree-previous-up-from-paths* '())
-
-(defun nomis-dirtree-note-previous-up-from-path ()
-  (push (nomis-dirtree-file-path)
-        *nomis-dirtree-previous-up-from-paths*))
-
-(defun no-previous-up-from-path-p? ()
-  (null *nomis-dirtree-previous-up-from-paths*))
-
-(defun pop-to-previous-up-from-path ()
-  (assert (not (no-previous-up-from-path-p?)))
-  (cl-loop for (f . r) on (pop *nomis-dirtree-previous-up-from-paths*)
+(defun nomis-dirtree-goto-path (path)
+  (nomis-dirtree-goto-root)
+  (nomis-dirtree-expand nil)
+  (cl-loop for (f . r) on path
+           ;; FIXME Want to do this without going to the root every time.
+           ;;       This is O(n^2).
            do (when r
+                (nomis-dirtree-goto-file-that-is-displayed-in-tree f)
                 (nomis-dirtree-expand nil))
            finally (nomis-dirtree-goto-file-that-is-displayed-in-tree f)))
+
+;;;; ---------------------------------------------------------------------------
+;;;; History
+
+;;;; FIXME Limit history growth.
+
+(defvar *nomis-dirtree/paths/current* nil)
+(defvar *nomis-dirtree/paths/history-list* '())
+(defvar *nomis-dirtree/paths/future-list* '())
+
+(defun nomis-dirtree-note-current-selection ()
+  (unless *nomis-dirtree-inhibit-history?*
+    (when *nomis-dirtree/paths/current*
+      (push *nomis-dirtree/paths/current*
+            *nomis-dirtree/paths/history-list*))
+    (setq *nomis-dirtree/paths/current* (nomis-dirtree-file-path))
+    (setq *nomis-dirtree/paths/future-list* '())))
+
+(defun nomis-dirtree/with-note-selection-when-done-fun (fun)
+  (let* ((res (let* ((*nomis-dirtree-inhibit-history?* t))
+                (funcall fun))))
+    (nomis-dirtree-note-current-selection)
+    res))
+
+(defmacro nomis-dirtree/with-note-selection-when-done (&rest body)
+  `(nomis-dirtree/with-note-selection-when-done-fun (lambda () ,@body)))
+
+(defun nomis-dirtree-no-history? ()
+  (null *nomis-dirtree/paths/history-list*))
+
+(defun nomis-dirtree-no-future? ()
+  (null *nomis-dirtree/paths/future-list*))
+
+(defun nomis-dirtree-history-step-back-impl ()
+  (assert (not (nomis-dirtree-no-history?)))
+  (let* ((*nomis-dirtree-inhibit-history?* t)
+         (path (pop *nomis-dirtree/paths/history-list*)))
+    (push *nomis-dirtree/paths/current*
+          *nomis-dirtree/paths/future-list*)
+    (setq *nomis-dirtree/paths/current* path)
+    (nomis-dirtree-goto-path path)))
+
+(defun nomis-dirtree-history-step-forward-impl ()
+  (assert (not (nomis-dirtree-no-future?)))
+  (let* ((*nomis-dirtree-inhibit-history?* t)
+         (path (pop *nomis-dirtree/paths/future-list*)))
+    (push *nomis-dirtree/paths/current*
+          *nomis-dirtree/paths/history-list*)
+    (setq *nomis-dirtree/paths/current* path)
+    (nomis-dirtree-goto-path path)))
 
 ;;;; ---------------------------------------------------------------------------
 ;;;; User-visible commands.
@@ -473,7 +522,8 @@ With prefix argument select `nomis-dirtree-buffer'"
 (defun nomis-dirtree-next-line (arg)
   "Move down <arg> lines."
   (interactive "p")
-  (tree-mode-next-node arg))
+  (nomis-dirtree/with-note-selection-when-done
+   (tree-mode-next-node arg)))
 
 (defun nomis-dirtree-next-line-and-display (arg)
   "Move down <arg> lines.
@@ -485,7 +535,8 @@ Then display contents of file under point in other window."
 (defun nomis-dirtree-previous-line (arg)
   "Move up <arg> lines."
   (interactive "p")
-  (tree-mode-previous-node arg))
+  (nomis-dirtree/with-note-selection-when-done
+   (tree-mode-previous-node arg)))
 
 (defun nomis-dirtree-previous-line-and-display (arg)
   "Move up <arg> lines.
@@ -494,16 +545,20 @@ Then display contents of file under point in other window."
   (nomis-dirtree-previous-line arg)
   (nomis-dirtree-display-file))
 
-(defun nomis-dirtree-next-line-with-expansion (arg)
-  "Move down <arg> lines, expanding any encountered collapsed directories
-and showing previous expansion of subdirectories."
-  (interactive "p")
+(defun nomis-dirtree-next-line-with-expansion* (arg)
   (unless (< arg 1)
     (let* ((widget (nomis-dirtree-selected-widget)))
       (when (nomis-dirtree-directory-widget-p widget)
         (nomis-dirtree-expand-node widget))
       (nomis-dirtree-next-line 1))
-    (nomis-dirtree-next-line-with-expansion (1- arg))))
+    (nomis-dirtree-next-line-with-expansion* (1- arg))))
+
+(defun nomis-dirtree-next-line-with-expansion (arg)
+  "Move down <arg> lines, expanding any encountered collapsed directories
+and showing previous expansion of subdirectories."
+  (interactive "p")
+  (nomis-dirtree/with-note-selection-when-done
+   (nomis-dirtree-next-line-with-expansion* arg)))
 
 (defun nomis-dirtree-next-line-with-expansion-and-display (arg)
   "Move down <arg> lines, expanding any encountered collapsed directories
@@ -515,42 +570,54 @@ Then display contents of file under point in other window."
 
 (defun nomis-dirtree-up-directory (arg)
   "Move to parent directory. Repeat <arg> times if <arg> supplied.
-Before doing this, push the current line onto a stack of previous up-from
-positions."
+Then add the then-current line to the history."
   (interactive "p")
   (if (nomis-dirtree-root-p (nomis-dirtree-selected-widget))
       (progn
         (message "Already at root.")
         (beep))
     (progn
-      (nomis-dirtree-note-previous-up-from-path)
-      (tree-mode-goto-parent arg))))
+      (nomis-dirtree/with-note-selection-when-done
+       (tree-mode-goto-parent arg)))))
 
 (defun nomis-dirtree-up-directory-and-display (arg)
   "Move to parent directory. Repeat <arg> times if <arg> supplied.
-Before doing this, push the current line onto a stack of previous up-from
-positions.
+Then add the then-current line to the history.
 Then display contents of file under point in other window."
   (interactive "p")
   (nomis-dirtree-up-directory arg)
   (nomis-dirtree-display-file))
 
-(defun nomis-dirtree-goto-previous-up-from-file ()
-  "Return to the line at the front of the stack of previous up-from
-positions, popping the stack."
+(defun nomis-dirtree-history-step-back ()
+  "Go back in history."
   (interactive)
-  (if (no-previous-up-from-path-p?)
+  (if (nomis-dirtree-no-history?)
       (progn
         (beep)
-        (message "There is no previous up-from position."))
-    (pop-to-previous-up-from-path)))
+        (message "There is no more history."))
+    (nomis-dirtree-history-step-back-impl)))
 
-(defun nomis-dirtree-goto-previous-up-from-file-and-display ()
-  "Return to the line at the front of the stack of previous up-from
-positions, popping the stack.
+(defun nomis-dirtree-history-step-forward ()
+  "Go forward in history."
+  (interactive)
+  (if (nomis-dirtree-no-future?)
+      (progn
+        (beep)
+        (message "There is no more future."))
+    (nomis-dirtree-history-step-forward-impl)))
+
+(defun nomis-dirtree-history-step-back-and-display ()
+  "Go back in history.
 Then display contents of file under point in other window."
   (interactive)
-  (nomis-dirtree-goto-previous-up-from-file)
+  (nomis-dirtree-history-step-back)
+  (nomis-dirtree-display-file))
+
+(defun nomis-dirtree-history-step-forward-and-display ()
+  "Go forward in history.
+Then display contents of file under point in other window."
+  (interactive)
+  (nomis-dirtree-history-step-forward)
   (nomis-dirtree-display-file))
 
 (defun nomis-dirtree-expand (arg)
@@ -662,8 +729,11 @@ Mostly for debugging purposes."
   (dk (kbd "C-<right>")   'nomis-dirtree-next-line-with-expansion-and-display)
   (dk (kbd "<left>")      'nomis-dirtree-up-directory)
   (dk (kbd "C-<left>")    'nomis-dirtree-up-directory-and-display)
-  (dk (kbd "M-[")         'nomis-dirtree-goto-previous-up-from-file)
-  (dk (kbd "C-M-[")       'nomis-dirtree-goto-previous-up-from-file-and-display)
+  
+  (dk (kbd "M-[")         'nomis-dirtree-history-step-back)
+  (dk (kbd "C-M-[")       'nomis-dirtree-history-step-back-and-display)
+  (dk (kbd "M-]")         'nomis-dirtree-history-step-forward)
+  (dk (kbd "C-M-]")       'nomis-dirtree-history-step-forward-and-display)
 
   (dk (kbd "M-<right>")   'nomis-dirtree-expand)
   (dk (kbd "M-<left>")    'nomis-dirtree-collapse)
