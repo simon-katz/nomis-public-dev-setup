@@ -20,13 +20,6 @@
 
 ;;;; TODO:
 
-;;;; - When recording positions in the history, record file names rather than
-;;;;   points. (But think about how to deal with files that are no longer
-;;;;   visible.)
-;;;;   Note that the code that supports `nomis/toggle-dirtree-dirs-at-top`
-;;;;   has stuff for looking at file names and navigating to files, so
-;;;;   this should be easy now.
-
 ;;;; - Bug: `nomis-dirtree-goto-previous-up-from-file-and-display`
 ;;;;        does the display part when the first part fails.
 ;;;;        We need to be thowing errors, probably at all places
@@ -397,7 +390,7 @@ With prefix argument select `nomis-dirtree-buffer'"
   `(nomis-dirtree/with-return-to-selected-file-fun (lambda () ,@body)))
 
 ;;;; ---------------------------------------------------------------------------
-;;;; The stack of previous up-from positions.
+;;;; The stack of previous up-from files.
 
 (defvar *nomis-dirtree-previous-up-from-files* '())
 
@@ -410,9 +403,8 @@ With prefix argument select `nomis-dirtree-buffer'"
 
 (defun pop-to-previous-up-from-file ()
   (assert (not (no-previous-up-from-file-p?)))
-  (let* ((file (first *nomis-dirtree-previous-up-from-files*)))
-    (nomis-dirtree-goto-file-that-is-displayed-in-tree file))
-  (pop *nomis-dirtree-previous-up-from-files*))
+  (let* ((file (pop *nomis-dirtree-previous-up-from-files*)))
+    (nomis-dirtree-goto-file-that-is-displayed-in-tree file)))
 
 ;;;; ---------------------------------------------------------------------------
 ;;;; User-visible commands.
