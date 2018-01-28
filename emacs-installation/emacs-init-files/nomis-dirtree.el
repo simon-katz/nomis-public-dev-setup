@@ -202,10 +202,11 @@ With prefix argument select `nomis-dirtree-buffer'"
       (while (not (equal file
                          (-> (nomis-dirtree-selected-widget)
                              (widget-get :file))))
-        (nomis-dirtree-next-line 1)
-        ;; Be defensive, in case you cycle around forever nor finding the file.
-        ;; (I think this is unnecesary -- I think `nomis-dirtree-next-line`
-        ;; throws an exception on wrapping to start of buffer/tree.)
+        ;; Be defensive: we should always find the file, but, in case we screw
+        ;; something up, take care not to cycle around forever not finding it.
+        ;; We could rely on an error thrown by `nomis-dirtree-next-line` when
+        ;; it wraps, but we prefer not to.
+        (ignore-errors (nomis-dirtree-next-line 1))
         (when (equal root-file
                      (-> (nomis-dirtree-selected-widget)
                          (widget-get :file)))
