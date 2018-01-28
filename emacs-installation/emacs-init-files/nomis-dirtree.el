@@ -369,13 +369,13 @@ With prefix argument select `nomis-dirtree-buffer'"
     (nomis-dirtree-tree-mode-goto-parent 1)))
 
 (defun nomis-dirtree/with-return-to-selected-file-fun (fun)
-  (let* ((file (-> (tree-mode-icon-current-line)
-                   (widget-get :node)
-                   (widget-get :file))))
+  (let* ((file-to-return-to (-> (tree-mode-icon-current-line)
+                                (widget-get :node)
+                                (widget-get :file))))
     (funcall fun)
     (nomis-dirtree-goto-root)
     (let* ((root-file (nomis-dirtree-selected-file-or-dir)))
-      (while (not (equal file
+      (while (not (equal file-to-return-to
                          (nomis-dirtree-selected-file-or-dir)))
         ;; Be defensive: we should always find the file, but, in case we screw
         ;; something up, take care not to cycle around forever not finding it.
@@ -384,7 +384,8 @@ With prefix argument select `nomis-dirtree-buffer'"
         (ignore-errors (nomis-dirtree-next-line 1))
         (when (equal root-file
                      (nomis-dirtree-selected-file-or-dir))
-          (error "Couldn't find file %s" file))))))
+          ;; We looped around. This shouldn't happen.
+          (error "Couldn't find file-to-return-to %s" file-to-return-to))))))
 
 (defmacro nomis-dirtree/with-return-to-selected-file (&rest body)
   `(nomis-dirtree/with-return-to-selected-file-fun (lambda () ,@body)))
