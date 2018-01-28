@@ -367,25 +367,26 @@ With prefix argument select `nomis-dirtree-buffer'"
     ;;       in "clojure-the-language"?
     (nomis-dirtree-tree-mode-goto-parent 1)))
 
+(defun nomis-dirtree-selected-file ()
+  (-> (nomis-dirtree-selected-widget)
+      (widget-get :file)))
+
 (defun nomis-dirtree/with-return-to-selected-file-fun (fun)
   (let* ((file (-> (tree-mode-icon-current-line)
                    (widget-get :node)
                    (widget-get :file))))
     (funcall fun)
     (nomis-dirtree-goto-root)
-    (let* ((root-file (-> (nomis-dirtree-selected-widget)
-                          (widget-get :file))))
+    (let* ((root-file (nomis-dirtree-selected-file)))
       (while (not (equal file
-                         (-> (nomis-dirtree-selected-widget)
-                             (widget-get :file))))
+                         (nomis-dirtree-selected-file)))
         ;; Be defensive: we should always find the file, but, in case we screw
         ;; something up, take care not to cycle around forever not finding it.
         ;; We could rely on an error thrown by `nomis-dirtree-next-line` when
         ;; it wraps, but we prefer not to.
         (ignore-errors (nomis-dirtree-next-line 1))
         (when (equal root-file
-                     (-> (nomis-dirtree-selected-widget)
-                         (widget-get :file)))
+                     (nomis-dirtree-selected-file))
           (error "Couldn't find file %s" file))))))
 
 (defmacro nomis-dirtree/with-return-to-selected-file (&rest body)
