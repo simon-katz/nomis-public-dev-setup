@@ -315,7 +315,7 @@ With prefix argument select `nomis-dirtree-buffer'"
 
 (defun nomis-dirtree-tree-mode-goto-parent (arg)
   "Move to parent node.
-   Like `tree-mode-goto-parent`, but throws an exception when at root."
+   Like `tree-mode-goto-parent`, but throws an exception when there's no parent."
   (interactive "p")
   (let ((parent (tree-mode-parent-current-line)))
     (setq arg (1- arg))
