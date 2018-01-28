@@ -346,9 +346,26 @@ With prefix argument select `nomis-dirtree-buffer'"
 ;;;; ---------------------------------------------------------------------------
 ;;;; Navigation
 
+(defun nomis-dirtree-tree-mode-goto-parent (arg)
+  "Move to parent node.
+   Like `tree-mode-goto-parent`, but throws an exception when at root."
+  (interactive "p")
+  (let ((parent (tree-mode-parent-current-line)))
+    (setq arg (1- arg))
+    (if parent
+        (progn
+          (goto-char (widget-get parent :from))
+          (while (and (> arg 0)
+                      (setq parent (widget-get parent :parent))
+                      (goto-char (widget-get parent :from))
+                      (setq arg (1- arg)))))
+      (error "No parent!"))))
+
 (defun nomis-dirtree-goto-root ()
   (while (not (nomis-dirtree-root-p (nomis-dirtree-selected-widget)))
-    (tree-mode-goto-parent 1)))
+    ;; FIXME Why is there "No parent!" when on "test" dir
+    ;;       in "clojure-the-language"?
+    (nomis-dirtree-tree-mode-goto-parent 1)))
 
 (defun nomis-dirtree/with-return-to-selected-file-fun (fun)
   (let* ((file (-> (tree-mode-icon-current-line)
