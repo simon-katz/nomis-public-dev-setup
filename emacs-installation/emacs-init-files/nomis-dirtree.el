@@ -313,22 +313,6 @@ With prefix argument select `nomis-dirtree-buffer'"
         *dirs-to-keep-collapsed-unless-forced*))
 
 ;;;; ---------------------------------------------------------------------------
-;;;; The stack of previous up-from positions.
-
-(defvar *nomis-dirtree-previous-up-from-positions* '())
-
-(defun nomis-dirtree-note-previous-up-from-position ()
-  (push (point) *nomis-dirtree-previous-up-from-positions*))
-
-(defun no-previous-up-from-position-p? ()
-  (null *nomis-dirtree-previous-up-from-positions*))
-
-(defun pop-to-previous-up-from-position ()
-  (assert (not (no-previous-up-from-position-p?)))
-  (goto-char (first *nomis-dirtree-previous-up-from-positions*))
-  (pop *nomis-dirtree-previous-up-from-positions*))
-
-;;;; ---------------------------------------------------------------------------
 ;;;; Helper functions to do with the selection.
 
 ;;;; FIXME This mixes the domains of widgets and files.
@@ -404,6 +388,22 @@ With prefix argument select `nomis-dirtree-buffer'"
 
 (defmacro nomis-dirtree/with-return-to-selected-file (&rest body)
   `(nomis-dirtree/with-return-to-selected-file-fun (lambda () ,@body)))
+
+;;;; ---------------------------------------------------------------------------
+;;;; The stack of previous up-from positions.
+
+(defvar *nomis-dirtree-previous-up-from-positions* '())
+
+(defun nomis-dirtree-note-previous-up-from-position ()
+  (push (point) *nomis-dirtree-previous-up-from-positions*))
+
+(defun no-previous-up-from-position-p? ()
+  (null *nomis-dirtree-previous-up-from-positions*))
+
+(defun pop-to-previous-up-from-position ()
+  (assert (not (no-previous-up-from-position-p?)))
+  (goto-char (first *nomis-dirtree-previous-up-from-positions*))
+  (pop *nomis-dirtree-previous-up-from-positions*))
 
 ;;;; ---------------------------------------------------------------------------
 ;;;; User-visible commands.
