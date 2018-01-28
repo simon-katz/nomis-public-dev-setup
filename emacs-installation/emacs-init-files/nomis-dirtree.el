@@ -23,6 +23,9 @@
 ;;;; - When recording positions in the history, record file names rather than
 ;;;;   points. (But think about how to deal with files that are no longer
 ;;;;   visible.)
+;;;;   Note that the code that supports `nomis/toggle-dirtree-dirs-at-top`
+;;;;   has stuff for looking at file names and navigating to files, so
+;;;;   this should be easy now.
 
 ;;;; - Bug: `nomis-dirtree-goto-previous-up-from-position-and-display`
 ;;;;        does the display part when the first part fails.
