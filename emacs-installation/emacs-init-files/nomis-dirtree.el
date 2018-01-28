@@ -374,6 +374,9 @@ With prefix argument select `nomis-dirtree-buffer'"
                 ;; I wonder why that's different to other dirs in the project.
                 ;; - Here's a clue: the cursor position is different for "test"
                 ;;   after you do a `nomis/toggle-dirtree-dirs-at-top`.
+                ;; - I added a new directory called "zzzz", and then that was
+                ;;   bad and "test" was OK -- so the problem is with the last
+                ;;   directory (alphabetically).
                 (tree-mode-parent-current-line)))
     (nomis-dirtree-tree-mode-goto-parent 1)))
 
