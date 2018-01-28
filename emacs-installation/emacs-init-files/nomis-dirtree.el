@@ -25,10 +25,13 @@
 ;;;;        We need to be thowing errors, probably at all places
 ;;;;        where we currenty beep.
 
-;;;; - Why did you get rid of generalised back navigation?
-;;;;   Were there difficulties?
-;;;;   General back navigation, with control key skipping to only files
-;;;;   that were displayed, would be good.  (Right?)
+;;;; - Could add backward and forward navigation.
+;;;;   - You have `nomis-dirtree-goto-previous-up-from-file`.
+;;;;     Maybe that's good enough.
+;;;;   - Why did you get rid of generalised back navigation?
+;;;;     Were there difficulties?
+;;;;     General back navigation, with control key skipping to only files
+;;;;     that were displayed, would be good.  (Right?)
 
 ;;;; - When hitting up and down arrow keys, when you hit directories
 ;;;;   there are messages saying "Expand" and "Collapse" (depending on
@@ -42,23 +45,6 @@
 
 ;;;; - Scan all for badness.
 ;;;; - Tidy.
-
-;;;; ---------------------------------------------------------------------------
-
-;;;; Probably won't do the following:
-
-;;;; - Could add backward and forward navigation (to previous and next selections).
-;;;;   - You have `nomis-dirtree-goto-previous-up-from-file`.
-;;;;     Maybe that's good enough.
-;;;;     It's broken after collapsing/expanding/refreshing, though.
-;;;;   - Using positions would be no good.
-;;;;     - A refresh changes things.
-;;;;     - Needs to work with collapsing and expanding.
-;;;;   - Need to use filenames.
-;;;;     But how can you go to a particular widget? Maybe use its :start or :end.
-
-
-
 
 ;;;; ___________________________________________________________________________
 ;;;; Initially we have, more-or-less, the original dirtree.
@@ -361,10 +347,7 @@ With prefix argument select `nomis-dirtree-buffer'"
     (nomis-dirtree-tree-mode-goto-parent 1)))
 
 (defun nomis-dirtree-goto-file-that-is-displayed-in-tree (target-file)
-  ;; With current usage, we can assume the file is in the expanded tree.
-  ;; The name of this function tries to make that clear.
-  ;; But it's not very clear.
-  ;; Hence this comment.
+  ;; FIXME Make this work when `target-file` is not in the expanded tree.
   (nomis-dirtree-goto-root)
   (let* ((root-file (nomis-dirtree-selected-file-or-dir)))
     (while (not (equal target-file
