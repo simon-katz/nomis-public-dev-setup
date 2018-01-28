@@ -336,17 +336,17 @@ With prefix argument select `nomis-dirtree-buffer'"
        nomis-dirtree-widget-path
        (-map #'nomis-dirtree-widget-file)))
 
-(defun nomis-dirtree-file-path-filenames-FOR-DEBUG ()
-  (->> (nomis-dirtree-file-path)
-       (-map (lambda (s)
-               (s-replace "/Users/simonkatz/development-100/repositories/nomis/_teaching-and-demoing/clojure-the-language/"
-                          ""
-                          s)))))
-
 (defun nomis-dirtree-root-file ()
   (-> (nomis-dirtree-selected-widget)
       nomis-dirtree-root-widget
       nomis-dirtree-widget-file))
+
+(defun nomis-dirtree-file-path-filenames-FOR-DEBUG ()
+  (->> (nomis-dirtree-file-path)
+       (-map (lambda (s)
+               (s-replace (nomis-dirtree-root-file)
+                          ""
+                          s)))))
 
 ;;;; ---------------------------------------------------------------------------
 
@@ -438,16 +438,17 @@ With prefix argument select `nomis-dirtree-buffer'"
   (cl-loop for (f . r) on path
            ;; FIXME Want to do this without going to the root every time.
            ;;       This is O(n^2).
-           do (when r
+           do (progn
                 (nomis-dirtree-goto-file-that-is-displayed-in-tree f)
-                (nomis-dirtree-expand nil))
-           finally (nomis-dirtree-goto-file-that-is-displayed-in-tree f)))
+                (when r
+                  (nomis-dirtree-expand nil)))))
 
 ;;;; ---------------------------------------------------------------------------
 ;;;; History
 
 ;;;; FIXME Limit history growth.
 
+;;;; FIXME You have these as buffer local, but they need to be per tree.
 (defvar *nomis-dirtree/paths/current* nil)
 (defvar *nomis-dirtree/paths/history-list* '())
 (defvar *nomis-dirtree/paths/future-list* '())
