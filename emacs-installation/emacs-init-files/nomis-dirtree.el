@@ -200,7 +200,7 @@ With prefix argument select `nomis-dirtree-buffer'"
                    (widget-get :file))))
     (funcall fun)
     (while (not (nomis-dirtree-root-p (nomis-dirtree-selected-widget)))
-      (tree-mode-goto-parent arg))
+      (tree-mode-goto-parent 1))
     (let* ((root-file (-> (nomis-dirtree-selected-widget)
                           (widget-get :file))))
       (while (not (equal file
