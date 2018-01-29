@@ -638,7 +638,7 @@ Then display contents of file under point in other window."
   (if (nomis-dirtree-no-history?)
       (progn
         (beep)
-        (message "There is no more history."))
+        (message "There is no history [...] (Karl Popper)"))
     (nomis-dirtree-history-step-back-impl)))
 
 (defun nomis-dirtree-history-step-forward ()
@@ -647,7 +647,7 @@ Then display contents of file under point in other window."
   (if (nomis-dirtree-no-future?)
       (progn
         (beep)
-        (message "There is no more future."))
+        (message "There is no future [...] (Nelson Mandela)"))
     (nomis-dirtree-history-step-forward-impl)))
 
 (defun nomis-dirtree-history-step-back-and-display ()
