@@ -479,6 +479,7 @@ With prefix argument select `nomis-dirtree-buffer'"
     (setq *nomis-dirtree/paths/future-list* '())))
 
 (defun nomis-dirtree/with-note-selection-when-done-fun (fun)
+  (nomis-dirtree-note-current-selection)
   (let* ((res (let* ((*nomis-dirtree-inhibit-history?* t))
                 (funcall fun))))
     (nomis-dirtree-note-current-selection)
