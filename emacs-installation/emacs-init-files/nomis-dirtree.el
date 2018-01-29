@@ -285,7 +285,8 @@ With prefix argument select `nomis-dirtree-buffer'"
     "\\.sync"
     "checkouts"
     "out"
-    "target"))
+    "target"
+    "zzzz-nomis-dirtee-test-keep-collapsed"))
 
 (defun directory-to-keep-collapsed-p (name)
   (some (lambda (no-expand-name)
