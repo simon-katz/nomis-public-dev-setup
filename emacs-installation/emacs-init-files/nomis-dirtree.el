@@ -142,7 +142,7 @@ With prefix argument select `nomis-dirtree-buffer'"
         (widget-apply-action tree))
       (goto-char (widget-get tree :from))
       (recenter 1)
-      (nomis-dirtree-note-current-selection))
+      (nomis-dirtree-note-selection))
     (if select
         (select-window win))))
 
@@ -464,7 +464,7 @@ With prefix argument select `nomis-dirtree-buffer'"
   (message "Cleared history, but kept future (if there is any).")
   (nomis/grab-user-attention/low))
 
-(defun nomis-dirtree-note-current-selection ()
+(defun nomis-dirtree-note-selection ()
   (unless (or *nomis-dirtree-inhibit-history?*
               (equal (first (last ; O(n) -- OK I guess
                              *nomis-dirtree/paths/current*))
@@ -478,15 +478,15 @@ With prefix argument select `nomis-dirtree-buffer'"
     (setq *nomis-dirtree/paths/current* (nomis-dirtree-file-path))
     (setq *nomis-dirtree/paths/future-list* '())))
 
-(defun nomis-dirtree/with-note-selection-when-done-fun (fun)
-  (nomis-dirtree-note-current-selection)
+(defun nomis-dirtree/with-note-selection-fun (fun)
+  (nomis-dirtree-note-selection)
   (let* ((res (let* ((*nomis-dirtree-inhibit-history?* t))
                 (funcall fun))))
-    (nomis-dirtree-note-current-selection)
+    (nomis-dirtree-note-selection)
     res))
 
-(defmacro nomis-dirtree/with-note-selection-when-done (&rest body)
-  `(nomis-dirtree/with-note-selection-when-done-fun (lambda () ,@body)))
+(defmacro nomis-dirtree/with-note-selection (&rest body)
+  `(nomis-dirtree/with-note-selection-fun (lambda () ,@body)))
 
 (defun nomis-dirtree-no-history? ()
   (null *nomis-dirtree/paths/history-list*))
@@ -516,7 +516,7 @@ With prefix argument select `nomis-dirtree-buffer'"
 (defun nomis-dirtree-display-file ()
   "Display contents of file under point in other window."
   (interactive)
-  (nomis-dirtree/with-note-selection-when-done
+  (nomis-dirtree/with-note-selection
    (save-selected-window
      (let* ((file (nomis-dirtree-selected-file)))
        (when file
@@ -525,7 +525,7 @@ With prefix argument select `nomis-dirtree-buffer'"
 (defun nomis-dirtree-display-file-in-new-frame ()
   "Display contents of file under point in other window."
   (interactive)
-  (nomis-dirtree/with-note-selection-when-done
+  (nomis-dirtree/with-note-selection
    (save-selected-window
      (let* ((file (nomis-dirtree-selected-file)))
        (when file
@@ -534,7 +534,7 @@ With prefix argument select `nomis-dirtree-buffer'"
 (defun nomis-dirtree-open-in-default-app ()
   "Open file under point using its default app."
   (interactive)
-  (nomis-dirtree/with-note-selection-when-done
+  (nomis-dirtree/with-note-selection
    (let* ((file (nomis-dirtree-selected-file)))
      (when file
        (shell-command (concat "open \"" file "\""))))))
@@ -542,7 +542,7 @@ With prefix argument select `nomis-dirtree-buffer'"
 (defun nomis-dirtree-next-line (arg)
   "Move down <arg> lines."
   (interactive "p")
-  (nomis-dirtree/with-note-selection-when-done
+  (nomis-dirtree/with-note-selection
    (tree-mode-next-node arg)))
 
 (defun nomis-dirtree-next-line-and-display (arg)
@@ -555,7 +555,7 @@ Then display contents of file under point in other window."
 (defun nomis-dirtree-previous-line (arg)
   "Move up <arg> lines."
   (interactive "p")
-  (nomis-dirtree/with-note-selection-when-done
+  (nomis-dirtree/with-note-selection
    (tree-mode-previous-node arg)))
 
 (defun nomis-dirtree-previous-line-and-display (arg)
@@ -577,7 +577,7 @@ Then display contents of file under point in other window."
   "Move down <arg> lines, expanding any encountered collapsed directories
 and showing previous expansion of subdirectories."
   (interactive "p")
-  (nomis-dirtree/with-note-selection-when-done
+  (nomis-dirtree/with-note-selection
    (nomis-dirtree-next-line-with-expansion* arg)))
 
 (defun nomis-dirtree-next-line-with-expansion-and-display (arg)
@@ -597,7 +597,7 @@ Then add the then-current line to the history."
         (message "Already at root.")
         (beep))
     (progn
-      (nomis-dirtree/with-note-selection-when-done
+      (nomis-dirtree/with-note-selection
        (tree-mode-goto-parent arg)))))
 
 (defun nomis-dirtree-up-directory-and-display (arg)
