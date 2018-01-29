@@ -466,16 +466,15 @@ With prefix argument select `nomis-dirtree-buffer'"
 
 (defun nomis-dirtree-note-current-selection ()
   (unless (or *nomis-dirtree-inhibit-history?*
-              ;; This might be useful:
-              ;; (equal (first (last *nomis-dirtree/paths/current*)) ; O(n) -- OK I guess
-              ;;        (nomis-dirtree-selected-file))
-              )
+              (equal (first (last ; O(n) -- OK I guess
+                             *nomis-dirtree/paths/current*))
+                     (nomis-dirtree-selected-file)))
     (when *nomis-dirtree/paths/current*
-      (setq *nomis-dirtree/paths/history-list*
-            ;; O(n) -- OK I guess
-            (seq-take (cons *nomis-dirtree/paths/current*
-                            *nomis-dirtree/paths/history-list*)
-                      *nomis-dirtree/max-history-size*)))
+      (setq *nomis-dirtree/paths/history-list* 
+            (seq-take ; O(n) -- OK I guess
+             (cons *nomis-dirtree/paths/current*
+                   *nomis-dirtree/paths/history-list*)
+             *nomis-dirtree/max-history-size*)))
     (setq *nomis-dirtree/paths/current* (nomis-dirtree-file-path))
     (setq *nomis-dirtree/paths/future-list* '())))
 
