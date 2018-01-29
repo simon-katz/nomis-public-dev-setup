@@ -516,25 +516,28 @@ With prefix argument select `nomis-dirtree-buffer'"
 (defun nomis-dirtree-display-file ()
   "Display contents of file under point in other window."
   (interactive)
-  (save-selected-window
-    (let* ((file (nomis-dirtree-selected-file)))
-      (when file
-        (find-file-other-window file)))))
+  (nomis-dirtree/with-note-selection-when-done
+   (save-selected-window
+     (let* ((file (nomis-dirtree-selected-file)))
+       (when file
+         (find-file-other-window file))))))
 
 (defun nomis-dirtree-display-file-in-new-frame ()
   "Display contents of file under point in other window."
   (interactive)
-  (save-selected-window
-    (let* ((file (nomis-dirtree-selected-file)))
-      (when file
-        (find-file-other-frame file)))))
+  (nomis-dirtree/with-note-selection-when-done
+   (save-selected-window
+     (let* ((file (nomis-dirtree-selected-file)))
+       (when file
+         (find-file-other-frame file))))))
 
 (defun nomis-dirtree-open-in-default-app ()
   "Open file under point using its default app."
   (interactive)
-  (let* ((file (nomis-dirtree-selected-file)))
-    (when file
-      (shell-command (concat "open \"" file "\"")))))
+  (nomis-dirtree/with-note-selection-when-done
+   (let* ((file (nomis-dirtree-selected-file)))
+     (when file
+       (shell-command (concat "open \"" file "\""))))))
 
 (defun nomis-dirtree-next-line (arg)
   "Move down <arg> lines."
