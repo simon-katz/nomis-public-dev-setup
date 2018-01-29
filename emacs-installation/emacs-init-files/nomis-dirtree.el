@@ -264,14 +264,17 @@ With prefix argument select `nomis-dirtree-buffer'"
 ;;;; ---------------------------------------------------------------------------
 ;;;; Support for expand/collapse.
 
+(defun nomis-dirtree-expanded? (widget)
+  (widget-get widget :open))
+
 (defun nomis-dirtree-expand-node (widget)
   (when (tree-widget-p widget)
-    (unless (widget-get widget :open)
+    (unless (nomis-dirtree-expanded? widget)
       (widget-apply-action widget))))
 
 (defun nomis-dirtree-collapse-node (widget)
   (when (tree-widget-p widget)
-    (when (widget-get widget :open)
+    (when (nomis-dirtree-expanded? widget)
       (widget-apply-action widget))))
 
 (defvar *dirs-to-keep-collapsed-unless-forced*
@@ -462,7 +465,11 @@ With prefix argument select `nomis-dirtree-buffer'"
   (nomis/grab-user-attention/low))
 
 (defun nomis-dirtree-note-current-selection ()
-  (unless *nomis-dirtree-inhibit-history?*
+  (unless (or *nomis-dirtree-inhibit-history?*
+              ;; This might be useful:
+              ;; (equal (first (last *nomis-dirtree/paths/current*)) ; O(n) -- OK I guess
+              ;;        (nomis-dirtree-selected-file))
+              )
     (when *nomis-dirtree/paths/current*
       (setq *nomis-dirtree/paths/history-list*
             (seq-take (cons *nomis-dirtree/paths/current*
