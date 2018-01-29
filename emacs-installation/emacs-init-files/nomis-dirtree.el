@@ -472,6 +472,7 @@ With prefix argument select `nomis-dirtree-buffer'"
               )
     (when *nomis-dirtree/paths/current*
       (setq *nomis-dirtree/paths/history-list*
+            ;; O(n) -- OK I guess
             (seq-take (cons *nomis-dirtree/paths/current*
                             *nomis-dirtree/paths/history-list*)
                       *nomis-dirtree/max-history-size*)))
