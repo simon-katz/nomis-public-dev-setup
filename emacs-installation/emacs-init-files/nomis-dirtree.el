@@ -454,6 +454,13 @@ With prefix argument select `nomis-dirtree-buffer'"
 
 (defvar *nomis-dirtree/max-history-size* 100)
 
+(defun nomis-dirtree-clear-history ()
+  (interactive)
+  (setq *nomis-dirtree/paths/history-list* '())
+  (setq *nomis-dirtree/paths/current* (nomis-dirtree-file-path))
+  (message "Cleared history, but kept future (if there is any).")
+  (nomis/grab-user-attention/low))
+
 (defun nomis-dirtree-note-current-selection ()
   (unless *nomis-dirtree-inhibit-history?*
     (when *nomis-dirtree/paths/current*
@@ -743,6 +750,8 @@ Mostly for debugging purposes."
   (dk (kbd "M-S-<left>")  'nomis-dirtree-collapse-all)
 
   (dk (kbd "t")           'nomis/toggle-dirtree-dirs-at-top)
+
+  (dk (kbd "X")           'nomis-dirtree-clear-history)
   
   (dk (kbd "M-d")         'nomis-dirtree-show-selection-info))
 
