@@ -401,10 +401,11 @@ With prefix argument select `nomis-dirtree-buffer'"
              (nomis-dirtree-goto-widget root-widget))
          (message "Didn't find selected widget."))))))
 
-(defun nomis-dirtree-goto-file-that-is-displayed-in-tree (target-file)
-  (let* ((*nomis-dirtree-inhibit-history?* t))
-    (nomis-dirtree-goto-root)
-    (let* ((root-file (nomis-dirtree-selected-file)))
+(defun nomis-dirtree-move-forward-to-file-that-is-in-expansion (target-file)
+  "Move forward to target-file (or stay where we are if the target-file is the
+   current selection)."
+  (let* ((*nomis-dirtree-inhibit-history?* t)) 
+    (let* ((start-file (nomis-dirtree-selected-file)))
       (while (not (equal target-file
                          (nomis-dirtree-selected-file)))
         ;; Be defensive: we should always find the file, but, in case we screw
@@ -412,7 +413,7 @@ With prefix argument select `nomis-dirtree-buffer'"
         ;; We could rely on an error thrown by `nomis-dirtree-next-line` when
         ;; it wraps, but we prefer not to.
         (ignore-errors (nomis-dirtree-next-line 1))
-        (when (equal root-file
+        (when (equal start-file
                      (nomis-dirtree-selected-file))
           ;; We looped around. This shouldn't happen.
           (error "Couldn't find target-file %s" target-file))))))
@@ -425,22 +426,23 @@ With prefix argument select `nomis-dirtree-buffer'"
                    nomis-dirtree-widget-file))
             (2 (nomis-dirtree-selected-file))))
          (res (funcall fun)))
-    (nomis-dirtree-goto-file-that-is-displayed-in-tree file-to-return-to)
+    (let* ((*nomis-dirtree-inhibit-history?* t))
+      (nomis-dirtree-goto-root)
+      (nomis-dirtree-move-forward-to-file-that-is-in-expansion file-to-return-to))
     res))
 
 (defmacro nomis-dirtree/with-return-to-selected-file (&rest body)
   `(nomis-dirtree/with-return-to-selected-file-fun (lambda () ,@body)))
 
 (defun nomis-dirtree-goto-path (path)
-  (nomis-dirtree-goto-root)
-  (nomis-dirtree-expand nil)
-  (cl-loop for (f . r) on path
-           ;; FIXME Want to do this without going to the root every time.
-           ;;       This is O(n^2).
-           do (progn
-                (nomis-dirtree-goto-file-that-is-displayed-in-tree f)
-                (when r
-                  (nomis-dirtree-expand nil)))))
+  (let* ((*nomis-dirtree-inhibit-history?* t))
+    (nomis-dirtree-goto-root)
+    (nomis-dirtree-expand nil)
+    (cl-loop for (f . r) on path
+             do (progn
+                  (nomis-dirtree-move-forward-to-file-that-is-in-expansion f)
+                  (when r
+                    (nomis-dirtree-expand nil))))))
 
 ;;;; ---------------------------------------------------------------------------
 ;;;; History
@@ -479,8 +481,7 @@ With prefix argument select `nomis-dirtree-buffer'"
 
 (defun nomis-dirtree-history-step-back-impl ()
   (assert (not (nomis-dirtree-no-history?)))
-  (let* ((*nomis-dirtree-inhibit-history?* t)
-         (path (pop *nomis-dirtree/paths/history-list*)))
+  (let* ((path (pop *nomis-dirtree/paths/history-list*)))
     (push *nomis-dirtree/paths/current*
           *nomis-dirtree/paths/future-list*)
     (setq *nomis-dirtree/paths/current* path)
@@ -488,8 +489,7 @@ With prefix argument select `nomis-dirtree-buffer'"
 
 (defun nomis-dirtree-history-step-forward-impl ()
   (assert (not (nomis-dirtree-no-future?)))
-  (let* ((*nomis-dirtree-inhibit-history?* t)
-         (path (pop *nomis-dirtree/paths/future-list*)))
+  (let* ((path (pop *nomis-dirtree/paths/future-list*)))
     (push *nomis-dirtree/paths/current*
           *nomis-dirtree/paths/history-list*)
     (setq *nomis-dirtree/paths/current* path)
