@@ -42,10 +42,6 @@
 ;;;;
 ;;;;     - Ah, it's more simple -- create a path and use
 ;;;;       `nomis-dirtree-goto-path`.
-;;;;       - You may need to deal with (existing) bugs when there are multiple
-;;;;         trees.
-;;;;         - I think history navigation is broken when there are multiple
-;;;;           trees.
 ;;;;
 ;;;;     - Go to first line.
 ;;;;     - Go through one line at a time.
@@ -466,8 +462,6 @@ With prefix argument select `nomis-dirtree-buffer'"
 
 (defun nomis-dirtree-goto-path (path)
   (let* ((*nomis-dirtree-inhibit-history?* t))
-    (nomis-dirtree-goto-root)
-    (nomis-dirtree-expand nil)
     (cl-loop for (f . r) on path
              do (progn
                   (nomis-dirtree-move-forward-to-file-that-is-in-expansion f)
