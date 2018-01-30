@@ -88,6 +88,21 @@ See `windata-display-buffer' for setup the arguments."
   :format         "%[%t%]\n"
   :button-face    'default)
 
+(defun nomis-dirtree/make-file-widget (file-&-basename)
+  `(nomis-dirtree/widget/file
+    :file ,(car file-&-basename)
+    :tag ,(cdr file-&-basename)))
+
+(cl-defun nomis-dirtree/make-directory-widget (file-&-basename
+                                               &key root?)
+  `(nomis-dirtree/widget/directory
+    :file ,(car file-&-basename)
+    :node (nomis-dirtree/widget/directory/internal
+           :tag ,(cdr file-&-basename)
+           :file ,(car file-&-basename))
+    :open ,root?
+    :nomis-root ,root?))
+
 (defun nomis-dirtree/widget/directory? (widget)
   (eql (car widget) 'nomis-dirtree/widget/directory))
 
@@ -173,13 +188,9 @@ With prefix argument select `nomis-dirtree-buffer'"
 
 (defun nomis-dirtree-make-root-widget-spec (directory)
   "create the root directory"
-  `(nomis-dirtree/widget/directory
-    :node (nomis-dirtree/widget/directory/internal
-           :tag ,directory
-           :file ,directory)
-    :file ,directory
-    :open t
-    :nomis-root t))
+  ;; FIXME :tag and :file are the same here
+  (nomis-dirtree/make-directory-widget (cons directory directory)
+                                       :root? t))
 
 (defconst nomis-dirtree/approach-to-children :new)
 (defconst nomis-dirtree/dirs-at-top? nil)
@@ -202,16 +213,9 @@ With prefix argument select `nomis-dirtree-buffer'"
            (setq files (sort files (lambda (a b) (string< (cdr a) (cdr b)))))
            (append
             (mapcar (lambda (file)
-                      `(nomis-dirtree/widget/directory
-                        :file ,(car file)
-                        :node (nomis-dirtree/widget/directory/internal
-                               :tag ,(cdr file)
-                               :file ,(car file))))
+                      (nomis-dirtree/make-directory-widget file))
                     dirs)
-            (mapcar (lambda (file)
-                      `(nomis-dirtree/widget/file
-                        :file ,(car file)
-                        :tag ,(cdr file)))
+            (mapcar #'nomis-dirtree/make-file-widget
                     files)))))
     (:new
      (or (widget-get tree :args)
@@ -226,16 +230,10 @@ With prefix argument select `nomis-dirtree-buffer'"
                       (-remove #'null))))
            (cl-labels ((make-directory-widget
                         (file-&-basename)
-                        `(nomis-dirtree/widget/directory
-                          :file ,(car file-&-basename)
-                          :node (nomis-dirtree/widget/directory/internal
-                                 :tag ,(cdr file-&-basename)
-                                 :file ,(car file-&-basename))))
+                        (nomis-dirtree/make-directory-widget file-&-basename))
                        (make-file-widget
                         (file-&-basename)
-                        `(nomis-dirtree/widget/file
-                          :file ,(car file-&-basename)
-                          :tag ,(cdr file-&-basename)))
+                        (nomis-dirtree/make-file-widget file-&-basename))
                        (make-widget
                         (file-&-basename)
                         (if (directory? file-&-basename)
@@ -732,7 +730,7 @@ sub-subdirectories, etc, so that subsequent expansion shows only one level."
          tree-mode-list)))
 
 (defun nomis-dirtree-show-widget-info (widget)
-  (let* ((file (nomis-dirtree-widget-file widget)))
+  (let* ((inhibit-message t))
     (message "
  ======== Widget info -- %s ========
  (car widget) = %s
@@ -750,7 +748,7 @@ sub-subdirectories, etc, so that subsequent expansion shows only one level."
              (car widget)
              (widget-get widget :nomis-root)
              (widget-get widget :tag)
-             file
+             (nomis-dirtree-widget-file widget)
              (widget-get widget :open)
              (widget-get widget :node)
              (line-end-position)
