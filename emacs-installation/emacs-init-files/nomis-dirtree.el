@@ -316,10 +316,13 @@ With prefix argument select `nomis-dirtree-buffer'"
       nomis-dirtree-widget-file))
 
 (defun nomis-dirtree-root-p (widget)
+  (assert widget nil "widget was null") ; FIXME Be more specific
+  (message "(car widget) = %s" (car widget))
   (plist-get (rest widget)
              :nomis-root))
 
 (defun nomis-dirtree-parent-widget (widget)
+  (assert widget nil "widget was null") ; FIXME Be more specific
   (widget-get widget :parent))
 
 (defun nomis-dirtree-widget-path (widget)
