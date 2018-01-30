@@ -78,20 +78,15 @@ See `windata-display-buffer' for setup the arguments."
   :dynargs        'nomis-dirtree-setup-children
   :has-children   t)
 
-(define-widget 'nomis-dirtree/widget/file 'push-button
-  "File widget."
-  :format         "%[%t%]\n"
-  :button-face    'default)
-
 (define-widget 'nomis-dirtree/widget/directory/internal 'push-button
   "File widget."
   :format         "%[%t%]\n"
   :button-face    'default)
 
-(defun nomis-dirtree/make-file-widget (file-&-basename)
-  `(nomis-dirtree/widget/file
-    :file ,(car file-&-basename)
-    :tag ,(cdr file-&-basename)))
+(define-widget 'nomis-dirtree/widget/file 'push-button
+  "File widget."
+  :format         "%[%t%]\n"
+  :button-face    'default)
 
 (cl-defun nomis-dirtree/make-directory-widget (file-&-basename
                                                &key root?)
@@ -102,6 +97,11 @@ See `windata-display-buffer' for setup the arguments."
            :file ,(car file-&-basename))
     :open ,root?
     :nomis-root ,root?))
+
+(defun nomis-dirtree/make-file-widget (file-&-basename)
+  `(nomis-dirtree/widget/file
+    :file ,(car file-&-basename)
+    :tag ,(cdr file-&-basename)))
 
 (cl-defun nomis-dirtree/make-widget (file-&-basename
                                      &key root?)
