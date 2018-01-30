@@ -35,6 +35,17 @@
 ;;;;     coming from.
 
 ;;;; - Navigate to node in tree from a file.
+;;;;   - The steps are roughly:
+;;;;     - Find this file's name (a full path "/Users/xxx/...").
+;;;;     - Find the *nomis-dirtree* buffer (maybe within the current frame).
+;;;;     - Refresh the tree, so we are up to date with the file system.
+;;;;     - Go to first line.
+;;;;     - Go through one line at a time.
+;;;;     - If node's :file is what we are looking for we are done.
+;;;;     - If we have a start-of-string match using current node's :file,
+;;;;       expand this node.
+;;;;     - If we reach the node after the just-expanded node, no such file.
+;;;;     - If we reached EOB, no such file.
 
 ;;;; - Look into the Tree menu.
 ;;;;   - Is stuff not as it says?
