@@ -473,18 +473,20 @@ With prefix argument select `nomis-dirtree-buffer'"
   (nomis/grab-user-attention/low))
 
 (defun nomis-dirtree-note-selection ()
-  (unless (or *nomis-dirtree-inhibit-history?*
-              (equal (first (last ; O(n) -- OK I guess
-                             *nomis-dirtree/paths/current*))
-                     (nomis-dirtree-selected-file)))
-    (when *nomis-dirtree/paths/current*
-      (setq *nomis-dirtree/paths/history-list* 
-            (seq-take ; O(n) -- OK I guess
-             (cons *nomis-dirtree/paths/current*
-                   *nomis-dirtree/paths/history-list*)
-             *nomis-dirtree/max-history-size*)))
-    (setq *nomis-dirtree/paths/current* (nomis-dirtree-file-path))
-    (setq *nomis-dirtree/paths/future-list* '())))
+  (if (null (nomis-dirtree-selected-widget/with-extras))
+      (message "Not on a widget")
+    (unless (or *nomis-dirtree-inhibit-history?*
+                (equal (first (last ; O(n) -- OK I guess
+                               *nomis-dirtree/paths/current*))
+                       (nomis-dirtree-selected-file)))
+      (when *nomis-dirtree/paths/current*
+        (setq *nomis-dirtree/paths/history-list* 
+              (seq-take ; O(n) -- OK I guess
+               (cons *nomis-dirtree/paths/current*
+                     *nomis-dirtree/paths/history-list*)
+               *nomis-dirtree/max-history-size*)))
+      (setq *nomis-dirtree/paths/current* (nomis-dirtree-file-path))
+      (setq *nomis-dirtree/paths/future-list* '()))))
 
 (defun nomis-dirtree/with-note-selection-fun (fun)
   (nomis-dirtree-note-selection)
