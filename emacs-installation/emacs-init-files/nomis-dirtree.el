@@ -427,18 +427,13 @@ With prefix argument select `nomis-dirtree-buffer'"
              (nomis-dirtree-goto-widget root-widget))
          (message "Didn't find selected widget."))))))
 
-(defun nomis-dirtree-move-forward-to-file-that-is-in-expansion (target-file)
-  "Move forward to target-file (or stay where we are if the target-file is the
-   current selection)."
+(defun nomis-dirtree-goto-file-that-is-in-expansion (target-file)
+  "Go to `target-file`, assuming that it is in the tree's expansion."
   (let* ((*nomis-dirtree-inhibit-history?* t)) 
     (let* ((start-file (nomis-dirtree-selected-file)))
       (while (not (equal target-file
                          (nomis-dirtree-selected-file)))
-        ;; Be defensive: we should always find the file, but, in case we screw
-        ;; something up, take care not to cycle around forever not finding it.
-        ;; We could rely on an error thrown by `nomis-dirtree-next-line` when
-        ;; it wraps, but we prefer not to.
-        (ignore-errors (nomis-dirtree-next-line 1))
+        (nomis-dirtree-next-line 1) ; will cycle around at end of buffer
         (when (equal start-file
                      (nomis-dirtree-selected-file))
           ;; We looped around. This shouldn't happen.
@@ -454,7 +449,7 @@ With prefix argument select `nomis-dirtree-buffer'"
          (res (funcall fun)))
     (let* ((*nomis-dirtree-inhibit-history?* t))
       (nomis-dirtree-goto-root)
-      (nomis-dirtree-move-forward-to-file-that-is-in-expansion file-to-return-to))
+      (nomis-dirtree-goto-file-that-is-in-expansion file-to-return-to))
     res))
 
 (defmacro nomis-dirtree/with-return-to-selected-file (&rest body)
@@ -464,7 +459,7 @@ With prefix argument select `nomis-dirtree-buffer'"
   (let* ((*nomis-dirtree-inhibit-history?* t))
     (cl-loop for (f . r) on path
              do (progn
-                  (nomis-dirtree-move-forward-to-file-that-is-in-expansion f)
+                  (nomis-dirtree-goto-file-that-is-in-expansion f)
                   (when r
                     (nomis-dirtree-expand nil))))))
 
