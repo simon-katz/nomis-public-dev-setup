@@ -736,17 +736,23 @@ sub-subdirectories, etc, so that subsequent expansion shows only one level."
     (message "
  ======== Widget info -- %s ========
  (car widget) = %s
- file = %s
- tag = %s
+ :nomis-root = %s
+ :tag = %s
+ :file = %s
+ :open = %s
+ :node = %s
  (line-end-position) = %s
- from = %s
- to = %s
- widget keys = %s
+ :from = %s
+ :to = %s
+ keys = %s
 "
              (car widget)
              (car widget)
-             file
+             (widget-get widget :nomis-root)
              (widget-get widget :tag)
+             file
+             (widget-get widget :open)
+             (widget-get widget :node)
              (line-end-position)
              (plist-get (rest widget) :from)
              (plist-get (rest widget) :to)
