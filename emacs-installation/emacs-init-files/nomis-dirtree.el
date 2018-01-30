@@ -124,6 +124,13 @@ See `windata-display-buffer' for setup the arguments."
 (defun nomis-dirtree/widget/directory/internal? (widget)
   (eql (car widget) 'nomis-dirtree/widget/directory/internal))
 
+(defun nomis-dirtree/widget/file? (widget)
+  (eql (car widget) 'nomis-dirtree/widget/file))
+
+(defun nomis-dirtree/widget? (widget)
+  (or (nomis-dirtree/widget/directory? widget)
+      (nomis-dirtree/widget/file? widget)))
+
 (defun nomis-dirtree-show ()
   "Show `nomis-dirtree-buffer'. Create tree when no parent directory find."
   (interactive)
@@ -314,12 +321,12 @@ With prefix argument select `nomis-dirtree-buffer'"
       nomis-dirtree-widget-file))
 
 (defun nomis-dirtree-root-p (widget)
-  (assert widget nil "widget was null") ; FIXME Be more specific
+  (assert (nomis-dirtree/widget? widget))
   (plist-get (rest widget)
              :nomis-root))
 
 (defun nomis-dirtree-parent-widget (widget)
-  (assert widget nil "widget was null") ; FIXME Be more specific
+  (assert (nomis-dirtree/widget? widget))
   (widget-get widget :parent))
 
 (defun nomis-dirtree-widget-path (widget)
