@@ -305,14 +305,17 @@ With prefix argument select `nomis-dirtree-buffer'"
 (defun nomis-dirtree-widget-children (widget)
   (widget-get widget :children))
 
-(defun nomis-dirtree-selected-widget ()
-  (let* ((widget (widget-at (1- (line-end-position)))))
+(defun nomis-dirtree-selected-widget/no-extras ()
+  (widget-at (1- (line-end-position))))
+
+(defun nomis-dirtree-selected-widget/with-extras ()
+  (let* ((widget (nomis-dirtree-selected-widget/no-extras)))
     (if (nomis-dirtree/widget/directory/push-button? widget)
         (widget-get widget :parent)
       widget)))
 
 (defun nomis-dirtree-selected-file ()
-  (-> (nomis-dirtree-selected-widget)
+  (-> (nomis-dirtree-selected-widget/with-extras)
       nomis-dirtree-widget-file))
 
 (defun nomis-dirtree-root-p (widget)
@@ -344,12 +347,12 @@ With prefix argument select `nomis-dirtree-buffer'"
         nomis-dirtree-root-widget)))
 
 (defun nomis-dirtree-file-path ()
-  (->> (nomis-dirtree-selected-widget)
+  (->> (nomis-dirtree-selected-widget/with-extras)
        nomis-dirtree-widget-path
        (-map #'nomis-dirtree-widget-file)))
 
 (defun nomis-dirtree-root-file ()
-  (-> (nomis-dirtree-selected-widget)
+  (-> (nomis-dirtree-selected-widget/with-extras)
       nomis-dirtree-root-widget
       nomis-dirtree-widget-file))
 
@@ -397,11 +400,11 @@ With prefix argument select `nomis-dirtree-buffer'"
   ;;   directory (alphabetically).
   (case 2
     (1
-     (while (and (not (nomis-dirtree-root-p (nomis-dirtree-selected-widget)))
+     (while (and (not (nomis-dirtree-root-p (nomis-dirtree-selected-widget/with-extras)))
                  (tree-mode-parent-current-line))
        (nomis-dirtree-tree-mode-goto-parent-CAN-DELETE-ME 1)))
     (2
-     (let* ((selected-widget (nomis-dirtree-selected-widget)))
+     (let* ((selected-widget (nomis-dirtree-selected-widget/with-extras)))
        (if selected-widget
            (let* ((root-widget (-> selected-widget
                                    nomis-dirtree-root-widget)))
@@ -581,7 +584,7 @@ Then display contents of file under point in other window."
 
 (defun nomis-dirtree-next-line-with-expansion* (arg)
   (unless (< arg 1)
-    (let* ((widget (nomis-dirtree-selected-widget)))
+    (let* ((widget (nomis-dirtree-selected-widget/with-extras)))
       (when (nomis-dirtree/widget/directory/tree-widget? widget)
         (let* ((expanded? (nomis-dirtree-expanded? widget)))
           (when (or expanded?
@@ -612,7 +615,7 @@ Then display contents of file under point in other window."
   "Move to parent directory. Repeat <arg> times if <arg> supplied.
 Then add the then-current line to the history."
   (interactive "p")
-  (if (nomis-dirtree-root-p (nomis-dirtree-selected-widget))
+  (if (nomis-dirtree-root-p (nomis-dirtree-selected-widget/with-extras))
       (progn
         (message "Already at root.")
         (beep))
@@ -674,7 +677,7 @@ If <arg> is supplied, first collapse all and then expand to <arg> levels."
                  (nomis-dirtree-expand-node widget)
                  (mapc (lambda (x) (expand-recursively x (1- n-times)))
                        (nomis-dirtree-widget-children widget)))))
-    (let* ((widget (nomis-dirtree-selected-widget)))
+    (let* ((widget (nomis-dirtree-selected-widget/with-extras)))
       (if (nomis-dirtree/widget/directory/tree-widget? widget)
           (progn
             (unless (null arg)
@@ -689,7 +692,7 @@ If <arg> is supplied, first collapse all and then expand to <arg> levels."
 (defun nomis-dirtree-collapse ()
   "Collapse directory under point, retaining previous expansion of subdirectories."
   (interactive)
-  (let* ((widget (nomis-dirtree-selected-widget)))
+  (let* ((widget (nomis-dirtree-selected-widget/with-extras)))
     (if (nomis-dirtree/widget/directory/tree-widget? widget)
         (nomis-dirtree-collapse-node widget)
       (progn
@@ -714,7 +717,7 @@ sub-subdirectories, etc."
   "Collapse directory under point and all of its subdirectories,
 sub-subdirectories, etc, so that subsequent expansion shows only one level."
   (interactive)
-  (let* ((widget (nomis-dirtree-selected-widget)))
+  (let* ((widget (nomis-dirtree-selected-widget/with-extras)))
     (if (nomis-dirtree/widget/directory/tree-widget? widget)
         (collapse-recursively widget)
       (progn
@@ -729,25 +732,38 @@ sub-subdirectories, etc, so that subsequent expansion shows only one level."
    (mapc #'tree-mode-reflesh-tree
          tree-mode-list)))
 
-(defun nomis-dirtree-show-selection-info ()
-  "Display some details of the file under point in a message dialog.
+(defun nomis-dirtree-show-widget-info (widget)
+  (let* ((file (nomis-dirtree-widget-file widget)))
+    (message "======== Widget info ========
+ (car widget) = %s
+ file = %s
+ tag = %s
+ (line-end-position) = %s
+ from = %s
+ to = %s
+ widget keys = %s"
+             (car widget)
+             file
+             (widget-get widget :tag)
+             (line-end-position)
+             (plist-get (rest widget) :from)
+             (plist-get (rest widget) :to)
+             (loop for k in (rest widget) by 'cddr
+                   collect k))))
+
+(defun nomis-dirtree-show-selection-no-extras-info ()
+  "Display some details of selection-no-extras.
 Mostly for debugging purposes."
   (interactive)
-  (let* ((widget (nomis-dirtree-selected-widget))
-         (file (nomis-dirtree-widget-file widget)))
-    (message-box "                              (car widget) = %s
-                              file = %s
-                              (line-end-position) = %s
-                              from = %s
-                              to = %s
-                              widget keys = %s"
-                 (car widget)
-                 file
-                 (line-end-position)
-                 (plist-get (rest widget) :from)
-                 (plist-get (rest widget) :to)
-                 (loop for k in (rest widget) by 'cddr
-                       collect k))))
+  (let* ((widget (nomis-dirtree-selected-widget/no-extras)))
+    (nomis-dirtree-show-widget-info widget)))
+
+(defun nomis-dirtree-show-selection-with-extras-info ()
+  "Display some details of selection-with-extras.
+Mostly for debugging purposes."
+  (interactive)
+  (let* ((widget (nomis-dirtree-selected-widget/with-extras)))
+    (nomis-dirtree-show-widget-info widget)))
 
 (define-key global-map (kbd "H-q d") 'nomis-dirtree)
 
@@ -784,6 +800,7 @@ Mostly for debugging purposes."
 
   (dk (kbd "X")           'nomis-dirtree-clear-history)
   
-  (dk (kbd "M-d")         'nomis-dirtree-show-selection-info))
+  (dk (kbd "M-d")         'nomis-dirtree-show-selection-no-extras-info)  
+  (dk (kbd "M-D")         'nomis-dirtree-show-selection-with-extras-info))
 
 (provide 'nomis-dirtree)
