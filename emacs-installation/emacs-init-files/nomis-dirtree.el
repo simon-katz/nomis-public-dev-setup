@@ -812,7 +812,7 @@ Mostly for debugging purposes."
 
   (dk (kbd "X")           'nomis-dirtree-clear-history)
   
-  (dk (kbd "M-d")         'nomis-dirtree-show-selection-no-extras-info)  
-  (dk (kbd "M-D")         'nomis-dirtree-show-selection-with-extras-info))
+  (dk (kbd "M-D")         'nomis-dirtree-show-selection-no-extras-info)  
+  (dk (kbd "M-d")         'nomis-dirtree-show-selection-with-extras-info))
 
 (provide 'nomis-dirtree)
