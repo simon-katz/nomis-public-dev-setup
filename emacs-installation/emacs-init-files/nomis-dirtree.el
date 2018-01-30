@@ -73,26 +73,26 @@ See `windata-display-buffer' for setup the arguments."
   :type 'string
   :group 'nomis-dirtree)
 
-(define-widget 'nomis-dirtree/widget/directory/tree-widget 'tree-widget
+(define-widget 'nomis-dirtree/widget/directory 'tree-widget
   "Directory Tree widget."
   :dynargs        'nomis-dirtree-setup-children
   :has-children   t)
 
-(define-widget 'nomis-dirtree/widget/file/push-button 'push-button
+(define-widget 'nomis-dirtree/widget/file 'push-button
   "File widget."
   :format         "%[%t%]\n"
   :button-face    'default)
 
-(define-widget 'nomis-dirtree/widget/directory/push-button 'push-button
+(define-widget 'nomis-dirtree/widget/directory/internal 'push-button
   "File widget."
   :format         "%[%t%]\n"
   :button-face    'default)
 
-(defun nomis-dirtree/widget/directory/tree-widget? (widget)
-  (eql (car widget) 'nomis-dirtree/widget/directory/tree-widget))
+(defun nomis-dirtree/widget/directory? (widget)
+  (eql (car widget) 'nomis-dirtree/widget/directory))
 
-(defun nomis-dirtree/widget/directory/push-button? (widget)
-  (eql (car widget) 'nomis-dirtree/widget/directory/push-button))
+(defun nomis-dirtree/widget/directory/internal? (widget)
+  (eql (car widget) 'nomis-dirtree/widget/directory/internal))
 
 (defun nomis-dirtree-show ()
   "Show `nomis-dirtree-buffer'. Create tree when no parent directory find."
@@ -173,8 +173,8 @@ With prefix argument select `nomis-dirtree-buffer'"
 
 (defun nomis-dirtree-make-root-widget-spec (directory)
   "create the root directory"
-  `(nomis-dirtree/widget/directory/tree-widget
-    :node (nomis-dirtree/widget/directory/push-button
+  `(nomis-dirtree/widget/directory
+    :node (nomis-dirtree/widget/directory/internal
            :tag ,directory
            :file ,directory)
     :file ,directory
@@ -202,14 +202,14 @@ With prefix argument select `nomis-dirtree-buffer'"
            (setq files (sort files (lambda (a b) (string< (cdr a) (cdr b)))))
            (append
             (mapcar (lambda (file)
-                      `(nomis-dirtree/widget/directory/tree-widget
+                      `(nomis-dirtree/widget/directory
                         :file ,(car file)
-                        :node (nomis-dirtree/widget/directory/push-button
+                        :node (nomis-dirtree/widget/directory/internal
                                :tag ,(cdr file)
                                :file ,(car file))))
                     dirs)
             (mapcar (lambda (file)
-                      `(nomis-dirtree/widget/file/push-button
+                      `(nomis-dirtree/widget/file
                         :file ,(car file)
                         :tag ,(cdr file)))
                     files)))))
@@ -226,14 +226,14 @@ With prefix argument select `nomis-dirtree-buffer'"
                       (-remove #'null))))
            (cl-labels ((make-directory-widget
                         (file-&-basename)
-                        `(nomis-dirtree/widget/directory/tree-widget
+                        `(nomis-dirtree/widget/directory
                           :file ,(car file-&-basename)
-                          :node (nomis-dirtree/widget/directory/push-button
+                          :node (nomis-dirtree/widget/directory/internal
                                  :tag ,(cdr file-&-basename)
                                  :file ,(car file-&-basename))))
                        (make-file-widget
                         (file-&-basename)
-                        `(nomis-dirtree/widget/file/push-button
+                        `(nomis-dirtree/widget/file
                           :file ,(car file-&-basename)
                           :tag ,(cdr file-&-basename)))
                        (make-widget
@@ -310,7 +310,7 @@ With prefix argument select `nomis-dirtree-buffer'"
 
 (defun nomis-dirtree-selected-widget/with-extras ()
   (let* ((widget (nomis-dirtree-selected-widget/no-extras)))
-    (if (nomis-dirtree/widget/directory/push-button? widget)
+    (if (nomis-dirtree/widget/directory/internal? widget)
         (widget-get widget :parent)
       widget)))
 
@@ -584,7 +584,7 @@ Then display contents of file under point in other window."
 (defun nomis-dirtree-next-line-with-expansion* (arg)
   (unless (< arg 1)
     (let* ((widget (nomis-dirtree-selected-widget/with-extras)))
-      (when (nomis-dirtree/widget/directory/tree-widget? widget)
+      (when (nomis-dirtree/widget/directory? widget)
         (let* ((expanded? (nomis-dirtree-expanded? widget)))
           (when (or expanded?
                     (not (directory-to-keep-collapsed-p
@@ -668,7 +668,7 @@ If <arg> is supplied, first collapse all and then expand to <arg> levels."
   (interactive "P")
   (cl-labels ((expand-recursively
                (widget n-times &optional force-expand-p)
-               (when (and (nomis-dirtree/widget/directory/tree-widget? widget)
+               (when (and (nomis-dirtree/widget/directory? widget)
                           (>= n-times 1)
                           (or force-expand-p
                               (not (directory-to-keep-collapsed-p
@@ -677,7 +677,7 @@ If <arg> is supplied, first collapse all and then expand to <arg> levels."
                  (mapc (lambda (x) (expand-recursively x (1- n-times)))
                        (nomis-dirtree-widget-children widget)))))
     (let* ((widget (nomis-dirtree-selected-widget/with-extras)))
-      (if (nomis-dirtree/widget/directory/tree-widget? widget)
+      (if (nomis-dirtree/widget/directory? widget)
           (progn
             (unless (null arg)
               (nomis-dirtree-collapse-all))
@@ -692,7 +692,7 @@ If <arg> is supplied, first collapse all and then expand to <arg> levels."
   "Collapse directory under point, retaining previous expansion of subdirectories."
   (interactive)
   (let* ((widget (nomis-dirtree-selected-widget/with-extras)))
-    (if (nomis-dirtree/widget/directory/tree-widget? widget)
+    (if (nomis-dirtree/widget/directory? widget)
         (nomis-dirtree-collapse-node widget)
       (progn
         (message "Not a directory, so can't collapse.")
@@ -717,7 +717,7 @@ sub-subdirectories, etc."
 sub-subdirectories, etc, so that subsequent expansion shows only one level."
   (interactive)
   (let* ((widget (nomis-dirtree-selected-widget/with-extras)))
-    (if (nomis-dirtree/widget/directory/tree-widget? widget)
+    (if (nomis-dirtree/widget/directory? widget)
         (collapse-recursively widget)
       (progn
         (message "Not a directory, so can't collapse.")
