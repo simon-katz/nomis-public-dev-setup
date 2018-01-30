@@ -567,21 +567,14 @@ Then display contents of file under point in other window."
   (nomis-dirtree-display-file))
 
 (defun nomis-dirtree-expand-widget-y-or-n-p (widget)
-  (cl-labels ((do-it
-               ()
-               (let* ((last-nonmenu-event nil) ; makes `y-or-n-p` use a dialog box
-                      )
-                 (y-or-n-p
-                  (concat "Really expand \""
-                          (-> widget
-                              nomis-dirtree-widget-file
-                              file-name-nondirectory)
-                          "\"?"
-                          " It's a directory I'd normally keep collapsed."
-                          " ")))))
-    (condition-case nil
-        (do-it)
-      (quit nil))))
+  (nomis/y-or-n-p-with-quit->nil
+   (concat "Really expand \""
+           (-> widget
+               nomis-dirtree-widget-file
+               file-name-nondirectory)
+           "\"?"
+           " It's a directory I'd normally keep collapsed."
+           " ")))
 
 (defun nomis-dirtree-next-line-with-expansion* (arg)
   (unless (< arg 1)
