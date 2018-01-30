@@ -39,6 +39,14 @@
 ;;;;     - Find this file's name (a full path "/Users/xxx/...").
 ;;;;     - Find the *nomis-dirtree* buffer (maybe within the current frame).
 ;;;;     - Refresh the tree, so we are up to date with the file system.
+;;;;
+;;;;     - Ah, it's more simple -- create a path and use
+;;;;       `nomis-dirtree-goto-path`.
+;;;;       - You may need to deal with (existing) bugs when there are multiple
+;;;;         trees.
+;;;;         - I think history navigation is broken when there are multiple
+;;;;           trees.
+;;;;
 ;;;;     - Go to first line.
 ;;;;     - Go through one line at a time.
 ;;;;     - If node's :file is what we are looking for we are done.
