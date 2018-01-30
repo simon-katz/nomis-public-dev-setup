@@ -320,7 +320,6 @@ With prefix argument select `nomis-dirtree-buffer'"
 
 (defun nomis-dirtree-root-p (widget)
   (assert widget nil "widget was null") ; FIXME Be more specific
-  (message "(car widget) = %s" (car widget))
   (plist-get (rest widget)
              :nomis-root))
 
@@ -734,14 +733,17 @@ sub-subdirectories, etc, so that subsequent expansion shows only one level."
 
 (defun nomis-dirtree-show-widget-info (widget)
   (let* ((file (nomis-dirtree-widget-file widget)))
-    (message "======== Widget info ========
+    (message "
+ ======== Widget info -- %s ========
  (car widget) = %s
  file = %s
  tag = %s
  (line-end-position) = %s
  from = %s
  to = %s
- widget keys = %s"
+ widget keys = %s
+"
+             (car widget)
              (car widget)
              file
              (widget-get widget :tag)
