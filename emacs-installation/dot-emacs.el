@@ -151,6 +151,7 @@
 (require 'nomis-buffers)
 (require 'nomis-frame-style)
 (require 'nomis-windows)
+(require 'nomis-files)
 (require 'nomis-faces)
 
 (require 'nomis-uniquify)

@@ -57,6 +57,11 @@
 (require 'windata)
 (require 'dired-x)
 
+(require 's)
+(require 'dash)
+
+(require 'nomis-files)
+
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ;;;; Intermission -- get rid of annoying messages.
 
@@ -306,28 +311,6 @@ With prefix argument select `nomis-dirtree-buffer'"
                          buffer-name))
                 windows)))
 
-(defun nomis/dir-separator? (c) (member c '(?/ ?\\)))
-
-(defun nomis/directory-no-slash (s)
-  (replace-regexp-in-string "[/\\]$"
-                            ""
-                            s))
-
-(defun nomis/filename->path (filename)
-  (let* ((filename-as-list (string-to-list filename))
-         (slash-positions (nomis/positions #'nomis/dir-separator?
-                                           filename-as-list))
-         (directory? (-> filename-as-list
-                         last ; O(n)
-                         first
-                         nomis/dir-separator?))
-         (substring-positions (if directory?
-                                  slash-positions
-                                (append slash-positions ; O(n)
-                                        (list (1- (length filename)))))))
-    (cl-loop for pos in substring-positions
-             collect (substring filename 0 (1+ pos)))))
-
 ;;;; ---------------------------------------------------------------------------
 ;;;; Widget and file stuff.
 
@@ -572,8 +555,6 @@ With prefix argument select `nomis-dirtree-buffer'"
 
 ;;;; ---------------------------------------------------------------------------
 ;;;; User-visible commands.
-
-;;;; FIXME Some of this is general stuff that belongs elsewhere.
 
 (defun nomis-dirtree/goto-file* (return-to-original-window?)
   (let* ((dirtree-window (nomis/find-window-in-frame nomis-dirtree-buffer))
