@@ -22,6 +22,10 @@
 
 ;;;; Add collapse-tree-to-show-only-selection command.
 
+;;;; Add feature to make tree selection follow file in current buffer.
+;;;; - Use an idle timer.
+;;;;   - See `nomis-idle-highlight-mode` for stuff to copy.
+
 ;;;; - Bug: `nomis-dirtree-history-step-back-and-display`
 ;;;;        does the display part when the first part fails.
 ;;;;        We need to be thowing errors, probably at all places
