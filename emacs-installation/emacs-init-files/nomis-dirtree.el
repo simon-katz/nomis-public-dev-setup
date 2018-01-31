@@ -500,8 +500,9 @@ With prefix argument select `nomis-dirtree-buffer'"
 (defun nomis-dirtree-clear-history ()
   (interactive)
   (setq *nomis-dirtree/paths/history-list* '())
+  (setq *nomis-dirtree/paths/future-list* '())
   (setq *nomis-dirtree/paths/current* (nomis-dirtree-file-path))
-  (message "Cleared history, but kept future (if there is any).")
+  (message "Cleared history.")
   (nomis/grab-user-attention/low))
 
 (defun nomis-dirtree-note-selection ()
