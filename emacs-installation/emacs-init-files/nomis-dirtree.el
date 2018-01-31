@@ -20,7 +20,7 @@
 
 ;;;; TODO:
 
-;;;; Add collapse-tree-to-show-only-selection command
+;;;; Add collapse-tree-to-show-only-selection command.
 
 ;;;; - Bug: `nomis-dirtree-history-step-back-and-display`
 ;;;;        does the display part when the first part fails.
@@ -33,8 +33,7 @@
 ;;;; - When hitting up and down arrow keys, when you hit directories
 ;;;;   there are messages saying "Expand" and "Collapse" (depending on
 ;;;;   whether the directory is collapsed or expanded).
-;;;;   - I've looked, but I can't even work out where the messages are
-;;;;     coming from.
+;;;;   - It's coming from the call of `widget-echo-help` in `widget-move`.
 
 ;;;; - Look into the Tree menu.
 ;;;;   - Is stuff not as it says?
