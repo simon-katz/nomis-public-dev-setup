@@ -98,7 +98,16 @@
     '(defun enriched-decode-display-prop (start end &optional param)
        (list start end))))
 
+;;;; ---- Very general stuff ----
+
+(require 's)
+(require 'dash)
+(require 'cl)
+(require 'mmt)
+
 (require 'nomis-very-general-stuff-new)
+
+;;;; ---- This is here because of a problem when it was later ----
 
 (require 'nomis-org) ; When this was later in the file my setting of
                      ; `org-replace-disputed-keys` wasn't working.
@@ -108,12 +117,6 @@
                      ; -- jsk 2014-08-13
 
 ;;;; ---- General stuff ----
-
-;;;; FIXME This stuff should be earlier.
-(require 's)
-(require 'dash)
-(require 'cl)
-(require 'mmt)
 
 (require 'nomis-ido-and-smex)
 (require 'nomis-auto-complete)
