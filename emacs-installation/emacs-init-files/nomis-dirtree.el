@@ -136,15 +136,10 @@ See `windata-display-buffer' for setup the arguments."
                                            :root? root?)
     (nomis-dirtree/make-file-widget file-&-basename)))
 
-(defun directory-no-slash (s)
-  (replace-regexp-in-string "[/\\]$"
-                            ""
-                            s))
-
 (defun nomis-dirtree-make-root-widget (directory)
   "create the root directory"
   (nomis-dirtree/make-widget (cons directory
-                                   (directory-no-slash directory))
+                                   (nomis/directory-no-slash directory))
                              :root? t))
 
 (defun nomis-dirtree/widget/directory? (widget)
@@ -295,7 +290,18 @@ With prefix argument select `nomis-dirtree-buffer'"
 ;;;; My stuff.
 
 ;;;; ---------------------------------------------------------------------------
-;;;; Support for expand/collapse. FIXME Move to be with the early widget stuff.
+;;;; FIXME General stuff to find a new home for.
+
+(defun nomis/directory-no-slash (s)
+  (replace-regexp-in-string "[/\\]$"
+                            ""
+                            s))
+
+;;;; ---------------------------------------------------------------------------
+;;;; Widget and file stuff.
+
+;;;; FIXME Would be nice to have clearer separation of the widget and
+;;;        file domains.
 
 (defun nomis-dirtree-expanded? (widget)
   (widget-get widget :open))
@@ -310,7 +316,7 @@ With prefix argument select `nomis-dirtree-buffer'"
     (when (nomis-dirtree-expanded? widget)
       (widget-apply-action widget))))
 
-(defvar *dirs-to-keep-collapsed-unless-forced*
+(defvar *nomis-dirtree/dirs-to-keep-collapsed-unless-forced*
   '("\\.git"
     "\\.idea"
     "\\.repl"
@@ -321,16 +327,11 @@ With prefix argument select `nomis-dirtree-buffer'"
     "target"
     "zzzz-nomis-dirtee-test-keep-collapsed"))
 
-(defun directory-to-keep-collapsed-p (name)
+(defun nomis-dirtree/directory-to-keep-collapsed? (name)
   (some (lambda (no-expand-name)
           (string-match (concat "/" no-expand-name "/" "$")
                         name))
-        *dirs-to-keep-collapsed-unless-forced*))
-
-;;;; ---------------------------------------------------------------------------
-;;;; Widget and file stuff.  FIXME Move to be with the early widget stuff.
-
-;;;; FIXME This mixes the domains of widgets and files.
+        *nomis-dirtree/dirs-to-keep-collapsed-unless-forced*))
 
 (defun nomis-dirtree-widget-file (widget)
   (widget-get widget :file))
@@ -708,7 +709,7 @@ Then display contents of file under point in other window."
       (when (nomis-dirtree/widget/directory? widget)
         (let* ((expanded? (nomis-dirtree-expanded? widget)))
           (when (or expanded?
-                    (not (directory-to-keep-collapsed-p
+                    (not (nomis-dirtree/directory-to-keep-collapsed?
                           (nomis-dirtree-widget-file widget)))
                     (nomis-dirtree-expand-widget-y-or-n-p widget))
             (unless expanded?
@@ -792,7 +793,7 @@ If <arg> is supplied, first collapse all and then expand to <arg> levels."
                (when (and (nomis-dirtree/widget/directory? widget)
                           (>= n-times 1)
                           (or force-expand-p
-                              (not (directory-to-keep-collapsed-p
+                              (not (nomis-dirtree/directory-to-keep-collapsed?
                                     (nomis-dirtree-widget-file widget)))))
                  (nomis-dirtree-expand-node widget)
                  (mapc (lambda (x) (expand-recursively x (1- n-times)))
