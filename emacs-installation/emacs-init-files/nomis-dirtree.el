@@ -235,9 +235,6 @@ With prefix argument select `nomis-dirtree-buffer'"
 
 (define-derived-mode nomis-dirtree-mode tree-mode "Dir-Tree"
   "A mode to display tree of directory"
-  (make-local-variable '*nomis-dirtree/paths/current*)
-  (make-local-variable '*nomis-dirtree/paths/history-list*)
-  (make-local-variable '*nomis-dirtree/paths/future-list*)
   (tree-widget-set-theme "folder")
   (hl-line-mode)
   (face-remap-add-relative 'hl-line '((:background "grey90"))))
@@ -494,8 +491,6 @@ With prefix argument select `nomis-dirtree-buffer'"
 ;;;; ---------------------------------------------------------------------------
 ;;;; History
 
-;;;; FIXME You have these as buffer local, but they need to be per tree.
-;;;;       - Um, no. It's OK. Right?
 (defvar *nomis-dirtree/paths/current* nil)
 (defvar *nomis-dirtree/paths/history-list* '())
 (defvar *nomis-dirtree/paths/future-list* '())
