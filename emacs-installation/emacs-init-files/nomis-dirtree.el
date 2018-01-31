@@ -136,10 +136,15 @@ See `windata-display-buffer' for setup the arguments."
                                            :root? root?)
     (nomis-dirtree/make-file-widget file-&-basename)))
 
+(defun directory-no-slash (s)
+  (replace-regexp-in-string "[/\\]$"
+                            ""
+                            s))
+
 (defun nomis-dirtree-make-root-widget (directory)
   "create the root directory"
-  ;; FIXME :tag and :file are the same here
-  (nomis-dirtree/make-widget (cons directory directory)
+  (nomis-dirtree/make-widget (cons directory
+                                   (directory-no-slash directory))
                              :root? t))
 
 (defun nomis-dirtree/widget/directory? (widget)
@@ -505,6 +510,7 @@ With prefix argument select `nomis-dirtree-buffer'"
                 (equal (first (last ; O(n) -- OK I guess
                                *nomis-dirtree/paths/current*))
                        (nomis-dirtree-selected-file)))
+      ;; (message "Noting selection %s" (nomis-dirtree-selected-file))
       (when *nomis-dirtree/paths/current*
         (setq *nomis-dirtree/paths/history-list* 
               (seq-take ; O(n) -- OK I guess
