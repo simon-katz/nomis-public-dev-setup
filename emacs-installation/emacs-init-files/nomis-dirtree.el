@@ -48,14 +48,6 @@
 ;;;; - Tidy.
 
 ;;;; ___________________________________________________________________________
-;;;; Some definitions that need to come early.
-
-;;;; FIXME Should need to set this to true in only one place.
-;;;;       In `nomis-dirtree/with-note-selection-fun`.
-;;;;       Perhaps also in `nomis-dirtree-note-selection`.
-(defvar *nomis-dirtree-inhibit-history?* nil)
-
-;;;; ___________________________________________________________________________
 ;;;; Initially we have, more-or-less, the original dirtree.
 ;;;; I don't have a deep understanding of this, but I've hacked it a bit.
 
@@ -454,15 +446,14 @@ With prefix argument select `nomis-dirtree-buffer'"
 (defun nomis-dirtree-goto-file-that-is-in-expansion (target-file)
   "If `target-file` is in the tree's expansion, make it the selection.
    Otherwise throw an exception."
-  (let* ((*nomis-dirtree-inhibit-history?* t)) 
-    (let* ((start-file (nomis-dirtree-selected-file)))
-      (while (not (equal target-file
-                         (nomis-dirtree-selected-file)))
-        (ignore-errors ; so we cycle around at end of buffer
-          (nomis-dirtree-next-line 1))
-        (when (equal start-file
-                     (nomis-dirtree-selected-file))
-          (error "Couldn't find target-file %s" target-file))))))
+  (let* ((start-file (nomis-dirtree-selected-file)))
+    (while (not (equal target-file
+                       (nomis-dirtree-selected-file)))
+      (ignore-errors ; so we cycle around at end of buffer
+        (tree-mode-next-node 1))
+      (when (equal start-file
+                   (nomis-dirtree-selected-file))
+        (error "Couldn't find target-file %s" target-file)))))
 
 (defun nomis-dirtree/with-return-to-selected-file-fun (fun)
   (let* ((file-to-return-to
@@ -472,24 +463,26 @@ With prefix argument select `nomis-dirtree-buffer'"
                    nomis-dirtree-widget-file))
             (2 (nomis-dirtree-selected-file))))
          (res (funcall fun)))
-    (let* ((*nomis-dirtree-inhibit-history?* t))
-      (nomis-dirtree-goto-root)
-      (nomis-dirtree-goto-file-that-is-in-expansion file-to-return-to))
+    (nomis-dirtree-goto-root) ; FIXME Not needed, right?
+    (nomis-dirtree-goto-file-that-is-in-expansion file-to-return-to)
     res))
 
 (defmacro nomis-dirtree/with-return-to-selected-file (&rest body)
   `(nomis-dirtree/with-return-to-selected-file-fun (lambda () ,@body)))
 
 (defun nomis-dirtree-goto-path (path)
-  (let* ((*nomis-dirtree-inhibit-history?* t))
-    (cl-loop for (f . r) on path
-             do (progn
-                  (nomis-dirtree-goto-file-that-is-in-expansion f)
-                  (when r
-                    (nomis-dirtree-expand nil))))))
+  (cl-loop for (f . r) on path
+           do (progn
+                (nomis-dirtree-goto-file-that-is-in-expansion f)
+                (when r
+                  (nomis-dirtree-expand nil)))))
 
 ;;;; ---------------------------------------------------------------------------
 ;;;; History
+
+;;;; FIXME Use lexical binding. You had a nasty.
+
+(defvar *nomis-dirtree-inhibit-history?* nil)
 
 (defvar *nomis-dirtree/paths/current* nil)
 (defvar *nomis-dirtree/paths/history-list* '())
