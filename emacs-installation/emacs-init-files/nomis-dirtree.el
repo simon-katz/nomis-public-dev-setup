@@ -516,10 +516,10 @@ With prefix argument select `nomis-dirtree-buffer'"
 
 (defun nomis-dirtree/with-note-selection-fun (fun)
   (nomis-dirtree-note-selection)
-  (let* ((res (let* ((*nomis-dirtree-inhibit-history?* t))
-                (funcall fun))))
-    (nomis-dirtree-note-selection)
-    res))
+  (prog1
+      (let* ((*nomis-dirtree-inhibit-history?* t))
+        (funcall fun))
+    (nomis-dirtree-note-selection)))
 
 (defmacro nomis-dirtree/with-note-selection (&rest body)
   `(nomis-dirtree/with-note-selection-fun (lambda () ,@body)))
