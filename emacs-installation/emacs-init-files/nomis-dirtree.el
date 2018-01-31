@@ -399,6 +399,22 @@ With prefix argument select `nomis-dirtree-buffer'"
                           ""
                           s)))))
 
+(defun nomis-dirtree/filename->root-widget (filename)
+  (let* ((widget (cl-find-if (lambda (w)
+                               (s-starts-with? (nomis-dirtree-widget-file w)
+                                               filename))
+                             tree-mode-list)))
+    (assert widget
+            nil
+            "File is not in dirtree: %s"
+            filename)
+    widget))
+
+(defun nomis-dirtree/filename->root-filename (filename)
+  (-> filename
+      nomis-dirtree/filename->root-widget
+      nomis-dirtree-widget-file))
+
 ;;;; ---------------------------------------------------------------------------
 ;;;; Navigation
 
@@ -583,7 +599,8 @@ With prefix argument select `nomis-dirtree-buffer'"
         (unwind-protect
             (progn
               (select-window dirtree-window)
-              (let* ((root-file (nomis-dirtree-root-file)) ; FIXME Need to deal with multiple trees -- can look at each root and check for a prefix match
+              (let* ((root-file (nomis-dirtree/filename->root-filename
+                                 filename))
                      (path (nomis/filename->path filename))
                      (path (cons root-file
                                  (-drop-while (lambda (s)
