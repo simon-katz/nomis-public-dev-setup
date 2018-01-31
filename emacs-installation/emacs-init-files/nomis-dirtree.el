@@ -1,4 +1,5 @@
-;;;; nomis-dirtree.el --- Directory tree views
+;;;; nomis-dirtree.el --- Directory tree views ---  -*- lexical-binding: t -*-
+
 ;;;; Based on dirtree.el (see https://github.com/zk/emacs-dirtree).
 ;;;; This work was started on 2013-12-22.
 
