@@ -419,35 +419,6 @@ With prefix argument select `nomis-dirtree-buffer'"
           (nomis-dirtree-goto-widget parent))
       (error "No parent!"))))
 
-(defun nomis-dirtree-goto-root ()
-  ;; Sometimes we don't find the selected widget. I noticed it with:
-  ;; - on "test" dir in the "clojure-the-language" project
-  ;; - that dir is in the expanded state
-  ;; - we do a `nomis/toggle-dirtree-dirs-at-top` to set
-  ;;   `nomis-dirtree/dirs-at-top?` to true
-  ;; I wonder why that's different to other dirs in the project.
-  ;; - If I call `nomis-dirtree-root-file` from M-: it always finds
-  ;;   the selection. Ah, but the difference is that you have recreated the
-  ;;   tree when you toggle.
-  ;; - Here's a clue: the cursor position is different for "test"
-  ;;   after you do a `nomis/toggle-dirtree-dirs-at-top`.
-  ;; - I added a new directory called "zzzz", and then that was
-  ;;   bad and "test" was OK -- so the problem is with the last
-  ;;   directory (alphabetically).
-  (case 2
-    (1
-     (while (and (not (nomis-dirtree-root-p (nomis-dirtree-selected-widget/with-extras)))
-                 (tree-mode-parent-current-line))
-       (nomis-dirtree-tree-mode-goto-parent-CAN-DELETE-ME 1)))
-    (2
-     (let* ((selected-widget (nomis-dirtree-selected-widget/with-extras)))
-       (if selected-widget
-           (let* ((root-widget (-> selected-widget
-                                   nomis-dirtree-root-widget)))
-             (nomis-dirtree-goto-widget root-widget))
-         ;; FIXME Should we make this an error?
-         (message "Didn't find selected widget."))))))
-
 (defun nomis-dirtree-goto-file-that-is-in-expansion (target-file)
   "If `target-file` is in the tree's expansion, make it the selection.
    Otherwise throw an exception."
@@ -468,7 +439,6 @@ With prefix argument select `nomis-dirtree-buffer'"
                    nomis-dirtree-widget-file))
             (2 (nomis-dirtree-selected-file))))
          (res (funcall fun)))
-    (nomis-dirtree-goto-root) ; FIXME Not needed, right?
     (nomis-dirtree-goto-file-that-is-in-expansion file-to-return-to)
     res))
 
