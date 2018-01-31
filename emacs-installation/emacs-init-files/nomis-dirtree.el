@@ -48,8 +48,8 @@
 ;;;; - Tidy.
 
 ;;;; ___________________________________________________________________________
-;;;; Initially we have, more-or-less, the original dirtree.
-;;;; I don't have a deep understanding of this, but I've hacked it a bit.
+;;;; Initially we have the original dirtree, with much modification.
+;;;; I don't have a deep understanding of this, but I've hacked it a fair bit.
 
 (eval-when-compile
   (require 'cl))
@@ -292,10 +292,41 @@ With prefix argument select `nomis-dirtree-buffer'"
 ;;;; ---------------------------------------------------------------------------
 ;;;; FIXME General stuff to find a new home for.
 
+(defun nomis/positions (pred list)
+  (cl-loop for x in list
+           as  cnt from 0
+           when (funcall pred x)
+           collect cnt))
+
+(defun nomis/find-window-in-frame (buffer-name)
+  (let* ((frame (selected-frame))
+         (windows (window-list frame)))
+    (cl-find-if (lambda (w)
+                  (equal (-> w window-buffer buffer-name)
+                         buffer-name))
+                windows)))
+
+(defun nomis/dir-separator? (c) (member c '(?/ ?\\)))
+
 (defun nomis/directory-no-slash (s)
   (replace-regexp-in-string "[/\\]$"
                             ""
                             s))
+
+(defun nomis/filename->path (filename)
+  (let* ((filename-as-list (string-to-list filename))
+         (slash-positions (nomis/positions #'nomis/dir-separator?
+                                           filename-as-list))
+         (directory? (-> filename-as-list
+                         last ; O(n)
+                         first
+                         nomis/dir-separator?))
+         (substring-positions (if directory?
+                                  slash-positions
+                                (append slash-positions ; O(n)
+                                        (list (1- (length filename)))))))
+    (cl-loop for pos in substring-positions
+             collect (substring filename 0 (1+ pos)))))
 
 ;;;; ---------------------------------------------------------------------------
 ;;;; Widget and file stuff.
@@ -543,38 +574,6 @@ With prefix argument select `nomis-dirtree-buffer'"
 ;;;; User-visible commands.
 
 ;;;; FIXME Some of this is general stuff that belongs elsewhere.
-;;;;       But check FIXMEs first.
-
-(defun nomis/find-window-in-frame (buffer-name)
-  (let* ((frame (selected-frame))
-         (windows (window-list frame)))
-    (cl-find-if (lambda (w)
-                  (equal (-> w window-buffer buffer-name)
-                         buffer-name))
-                windows)))
-
-(defun nomis/positions (pred list)
-  (cl-loop for x in list
-           as  cnt from 0
-           when (funcall pred x)
-           collect cnt))
-
-(defun nomis/dir-separator? (c) (member c '(?/ ?\\)))
-
-(defun nomis/filename->path (filename)
-  (let* ((filename-as-list (string-to-list filename))
-         (slash-positions (nomis/positions #'nomis/dir-separator?
-                                           filename-as-list))
-         (directory? (-> filename-as-list
-                         last ; O(n)
-                         first
-                         nomis/dir-separator?))
-         (substring-positions (if directory?
-                                  slash-positions
-                                (append slash-positions ; O(n)
-                                        (list (1- (length filename)))))))
-    (cl-loop for pos in substring-positions
-             collect (substring filename 0 (1+ pos)))))
 
 (defun nomis-dirtree/goto-file* (return-to-original-window?)
   (let* ((dirtree-window (nomis/find-window-in-frame nomis-dirtree-buffer))
