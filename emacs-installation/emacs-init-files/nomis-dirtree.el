@@ -60,6 +60,8 @@
 (require 's)
 (require 'dash)
 
+(require 'nomis-core-utils)
+(require 'nomis-buffers-windows-frames)
 (require 'nomis-files)
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -85,7 +87,7 @@
               `((name . ,advice-name))))
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-;;;; Resume the original dirtree.
+;;;; Resume the original dirtree, with much modification.
 
 (defgroup nomis-dirtree nil
   "Directory tree views"
@@ -293,23 +295,6 @@ With prefix argument select `nomis-dirtree-buffer'"
 
 ;;;; ___________________________________________________________________________
 ;;;; My stuff.
-
-;;;; ---------------------------------------------------------------------------
-;;;; FIXME General stuff to find a new home for.
-
-(defun nomis/positions (pred list)
-  (cl-loop for x in list
-           as  cnt from 0
-           when (funcall pred x)
-           collect cnt))
-
-(defun nomis/find-window-in-frame (buffer-name)
-  (let* ((frame (selected-frame))
-         (windows (window-list frame)))
-    (cl-find-if (lambda (w)
-                  (equal (-> w window-buffer buffer-name)
-                         buffer-name))
-                windows)))
 
 ;;;; ---------------------------------------------------------------------------
 ;;;; Widget and file stuff.

@@ -105,6 +105,7 @@
 (require 'cl)
 (require 'mmt)
 
+(require 'nomis-core-utils)
 (require 'nomis-very-general-stuff-new)
 
 ;;;; ---- This is here because of a problem when it was later ----
@@ -148,13 +149,18 @@
 (require 'nomis-highlighting)
 (require 'nomis-line-numbering)
 (require 'nomis-saveplace)
+
+(require 'nomis-buffers-windows-frames)
+
 (when (display-graphic-p)
   (require 'nomis-screens)
   (require 'nomis-frames))
 (require 'nomis-buffers)
 (require 'nomis-frame-style)
 (require 'nomis-windows)
+
 (require 'nomis-files)
+
 (require 'nomis-faces)
 
 (require 'nomis-uniquify)
