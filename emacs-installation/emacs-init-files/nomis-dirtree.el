@@ -565,15 +565,13 @@ With prefix argument select `nomis-dirtree-buffer'"
          (slash-positions (nomis/positions #'nomis/dir-separator?
                                            filename-as-list))
          (directory? (-> filename-as-list
-                         last
+                         last ; O(n)
                          first
                          nomis/dir-separator?))
          (substring-positions (if directory?
                                   slash-positions
-                                (append
-                                 ;; FIXME O(n)
-                                 slash-positions
-                                 (list (1- (length filename)))))))
+                                (append slash-positions ; O(n)
+                                        (list (1- (length filename)))))))
     (cl-loop for pos in substring-positions
              collect (substring filename 0 (1+ pos)))))
 
