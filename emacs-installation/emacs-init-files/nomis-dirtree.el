@@ -20,6 +20,12 @@
 
 ;;;; TODO:
 
+;;;; Deal better with things when trying to go to a file that isn't in the
+;;;; tree:
+;;;; - Don't change selection in dirtree buffer.
+;;;; - Don't switch window.
+;;;; - Beep.
+
 ;;;; Add collapse-tree-to-show-only-selection command.
 
 ;;;; Add feature to make tree selection follow file in current buffer.
