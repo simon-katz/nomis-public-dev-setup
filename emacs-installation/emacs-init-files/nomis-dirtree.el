@@ -30,11 +30,6 @@
 ;;;; - Navigation with (eg) control key skipping to only files
 ;;;;   that were displayed would be good.  (Right?)
 
-;;;; - When hitting up and down arrow keys, when you hit directories
-;;;;   there are messages saying "Expand" and "Collapse" (depending on
-;;;;   whether the directory is collapsed or expanded).
-;;;;   - It's coming from the call of `widget-echo-help` in `widget-move`.
-
 ;;;; - Look into the Tree menu.
 ;;;;   - Is stuff not as it says?
 ;;;;   - Can you add to it?  Do you want to?
@@ -59,6 +54,31 @@
 (require 'tree-mode)
 (require 'windata)
 (require 'dired-x)
+
+;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+;;;; Intermission -- get rid of annoying messages.
+
+;;;; `widget-move` has a call to `widget-echo-help`, which causes annoying
+;;;; messages in the *Messages* buffer.
+
+(defvar *nomis-dirtree/in-widget-move?* nil)
+
+(let* ((advice-name '-nomis-dirtree/no-widget-echo-help))
+  (advice-add 'widget-move
+              :around
+              (lambda (orig-fun &rest args)
+                (let* ((*nomis-dirtree/in-widget-move?* t))
+                  (apply orig-fun args)))
+              `((name . ,advice-name)))
+  (advice-add 'widget-echo-help
+              :around
+              (lambda (orig-fun &rest args)
+                (unless *nomis-dirtree/in-widget-move?*
+                  (apply orig-fun args)))
+              `((name . ,advice-name))))
+
+;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+;;;; Resume the original dirtree.
 
 (defgroup nomis-dirtree nil
   "Directory tree views"
