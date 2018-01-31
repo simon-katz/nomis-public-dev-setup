@@ -585,7 +585,7 @@ With prefix argument select `nomis-dirtree-buffer'"
               (select-window dirtree-window)
               (let* ((root-file (nomis-dirtree-root-file)) ; FIXME Need to deal with multiple trees -- can look at each root and check for a prefix match
                      (path (nomis/filename->path filename))
-                     (path (cons root-file ; FIXME drop then cons. OK?
+                     (path (cons root-file
                                  (-drop-while (lambda (s)
                                                 (not (s-starts-with? root-file
                                                                      s)))
