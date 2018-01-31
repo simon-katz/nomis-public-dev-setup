@@ -20,6 +20,8 @@
 
 ;;;; TODO:
 
+;;;; Add collapse-tree-to-show-only-selection command
+
 ;;;; - Bug: `nomis-dirtree-history-step-back-and-display`
 ;;;;        does the display part when the first part fails.
 ;;;;        We need to be thowing errors, probably at all places
@@ -34,23 +36,6 @@
 ;;;;   - I've looked, but I can't even work out where the messages are
 ;;;;     coming from.
 
-;;;; - Navigate to node in tree from a file.
-;;;;   - The steps are roughly:
-;;;;     - Find this file's name (a full path "/Users/xxx/...").
-;;;;     - Find the *nomis-dirtree* buffer (maybe within the current frame).
-;;;;     - Refresh the tree, so we are up to date with the file system.
-;;;;
-;;;;     - Ah, it's more simple -- create a path and use
-;;;;       `nomis-dirtree-goto-path`.
-;;;;
-;;;;     - Go to first line.
-;;;;     - Go through one line at a time.
-;;;;     - If node's :file is what we are looking for we are done.
-;;;;     - If we have a start-of-string match using current node's :file,
-;;;;       expand this node.
-;;;;     - If we reach the node after the just-expanded node, no such file.
-;;;;     - If we reached EOB, no such file.
-
 ;;;; - Look into the Tree menu.
 ;;;;   - Is stuff not as it says?
 ;;;;   - Can you add to it?  Do you want to?
@@ -61,6 +46,9 @@
 ;;;; ___________________________________________________________________________
 ;;;; Some definitions that need to come early.
 
+;;;; FIXME Should need to set this to true in only one place.
+;;;;       In `nomis-dirtree/with-note-selection-fun`.
+;;;;       Perhaps also in `nomis-dirtree-note-selection`.
 (defvar *nomis-dirtree-inhibit-history?* nil)
 
 ;;;; ___________________________________________________________________________
@@ -221,7 +209,9 @@ With prefix argument select `nomis-dirtree-buffer'"
   (make-local-variable '*nomis-dirtree/paths/current*)
   (make-local-variable '*nomis-dirtree/paths/history-list*)
   (make-local-variable '*nomis-dirtree/paths/future-list*)
-  (tree-widget-set-theme "folder"))
+  (tree-widget-set-theme "folder")
+  (hl-line-mode)
+  (face-remap-add-relative 'hl-line '((:background "grey90"))))
 
 (defconst nomis-dirtree/approach-to-children :new)
 (defconst nomis-dirtree/dirs-at-top? nil)
@@ -238,7 +228,7 @@ With prefix argument select `nomis-dirtree-buffer'"
              (setq basename (file-name-nondirectory file))
              (unless (string-match re basename)
                (if (file-directory-p file)
-                   (push (cons file basename) dirs)
+                   (push (cons (concat file "/") basename) dirs)
                  (push (cons file basename) files))))
            (setq dirs (sort dirs (lambda (a b) (string< (cdr a) (cdr b)))))
            (setq files (sort files (lambda (a b) (string< (cdr a) (cdr b)))))
@@ -254,7 +244,10 @@ With prefix argument select `nomis-dirtree-buffer'"
                       (-map (lambda (f)
                               (let* ((basename (file-name-nondirectory f)))
                                 (unless (string-match re basename)
-                                  (cons f basename)))))
+                                  (cons (if (file-directory-p f)
+                                            (concat f "/")
+                                          f)
+                                        basename)))))
                       (-remove #'null))))
            (cl-labels ((directory?
                         (file-&-basename)
@@ -279,7 +272,7 @@ With prefix argument select `nomis-dirtree-buffer'"
 ;;;; My stuff.
 
 ;;;; ---------------------------------------------------------------------------
-;;;; Support for expand/collapse.
+;;;; Support for expand/collapse. FIXME Move to be with the early widget stuff.
 
 (defun nomis-dirtree-expanded? (widget)
   (widget-get widget :open))
@@ -307,12 +300,12 @@ With prefix argument select `nomis-dirtree-buffer'"
 
 (defun directory-to-keep-collapsed-p (name)
   (some (lambda (no-expand-name)
-          (string-match (concat "/" no-expand-name "$")
+          (string-match (concat "/" no-expand-name "/" "$")
                         name))
         *dirs-to-keep-collapsed-unless-forced*))
 
 ;;;; ---------------------------------------------------------------------------
-;;;; Widget and file stuff.
+;;;; Widget and file stuff.  FIXME Move to be with the early widget stuff.
 
 ;;;; FIXME This mixes the domains of widgets and files.
 
@@ -326,6 +319,10 @@ With prefix argument select `nomis-dirtree-buffer'"
   (widget-at (1- (line-end-position))))
 
 (defun nomis-dirtree-selected-widget/with-extras ()
+  (when (= (point) (point-max))
+    ;; We're at that nasty place at the end of the buffer.
+    ;; Doing this allows eg `nomis-dirtree/goto-file` when at that place.
+    (backward-char))
   (let* ((widget (nomis-dirtree-selected-widget/no-extras)))
     (if (nomis-dirtree/widget/directory/internal? widget)
         (widget-get widget :parent)
@@ -362,7 +359,7 @@ With prefix argument select `nomis-dirtree-buffer'"
         nomis-dirtree-parent-widget
         nomis-dirtree-root-widget)))
 
-(defun nomis-dirtree-file-path ()
+(defun nomis-dirtree-file-path () ; FIXME You have a new way to calculate this now (the one you created for `nomis-dirtree/goto-file`). Hmmmm... maybe you should store the filename on the history list, and calculate the path when needed (will make debugging easier -- shorter thing to print). BUT: if you compute when navigating history you will repeat work on each history navigation.
   (->> (nomis-dirtree-selected-widget/with-extras)
        nomis-dirtree-widget-path
        (-map #'nomis-dirtree-widget-file)))
@@ -425,18 +422,20 @@ With prefix argument select `nomis-dirtree-buffer'"
            (let* ((root-widget (-> selected-widget
                                    nomis-dirtree-root-widget)))
              (nomis-dirtree-goto-widget root-widget))
+         ;; FIXME Should we make this an error?
          (message "Didn't find selected widget."))))))
 
 (defun nomis-dirtree-goto-file-that-is-in-expansion (target-file)
-  "Go to `target-file`, assuming that it is in the tree's expansion."
+  "If `target-file` is in the tree's expansion, make it the selection.
+   Otherwise throw an exception."
   (let* ((*nomis-dirtree-inhibit-history?* t)) 
     (let* ((start-file (nomis-dirtree-selected-file)))
       (while (not (equal target-file
                          (nomis-dirtree-selected-file)))
-        (nomis-dirtree-next-line 1) ; will cycle around at end of buffer
+        (ignore-errors ; so we cycle around at end of buffer
+          (nomis-dirtree-next-line 1))
         (when (equal start-file
                      (nomis-dirtree-selected-file))
-          ;; We looped around. This shouldn't happen.
           (error "Couldn't find target-file %s" target-file))))))
 
 (defun nomis-dirtree/with-return-to-selected-file-fun (fun)
@@ -467,6 +466,7 @@ With prefix argument select `nomis-dirtree-buffer'"
 ;;;; History
 
 ;;;; FIXME You have these as buffer local, but they need to be per tree.
+;;;;       - Um, no. It's OK. Right?
 (defvar *nomis-dirtree/paths/current* nil)
 (defvar *nomis-dirtree/paths/history-list* '())
 (defvar *nomis-dirtree/paths/future-list* '())
@@ -531,6 +531,98 @@ With prefix argument select `nomis-dirtree-buffer'"
 ;;;; ---------------------------------------------------------------------------
 ;;;; User-visible commands.
 
+;;;; FIXME Some of this is general stuff that belongs elsewhere.
+;;;;       But check FIXMEs first.
+
+(defun nomis/find-window-in-frame (buffer-name)
+  (let* ((frame (selected-frame))
+         (windows (window-list frame)))
+    (cl-find-if (lambda (w)
+                  (equal (-> w window-buffer buffer-name)
+                         buffer-name))
+                windows)))
+
+(defun nomis/positions (pred list)
+  (cl-loop for x in list
+           as  cnt from 0
+           when (funcall pred x)
+           collect cnt))
+
+(defun nomis/dir-separator? (c) (member c '(?/ ?\\)))
+
+(defun nomis/filename->path (filename)
+  (let* ((filename-as-list (string-to-list filename))
+         (slash-positions (nomis/positions #'nomis/dir-separator?
+                                           filename-as-list))
+         (directory? (-> filename-as-list
+                         last
+                         first
+                         nomis/dir-separator?))
+         (substring-positions (if directory?
+                                  slash-positions
+                                (append
+                                 ;; FIXME O(n)
+                                 slash-positions
+                                 (list (1- (length filename)))))))
+    (cl-loop for pos in substring-positions
+             collect (substring filename 0 (1+ pos)))))
+
+(defun nomis-dirtree/goto-file* (return-to-original-window?)
+  (let* ((dirtree-window (nomis/find-window-in-frame nomis-dirtree-buffer))
+         (dirtree-buffer (when dirtree-window
+                           (window-buffer dirtree-window)))
+         (filename (let* ((filename (or buffer-file-name
+                                        dired-directory
+                                        ;; default-directory
+                                        )))
+                     (when filename
+                       (expand-file-name filename)))))
+    (cond
+     ((null dirtree-window)
+      (message "There's no dirtee window in the current frame.")
+      (nomis/beep))
+     ((null filename)
+      (message "This buffer has no associated file.")
+      (nomis/beep))
+     (t
+      (let* ((original-window (get-buffer-window)))
+        (unwind-protect
+            (progn
+              (select-window dirtree-window)
+              (let* ((root-file (nomis-dirtree-root-file)) ; FIXME Need to deal with multiple trees -- can look at each root and check for a prefix match
+                     (path (nomis/filename->path filename))
+                     (path (cons root-file ; FIXME drop then cons. OK?
+                                 (-drop-while (lambda (s)
+                                                (not (s-starts-with? root-file
+                                                                     s)))
+                                              path))))
+                (nomis-dirtree/with-note-selection
+                 (tree-mode-reflesh)
+                 (nomis-dirtree-goto-path path)
+                 (when (bound-and-true-p hl-line-mode)
+                   ;; Workaround for bug.
+                   ;; Without this we don't have the highlighting.
+                   (hl-line-mode 1)))))
+          (when return-to-original-window?
+            (select-window original-window))))))))
+
+(defun nomis-dirtree/goto-file ()
+  "Change the nomis-dirtree selection to be the current file, and go to the
+   nomis-dirtree buffer.
+   More precisely: If there is a nomis-dirtree buffer in a window
+   in the current frame, change the selection in that buffer to
+   be the current buffer's file."
+  (interactive)
+  (nomis-dirtree/goto-file* nil))
+
+(defun nomis-dirtree/goto-file/return-to-window ()
+  (interactive)
+  "Change the nomis-dirtree selection to be the current file.
+   More precisely: If there is a nomis-dirtree buffer in a window
+   in the current frame, change the selection in that buffer to
+   be the current buffer's file."
+  (nomis-dirtree/goto-file* t))
+
 (defun nomis-dirtree-display-file ()
   "Display contents of file under point in other window."
   (interactive)
@@ -539,6 +631,14 @@ With prefix argument select `nomis-dirtree-buffer'"
      (let* ((file (nomis-dirtree-selected-file)))
        (when file
          (find-file-other-window file))))))
+
+(defun nomis-dirtree-display-file-and-goto-other-window ()
+  "Display contents of file under point in other window."
+  (interactive)
+  (let* ((file (nomis-dirtree-selected-file)))
+    (when file
+      (nomis-dirtree-display-file)
+      (find-file-other-window file))))
 
 (defun nomis-dirtree-display-file-in-new-frame ()
   "Display contents of file under point in other window."
@@ -785,7 +885,14 @@ Mostly for debugging purposes."
   (let* ((widget (nomis-dirtree-selected-widget/with-extras)))
     (nomis-dirtree-show-widget-info widget)))
 
+;;;; FIXME Revisit all key bindings. Maybe think about the set of commands.
+;;;;       Want consistency.
+;;;;       - eg Meta for go to the file's window.
+;;;;       - eg Control for display but stay in nomis-dirtree window.
+
 (define-key global-map (kbd "H-q d") 'nomis-dirtree)
+(define-key global-map (kbd "H-/")   'nomis-dirtree/goto-file)
+(define-key global-map (kbd "H-M-/") 'nomis-dirtree/goto-file/return-to-window)
 
 (cl-labels ((dk (k f)
                 (define-key nomis-dirtree-mode-map k f)))
@@ -793,7 +900,7 @@ Mostly for debugging purposes."
   (define-key widget-keymap (kbd "<RET>") nil)
   (dk (kbd "<RET>")       'nomis-dirtree-display-file)
   (dk (kbd "C-<return>")  'nomis-dirtree-display-file)
-  (dk (kbd "M-<return>")  'nomis-dirtree-display-file-in-new-frame)
+  (dk (kbd "M-<return>")  'nomis-dirtree-display-file-and-goto-other-window)
 
   (dk (kbd "M-o")         'nomis-dirtree-open-in-default-app)
 

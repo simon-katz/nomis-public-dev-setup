@@ -109,6 +109,7 @@
 
 ;;;; ---- General stuff ----
 
+;;;; FIXME This stuff should be earlier.
 (require 's)
 (require 'dash)
 (require 'cl)
