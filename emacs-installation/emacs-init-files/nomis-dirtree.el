@@ -382,7 +382,7 @@ With prefix argument select `nomis-dirtree-buffer'"
         nomis-dirtree-parent-widget
         nomis-dirtree-root-widget)))
 
-(defun nomis-dirtree-file-path () ; FIXME You have a new way to calculate this now (the one you created for `nomis-dirtree/goto-file`). Hmmmm... maybe you should store the filename on the history list, and calculate the path when needed (will make debugging easier -- shorter thing to print). BUT: if you compute when navigating history you will repeat work on each history navigation.
+(defun nomis-dirtree-file-path ()
   (->> (nomis-dirtree-selected-widget/with-extras)
        nomis-dirtree-widget-path
        (-map #'nomis-dirtree-widget-file)))
