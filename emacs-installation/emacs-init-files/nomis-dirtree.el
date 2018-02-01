@@ -816,7 +816,7 @@ If <arg> is supplied, first collapse all and then expand to <arg> levels."
                                     (nomis-dirtree-widget-file widget)))))
                  (nomis-dirtree-expand-node widget)
                  (mapc (lambda (x) (expand-recursively x (1- n-times)))
-                       (nomis-dirtree-widget-children/all widget)))))
+                       (nomis-dirtree-widget-children/no-internals widget)))))
     (let* ((widget (nomis-dirtree-selected-widget/with-extras)))
       (if (nomis-dirtree/widget/directory? widget)
           (progn
@@ -850,7 +850,7 @@ sub-subdirectories, etc."
   ;; `nomis-dirtree-collapse-all` doesn't work -- undefined function.
   ;; Weird. Was ok in Emacs 24.2 but not in 24.3
   (mapc 'collapse-recursively
-        (nomis-dirtree-widget-children/all widget))
+        (nomis-dirtree-widget-children/no-internals widget))
   (nomis-dirtree-collapse-node widget))
 
 (defun nomis-dirtree-collapse-all ()
@@ -902,7 +902,8 @@ sub-subdirectories, etc, so that subsequent expansion shows only one level."
  :from = %s
  :to = %s
  keys = %s
- children info = %s
+ children info (all)          = %s
+ children info (no internals) = %s
 "
                           (car widget)
                           (car widget)
@@ -917,7 +918,9 @@ sub-subdirectories, etc, so that subsequent expansion shows only one level."
                           (loop for k in (rest widget) by 'cddr
                                 collect k)
                           (-map #'car
-                                (nomis-dirtree-widget-children/all widget))))))
+                                (nomis-dirtree-widget-children/all widget))
+                          (-map #'car
+                                (nomis-dirtree-widget-children/no-internals widget))))))
     (let* ((original-window (selected-window)))
       (unwind-protect
           (progn 
