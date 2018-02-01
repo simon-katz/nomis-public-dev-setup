@@ -130,6 +130,7 @@ See `windata-display-buffer' for setup the arguments."
 (cl-defun nomis-dirtree/make-directory-widget (file-&-basename
                                                &key root?)
   `(nomis-dirtree/widget/directory
+    :tag ,(cdr file-&-basename)
     :file ,(car file-&-basename)
     :node (nomis-dirtree/widget/directory/internal
            :tag ,(cdr file-&-basename)
@@ -342,6 +343,9 @@ With prefix argument select `nomis-dirtree-buffer'"
 
 (defun nomis-dirtree-widget-file (widget)
   (widget-get widget :file))
+
+(defun nomis-dirtree-widget-tag (widget)
+  (widget-get widget :tag))
 
 (defun nomis-dirtree-widget-children (widget)
   (widget-get widget :children))
@@ -686,9 +690,7 @@ Then display contents of file under point in other window."
 (defun nomis-dirtree-expand-widget-y-or-n-p (widget)
   (nomis/y-or-n-p-with-quit->nil
    (concat "Really expand \""
-           (-> widget
-               nomis-dirtree-widget-file
-               file-name-nondirectory)
+           (nomis-dirtree-widget-tag widget)
            "\"?"
            " It's a directory I'd normally keep collapsed."
            " ")))
