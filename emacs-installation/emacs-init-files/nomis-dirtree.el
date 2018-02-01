@@ -711,10 +711,11 @@ Then display contents of file under point in other window."
   (unless (< arg 1)
     (let* ((widget (nomis-dirtree-selected-widget/with-extras)))
       (let* ((directory? (nomis-dirtree/widget/directory? widget)))
-        (when (and directory?
-                   (not (nomis-dirtree/directory-to-keep-collapsed?/fullname
-                         (nomis-dirtree-widget-file widget))))
-          (nomis-dirtree-expand-node widget))
+        (if (and directory?
+                 (not (nomis-dirtree/directory-to-keep-collapsed?/fullname
+                       (nomis-dirtree-widget-file widget))))
+            (nomis-dirtree-expand-node widget)
+          (nomis/grab-user-attention/low 0.01))
         (nomis-dirtree-next-line 1)
         (nomis-dirtree-next-line-with-expansion* (1- arg))))))
 

@@ -69,21 +69,25 @@
 
 ;;;; ___________________________________________________________________________
 
-(defun nomis/beep ()
-  (nomis/flash :bg *nomis/grab-user-attention/high/background*
-               :secs 0.25))
+(defun nomis/beep (&optional secs)
+  (let* ((secs (or secs 0.25)))
+    (nomis/flash :bg *nomis/grab-user-attention/high/background*
+                 :secs secs)))
 
-(defun nomis/grab-user-attention/high ()
-  (nomis/flash :bg *nomis/grab-user-attention/high/background*
-               :secs 2))
+(defun nomis/grab-user-attention/high (&optional secs)
+  (let* ((secs (or sec 2)))
+    (nomis/flash :bg *nomis/grab-user-attention/high/background*
+                 :secs secs)))
 
-(defun nomis/grab-user-attention/low ()
-  (nomis/flash :bg *nomis/grab-user-attention/low/background*
-               :secs 1))
+(defun nomis/grab-user-attention/low (&optional secs)
+  (let* ((secs (or secs 1)))
+    (nomis/flash :bg *nomis/grab-user-attention/low/background*
+                 :secs secs)))
 
-(defun nomis/grab-user-attention/input-required ()
-  (nomis/flash :bg *nomis/grab-user-attention/input-required/background*
-               :secs 1))
+(defun nomis/grab-user-attention/input-required (&optional secs)
+  (let* ((secs (or secs 1)))
+    (nomis/flash :bg *nomis/grab-user-attention/input-required/background*
+                 :secs secs)))
 
 (cl-defmacro nomis/with-grab-user-attention/high (() &body body)
   (declare (indent 1))
