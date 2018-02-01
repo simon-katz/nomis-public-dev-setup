@@ -21,12 +21,6 @@
 
 ;;;; TODO:
 
-;;;; Deal better with things when trying to go to a file that isn't in the
-;;;; tree:
-;;;; - Don't change selection in dirtree buffer.
-;;;; - Don't switch window.
-;;;; - Beep.
-
 ;;;; Add collapse-tree-to-show-only-selection command.
 
 ;;;; Add feature to make tree selection follow file in current buffer.
@@ -416,6 +410,10 @@ With prefix argument select `nomis-dirtree-buffer'"
       nomis-dirtree/filename->root-widget
       nomis-dirtree-widget-file))
 
+(defun nomis-dirtree/refresh () ; FIXME Is this called only when it should be? Draw a call tree, at least in your head. (I'm too tored ATM.)
+  (mapc #'tree-mode-reflesh-tree
+        tree-mode-list))
+
 ;;;; ---------------------------------------------------------------------------
 ;;;; Navigation
 
@@ -463,6 +461,7 @@ With prefix argument select `nomis-dirtree-buffer'"
   `(nomis-dirtree/with-return-to-selected-file-fun (lambda () ,@body)))
 
 (defun nomis-dirtree-goto-path (path)
+  (nomis-dirtree/refresh)
   (cl-loop for (f . r) on path
            do (progn
                 (nomis-dirtree-goto-file-that-is-in-expansion f)
@@ -573,7 +572,6 @@ With prefix argument select `nomis-dirtree-buffer'"
                                                                      s)))
                                               path))))
                 (nomis-dirtree/with-note-selection
-                 (tree-mode-reflesh)
                  (nomis-dirtree-goto-path path)
                  (when (bound-and-true-p hl-line-mode)
                    ;; Workaround for bug.
@@ -816,8 +814,7 @@ sub-subdirectories, etc, so that subsequent expansion shows only one level."
   (setq nomis-dirtree/dirs-at-top?
         (not nomis-dirtree/dirs-at-top?))
   (nomis-dirtree/with-return-to-selected-file
-   (mapc #'tree-mode-reflesh-tree
-         tree-mode-list)))
+   (nomis-dirtree/refresh)))
 
 (defun nomis-dirtree-show-widget-info (widget)
   (let* ((inhibit-message t))
