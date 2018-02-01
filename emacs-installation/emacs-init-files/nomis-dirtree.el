@@ -362,6 +362,12 @@ With prefix argument select `nomis-dirtree-buffer'"
 (defun nomis-dirtree-widget-children (widget)
   (widget-get widget :children))
 
+(defun nomis-dirtree-widget-children/no-internals (widget)
+  (-remove (lambda (w)
+             (eql (car w)
+                  'nomis-dirtree/widget/directory/internal))
+           (nomis-dirtree-widget-children widget)))
+
 (defun nomis-dirtree-selected-widget/no-extras ()
   (widget-at (1- (line-end-position))))
 
@@ -713,9 +719,20 @@ Then display contents of file under point in other window."
       (let* ((directory? (nomis-dirtree/widget/directory? widget)))
         (if (and directory?
                  (not (nomis-dirtree/directory-to-keep-collapsed?/fullname
-                       (nomis-dirtree-widget-file widget))))
-            (nomis-dirtree-expand-node widget)
-          (nomis/grab-user-attention/low 0.01))
+                       (nomis-dirtree-widget-file widget)))
+                 (progn
+                   ;; Expand the widget, and return truthy if there are
+                   ;; children.
+                   (nomis-dirtree-expand-node widget)
+                   (nomis-dirtree-widget-children/no-internals widget)))
+            nil
+          (progn
+            ;; The user pressed the right arrow (or whatever), but we won't
+            ;; be droping into a subdirectory.
+            ;; The natural "inverse" operation (pressing the left arrow (or
+            ;; whatever)), will not take the user back to where they came from.
+            ;; This is intended to alert the user to that.
+            (nomis/grab-user-attention/low 0.01)))
         (nomis-dirtree-next-line 1)
         (nomis-dirtree-next-line-with-expansion* (1- arg))))))
 
@@ -885,6 +902,7 @@ sub-subdirectories, etc, so that subsequent expansion shows only one level."
  :from = %s
  :to = %s
  keys = %s
+ children info = %s
 "
                           (car widget)
                           (car widget)
@@ -897,7 +915,9 @@ sub-subdirectories, etc, so that subsequent expansion shows only one level."
                           (plist-get (rest widget) :from)
                           (plist-get (rest widget) :to)
                           (loop for k in (rest widget) by 'cddr
-                                collect k)))))
+                                collect k)
+                          (-map #'car
+                                (nomis-dirtree-widget-children widget))))))
     (let* ((original-window (selected-window)))
       (unwind-protect
           (progn 
