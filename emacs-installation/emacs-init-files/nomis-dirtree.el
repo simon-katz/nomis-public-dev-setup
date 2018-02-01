@@ -21,13 +21,6 @@
 
 ;;;; TODO:
 
-;;;; Bug: Weird. When on root node, go down one then up one, and history is
-;;;;      a bit messed up.
-;;;;      Ah! -- There's a beginning-of-buffer exception being thrown.
-;;;;      And weirder:
-;;;;      - The bug went away, without me changing anything.
-;;;;      - It returned after I killed the dirtree buffer and created a new one.
-
 ;;;; Add feature to make tree selection follow file in current buffer.
 ;;;; - Use an idle timer.
 ;;;;   - See `nomis-idle-highlight-mode` for stuff to copy.
@@ -556,10 +549,13 @@ With prefix argument select `nomis-dirtree-buffer'"
 
 (defun nomis-dirtree/with-note-selection-fun (fun)
   (nomis-dirtree-note-selection)
-  (prog1
+  (condition-case err
       (let* ((*nomis-dirtree-inhibit-history?* t))
         (funcall fun))
-    (nomis-dirtree-note-selection)))
+    (error
+     (nomis-dirtree-note-selection)
+     (signal (car err)
+             (cdr err)))))
 
 (defmacro nomis-dirtree/with-note-selection (&rest body)
   `(nomis-dirtree/with-note-selection-fun (lambda () ,@body)))
@@ -612,14 +608,8 @@ With prefix argument select `nomis-dirtree-buffer'"
             (progn
               (select-window dirtree-window)
               (let* ((path (nomis-dirtree/filename->path-from-root filename)))
-                (let* ((err-for-rethrowing nil))
-                  (nomis-dirtree/with-note-selection
-                   (condition-case err
-                       (nomis-dirtree-goto-path path)
-                     (error (setq err-for-rethrowing err))))
-                  (when err-for-rethrowing
-                    (signal (car err-for-rethrowing)
-                            (cdr err-for-rethrowing))))
+                (nomis-dirtree/with-note-selection
+                 (nomis-dirtree-goto-path path))
                 (when (bound-and-true-p hl-line-mode)
                   ;; Workaround for bug.
                   ;; Without this we don't have the highlighting.
