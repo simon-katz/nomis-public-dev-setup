@@ -129,14 +129,19 @@ See `windata-display-buffer' for setup the arguments."
 
 (cl-defun nomis-dirtree/make-directory-widget (file-&-basename
                                                &key root?)
-  `(nomis-dirtree/widget/directory
-    :tag ,(cdr file-&-basename)
-    :file ,(car file-&-basename)
-    :node (nomis-dirtree/widget/directory/internal
-           :tag ,(cdr file-&-basename)
-           :file ,(car file-&-basename))
-    :open ,root?
-    :nomis-root ,root?))
+  (let* ((file (car file-&-basename))
+         (tag  (cdr file-&-basename))
+         (tag (if (nomis-dirtree/directory-to-keep-collapsed?-v2 tag)
+                  (concat tag "  [no auto-expand]")
+                tag)))
+    `(nomis-dirtree/widget/directory
+      :tag ,tag
+      :file ,file
+      :node (nomis-dirtree/widget/directory/internal
+             :tag ,tag
+             :file ,file)
+      :open ,root?
+      :nomis-root ,root?)))
 
 (defun nomis-dirtree/make-file-widget (file-&-basename)
   `(nomis-dirtree/widget/file
@@ -340,6 +345,13 @@ With prefix argument select `nomis-dirtree-buffer'"
           (string-match (concat "/" no-expand-name "/" "$")
                         name))
         *nomis-dirtree/dirs-to-keep-collapsed-unless-forced*))
+
+(defun nomis-dirtree/directory-to-keep-collapsed?-v2 (basename)
+  (let* ((res (some (lambda (no-expand-name)
+                      (string-match (concat "^" no-expand-name "$")
+                                    basename))
+                    *nomis-dirtree/dirs-to-keep-collapsed-unless-forced*)))
+    res))
 
 (defun nomis-dirtree-widget-file (widget)
   (widget-get widget :file))
