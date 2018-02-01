@@ -131,7 +131,7 @@ See `windata-display-buffer' for setup the arguments."
                                                &key root?)
   (let* ((file (car file-&-basename))
          (tag  (cdr file-&-basename))
-         (tag (if (nomis-dirtree/directory-to-keep-collapsed?-v2 tag)
+         (tag (if (nomis-dirtree/directory-to-keep-collapsed?/basename tag)
                   (concat tag "  [no auto-expand]")
                 tag)))
     `(nomis-dirtree/widget/directory
@@ -340,13 +340,13 @@ With prefix argument select `nomis-dirtree-buffer'"
     "target"
     "zzzz-nomis-dirtee-test-keep-collapsed"))
 
-(defun nomis-dirtree/directory-to-keep-collapsed? (name)
+(defun nomis-dirtree/directory-to-keep-collapsed?/fullname (name)
   (some (lambda (no-expand-name)
           (string-match (concat "/" no-expand-name "/" "$")
                         name))
         *nomis-dirtree/dirs-to-keep-collapsed-unless-forced*))
 
-(defun nomis-dirtree/directory-to-keep-collapsed?-v2 (basename)
+(defun nomis-dirtree/directory-to-keep-collapsed?/basename (basename)
   (let* ((res (some (lambda (no-expand-name)
                       (string-match (concat "^" no-expand-name "$")
                                     basename))
@@ -712,7 +712,7 @@ Then display contents of file under point in other window."
     (let* ((widget (nomis-dirtree-selected-widget/with-extras)))
       (let* ((directory? (nomis-dirtree/widget/directory? widget)))
         (when (and directory?
-                   (not (nomis-dirtree/directory-to-keep-collapsed?
+                   (not (nomis-dirtree/directory-to-keep-collapsed?/fullname
                          (nomis-dirtree-widget-file widget))))
           (nomis-dirtree-expand-node widget))
         (nomis-dirtree-next-line 1)
@@ -794,7 +794,7 @@ If <arg> is supplied, first collapse all and then expand to <arg> levels."
                (when (and (nomis-dirtree/widget/directory? widget)
                           (>= n-times 1)
                           (or force-expand-p
-                              (not (nomis-dirtree/directory-to-keep-collapsed?
+                              (not (nomis-dirtree/directory-to-keep-collapsed?/fullname
                                     (nomis-dirtree-widget-file widget)))))
                  (nomis-dirtree-expand-node widget)
                  (mapc (lambda (x) (expand-recursively x (1- n-times)))
