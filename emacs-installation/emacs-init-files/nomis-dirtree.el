@@ -585,7 +585,7 @@ With prefix argument select `nomis-dirtree-buffer'"
       (message "This buffer has no associated file.")
       (nomis/beep))
      (t
-      (let* ((original-window (get-buffer-window)))
+      (let* ((original-window (selected-window)))
         (unwind-protect
             (progn
               (select-window dirtree-window)
@@ -858,8 +858,10 @@ sub-subdirectories, etc, so that subsequent expansion shows only one level."
    (nomis-dirtree/refresh)))
 
 (defun nomis-dirtree-show-widget-info (widget)
-  (let* ((inhibit-message t))
-    (message "
+  (cl-labels ((emit-info
+               ()
+               (let* ((inhibit-message t))
+                 (message "
  ======== Widget info -- %s ========
  (car widget) = %s
  :nomis-root = %s
@@ -872,18 +874,24 @@ sub-subdirectories, etc, so that subsequent expansion shows only one level."
  :to = %s
  keys = %s
 "
-             (car widget)
-             (car widget)
-             (widget-get widget :nomis-root)
-             (widget-get widget :tag)
-             (nomis-dirtree-widget-file widget)
-             (widget-get widget :open)
-             (widget-get widget :node)
-             (line-end-position)
-             (plist-get (rest widget) :from)
-             (plist-get (rest widget) :to)
-             (loop for k in (rest widget) by 'cddr
-                   collect k))))
+                          (car widget)
+                          (car widget)
+                          (widget-get widget :nomis-root)
+                          (widget-get widget :tag)
+                          (nomis-dirtree-widget-file widget)
+                          (widget-get widget :open)
+                          (widget-get widget :node)
+                          (line-end-position)
+                          (plist-get (rest widget) :from)
+                          (plist-get (rest widget) :to)
+                          (loop for k in (rest widget) by 'cddr
+                                collect k)))))
+    (let* ((original-window (selected-window)))
+      (unwind-protect
+          (progn 
+            (switch-to-buffer-other-window "*Messages*")
+            (emit-info))
+        (select-window original-window)))))
 
 (defun nomis-dirtree-show-selection-no-extras-info ()
   "Display some details of selection-no-extras.
