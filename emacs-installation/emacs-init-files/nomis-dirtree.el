@@ -549,13 +549,10 @@ With prefix argument select `nomis-dirtree-buffer'"
 
 (defun nomis-dirtree/with-note-selection-fun (fun)
   (nomis-dirtree-note-selection)
-  (condition-case err
+  (unwind-protect
       (let* ((*nomis-dirtree-inhibit-history?* t))
         (funcall fun))
-    (error
-     (nomis-dirtree-note-selection)
-     (signal (car err)
-             (cdr err)))))
+    (nomis-dirtree-note-selection)))
 
 (defmacro nomis-dirtree/with-note-selection (&rest body)
   `(nomis-dirtree/with-note-selection-fun (lambda () ,@body)))
