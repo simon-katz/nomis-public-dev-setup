@@ -21,8 +21,6 @@
 
 ;;;; TODO:
 
-;;;; Add collapse-tree-to-show-only-selection command.
-
 ;;;; Add feature to make tree selection follow file in current buffer.
 ;;;; - Use an idle timer.
 ;;;;   - See `nomis-idle-highlight-mode` for stuff to copy.
@@ -382,9 +380,12 @@ With prefix argument select `nomis-dirtree-buffer'"
        nomis-dirtree-widget-path
        (-map #'nomis-dirtree-widget-file)))
 
-(defun nomis-dirtree-root-file ()
+(defun nomis-dirtree-root-widget-no-arg () ; FIXME Make with-arg and no-arg versions of everything use consistent naming
   (-> (nomis-dirtree-selected-widget/with-extras)
-      nomis-dirtree-root-widget
+      nomis-dirtree-root-widget))
+
+(defun nomis-dirtree-root-file ()
+  (-> (nomis-dirtree-root-widget-no-arg)
       nomis-dirtree-widget-file))
 
 (defun nomis-dirtree-file-path-filenames-FOR-DEBUG ()
@@ -410,8 +411,18 @@ With prefix argument select `nomis-dirtree-buffer'"
       nomis-dirtree/filename->root-widget
       nomis-dirtree-widget-file))
 
+(defun nomis-dirtree/filename->path-from-root (filename)
+  (let* ((root-file (nomis-dirtree/filename->root-filename
+                     filename)))
+    (nomis/filename->path-from-a-root filename
+                                      root-file)))
+
 (defun nomis-dirtree/refresh () ; FIXME Is this called only when it should be? Draw a call tree, at least in your head. (I'm too tored ATM.)
   (mapc #'tree-mode-reflesh-tree
+        tree-mode-list))
+
+(defun nomis-dirtree/collapse-recursively-all-trees ()
+  (mapc #'collapse-recursively
         tree-mode-list))
 
 ;;;; ---------------------------------------------------------------------------
@@ -561,14 +572,7 @@ With prefix argument select `nomis-dirtree-buffer'"
         (unwind-protect
             (progn
               (select-window dirtree-window)
-              (let* ((root-file (nomis-dirtree/filename->root-filename
-                                 filename))
-                     (path (nomis/filename->path filename))
-                     (path (cons root-file
-                                 (-drop-while (lambda (s)
-                                                (not (s-starts-with? root-file
-                                                                     s)))
-                                              path))))
+              (let* ((path (nomis-dirtree/filename->path-from-root filename)))
                 (let* ((err-for-rethrowing nil))
                   (nomis-dirtree/with-note-selection
                    (condition-case err
@@ -813,6 +817,21 @@ sub-subdirectories, etc, so that subsequent expansion shows only one level."
         (message "Not a directory, so can't collapse.")
         (beep)))))
 
+(defun nomis-dirtree/show-only-selection (arg)
+  (interactive "P")
+  (let* ((collapse-all-trees? arg)
+         (filename (-> (nomis-dirtree-selected-widget/with-extras)
+                       nomis-dirtree-widget-file))
+         (path (nomis-dirtree/filename->path-from-root filename)))
+    (if collapse-all-trees?
+        (nomis-dirtree/collapse-recursively-all-trees)
+      (collapse-recursively (nomis-dirtree-root-widget-no-arg)))
+    (nomis-dirtree-goto-path path)))
+
+(defun nomis-dirtree/show-only-selection/collapse-other-trees ()
+  (interactive)
+  (nomis-dirtree/show-only-selection t))
+
 (defun nomis/toggle-dirtree-dirs-at-top ()
   (interactive)
   (setq nomis-dirtree/dirs-at-top?
@@ -899,6 +918,9 @@ Mostly for debugging purposes."
   (dk (kbd "M-<left>")    'nomis-dirtree-collapse)
   (dk (kbd "M-S-<right>") 'nomis-dirtree-expand-all)
   (dk (kbd "M-S-<left>")  'nomis-dirtree-collapse-all)
+
+  (dk (kbd "<")           'nomis-dirtree/show-only-selection)
+  (dk (kbd "M-<")         'nomis-dirtree/show-only-selection/collapse-other-trees)
 
   (dk (kbd "t")           'nomis/toggle-dirtree-dirs-at-top)
 
