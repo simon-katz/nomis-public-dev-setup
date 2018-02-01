@@ -21,6 +21,13 @@
 
 ;;;; TODO:
 
+;;;; Bug: Weird. When on root node, go down one then up one, and history is
+;;;;      a bit messed up.
+;;;;      Ah! -- There's a beginning-of-buffer exception being thrown.
+;;;;      And weirder:
+;;;;      - The bug went away, without me changing anything.
+;;;;      - It returned after I killed the dirtree buffer and created a new one.
+
 ;;;; Add feature to make tree selection follow file in current buffer.
 ;;;; - Use an idle timer.
 ;;;;   - See `nomis-idle-highlight-mode` for stuff to copy.
@@ -39,6 +46,14 @@
 
 ;;;; - Scan all for badness.
 ;;;; - Tidy.
+
+;;;; ___________________________________________________________________________
+
+(defvar *nomis-dirtree/print-debug-messages?* nil)
+
+(defun nomis-dirtree/debug-message (format-string &rest args)
+  (when *nomis-dirtree/print-debug-messages?*
+    (apply #'message format-string args )))
 
 ;;;; ___________________________________________________________________________
 ;;;; Initially we have the original dirtree, with much modification.
@@ -472,6 +487,7 @@ With prefix argument select `nomis-dirtree-buffer'"
   `(nomis-dirtree/with-return-to-selected-file-fun (lambda () ,@body)))
 
 (defun nomis-dirtree-goto-path (path)
+  (nomis-dirtree/debug-message "Going to %s" (first (last path)))
   (nomis-dirtree/refresh)
   (cl-loop for (f . r) on path
            do (progn
@@ -505,7 +521,8 @@ With prefix argument select `nomis-dirtree-buffer'"
                 (equal (first (last ; O(n) -- OK I guess
                                *nomis-dirtree/paths/current*))
                        (nomis-dirtree-selected-file)))
-      ;; (message "Noting selection %s" (nomis-dirtree-selected-file))
+      (nomis-dirtree/debug-message "Noting selection %s"
+                                   (nomis-dirtree-selected-file))
       (when *nomis-dirtree/paths/current*
         (setq *nomis-dirtree/paths/history-list* 
               (seq-take ; O(n) -- OK I guess
