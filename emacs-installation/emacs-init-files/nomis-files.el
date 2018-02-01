@@ -28,11 +28,10 @@
 
 (defun nomis/filename->path-from-a-root (filename root-filename) ; FIXME Terminology -- a path here is something like ("/a/b/c/" "/a/b/c/d/" "/a/b/c/d/e")
   (let* ((path (nomis/filename->path filename))
-         (path (cons root-filename
-                     (-drop-while (lambda (s)
-                                    (not (s-starts-with? root-filename
-                                                         s)))
-                                  path))))
+         (path (-drop-while (lambda (s)
+                              (not (s-starts-with? root-filename
+                                                   s)))
+                            path)))
     path))
 
 ;;;; ___________________________________________________________________________
