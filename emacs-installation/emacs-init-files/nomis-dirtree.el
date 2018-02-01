@@ -710,16 +710,13 @@ Then display contents of file under point in other window."
 (defun nomis-dirtree-next-line-with-expansion* (arg)
   (unless (< arg 1)
     (let* ((widget (nomis-dirtree-selected-widget/with-extras)))
-      (when (nomis-dirtree/widget/directory? widget)
-        (let* ((expanded? (nomis-dirtree-expanded? widget)))
-          (when (or expanded?
-                    (not (nomis-dirtree/directory-to-keep-collapsed?
-                          (nomis-dirtree-widget-file widget)))
-                    (nomis-dirtree-expand-widget-y-or-n-p widget))
-            (unless expanded?
-              (nomis-dirtree-expand-node widget))
-            (nomis-dirtree-next-line 1)
-            (nomis-dirtree-next-line-with-expansion* (1- arg))))))))
+      (let* ((directory? (nomis-dirtree/widget/directory? widget)))
+        (when (and directory?
+                   (not (nomis-dirtree/directory-to-keep-collapsed?
+                         (nomis-dirtree-widget-file widget))))
+          (nomis-dirtree-expand-node widget))
+        (nomis-dirtree-next-line 1)
+        (nomis-dirtree-next-line-with-expansion* (1- arg))))))
 
 (defun nomis-dirtree-next-line-with-expansion (arg)
   "Move down <arg> lines, expanding any encountered collapsed directories
