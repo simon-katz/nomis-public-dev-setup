@@ -25,6 +25,16 @@
 ;;;; history for those.
 ;;;; - Maybe can add advice to those functions.
 ;;;;   But be sure that you don't break things in tree-mode (or whatever it is).
+;;;;   - j   tree-mode-next-sib
+;;;;   - k   tree-mode-previous-sib
+;;;;   - n   tree-mode-next-node
+;;;;   - p   tree-mode-previous-node
+;;;;   - r   tree-mode-goto-root
+;;;;   - s   tree-mode-sort-by-tag
+;;;;   - u   tree-mode-goto-parent
+;;;;   - SPC scroll-up
+;;;;   - DEL scroll-down
+
 
 ;;;; Add feature to make tree selection follow file in current buffer.
 ;;;; - Use an idle timer.
