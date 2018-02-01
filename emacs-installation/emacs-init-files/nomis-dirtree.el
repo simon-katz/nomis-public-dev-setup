@@ -471,8 +471,6 @@ With prefix argument select `nomis-dirtree-buffer'"
 ;;;; ---------------------------------------------------------------------------
 ;;;; History
 
-;;;; FIXME Use lexical binding. You had a nasty.
-
 (defvar *nomis-dirtree-inhibit-history?* nil)
 
 (defvar *nomis-dirtree/paths/current* nil)
