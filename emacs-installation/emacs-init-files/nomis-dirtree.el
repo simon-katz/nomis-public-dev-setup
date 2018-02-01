@@ -21,6 +21,11 @@
 
 ;;;; TODO:
 
+;;;; There are many built in key bindings (eg "j", "k"). You don't record
+;;;; history for those.
+;;;; - Maybe can add advice to those functions.
+;;;;   But be sure that you don't break things in tree-mode (or whatever it is).
+
 ;;;; Add feature to make tree selection follow file in current buffer.
 ;;;; - Use an idle timer.
 ;;;;   - See `nomis-idle-highlight-mode` for stuff to copy.
@@ -974,8 +979,8 @@ Mostly for debugging purposes."
   (dk (kbd "M-S-<right>") 'nomis-dirtree-expand-all)
   (dk (kbd "M-S-<left>")  'nomis-dirtree-collapse-all)
 
-  (dk (kbd "1")           'nomis-dirtree/show-only-selection)
-  (dk (kbd "!")           'nomis-dirtree/show-only-selection/collapse-other-trees)
+  (dk (kbd "H-1")         'nomis-dirtree/show-only-selection)
+  (dk (kbd "H-!")         'nomis-dirtree/show-only-selection/collapse-other-trees)
 
   (dk (kbd "t")           'nomis/toggle-dirtree-dirs-at-top)
 
