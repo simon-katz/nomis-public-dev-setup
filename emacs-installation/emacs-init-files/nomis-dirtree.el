@@ -362,7 +362,7 @@ With prefix argument select `nomis-dirtree-buffer'"
 (defun nomis-dirtree-widget-children/all (widget)
   (widget-get widget :children))
 
-(defun nomis-dirtree-widget-children/no-internals (widget)
+(defun nomis-dirtree-widget-children (widget)
   (-remove (lambda (w)
              (eql (car w)
                   'nomis-dirtree/widget/directory/internal))
@@ -724,7 +724,7 @@ Then display contents of file under point in other window."
                    ;; Expand the widget, and return truthy if there are
                    ;; children.
                    (nomis-dirtree-expand-node widget)
-                   (nomis-dirtree-widget-children/no-internals widget)))
+                   (nomis-dirtree-widget-children widget)))
             nil
           (progn
             ;; The user pressed the right arrow (or whatever), but we won't
@@ -816,7 +816,7 @@ If <arg> is supplied, first collapse all and then expand to <arg> levels."
                                     (nomis-dirtree-widget-file widget)))))
                  (nomis-dirtree-expand-node widget)
                  (mapc (lambda (x) (expand-recursively x (1- n-times)))
-                       (nomis-dirtree-widget-children/no-internals widget)))))
+                       (nomis-dirtree-widget-children widget)))))
     (let* ((widget (nomis-dirtree-selected-widget/with-extras)))
       (if (nomis-dirtree/widget/directory? widget)
           (progn
@@ -850,7 +850,7 @@ sub-subdirectories, etc."
   ;; `nomis-dirtree-collapse-all` doesn't work -- undefined function.
   ;; Weird. Was ok in Emacs 24.2 but not in 24.3
   (mapc 'collapse-recursively
-        (nomis-dirtree-widget-children/no-internals widget))
+        (nomis-dirtree-widget-children widget))
   (nomis-dirtree-collapse-node widget))
 
 (defun nomis-dirtree-collapse-all ()
@@ -920,7 +920,7 @@ sub-subdirectories, etc, so that subsequent expansion shows only one level."
                           (-map #'car
                                 (nomis-dirtree-widget-children/all widget))
                           (-map #'car
-                                (nomis-dirtree-widget-children/no-internals widget))))))
+                                (nomis-dirtree-widget-children widget))))))
     (let* ((original-window (selected-window)))
       (unwind-protect
           (progn 
