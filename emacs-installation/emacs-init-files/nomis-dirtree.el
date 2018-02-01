@@ -907,11 +907,6 @@ Mostly for debugging purposes."
   (let* ((widget (nomis-dirtree-selected-widget/with-extras)))
     (nomis-dirtree-show-widget-info widget)))
 
-;;;; FIXME Revisit all key bindings. Maybe think about the set of commands.
-;;;;       Want consistency.
-;;;;       - eg Meta for go to the file's window.
-;;;;       - eg Control for display but stay in nomis-dirtree window.
-
 (define-key global-map (kbd "H-q d") 'nomis-dirtree)
 (define-key global-map (kbd "H-/")   'nomis-dirtree/goto-file)
 (define-key global-map (kbd "H-M-/") 'nomis-dirtree/goto-file/return-to-window)
@@ -922,9 +917,9 @@ Mostly for debugging purposes."
   (define-key widget-keymap (kbd "<RET>") nil)
   (dk (kbd "<RET>")       'nomis-dirtree-display-file)
   (dk (kbd "C-<return>")  'nomis-dirtree-display-file)
-  (dk (kbd "M-<return>")  'nomis-dirtree-display-file-and-goto-other-window)
+  (dk (kbd "S-<return>")  'nomis-dirtree-display-file-and-goto-other-window)
 
-  (dk (kbd "M-o")         'nomis-dirtree-open-in-default-app)
+  (dk (kbd "o")           'nomis-dirtree-open-in-default-app)
 
   (dk (kbd "<down>")      'nomis-dirtree-next-line)
   (dk (kbd "C-<down>")    'nomis-dirtree-next-line-and-display)
@@ -935,24 +930,24 @@ Mostly for debugging purposes."
   (dk (kbd "<left>")      'nomis-dirtree-up-directory)
   (dk (kbd "C-<left>")    'nomis-dirtree-up-directory-and-display)
   
-  (dk (kbd "M-[")         'nomis-dirtree-history-step-back)
-  (dk (kbd "C-M-[")       'nomis-dirtree-history-step-back-and-display)
-  (dk (kbd "M-]")         'nomis-dirtree-history-step-forward)
-  (dk (kbd "C-M-]")       'nomis-dirtree-history-step-forward-and-display)
+  (dk (kbd ",")           'nomis-dirtree-history-step-back)
+  (dk (kbd "C-,")         'nomis-dirtree-history-step-back-and-display)
+  (dk (kbd ".")           'nomis-dirtree-history-step-forward)
+  (dk (kbd "C-.")         'nomis-dirtree-history-step-forward-and-display)
 
   (dk (kbd "M-<right>")   'nomis-dirtree-expand)
   (dk (kbd "M-<left>")    'nomis-dirtree-collapse)
   (dk (kbd "M-S-<right>") 'nomis-dirtree-expand-all)
   (dk (kbd "M-S-<left>")  'nomis-dirtree-collapse-all)
 
-  (dk (kbd "<")           'nomis-dirtree/show-only-selection)
-  (dk (kbd "M-<")         'nomis-dirtree/show-only-selection/collapse-other-trees)
+  (dk (kbd "1")           'nomis-dirtree/show-only-selection)
+  (dk (kbd "!")           'nomis-dirtree/show-only-selection/collapse-other-trees)
 
   (dk (kbd "t")           'nomis/toggle-dirtree-dirs-at-top)
 
   (dk (kbd "X")           'nomis-dirtree-clear-history)
   
-  (dk (kbd "M-D")         'nomis-dirtree-show-selection-no-extras-info)  
-  (dk (kbd "M-d")         'nomis-dirtree-show-selection-with-extras-info))
+  (dk (kbd "I")           'nomis-dirtree-show-selection-no-extras-info)  
+  (dk (kbd "i")           'nomis-dirtree-show-selection-with-extras-info))
 
 (provide 'nomis-dirtree)
