@@ -670,7 +670,13 @@ With prefix argument select `nomis-dirtree-buffer'"
   "Move down <arg> lines."
   (interactive "p")
   (nomis-dirtree/with-note-selection
-   (tree-mode-next-node arg)))
+   (let* ((on-last-line? (= (1- (point-max))
+                            (save-excursion
+                              (end-of-line)
+                              (point)))))
+     (if on-last-line?
+         (error "Can't move forward from last line.")
+       (tree-mode-next-node arg)))))
 
 (defun nomis-dirtree-next-line-and-display (arg)
   "Move down <arg> lines.
@@ -683,7 +689,13 @@ Then display contents of file under point in other window."
   "Move up <arg> lines."
   (interactive "p")
   (nomis-dirtree/with-note-selection
-   (tree-mode-previous-node arg)))
+   (let* ((on-first-line? (= 1
+                             (save-excursion
+                               (beginning-of-line)
+                               (point)))))
+     (if on-first-line?
+         (error "Can't move up from first line.")
+       (tree-mode-previous-node arg)))))
 
 (defun nomis-dirtree-previous-line-and-display (arg)
   "Move up <arg> lines.
