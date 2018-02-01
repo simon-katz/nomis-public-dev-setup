@@ -23,8 +23,8 @@
 
 ;;;; There are many built in key bindings (eg "j", "k"). You don't record
 ;;;; history for those.
-;;;; - Maybe can add advice to those functions.
-;;;;   But be sure that you don't break things in tree-mode (or whatever it is).
+;;;; Define your own commands with the same key bindings.
+;;;; These are they:
 ;;;;   - j   tree-mode-next-sib
 ;;;;   - k   tree-mode-previous-sib
 ;;;;   - n   tree-mode-next-node
@@ -34,6 +34,11 @@
 ;;;;   - u   tree-mode-goto-parent
 ;;;;   - SPC scroll-up
 ;;;;   - DEL scroll-down
+;;;; - Also want "-and-display" versions.
+;;;;   - Maybe have a macro that generates both `xxxx` and `xxxx-and-display`
+;;;;     comamnds.
+;;;; - In some cases you are more-or-less duplicating tree-mode commands.
+;;;;   But with differences (in all cases?). Maybe OK.
 
 
 ;;;; Add feature to make tree selection follow file in current buffer.
