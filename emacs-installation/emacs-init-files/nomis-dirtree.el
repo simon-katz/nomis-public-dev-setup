@@ -571,12 +571,18 @@ With prefix argument select `nomis-dirtree-buffer'"
                                                 (not (s-starts-with? root-file
                                                                      s)))
                                               path))))
-                (nomis-dirtree/with-note-selection
-                 (nomis-dirtree-goto-path path)
-                 (when (bound-and-true-p hl-line-mode)
-                   ;; Workaround for bug.
-                   ;; Without this we don't have the highlighting.
-                   (hl-line-mode 1)))))
+                (let* ((err-for-rethrowing nil))
+                  (nomis-dirtree/with-note-selection
+                   (condition-case err
+                       (nomis-dirtree-goto-path path)
+                     (error (setq err-for-rethrowing err))))
+                  (when err-for-rethrowing
+                    (signal (car err-for-rethrowing)
+                            (cdr err-for-rethrowing))))
+                (when (bound-and-true-p hl-line-mode)
+                  ;; Workaround for bug.
+                  ;; Without this we don't have the highlighting.
+                  (hl-line-mode 1))))
           (when return-to-original-window?
             (select-window original-window))))))))
 
