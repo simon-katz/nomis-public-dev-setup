@@ -634,10 +634,11 @@ With prefix argument select `nomis-dirtree-buffer'"
 (defun nomis-dirtree-display-file-and-goto-other-window ()
   "Display contents of file under point in other window."
   (interactive)
-  (let* ((file (nomis-dirtree-selected-file)))
-    (when file
-      (nomis-dirtree-display-file)
-      (find-file-other-window file))))
+  (nomis-dirtree/with-note-selection
+   (let* ((file (nomis-dirtree-selected-file)))
+     (when file
+       (nomis-dirtree-display-file)
+       (find-file-other-window file)))))
 
 (defun nomis-dirtree-display-file-in-new-frame ()
   "Display contents of file under point in other window."
