@@ -797,8 +797,6 @@ and showing previous expansion of subdirectories."
   :body ((tree-mode-next-sib arg)))
 
 (nomis-dirtree/define-command/with-and-without-and-display
-    ;; FIXME This should, like next sibling, stop when there are no previous
-    ;;       siblings. A bug in `tree-mode-previous-sib` I think.
     nomis-dirtree/previous-sib
     nomis-dirtree/previous-sib-and-display
     (arg)
