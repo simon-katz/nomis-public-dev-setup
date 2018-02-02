@@ -21,23 +21,6 @@
 
 ;;;; TODO:
 
-;;;; There are many built in key bindings (eg "j", "k"). You don't record
-;;;; history for those.
-;;;; Define your own commands with the same key bindings.
-;;;; These are they:
-;;;;   - j   tree-mode-next-sib
-;;;;   - k   tree-mode-previous-sib
-;;;;   - n   tree-mode-next-node
-;;;;   - p   tree-mode-previous-node
-;;;;   - r   tree-mode-goto-root
-;;;;   - s   tree-mode-sort-by-tag
-;;;;   - u   tree-mode-goto-parent
-;;;;   - SPC scroll-up
-;;;;   - DEL scroll-down
-;;;; - Also want "-and-display" versions.
-;;;; - In some cases you are more-or-less duplicating tree-mode commands.
-;;;;   But with differences (in all cases?). Maybe OK.
-
 ;;;; Faster history:
 ;;;; - Record buffer positions in the history.
 ;;;; - When navigating history, before the (expensive) current approach, check
@@ -483,20 +466,6 @@ With prefix argument select `nomis-dirtree-buffer'"
 (defun nomis-dirtree-goto-widget (widget)
   (goto-char (widget-get widget :from)))
 
-(defun nomis-dirtree-tree-mode-goto-parent-CAN-DELETE-ME (arg)
-  "Move to parent node.
-   Like `tree-mode-goto-parent`, but throws an exception when there's no parent."
-  (interactive "p")
-  (let ((parent (tree-mode-parent-current-line)))
-    (setq arg (1- arg))
-    (if parent
-        (progn
-          (while (and (> arg 0)
-                      (setq parent (widget-get parent :parent))
-                      (setq arg (1- arg))))
-          (nomis-dirtree-goto-widget parent))
-      (error "No parent!"))))
-
 (defun nomis-dirtree-goto-file-that-is-in-expansion (target-file)
   "If `target-file` is in the tree's expansion, make it the selection.
    Otherwise throw an exception."
@@ -822,6 +791,48 @@ and showing previous expansion of subdirectories."
               (tree-mode-goto-parent arg))))))
 
 (nomis-dirtree/define-command/with-and-without-and-display
+    nomis-dirtree/next-sib
+    nomis-dirtree/next-sib-and-display
+    (arg)
+  :doc-string "Move to next sibling node."
+  :preamble ((interactive "p"))
+  :body ((tree-mode-next-sib arg)))
+
+(nomis-dirtree/define-command/with-and-without-and-display
+    ;; FIXME This should, like next sibling, stop when there are no previous
+    ;;       siblings. A bug in `tree-mode-previous-sib` I think.
+    nomis-dirtree/previous-sib
+    nomis-dirtree/previous-sib-and-display
+    (arg)
+  :doc-string "Move to previous sibling node."
+  :preamble ((interactive "p"))
+  :body ((tree-mode-previous-sib arg)))
+
+(nomis-dirtree/define-command/with-and-without-and-display
+    nomis-dirtree/goto-root
+    nomis-dirtree/goto-root-and-display
+    ()
+  :doc-string "Move to root node"
+  :preamble ((interactive))
+  :body ((tree-mode-goto-root)))
+
+(nomis-dirtree/define-command/with-and-without-and-display
+    nomis-dirtree/scroll-up
+    nomis-dirtree/scroll-up-and-display
+    (arg)
+  :doc-string "Scroll up"
+  :preamble ((interactive "p"))
+  :body ((scroll-up arg)))
+
+(nomis-dirtree/define-command/with-and-without-and-display
+    nomis-dirtree/scroll-down
+    nomis-dirtree/scroll-down-and-display
+    (arg)
+  :doc-string "Scroll down"
+  :preamble ((interactive "p"))
+  :body ((scroll-down arg)))
+
+(nomis-dirtree/define-command/with-and-without-and-display
     nomis-dirtree-history-step-back
     nomis-dirtree-history-step-back-and-display
     ()
@@ -1004,10 +1015,28 @@ Mostly for debugging purposes."
   (dk (kbd "C-<down>")    'nomis-dirtree-next-line-and-display)
   (dk (kbd "<up>")        'nomis-dirtree-previous-line)
   (dk (kbd "C-<up>")      'nomis-dirtree-previous-line-and-display)
+
+  (dk (kbd "n")           'nomis-dirtree-next-line)
+  (dk (kbd "C-n")         'nomis-dirtree-next-line-and-display)
+  (dk (kbd "p")           'nomis-dirtree-previous-line)
+  (dk (kbd "C-p")         'nomis-dirtree-previous-line-and-display)
+  
   (dk (kbd "<right>")     'nomis-dirtree-next-line-with-expansion)
   (dk (kbd "C-<right>")   'nomis-dirtree-next-line-with-expansion-and-display)
+  
   (dk (kbd "<left>")      'nomis-dirtree-up-directory)
   (dk (kbd "C-<left>")    'nomis-dirtree-up-directory-and-display)
+  (dk (kbd "u")           'nomis-dirtree-up-directory)
+  (dk (kbd "C-S-u")       'nomis-dirtree-up-directory-and-display)
+
+  (dk (kbd "j")           'nomis-dirtree/next-sib)
+  (dk (kbd "C-j")         'nomis-dirtree/next-sib-and-display)
+
+  (dk (kbd "k")           'nomis-dirtree/previous-sib)
+  (dk (kbd "C-k")         'nomis-dirtree/previous-sib-and-display)
+
+  (dk (kbd "r")           'nomis-dirtree/goto-root)
+  (dk (kbd "C-S-r")       'nomis-dirtree/goto-root-and-display)
   
   (dk (kbd ",")           'nomis-dirtree-history-step-back)
   (dk (kbd "C-,")         'nomis-dirtree-history-step-back-and-display)
@@ -1018,6 +1047,14 @@ Mostly for debugging purposes."
   (dk (kbd "M-<left>")    'nomis-dirtree-collapse)
   (dk (kbd "M-S-<right>") 'nomis-dirtree-expand-all)
   (dk (kbd "M-S-<left>")  'nomis-dirtree-collapse-all)
+
+  (dk (kbd "<SPC>")       'nomis-dirtree/scroll-up)
+  (dk (kbd "C-<SPC>")     'nomis-dirtree/scroll-up-and-display)
+
+  (dk (kbd "<DEL>")       'nomis-dirtree/scroll-down)
+  (dk (kbd "C-<DEL>")     'nomis-dirtree/scroll-down-and-display)
+  (dk (kbd "<backspace>") 'nomis-dirtree/scroll-down)
+  (dk (kbd "C-<backspace>") 'nomis-dirtree/scroll-down-and-display)
 
   (dk (kbd "H-1")         'nomis-dirtree/show-only-selection)
   (dk (kbd "H-!")         'nomis-dirtree/show-only-selection/collapse-other-trees)
