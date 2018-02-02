@@ -30,13 +30,9 @@
 ;;;; - Use an idle timer.
 ;;;;   - See `nomis-idle-highlight-mode` for stuff to copy.
 
-;;;; - Bug: `nomis-dirtree-history-step-back-and-display`
-;;;;        does the display part when the first part fails.
-;;;;        We need to be thowing errors, probably at all places
-;;;;        where we currenty beep.
-
-;;;; - Navigation with (eg) control key skipping to only files
-;;;;   that were displayed would be good.  (Right?)
+;;;; - Bug: `xxxx-and-display` commands do the display part when the first part
+;;;;        fails. We need to be throwing errors, probably at all places where
+;;;;        we currenty beep.
 
 ;;;; - Look into the Tree menu.
 ;;;;   - Is stuff not as it says?
