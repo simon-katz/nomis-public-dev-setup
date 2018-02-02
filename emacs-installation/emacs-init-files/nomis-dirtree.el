@@ -353,7 +353,7 @@ With prefix argument select `nomis-dirtree-buffer'"
 (defun nomis-dirtree-widget-tag (widget)
   (widget-get widget :tag))
 
-(defun nomis-dirtree-parent-widget (widget)
+(defun nomis-dirtree-widget-parent (widget)
   (assert (nomis-dirtree/widget? widget))
   (widget-get widget :parent))
 
@@ -394,7 +394,7 @@ With prefix argument select `nomis-dirtree-buffer'"
                (if (nomis-dirtree-root-p w)
                    (list w)
                  (cons w
-                       (-> (nomis-dirtree-parent-widget w)
+                       (-> (nomis-dirtree-widget-parent w)
                            helper)))))
     (-> (helper widget)
         reverse)))
@@ -403,7 +403,7 @@ With prefix argument select `nomis-dirtree-buffer'"
   (if (nomis-dirtree-root-p widget)
       widget
     (-> widget
-        nomis-dirtree-parent-widget
+        nomis-dirtree-widget-parent
         nomis-dirtree-root-widget)))
 
 (defun nomis-dirtree-file-path ()
@@ -800,7 +800,7 @@ and showing previous expansion of subdirectories."
   :preamble ((interactive "p"))
   :body ((let* ((selected-widget (nomis-dirtree-selected-widget/with-extras)))
            (if (eql (-> selected-widget
-                        nomis-dirtree-parent-widget
+                        nomis-dirtree-widget-parent
                         nomis-dirtree-widget-children
                         first)
                     selected-widget)
