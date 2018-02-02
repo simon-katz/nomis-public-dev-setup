@@ -35,11 +35,13 @@
 ;;;;   - SPC scroll-up
 ;;;;   - DEL scroll-down
 ;;;; - Also want "-and-display" versions.
-;;;;   - Maybe have a macro that generates both `xxxx` and `xxxx-and-display`
-;;;;     comamnds.
 ;;;; - In some cases you are more-or-less duplicating tree-mode commands.
 ;;;;   But with differences (in all cases?). Maybe OK.
 
+;;;; Faster history:
+;;;; - Record buffer positions in the history.
+;;;; - When navigating history, before the (expensive) current approach, check
+;;;;   whether the recorded point's widget is the one you want.
 
 ;;;; Add feature to make tree selection follow file in current buffer.
 ;;;; - Use an idle timer.
@@ -602,6 +604,46 @@ With prefix argument select `nomis-dirtree-buffer'"
 ;;;; ---------------------------------------------------------------------------
 ;;;; User-visible commands.
 
+(defun nomis-dirtree-display-file* ()
+  "Display contents of file under point in other window."
+  (save-selected-window
+    (let* ((file (nomis-dirtree-selected-file)))
+      (when file
+        (find-file-other-window file)))))
+
+(cl-defmacro nomis-dirtree/define-command/with-and-without-and-display
+    (name
+     name-for-and-display
+     args
+     &key
+     doc-string
+     preamble
+     body
+     no-record-history?)
+  (declare (indent 3))
+  (let* ((doc-string (concat doc-string
+                             (unless no-record-history?
+                               "
+Record history -- record the selection before and after moving around."))))
+    `(progn
+       (defun ,name (,@args)
+         ,doc-string
+         ,@preamble
+         (cl-labels ((do-it
+                      ()
+                      ,@body))
+           ,(if no-record-history?
+                `(do-it)
+              `(nomis-dirtree/with-note-selection
+                (do-it)))))
+       (defun ,name-for-and-display (,@args)
+         ,(concat doc-string
+                  "
+Then display contents of file under point in other window.")
+         ,@preamble
+         (,name ,@args)
+         (nomis-dirtree-display-file*)))))
+
 (defun nomis-dirtree/goto-file* (return-to-original-window?)
   (let* ((dirtree-window (nomis/find-window-in-frame nomis-dirtree-buffer))
          (dirtree-buffer (when dirtree-window
@@ -655,10 +697,7 @@ With prefix argument select `nomis-dirtree-buffer'"
   "Display contents of file under point in other window."
   (interactive)
   (nomis-dirtree/with-note-selection
-   (save-selected-window
-     (let* ((file (nomis-dirtree-selected-file)))
-       (when file
-         (find-file-other-window file))))))
+   (nomis-dirtree-display-file*)))
 
 (defun nomis-dirtree-display-file-and-goto-other-window ()
   "Display contents of file under point in other window."
@@ -686,43 +725,33 @@ With prefix argument select `nomis-dirtree-buffer'"
      (when file
        (shell-command (concat "open \"" file "\""))))))
 
-(defun nomis-dirtree-next-line (arg)
-  "Move down <arg> lines."
-  (interactive "p")
-  (nomis-dirtree/with-note-selection
-   (let* ((on-last-line? (= (1- (point-max))
-                            (save-excursion
-                              (end-of-line)
-                              (point)))))
-     (if on-last-line?
-         (error "Can't move forward from last line.")
-       (tree-mode-next-node arg)))))
+(nomis-dirtree/define-command/with-and-without-and-display
+    nomis-dirtree-next-line
+    nomis-dirtree-next-line-and-display
+    (arg)
+  :doc-string "Move down <arg> lines."
+  :preamble ((interactive "p"))
+  :body ((let* ((on-last-line? (= (1- (point-max))
+                                  (save-excursion
+                                    (end-of-line)
+                                    (point)))))
+           (if on-last-line?
+               (error "Can't move forward from last line.")
+             (tree-mode-next-node arg)))))
 
-(defun nomis-dirtree-next-line-and-display (arg)
-  "Move down <arg> lines.
-Then display contents of file under point in other window."
-  (interactive "p")
-  (nomis-dirtree-next-line arg)
-  (nomis-dirtree-display-file))
-
-(defun nomis-dirtree-previous-line (arg)
-  "Move up <arg> lines."
-  (interactive "p")
-  (nomis-dirtree/with-note-selection
-   (let* ((on-first-line? (= 1
-                             (save-excursion
-                               (beginning-of-line)
-                               (point)))))
-     (if on-first-line?
-         (error "Can't move up from first line.")
-       (tree-mode-previous-node arg)))))
-
-(defun nomis-dirtree-previous-line-and-display (arg)
-  "Move up <arg> lines.
-Then display contents of file under point in other window."
-  (interactive "p")
-  (nomis-dirtree-previous-line arg)
-  (nomis-dirtree-display-file))
+(nomis-dirtree/define-command/with-and-without-and-display
+    nomis-dirtree-previous-line
+    nomis-dirtree-previous-line-and-display
+    (arg)
+  :doc-string "Move up <arg> lines."
+  :preamble ((interactive "p"))
+  :body ((let* ((on-first-line? (= 1
+                                   (save-excursion
+                                     (beginning-of-line)
+                                     (point)))))
+           (if on-first-line?
+               (error "Can't move up from first line.")
+             (tree-mode-previous-node arg)))))
 
 (defun nomis-dirtree-expand-widget-y-or-n-p (widget)
   (nomis/y-or-n-p-with-quit->nil
@@ -731,6 +760,21 @@ Then display contents of file under point in other window."
            "\"?"
            " It's a directory I'd normally keep collapsed."
            " ")))
+
+(defvar *nomis-dirtree/no-inverse/flash-time*
+  0.5
+  "For use as an arg to `nomis/grab-user-attention/low`.
+Example of use:
+The user pressed the right arrow (or whatever), but we won't
+be droping into a subdirectory.
+The natural \"inverse\" operation (pressing the left arrow (or
+whatever)), will not take the user back to where they came from.
+This is intended to alert the user to that.
+
+Note:
+Making this number too small means that the flash might not be seen.
+I noticed this with the \"and-display\" commands. Maybe switching
+windows mucks things up.")
 
 (defun nomis-dirtree-next-line-with-expansion* (arg)
   (unless (< arg 1)
@@ -746,81 +790,59 @@ Then display contents of file under point in other window."
                    (nomis-dirtree-widget-children widget)))
             nil
           (progn
-            ;; The user pressed the right arrow (or whatever), but we won't
-            ;; be droping into a subdirectory.
-            ;; The natural "inverse" operation (pressing the left arrow (or
-            ;; whatever)), will not take the user back to where they came from.
-            ;; This is intended to alert the user to that.
-            (nomis/grab-user-attention/low 0.01)))
+            (nomis/grab-user-attention/low *nomis-dirtree/no-inverse/flash-time*)))
         (nomis-dirtree-next-line 1)
         (nomis-dirtree-next-line-with-expansion* (1- arg))))))
 
-(defun nomis-dirtree-next-line-with-expansion (arg)
+(nomis-dirtree/define-command/with-and-without-and-display
+    nomis-dirtree-next-line-with-expansion
+    nomis-dirtree-next-line-with-expansion-and-display
+    (arg)
+  :doc-string
   "Move down <arg> lines, expanding any encountered collapsed directories
 and showing previous expansion of subdirectories."
-  (interactive "p")
-  (nomis-dirtree/with-note-selection
-   (nomis-dirtree-next-line-with-expansion* arg)))
+  :preamble ((interactive "p"))
+  :body ((nomis-dirtree-next-line-with-expansion* arg)))
 
-(defun nomis-dirtree-next-line-with-expansion-and-display (arg)
-  "Move down <arg> lines, expanding any encountered collapsed directories
-and showing previous expansion of subdirectories.
-Then display contents of file under point in other window."
-  (interactive "p")
-  (nomis-dirtree-next-line-with-expansion arg)
-  (nomis-dirtree-display-file))
+(nomis-dirtree/define-command/with-and-without-and-display
+    nomis-dirtree-up-directory
+    nomis-dirtree-up-directory-and-display
+    (arg)
+  :doc-string "Move to parent directory. Repeat <arg> times if <arg> supplied."
+  :preamble ((interactive "p"))
+  :body ((if (nomis-dirtree-root-p (nomis-dirtree-selected-widget/with-extras))
+             (progn
+               (message "Already at root.")
+               (beep))
+           (progn
+             (nomis-dirtree/with-note-selection
+              (tree-mode-goto-parent arg))))))
 
-(defun nomis-dirtree-up-directory (arg)
-  "Move to parent directory. Repeat <arg> times if <arg> supplied.
-Then add the then-current line to the history."
-  (interactive "p")
-  (if (nomis-dirtree-root-p (nomis-dirtree-selected-widget/with-extras))
-      (progn
-        (message "Already at root.")
-        (beep))
-    (progn
-      (nomis-dirtree/with-note-selection
-       (tree-mode-goto-parent arg)))))
+(nomis-dirtree/define-command/with-and-without-and-display
+    nomis-dirtree-history-step-back
+    nomis-dirtree-history-step-back-and-display
+    ()
+  :no-record-history? t
+  :doc-string "Go back in history."
+  :preamble ((interactive))
+  :body ((if (nomis-dirtree-no-history?)
+             (progn
+               (beep)
+               (message "There is no history [...] (Karl Popper)"))
+           (nomis-dirtree-history-step-back-impl))))
 
-(defun nomis-dirtree-up-directory-and-display (arg)
-  "Move to parent directory. Repeat <arg> times if <arg> supplied.
-Then add the then-current line to the history.
-Then display contents of file under point in other window."
-  (interactive "p")
-  (nomis-dirtree-up-directory arg)
-  (nomis-dirtree-display-file))
-
-(defun nomis-dirtree-history-step-back ()
-  "Go back in history."
-  (interactive)
-  (if (nomis-dirtree-no-history?)
-      (progn
-        (beep)
-        (message "There is no history [...] (Karl Popper)"))
-    (nomis-dirtree-history-step-back-impl)))
-
-(defun nomis-dirtree-history-step-forward ()
-  "Go forward in history."
-  (interactive)
-  (if (nomis-dirtree-no-future?)
-      (progn
-        (beep)
-        (message "There is no future [...] (Nelson Mandela)"))
-    (nomis-dirtree-history-step-forward-impl)))
-
-(defun nomis-dirtree-history-step-back-and-display ()
-  "Go back in history.
-Then display contents of file under point in other window."
-  (interactive)
-  (nomis-dirtree-history-step-back)
-  (nomis-dirtree-display-file))
-
-(defun nomis-dirtree-history-step-forward-and-display ()
-  "Go forward in history.
-Then display contents of file under point in other window."
-  (interactive)
-  (nomis-dirtree-history-step-forward)
-  (nomis-dirtree-display-file))
+(nomis-dirtree/define-command/with-and-without-and-display
+    nomis-dirtree-history-step-forward
+    nomis-dirtree-history-step-forward-and-display
+    ()
+  :no-record-history? t
+  :doc-string "Go forward in history."
+  :preamble ((interactive))
+  :body ((if (nomis-dirtree-no-future?)
+             (progn
+               (beep)
+               (message "There is no future [...] (Nelson Mandela)"))
+           (nomis-dirtree-history-step-forward-impl))))
 
 (defun nomis-dirtree-expand (arg)
   "Expand directory under point, showing previous expansion of subdirectories.
