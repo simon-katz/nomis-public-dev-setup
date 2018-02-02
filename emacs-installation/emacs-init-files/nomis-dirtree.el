@@ -612,6 +612,9 @@ With prefix argument select `nomis-dirtree-buffer'"
         (find-file-other-window file)))))
 
 (cl-defmacro nomis-dirtree/define-command/with-and-without-and-display
+    ;; FIXME Can you make M-. work for the `name-for-and-display` function?
+    ;;       See `find-function-regexp-alist` for pointers.
+    ;;       I found a reference to that at https://emacs.stackexchange.com/questions/31042/how-can-i-record-where-a-function-is-defined-if-its-done-indirectly
     (name
      name-for-and-display
      args
