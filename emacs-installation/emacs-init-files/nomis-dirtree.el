@@ -1011,21 +1011,21 @@ Mostly for debugging purposes."
   (dk (kbd "o")           'nomis-dirtree-open-in-default-app)
 
   (dk (kbd "<down>")      'nomis-dirtree-next-line)
-  (dk (kbd "C-<down>")    'nomis-dirtree-next-line-and-display)
-  (dk (kbd "<up>")        'nomis-dirtree-previous-line)
-  (dk (kbd "C-<up>")      'nomis-dirtree-previous-line-and-display)
-
   (dk (kbd "n")           'nomis-dirtree-next-line)
+  (dk (kbd "C-<down>")    'nomis-dirtree-next-line-and-display)
   (dk (kbd "C-n")         'nomis-dirtree-next-line-and-display)
+
+  (dk (kbd "<up>")        'nomis-dirtree-previous-line)
   (dk (kbd "p")           'nomis-dirtree-previous-line)
+  (dk (kbd "C-<up>")      'nomis-dirtree-previous-line-and-display)
   (dk (kbd "C-p")         'nomis-dirtree-previous-line-and-display)
   
   (dk (kbd "<right>")     'nomis-dirtree-next-line-with-expansion)
   (dk (kbd "C-<right>")   'nomis-dirtree-next-line-with-expansion-and-display)
   
   (dk (kbd "<left>")      'nomis-dirtree-up-directory)
-  (dk (kbd "C-<left>")    'nomis-dirtree-up-directory-and-display)
   (dk (kbd "u")           'nomis-dirtree-up-directory)
+  (dk (kbd "C-<left>")    'nomis-dirtree-up-directory-and-display)
   (dk (kbd "C-S-u")       'nomis-dirtree-up-directory-and-display)
 
   (dk (kbd "j")           'nomis-dirtree/next-sib)
@@ -1051,8 +1051,8 @@ Mostly for debugging purposes."
   (dk (kbd "C-<SPC>")     'nomis-dirtree/scroll-up-and-display)
 
   (dk (kbd "<DEL>")       'nomis-dirtree/scroll-down)
-  (dk (kbd "C-<DEL>")     'nomis-dirtree/scroll-down-and-display)
   (dk (kbd "<backspace>") 'nomis-dirtree/scroll-down)
+  (dk (kbd "C-<DEL>")     'nomis-dirtree/scroll-down-and-display)
   (dk (kbd "C-<backspace>") 'nomis-dirtree/scroll-down-and-display)
 
   (dk (kbd "H-1")         'nomis-dirtree/show-only-selection)
