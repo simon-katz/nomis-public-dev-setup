@@ -357,6 +357,10 @@ With prefix argument select `nomis-dirtree-buffer'"
 (defun nomis-dirtree-widget-tag (widget)
   (widget-get widget :tag))
 
+(defun nomis-dirtree-parent-widget (widget)
+  (assert (nomis-dirtree/widget? widget))
+  (widget-get widget :parent))
+
 (defun nomis-dirtree-widget-children/all (widget)
   (widget-get widget :children))
 
@@ -387,10 +391,6 @@ With prefix argument select `nomis-dirtree-buffer'"
   (assert (nomis-dirtree/widget? widget))
   (plist-get (rest widget)
              :nomis-root))
-
-(defun nomis-dirtree-parent-widget (widget)
-  (assert (nomis-dirtree/widget? widget))
-  (widget-get widget :parent))
 
 (defun nomis-dirtree-widget-path (widget)
   (cl-labels ((helper
@@ -452,7 +452,7 @@ With prefix argument select `nomis-dirtree-buffer'"
     (nomis/filename->path-from-a-root filename
                                       root-file)))
 
-(defun nomis-dirtree/refresh () ; FIXME Is this called only when it should be? Draw a call tree, at least in your head. (I'm too tored ATM.)
+(defun nomis-dirtree/refresh () ; FIXME Is this called only when it should be? Draw a call tree, at least in your head. (I'm too tired ATM.)
   (mapc #'tree-mode-reflesh-tree
         tree-mode-list))
 
@@ -804,7 +804,14 @@ and showing previous expansion of subdirectories."
     (arg)
   :doc-string "Move to previous sibling node."
   :preamble ((interactive "p"))
-  :body ((tree-mode-previous-sib arg)))
+  :body ((let* ((selected-widget (nomis-dirtree-selected-widget/with-extras)))
+           (if (eql (-> selected-widget
+                        nomis-dirtree-parent-widget
+                        nomis-dirtree-widget-children
+                        first)
+                    selected-widget)
+               (message "No previous siblings")
+             (tree-mode-previous-sib arg)))))
 
 (nomis-dirtree/define-command/with-and-without-and-display
     nomis-dirtree/goto-root
