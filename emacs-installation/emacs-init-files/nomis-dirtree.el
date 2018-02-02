@@ -668,34 +668,34 @@ Then display contents of file under point in other window.")
 (defun nomis-dirtree-display-file ()
   "Display contents of file under point in other window."
   (interactive)
-  (nomis-dirtree/with-note-selection
-   (nomis-dirtree-display-file*)))
+  (nomis-dirtree-note-selection)
+  (nomis-dirtree-display-file*))
 
 (defun nomis-dirtree-display-file-and-goto-other-window ()
   "Display contents of file under point in other window."
   (interactive)
-  (nomis-dirtree/with-note-selection
-   (let* ((file (nomis-dirtree-selected-file)))
-     (when file
-       (nomis-dirtree-display-file)
-       (find-file-other-window file)))))
+  (nomis-dirtree-note-selection)
+  (let* ((file (nomis-dirtree-selected-file)))
+    (when file
+      (nomis-dirtree-display-file)
+      (find-file-other-window file))))
 
 (defun nomis-dirtree-display-file-in-new-frame ()
   "Display contents of file under point in other window."
   (interactive)
-  (nomis-dirtree/with-note-selection
-   (save-selected-window
-     (let* ((file (nomis-dirtree-selected-file)))
-       (when file
-         (find-file-other-frame file))))))
+  (nomis-dirtree-note-selection)
+  (save-selected-window
+    (let* ((file (nomis-dirtree-selected-file)))
+      (when file
+        (find-file-other-frame file)))))
 
 (defun nomis-dirtree-open-in-default-app ()
   "Open file under point using its default app."
   (interactive)
-  (nomis-dirtree/with-note-selection
-   (let* ((file (nomis-dirtree-selected-file)))
-     (when file
-       (shell-command (concat "open \"" file "\""))))))
+  (nomis-dirtree-note-selection)
+  (let* ((file (nomis-dirtree-selected-file)))
+    (when file
+      (shell-command (concat "open \"" file "\"")))))
 
 (nomis-dirtree/define-command/with-and-without-and-display
     nomis-dirtree-next-line
@@ -786,9 +786,7 @@ and showing previous expansion of subdirectories."
              (progn
                (message "Already at root.")
                (beep))
-           (progn
-             (nomis-dirtree/with-note-selection
-              (tree-mode-goto-parent arg))))))
+           (tree-mode-goto-parent arg))))
 
 (nomis-dirtree/define-command/with-and-without-and-display
     nomis-dirtree/next-sib
