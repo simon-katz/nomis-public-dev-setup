@@ -460,10 +460,6 @@ With prefix argument select `nomis/dirtree/buffer'"
     (nomis/filename->path-from-a-root filename
                                       root-file)))
 
-(defun nomis/dirtree/refresh ()
-  (mapc #'nomis/dirtree/refresh-tree
-        tree-mode-list))
-
 (defun nomis/dirtree/collapse-recursively-all-trees ()
   (mapc #'collapse-recursively
         tree-mode-list))
@@ -475,7 +471,13 @@ With prefix argument select `nomis/dirtree/buffer'"
   (tree-mode-goto-root))
 
 (defun nomis/dirtree/refresh-tree (tree)
-  (tree-mode-reflesh-tree tree))
+  (nomis/dirtree/with-return-to-selected-file ; because refresh sometimes jumps us to mad and/or bad place
+   (tree-mode-reflesh-tree tree)))
+
+(defun nomis/dirtree/refresh ()
+  (nomis/dirtree/with-return-to-selected-file ; because refresh sometimes jumps us to mad and/or bad place
+   (mapc #'tree-mode-reflesh-tree
+         tree-mode-list)))
 
 ;;;; ---------------------------------------------------------------------------
 ;;;; Navigation
@@ -957,8 +959,7 @@ sub-subdirectories, etc, so that subsequent expansion shows only one level."
   (interactive)
   (setq nomis/dirtree/dirs-at-top?
         (not nomis/dirtree/dirs-at-top?))
-  (nomis/dirtree/with-return-to-selected-file
-   (nomis/dirtree/refresh)))
+  (nomis/dirtree/refresh))
 
 (defun nomis/dirtree/show-widget-info (widget)
   (cl-labels ((emit-info
