@@ -499,7 +499,6 @@ With prefix argument select `nomis/dirtree/buffer'"
 
 (defun nomis/dirtree/goto-path (path)
   (nomis/dirtree/debug-message "Going to %s" (first (last path)))
-  (nomis/dirtree/refresh-tree (nomis/dirtree/root-widget-no-arg))
   ;; Usually a refresh leaves the cursor at the same place, but sometimes a
   ;; refresh moves the cursor, and sometimes to a nasty place on the last line
   ;; with `tree-mode-next-node` not moving the cursor to the first line (a
@@ -508,7 +507,6 @@ With prefix argument select `nomis/dirtree/buffer'"
   ;; (I can't see a pattern, but never mind.)
   ;; Possible solutions:
   ;;   (1) Maybe we could not do the refresh.
-  ;;       No.
   ;;   (2) Maybe there's a way to recover the selection after the refresh.
   ;;       I can't think of a way ATM.
   ;;   (3) Instead of cycling around the buffer from the current position
@@ -517,9 +515,20 @@ With prefix argument select `nomis/dirtree/buffer'"
   ;;       be to the node just below the current one).
   ;;   (4) Stay on the current line but make sure we are in a good state.
   ;;       This is what we are doing.
-  (case 4
-    (3 (nomis/dirtree/goto-root/impl))
-    (4 (nomis/dirtree/goto-widget (nomis/dirtree/selected-widget/with-extras))))
+  (labels ((refresh
+            ()
+            (nomis/dirtree/refresh-tree
+             (nomis/dirtree/root-widget-no-arg))))
+    (case 4
+      (0
+       ;; Original broken version
+       (refresh))
+      (1
+       )
+      (3 (refresh)
+         (nomis/dirtree/goto-root/impl))
+      (4 (refresh)
+         (nomis/dirtree/goto-widget (nomis/dirtree/selected-widget/with-extras)))))
   (cl-loop for (f . r) on path
            do (progn
                 (nomis/dirtree/goto-file-that-is-in-expansion f)
