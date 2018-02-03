@@ -27,7 +27,6 @@
 ;;;;   whether the recorded point's widget is the one you want.
 
 ;;;; Auto-refreshing:
-;;;; - Refresh when you fail to find a file.
 ;;;; - Maybe auto-refresh every so often.
 ;;;;   - But be mindful of potential interactions if there is any idleness
 ;;;;     when doing things with widgets.
@@ -478,7 +477,7 @@ With prefix argument select `nomis/dirtree/buffer'"
     (nomis/dirtree/goto-file-that-is-in-expansion file-to-return-to)
     res))
 
-(defmacro nomis/dirtree/with-return-to-selected-file (&rest body) ; FIXME Move macro def to above calls!!!
+(defmacro nomis/dirtree/with-return-to-selected-file (&rest body)
   `(nomis/dirtree/with-return-to-selected-file-fun (lambda () ,@body)))
 
 (defun nomis/dirtree/goto-root/impl ()
@@ -499,6 +498,12 @@ With prefix argument select `nomis/dirtree/buffer'"
 (defun nomis/dirtree/goto-widget (widget)
   (goto-char (widget-get widget :from)))
 
+(defun nomis/dirtree/goto-selected-widget ()
+  ;; Maybe useful in cases where selection has got screwed. (But I think you
+  ;; have fixed those -- it was to do with refresh screwing things up, and now
+  ;; you do a return-to-selected-file when refreshing.)
+  (nomis/dirtree/goto-widget (nomis/dirtree/selected-widget/with-extras)))
+
 (defun nomis/dirtree/goto-file-that-is-in-expansion (target-file)
   "If `target-file` is in the tree's expansion, make it the selection.
    Otherwise throw an exception."
@@ -512,16 +517,11 @@ With prefix argument select `nomis/dirtree/buffer'"
                 (when (equal start-file
                              (nomis/dirtree/selected-file))
                   (error "Couldn't find target-file %s" target-file))))))
+    ;; Search. If we fail to find to find `target-file` refresh and try again.
     (condition-case err-1
-        ;; Do initial search.
         (search)
       (error
-       ;; We didn't find what we were after.
-       ;; Do refresh...
        (nomis/dirtree/refresh-tree (nomis/dirtree/root-widget-no-arg))
-       ;; FIXME Need a new function that does the below
-       ;; (nomis/dirtree/goto-widget (nomis/dirtree/selected-widget/with-extras))
-       ;; ...and try again.
        (search)))))
 
 (defun nomis/dirtree/goto-path (path)
