@@ -467,6 +467,20 @@ With prefix argument select `nomis/dirtree/buffer'"
 ;;;; ---------------------------------------------------------------------------
 ;;;; (More) Wrappers for tree mode stuff --  FIXME Search for all "tree-mode"
 
+(defun nomis/dirtree/with-return-to-selected-file-fun (fun)
+  (let* ((file-to-return-to
+          (case 2
+            (1 (-> (tree-mode-icon-current-line)
+                   (widget-get :node)
+                   nomis/dirtree/widget-file))
+            (2 (nomis/dirtree/selected-file))))
+         (res (funcall fun)))
+    (nomis/dirtree/goto-file-that-is-in-expansion file-to-return-to)
+    res))
+
+(defmacro nomis/dirtree/with-return-to-selected-file (&rest body) ; FIXME Move macro def to above calls!!!
+  `(nomis/dirtree/with-return-to-selected-file-fun (lambda () ,@body)))
+
 (defun nomis/dirtree/goto-root/impl ()
   (tree-mode-goto-root))
 
@@ -496,20 +510,6 @@ With prefix argument select `nomis/dirtree/buffer'"
       (when (equal start-file
                    (nomis/dirtree/selected-file))
         (error "Couldn't find target-file %s" target-file)))))
-
-(defun nomis/dirtree/with-return-to-selected-file-fun (fun)
-  (let* ((file-to-return-to
-          (case 2
-            (1 (-> (tree-mode-icon-current-line)
-                   (widget-get :node)
-                   nomis/dirtree/widget-file))
-            (2 (nomis/dirtree/selected-file))))
-         (res (funcall fun)))
-    (nomis/dirtree/goto-file-that-is-in-expansion file-to-return-to)
-    res))
-
-(defmacro nomis/dirtree/with-return-to-selected-file (&rest body)
-  `(nomis/dirtree/with-return-to-selected-file-fun (lambda () ,@body)))
 
 (defun nomis/dirtree/goto-path (path)
   (nomis/dirtree/debug-message "Going to %s" (first (last path)))
