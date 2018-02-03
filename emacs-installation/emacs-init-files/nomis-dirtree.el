@@ -496,7 +496,7 @@ With prefix argument select `nomis/dirtree/buffer'"
 
 (defun nomis/dirtree/goto-path (path)
   (nomis/dirtree/debug-message "Going to %s" (first (last path)))
-  (nomis/dirtree/refresh) ; FIXME Change this to: (tree-mode-reflesh-tree (nomis/dirtree/root-widget-no-arg))
+  (tree-mode-reflesh-tree (nomis/dirtree/root-widget-no-arg))
   ;; Usually a refresh leaves the cursor at the same place, but sometimes a
   ;; refresh moves the cursor, and sometimes to a nasty place on the last line
   ;; with `tree-mode-next-node` not moving the cursor to the first line (a
