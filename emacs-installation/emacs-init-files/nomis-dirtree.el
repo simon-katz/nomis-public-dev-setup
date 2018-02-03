@@ -449,7 +449,7 @@ With prefix argument select `nomis/dirtree/buffer'"
                                       root-file)))
 
 (defun nomis/dirtree/refresh () ; FIXME Is this called only when it should be? Draw a call tree, at least in your head. (I'm too tired ATM.)
-  (mapc #'tree-mode-reflesh-tree
+  (mapc #'nomis/dirtree/refresh-tree
         tree-mode-list))
 
 (defun nomis/dirtree/collapse-recursively-all-trees ()
@@ -457,10 +457,13 @@ With prefix argument select `nomis/dirtree/buffer'"
         tree-mode-list))
 
 ;;;; ---------------------------------------------------------------------------
-;;;; Impl functions
+;;;; (More) Wrappers for tree mode stuff --  FIXME Search for all "tree-mode"
 
 (defun nomis/dirtree/goto-root/impl ()
   (tree-mode-goto-root))
+
+(defun nomis/dirtree/refresh-tree (tree)
+  (tree-mode-reflesh-tree tree))
 
 ;;;; ---------------------------------------------------------------------------
 ;;;; Navigation
@@ -496,7 +499,7 @@ With prefix argument select `nomis/dirtree/buffer'"
 
 (defun nomis/dirtree/goto-path (path)
   (nomis/dirtree/debug-message "Going to %s" (first (last path)))
-  (tree-mode-reflesh-tree (nomis/dirtree/root-widget-no-arg))
+  (nomis/dirtree/refresh-tree (nomis/dirtree/root-widget-no-arg))
   ;; Usually a refresh leaves the cursor at the same place, but sometimes a
   ;; refresh moves the cursor, and sometimes to a nasty place on the last line
   ;; with `tree-mode-next-node` not moving the cursor to the first line (a
