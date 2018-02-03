@@ -26,6 +26,18 @@
 ;;;; - When navigating history, before the (expensive) current approach, check
 ;;;;   whether the recorded point's widget is the one you want.
 
+;;;; Auto-refreshing:
+;;;; - Refresh when you fail to find a file.
+;;;; - Maybe auto-refresh every so often.
+;;;;   - But be mindful of potential interactions if there is any idleness
+;;;;     when doing things with widgets.
+
+;;;; Key bindings:
+;;;; - Add more wrappers for tree-mode commands and/or add your own key
+;;;;   bindings, so that you have more commands findable with the
+;;;;   `nomis/dirtree/` prefix.
+;;;;   - eg Add "g" key binding for `nomis/dirtree/refresh-tree`
+
 ;;;; Add feature to make tree selection follow file in current buffer.
 ;;;; - Use an idle timer.
 ;;;;   - See `nomis-idle-highlight-mode` for stuff to copy.
@@ -448,7 +460,7 @@ With prefix argument select `nomis/dirtree/buffer'"
     (nomis/filename->path-from-a-root filename
                                       root-file)))
 
-(defun nomis/dirtree/refresh () ; FIXME Is this called only when it should be? Draw a call tree, at least in your head. (I'm too tired ATM.)
+(defun nomis/dirtree/refresh ()
   (mapc #'nomis/dirtree/refresh-tree
         tree-mode-list))
 
