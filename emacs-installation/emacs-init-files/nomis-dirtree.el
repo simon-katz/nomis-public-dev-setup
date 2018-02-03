@@ -502,14 +502,27 @@ With prefix argument select `nomis/dirtree/buffer'"
 (defun nomis/dirtree/goto-file-that-is-in-expansion (target-file)
   "If `target-file` is in the tree's expansion, make it the selection.
    Otherwise throw an exception."
-  (let* ((start-file (nomis/dirtree/selected-file)))
-    (while (not (equal target-file
-                       (nomis/dirtree/selected-file)))
-      (ignore-errors ; so we cycle around at end of buffer
-        (tree-mode-next-node 1))
-      (when (equal start-file
-                   (nomis/dirtree/selected-file))
-        (error "Couldn't find target-file %s" target-file)))))
+  (labels ((search
+            ()
+            (let* ((start-file (nomis/dirtree/selected-file)))
+              (while (not (equal target-file
+                                 (nomis/dirtree/selected-file)))
+                (ignore-errors ; so we cycle around at end of buffer
+                  (tree-mode-next-node 1))
+                (when (equal start-file
+                             (nomis/dirtree/selected-file))
+                  (error "Couldn't find target-file %s" target-file))))))
+    (condition-case err-1
+        ;; Do initial search.
+        (search)
+      (error
+       ;; We didn't find what we were after.
+       ;; Do refresh...
+       (nomis/dirtree/refresh-tree (nomis/dirtree/root-widget-no-arg))
+       ;; FIXME Need a new function that does the below
+       ;; (nomis/dirtree/goto-widget (nomis/dirtree/selected-widget/with-extras))
+       ;; ...and try again.
+       (search)))))
 
 (defun nomis/dirtree/goto-path (path)
   (nomis/dirtree/debug-message "Going to %s" (first (last path)))
