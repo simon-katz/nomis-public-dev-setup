@@ -849,7 +849,7 @@ and showing previous expansion of subdirectories."
     ()
   :doc-string "Move to root node"
   :preamble ((interactive))
-  :body (nomis/dirtree/goto-root/impl))
+  :body ((nomis/dirtree/goto-root/impl)))
 
 (nomis/dirtree/define-command/with-and-without-and-display
     nomis/dirtree/scroll-up
