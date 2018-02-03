@@ -488,6 +488,7 @@ With prefix argument select `nomis/dirtree/buffer'"
    (tree-mode-reflesh-tree tree)))
 
 (defun nomis/dirtree/refresh ()
+  (interactive)
   (nomis/dirtree/with-return-to-selected-file ; because refresh sometimes jumps us to mad and/or bad place
    (mapc #'tree-mode-reflesh-tree
          tree-mode-list)))
@@ -1038,6 +1039,9 @@ Mostly for debugging purposes."
                 (define-key nomis/dirtree/mode-map k f)))
 
   (define-key widget-keymap (kbd "<RET>") nil)
+
+  (dk (kbd "g")             'nomis/dirtree/refresh)  
+  
   (dk (kbd "<RET>")         'nomis/dirtree/display-file)
   (dk (kbd "C-<return>")    'nomis/dirtree/display-file)
   (dk (kbd "S-<return>")    'nomis/dirtree/display-file-and-goto-other-window)
