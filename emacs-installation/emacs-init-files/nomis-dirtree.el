@@ -515,11 +515,13 @@ With prefix argument select `nomis/dirtree/buffer'"
   ;;       be to the node just below the current one).
   ;;   (4) Stay on the current line but make sure we are in a good state.
   ;;       This is what we are doing.
+  ;; Actually, the refresh slows things down hugely when you have lots of stuff
+  ;; expanded. So don't refresh.
   (labels ((refresh
             ()
             (nomis/dirtree/refresh-tree
              (nomis/dirtree/root-widget-no-arg))))
-    (case 4
+    (case 1
       (0
        ;; Original broken version
        (refresh))
