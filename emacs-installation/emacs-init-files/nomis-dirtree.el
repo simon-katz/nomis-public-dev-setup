@@ -319,7 +319,10 @@ With prefix argument select `nomis/dirtree/buffer'"
 ;;;; Widget and file stuff.
 
 ;;;; FIXME Would be nice to have clearer separation of the widget and
-;;;        file domains.
+;;;;       file domains.
+
+;;;; FIXME Make with-arg and no-arg versions of everything use consistent
+;;;;       naming.
 
 (defun nomis/dirtree/expanded? (widget)
   (widget-get widget :open))
@@ -422,7 +425,7 @@ With prefix argument select `nomis/dirtree/buffer'"
        nomis/dirtree/widget-path
        (-map #'nomis/dirtree/widget-file)))
 
-(defun nomis/dirtree/root-widget-no-arg () ; FIXME Make with-arg and no-arg versions of everything use consistent naming
+(defun nomis/dirtree/root-widget-no-arg ()
   (-> (nomis/dirtree/selected-widget/with-extras)
       nomis/dirtree/root-widget))
 
