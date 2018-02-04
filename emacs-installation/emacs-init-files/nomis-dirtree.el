@@ -474,8 +474,13 @@ With prefix argument select `nomis/dirtree/buffer'"
                    nomis/dirtree/widget-file))
             (2 (nomis/dirtree/selected-file))))
          (res (funcall fun)))
-    (nomis/dirtree/goto-file-that-is-in-expansion ; FIXME use-before-definition
-     file-to-return-to)
+    (-> file-to-return-to
+        ;; We use goto-path here rather than goto-file-that-is-in-expansion
+        ;; because the selected file will not be in the expansion if the called
+        ;; `fun` does a refresh and if the selected file has been deleted.
+        nomis/dirtree/filename->path-from-root
+        (nomis/dirtree/goto-path :refresh-not-allowed? t) ; FIXME use-before-definition
+        )
     res))
 
 (defmacro nomis/dirtree/with-return-to-selected-file (&rest body)
@@ -506,34 +511,47 @@ With prefix argument select `nomis/dirtree/buffer'"
   ;; you do a return-to-selected-file when refreshing.)
   (nomis/dirtree/goto-widget (nomis/dirtree/selected-widget/with-extras)))
 
-(defun nomis/dirtree/goto-file-that-is-in-expansion (target-file)
+;;;; FIXME Tease out the call chains here.
+;;;;       - Don't want to refresh if you are already in a refresh.
+;;;;       - Maybe first order things to that all definitions are before uses.
+;;;;       - Do you have cycles or can you order nicely?
+
+(defun nomis/dirtree/goto-file-that-is-in-expansion (target-file) ; FIXME Make this local to `nomis/dirtree/goto-path`
   "If `target-file` is in the tree's expansion, make it the selection.
    Otherwise throw an exception."
+  (let* ((start-file (nomis/dirtree/selected-file)))
+    (while (not (equal target-file
+                       (nomis/dirtree/selected-file)))
+      (ignore-errors ; so we cycle around at end of buffer
+        (tree-mode-next-node 1))
+      (when (equal start-file
+                   (nomis/dirtree/selected-file))
+        (error "Couldn't find target-file %s" target-file)))))
+
+(cl-defun nomis/dirtree/goto-path (path
+                                   &key refresh-not-allowed?)
+  (nomis/dirtree/debug-message "Going to %s" (first (last path)))
   (labels ((search
             ()
-            (let* ((start-file (nomis/dirtree/selected-file)))
-              (while (not (equal target-file
-                                 (nomis/dirtree/selected-file)))
-                (ignore-errors ; so we cycle around at end of buffer
-                  (tree-mode-next-node 1))
-                (when (equal start-file
-                             (nomis/dirtree/selected-file))
-                  (error "Couldn't find target-file %s" target-file))))))
+            (cl-loop for (f . r) on path
+                     do (progn
+                          (nomis/dirtree/goto-file-that-is-in-expansion f)
+                          (when r
+                            (nomis/dirtree/expand nil))))))
+    
     ;; Search. If we fail to find to find `target-file` refresh and try again.
-    (condition-case err-1
+    (condition-case err
         (search)
       (error
-       (tree-mode-reflesh-tree ; FIXME Refactor to make this clearer -- no nomis/dirtree/with-return-to-selected-file wih this refresh -- add an impl function!
-        (nomis/dirtree/root-widget-no-arg))
-       (search)))))
+       (if refresh-not-allowed?
+           (signal (car err) (cdr err))
+         (progn
+           (tree-mode-reflesh-tree ; FIXME Refactor to make this clearer -- no nomis/dirtree/with-return-to-selected-file wih this refresh -- add an impl function!
+            (nomis/dirtree/root-widget-no-arg))
+           (nomis/dirtree/goto-root/impl) ; because refresh sometimes jumps us to mad and/or bad place
 
-(defun nomis/dirtree/goto-path (path)
-  (nomis/dirtree/debug-message "Going to %s" (first (last path)))
-  (cl-loop for (f . r) on path
-           do (progn
-                (nomis/dirtree/goto-file-that-is-in-expansion f)
-                (when r
-                  (nomis/dirtree/expand nil)))))
+           ;; (nomis/dirtree/goto-selected-widget) ; because refresh sometimes jumps us to mad and/or bad place
+           (search)))))))
 
 ;;;; ---------------------------------------------------------------------------
 ;;;; History
