@@ -529,12 +529,7 @@ With prefix argument select `nomis/dirtree/buffer'"
            (search)))))))
 
 (defun nomis/dirtree/with-return-to-selected-file-fun (fun)
-  (let* ((file-to-return-to
-          (case 2
-            (1 (-> (tree-mode-icon-current-line)
-                   (widget-get :node)
-                   nomis/dirtree/widget-file))
-            (2 (nomis/dirtree/selected-file))))
+  (let* ((file-to-return-to (nomis/dirtree/selected-file))
          (res (funcall fun)))
     (-> file-to-return-to
         ;; We use goto-path here rather than goto-file-that-is-in-expansion
