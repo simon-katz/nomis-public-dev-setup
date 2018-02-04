@@ -316,7 +316,7 @@ With prefix argument select `nomis/dirtree/buffer'"
 ;;;; My stuff.
 
 ;;;; ---------------------------------------------------------------------------
-;;;; (More) Wrappers for tree mode stuff --  FIXME Search for all "tree-mode"
+;;;; (More) Wrappers for tree mode stuff
 
 (defun nomis/dirtree/all-trees ()
   tree-mode-list)
@@ -334,6 +334,18 @@ With prefix argument select `nomis/dirtree/buffer'"
 
 (defun nomis/dirtree/next-line/impl (n)
   (tree-mode-next-node n))
+
+(defun nomis/dirtree/previous-line/impl (n)
+  (tree-mode-previous-node n))
+
+(defun nomis/dirtree/up-directory/impl (n)
+  (tree-mode-goto-parent n))
+
+(defun nomis/dirtree/next-sib/impl (n)
+  (tree-mode-next-sib n))
+
+(defun nomis/dirtree/previous-sib/impl (n)
+  (tree-mode-previous-sib n))
 
 ;;;; ---------------------------------------------------------------------------
 ;;;; Widget and file stuff.
@@ -777,7 +789,7 @@ Then display contents of file under point in other window.")
                                      (point)))))
            (if on-first-line?
                (error "Can't move up from first line.")
-             (tree-mode-previous-node arg)))))
+             (nomis/dirtree/previous-line/impl arg)))))
 
 (defun nomis/dirtree/expand-widget-y-or-n-p (widget)
   (nomis/y-or-n-p-with-quit->nil
@@ -840,7 +852,7 @@ and showing previous expansion of subdirectories."
              (progn
                (message "Already at root.")
                (beep))
-           (tree-mode-goto-parent arg))))
+           (nomis/dirtree/up-directory/impl arg))))
 
 (nomis/dirtree/define-command/with-and-without-and-display
     nomis/dirtree/next-sib
@@ -848,7 +860,7 @@ and showing previous expansion of subdirectories."
     (arg)
   :doc-string "Move to next sibling node."
   :preamble ((interactive "p"))
-  :body ((tree-mode-next-sib arg)))
+  :body ((nomis/dirtree/next-sib/impl arg)))
 
 (nomis/dirtree/define-command/with-and-without-and-display
     nomis/dirtree/previous-sib
@@ -863,7 +875,7 @@ and showing previous expansion of subdirectories."
                         first)
                     selected-widget)
                (message "No previous siblings")
-             (tree-mode-previous-sib arg)))))
+             (nomis/dirtree/previous-sib/impl arg)))))
 
 (nomis/dirtree/define-command/with-and-without-and-display
     nomis/dirtree/goto-root
