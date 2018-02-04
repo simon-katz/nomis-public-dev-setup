@@ -466,38 +466,8 @@ With prefix argument select `nomis/dirtree/buffer'"
 ;;;; ---------------------------------------------------------------------------
 ;;;; (More) Wrappers for tree mode stuff --  FIXME Search for all "tree-mode"
 
-(defun nomis/dirtree/with-return-to-selected-file-fun (fun)
-  (let* ((file-to-return-to
-          (case 2
-            (1 (-> (tree-mode-icon-current-line)
-                   (widget-get :node)
-                   nomis/dirtree/widget-file))
-            (2 (nomis/dirtree/selected-file))))
-         (res (funcall fun)))
-    (-> file-to-return-to
-        ;; We use goto-path here rather than goto-file-that-is-in-expansion
-        ;; because the selected file will not be in the expansion if the called
-        ;; `fun` does a refresh and if the selected file has been deleted.
-        nomis/dirtree/filename->path-from-root
-        (nomis/dirtree/goto-path :refresh-not-allowed? t) ; FIXME use-before-definition
-        )
-    res))
-
-(defmacro nomis/dirtree/with-return-to-selected-file (&rest body)
-  `(nomis/dirtree/with-return-to-selected-file-fun (lambda () ,@body)))
-
 (defun nomis/dirtree/goto-root/impl ()
   (tree-mode-goto-root))
-
-(defun nomis/dirtree/refresh-tree (tree)
-  (nomis/dirtree/with-return-to-selected-file ; because refresh sometimes jumps us to mad and/or bad place
-   (tree-mode-reflesh-tree tree)))
-
-(defun nomis/dirtree/refresh ()
-  (interactive)
-  (nomis/dirtree/with-return-to-selected-file ; because refresh sometimes jumps us to mad and/or bad place
-   (mapc #'tree-mode-reflesh-tree
-         tree-mode-list)))
 
 ;;;; ---------------------------------------------------------------------------
 ;;;; Navigation
@@ -510,11 +480,6 @@ With prefix argument select `nomis/dirtree/buffer'"
   ;; have fixed those -- it was to do with refresh screwing things up, and now
   ;; you do a return-to-selected-file when refreshing.)
   (nomis/dirtree/goto-widget (nomis/dirtree/selected-widget/with-extras)))
-
-;;;; FIXME Tease out the call chains here.
-;;;;       - Don't want to refresh if you are already in a refresh.
-;;;;       - Maybe first order things to that all definitions are before uses.
-;;;;       - Do you have cycles or can you order nicely?
 
 (cl-defun nomis/dirtree/goto-path (path
                                    &key refresh-not-allowed?)
@@ -545,10 +510,39 @@ With prefix argument select `nomis/dirtree/buffer'"
        (if refresh-not-allowed?
            (signal (car err) (cdr err))
          (progn
-           (tree-mode-reflesh-tree ; FIXME Refactor to make this clearer -- no nomis/dirtree/with-return-to-selected-file wih this refresh -- add an impl function!
+           (tree-mode-reflesh-tree ; FIXME Refactor to make this clearer -- no nomis/dirtree/with-return-to-selected-file with this refresh -- add an impl function!
             (nomis/dirtree/root-widget-no-arg))
            (nomis/dirtree/goto-root/impl) ; because refresh sometimes jumps us to mad and/or bad place
            (search)))))))
+
+(defun nomis/dirtree/with-return-to-selected-file-fun (fun)
+  (let* ((file-to-return-to
+          (case 2
+            (1 (-> (tree-mode-icon-current-line)
+                   (widget-get :node)
+                   nomis/dirtree/widget-file))
+            (2 (nomis/dirtree/selected-file))))
+         (res (funcall fun)))
+    (-> file-to-return-to
+        ;; We use goto-path here rather than goto-file-that-is-in-expansion
+        ;; because the selected file will not be in the expansion if the called
+        ;; `fun` does a refresh and if the selected file has been deleted.
+        nomis/dirtree/filename->path-from-root
+        (nomis/dirtree/goto-path :refresh-not-allowed? t))
+    res))
+
+(defmacro nomis/dirtree/with-return-to-selected-file (&rest body)
+  `(nomis/dirtree/with-return-to-selected-file-fun (lambda () ,@body)))
+
+(defun nomis/dirtree/refresh-tree (tree)
+  (nomis/dirtree/with-return-to-selected-file ; because refresh sometimes jumps us to mad and/or bad place
+   (tree-mode-reflesh-tree tree)))
+
+(defun nomis/dirtree/refresh ()
+  (interactive)
+  (nomis/dirtree/with-return-to-selected-file ; because refresh sometimes jumps us to mad and/or bad place
+   (mapc #'tree-mode-reflesh-tree
+         tree-mode-list)))
 
 ;;;; ---------------------------------------------------------------------------
 ;;;; History
