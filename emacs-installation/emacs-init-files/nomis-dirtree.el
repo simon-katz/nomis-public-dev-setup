@@ -78,28 +78,6 @@
 (require 'nomis-files)
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-;;;; Intermission -- get rid of annoying messages.
-
-;;;; `widget-move` has a call to `widget-echo-help`, which causes annoying
-;;;; messages in the *Messages* buffer.
-
-(defvar *nomis/dirtree/in-widget-move?* nil)
-
-(let* ((advice-name '-nomis/dirtree/no-widget-echo-help))
-  (advice-add 'widget-move
-              :around
-              (lambda (orig-fun &rest args)
-                (let* ((*nomis/dirtree/in-widget-move?* t))
-                  (apply orig-fun args)))
-              `((name . ,advice-name)))
-  (advice-add 'widget-echo-help
-              :around
-              (lambda (orig-fun &rest args)
-                (unless *nomis/dirtree/in-widget-move?*
-                  (apply orig-fun args)))
-              `((name . ,advice-name))))
-
-;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ;;;; Resume the original dirtree, with much modification.
 
 (defgroup nomis/dirtree/dirtree-group nil
@@ -316,7 +294,29 @@ With prefix argument select `nomis/dirtree/buffer'"
 ;;;; My stuff.
 
 ;;;; ---------------------------------------------------------------------------
-;;;; (More) Wrappers for tree mode stuff
+;;;; Get rid of annoying messages.
+
+;;;; `widget-move` has a call to `widget-echo-help`, which causes annoying
+;;;; messages in the *Messages* buffer.
+
+(defvar *nomis/dirtree/in-widget-move?* nil)
+
+(let* ((advice-name '-nomis/dirtree/no-widget-echo-help))
+  (advice-add 'widget-move
+              :around
+              (lambda (orig-fun &rest args)
+                (let* ((*nomis/dirtree/in-widget-move?* t))
+                  (apply orig-fun args)))
+              `((name . ,advice-name)))
+  (advice-add 'widget-echo-help
+              :around
+              (lambda (orig-fun &rest args)
+                (unless *nomis/dirtree/in-widget-move?*
+                  (apply orig-fun args)))
+              `((name . ,advice-name))))
+
+;;;; ---------------------------------------------------------------------------
+;;;; Wrappers for tree mode stuff
 
 (defun nomis/dirtree/all-trees ()
   tree-mode-list)
