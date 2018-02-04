@@ -477,6 +477,9 @@ With prefix argument select `nomis/dirtree/buffer'"
   (-> (nomis/dirtree/root-widget-no-arg)
       nomis/dirtree/refresh-tree/impl/with-arg))
 
+(defun nomis/dirtree/next-line/impl (n)
+  (tree-mode-next-node n))
+
 ;;;; ---------------------------------------------------------------------------
 ;;;; Navigation
 
@@ -500,7 +503,7 @@ With prefix argument select `nomis/dirtree/buffer'"
               (while (not (equal target-file
                                  (nomis/dirtree/selected-file)))
                 (ignore-errors ; so we cycle around at end of buffer
-                  (tree-mode-next-node 1))
+                  (nomis/dirtree/next-line/impl 1))
                 (when (equal start-file
                              (nomis/dirtree/selected-file))
                   (error "Couldn't find target-file %s" target-file)))))
@@ -759,8 +762,7 @@ Then display contents of file under point in other window.")
                                     (point)))))
            (if on-last-line?
                (error "Can't move forward from last line.")
-             (tree-mode-next-node ; FIXME Make this an impl function
-              arg)))))
+             (nomis/dirtree/next-line/impl arg)))))
 
 (nomis/dirtree/define-command/with-and-without-and-display
     nomis/dirtree/previous-line
