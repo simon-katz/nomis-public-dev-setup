@@ -516,7 +516,7 @@ With prefix argument select `nomis/dirtree/buffer'"
   (labels ((goto-file-that-is-in-expansion
             (target-file)
             ;; If `target-file` is in the tree's expansion, make it the
-            ;; selection; otherwise throw an exception. 
+            ;; selection; otherwise throw an exception.
             (let* ((start-file (nomis/dirtree/selected-file)))
               (while (not (equal target-file
                                  (nomis/dirtree/selected-file)))
@@ -596,7 +596,7 @@ With prefix argument select `nomis/dirtree/buffer'"
       (nomis/dirtree/debug-message "Noting selection %s"
                                    (nomis/dirtree/selected-file))
       (when *nomis/dirtree/paths/current*
-        (setq *nomis/dirtree/paths/history-list* 
+        (setq *nomis/dirtree/paths/history-list*
               (seq-take ; O(n) -- OK I guess
                (cons *nomis/dirtree/paths/current*
                      *nomis/dirtree/paths/history-list*)
@@ -1046,7 +1046,7 @@ sub-subdirectories, etc, so that subsequent expansion shows only one level."
                                 (nomis/dirtree/widget-children widget))))))
     (let* ((original-window (selected-window)))
       (unwind-protect
-          (progn 
+          (progn
             (switch-to-buffer-other-window "*Messages*")
             (emit-info))
         (select-window original-window)))))
@@ -1074,8 +1074,8 @@ Mostly for debugging purposes."
 
   (define-key widget-keymap (kbd "<RET>") nil)
 
-  (dk (kbd "g")             'nomis/dirtree/refresh)  
-  
+  (dk (kbd "g")             'nomis/dirtree/refresh)
+
   (dk (kbd "<RET>")         'nomis/dirtree/display-file)
   (dk (kbd "C-<return>")    'nomis/dirtree/display-file)
   (dk (kbd "S-<return>")    'nomis/dirtree/display-file-and-goto-other-window)
@@ -1091,10 +1091,10 @@ Mostly for debugging purposes."
   (dk (kbd "p")             'nomis/dirtree/previous-line)
   (dk (kbd "C-<up>")        'nomis/dirtree/previous-line-and-display)
   (dk (kbd "C-p")           'nomis/dirtree/previous-line-and-display)
-  
+
   (dk (kbd "<right>")       'nomis/dirtree/next-line-with-expansion)
   (dk (kbd "C-<right>")     'nomis/dirtree/next-line-with-expansion-and-display)
-  
+
   (dk (kbd "<left>")        'nomis/dirtree/up-directory)
   (dk (kbd "u")             'nomis/dirtree/up-directory)
   (dk (kbd "C-<left>")      'nomis/dirtree/up-directory-and-display)
@@ -1108,7 +1108,7 @@ Mostly for debugging purposes."
 
   (dk (kbd "r")             'nomis/dirtree/goto-root)
   (dk (kbd "C-S-r")         'nomis/dirtree/goto-root-and-display)
-  
+
   (dk (kbd ",")             'nomis/dirtree/history-step-back)
   (dk (kbd "C-,")           'nomis/dirtree/history-step-back-and-display)
   (dk (kbd ".")             'nomis/dirtree/history-step-forward)
@@ -1133,8 +1133,8 @@ Mostly for debugging purposes."
   (dk (kbd "t")             'nomis/dirtree/toggle-dirtree-dirs-at-top)
 
   (dk (kbd "X")             'nomis/dirtree/clear-history)
-  
-  (dk (kbd "I")             'nomis/dirtree/show-selection-no-extras-info)  
+
+  (dk (kbd "I")             'nomis/dirtree/show-selection-no-extras-info)
   (dk (kbd "i")             'nomis/dirtree/show-selection-with-extras-info))
 
 (provide 'nomis-dirtree)
