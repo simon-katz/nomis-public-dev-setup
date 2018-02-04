@@ -541,15 +541,13 @@ With prefix argument select `nomis/dirtree/buffer'"
     ;; Search. If we fail to find to find `target-file` refresh and try again.
     (condition-case err
         (search)
-      (error ; FIXME Can you make this more specific? (How do you define condition types in Elisp? Ah, see https://www.gnu.org/software/emacs/manual/html_node/elisp/Error-Symbols.html)
+      (error ; FIXME Define your own condition type. See https://www.gnu.org/software/emacs/manual/html_node/elisp/Error-Symbols.html
        (if refresh-not-allowed?
            (signal (car err) (cdr err))
          (progn
            (tree-mode-reflesh-tree ; FIXME Refactor to make this clearer -- no nomis/dirtree/with-return-to-selected-file wih this refresh -- add an impl function!
             (nomis/dirtree/root-widget-no-arg))
            (nomis/dirtree/goto-root/impl) ; because refresh sometimes jumps us to mad and/or bad place
-
-           ;; (nomis/dirtree/goto-selected-widget) ; because refresh sometimes jumps us to mad and/or bad place
            (search)))))))
 
 ;;;; ---------------------------------------------------------------------------
