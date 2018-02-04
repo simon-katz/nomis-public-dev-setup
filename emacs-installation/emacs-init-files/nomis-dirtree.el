@@ -316,6 +316,26 @@ With prefix argument select `nomis/dirtree/buffer'"
 ;;;; My stuff.
 
 ;;;; ---------------------------------------------------------------------------
+;;;; (More) Wrappers for tree mode stuff --  FIXME Search for all "tree-mode"
+
+(defun nomis/dirtree/all-trees ()
+  tree-mode-list)
+
+(defun nomis/dirtree/goto-root/impl ()
+  (tree-mode-goto-root))
+
+(defun nomis/dirtree/refresh-tree/impl/with-arg (tree)
+  (-> tree
+      tree-mode-reflesh-tree))
+
+(defun nomis/dirtree/refresh-tree/impl/no-arg ()
+  (-> (nomis/dirtree/root-widget-no-arg)
+      nomis/dirtree/refresh-tree/impl/with-arg))
+
+(defun nomis/dirtree/next-line/impl (n)
+  (tree-mode-next-node n))
+
+;;;; ---------------------------------------------------------------------------
 ;;;; Widget and file stuff.
 
 ;;;; FIXME Would be nice to have clearer separation of the widget and
@@ -465,26 +485,6 @@ With prefix argument select `nomis/dirtree/buffer'"
 (defun nomis/dirtree/collapse-recursively-all-trees ()
   (mapc #'collapse-recursively
         (nomis/dirtree/all-trees)))
-
-;;;; ---------------------------------------------------------------------------
-;;;; (More) Wrappers for tree mode stuff --  FIXME Search for all "tree-mode"
-
-(defun nomis/dirtree/all-trees ()
-  tree-mode-list)
-
-(defun nomis/dirtree/goto-root/impl ()
-  (tree-mode-goto-root))
-
-(defun nomis/dirtree/refresh-tree/impl/with-arg (tree)
-  (-> tree
-      tree-mode-reflesh-tree))
-
-(defun nomis/dirtree/refresh-tree/impl/no-arg ()
-  (-> (nomis/dirtree/root-widget-no-arg)
-      nomis/dirtree/refresh-tree/impl/with-arg))
-
-(defun nomis/dirtree/next-line/impl (n)
-  (tree-mode-next-node n))
 
 ;;;; ---------------------------------------------------------------------------
 ;;;; Navigation
