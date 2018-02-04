@@ -28,6 +28,7 @@
         paredit-backslash
         paredit-backward-up
         paredit-doublequote
+        paredit-forward-barf-sexp
         paredit-forward-delete
         paredit-forward-down
         paredit-forward-slurp-sexp
