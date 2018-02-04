@@ -522,7 +522,8 @@ With prefix argument select `nomis/dirtree/buffer'"
     (condition-case err-1
         (search)
       (error
-       (nomis/dirtree/refresh-tree (nomis/dirtree/root-widget-no-arg))
+       (tree-mode-reflesh-tree ; FIXME Refactor to make this clearer -- no nomis/dirtree/with-return-to-selected-file wih this refresh -- add an impl function!
+        (nomis/dirtree/root-widget-no-arg))
        (search)))))
 
 (defun nomis/dirtree/goto-path (path)
