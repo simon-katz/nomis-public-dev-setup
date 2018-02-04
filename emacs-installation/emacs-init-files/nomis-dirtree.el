@@ -516,33 +516,32 @@ With prefix argument select `nomis/dirtree/buffer'"
 ;;;;       - Maybe first order things to that all definitions are before uses.
 ;;;;       - Do you have cycles or can you order nicely?
 
-(defun nomis/dirtree/goto-file-that-is-in-expansion (target-file) ; FIXME Make this local to `nomis/dirtree/goto-path`
-  "If `target-file` is in the tree's expansion, make it the selection.
-   Otherwise throw an exception."
-  (let* ((start-file (nomis/dirtree/selected-file)))
-    (while (not (equal target-file
-                       (nomis/dirtree/selected-file)))
-      (ignore-errors ; so we cycle around at end of buffer
-        (tree-mode-next-node 1))
-      (when (equal start-file
-                   (nomis/dirtree/selected-file))
-        (error "Couldn't find target-file %s" target-file)))))
-
 (cl-defun nomis/dirtree/goto-path (path
                                    &key refresh-not-allowed?)
   (nomis/dirtree/debug-message "Going to %s" (first (last path)))
-  (labels ((search
+  (labels ((goto-file-that-is-in-expansion
+            (target-file)
+            ;; If `target-file` is in the tree's expansion, make it the
+            ;; selection; otherwise throw an exception. 
+            (let* ((start-file (nomis/dirtree/selected-file)))
+              (while (not (equal target-file
+                                 (nomis/dirtree/selected-file)))
+                (ignore-errors ; so we cycle around at end of buffer
+                  (tree-mode-next-node 1))
+                (when (equal start-file
+                             (nomis/dirtree/selected-file))
+                  (error "Couldn't find target-file %s" target-file)))))
+           (search
             ()
             (cl-loop for (f . r) on path
                      do (progn
-                          (nomis/dirtree/goto-file-that-is-in-expansion f)
+                          (goto-file-that-is-in-expansion f)
                           (when r
                             (nomis/dirtree/expand nil))))))
-    
     ;; Search. If we fail to find to find `target-file` refresh and try again.
     (condition-case err
         (search)
-      (error
+      (error ; FIXME Can you make this more specific? (How do you define condition types in Elisp? Ah, see https://www.gnu.org/software/emacs/manual/html_node/elisp/Error-Symbols.html)
        (if refresh-not-allowed?
            (signal (car err) (cdr err))
          (progn
