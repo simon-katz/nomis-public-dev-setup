@@ -444,7 +444,7 @@ With prefix argument select `nomis/dirtree/buffer'"
   (let* ((widget (cl-find-if (lambda (w)
                                (s-starts-with? (nomis/dirtree/widget-file w)
                                                filename))
-                             tree-mode-list)))
+                             (nomis/dirtree/all-trees))))
     (assert widget
             nil
             "File is not in dirtree: %s"
@@ -464,10 +464,13 @@ With prefix argument select `nomis/dirtree/buffer'"
 
 (defun nomis/dirtree/collapse-recursively-all-trees ()
   (mapc #'collapse-recursively
-        tree-mode-list))
+        (nomis/dirtree/all-trees)))
 
 ;;;; ---------------------------------------------------------------------------
 ;;;; (More) Wrappers for tree mode stuff --  FIXME Search for all "tree-mode"
+
+(defun nomis/dirtree/all-trees ()
+  tree-mode-list)
 
 (defun nomis/dirtree/goto-root/impl ()
   (tree-mode-goto-root))
@@ -550,7 +553,7 @@ With prefix argument select `nomis/dirtree/buffer'"
   (interactive)
   (nomis/dirtree/with-return-to-selected-file ; because refresh sometimes jumps us to mad and/or bad place
    (mapc #'nomis/dirtree/refresh-tree/impl/with-arg
-         tree-mode-list)))
+         (nomis/dirtree/all-trees))))
 
 ;;;; ---------------------------------------------------------------------------
 ;;;; History
