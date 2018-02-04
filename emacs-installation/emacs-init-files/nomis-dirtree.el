@@ -469,6 +469,14 @@ With prefix argument select `nomis/dirtree/buffer'"
 (defun nomis/dirtree/goto-root/impl ()
   (tree-mode-goto-root))
 
+(defun nomis/dirtree/refresh-tree/impl/with-arg (tree)
+  (-> tree
+      tree-mode-reflesh-tree))
+
+(defun nomis/dirtree/refresh-tree/impl/no-arg ()
+  (-> (nomis/dirtree/root-widget-no-arg)
+      nomis/dirtree/refresh-tree/impl/with-arg))
+
 ;;;; ---------------------------------------------------------------------------
 ;;;; Navigation
 
@@ -510,8 +518,7 @@ With prefix argument select `nomis/dirtree/buffer'"
        (if refresh-not-allowed?
            (signal (car err) (cdr err))
          (progn
-           (tree-mode-reflesh-tree ; FIXME Refactor to make this clearer -- no nomis/dirtree/with-return-to-selected-file with this refresh -- add an impl function!
-            (nomis/dirtree/root-widget-no-arg))
+           (nomis/dirtree/refresh-tree/impl/no-arg)
            (nomis/dirtree/goto-root/impl) ; because refresh sometimes jumps us to mad and/or bad place
            (search)))))))
 
@@ -536,12 +543,12 @@ With prefix argument select `nomis/dirtree/buffer'"
 
 (defun nomis/dirtree/refresh-tree (tree)
   (nomis/dirtree/with-return-to-selected-file ; because refresh sometimes jumps us to mad and/or bad place
-   (tree-mode-reflesh-tree tree)))
+   (nomis/dirtree/refresh-tree/impl/with-arg tree)))
 
 (defun nomis/dirtree/refresh ()
   (interactive)
   (nomis/dirtree/with-return-to-selected-file ; because refresh sometimes jumps us to mad and/or bad place
-   (mapc #'tree-mode-reflesh-tree
+   (mapc #'nomis/dirtree/refresh-tree/impl/with-arg
          tree-mode-list)))
 
 ;;;; ---------------------------------------------------------------------------
