@@ -474,7 +474,8 @@ With prefix argument select `nomis/dirtree/buffer'"
                    nomis/dirtree/widget-file))
             (2 (nomis/dirtree/selected-file))))
          (res (funcall fun)))
-    (nomis/dirtree/goto-file-that-is-in-expansion file-to-return-to)
+    (nomis/dirtree/goto-file-that-is-in-expansion ; FIXME use-before-definition
+     file-to-return-to)
     res))
 
 (defmacro nomis/dirtree/with-return-to-selected-file (&rest body)
@@ -742,7 +743,8 @@ Then display contents of file under point in other window.")
                                     (point)))))
            (if on-last-line?
                (error "Can't move forward from last line.")
-             (tree-mode-next-node arg)))))
+             (tree-mode-next-node ; FIXME Make this an impl function
+              arg)))))
 
 (nomis/dirtree/define-command/with-and-without-and-display
     nomis/dirtree/previous-line
