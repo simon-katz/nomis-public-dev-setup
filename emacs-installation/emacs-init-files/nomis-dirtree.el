@@ -513,25 +513,25 @@ With prefix argument select `nomis/dirtree/buffer'"
 (cl-defun nomis/dirtree/goto-path (path
                                    &key refresh-not-allowed?)
   (nomis/dirtree/debug-message "Going to %s" (first (last path)))
-  (labels ((goto-file-that-is-in-expansion
-            (target-file)
-            ;; If `target-file` is in the tree's expansion, make it the
-            ;; selection; otherwise throw an exception.
-            (let* ((start-file (nomis/dirtree/selected-file)))
-              (while (not (equal target-file
-                                 (nomis/dirtree/selected-file)))
-                (ignore-errors ; so we cycle around at end of buffer
-                  (nomis/dirtree/next-line/impl 1))
-                (when (equal start-file
-                             (nomis/dirtree/selected-file))
-                  (error "Couldn't find target-file %s" target-file)))))
-           (search
-            ()
-            (cl-loop for (f . r) on path
-                     do (progn
-                          (goto-file-that-is-in-expansion f)
-                          (when r
-                            (nomis/dirtree/expand nil))))))
+  (cl-labels ((goto-file-that-is-in-expansion
+               (target-file)
+               ;; If `target-file` is in the tree's expansion, make it the
+               ;; selection; otherwise throw an exception.
+               (let* ((start-file (nomis/dirtree/selected-file)))
+                 (while (not (equal target-file
+                                    (nomis/dirtree/selected-file)))
+                   (ignore-errors ; so we cycle around at end of buffer
+                     (nomis/dirtree/next-line/impl 1))
+                   (when (equal start-file
+                                (nomis/dirtree/selected-file))
+                     (error "Couldn't find target-file %s" target-file)))))
+              (search
+               ()
+               (cl-loop for (f . r) on path
+                        do (progn
+                             (goto-file-that-is-in-expansion f)
+                             (when r
+                               (nomis/dirtree/expand nil))))))
     ;; Search. If we fail to find to find `target-file` refresh and try again.
     (condition-case err
         (search)
