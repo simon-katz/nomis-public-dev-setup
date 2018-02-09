@@ -229,3 +229,10 @@
   (setq-default buffer-file-coding-system 'utf-8-unix)
 
   (setq projectile-indexing-method 'alien))
+
+;;;; ___________________________________________________________________________
+;;;; ---- Local ----
+
+(let* ((local-extras-file "~/development-100/repositories/local/sk-local-settings/dot-emacs-extras.el"))
+  (when (file-exists-p local-extras-file)
+    (load local-extras-file)))
