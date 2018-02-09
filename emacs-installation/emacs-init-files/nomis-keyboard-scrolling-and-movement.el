@@ -30,7 +30,7 @@ in the display."
 
 ;;;; ___________________________________________________________________________
 
-(defconst go-left-right-amount 20)
+(defconst go-left-right-amount 40)
 
 (defun nomis-go-right-lots ()
   (interactive)
