@@ -25,6 +25,7 @@
         org-meta-return
         org-self-insert-command
         org-shiftmetaleft
+        org-yank
         paredit-backslash
         paredit-backward-up
         paredit-doublequote
