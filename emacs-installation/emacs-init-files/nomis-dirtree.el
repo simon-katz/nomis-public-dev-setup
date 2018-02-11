@@ -1003,6 +1003,11 @@ sub-subdirectories, etc, so that subsequent expansion shows only one level."
   (interactive)
   (nomis/dirtree/show-only-selection t))
 
+(defun nomis/dirtree/isearch-forward ()
+  (interactive)
+  (isearch-forward)
+  (nomis/dirtree/note-selection))
+
 (defun nomis/dirtree/toggle-dirtree-dirs-at-top ()
   (interactive)
   (setq nomis/dirtree/dirs-at-top?
@@ -1129,6 +1134,8 @@ Mostly for debugging purposes."
 
   (dk (kbd "H-1")           'nomis/dirtree/show-only-selection)
   (dk (kbd "H-!")           'nomis/dirtree/show-only-selection/collapse-other-trees)
+
+  (dk (kbd "C-s")           'nomis/dirtree/isearch-forward)
 
   (dk (kbd "t")             'nomis/dirtree/toggle-dirtree-dirs-at-top)
 
