@@ -840,7 +840,8 @@ windows mucks things up.")
   "Move down <arg> lines, expanding any encountered collapsed directories
 and showing previous expansion of subdirectories."
   :preamble ((interactive "p"))
-  :body ((nomis/dirtree/next-line-with-expansion* arg)))
+  :body ((nomis/dirtree/goto-selected-widget) ; without this, when we are at the end of a line we end up on the next sibling
+         (nomis/dirtree/next-line-with-expansion* arg)))
 
 (nomis/dirtree/define-command/with-and-without-and-display
     nomis/dirtree/up-directory
