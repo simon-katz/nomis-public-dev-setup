@@ -54,8 +54,7 @@
 ;; (set-face-background 'hl-line "LightGoldenrodYellow")
 
 ;;;; ___________________________________________________________________________
-;;;; Highlighting of text (usually symbol names) inside `` and inside `'.
-;;;; e.g. `foo` and `foo'.
+;;;; Highlighting of text (usually symbol names) like `xxxx` and `xxxx'.
 
 ;;; How is it done in Lisp mode?
 ;;; See:
@@ -70,10 +69,18 @@
 
 ;;; I want Lisp mode's highlighting of `foo' in other modes, and I
 ;;; want similar highlighting for `foo`.
+;;; So the first two of these have highlighting and the second two do not:
+;;; - plop `plop` plop
+;;; - plop `plop' plop
+;;; - plop 'plop' plop
+;;; - plop 'plop` plop
 
 (defun nomis-highlight-symbol-quoting-in-text ()
   (dolist (regex '("`\\(.+?\\)[`']"))
-    (font-lock-add-keywords nil `((,regex 1 font-lock-constant-face prepend)))))
+    (font-lock-add-keywords nil
+                            `((,regex 1 font-lock-constant-face prepend))
+                            t ; add at end -- otherwise breaks highlighting in org mode
+                            )))
 
 (add-hook 'text-mode-hook 'nomis-highlight-symbol-quoting-in-text)
 (add-hook 'prog-mode-hook 'nomis-highlight-symbol-quoting-in-text)
