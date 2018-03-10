@@ -119,6 +119,7 @@
 (let ((hook-funs-when-repl-exists `(eldoc-mode))
       (hook-funs-always `(rainbow-delimiters-mode
                           paredit-mode
+                          paxedit-mode
                           nomis-set-comment-column-to-zero
                           subword-mode
                           nomis-setup-clj-refactor-mode

@@ -129,6 +129,7 @@
 ;;;; ---- Lisp and Clojure stuff probably good for anyone ----
 
 (require 'nomis-paredit)
+(require 'nomis-paxedit)
 (require 'nomis-emacs-lisp-and-ielm)
 (require 'nomis-clojure)
 

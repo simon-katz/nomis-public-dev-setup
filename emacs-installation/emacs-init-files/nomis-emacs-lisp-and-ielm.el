@@ -5,6 +5,7 @@
 (defvar nomis-lisp-and-ielm-mode-hook-functions
   `(rainbow-delimiters-mode
     paredit-mode
+    paxedit-mode ; some commands (at least) don't work in ielm mode
     ,(lambda () (set (make-local-variable 'comment-column) 0))
     turn-on-elisp-slime-nav-mode
     turn-on-eldoc-mode
