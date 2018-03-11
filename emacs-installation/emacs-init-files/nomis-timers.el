@@ -38,7 +38,7 @@
                (run-at-time next-time
                             nil
                             (lambda ()
-                              (let ((res ,@body))
+                              (let ((res (progn ,@body)))
                                 (when (and (listp res)
                                            (eql (first res) :repeat)
                                            (numberp (second res)))
