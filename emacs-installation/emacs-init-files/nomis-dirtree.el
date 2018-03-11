@@ -26,20 +26,14 @@
 ;;;; - When navigating history, before the (expensive) current approach, check
 ;;;;   whether the recorded point's widget is the one you want.
 
-;;;; Auto-refreshing:
-;;;; - Maybe auto-refresh every so often.
-;;;;   - But be mindful of potential interactions if there is any idleness
-;;;;     when doing things with widgets.
-
 ;;;; Key bindings:
 ;;;; - Add more wrappers for tree-mode commands and/or add your own key
 ;;;;   bindings, so that you have more commands findable with the
 ;;;;   `nomis/dirtree/` prefix.
 ;;;;   - eg Add "g" key binding for `nomis/dirtree/refresh-tree`
 
-;;;; Add feature to make tree selection follow file in current buffer.
-;;;; - Use an idle timer.
-;;;;   - See `nomis-idle-highlight-mode` for stuff to copy.
+;;;; Maybe add feature to make tree selection follow file in current buffer.
+;;;; - Use an idle timer -- maybe combine with the auto-refresh timer.
 
 ;;;; - Bug: `xxxx-and-display` commands do the display part when the first part
 ;;;;        fails. We need to be throwing errors, probably at all places where
@@ -502,15 +496,17 @@ With prefix argument select `nomis/dirtree/buffer'"
 ;;;; nomis/dirtree/with-make-dirtree-window-active
 
 (defun nomis/dirtree/with-make-dirtree-window-active-fun
-    (return-to-original-window?
+    (message-if-no-dirtree-buffer?
+     return-to-original-window?
      fun)
-  (let* ((dirtree-window (nomis/find-window-in-frame nomis/dirtree/buffer))
+  (let* ((dirtree-window (nomis/find-window-in-any-frame nomis/dirtree/buffer))
          (dirtree-buffer (when dirtree-window
                            (window-buffer dirtree-window))))
     (cond
      ((null dirtree-window)
-      (message "There's no dirtee window in the current frame.")
-      (nomis/beep))
+      (when message-if-no-dirtree-buffer?
+        (message "There's no dirtee window.")
+        (nomis/beep)))
      (t
       (let* ((original-window (selected-window)))
         (unwind-protect
@@ -521,11 +517,14 @@ With prefix argument select `nomis/dirtree/buffer'"
             (select-window original-window))))))))
 
 (defmacro nomis/dirtree/with-make-dirtree-window-active
-    (return-to-original-window?
+    (message-if-no-dirtree-buffer?
+     return-to-original-window?
      &rest body)
-  (declare (indent 1))
-  `(nomis/dirtree/with-make-dirtree-window-active-fun return-to-original-window?
-                                                      (lambda () ,@body)))
+  (declare (indent 2))
+  `(nomis/dirtree/with-make-dirtree-window-active-fun
+    ,message-if-no-dirtree-buffer?
+    ,return-to-original-window?
+    (lambda () ,@body)))
 
 ;;;; ---------------------------------------------------------------------------
 ;;;; Navigation
@@ -538,6 +537,8 @@ With prefix argument select `nomis/dirtree/buffer'"
   ;; have fixed those -- it was to do with refresh screwing things up, and now
   ;; you do a return-to-selected-file when refreshing.)
   (nomis/dirtree/goto-widget (nomis/dirtree/selected-widget/with-extras)))
+
+(define-error 'nomis/dirtree/file-not-found "nomis-dirtree: No such file")
 
 (cl-defun nomis/dirtree/goto-path (path
                                    &key refresh-not-allowed?)
@@ -553,7 +554,8 @@ With prefix argument select `nomis/dirtree/buffer'"
                      (nomis/dirtree/next-line/impl 1))
                    (when (equal start-file
                                 (nomis/dirtree/selected-file))
-                     (error "Couldn't find target-file %s" target-file)))))
+                     (signal 'nomis/dirtree/file-not-found
+                             target-file)))))
               (search
                ()
                (cl-loop for (f . r) on path
@@ -564,7 +566,7 @@ With prefix argument select `nomis/dirtree/buffer'"
     ;; Search. If we fail to find to find `target-file` refresh and try again.
     (condition-case err
         (search)
-      (error ; FIXME Define your own condition type. See https://www.gnu.org/software/emacs/manual/html_node/elisp/Error-Symbols.html
+      (nomis/dirtree/file-not-found
        (if refresh-not-allowed?
            (signal (car err) (cdr err))
          (progn
@@ -595,6 +597,28 @@ With prefix argument select `nomis/dirtree/buffer'"
   (nomis/dirtree/with-return-to-selected-file ; because refresh sometimes jumps us to mad and/or bad place
    (mapc #'nomis/dirtree/refresh-tree/impl/with-arg
          (nomis/dirtree/all-trees))))
+
+;;;; ---------------------------------------------------------------------------
+;;;; Refresh from time to time
+
+(defvar nomis/dirtree/auto-refresh-interval 10) ; TODO What do we want?
+
+(defun nomis/dirtree/refresh-after-finding-buffer ()
+  (condition-case err
+      (nomis/dirtree/with-make-dirtree-window-active
+          nil
+          t
+        (nomis/dirtree/refresh))
+    (nomis/dirtree/file-not-found
+     ;; We get here if the selected file is deleted -- not a problem.
+     )))
+
+(nomis/def-timer-with-relative-repeats
+    nomis/dirtree/auto-refresh-timer
+    nomis/dirtree/auto-refresh-interval
+  (nomis/dirtree/refresh-after-finding-buffer)
+  `(:repeat ,nomis/dirtree/auto-refresh-interval) ; TODO This is a weird way of specifying the repeat interval
+  )
 
 ;;;; ---------------------------------------------------------------------------
 ;;;; History
@@ -724,6 +748,7 @@ Then display contents of file under point in other window.")
       (nomis/beep))
      (t
       (nomis/dirtree/with-make-dirtree-window-active
+          t
           return-to-original-window?
         (let* ((path (nomis/dirtree/filename->path-from-root filename)))
           (nomis/dirtree/with-note-selection
