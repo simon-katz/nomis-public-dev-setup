@@ -499,6 +499,35 @@ With prefix argument select `nomis/dirtree/buffer'"
         (nomis/dirtree/all-trees)))
 
 ;;;; ---------------------------------------------------------------------------
+;;;; nomis/dirtree/with-make-dirtree-window-active
+
+(defun nomis/dirtree/with-make-dirtree-window-active-fun
+    (return-to-original-window?
+     fun)
+  (let* ((dirtree-window (nomis/find-window-in-frame nomis/dirtree/buffer))
+         (dirtree-buffer (when dirtree-window
+                           (window-buffer dirtree-window))))
+    (cond
+     ((null dirtree-window)
+      (message "There's no dirtee window in the current frame.")
+      (nomis/beep))
+     (t
+      (let* ((original-window (selected-window)))
+        (unwind-protect
+            (progn
+              (select-window dirtree-window)
+              (funcall fun))
+          (when return-to-original-window?
+            (select-window original-window))))))))
+
+(defmacro nomis/dirtree/with-make-dirtree-window-active
+    (return-to-original-window?
+     &rest body)
+  (declare (indent 1))
+  `(nomis/dirtree/with-make-dirtree-window-active-fun return-to-original-window?
+                                                      (lambda () ,@body)))
+
+;;;; ---------------------------------------------------------------------------
 ;;;; Navigation
 
 (defun nomis/dirtree/goto-widget (widget)
@@ -683,36 +712,26 @@ Then display contents of file under point in other window.")
          (nomis/dirtree/display-file*)))))
 
 (defun nomis/dirtree/goto-file* (return-to-original-window?)
-  (let* ((dirtree-window (nomis/find-window-in-frame nomis/dirtree/buffer))
-         (dirtree-buffer (when dirtree-window
-                           (window-buffer dirtree-window)))
-         (filename (let* ((filename (or buffer-file-name
+  (let* ((filename (let* ((filename (or buffer-file-name
                                         dired-directory
                                         ;; default-directory
                                         )))
                      (when filename
                        (expand-file-name filename)))))
     (cond
-     ((null dirtree-window)
-      (message "There's no dirtee window in the current frame.")
-      (nomis/beep))
      ((null filename)
       (message "This buffer has no associated file.")
       (nomis/beep))
      (t
-      (let* ((original-window (selected-window)))
-        (unwind-protect
-            (progn
-              (select-window dirtree-window)
-              (let* ((path (nomis/dirtree/filename->path-from-root filename)))
-                (nomis/dirtree/with-note-selection
-                 (nomis/dirtree/goto-path path))
-                (when (bound-and-true-p hl-line-mode)
-                  ;; Workaround for bug.
-                  ;; Without this we don't have the highlighting.
-                  (hl-line-mode 1))))
-          (when return-to-original-window?
-            (select-window original-window))))))))
+      (nomis/dirtree/with-make-dirtree-window-active
+          return-to-original-window?
+        (let* ((path (nomis/dirtree/filename->path-from-root filename)))
+          (nomis/dirtree/with-note-selection
+           (nomis/dirtree/goto-path path))
+          (when (bound-and-true-p hl-line-mode)
+            ;; Workaround for bug.
+            ;; Without this we don't have the highlighting.
+            (hl-line-mode 1))))))))
 
 (defun nomis/dirtree/goto-file ()
   "Change the nomis/dirtree selection to be the current file, and go to the
