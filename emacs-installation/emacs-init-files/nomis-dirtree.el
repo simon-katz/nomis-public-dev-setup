@@ -26,12 +26,6 @@
 ;;;; - When navigating history, before the (expensive) current approach, check
 ;;;;   whether the recorded point's widget is the one you want.
 
-;;;; Key bindings:
-;;;; - Add more wrappers for tree-mode commands and/or add your own key
-;;;;   bindings, so that you have more commands findable with the
-;;;;   `nomis/dirtree/` prefix.
-;;;;   - eg Add "g" key binding for `nomis/dirtree/refresh-tree`
-
 ;;;; Maybe add feature to make tree selection follow file in current buffer.
 ;;;; - Use an idle timer -- maybe combine with the auto-refresh timer.
 
