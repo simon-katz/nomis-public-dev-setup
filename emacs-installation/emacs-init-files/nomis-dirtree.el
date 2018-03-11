@@ -595,7 +595,7 @@ With prefix argument select `nomis/dirtree/buffer'"
 ;;;; ---------------------------------------------------------------------------
 ;;;; Refresh from time to time
 
-(defvar nomis/dirtree/auto-refresh-interval 10) ; TODO What do we want?
+(defvar nomis/dirtree/auto-refresh-interval 5) ; TODO What do we want?
 
 (defun nomis/dirtree/refresh-after-finding-buffer ()
   (condition-case err
