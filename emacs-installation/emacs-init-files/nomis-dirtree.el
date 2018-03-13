@@ -364,6 +364,7 @@ With prefix argument select `nomis/dirtree/buffer'"
     "\\.vagrant"
     "\\.sync"
     "checkouts"
+    "node_modules"
     "out"
     "target"
     "zzzz-nomis-dirtee-test-keep-collapsed"))
