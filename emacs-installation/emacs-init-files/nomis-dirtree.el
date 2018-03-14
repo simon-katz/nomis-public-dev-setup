@@ -105,6 +105,8 @@ See `windata-display-buffer' for setup the arguments."
          (tag (if (nomis/dirtree/directory-to-keep-collapsed?/basename tag)
                   (concat tag "  [no auto-expand]")
                 tag)))
+    (when root?
+      (nomis/dirtree/add-directory-watcher file))
     `(nomis/dirtree/directory-widget
       :tag ,tag
       :file ,file
@@ -336,6 +338,41 @@ With prefix argument select `nomis/dirtree/buffer'"
   (tree-mode-previous-sib n))
 
 ;;;; ---------------------------------------------------------------------------
+;;;; File watchers
+
+;;;; TODO What about when a tree is deleted?
+;;;; TODO Are you creating watchers when you create a second tree? I guess so.
+
+;;;; TODO Need to spot deletion of dirs.
+
+(require 'filenotify)
+
+(defvar nomis/dirtree/directory-watchers '())
+
+(defun nomis/dirtree/handle-directory-change (event)
+  (message "nomis/dirtree/handle-directory-change %s" event)
+  (nomis/dirtree/refresh-after-finding-buffer))
+
+(defun nomis/dirtree/add-directory-watcher (directory)
+  (let ((watcher (file-notify-add-watch
+                  directory
+                  '(change)
+                  'nomis/dirtree/handle-directory-change)))
+    (setf nomis/dirtree/directory-watchers
+          (cons (cons directory watcher)
+                nomis/dirtree/directory-watchers))))
+
+(defun nomis/dirtree/remove-directory-watcher (directory)
+  (setq nomis/dirtree/directory-watchers
+        (-remove (lambda (entry)
+                   (if (equal (car entry) directory)
+                       (progn
+                         (file-notify-rm-watch (cdr entry))
+                         t)
+                     nil))
+                 nomis/dirtree/directory-watchers)))
+
+;;;; ---------------------------------------------------------------------------
 ;;;; Widget and file stuff.
 
 ;;;; FIXME Would be nice to have clearer separation of the widget and
@@ -350,12 +387,16 @@ With prefix argument select `nomis/dirtree/buffer'"
 (defun nomis/dirtree/expand-node (widget)
   (when (tree-widget-p widget)
     (unless (nomis/dirtree/expanded? widget)
-      (widget-apply-action widget))))
+      (widget-apply-action widget)
+      (-> (nomis/dirtree/widget-file widget)
+          nomis/dirtree/add-directory-watcher))))
 
 (defun nomis/dirtree/collapse-node (widget)
   (when (tree-widget-p widget)
     (when (nomis/dirtree/expanded? widget)
-      (widget-apply-action widget))))
+      (widget-apply-action widget)
+      (-> (nomis/dirtree/widget-file widget)
+          nomis/dirtree/remove-directory-watcher))))
 
 (defvar *nomis/dirtree/dirs-to-keep-collapsed-unless-forced*
   '("\\.git"
@@ -596,9 +637,9 @@ With prefix argument select `nomis/dirtree/buffer'"
 ;;;; ---------------------------------------------------------------------------
 ;;;; Refresh from time to time
 
-(defvar nomis/dirtree/auto-refresh-interval 120) ; TODO What do we want? -- We want a directory watcher
+;; (defvar nomis/dirtree/auto-refresh-interval 120) ; TODO What do we want? -- We want a directory watcher
 
-(defun nomis/dirtree/refresh-after-finding-buffer ()
+(defun nomis/dirtree/refresh-after-finding-buffer () ; TODO Move to before use.
   (condition-case err
       (nomis/dirtree/with-make-dirtree-window-active
           nil
@@ -608,12 +649,12 @@ With prefix argument select `nomis/dirtree/buffer'"
      ;; We get here if the selected file is deleted -- not a problem.
      )))
 
-(nomis/def-timer-with-relative-repeats
-    nomis/dirtree/auto-refresh-timer
-    nomis/dirtree/auto-refresh-interval
-  (nomis/dirtree/refresh-after-finding-buffer)
-  `(:repeat ,nomis/dirtree/auto-refresh-interval) ; TODO This is a weird way of specifying the repeat interval
-  )
+;; (nomis/def-timer-with-relative-repeats
+;;     nomis/dirtree/auto-refresh-timer
+;;     nomis/dirtree/auto-refresh-interval
+;;   (nomis/dirtree/refresh-after-finding-buffer)
+;;   `(:repeat ,nomis/dirtree/auto-refresh-interval) ; TODO This is a weird way of specifying the repeat interval
+;;   )
 
 ;;;; ---------------------------------------------------------------------------
 ;;;; History
