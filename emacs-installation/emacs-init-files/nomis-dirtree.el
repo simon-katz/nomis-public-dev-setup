@@ -353,7 +353,16 @@ With prefix argument select `nomis/dirtree/buffer'"
   (message "nomis/dirtree/handle-directory-change %s" event)
   (nomis/dirtree/refresh-after-finding-buffer))
 
+(defun nomis/dirtree/remove-watchers-of-deleted-dirs () ; TODO Want to do this when there's a change
+  (setq nomis/dirtree/directory-watchers
+        (->> nomis/dirtree/directory-watchers
+             (-filter (case 2 ; TODO
+                        (1 #'file-notify-valid-p)
+                        (2 (lambda (entry)
+                             (file-exists-p (car entry)))))))))
+
 (defun nomis/dirtree/add-directory-watcher (directory)
+  (nomis/dirtree/remove-watchers-of-deleted-dirs)
   (let ((watcher (file-notify-add-watch
                   directory
                   '(change)
@@ -363,6 +372,7 @@ With prefix argument select `nomis/dirtree/buffer'"
                 nomis/dirtree/directory-watchers))))
 
 (defun nomis/dirtree/remove-directory-watcher (directory)
+  (nomis/dirtree/remove-watchers-of-deleted-dirs)
   (setq nomis/dirtree/directory-watchers
         (-remove (lambda (entry)
                    (if (equal (car entry) directory)
