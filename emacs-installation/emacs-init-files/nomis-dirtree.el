@@ -345,10 +345,6 @@ With prefix argument select `nomis/dirtree/buffer'"
 
 ;;;; TODO What about when dirtree buffer is deleted?
 
-;;;; TODO Need to spot deletion of dirs. Or just fix up at a convenient time.
-;;;;      Nicer if they are deleted upon deletion of dirs.
-;;;;      - But why aren't they? That's a change, right?
-
 (require 'filenotify)
 
 (defvar nomis/dirtree/directory-watchers '())
@@ -358,38 +354,39 @@ With prefix argument select `nomis/dirtree/buffer'"
         do (princ x)
         do (terpri)))
 
-(defun nomis/dirtree/handle-directory-change (event)
-  ;; (message "nomis/dirtree/handle-directory-change %s" event)
-  (nomis/dirtree/refresh-after-finding-buffer))
-
-(defun nomis/dirtree/remove-watchers-of-deleted-dirs () ; TODO Want to do this when there's a change
+(defun nomis/dirtree/remove-watchers-of-deleted-dirs ()
   (setq nomis/dirtree/directory-watchers
         (->> nomis/dirtree/directory-watchers
-             (-filter (case 2 ; TODO
-                        (1 #'file-notify-valid-p)
-                        (2 (lambda (entry)
-                             (file-exists-p (car entry)))))))))
+             (-filter (lambda (entry)
+                        (file-notify-valid-p (cdr entry)))))))
+
+(defun nomis/dirtree/handle-directory-change (event)
+  (let* ((action (cadr event))
+         (filename (caddr event))
+         (filename-no-dir (file-name-nondirectory filename)))
+    (unless (or (string-match-p "^.#" filename-no-dir)
+                (string-match-p "^#.*#$" filename-no-dir))
+      (nomis/dirtree/refresh-after-finding-buffer)
+      (when (eql action 'deleted)
+        (nomis/dirtree/remove-watchers-of-deleted-dirs)))))
 
 (defun nomis/dirtree/add-directory-watcher (directory)
-  (nomis/dirtree/remove-watchers-of-deleted-dirs)
-  (let ((watcher (file-notify-add-watch
-                  directory
-                  '(change)
-                  'nomis/dirtree/handle-directory-change)))
+  (let ((watcher (file-notify-add-watch directory
+                                        '(change)
+                                        'nomis/dirtree/handle-directory-change)))
     (setf nomis/dirtree/directory-watchers
           (cons (cons directory watcher)
                 nomis/dirtree/directory-watchers))))
 
 (defun nomis/dirtree/remove-directory-watcher (directory)
-  (nomis/dirtree/remove-watchers-of-deleted-dirs)
   (setq nomis/dirtree/directory-watchers
-        (-remove (lambda (entry)
-                   (if (equal (car entry) directory)
-                       (progn
-                         (file-notify-rm-watch (cdr entry))
-                         t)
-                     nil))
-                 nomis/dirtree/directory-watchers)))
+        (-remove-first (lambda (entry)
+                         (if (equal (car entry) directory)
+                             (progn
+                               (file-notify-rm-watch (cdr entry))
+                               t)
+                           nil))
+                       nomis/dirtree/directory-watchers)))
 
 ;;;; ---------------------------------------------------------------------------
 ;;;; Widget and file stuff.
