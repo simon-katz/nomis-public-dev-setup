@@ -338,6 +338,28 @@ With prefix argument select `nomis/dirtree/buffer'"
   (tree-mode-previous-sib n))
 
 ;;;; ---------------------------------------------------------------------------
+;;;; Refresh from time to time
+
+;; (defvar nomis/dirtree/auto-refresh-interval 120) ; TODO What do we want? -- We want a directory watcher
+
+(defun nomis/dirtree/refresh-after-finding-buffer () ; TODO Move to before use.
+  (condition-case err
+      (nomis/dirtree/with-make-dirtree-window-active
+          nil
+          t
+        (nomis/dirtree/refresh))
+    (nomis/dirtree/file-not-found
+     ;; We get here if the selected file is deleted -- not a problem.
+     )))
+
+;; (nomis/def-timer-with-relative-repeats
+;;     nomis/dirtree/auto-refresh-timer
+;;     nomis/dirtree/auto-refresh-interval
+;;   (nomis/dirtree/refresh-after-finding-buffer)
+;;   `(:repeat ,nomis/dirtree/auto-refresh-interval) ; TODO This is a weird way of specifying the repeat interval
+;;   )
+
+;;;; ---------------------------------------------------------------------------
 ;;;; File watchers
 
 ;;;; TODO What about when a tree is deleted?
@@ -649,28 +671,6 @@ With prefix argument select `nomis/dirtree/buffer'"
   (nomis/dirtree/with-return-to-selected-file ; because refresh sometimes jumps us to mad and/or bad place
    (mapc #'nomis/dirtree/refresh-tree/impl/with-arg
          (nomis/dirtree/all-trees))))
-
-;;;; ---------------------------------------------------------------------------
-;;;; Refresh from time to time
-
-;; (defvar nomis/dirtree/auto-refresh-interval 120) ; TODO What do we want? -- We want a directory watcher
-
-(defun nomis/dirtree/refresh-after-finding-buffer () ; TODO Move to before use.
-  (condition-case err
-      (nomis/dirtree/with-make-dirtree-window-active
-          nil
-          t
-        (nomis/dirtree/refresh))
-    (nomis/dirtree/file-not-found
-     ;; We get here if the selected file is deleted -- not a problem.
-     )))
-
-;; (nomis/def-timer-with-relative-repeats
-;;     nomis/dirtree/auto-refresh-timer
-;;     nomis/dirtree/auto-refresh-interval
-;;   (nomis/dirtree/refresh-after-finding-buffer)
-;;   `(:repeat ,nomis/dirtree/auto-refresh-interval) ; TODO This is a weird way of specifying the repeat interval
-;;   )
 
 ;;;; ---------------------------------------------------------------------------
 ;;;; History
