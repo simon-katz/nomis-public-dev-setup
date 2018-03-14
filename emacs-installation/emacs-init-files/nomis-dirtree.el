@@ -350,7 +350,7 @@ With prefix argument select `nomis/dirtree/buffer'"
 (defvar nomis/dirtree/directory-watchers '())
 
 (defun nomis/dirtree/handle-directory-change (event)
-  (message "nomis/dirtree/handle-directory-change %s" event)
+  ;; (message "nomis/dirtree/handle-directory-change %s" event)
   (nomis/dirtree/refresh-after-finding-buffer))
 
 (defun nomis/dirtree/remove-watchers-of-deleted-dirs () ; TODO Want to do this when there's a change
