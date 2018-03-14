@@ -338,34 +338,14 @@ With prefix argument select `nomis/dirtree/buffer'"
   (tree-mode-previous-sib n))
 
 ;;;; ---------------------------------------------------------------------------
-;;;; Refresh from time to time
-
-;; (defvar nomis/dirtree/auto-refresh-interval 120) ; TODO What do we want? -- We want a directory watcher
-
-(defun nomis/dirtree/refresh-after-finding-buffer () ; TODO Move to before use.
-  (condition-case err
-      (nomis/dirtree/with-make-dirtree-window-active
-          nil
-          t
-        (nomis/dirtree/refresh))
-    (nomis/dirtree/file-not-found
-     ;; We get here if the selected file is deleted -- not a problem.
-     )))
-
-;; (nomis/def-timer-with-relative-repeats
-;;     nomis/dirtree/auto-refresh-timer
-;;     nomis/dirtree/auto-refresh-interval
-;;   (nomis/dirtree/refresh-after-finding-buffer)
-;;   `(:repeat ,nomis/dirtree/auto-refresh-interval) ; TODO This is a weird way of specifying the repeat interval
-;;   )
-
-;;;; ---------------------------------------------------------------------------
-;;;; File watchers
+;;;; nomis/dirtree/directory-watchers
 
 ;;;; TODO What about when a tree is deleted?
 ;;;;      You need a wrapper for `tree-mode-delete-tree`
 
 ;;;; TODO What about when dirtree buffer is deleted?
+;;;;      - Set `nomis/dirtree/directory-watchers` to nil.
+;;;;      - Remove all watchers.
 
 (require 'filenotify)
 
@@ -376,39 +356,74 @@ With prefix argument select `nomis/dirtree/buffer'"
         do (princ x)
         do (terpri)))
 
+;;;; ---------------------------------------------------------------------------
+;;;; Stuff to do on scheduled refresh
+
 (defun nomis/dirtree/remove-watchers-of-deleted-dirs ()
   (setq nomis/dirtree/directory-watchers
         (->> nomis/dirtree/directory-watchers
              (-filter (lambda (entry)
                         (file-notify-valid-p (cdr entry)))))))
 
-(defun nomis/dirtree/handle-directory-change (event)
-  (let* ((action (cadr event))
-         (filename (caddr event))
+(defun nomis/dirtree/refresh-after-finding-buffer ()
+  (condition-case err
+      (nomis/dirtree/with-make-dirtree-window-active
+          nil
+          t
+        (nomis/dirtree/refresh))
+    (nomis/dirtree/file-not-found
+     ;; We get here if the selected file is deleted -- not a problem.
+     )))
+
+;;;; ---------------------------------------------------------------------------
+;;;; Scheduling refreshes
+
+(defvar nomis/dirtree/refresh-scheduled? nil)
+(defvar nomis/dirtree/refresh-interval 2)
+
+(defun nomis/dirtree/do-scheduled-refresh ()
+  (nomis/dirtree/remove-watchers-of-deleted-dirs)
+  (nomis/dirtree/refresh-after-finding-buffer)
+  (setq nomis/dirtree/refresh-scheduled? nil))
+
+(nomis/def-timer-with-relative-repeats
+    nomis/dirtree/refresh-timer
+    nomis/dirtree/refresh-interval
+  (when nomis/dirtree/refresh-scheduled?
+    (nomis/dirtree/do-scheduled-refresh))
+  `(:repeat ,nomis/dirtree/refresh-interval) ; TODO This is a weird way of specifying the repeat interval
+  )
+
+;;;; ---------------------------------------------------------------------------
+;;;; File watchers
+
+(defun nomis/dirtree/handle-watch-event (event)
+  (let* ((filename (caddr event))
          (filename-no-dir (file-name-nondirectory filename)))
     (unless (or (string-match-p "^.#" filename-no-dir)
                 (string-match-p "^#.*#$" filename-no-dir))
-      (nomis/dirtree/refresh-after-finding-buffer)
-      (when (eql action 'deleted)
-        (nomis/dirtree/remove-watchers-of-deleted-dirs)))))
+      (setq nomis/dirtree/refresh-scheduled? t))))
 
 (defun nomis/dirtree/add-directory-watcher (directory)
   (let ((watcher (file-notify-add-watch directory
                                         '(change)
-                                        'nomis/dirtree/handle-directory-change)))
+                                        'nomis/dirtree/handle-watch-event)))
     (setf nomis/dirtree/directory-watchers
           (cons (cons directory watcher)
                 nomis/dirtree/directory-watchers))))
 
 (defun nomis/dirtree/remove-directory-watcher (directory)
   (setq nomis/dirtree/directory-watchers
-        (-remove-first (lambda (entry)
-                         (if (equal (car entry) directory)
-                             (progn
-                               (file-notify-rm-watch (cdr entry))
-                               t)
-                           nil))
-                       nomis/dirtree/directory-watchers)))
+        ;; Not `-remove-first` -- there can be multiple trees, so the same
+        ;; dir can be here twice. TODO Change this by not adding duplicate
+        ;; entries.
+        (-remove (lambda (entry)
+                   (if (equal (car entry) directory)
+                       (progn
+                         (file-notify-rm-watch (cdr entry))
+                         t)
+                     nil))
+                 nomis/dirtree/directory-watchers)))
 
 ;;;; ---------------------------------------------------------------------------
 ;;;; Widget and file stuff.
