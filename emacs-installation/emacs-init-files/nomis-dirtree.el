@@ -341,13 +341,22 @@ With prefix argument select `nomis/dirtree/buffer'"
 ;;;; File watchers
 
 ;;;; TODO What about when a tree is deleted?
-;;;; TODO Are you creating watchers when you create a second tree? I guess so.
+;;;;      You need a wrapper for `tree-mode-delete-tree`
 
-;;;; TODO Need to spot deletion of dirs.
+;;;; TODO What about when dirtree buffer is deleted?
+
+;;;; TODO Need to spot deletion of dirs. Or just fix up at a convenient time.
+;;;;      Nicer if they are deleted upon deletion of dirs.
+;;;;      - But why aren't they? That's a change, right?
 
 (require 'filenotify)
 
 (defvar nomis/dirtree/directory-watchers '())
+
+(defun nomis/dirtree/print-directory-watchers ()
+  (loop for x in (-map #'car nomis/dirtree/directory-watchers)
+        do (princ x)
+        do (terpri)))
 
 (defun nomis/dirtree/handle-directory-change (event)
   ;; (message "nomis/dirtree/handle-directory-change %s" event)
