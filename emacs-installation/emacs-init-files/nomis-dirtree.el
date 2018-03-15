@@ -414,16 +414,15 @@ With prefix argument select `nomis/dirtree/buffer'"
 
 (defun nomis/dirtree/remove-directory-watcher (directory)
   (setq nomis/dirtree/directory-watchers
-        ;; Not `-remove-first` -- there can be multiple trees, so the same
-        ;; dir can be here twice. TODO Change this by not adding duplicate
-        ;; entries.
-        (-remove (lambda (entry)
-                   (if (equal (car entry) directory)
-                       (progn
-                         (file-notify-rm-watch (cdr entry))
-                         t)
-                     nil))
-                 nomis/dirtree/directory-watchers)))
+        ;; `-remove-first` is not only for efficeiency -- there can be multiple
+        ;; trees, so the same dir can be here twice.
+        (-remove-first (lambda (entry)
+                         (if (equal (car entry) directory)
+                             (progn
+                               (file-notify-rm-watch (cdr entry))
+                               t)
+                           nil))
+                       nomis/dirtree/directory-watchers)))
 
 ;;;; ---------------------------------------------------------------------------
 ;;;; Widget and file stuff.
