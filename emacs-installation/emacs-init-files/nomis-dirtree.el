@@ -448,7 +448,8 @@ With prefix argument select `nomis/dirtree/buffer'"
           nomis/dirtree/remove-directory-watcher))))
 
 (defvar *nomis/dirtree/dirs-to-keep-collapsed-unless-forced*
-  '("\\.git"
+  '("\\.emacs\\.d"
+    "\\.git"
     "\\.idea"
     "\\.repl"
     "\\.vagrant"
