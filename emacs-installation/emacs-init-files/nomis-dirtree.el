@@ -340,9 +340,6 @@ With prefix argument select `nomis/dirtree/buffer'"
 ;;;; ---------------------------------------------------------------------------
 ;;;; nomis/dirtree/directory-watchers
 
-;;;; TODO What about when a tree is deleted?
-;;;;      You need a wrapper for `tree-mode-delete-tree`
-
 ;;;; TODO What about when dirtree buffer is deleted?
 ;;;;      - Set `nomis/dirtree/directory-watchers` to nil.
 ;;;;      - Remove all watchers.
@@ -1181,6 +1178,17 @@ Mostly for debugging purposes."
   (let* ((widget (nomis/dirtree/selected-widget/with-extras)))
     (nomis/dirtree/show-widget-info widget)))
 
+(defun nomis/dirtree/delete-tree ()
+  "Delete tree containing selection from the dirtree buffer."
+  (interactive)
+  (if (not (tree-mode-root-linep))
+      (progn
+        (message "The delete-tree command only works when at the root of a tree.")
+        (nomis/beep))
+    (when (yes-or-no-p "Delete current tree?")
+      (nomis/dirtree/collapse-all) ; an easy way to remove watchers.
+      (tree-mode-delete (tree-mode-tree-ap)))))
+
 (define-key global-map (kbd "H-q d") 'nomis/dirtree/make-dirtree)
 (define-key global-map (kbd "H-/")   'nomis/dirtree/goto-file)
 (define-key global-map (kbd "H-M-/") 'nomis/dirtree/goto-file/return-to-window)
@@ -1253,6 +1261,8 @@ Mostly for debugging purposes."
   (dk (kbd "X")             'nomis/dirtree/clear-history)
 
   (dk (kbd "I")             'nomis/dirtree/show-selection-no-extras-info)
-  (dk (kbd "i")             'nomis/dirtree/show-selection-with-extras-info))
+  (dk (kbd "i")             'nomis/dirtree/show-selection-with-extras-info)
+
+  (dk (kbd "D")             'nomis/dirtree/delete-tree))
 
 (provide 'nomis-dirtree)
