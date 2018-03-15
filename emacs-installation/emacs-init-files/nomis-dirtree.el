@@ -340,10 +340,6 @@ With prefix argument select `nomis/dirtree/buffer'"
 ;;;; ---------------------------------------------------------------------------
 ;;;; nomis/dirtree/directory-watchers
 
-;;;; TODO What about when dirtree buffer is deleted?
-;;;;      - Set `nomis/dirtree/directory-watchers` to nil.
-;;;;      - Remove all watchers.
-
 (require 'filenotify)
 
 (defvar nomis/dirtree/directory-watchers '())
@@ -420,6 +416,18 @@ With prefix argument select `nomis/dirtree/buffer'"
                                t)
                            nil))
                        nomis/dirtree/directory-watchers)))
+
+;;;; ---------------------------------------------------------------------------
+;;;; nomis/dirtree/kill-buffer-hook
+
+(cl-defun nomis/dirtree/kill-buffer-hook (&rest args)
+  (when (equal (buffer-name (current-buffer))
+               nomis/dirtree/buffer)
+    ;; An easy way to remove watchers:
+    (nomis/dirtree/collapse-recursively-all-trees)))
+
+(add-hook 'kill-buffer-hook
+          'nomis/dirtree/kill-buffer-hook)
 
 ;;;; ---------------------------------------------------------------------------
 ;;;; Widget and file stuff.
