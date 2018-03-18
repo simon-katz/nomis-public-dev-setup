@@ -172,52 +172,74 @@ See `windata-display-buffer' for setup the arguments."
               (goto-char (widget-get (car button) :from))))
       (call-interactively 'nomis/dirtree/make-dirtree))))
 
+(defun nomis/dirtree/make-dirtree/really-do-it? (root)
+  (let ((existing-roots (if (get-buffer nomis/dirtree/buffer)
+                            (-map #'nomis/dirtree/widget-file
+                                  (with-current-buffer nomis/dirtree/buffer
+                                    (nomis/dirtree/all-trees)))
+                          '())))
+    (if (member root existing-roots)
+        (progn
+          (message "The directory is already in dirtree.")
+          (nomis/beep)
+          nil)
+      (and (or (-none? (lambda (f) (s-starts-with? root f))
+                       existing-roots)
+               (yes-or-no-p
+                "A child of the directory is already in dirtree. Really show? (May have unexpected behaviour!)"))
+           (or (-none? (lambda (f) (s-starts-with? f root))
+                       existing-roots)
+               (yes-or-no-p
+                "A parent of the directory is already in dirtree. Really show? (May have unexpected behaviour!)"))))))
+
 (defun nomis/dirtree/make-dirtree (root select)
   "Create tree of `root' directory.
 With prefix argument select `nomis/dirtree/buffer'"
   (interactive "DDirectory: \nP")
-  (let ((buffer (get-buffer-create nomis/dirtree/buffer))
-        tree win)
-    (with-current-buffer buffer
-      (unless (eq major-mode 'nomis/dirtree/mode)
-        (nomis/dirtree/mode))
-      (dolist (atree tree-mode-list)
-        (if (string= (widget-get atree :file) root)
-            (setq tree atree)))
-      (or tree
-          (setq tree (tree-mode-insert
-                      (nomis/dirtree/make-root-widget root)))))
-    ;; (setq win (get-buffer-window nomis/dirtree/buffer))
-    (unless win
-      ;;(setq win (get-buffer-window nomis/dirtree/buffer))
-      (setq win (apply 'windata-display-buffer nomis/dirtree/buffer nomis/dirtree/windata))
-      (select-window win))
-    (with-selected-window win
-      (unless (widget-get tree :open)
-        (widget-apply-action tree))
-      (goto-char (widget-get tree :from))
-      (recenter 1)
-      (nomis/dirtree/note-selection))
-    (if select
-        (select-window win))))
+  (when (nomis/dirtree/make-dirtree/really-do-it? root)
+    (let ((buffer (get-buffer-create nomis/dirtree/buffer))
+          tree win)
+      (with-current-buffer buffer
+        (unless (eq major-mode 'nomis/dirtree/mode)
+          (nomis/dirtree/mode))
+        (dolist (atree tree-mode-list)
+          (if (string= (widget-get atree :file) root)
+              (setq tree atree)))
+        (or tree
+            (setq tree (tree-mode-insert
+                        (nomis/dirtree/make-root-widget root)))))
+      ;; (setq win (get-buffer-window nomis/dirtree/buffer))
+      (unless win
+        ;;(setq win (get-buffer-window nomis/dirtree/buffer))
+        (setq win (apply 'windata-display-buffer nomis/dirtree/buffer nomis/dirtree/windata))
+        (select-window win))
+      (with-selected-window win
+        (unless (widget-get tree :open)
+          (widget-apply-action tree))
+        (goto-char (widget-get tree :from))
+        (recenter 1)
+        (nomis/dirtree/note-selection))
+      (if select
+          (select-window win)))))
 
 (defun nomis/dirtree/make-dirtree-in-buffer (root select)
   "Create tree of `root' directory.
 With prefix argument select `nomis/dirtree/buffer'"
   (interactive "DDirectory: \nP")
-  (let ((buffer (get-buffer-create nomis/dirtree/buffer))
-        tree win)
-    (with-current-buffer buffer
-      (unless (eq major-mode 'nomis/dirtree/mode)
-        (nomis/dirtree/mode))
-      (dolist (atree tree-mode-list)
-        (if (string= (widget-get atree :file) root)
-            (setq tree atree)))
-      (or tree
-          (setq tree (tree-mode-insert
-                      (nomis/dirtree/make-root-widget root)))))
-    (if select
-        (switch-to-buffer nomis/dirtree/buffer))))
+  (when (nomis/dirtree/make-dirtree/really-do-it? root)
+    (let ((buffer (get-buffer-create nomis/dirtree/buffer))
+          tree win)
+      (with-current-buffer buffer
+        (unless (eq major-mode 'nomis/dirtree/mode)
+          (nomis/dirtree/mode))
+        (dolist (atree tree-mode-list)
+          (if (string= (widget-get atree :file) root)
+              (setq tree atree)))
+        (or tree
+            (setq tree (tree-mode-insert
+                        (nomis/dirtree/make-root-widget root)))))
+      (if select
+          (switch-to-buffer nomis/dirtree/buffer)))))
 
 (define-derived-mode nomis/dirtree/mode tree-mode "Dir-Tree"
   "A mode to display tree of directory"
