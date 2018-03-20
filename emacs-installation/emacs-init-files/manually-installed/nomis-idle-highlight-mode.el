@@ -297,20 +297,26 @@
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 (defun nomis/start-of-symbol-regexp ()
-  ;; We would like to use "\\_<", but that doesn't work well with symbols
-  ;; that contain single quotes.
-  (let* ((simple-start (nomis/rx/or "^"
-                                    (nomis/not-symbol-body-char-regexp))))
-    (nomis/rx/or simple-start
-                 ;; We allow single quotes in symbol bodies, so:
-                 (concat simple-start
-                         "'"))))
+  ;; "\\_<" doesn't work well with Lispy symbols that contain single quotes, so:
+  (if (not (member major-mode
+                   '(emacs-lisp-mode
+                     clojure-mode)))
+      "\\_<"
+    (let* ((simple-start (nomis/rx/or "^"
+                                      (nomis/not-symbol-body-char-regexp))))
+      (nomis/rx/or simple-start
+                   ;; We allow single quotes in symbol bodies, so:
+                   (concat simple-start
+                           "'")))))
 
 (defun nomis/end-of-symbol-regexp ()
-  ;; We would like to use "\\_>", but that doesn't work well with symbols
-  ;; that contain single quotes.
-  (nomis/rx/or "$"
-               (nomis/not-symbol-body-char-regexp)))
+  ;; "\\_>" doesn't work well with Lispy symbols that contain single quotes, so:
+  (if (not (member major-mode
+                   '(emacs-lisp-mode
+                     clojure-mode)))
+      "\\_>"
+    (nomis/rx/or "$"
+                 (nomis/not-symbol-body-char-regexp))))
 
 ;;;; ___________________________________________________________________________
 ;;;; Regular expressions for searching
