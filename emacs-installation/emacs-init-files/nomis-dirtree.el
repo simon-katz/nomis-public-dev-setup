@@ -380,6 +380,16 @@ With prefix argument select `nomis/dirtree/buffer'"
              (-filter (lambda (entry)
                         (file-notify-valid-p (cdr entry)))))))
 
+(defun nomis/dirtree/remove-roots-whose-dirs-are-deleted ()
+  (nomis/dirtree/with-make-dirtree-window-active
+      t
+      t
+    (loop for tree in (copy-list (nomis/dirtree/all-trees))
+          unless (file-exists-p (nomis/dirtree/widget-file tree))
+          do (progn
+               (nomis/dirtree/goto-widget tree)
+               (nomis/dirtree/delete-tree/do-it)))))
+
 (defun nomis/dirtree/refresh-after-finding-buffer ()
   (condition-case err
       (nomis/dirtree/with-make-dirtree-window-active
@@ -397,8 +407,17 @@ With prefix argument select `nomis/dirtree/buffer'"
 (defvar nomis/dirtree/refresh-interval 2)
 
 (defun nomis/dirtree/do-scheduled-refresh ()
-  (nomis/dirtree/remove-watchers-of-deleted-dirs)
-  (nomis/dirtree/refresh-after-finding-buffer)
+  (when (get-buffer nomis/dirtree/buffer)
+    (condition-case err
+        (progn
+          (nomis/dirtree/remove-watchers-of-deleted-dirs)
+          (nomis/dirtree/remove-roots-whose-dirs-are-deleted)
+          (nomis/dirtree/refresh-after-finding-buffer))
+      (error
+       (progn
+         (message "Error in nomis/dirtree/do-scheduled-refresh %s %s"
+                  (car err)
+                  (cdr err))))))
   (setq nomis/dirtree/refresh-scheduled? nil))
 
 (nomis/def-timer-with-relative-repeats
@@ -1209,6 +1228,11 @@ Mostly for debugging purposes."
   (let* ((widget (nomis/dirtree/selected-widget/with-extras)))
     (nomis/dirtree/show-widget-info widget)))
 
+(defun nomis/dirtree/delete-tree/do-it ()
+  (assert (tree-mode-root-linep))
+  (nomis/dirtree/collapse-all) ; an easy way to remove watchers.
+  (tree-mode-delete (tree-mode-tree-ap)))
+
 (defun nomis/dirtree/delete-tree ()
   "Delete tree containing selection from the dirtree buffer."
   (interactive)
@@ -1217,8 +1241,7 @@ Mostly for debugging purposes."
         (message "The delete-tree command only works when at the root of a tree.")
         (nomis/beep))
     (when (yes-or-no-p "Delete current tree?")
-      (nomis/dirtree/collapse-all) ; an easy way to remove watchers.
-      (tree-mode-delete (tree-mode-tree-ap)))))
+      (nomis/dirtree/delete-tree/do-it))))
 
 (define-key global-map (kbd "H-q d") 'nomis/dirtree/make-dirtree)
 (define-key global-map (kbd "H-/")   'nomis/dirtree/goto-file)
