@@ -360,6 +360,40 @@ With prefix argument select `nomis/dirtree/buffer'"
   (tree-mode-previous-sib n))
 
 ;;;; ---------------------------------------------------------------------------
+;;;; nomis/dirtree/with-make-dirtree-window-active
+
+(defun nomis/dirtree/with-make-dirtree-window-active-fun
+    (message-if-no-dirtree-buffer?
+     return-to-original-window?
+     fun)
+  (let* ((dirtree-window (nomis/find-window-in-any-frame nomis/dirtree/buffer))
+         (dirtree-buffer (when dirtree-window
+                           (window-buffer dirtree-window))))
+    (cond
+     ((null dirtree-window)
+      (when message-if-no-dirtree-buffer?
+        (message "There's no dirtee window.")
+        (nomis/beep)))
+     (t
+      (let* ((original-window (selected-window)))
+        (unwind-protect
+            (progn
+              (select-window dirtree-window)
+              (funcall fun))
+          (when return-to-original-window?
+            (select-window original-window))))))))
+
+(defmacro nomis/dirtree/with-make-dirtree-window-active
+    (message-if-no-dirtree-buffer?
+     return-to-original-window?
+     &rest body)
+  (declare (indent 2))
+  `(nomis/dirtree/with-make-dirtree-window-active-fun
+    ,message-if-no-dirtree-buffer?
+    ,return-to-original-window?
+    (lambda () ,@body)))
+
+;;;; ---------------------------------------------------------------------------
 ;;;; nomis/dirtree/directory-watchers
 
 (require 'filenotify)
@@ -626,40 +660,6 @@ With prefix argument select `nomis/dirtree/buffer'"
 (defun nomis/dirtree/collapse-recursively-all-trees ()
   (mapc #'collapse-recursively
         (nomis/dirtree/all-trees)))
-
-;;;; ---------------------------------------------------------------------------
-;;;; nomis/dirtree/with-make-dirtree-window-active
-
-(defun nomis/dirtree/with-make-dirtree-window-active-fun
-    (message-if-no-dirtree-buffer?
-     return-to-original-window?
-     fun)
-  (let* ((dirtree-window (nomis/find-window-in-any-frame nomis/dirtree/buffer))
-         (dirtree-buffer (when dirtree-window
-                           (window-buffer dirtree-window))))
-    (cond
-     ((null dirtree-window)
-      (when message-if-no-dirtree-buffer?
-        (message "There's no dirtee window.")
-        (nomis/beep)))
-     (t
-      (let* ((original-window (selected-window)))
-        (unwind-protect
-            (progn
-              (select-window dirtree-window)
-              (funcall fun))
-          (when return-to-original-window?
-            (select-window original-window))))))))
-
-(defmacro nomis/dirtree/with-make-dirtree-window-active
-    (message-if-no-dirtree-buffer?
-     return-to-original-window?
-     &rest body)
-  (declare (indent 2))
-  `(nomis/dirtree/with-make-dirtree-window-active-fun
-    ,message-if-no-dirtree-buffer?
-    ,return-to-original-window?
-    (lambda () ,@body)))
 
 ;;;; ---------------------------------------------------------------------------
 ;;;; Navigation
