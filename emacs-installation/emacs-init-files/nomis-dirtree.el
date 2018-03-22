@@ -441,7 +441,7 @@ With prefix argument select `nomis/dirtree/buffer'"
 (defvar nomis/dirtree/refresh-interval 2)
 
 (defun nomis/dirtree/do-scheduled-refresh ()
-  (when (get-buffer nomis/dirtree/buffer)
+  (when (nomis/find-window-in-any-frame nomis/dirtree/buffer)
     (condition-case err
         (progn
           (nomis/dirtree/remove-watchers-of-deleted-dirs)
