@@ -245,7 +245,9 @@ With prefix argument select `nomis/dirtree/buffer'"
   "A mode to display tree of directory"
   (tree-widget-set-theme "folder")
   (hl-line-mode)
-  (face-remap-add-relative 'hl-line '((:background "grey90"))))
+  (face-remap-add-relative 'hl-line
+                           (list (list :background "grey90"
+                                       :box nil))))
 
 (defconst nomis/dirtree/approach-to-children :new)
 (defconst nomis/dirtree/dirs-at-top? nil)
