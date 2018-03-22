@@ -429,7 +429,7 @@ With prefix argument select `nomis/dirtree/buffer'"
       (nomis/dirtree/with-make-dirtree-window-active
           nil
           t
-        (nomis/dirtree/refresh))
+        (nomis/dirtree/refresh/internal))
     (nomis/dirtree/file-not-found
      ;; We get here if the selected file is deleted -- not a problem.
      )))
@@ -727,7 +727,7 @@ With prefix argument select `nomis/dirtree/buffer'"
   (nomis/dirtree/with-return-to-selected-file ; because refresh sometimes jumps us to mad and/or bad place
    (nomis/dirtree/refresh-tree/impl/with-arg tree)))
 
-(defun nomis/dirtree/refresh ()
+(defun nomis/dirtree/refresh/internal ()
   (interactive)
   (nomis/dirtree/with-return-to-selected-file ; because refresh sometimes jumps us to mad and/or bad place
    (mapc #'nomis/dirtree/refresh-tree/impl/with-arg
@@ -1170,7 +1170,7 @@ sub-subdirectories, etc, so that subsequent expansion shows only one level."
   (interactive)
   (setq nomis/dirtree/dirs-at-top?
         (not nomis/dirtree/dirs-at-top?))
-  (nomis/dirtree/refresh))
+  (nomis/dirtree/refresh/internal))
 
 (defun nomis/dirtree/show-widget-info (widget)
   (cl-labels ((emit-info
@@ -1252,7 +1252,7 @@ Mostly for debugging purposes."
 
   (define-key widget-keymap (kbd "<RET>") nil)
 
-  (dk (kbd "g")             'nomis/dirtree/refresh)
+  (dk (kbd "g")             'nomis/dirtree/refresh/internal)
 
   (dk (kbd "<RET>")         'nomis/dirtree/display-file)
   (dk (kbd "C-<return>")    'nomis/dirtree/display-file)
