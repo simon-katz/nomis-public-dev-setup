@@ -435,12 +435,13 @@ With prefix argument select `nomis/dirtree/buffer'"
      )))
 
 ;;;; ---------------------------------------------------------------------------
-;;;; Scheduling refreshes
+;;;; Refreshing and scheduling refreshes
 
 (defvar nomis/dirtree/refresh-scheduled? nil)
 (defvar nomis/dirtree/refresh-interval 2)
 
-(defun nomis/dirtree/do-scheduled-refresh ()
+(defun nomis/dirtree/refresh ()
+  (interactive)
   (when (nomis/find-window-in-any-frame nomis/dirtree/buffer)
     (condition-case err
         (progn
@@ -448,17 +449,16 @@ With prefix argument select `nomis/dirtree/buffer'"
           (nomis/dirtree/remove-roots-whose-dirs-are-deleted)
           (nomis/dirtree/refresh-after-finding-buffer))
       (error
-       (progn
-         (message "Error in nomis/dirtree/do-scheduled-refresh %s %s"
-                  (car err)
-                  (cdr err))))))
+       (message "Error in nomis/dirtree/refresh %s %s"
+                (car err)
+                (cdr err)))))
   (setq nomis/dirtree/refresh-scheduled? nil))
 
 (nomis/def-timer-with-relative-repeats
     nomis/dirtree/refresh-timer
     nomis/dirtree/refresh-interval
   (when nomis/dirtree/refresh-scheduled?
-    (nomis/dirtree/do-scheduled-refresh))
+    (nomis/dirtree/refresh))
   `(:repeat ,nomis/dirtree/refresh-interval) ; TODO This is a weird way of specifying the repeat interval
   )
 
@@ -728,7 +728,6 @@ With prefix argument select `nomis/dirtree/buffer'"
    (nomis/dirtree/refresh-tree/impl/with-arg tree)))
 
 (defun nomis/dirtree/refresh/internal ()
-  (interactive)
   (nomis/dirtree/with-return-to-selected-file ; because refresh sometimes jumps us to mad and/or bad place
    (mapc #'nomis/dirtree/refresh-tree/impl/with-arg
          (nomis/dirtree/all-trees))))
@@ -1252,7 +1251,7 @@ Mostly for debugging purposes."
 
   (define-key widget-keymap (kbd "<RET>") nil)
 
-  (dk (kbd "g")             'nomis/dirtree/refresh/internal)
+  (dk (kbd "g")             'nomis/dirtree/refresh)
 
   (dk (kbd "<RET>")         'nomis/dirtree/display-file)
   (dk (kbd "C-<return>")    'nomis/dirtree/display-file)
