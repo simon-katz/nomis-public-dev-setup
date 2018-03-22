@@ -39,15 +39,19 @@
 (require 'hl-line)
 
 ;; (global-hl-line-mode 1)
-(set-face-background 'hl-line "palegoldenrod") ; was "darkseagreen1", but that doesn't work nicely with magit, and the magit-item-highlight face has disappeared
 
-;; (set-face-attribute 'hl-line nil
-;;                     ;; :background
-;;                     ;; (case 1
-;;                     ;;    (1 "palegoldenrod")
-;;                     ;;    (2 'unspecified))
-;;                     :inherit nil
-;;                     :box '(:line-width 1 :color "grey75"))
+(progn
+  (defvar nomis/hl-line/approach 2)
+  (set-face-attribute 'hl-line nil
+                      :inherit nil
+                      :background (case nomis/hl-line/approach
+                                    (1 "palegoldenrod") ; was "darkseagreen1", but that doesn't work nicely with magit, and the magit-item-highlight face has disappeared
+                                    (2 'unspecified))
+                      :box (case nomis/hl-line/approach
+                             (1 nil)
+                             (2 (list :line-width -1
+                                      :color "grey25"
+                                      :style nil)))))
 
 ;; (set-face-background 'hl-line "lightcyan")
 ;; (set-face-background 'hl-line "lightcyan1")
