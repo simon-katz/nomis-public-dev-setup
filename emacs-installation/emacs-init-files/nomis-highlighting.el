@@ -43,7 +43,7 @@
 
 ;; (set-face-attribute 'hl-line nil
 ;;                     ;; :background
-;;                     ;; (case 2
+;;                     ;; (case 1
 ;;                     ;;    (1 "palegoldenrod")
 ;;                     ;;    (2 'unspecified))
 ;;                     :inherit nil
