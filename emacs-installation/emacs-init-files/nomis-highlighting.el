@@ -41,6 +41,14 @@
 ;; (global-hl-line-mode 1)
 (set-face-background 'hl-line "palegoldenrod") ; was "darkseagreen1", but that doesn't work nicely with magit, and the magit-item-highlight face has disappeared
 
+;; (set-face-attribute 'hl-line nil
+;;                     ;; :background
+;;                     ;; (case 2
+;;                     ;;    (1 "palegoldenrod")
+;;                     ;;    (2 'unspecified))
+;;                     :inherit nil
+;;                     :box '(:line-width 1 :color "grey75"))
+
 ;; (set-face-background 'hl-line "lightcyan")
 ;; (set-face-background 'hl-line "lightcyan1")
 ;; (set-face-background 'hl-line "azure2")
