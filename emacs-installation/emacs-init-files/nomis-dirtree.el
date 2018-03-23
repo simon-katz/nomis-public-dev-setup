@@ -64,6 +64,7 @@
 (require 'nomis-core-utils)
 (require 'nomis-buffers-windows-frames)
 (require 'nomis-files)
+(require 'nomis-timers)
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ;;;; Resume the original dirtree, with much modification.
