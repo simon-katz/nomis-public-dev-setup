@@ -22,6 +22,8 @@
         nomis-meta-x
         nomis-prog-indent-sexp--top-level
         org-beginning-of-line
+        org-end-of-line
+        org-force-self-insert
         org-meta-return
         org-self-insert-command
         org-shiftmetaleft
