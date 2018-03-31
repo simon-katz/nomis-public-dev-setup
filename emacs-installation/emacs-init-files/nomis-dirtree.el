@@ -21,13 +21,21 @@
 
 ;;;; TODO:
 
+;;;; Feature:
+;;;; Control over whether auto-update happens (maybe off by default).
+
+;;;; Bug:
+;;;; When the dirtree buffer is re-shown in a window after not being shown.
+;;;; it should be refreshed (if auto-update is on).
+
+;;;; Feature:
+;;;; Maybe add feature to make tree selection follow file in current buffer.
+;;;; - Use an idle timer -- maybe combine with the auto-refresh timer.
+
 ;;;; Faster history:
 ;;;; - Record buffer positions in the history.
 ;;;; - When navigating history, before the (expensive) current approach, check
 ;;;;   whether the recorded point's widget is the one you want.
-
-;;;; Maybe add feature to make tree selection follow file in current buffer.
-;;;; - Use an idle timer -- maybe combine with the auto-refresh timer.
 
 ;;;; - Bug: `xxxx-and-display` commands do the display part when the first part
 ;;;;        fails. We need to be throwing errors, probably at all places where
