@@ -24,10 +24,6 @@
 ;;;; Feature:
 ;;;; Control over whether auto-update happens (maybe off by default).
 
-;;;; Bug:
-;;;; When the dirtree buffer is re-shown in a window after not being shown.
-;;;; it should be refreshed (if auto-update is on).
-
 ;;;; Feature:
 ;;;; Maybe add feature to make tree selection follow file in current buffer.
 ;;;; - Use an idle timer -- maybe combine with the auto-refresh timer.
@@ -458,12 +454,12 @@ With prefix argument select `nomis/dirtree/buffer'"
         (progn
           (nomis/dirtree/remove-watchers-of-deleted-dirs)
           (nomis/dirtree/remove-roots-whose-dirs-are-deleted)
-          (nomis/dirtree/refresh-after-finding-buffer))
+          (nomis/dirtree/refresh-after-finding-buffer)
+          (setq nomis/dirtree/refresh-scheduled? nil))
       (error
        (message "Error in nomis/dirtree/refresh %s %s"
                 (car err)
-                (cdr err)))))
-  (setq nomis/dirtree/refresh-scheduled? nil))
+                (cdr err))))))
 
 (nomis/def-timer-with-relative-repeats
     nomis/dirtree/refresh-timer
