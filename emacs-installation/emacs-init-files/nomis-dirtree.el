@@ -111,7 +111,7 @@ See `windata-display-buffer' for setup the arguments."
                   (concat tag "  [no auto-expand]")
                 tag)))
     (when root?
-      (nomis/dirtree/add-directory-watcher file))
+      (nomis/dirtree/note-directory-expanded file))
     `(nomis/dirtree/directory-widget
       :tag ,tag
       :file ,file
@@ -499,6 +499,12 @@ With prefix argument select `nomis/dirtree/buffer'"
                            nil))
                        nomis/dirtree/directory-watchers)))
 
+(defun nomis/dirtree/note-directory-expanded (directory)
+  (nomis/dirtree/add-directory-watcher directory))
+
+(defun nomis/dirtree/note-directory-collapsed (directory)
+  (nomis/dirtree/remove-directory-watcher directory))
+
 ;;;; ---------------------------------------------------------------------------
 ;;;; nomis/dirtree/kill-buffer-hook
 
@@ -528,14 +534,14 @@ With prefix argument select `nomis/dirtree/buffer'"
     (unless (nomis/dirtree/expanded? widget)
       (widget-apply-action widget)
       (-> (nomis/dirtree/widget-file widget)
-          nomis/dirtree/add-directory-watcher))))
+          nomis/dirtree/note-directory-expanded))))
 
 (defun nomis/dirtree/collapse-node (widget)
   (when (tree-widget-p widget)
     (when (nomis/dirtree/expanded? widget)
       (widget-apply-action widget)
       (-> (nomis/dirtree/widget-file widget)
-          nomis/dirtree/remove-directory-watcher))))
+          nomis/dirtree/note-directory-collapsed))))
 
 (defvar *nomis/dirtree/dirs-to-keep-collapsed-unless-forced*
   '("\\.emacs\\.d"
