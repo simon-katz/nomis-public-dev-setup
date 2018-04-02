@@ -22,10 +22,15 @@
 ;;;; TODO:
 
 ;;;; Bug:
-;;;; When you collapse a directory, watchers remain for any subdirectories
-;;;; that were expanded.
-;;;; (And is there a difference between `nomis/dirtree/collapse` and
-;;;; `nomis/dirtree/collapse-all`?. Do both collapse all?
+;;;; When there are expanded directories within collapsed directories:
+;;;; - You have watchers on those expanded directories
+;;;    - I guess that's OK, but does it do what is expected?
+;;;; - When you refresh, the expanded subdirectories stop being expanded, but
+;;;;   you don't update your watchers or knowledge of expansion.
+;;;;   - Can you retain the expanded subdirectories? (But maybe this is dirtree
+;;;;     rather than nomis-dirtree. (Yes, it's `tree-mode-reflesh-tree`.)
+;;;;   - One way to fix this would be to occasionally crawl the trees and reset
+;;;;     your watchers and knowledge of expansion.
 
 ;;;; Feature:
 ;;;; Maybe add feature to make tree selection follow file in current buffer.
