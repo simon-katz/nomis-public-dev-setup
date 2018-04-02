@@ -25,7 +25,10 @@
 ;;;; When there are expanded directories within collapsed directories:
 ;;;; - You have watchers on those expanded directories
 ;;;    - I guess that's OK, but does it do what is expected?
-;;;; - When you refresh, the expanded subdirectories stop being expanded, but
+;;;; - When you refresh, the expanded subdirectories stop being expanded.
+;;;;   And now, with auto-refresh, you are updating automatically when there's
+;;;;   a change, so this is very bad.
+;;;;   Also:
 ;;;;   you don't update your watchers or knowledge of expansion.
 ;;;;   - Can you retain the expanded subdirectories? (But maybe this is dirtree
 ;;;;     rather than nomis-dirtree. (Yes, it's `tree-mode-reflesh-tree`.)
