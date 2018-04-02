@@ -28,10 +28,12 @@
 ;;;; - When you refresh, the expanded subdirectories stop being expanded.
 ;;;;   And now, with auto-refresh, you are updating automatically when there's
 ;;;;   a change, so this is very bad.
+;;;;   - Can you retain the expanded subdirectories?
+;;;;     (But the problem is in dirtree, not nomis-dirtree --
+;;;;     `tree-mode-reflesh-tree`.)
+;;;;     Can you write your own refresh function?
 ;;;;   Also:
-;;;;   you don't update your watchers or knowledge of expansion.
-;;;;   - Can you retain the expanded subdirectories? (But maybe this is dirtree
-;;;;     rather than nomis-dirtree. (Yes, it's `tree-mode-reflesh-tree`.)
+;;;;   You don't update your watchers or knowledge of expansion.
 ;;;;   - One way to fix this would be to occasionally crawl the trees and reset
 ;;;;     your watchers and knowledge of expansion.
 
