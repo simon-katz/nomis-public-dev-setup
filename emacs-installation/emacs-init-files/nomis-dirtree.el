@@ -27,7 +27,8 @@
 ;;;    - I guess that's OK, but does it do what is expected?
 ;;;; - When you refresh, the expanded subdirectories stop being expanded.
 ;;;;   And now, with auto-refresh, you are updating automatically when there's
-;;;;   a change, so this is very bad.
+;;;;   a change, so this is very bad. (But less bad now that you are ignoring
+;;;;   `stopped` events.)
 ;;;;   - Can you retain the expanded subdirectories?
 ;;;;     (But the problem is in dirtree, not nomis-dirtree --
 ;;;;     `tree-mode-reflesh-tree`.)
@@ -530,11 +531,16 @@ With prefix argument select `nomis/dirtree/buffer'"
 ;;;; File watchers
 
 (defun nomis/dirtree/handle-watch-event (event)
-  (let* ((filename (caddr event))
-         (filename-no-dir (file-name-nondirectory filename)))
-    (unless (or (string-match-p "^.#" filename-no-dir)
-                (string-match-p "^#.*#$" filename-no-dir))
-      (setq nomis/dirtree/refresh-scheduled? t))))
+  (let* ((action (cadr event)))
+    (when (-contains? '(created
+                        deleted
+                        renamed)
+                      action)
+      (let* ((filename (caddr event))
+             (filename-no-dir (file-name-nondirectory filename)))
+        (unless (or (string-match-p "^.#" filename-no-dir)
+                    (string-match-p "^#.*#$" filename-no-dir))
+          (setq nomis/dirtree/refresh-scheduled? t))))))
 
 (defun nomis/dirtree/add-directory-watcher (directory)
   (let ((watcher (file-notify-add-watch directory
