@@ -36,6 +36,9 @@
 ;;;;   You don't update your watchers or knowledge of expansion.
 ;;;;   - One way to fix this would be to occasionally crawl the trees and reset
 ;;;;     your watchers and knowledge of expansion.
+;;;; PLAN:
+;;;; - Understand the details of how tree-mode sets up children and does the
+;;;    refresh. And then think about how to roll your own refresh.
 
 ;;;; Feature:
 ;;;; Maybe add feature to make tree selection follow file in current buffer.
