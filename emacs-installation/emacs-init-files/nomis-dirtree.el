@@ -21,6 +21,12 @@
 
 ;;;; TODO:
 
+;;;; Bug:
+;;;; When you collapse a directory, watchers remain for any subdirectories
+;;;; that were expanded.
+;;;; (And is there a difference between `nomis/dirtree/collapse` and
+;;;; `nomis/dirtree/collapse-all`?. Do both collapse all?
+
 ;;;; Feature:
 ;;;; Control over whether auto-update happens (maybe off by default).
 
