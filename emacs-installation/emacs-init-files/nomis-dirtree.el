@@ -1324,6 +1324,8 @@ Mostly for debugging purposes."
 
   (dk (kbd "g")             'nomis/dirtree/refresh)
 
+  (dk (kbd "a")             'nomis/dirtree/toggle-auto-refresh)
+
   (dk (kbd "<RET>")         'nomis/dirtree/display-file)
   (dk (kbd "C-<return>")    'nomis/dirtree/display-file)
   (dk (kbd "S-<return>")    'nomis/dirtree/display-file-and-goto-other-window)
