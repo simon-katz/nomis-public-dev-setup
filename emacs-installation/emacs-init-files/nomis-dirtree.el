@@ -28,9 +28,6 @@
 ;;;; `nomis/dirtree/collapse-all`?. Do both collapse all?
 
 ;;;; Feature:
-;;;; Control over whether auto-update happens (maybe off by default).
-
-;;;; Feature:
 ;;;; Maybe add feature to make tree selection follow file in current buffer.
 ;;;; - Use an idle timer -- maybe combine with the auto-refresh timer.
 
@@ -407,16 +404,32 @@ With prefix argument select `nomis/dirtree/buffer'"
     (lambda () ,@body)))
 
 ;;;; ---------------------------------------------------------------------------
+;;;; nomis/dirtree/auto-refresh?
+;;;; nomis/dirtree/expanded-directories
 ;;;; nomis/dirtree/directory-watchers
 
 (require 'filenotify)
 
+(defvar nomis/dirtree/auto-refresh? nil)
+(defvar nomis/dirtree/expanded-directories '())
 (defvar nomis/dirtree/directory-watchers '())
 
-(defun nomis/dirtree/print-directory-watchers ()
-  (loop for x in (-map #'car nomis/dirtree/directory-watchers)
-        do (princ x)
-        do (terpri)))
+(defun nomis/dirtree/status ()
+  (list :auto-refresh? nomis/dirtree/auto-refresh?
+        :expanded-directories nomis/dirtree/expanded-directories
+        :watched-directories (-map #'car nomis/dirtree/directory-watchers)))
+
+(defun nomis/dirtree/add-expanded-directory (directory)
+  (setf nomis/dirtree/expanded-directories
+        (cons directory
+              nomis/dirtree/expanded-directories)))
+
+(defun nomis/dirtree/remove-expanded-directory (directory)
+  (setq nomis/dirtree/expanded-directories
+        ;; `-remove-first` is not only for efficiency -- there can be multiple
+        ;; trees, so the same dir can be here twice.
+        (-remove-first directory
+                       nomis/dirtree/expanded-directories)))
 
 ;;;; ---------------------------------------------------------------------------
 ;;;; Stuff to do on scheduled refresh
@@ -476,6 +489,31 @@ With prefix argument select `nomis/dirtree/buffer'"
   )
 
 ;;;; ---------------------------------------------------------------------------
+
+(defun nomis/dirtree/turn-on-auto-refresh ()
+  (when (not nomis/dirtree/auto-refresh?)
+    (assert (null nomis/dirtree/directory-watchers))
+    (setq nomis/dirtree/auto-refresh? t)
+    (nomis/dirtree/refresh)
+    (mapc #'nomis/dirtree/add-directory-watcher
+          nomis/dirtree/expanded-directories)))
+
+(defun nomis/dirtree/turn-off-auto-refresh ()
+  (when nomis/dirtree/auto-refresh?
+    (setq nomis/dirtree/auto-refresh? nil)
+    (mapc #'nomis/dirtree/remove-directory-watcher
+          nomis/dirtree/expanded-directories)
+    (assert (null nomis/dirtree/directory-watchers))))
+
+(defun nomis/dirtree/toggle-auto-refresh ()
+  (interactive)
+  (if nomis/dirtree/auto-refresh?
+      (nomis/dirtree/turn-off-auto-refresh)
+    (nomis/dirtree/turn-on-auto-refresh))
+  (message "nomis-dirtree auto refresh turned %s"
+           (if nomis/dirtree/auto-refresh? "on" "off")))
+
+;;;; ---------------------------------------------------------------------------
 ;;;; File watchers
 
 (defun nomis/dirtree/handle-watch-event (event)
@@ -495,7 +533,7 @@ With prefix argument select `nomis/dirtree/buffer'"
 
 (defun nomis/dirtree/remove-directory-watcher (directory)
   (setq nomis/dirtree/directory-watchers
-        ;; `-remove-first` is not only for efficeiency -- there can be multiple
+        ;; `-remove-first` is not only for efficiency -- there can be multiple
         ;; trees, so the same dir can be here twice.
         (-remove-first (lambda (entry)
                          (if (equal (car entry) directory)
@@ -506,10 +544,14 @@ With prefix argument select `nomis/dirtree/buffer'"
                        nomis/dirtree/directory-watchers)))
 
 (defun nomis/dirtree/note-directory-expanded (directory)
-  (nomis/dirtree/add-directory-watcher directory))
+  (nomis/dirtree/add-expanded-directory directory)
+  (when nomis/dirtree/auto-refresh?
+    (nomis/dirtree/add-directory-watcher directory)))
 
 (defun nomis/dirtree/note-directory-collapsed (directory)
-  (nomis/dirtree/remove-directory-watcher directory))
+  (nomis/dirtree/remove-expanded-directory directory)
+  (when nomis/dirtree/auto-refresh?
+    (nomis/dirtree/remove-directory-watcher directory)))
 
 ;;;; ---------------------------------------------------------------------------
 ;;;; nomis/dirtree/kill-buffer-hook
