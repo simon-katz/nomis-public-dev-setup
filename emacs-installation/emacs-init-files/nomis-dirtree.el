@@ -433,7 +433,7 @@ With prefix argument select `nomis/dirtree/buffer'"
   (setq nomis/dirtree/expanded-directories
         ;; `-remove-first` is not only for efficiency -- there can be multiple
         ;; trees, so the same dir can be here twice.
-        (-remove-first directory
+        (-remove-first (-partial #'equal directory)
                        nomis/dirtree/expanded-directories)))
 
 ;;;; ---------------------------------------------------------------------------
