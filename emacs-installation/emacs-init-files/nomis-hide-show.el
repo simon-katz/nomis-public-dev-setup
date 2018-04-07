@@ -10,7 +10,9 @@
 (defun nomis-hs-hide-all ()
   (interactive)
   (hs-minor-mode 1)
-  (hs-hide-all))
+  (hs-hide-all)
+  (nomis-beginning-of-this-defun) ; without this, a following show command does not-very-nice positioning of the cursor
+  )
 
 (defun nomis-hs-show-all ()
   (interactive)
