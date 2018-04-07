@@ -45,6 +45,16 @@
 (define-key global-map (kbd "H-q H-]")  'nomis/hs-adjust/show-all)
 (define-key global-map (kbd "H-q H-=")  'nomis-hs-show-all)
 (define-key global-map (kbd "H-q H-/")  'nomis-hs-toggle-hiding)
+(define-key global-map (kbd "H-q H-0")  'nomis/hs-adjust/set-level/0)
+(define-key global-map (kbd "H-q H-1")  'nomis/hs-adjust/set-level/1)
+(define-key global-map (kbd "H-q H-2")  'nomis/hs-adjust/set-level/2)
+(define-key global-map (kbd "H-q H-3")  'nomis/hs-adjust/set-level/3)
+(define-key global-map (kbd "H-q H-4")  'nomis/hs-adjust/set-level/4)
+(define-key global-map (kbd "H-q H-5")  'nomis/hs-adjust/set-level/5)
+(define-key global-map (kbd "H-q H-6")  'nomis/hs-adjust/set-level/6)
+(define-key global-map (kbd "H-q H-7")  'nomis/hs-adjust/set-level/7)
+(define-key global-map (kbd "H-q H-8")  'nomis/hs-adjust/set-level/8)
+(define-key global-map (kbd "H-q H-9")  'nomis/hs-adjust/set-level/9)
 
 (key-chord-define-global "q-"  'nomis-hs-hide-all)
 (key-chord-define-global "q["  'nomis/hs-adjust/set-0)
@@ -54,6 +64,16 @@
 (key-chord-define-global "q]"  'nomis/hs-adjust/show-all)
 (key-chord-define-global "q="  'nomis-hs-show-all)
 (key-chord-define-global "q/"  'nomis-hs-toggle-hiding)
+(key-chord-define-global "q0"  'nomis/hs-adjust/set-level/0)
+(key-chord-define-global "q1"  'nomis/hs-adjust/set-level/1)
+(key-chord-define-global "q2"  'nomis/hs-adjust/set-level/2)
+(key-chord-define-global "q3"  'nomis/hs-adjust/set-level/3)
+(key-chord-define-global "q4"  'nomis/hs-adjust/set-level/4)
+(key-chord-define-global "q5"  'nomis/hs-adjust/set-level/5)
+(key-chord-define-global "q6"  'nomis/hs-adjust/set-level/6)
+(key-chord-define-global "q7"  'nomis/hs-adjust/set-level/7)
+(key-chord-define-global "q8"  'nomis/hs-adjust/set-level/8)
+(key-chord-define-global "q9"  'nomis/hs-adjust/set-level/9)
 
 (defun nomis-display-hs-hidden-stuff (ov)
   (when (eq 'code (overlay-get ov 'hs))
@@ -86,6 +106,46 @@
   (if (zerop n)
       (nomis-hs-hide-block)
     (hs-hide-level nomis/hs-adjust/level)))
+
+(defun nomis/hs-adjust/set-level/0 ()
+  (interactive)
+  (nomis/hs-adjust/set-level 0))
+
+(defun nomis/hs-adjust/set-level/1 ()
+  (interactive)
+  (nomis/hs-adjust/set-level 1))
+
+(defun nomis/hs-adjust/set-level/2 ()
+  (interactive)
+  (nomis/hs-adjust/set-level 2))
+
+(defun nomis/hs-adjust/set-level/3 ()
+  (interactive)
+  (nomis/hs-adjust/set-level 3))
+
+(defun nomis/hs-adjust/set-level/4 ()
+  (interactive)
+  (nomis/hs-adjust/set-level 4))
+
+(defun nomis/hs-adjust/set-level/5 ()
+  (interactive)
+  (nomis/hs-adjust/set-level 5))
+
+(defun nomis/hs-adjust/set-level/6 ()
+  (interactive)
+  (nomis/hs-adjust/set-level 6))
+
+(defun nomis/hs-adjust/set-level/7 ()
+  (interactive)
+  (nomis/hs-adjust/set-level 7))
+
+(defun nomis/hs-adjust/set-level/8 ()
+  (interactive)
+  (nomis/hs-adjust/set-level 8))
+
+(defun nomis/hs-adjust/set-level/9 ()
+  (interactive)
+  (nomis/hs-adjust/set-level 9))
 
 (defun nomis/hs-adjust/inc-level (n)
   (setq nomis/hs-adjust/level (max 0
@@ -150,6 +210,16 @@
    ("\\" nomis/hs-adjust/more      "More")
    ("]"  nomis/hs-adjust/show-all  "Show this form")
    ("="  nomis-hs-show-all         "Show All")
-   ("/"  nomis-hs-toggle-hiding    "Toggle")))
+   ("/"  nomis-hs-toggle-hiding    "Toggle")
+   ("0"  nomis/hs-adjust/set-level/0)
+   ("1"  nomis/hs-adjust/set-level/1)
+   ("2"  nomis/hs-adjust/set-level/2)
+   ("3"  nomis/hs-adjust/set-level/3)
+   ("4"  nomis/hs-adjust/set-level/4)
+   ("5"  nomis/hs-adjust/set-level/5)
+   ("6"  nomis/hs-adjust/set-level/6)
+   ("7"  nomis/hs-adjust/set-level/7)
+   ("8"  nomis/hs-adjust/set-level/8)
+   ("9"  nomis/hs-adjust/set-level/9)))
 
 (provide 'nomis-hide-show)
