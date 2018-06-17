@@ -12,6 +12,7 @@
         dabbrev-expand
         delete-indentation
         down-list
+        electric-newline-and-maybe-indent
         eval-last-sexp
         forward-sentence
         forward-sexp
