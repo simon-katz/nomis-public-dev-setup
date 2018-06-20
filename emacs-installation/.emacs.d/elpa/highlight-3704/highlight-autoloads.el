@@ -3,7 +3,7 @@
 ;;; Code:
 (add-to-list 'load-path (directory-file-name (or (file-name-directory #$) (car load-path))))
 
-;;;### (autoloads nil "highlight" "highlight.el" (23147 29421 0 0))
+;;;### (autoloads nil "highlight" "highlight.el" (23338 45335 0 0))
 ;;; Generated autoloads from highlight.el
 
 (defvar hlt-max-region-no-warning 100000 "\

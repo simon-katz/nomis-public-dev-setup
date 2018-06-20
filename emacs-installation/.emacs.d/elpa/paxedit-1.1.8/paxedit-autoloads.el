@@ -3,7 +3,7 @@
 ;;; Code:
 (add-to-list 'load-path (directory-file-name (or (file-name-directory #$) (car load-path))))
 
-;;;### (autoloads nil "paxedit" "paxedit.el" (23203 56316 0 0))
+;;;### (autoloads nil "paxedit" "paxedit.el" (23338 45317 0 0))
 ;;; Generated autoloads from paxedit.el
 
 (autoload 'paxedit-whitespace-delete-left "paxedit" "\

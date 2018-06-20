@@ -23,7 +23,7 @@
                       ;; htmlize
                       pos-tip
                       magit
-                      ido-ubiquitous
+                      ido-completing-read+
                       smex
                       ;; idle-highlight-mode -- see "emacs-installation/emacs-init-files/manually-installed/nomis-idle-highlight-mode.el"
                       ;; scala-mode2

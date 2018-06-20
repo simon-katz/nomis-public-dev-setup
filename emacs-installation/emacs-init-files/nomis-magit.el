@@ -28,7 +28,8 @@
   (setq magit-diff-refine-hunk 'all)
   (setq magit-diff-highlight-trailing nil)
   ;; (setq git-commit-summary-max-length 999)
-  )
+  (setq magit-display-buffer-function
+        'magit-display-buffer-same-window-except-diff-v1))
 
 (add-hook 'magit-mode-hook 'nomis-init-magit)
 

@@ -9,7 +9,9 @@
 
 (ido-mode t)
 (ido-everywhere 1)
-(ido-ubiquitous-mode t) ; e.g. for `describe-function' (C-h f)
+
+(require 'ido-completing-read+)
+(ido-ubiquitous-mode 1) ; e.g. for `describe-function' (C-h f)
 
 (setq ido-default-file-method 'selected-window)
 (setq ido-default-buffer-method 'selected-window)
