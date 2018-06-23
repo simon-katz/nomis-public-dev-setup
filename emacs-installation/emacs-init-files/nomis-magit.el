@@ -4,6 +4,8 @@
 
 (require 'nomis-magit-fixes)
 
+(magit-auto-revert-mode 0)
+
 (defun nomis-init-magit ()
   (company-mode 0)
   (set-face-background 'magit-section-highlight
