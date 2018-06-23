@@ -41,7 +41,8 @@ not revert buffers."
 (defun -nomis/fix-magit-auto-revert ()
   (cond
    ((member magit-version '("2.10.3"
-                            "2.11.0"))
+                            "2.11.0"
+                            "2.13.0"))
     (-nomis/fix-magit-auto-revert/2.10.3))
    (t
     (message-box (s-join " "
