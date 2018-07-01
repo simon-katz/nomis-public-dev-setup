@@ -51,7 +51,8 @@
                       ht
                       helm
                       ido-vertical-mode
-                      aggressive-indent))
+                      aggressive-indent
+                      which-key))
 
 (dolist (p my-packages)
   (when (not (package-installed-p p))

@@ -123,6 +123,8 @@
 (require 'nomis-ido-and-smex)
 (require 'nomis-auto-complete)
 
+(require 'nomis-which-key)
+
 (require 'nomis-key-chord)
 (require 'nomis-hydra)
 
