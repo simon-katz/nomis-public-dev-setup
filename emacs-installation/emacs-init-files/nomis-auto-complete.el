@@ -14,6 +14,9 @@
   (1 (setq company-idle-delay nil))
   (2 (setq company-minimum-prefix-length 2)))
 
+(setq company-show-numbers t)
+(setq company-require-match nil)
+
 ;;;; ___________________________________________________________________________
 ;;;; Avoid annoyance of completing when nothing to complete.
 
