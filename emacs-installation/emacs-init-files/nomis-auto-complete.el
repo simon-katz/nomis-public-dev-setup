@@ -34,6 +34,12 @@
    "You need to fix `if-no-prefix-do-nothing` advice on `company-calculate-candidates` for this version of Company.")))
 
 ;;;; ___________________________________________________________________________
+;;;; Make aborting easier in `company-active-map` -- a single press of the
+;;;; escape key instead of Company's three presses.
+
+(define-key company-active-map "\e" 'company-abort)
+
+;;;; ___________________________________________________________________________
 ;;;; Make right arrow cycle through things in `company-active-map`.
 
 (defconst nomis/company-show-info/functions
