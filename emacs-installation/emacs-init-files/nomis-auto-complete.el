@@ -30,15 +30,6 @@
    "You need to fix `if-no-prefix-do-nothing` advice on `company-calculate-candidates` for this version of Company.")))
 
 ;;;; ___________________________________________________________________________
-;;;; company-quickhelp
-
-(company-quickhelp-mode)
-
-(setq company-quickhelp-delay nil)
-
-(define-key company-active-map (kbd "<right>") #'company-quickhelp-manual-begin)
-
-;;;; ___________________________________________________________________________
 ;;;; ---- Helm ----
 ;;;; Maybe Helm is good, but I don't like it much at first glance.
 ;;;; It does have some useful stuff though (eg live grepping (`helm-find-files`
