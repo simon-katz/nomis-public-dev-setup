@@ -13,6 +13,22 @@
   (1 (setq company-idle-delay nil))
   (2 (setq company-minimum-prefix-length 2)))
 
+(cond 
+ ((member (company-version)
+          '("0.9.6"))
+  (advice-add 'company-calculate-candidates
+              :around
+              (lambda (orig-fun &rest args)  
+                (if (equal args '(""))
+                    (progn
+                      (nomis/beep)  
+                      (error "Not doing completion when there's nothing to complete")) 
+                  (apply orig-fun args)))
+              `((name . if-no-prefix-do-nothing))))
+ (t
+  (message-box
+   "You need to fix `if-no-prefix-do-nothing` advice on `company-calculate-candidates` for this version of Company.")))
+
 ;;;; ___________________________________________________________________________
 ;;;; ---- Helm ----
 ;;;; Maybe Helm is good, but I don't like it much at first glance.
