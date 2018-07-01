@@ -42,6 +42,7 @@
                       ;; ac-js2
                       projectile
                       company
+                      company-quickhelp
                       ;; rcirc-notify
                       markdown-mode
                       hydra
