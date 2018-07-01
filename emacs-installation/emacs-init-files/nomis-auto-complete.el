@@ -1,3 +1,4 @@
+;; -*- lexical-binding: t -*-
 ;;;; Init stuff -- auto-complete
 
 ;;;; ___________________________________________________________________________
@@ -13,21 +14,71 @@
   (1 (setq company-idle-delay nil))
   (2 (setq company-minimum-prefix-length 2)))
 
-(cond 
+;;;; ___________________________________________________________________________
+;;;; Avoid annoyance of completing when nothing to complete.
+
+(cond
  ((member (company-version)
           '("0.9.6"))
   (advice-add 'company-calculate-candidates
               :around
-              (lambda (orig-fun &rest args)  
+              (lambda (orig-fun &rest args)
                 (if (equal args '(""))
                     (progn
-                      (nomis/beep)  
-                      (error "Not doing completion when there's nothing to complete")) 
+                      (nomis/beep)
+                      (error "Not doing completion when there's nothing to complete"))
                   (apply orig-fun args)))
               `((name . if-no-prefix-do-nothing))))
  (t
   (message-box
    "You need to fix `if-no-prefix-do-nothing` advice on `company-calculate-candidates` for this version of Company.")))
+
+;;;; ___________________________________________________________________________
+;;;; Make right arrow cycle through things in `company-active-map`.
+
+(defconst nomis/company-show-info/functions
+  (list #'company-show-doc-buffer
+        #'company-show-location))
+
+(defvar nomis/company-show-info/current-index 0)
+
+(defun nomis/company-show-info/next-function ()
+  (interactive)
+  (let* ((i nomis/company-show-info/current-index))
+    (setq nomis/company-show-info/current-index
+          (mod (1+ i)
+               (length nomis/company-show-info/functions)))
+    (nth i nomis/company-show-info/functions)))
+
+(defun nomis/company-show-info/call-next-function ()
+  (interactive)
+  (funcall (nomis/company-show-info/next-function)))
+
+(define-key company-active-map
+  (kbd "<right>") #'nomis/company-show-info/call-next-function)
+
+;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+;;;; Reset `nomis/company-show-info/current-index` for commands other than
+;;;; info commands.
+
+(defconst nomis/company-show-info/reset-functions
+  (list #'company-complete-common
+        #'company-select-next
+        #'company-select-previous
+        #'company-select-next-or-abort
+        #'company-select-previous-or-abort
+        #'company-next-page
+        #'company-previous-page 
+        #'company-filter-candidates))
+
+(dolist (f nomis/company-show-info/reset-functions)
+  (advice-add f
+              :around
+              (lambda (orig-fun &rest args)
+                (apply orig-fun args)
+                (setq nomis/company-show-info/current-index
+                      0))
+              `((name . reset-nomis/company-show-info/current-index))))
 
 ;;;; ___________________________________________________________________________
 ;;;; ---- Helm ----
