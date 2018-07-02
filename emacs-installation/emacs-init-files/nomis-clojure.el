@@ -85,6 +85,13 @@
 (add-hook 'cider-mode-hook #'cider-company-enable-fuzzy-completion)
 
 ;;;; ___________________________________________________________________________
+;;;; CIDER debug broken
+
+;;;; See https://github.com/clojure-emacs/cider-nrepl/issues/460
+;;;; - Workaround:
+;;;;   `(binding [cider.nrepl.middleware.debug/*skip-breaks* (atom nil)] ...)`
+
+;;;; ___________________________________________________________________________
 ;;;; Misc
 
 (require 'cider-grimoire)
