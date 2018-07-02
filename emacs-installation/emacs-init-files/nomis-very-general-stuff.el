@@ -7,7 +7,7 @@
 (defun nomis-no-op ()
   (interactive))
 
-(define-key global-map (kbd "M-<return>") 'nomis-no-op)
+;; (define-key global-map (kbd "M-<return>") 'nomis-no-op)
 
 ;; (defun nomis-save-buffers-kill-terminal ()
 ;;   (interactive)

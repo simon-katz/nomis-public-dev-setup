@@ -1,7 +1,11 @@
 ;;;; Init stuff -- Very general stuff (new).
 ;;;; - The plan is to move stuff to here from "nomis-very-general-stuff", but
-;;;;   I don't want to do that right now in case I break things.
+;;;;   I don't want to do that right now (2017-09-12) in case I break things.
 ;;;;   And I need what's here earlier in the init setup.
+
+;;;; ___________________________________________________________________________
+
+(setq help-window-select t)
 
 ;;;; ___________________________________________________________________________
 

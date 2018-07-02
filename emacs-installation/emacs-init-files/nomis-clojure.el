@@ -27,9 +27,13 @@
 
 (setq nrepl-buffer-name-separator "--")
 
-;; (setq nrepl-buffer-name-show-port t)
+(setq nrepl-buffer-name-show-port t)
 
-(setq cider-repl-display-in-current-window t)
+(progn
+  ;; Make C-c C-z (`cider-switch-to-repl-buffer`) display buffer in the
+  ;; current window.
+  (setq cider-repl-display-in-current-window t))
+
 (setq cider-repl-pop-to-buffer-on-connect nil)
 
 
@@ -43,9 +47,16 @@
   (setq cider-repl-history-size 5000) ; the default is 500
   )
 
-(setq cider-repl-use-clojure-font-lock t)
+(setq cider-repl-history-highlight-current-entry t)
+(setq cider-repl-history-highlight-inserted-item t)
 
 (setq cider-eval-result-prefix ";; => ")
+
+(setq cider-repl-result-prefix ";; =>\n")
+
+(setq cider-repl-use-pretty-printing t)
+
+(setq cider-repl-use-content-types nil) ; without this I get unhandled REPL handler exceptions when the result is an image file (2018-07-02, on upgrade to CIDER 0.17.0 (Andalucía)) -- eg `(clojure.java.io/file "/Users/simonkatz/Desktop/brave-clojure/ch00b/ch00b_Acknowledgments _ Clojure for the Brave and True_files/book-cover.jpg")` gives an exception
 
 ;; (setq cider-font-lock-dynamically t)
 
@@ -67,6 +78,8 @@
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ;;;; Company mode for Cider
+
+(setq cider-repl-tab-command 'company-indent-or-complete-common)
 
 (add-hook 'cider-repl-mode-hook #'cider-company-enable-fuzzy-completion)
 (add-hook 'cider-mode-hook #'cider-company-enable-fuzzy-completion)
