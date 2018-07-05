@@ -31,7 +31,7 @@
                       ;; ac-nrepl
                       clojure-mode
                       cider
-                      cider-eval-sexp-fu ; causes failure to download `highlight` -- I installed my old version manually
+                      cider-eval-sexp-fu
                       edn ; needed by clj-refactor, I think
                       inflections ; needed by clj-refactor, I think
                       ;; clj-refactor -- you have cloned this repo yourself
