@@ -16,11 +16,13 @@
                       )
   ;; I'm ok with trailing spaces. When they are in empty lines as part
   ;; of code or comments, I often /want/ trailing spaces.
-  (set-face-attribute 'whitespace-trailing nil
-                      :background (face-attribute 'default :background)
-                      :foreground (face-attribute 'default :foreground)
-                      ;; :underline nil
-                      ))
+  ;; - I've changed my mind, for now at least, so commenting out. [2018-07-08]
+  ;; (set-face-attribute 'whitespace-trailing nil
+  ;;                     :background (face-attribute 'default :background)
+  ;;                     :foreground (face-attribute 'default :foreground)
+  ;;                     ;; :underline nil
+  ;;                     )
+  )
 
 (progn
   ;; For some reason my whitespace face definitions get blatted, even

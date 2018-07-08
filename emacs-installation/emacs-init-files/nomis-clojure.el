@@ -132,6 +132,8 @@
 ;;;; ___________________________________________________________________________
 ;;;; Hooks
 
+(add-hook 'clojure-mode-hook 'whitespace-mode)
+
 (defun nomis-set-comment-column-to-zero ()
   (set (make-local-variable 'comment-column)
        0))

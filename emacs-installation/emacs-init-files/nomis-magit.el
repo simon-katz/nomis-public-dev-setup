@@ -28,7 +28,7 @@
     )
   ;; (setq magit-push-always-verify nil) ; no longer exists
   (setq magit-diff-refine-hunk 'all)
-  (setq magit-diff-highlight-trailing nil)
+  (setq magit-diff-highlight-trailing t)
   ;; (setq git-commit-summary-max-length 999)
   (setq magit-display-buffer-function
         'magit-display-buffer-same-window-except-diff-v1))
