@@ -25,6 +25,7 @@
         org-beginning-of-line
         org-end-of-line
         org-force-self-insert
+        org-kill-line
         org-meta-return
         org-self-insert-command
         org-shiftmetaleft
