@@ -11,7 +11,7 @@
   (interactive)
   (hs-minor-mode 1)
   (hs-hide-all)
-  (nomis-beginning-of-this-defun) ; without this, a following show command does not-very-nice positioning of the cursor
+  (nomis-beginning-of-top-level-form) ; without this, a following show command does not-very-nice positioning of the cursor
   )
 
 (defun nomis-hs-show-all ()

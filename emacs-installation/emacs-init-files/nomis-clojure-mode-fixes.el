@@ -11,7 +11,7 @@
 See: https://github.com/clojure-emacs/clj-refactor.el/wiki/cljr-cycle-privacy"
     (interactive)
     (save-excursion
-      (nomis-beginning-of-this-defun)
+      (nomis-beginning-of-top-level-form)
       (search-forward-regexp "(defn?\\(-\\| ^:private\\)?\\_>")
       (if (match-string 1)
           (replace-match "" nil nil nil 1)

@@ -183,10 +183,10 @@ Return the position of the prompt beginning."
       (cond
        (top-level-p
         (let ((start (save-excursion
-                       (nomis-beginning-of-this-defun)
+                       (nomis-beginning-of-top-level-form)
                        (point)))
               (end (save-excursion
-                     (nomis-beginning-of-this-defun)
+                     (nomis-beginning-of-top-level-form)
                      (forward-sexp 1)
                      (point))))
           (funcall grab-function start end)))

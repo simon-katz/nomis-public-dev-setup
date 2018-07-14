@@ -92,7 +92,7 @@
          (ignore-errors (forward-sexp 1))
          (backward-sexp 1))))
 
-(defun nomis-beginning-of-this-defun ()
+(defun nomis-beginning-of-top-level-form ()
   ;; this deals with most situations
   (while (ignore-errors (paredit-backward-up) t))
   ;; Check for Clojure #{
@@ -106,8 +106,8 @@
   (when (nomis-looking-at-whitespace)
     (backward-sexp)))
 
-(defun nomis-end-of-this-defun ()
-  (nomis-beginning-of-this-defun)
+(defun nomis-end-of-top-level-form ()
+  (nomis-beginning-of-top-level-form)
   (forward-sexp))
 
 (provide 'nomis-sexp-utils)
