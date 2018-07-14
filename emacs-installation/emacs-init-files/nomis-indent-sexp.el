@@ -3,55 +3,54 @@
 ;;;; ___________________________________________________________________________
 ;;;; ---- Want indentation commands to work when at the end of a sexp ----
 
-(defadvice indent-pp-sexp (around work-when-at-end-of-sexp (&optional arg))
+(defun just-after-close-paren-p ()
+  (prog2
+      (backward-char)
+      (looking-at ")")
+    (forward-char)))
+
+(defun do-backward-sexp-before-indenting-p ()
+  (and (just-after-close-paren-p)
+       (not (looking-at "("))))
+
+;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+(defun nomis/indent-pp-sexp ()
+  (interactive)
   (save-excursion
-    (cl-flet ((do-it () ad-do-it))
-      (if (or (looking-at "(")
-              (let ((just-after-close-paren-p
-                     (prog2
-                         (backward-char)
-                         (looking-at ")")
-                       (forward-char))))
-                (not just-after-close-paren-p)))
+    (cl-flet ((do-it () (indent-pp-sexp)))
+      (if (not (do-backward-sexp-before-indenting-p))
           (do-it)
         (progn
           (backward-sexp)
           (do-it))))))
 
-(ad-activate 'indent-pp-sexp)
-
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-(defadvice prog-indent-sexp (around work-when-at-end-of-sexp (&optional arg))
+(defun nomis/prog-indent-sexp ()
+  (interactive)
   (save-excursion
-    (cl-flet ((do-it () ad-do-it))
-      (if (or (looking-at "(")
-              (let ((just-after-close-paren-p
-                     (prog2
-                         (backward-char)
-                         (looking-at ")")
-                       (forward-char))))
-                (not just-after-close-paren-p)))
+    (cl-flet ((do-it () (prog-indent-sexp)))
+      (if (not (do-backward-sexp-before-indenting-p))
           (do-it)
         (progn
           (backward-sexp)
           (do-it))))))
 
-(ad-activate 'prog-indent-sexp)
-
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-(defun nomis-prog-indent-sexp--top-level ()
+(defun nomis/indent-sexp--top-level ()
   "Indent the enclosing top-level form using `prog-indent-sexp`."
   (interactive)
   (save-excursion
-    (prog-indent-sexp t)))
+    (nomis-beginning-of-this-defun)
+    (nomis/prog-indent-sexp)))
 
-(defun nomis-prog-indent-sexp--form-after-point ()
+(defun nomis/indent-sexp--form-after-point ()
   "Indent the form after point using `prog-indent-sexp`."
   (interactive)
   (save-excursion
-    (prog-indent-sexp nil)))
+    (nomis/prog-indent-sexp)))
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -59,22 +58,22 @@
 ;; - C-M-q in elisp               indent-pp-sexp
 ;; - C-M-q in clojure             prog-indent-sexp
 ;; -   M-q in clojure and elisp   paredit-reindent-defun
-;; 
+;;
 ;; Clojure indentation seems to work properly with `prog-indent-sexp`, but
 ;; not with the others.
-;; 
+;;
 ;; WTF!
 ;; Let's rationalise:
 
-(define-key emacs-lisp-mode-map (kbd "C-M-q") 'nomis-prog-indent-sexp--form-after-point)
+(define-key emacs-lisp-mode-map (kbd "C-M-q") 'nomis/indent-sexp--form-after-point)
 
 (eval-after-load 'clojure-mode
   '(progn
-     (define-key clojure-mode-map (kbd "C-M-q") 'nomis-prog-indent-sexp--form-after-point)))
+     (define-key clojure-mode-map (kbd "C-M-q") 'nomis/indent-sexp--form-after-point)))
 
 (eval-after-load 'paredit
   '(progn
-     (define-key paredit-mode-map (kbd "M-q") 'nomis-prog-indent-sexp--top-level)))
+     (define-key paredit-mode-map (kbd "M-q") 'nomis/indent-sexp--top-level)))
 
 ;;;; ___________________________________________________________________________
 
