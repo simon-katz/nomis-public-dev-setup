@@ -6,6 +6,17 @@
   ;; Neither of the above work, but IIUC they should.
   (looking-at "[ \t\n]"))
 
+(defun nomis-looking-at-whitespace-start-p ()
+  (and (nomis-looking-at-whitespace)
+       (or (= (point) 1)
+           (save-excursion
+             (backward-char 1)
+             (not (nomis-looking-at-whitespace))))))
+
+(defun nomis-looking-between-forms ()
+  (and (nomis-looking-at-whitespace)
+       (not (nomis-looking-at-whitespace-start-p))))
+
 (defvar *regexp-for-bracketed-sexp-start*
   "(\\|\\[\\|{\\|#{")
 
@@ -93,28 +104,24 @@
          (backward-sexp 1))))
 
 (defun nomis-beginning-of-top-level-form ()
-  ;; this deals with most situations
-  (while (ignore-errors (paredit-backward-up) t))
-  ;; Check for Clojure #{
-  (when (and (looking-at "{")
-             (ignore-errors
-               (save-excursion
-                 (backward-char 1)
-                 (looking-at "#"))))
-    (backward-char 1))
-  (when (or
-         ;; between top-level forms
-         (nomis-looking-at-whitespace)
-         ;; in the middle of a top-level symbol
-         (and (not (nomis-looking-at-bracketed-sexp-start))
-              (and (not (= (point) 1))
-                   (save-excursion
-                     (backward-char 1)
-                     (not (nomis-looking-at-whitespace))))))
-    (backward-sexp)))
+  (nomis-end-of-top-level-form)
+  (backward-sexp))
 
 (defun nomis-end-of-top-level-form ()
-  (nomis-beginning-of-top-level-form)
-  (forward-sexp))
+  (when (nomis-looking-at-bracketed-sexp-start)
+    (forward-sexp))
+  (while (ignore-errors (paredit-backward-up -1) t))
+  (when (or
+         ;; between top-level forms
+         (nomis-looking-between-forms)
+         ;; in the middle of a top-level symbol
+         (not (nomis-looking-at-whitespace)))
+    (forward-sexp)))
+
+(defun nomis-move-to-start-of-form ()
+  (when (nomis-looking-at-whitespace-start-p)
+    (backward-sexp))
+  (paredit-forward)
+  (paredit-backward))
 
 (provide 'nomis-sexp-utils)
