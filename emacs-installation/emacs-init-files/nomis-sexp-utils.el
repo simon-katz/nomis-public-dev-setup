@@ -102,8 +102,15 @@
                  (backward-char 1)
                  (looking-at "#"))))
     (backward-char 1))
-  ;; this handles the case when we are between top-level forms
-  (when (nomis-looking-at-whitespace)
+  (when (or
+         ;; between top-level forms
+         (nomis-looking-at-whitespace)
+         ;; in the middle of a top-level symbol
+         (and (not (nomis-looking-at-bracketed-sexp-start))
+              (and (not (= (point) 1))
+                   (save-excursion
+                     (backward-char 1)
+                     (not (nomis-looking-at-whitespace))))))
     (backward-sexp)))
 
 (defun nomis-end-of-top-level-form ()
