@@ -21,7 +21,6 @@
         markdown-exdent-or-delete
         nomis-meta-w
         nomis-meta-x
-        nomis/indent-sexp--top-level
         org-beginning-of-line
         org-end-of-line
         org-force-self-insert
