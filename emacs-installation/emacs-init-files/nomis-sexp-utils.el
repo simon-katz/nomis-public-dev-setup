@@ -103,7 +103,7 @@
                  (looking-at "#"))))
     (backward-char 1))
   ;; this handles the case when we are between top-level forms
-  (when (not (nomis-looking-at-bracketed-sexp-start))
+  (when (nomis-looking-at-whitespace)
     (backward-sexp)))
 
 (defun nomis-end-of-this-defun ()
