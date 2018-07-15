@@ -222,7 +222,7 @@ subheading at this level in the previous parent."
           (progn
             (load-library "find-lisp")
             (find-lisp-find-files org-directory
-                                  "\.org$"))))
+                                  "\\\.org$"))))
   (defadvice org-todo-list (before reset-agenda-files
                                    activate compile)
     (nomis-org-reset-org-agenda-files)))
