@@ -1,6 +1,11 @@
 ;;;; Init stuff -- Indenting s-expressions.
 
 ;;;; ___________________________________________________________________________
+
+(require 'eval-sexp-fu)
+(require 'nomis-sexp-utils)
+
+;;;; ___________________________________________________________________________
 ;;;; ---- Support for flashing forms when indenting ----
 
 (defvar nomis/prog-indent-sexp-flash-duration 0.2)
