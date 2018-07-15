@@ -33,16 +33,19 @@
                                    (point)))))
      (advice-add ',indentation-command
                  :around
-                 (lambda (orig-fun &rest args)
-                   (let* ((eval-sexp-fu-flash-duration
-                           nomis/prog-indent-sexp-flash-duration)
-                          (eval-sexp-fu-flash-face
-                           'nomis/prog-indent-sexp-flash-face))
-                     (cl-labels ((%do-indentation%
-                                  ()
-                                  (apply orig-fun args)))
-                       (save-excursion
-                         ,@move-and-call-advice-commands))))
+                 ,(case 2 ; an easy way to turn off the advice if you feel a need to
+                    (1 `(lambda (orig-fun &rest args)
+                          (apply orig-fun args)))
+                    (2 `(lambda (orig-fun &rest args)
+                          (let* ((eval-sexp-fu-flash-duration
+                                  nomis/prog-indent-sexp-flash-duration)
+                                 (eval-sexp-fu-flash-face
+                                  'nomis/prog-indent-sexp-flash-face))
+                            (cl-labels ((%do-indentation%
+                                         ()
+                                         (apply orig-fun args)))
+                              (save-excursion
+                                ,@move-and-call-advice-commands))))))
                  '((name . nomis/with-flash-for-indenting)))))
 
 ;;;; ___________________________________________________________________________
