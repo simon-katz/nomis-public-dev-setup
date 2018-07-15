@@ -47,7 +47,7 @@
               :around
               (lambda (orig-fun &rest args)
                 (save-excursion
-                  (nomis-move-to-start-of-form)
+                  (nomis-start-of-this-or-enclosing-form)
                   (apply orig-fun args)))
               '((name . nomis/goto-beginning-of-form))))
 
@@ -57,7 +57,7 @@
               :around
               (lambda (orig-fun &rest args)
                 (save-excursion
-                  (nomis-move-to-start-of-form)
+                  (nomis-start-of-this-or-enclosing-form)
                   (apply orig-fun args)))
               '((name . nomis/goto-beginning-of-form))))
 

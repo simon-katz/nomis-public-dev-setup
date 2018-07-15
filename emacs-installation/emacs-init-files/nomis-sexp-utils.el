@@ -118,10 +118,24 @@
          (not (nomis-looking-at-whitespace)))
     (forward-sexp)))
 
-(defun nomis-move-to-start-of-form ()
-  (when (nomis-looking-at-whitespace-start-p)
-    (backward-sexp))
-  (paredit-forward)
-  (paredit-backward))
+(defun nomis-start-of-this-or-enclosing-form ()
+  "If looking at beginning of bracketed sexp, stay there,
+   else if looking after end of bracketed sexp, move to its start,
+   else if within a bracketed sexp, move to its start,
+   otherwise move to beginning of next top-level form."
+  (cond ((nomis-looking-at-bracketed-sexp-start)
+         ;; stay where we are
+         )
+        ((nomis-looking-after-bracketed-sexp-end)
+         (ignore-errors (backward-sexp)))
+        (t
+         (unless (ignore-errors (paredit-backward-up)
+                                t)
+           (if (or (nomis-looking-at-whitespace-start-p)
+                   (= (point) (point-max)))
+               (backward-sexp)
+             (progn
+               (forward-sexp)
+               (backward-sexp)))))))
 
 (provide 'nomis-sexp-utils)
