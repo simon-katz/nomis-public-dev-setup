@@ -19,9 +19,10 @@
 (defmacro nomis/define-indent-command (command)
   `(progn
      (define-eval-sexp-fu-flash-command ,command
-       (eval-sexp-fu-flash (when (ignore-errors (elisp--preceding-sexp))
-                             (with-esf-end-of-sexp
-                               (bounds-of-thing-at-point 'sexp)))))
+       (eval-sexp-fu-flash (cons (point)
+                                 (save-excursion
+                                   (forward-sexp)
+                                   (point)))))
      (advice-add ',command
                  :around
                  (lambda (orig-fun &rest args)
