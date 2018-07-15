@@ -26,7 +26,7 @@
 (defun nomis-looking-at-bracketed-sexp-start ()
   (looking-at *regexp-for-bracketed-sexp-start*))
 
-(defun nomis-looking-at-bracketed-sexp-end ()
+(defun -nomis-looking-at-bracketed-sexp-end ()
   (looking-at *regexp-for-bracketed-sexp-end*))
 
 (defun nomis-looking-after-bracketed-sexp-end ()
@@ -34,10 +34,10 @@
        (and (not (= (point) 1))
             (save-excursion
               (backward-char 1)
-              (nomis-looking-at-bracketed-sexp-end)))))
+              (-nomis-looking-at-bracketed-sexp-end)))))
 
 (defun nomis-looking-at-end-of-empty-bracketed-sexp ()
-  (and (nomis-looking-at-bracketed-sexp-end)
+  (and (-nomis-looking-at-bracketed-sexp-end)
        (and (not (= (point) 1))
             (save-excursion
               (backward-char 1)
@@ -59,7 +59,7 @@
 (defun nomis-looking-after-bracketed-sexp-end-at-bracketed-sexp-end-or-whitespace ()
   (and (nomis-looking-after-bracketed-sexp-end)
        (or (nomis-looking-at-whitespace)
-           (nomis-looking-at-bracketed-sexp-end))))
+           (-nomis-looking-at-bracketed-sexp-end))))
 
 (defun nomis-looking-at-whitespace-after-bracketed-sexp-start ()
   (and (nomis-looking-at-whitespace)
