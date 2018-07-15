@@ -1,7 +1,7 @@
 ;;;; Init stuff -- Indenting s-expressions.
 
 ;;;; ___________________________________________________________________________
-;;;; ---- Flash forms when indenting ----
+;;;; ---- Support for flashing forms when indenting ----
 
 (defvar nomis/prog-indent-sexp-flash-duration 0.2)
 (defvar nomis/prog-indent-sexp-flash-colour "PeachPuff1")
@@ -16,68 +16,61 @@
   :group 'eval-sexp-fu ; is this right?
   )
 
-(defmacro nomis/define-indent-command (command)
+(defmacro nomis/define-indent-command (indentation-command
+                                       &rest move-and-call-advice-commands)
+  "For `indentation-command`, add advice to do the following:
+   - Position the cursor at the start of the targetted form.
+   - Flash the targetted form.
+   Within `move-and-call-advice-commands`, you should move the cursor to the
+   start of the targetted form and call `(%do-indentation%)` to run the
+   underlying command."
+  (declare (indent 1))
   `(progn
-     (define-eval-sexp-fu-flash-command ,command
+     (define-eval-sexp-fu-flash-command ,indentation-command
        (eval-sexp-fu-flash (cons (point)
                                  (save-excursion
                                    (forward-sexp)
                                    (point)))))
-     (advice-add ',command
+     (advice-add ',indentation-command
                  :around
                  (lambda (orig-fun &rest args)
                    (let* ((eval-sexp-fu-flash-duration
                            nomis/prog-indent-sexp-flash-duration)
                           (eval-sexp-fu-flash-face
                            'nomis/prog-indent-sexp-flash-face))
-                     (apply orig-fun args)))
+                     (cl-labels ((%do-indentation%
+                                  ()
+                                  (apply orig-fun args)))
+                       (save-excursion
+                         ,@move-and-call-advice-commands))))
                  '((name . nomis/with-flash-for-indenting)))))
+
+;;;; ___________________________________________________________________________
+;;;; ---- Flash forms when indenting ----
 
 ;; The built-in key bindings are:
 ;; - C-M-q in elisp               indent-pp-sexp
 ;; - C-M-q in clojure             prog-indent-sexp
 ;; -   M-q in clojure and elisp   paredit-reindent-defun
 
-(nomis/define-indent-command indent-pp-sexp)
-(nomis/define-indent-command prog-indent-sexp)
-(nomis/define-indent-command paredit-reindent-defun)
+(nomis/define-indent-command indent-pp-sexp
+  (nomis-start-of-this-or-enclosing-form)
+  (%do-indentation%))
 
-(progn
-  ;; Move to start of form when doing `indent-pp-sexp` so that flashing works.
-  (advice-add 'indent-pp-sexp
-              :around
-              (lambda (orig-fun &rest args)
-                (save-excursion
-                  (nomis-start-of-this-or-enclosing-form)
-                  (apply orig-fun args)))
-              '((name . nomis/goto-beginning-of-form))))
+(nomis/define-indent-command prog-indent-sexp
+  (nomis-start-of-this-or-enclosing-form)
+  (%do-indentation%))
 
-(progn
-  ;; Move to start of form when doing `prog-indent-sexp` so that flashing works.
-  (advice-add 'prog-indent-sexp
-              :around
-              (lambda (orig-fun &rest args)
-                (save-excursion
-                  (nomis-start-of-this-or-enclosing-form)
-                  (apply orig-fun args)))
-              '((name . nomis/goto-beginning-of-form))))
-
-(progn
-  ;; Want to flash the whole form when doing `paredit-reindent-defun`.
-  (advice-add 'paredit-reindent-defun
-              :around
-              (lambda (orig-fun &rest args)
-                (save-excursion
-                  (nomis-beginning-of-top-level-form)
-                  (let* ((not-in-a-top-level-symbol-p
-                          (nomis-looking-at-bracketed-sexp-start)))
-                    (if not-in-a-top-level-symbol-p
-                        (apply orig-fun args)
-                      ;; We are on a top-level symbol. `paredit-reindent-defun`
-                      ;; would re-indent a nearby non-symbol top-level form, so
-                      ;; don't do anything.
-                      (nomis/beep)))))
-              '((name . nomis/goto-beginning-of-this-defun))))
+(nomis/define-indent-command paredit-reindent-defun
+  (nomis-beginning-of-top-level-form)
+  (let* ((not-in-a-top-level-symbol-p
+          (nomis-looking-at-bracketed-sexp-start)))
+    (if not-in-a-top-level-symbol-p
+        (%do-indentation%)
+      ;; We are on a top-level symbol. `paredit-reindent-defun`
+      ;; would re-indent a nearby non-symbol top-level form; instead of that
+      ;; don't do anything.
+      (nomis/beep))))
 
 ;;;; ___________________________________________________________________________
 
