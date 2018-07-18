@@ -44,21 +44,21 @@
 
 ;;;; ___________________________________________________________________________
 
-(defun nomis-untabify-buffer ()
+(defun nomis/untabify-buffer ()
   (interactive)
   (save-excursion
     (untabify (point-min) (point-max))))
 
-(global-set-key [f11] 'nomis-untabify-buffer)
+(global-set-key [f11] 'nomis/untabify-buffer)
 
-(defun nomis-indent-buffer ()
+(defun nomis/indent-buffer ()
   (interactive)
   (save-excursion
     (delete-trailing-whitespace)
     (indent-region (point-min) (point-max) nil)
     (untabify (point-min) (point-max))))
 
-(global-set-key [f12] 'nomis-indent-buffer)
+(global-set-key [f12] 'nomis/indent-buffer)
 
 ;;;; ___________________________________________________________________________
 

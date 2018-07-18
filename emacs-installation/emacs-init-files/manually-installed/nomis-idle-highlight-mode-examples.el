@@ -1,7 +1,7 @@
 ;; -*- require-final-newline: nil; -*-
 
 :Elisp
-;;;; Elisp examples for testing nomis-idle-highlight-mode.
+;;;; Elisp examples for testing nomis/idle-highlight-mode.
 
 ;;; Ensure no problem at start of buffer.
 

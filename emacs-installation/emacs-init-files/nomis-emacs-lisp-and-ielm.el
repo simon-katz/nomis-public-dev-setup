@@ -4,7 +4,7 @@
 
 (add-hook 'emacs-lisp-mode-hook 'whitespace-mode)
 
-(defvar nomis-lisp-and-ielm-mode-hook-functions
+(defvar nomis/lisp-and-ielm-mode-hook-functions
   `(rainbow-delimiters-mode
     paredit-mode
     paxedit-mode ; some commands (at least) don't work in ielm mode
@@ -16,7 +16,7 @@
 
 (dolist (hook '(emacs-lisp-mode-hook
                 ielm-mode-hook))
-  (dolist (hook-fun nomis-lisp-and-ielm-mode-hook-functions)
+  (dolist (hook-fun nomis/lisp-and-ielm-mode-hook-functions)
     (add-hook hook hook-fun)))
 
 (define-key emacs-lisp-mode-map (kbd "RET") 'newline-and-indent)
@@ -26,7 +26,7 @@
 
 (require 'popup)
 
-(defun nomis-describe-thing-in-popup ()
+(defun nomis/describe-thing-in-popup ()
   ;; Thanks to Bruce Durling, Kris Jenkins and Steve Purcell.
   ;; Based on code taken from
   ;; https://github.com/otfrom/otfrom-org-emacs/blob/master/org/config.org.
@@ -58,7 +58,7 @@
   ;; documentation in the *Help* buffer.
   ;; Here rebind only C-c C-d C-d, because it's useful to have both.
   (require 'elisp-slime-nav)
-  (define-key elisp-slime-nav-mode-map (kbd "C-c C-d C-d") 'nomis-describe-thing-in-popup))
+  (define-key elisp-slime-nav-mode-map (kbd "C-c C-d C-d") 'nomis/describe-thing-in-popup))
 
 ;;; ___________________________________________________________________________
 

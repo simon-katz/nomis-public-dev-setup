@@ -46,7 +46,7 @@
 
 ;;;; ________ *** Org mode hook function
 
-(defun nomis-org-mode ()
+(defun nomis/org-mode ()
   ;; Layout
   (linum-mode 0) ; see "Linum-mode + org-indent-mode gives strange graphical refresh bugs" at http://orgmode.org/worg/org-issues.html
   ;; (setq org-indent-fix-section-after-idle-time nil)
@@ -66,7 +66,7 @@
         (remq 'org-optimize-window-after-visibility-change
               org-cycle-hook)))
 
-(add-hook 'org-mode-hook 'nomis-org-mode)
+(add-hook 'org-mode-hook 'nomis/org-mode)
 
 ;;;; ________ *** Dependencies
 
@@ -216,7 +216,7 @@ subheading at this level in the previous parent."
 (require 'org-agenda)
 
 (progn
-  (defun nomis-org-reset-org-agenda-files ()
+  (defun nomis/org-reset-org-agenda-files ()
     (interactive)
     (setq org-agenda-files
           (progn
@@ -225,10 +225,10 @@ subheading at this level in the previous parent."
                                   "\\\.org$"))))
   (defadvice org-todo-list (before reset-agenda-files
                                    activate compile)
-    (nomis-org-reset-org-agenda-files)))
+    (nomis/org-reset-org-agenda-files)))
 
 (progn
-  (defun nomis-org-finalize-agenda-hook ()
+  (defun nomis/org-finalize-agenda-hook ()
     (hl-line-mode)
     ;; From http://orgmode.org/worg/org-faq.html
     ;;   How can I stop the mouse cursor from highlighting lines
@@ -237,16 +237,16 @@ subheading at this level in the previous parent."
     (remove-text-properties
      (point-min) (point-max) '(mouse-face t)))
   (add-hook 'org-finalize-agenda-hook
-            'nomis-org-finalize-agenda-hook))
+            'nomis/org-finalize-agenda-hook))
 
 (progn
-  (defun nomis-setup-org-keys ()
+  (defun nomis/setup-org-keys ()
     ;; I don't like RETURN in org agenda giving ORG-AGENDA-SWITCH-TO.
     ;; I prefer this:
     (org-defkey org-agenda-mode-map "\C-m" 'org-agenda-show-and-scroll-up))
-  (add-hook 'org-mode-hook 'nomis-setup-org-keys))
+  (add-hook 'org-mode-hook 'nomis/setup-org-keys))
 
-(add-hook 'org-mode-hook 'nomis-turn-on-idle-highlight-mode)
+(add-hook 'org-mode-hook 'nomis/turn-on-idle-highlight-mode)
 
 ;;;; ________ *** Fontify code in code blocks
 

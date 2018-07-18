@@ -16,7 +16,7 @@
 (cond
  ((member (cider-version)
           '("CIDER 0.7.0"))
-  (defun nomis-clojure-buffer-ns ()
+  (defun nomis/clojure-buffer-ns ()
     (cider-find-ns)))
  ((member (cider-version)
           '("CIDER 0.8.2"
@@ -27,17 +27,17 @@
             "CIDER 0.15.0 (London)"
             "CIDER 0.16.0 (Riga)"
             "CIDER 0.17.0 (Andalucía)"))
-  (defun nomis-clojure-buffer-ns ()
+  (defun nomis/clojure-buffer-ns ()
     (clojure-find-ns)))
  (t
   (message-box
-   "You need to fix nomis-clojure-buffer-ns for this version of Cider.")))
+   "You need to fix nomis/clojure-buffer-ns for this version of Cider.")))
 
 (cond
  ((member (cider-version)
           '("CIDER 0.7.0"
             "CIDER 0.8.2"))
-  (defun nomis-cider-repl-namespace ()
+  (defun nomis/cider-repl-namespace ()
     (with-current-buffer (cider-current-repl-buffer)
       nrepl-buffer-ns)))
  ((member (cider-version)
@@ -47,27 +47,27 @@
             "CIDER 0.14.0 (Berlin)"
             "CIDER 0.15.0 (London)"
             "CIDER 0.16.0 (Riga)"))
-  (defun nomis-cider-repl-namespace ()
+  (defun nomis/cider-repl-namespace ()
     (with-current-buffer (cider-current-repl-buffer)
       cider-buffer-ns)))
  ((member (cider-version)
           '("CIDER 0.17.0 (Andalucía)"))
-  (defun nomis-cider-repl-namespace ()
+  (defun nomis/cider-repl-namespace ()
     (with-current-buffer (cider-current-connection)
       cider-buffer-ns)))
  (t
   (message-box
-   "You need to fix `nomis-cider-repl-namespace` for this version of Cider.")))
+   "You need to fix `nomis/cider-repl-namespace` for this version of Cider.")))
 
 (cond
  ((member (cider-version)
           '("CIDER 0.7.0"))
-  (defun nomis-cider-find-or-create-repl-buffer ()
+  (defun nomis/cider-find-or-create-repl-buffer ()
     (cider-find-or-create-repl-buffer)))
  ((member (cider-version)
           '("CIDER 0.8.2"
             "CIDER 0.9.1"))
-  (defun nomis-cider-find-or-create-repl-buffer ()
+  (defun nomis/cider-find-or-create-repl-buffer ()
     (cider-get-repl-buffer)))
  ((member (cider-version)
           '("CIDER 0.10.0"
@@ -76,11 +76,11 @@
             "CIDER 0.15.0 (London)"
             "CIDER 0.16.0 (Riga)"
             "CIDER 0.17.0 (Andalucía)"))
-  (defun nomis-cider-find-or-create-repl-buffer ()
+  (defun nomis/cider-find-or-create-repl-buffer ()
     (cider-current-connection)))
  (t
   (message-box
-   "You need to fix `nomis-cider-find-or-create-repl-buffer` for this version of Cider.")))
+   "You need to fix `nomis/cider-find-or-create-repl-buffer` for this version of Cider.")))
 
 
 ;;;; ___________________________________________________________________________
@@ -89,11 +89,11 @@
 ;;;; I want to enter my input on a fresh line. Nice when you are in a
 ;;;; namespace that has a long name.
 
-(defvar nomis-cider-repl--hack-prompt-p t)
+(defvar nomis/cider-repl--hack-prompt-p t)
 
-(defvar nomis-cider-repl--prompt-prefix (concat (make-string 80 ?\_) "\n"))
+(defvar nomis/cider-repl--prompt-prefix (concat (make-string 80 ?\_) "\n"))
 
-(defvar nomis-cider-repl--prompt-suffix "\n")
+(defvar nomis/cider-repl--prompt-suffix "\n")
 
 (cond
  ((member (cider-version)
@@ -161,10 +161,10 @@ Return the position of the prompt beginning."
                                (t
                                 'cider-repl-prompt-default))
                               namespace)))
-            (if nomis-cider-repl--hack-prompt-p
-                (concat nomis-cider-repl--prompt-prefix
+            (if nomis/cider-repl--hack-prompt-p
+                (concat nomis/cider-repl--prompt-prefix
                         (do-it)
-                        nomis-cider-repl--prompt-suffix)
+                        nomis/cider-repl--prompt-suffix)
               (do-it))))))
  (t
   (message-box
@@ -175,7 +175,7 @@ Return the position of the prompt beginning."
 
 (require 'nomis-sexp-utils)
 
-(cl-defun nomis-grab-text (&key top-level-p delete-p)
+(cl-defun nomis/grab-text (&key top-level-p delete-p)
   (let* ((grab-function (if delete-p
                             #'delete-and-extract-region
                           #'buffer-substring)))
@@ -183,10 +183,10 @@ Return the position of the prompt beginning."
       (cond
        (top-level-p
         (let ((start (save-excursion
-                       (nomis-beginning-of-top-level-form)
+                       (nomis/beginning-of-top-level-form)
                        (point)))
               (end (save-excursion
-                     (nomis-beginning-of-top-level-form)
+                     (nomis/beginning-of-top-level-form)
                      (forward-sexp 1)
                      (point))))
           (funcall grab-function start end)))
@@ -197,7 +197,7 @@ Return the position of the prompt beginning."
            (region-selected?
             (funcall grab-function (mark) (point)))
            (t
-            (nomis-move-to-start-of-bracketed-sexp-around-point)
+            (nomis/move-to-start-of-bracketed-sexp-around-point)
             (let ((start (point))
                   (end (save-excursion
                          (forward-sexp 1)
@@ -205,22 +205,22 @@ Return the position of the prompt beginning."
               (funcall grab-function start end))))))))))
 
 ;;## ;;;; ___________________________________________________________________________
-;;;; ---- nomis-cider-send-to-repl ----
+;;;; ---- nomis/cider-send-to-repl ----
 
 ;;;; Inspired by https://gist.github.com/4349847
 ;;;; ...which says...
 ;;;;     inspired by http://bc.tech.coop/blog/070424.html
 
 (define-key cider-mode-map (kbd "C-H-,")
-  'nomis-cider-send-to-repl-selection-or-form-around-point)
+  'nomis/cider-send-to-repl-selection-or-form-around-point)
 (define-key cider-mode-map (kbd "C-H-.")
-  'nomis-cider-send-to-repl-top-level-form)
+  'nomis/cider-send-to-repl-top-level-form)
 (define-key cider-mode-map (kbd "C-H-/")
-  'nomis-cider-send-to-repl-after-forward-sexp)
+  'nomis/cider-send-to-repl-after-forward-sexp)
 (define-key cider-mode-map (kbd "C-<kp-enter>")
-  'nomis-cider-send-to-repl-return)
+  'nomis/cider-send-to-repl-return)
 
-(defun nomis-cider-send-to-repl-selection-or-form-around-point (arg)
+(defun nomis/cider-send-to-repl-selection-or-form-around-point (arg)
   "Send text to the REPL.
 The text to send:
 - If a region is selected, use that text.
@@ -231,9 +231,9 @@ Control of evaluation:
 - If a prefix argument is supplied, do not evaluate the form and
   make the REPL window active."
   (interactive "P")
-  (nomis-cider-send-to-repl-helper arg :send-selection-or-form-around-point))
+  (nomis/cider-send-to-repl-helper arg :send-selection-or-form-around-point))
 
-(defun nomis-cider-send-to-repl-top-level-form (arg)
+(defun nomis/cider-send-to-repl-top-level-form (arg)
   "Send text to the REPL.
 The text to send:
 - The top-level s-expression around point.
@@ -243,9 +243,9 @@ Control of evaluation:
 - If a prefix argument is supplied, do not evaluate the form and
   make the REPL window active."
   (interactive "P")
-  (nomis-cider-send-to-repl-helper arg :send-top-level-form))
+  (nomis/cider-send-to-repl-helper arg :send-top-level-form))
 
-(defun nomis-cider-send-to-repl-after-forward-sexp (arg)
+(defun nomis/cider-send-to-repl-after-forward-sexp (arg)
   "Send next form to the REPL and move past it (so this
 command can be repeated usefully).
 Control of evaluation:
@@ -255,40 +255,40 @@ Control of evaluation:
   make the REPL window active."
   (interactive "P")
   (forward-sexp)
-  (nomis-cider-send-to-repl-helper arg :send-selection-or-form-around-point))
+  (nomis/cider-send-to-repl-helper arg :send-selection-or-form-around-point))
 
-(defun nomis-cider-send-to-repl-return ()
+(defun nomis/cider-send-to-repl-return ()
   "Send RETURN to the REPL."
   (interactive)
-  (nomis-cider-send-to-repl-helper nil :send-return))
+  (nomis/cider-send-to-repl-helper nil :send-return))
 
-(defcustom nomis-cider-send-to-repl-always-p nil
+(defcustom nomis/cider-send-to-repl-always-p nil
   "When sending forms to Cider REPL, whether to not check that buffer namespace is same as REPL namespace.")
 
-(defcustom nomis-cider-send-to-buffer-print-newline-first-p nil ; because you always have a newline now -- you changed the prompt to have a newline at the end
+(defcustom nomis/cider-send-to-buffer-print-newline-first-p nil ; because you always have a newline now -- you changed the prompt to have a newline at the end
   "When sending forms to Cider REPL, whether to send a newline first.")
 
-(defcustom nomis-cider-send-to-buffer-do-return-first-p nil
+(defcustom nomis/cider-send-to-buffer-do-return-first-p nil
   "When sending forms to Cider REPL, whether to send a RETURN first (to get a fresh prompt even after output appearing in the REPL buffer).")
 
-(defun nomis-cider-send-to-repl-helper (arg action)
+(defun nomis/cider-send-to-repl-helper (arg action)
   ;; TODO: Maybe instead of ACTION, should have a function to do whatever.
-  (when (or nomis-cider-send-to-repl-always-p
-            (null (nomis-clojure-buffer-ns))
-            (equal (nomis-clojure-buffer-ns)
-                   (nomis-cider-repl-namespace))
+  (when (or nomis/cider-send-to-repl-always-p
+            (null (nomis/clojure-buffer-ns))
+            (equal (nomis/clojure-buffer-ns)
+                   (nomis/cider-repl-namespace))
             (let ((user-happy-with-namespace-p
                    (y-or-n-p
                     (format "Buffer ns (%s) and REPL ns (%s) are different.
 Really send to REPL? "
-                            (nomis-clojure-buffer-ns)
-                            (nomis-cider-repl-namespace)))))
+                            (nomis/clojure-buffer-ns)
+                            (nomis/cider-repl-namespace)))))
               (if user-happy-with-namespace-p
                   t
                 (error "Not in this namespace!"))))
     (cl-labels ((grab-text
                  (top-level-p)
-                 (nomis-grab-text :top-level-p top-level-p :delete-p nil))
+                 (nomis/grab-text :top-level-p top-level-p :delete-p nil))
                 (the-text
                  ()
                  (case action
@@ -301,7 +301,7 @@ Really send to REPL? "
                  (cl-labels ((insert-text () (insert text)))
                    (let* ((original-frame (selected-frame))
                           (original-window (selected-window)))
-                     (set-buffer (nomis-cider-find-or-create-repl-buffer))
+                     (set-buffer (nomis/cider-find-or-create-repl-buffer))
                      (unless (eq (current-buffer) (window-buffer))
                        (let* ((window (get-buffer-window (current-buffer)
                                                          t)))
@@ -312,9 +312,9 @@ Really send to REPL? "
                            (pop-to-buffer (current-buffer) t))))
                      (goto-char (point-max))
                      (unless (null text)
-                       (when nomis-cider-send-to-buffer-print-newline-first-p
+                       (when nomis/cider-send-to-buffer-print-newline-first-p
                          (newline))
-                       (when nomis-cider-send-to-buffer-do-return-first-p
+                       (when nomis/cider-send-to-buffer-do-return-first-p
                          (cider-repl-return)
                          (sleep-for 0.25))
                        (insert-text)
@@ -329,10 +329,10 @@ Really send to REPL? "
 
 
 ;;## ;;;; ___________________________________________________________________________
-;;## ;;;; ---- nomis-cider-rearrange-string-into-lines ----
+;;## ;;;; ---- nomis/cider-rearrange-string-into-lines ----
 ;;## 
 ;;## ;;;; ****
-;;## ;;;; + Ensure `nomis-grab-text' has no free variables.
+;;## ;;;; + Ensure `nomis/grab-text' has no free variables.
 ;;## ;;;;
 ;;## ;;;; + Put all your code-manipulation Clojure functions in single file in
 ;;## ;;;;   a new project.
@@ -351,7 +351,7 @@ Really send to REPL? "
 ;;##     (insert-file-contents-literally filePath)
 ;;##     (buffer-string)))
 
-(defun nomis-cider-rearrange-string-into-lines (prefix)
+(defun nomis/cider-rearrange-string-into-lines (prefix)
   "Rearrange string into lines.
    Without a prefix argument, indent second and subsequent lines so
    that they line up sensibly with the first line.
@@ -361,7 +361,7 @@ Really send to REPL? "
   (interactive "*P")
   (if (y-or-n-p "Use `fill-paragraph` instead?")
       (fill-paragraph)
-    (let* ((string (nomis-grab-text
+    (let* ((string (nomis/grab-text
                     :top-level-p nil
                     :delete-p t))
            (clojure-form-as-string
@@ -374,7 +374,7 @@ Really send to REPL? "
       (nomis/run-clojure-and-insert-result clojure-form-as-string))))
 
 (define-key cider-mode-map (kbd "C-c C-g")
-  'nomis-cider-rearrange-string-into-lines)
+  'nomis/cider-rearrange-string-into-lines)
 
 ;;## ;;;; ___________________________________________________________________________
 ;;## 

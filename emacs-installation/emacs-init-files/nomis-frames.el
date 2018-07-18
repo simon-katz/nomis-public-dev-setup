@@ -18,12 +18,12 @@
            (eql (key-binding (kbd "C-z")) 'suspend-frame))
   (global-unset-key (kbd "C-z")))
 
-(defun nomis-do-not-close-lots-of-frames (arg)
+(defun nomis/do-not-close-lots-of-frames (arg)
   (interactive "p")
   (message "No, I won't close lots of frames."))
 
 (define-key ctl-x-5-map "1"
-  'nomis-do-not-close-lots-of-frames) ; default was `delete-other-frames`
+  'nomis/do-not-close-lots-of-frames) ; default was `delete-other-frames`
 
 ;;;; ___________________________________________________________________________
 ;;;; ---- Closing frames ----
@@ -47,13 +47,13 @@
 ;;;; ___________________________________________________________________________
 ;;;; ---- Frame size ----
 
-(defvar nomis-extra-width-for-each-window 90)
+(defvar nomis/extra-width-for-each-window 90)
 
-(defvar nomis-single-window-frame-width 84)
-(defvar nomis-double-window-frame-width (+ nomis-single-window-frame-width
-                                           nomis-extra-width-for-each-window))
-(defvar nomis-triple-window-frame-width (+ nomis-double-window-frame-width
-                                           nomis-extra-width-for-each-window))
+(defvar nomis/single-window-frame-width 84)
+(defvar nomis/double-window-frame-width (+ nomis/single-window-frame-width
+                                           nomis/extra-width-for-each-window))
+(defvar nomis/triple-window-frame-width (+ nomis/double-window-frame-width
+                                           nomis/extra-width-for-each-window))
 
 ;;;; ___________________________________________________________________________
 ;;;; ---- Cycle frames ----
@@ -72,7 +72,7 @@
 ;;;; ___________________________________________________________________________
 ;;;; ---- Default frame size ----
 
-(defvar nomis-window-height
+(defvar nomis/window-height
   (cl-case nomis/system-name
     (:chivers
      ;; 1200 pixels
@@ -100,13 +100,13 @@
     (t
      66)))
 
-(defvar nomis-frame-prefs (append
-                           (if (and i-am-nomis-p
-                                    nomis-window-height)
-                               `((height . ,nomis-window-height) ; Broken when people have thingy bar at the bottom of the screen.  (Also, this depends on a particular font size.)
+(defvar nomis/frame-prefs (append
+                           (if (and i-am-nomis/p
+                                    nomis/window-height)
+                               `((height . ,nomis/window-height) ; Broken when people have thingy bar at the bottom of the screen.  (Also, this depends on a particular font size.)
                                  )
                              '())
-                           `((width  . ,nomis-single-window-frame-width)
+                           `((width  . ,nomis/single-window-frame-width)
                              (top . 0)
                              ;; (left . 140)
                              ;; (font . "4.System VIO")
@@ -114,8 +114,8 @@
                              (background-color . "#f5f5f5")
                              ;;(cursor-color . "SkyBlue")
                              )))
-;; (setq initial-frame-alist (append nomis-frame-prefs initial-frame-alist))
-(setq default-frame-alist (append nomis-frame-prefs default-frame-alist))
+;; (setq initial-frame-alist (append nomis/frame-prefs initial-frame-alist))
+(setq default-frame-alist (append nomis/frame-prefs default-frame-alist))
 
 ;;;; ___________________________________________________________________________
 ;;;; ---- Commands to adjust frames -- misc ----
@@ -142,52 +142,52 @@
           (string-to-number string)
         (error "Silly %s: %s" kind string))))
     
-  (defun nomis-set-frame-width* (width)
+  (defun nomis/set-frame-width* (width)
     (set-frame-width (selected-frame) width))
   
-  (defun nomis-set-frame-width ()
+  (defun nomis/set-frame-width ()
     (interactive "")
-    (nomis-set-frame-width*
+    (nomis/set-frame-width*
      (read-reasonable-frame-width-or-height "width" (frame-width))))
    
-  (defun nomis-w-single ()
+  (defun nomis/w-single ()
     (interactive)
-    (nomis-set-frame-width* nomis-single-window-frame-width))
+    (nomis/set-frame-width* nomis/single-window-frame-width))
 
-  (defun nomis-w-double ()
+  (defun nomis/w-double ()
     (interactive)
-    (nomis-set-frame-width* nomis-double-window-frame-width))
+    (nomis/set-frame-width* nomis/double-window-frame-width))
 
-  (defun nomis-w-triple ()
+  (defun nomis/w-triple ()
     (interactive)
-    (nomis-set-frame-width* nomis-triple-window-frame-width))
+    (nomis/set-frame-width* nomis/triple-window-frame-width))
 
-  (defun nomis-set-frame-height* (height)
+  (defun nomis/set-frame-height* (height)
     (set-frame-height (selected-frame) height))
   
-  (defun nomis-set-frame-height ()
+  (defun nomis/set-frame-height ()
     (interactive "")
-    (nomis-set-frame-height*
+    (nomis/set-frame-height*
      (read-reasonable-frame-width-or-height "height" (frame-height))))
   
-  (defun nomis-maximize-frame-vertically-assuming-toolbar-of-size-arg (arg)
+  (defun nomis/maximize-frame-vertically-assuming-toolbar-of-size-arg (arg)
     (interactive "P")
     (maximize-frame-vertically)
     (redisplay)
-    (nomis-set-frame-height* (- (frame-height) (or arg 2))))
+    (nomis/set-frame-height* (- (frame-height) (or arg 2))))
 
-  (defun nomis-h62 ()
+  (defun nomis/h62 ()
     (interactive)
-    (nomis-set-frame-height* 62))
+    (nomis/set-frame-height* 62))
 
-  (defun nomis-h29 ()
+  (defun nomis/h29 ()
     (interactive)
-    (nomis-set-frame-height* 29)))
+    (nomis/set-frame-height* 29)))
 
 ;;;; ___________________________________________________________________________
 ;;;; Fix for broken `move-frame-to-screen-bottom`
 
-(defun move-frame-to-screen-bottom/nomis-hacked (n-pixels)
+(defun move-frame-to-screen-bottom/nomis/hacked (n-pixels)
   (case 2
     (1
      (move-frame-to-screen-bottom n-pixels))
@@ -240,7 +240,7 @@
   (let* ((n-pixels (* n-chars (frame-char-height)))
          (n-pixels-v2 (- n-pixels
                          (alist-get :bottom nomis/-screen-pixel-adjustments))))
-    (move-frame-to-screen-bottom/nomis-hacked n-pixels-v2)))
+    (move-frame-to-screen-bottom/nomis/hacked n-pixels-v2)))
 
 (defun nomis/move-frame-to-screen-left (n-chars)
   (interactive (list (if current-prefix-arg
@@ -294,7 +294,7 @@
   (nomis/modify-frame-l-t-w-h nomis/modify-frame/initial-state)
   (setq nomis/modify-frame/initial-state nil))
 
-(define-nomis-hydra nomis/modify-frame/resize
+(define-nomis/hydra nomis/modify-frame/resize
   :name-as-string "Resize frame"
   :key "H-M-Z" ; Want no key, but not sure if Hydra allows that. So use a ridiculous key chord.
   :init-form   (nomis/modify-frame/init-state-if-unset)
@@ -318,7 +318,7 @@
                 ("M-S-<right>" restore-frame-horizontally        "Max or restore horizontally")
                 ("M-Z"         nomis/modify-frame/move/body      "Move"   :exit t)))
 
-(define-nomis-hydra nomis/modify-frame/move
+(define-nomis/hydra nomis/modify-frame/move
   :name-as-string "Move frame"
   :key "M-Z"
   :init-form   (nomis/modify-frame/init-state-if-unset)
@@ -344,18 +344,18 @@
 
 ;;;; ___________________________________________________________________________
 
-(defun nomis-maximize-all-frame-heights ()
+(defun nomis/maximize-all-frame-heights ()
   (interactive)
   (mapc (lambda (frame) (maximize-frame-vertically frame t))
         (frame-list)))
 
 ;;;; ___________________________________________________________________________
 
-(define-key global-map (kbd "H-q 1") 'nomis-w-single)
-(define-key global-map (kbd "H-q 2") 'nomis-w-double)
-(define-key global-map (kbd "H-q 3") 'nomis-w-triple)
+(define-key global-map (kbd "H-q 1") 'nomis/w-single)
+(define-key global-map (kbd "H-q 2") 'nomis/w-double)
+(define-key global-map (kbd "H-q 3") 'nomis/w-triple)
 (define-key global-map (kbd "H-q v") 'maximize-frame-vertically)
-(define-key global-map (kbd "H-q V") 'nomis-maximize-frame-vertically-assuming-toolbar-of-size-arg)
+(define-key global-map (kbd "H-q V") 'nomis/maximize-frame-vertically-assuming-toolbar-of-size-arg)
 (define-key global-map (kbd "H-q h") 'maximize-frame-horizontally)
 
 ;;;; ___________________________________________________________________________

@@ -1,10 +1,10 @@
-;;;; Init stuff -- nomis-hydra
+;;;; Init stuff -- nomis/hydra
 
 ;;;; ___________________________________________________________________________
 
 (require 'hydra)
 
-(cl-defmacro define-nomis-hydra (name &key
+(cl-defmacro define-nomis/hydra (name &key
                                       name-as-string
                                       key
                                       vars

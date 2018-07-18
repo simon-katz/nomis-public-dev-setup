@@ -7,7 +7,7 @@
 
 ;;;; TODO: Take a look at this.  What does it do?  Maybe from Windoze days?
 
-;; (setq *nomis-grep-find-options*
+;; (setq *nomis/grep-find-options*
 ;;       "\\\( \\\! -name \\\*.jar \\\) \\\( \\\! -name \\\*.class \\\) \\\( \\\! -name \\\#*# \\\)")
 
 ;;;; ___________________________________________________________________________

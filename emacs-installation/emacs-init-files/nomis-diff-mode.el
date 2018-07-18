@@ -2,7 +2,7 @@
 
 ;;;; ___________________________________________________________________________
 
-(defun nomis-diff-colors ()
+(defun nomis/diff-colors ()
   "update the colors for diff faces"
   (set-face-attribute
    'diff-added nil :foreground "SpringGreen4")
@@ -11,7 +11,7 @@
   (set-face-attribute
    'diff-changed nil :foreground "purple"))
 
-(eval-after-load "diff-mode" '(nomis-diff-colors))
+(eval-after-load "diff-mode" '(nomis/diff-colors))
 
 ;;;; ___________________________________________________________________________
 

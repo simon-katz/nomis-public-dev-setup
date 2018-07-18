@@ -1,4 +1,4 @@
-;;;; nomis-dirtree.el --- Directory tree views ---  -*- lexical-binding: t -*-
+;;;; nomis/dirtree.el --- Directory tree views ---  -*- lexical-binding: t -*-
 
 ;;;; Based on dirtree.el (see https://github.com/zk/emacs-dirtree).
 ;;;; This work was started on 2013-12-22.
@@ -30,7 +30,7 @@
 ;;;;   a change, so this is very bad. (But less bad now that you are ignoring
 ;;;;   `stopped` events.)
 ;;;;   - Can you retain the expanded subdirectories?
-;;;;     (But the problem is in dirtree, not nomis-dirtree --
+;;;;     (But the problem is in dirtree, not nomis/dirtree --
 ;;;;     `tree-mode-reflesh-tree`.)
 ;;;;     Can you write your own refresh function?
 ;;;;   Also:
@@ -101,7 +101,7 @@ See `windata-display-buffer' for setup the arguments."
   :group 'nomis/dirtree/dirtree-group)
 
 (defcustom nomis/dirtree/buffer "*nomis-dirtree*"
-  "*Buffer name for nomis-dirtree"
+  "*Buffer name for nomis/dirtree"
   :type 'string
   :group 'nomis/dirtree/dirtree-group)
 
@@ -136,7 +136,7 @@ See `windata-display-buffer' for setup the arguments."
              :tag ,tag
              :file ,file)
       :open ,root?
-      :nomis-root ,root?)))
+      :nomis/root ,root?)))
 
 (defun nomis/dirtree/make-file-widget (file-&-basename)
   `(nomis/dirtree/file-widget
@@ -524,7 +524,7 @@ With prefix argument select `nomis/dirtree/buffer'"
   (if nomis/dirtree/auto-refresh?
       (nomis/dirtree/turn-off-auto-refresh)
     (nomis/dirtree/turn-on-auto-refresh))
-  (message "nomis-dirtree auto refresh turned %s"
+  (message "nomis/dirtree auto refresh turned %s"
            (if nomis/dirtree/auto-refresh? "on" "off")))
 
 ;;;; ---------------------------------------------------------------------------
@@ -621,7 +621,7 @@ With prefix argument select `nomis/dirtree/buffer'"
     "node_modules"
     "out"
     "target"
-    "zzzz-nomis-dirtee-test-keep-collapsed"))
+    "zzzz-nomis/dirtee-test-keep-collapsed"))
 
 (defun nomis/dirtree/directory-to-keep-collapsed?/fullname (name)
   (some (lambda (no-expand-name)
@@ -675,7 +675,7 @@ With prefix argument select `nomis/dirtree/buffer'"
 (defun nomis/dirtree/root-p (widget)
   (assert (nomis/dirtree/widget? widget))
   (plist-get (rest widget)
-             :nomis-root))
+             :nomis/root))
 
 (defun nomis/dirtree/widget-path (widget)
   (cl-labels ((helper
@@ -753,7 +753,7 @@ With prefix argument select `nomis/dirtree/buffer'"
   ;; you do a return-to-selected-file when refreshing.)
   (nomis/dirtree/goto-widget (nomis/dirtree/selected-widget/with-extras)))
 
-(define-error 'nomis/dirtree/file-not-found "nomis-dirtree: No such file")
+(define-error 'nomis/dirtree/file-not-found "nomis/dirtree: No such file")
 
 (cl-defun nomis/dirtree/goto-path (path
                                    &key refresh-not-allowed?)
@@ -1258,7 +1258,7 @@ sub-subdirectories, etc, so that subsequent expansion shows only one level."
                  (message "
  ======== Widget info -- %s ========
  (car widget) = %s
- :nomis-root = %s
+ :nomis/root = %s
  :tag = %s
  :file = %s
  :open = %s
@@ -1272,7 +1272,7 @@ sub-subdirectories, etc, so that subsequent expansion shows only one level."
 "
                           (car widget)
                           (car widget)
-                          (widget-get widget :nomis-root)
+                          (widget-get widget :nomis/root)
                           (widget-get widget :tag)
                           (nomis/dirtree/widget-file widget)
                           (widget-get widget :open)

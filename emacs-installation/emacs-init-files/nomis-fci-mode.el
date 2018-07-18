@@ -3,7 +3,7 @@
 ;;;; See http://www.emacswiki.org/emacs/FillColumnIndicator
 ;;;;     https://github.com/alpaker/Fill-Column-Indicator
 
-(defvar nomis-fci-mode-issues
+(defvar nomis/fci-mode-issues
   "
 There are some issues, so for now just turn on fci-mode temporarily
 when you want it.
@@ -31,7 +31,7 @@ The issues:
   See https://github.com/alpaker/Fill-Column-Indicator/issues.
 ")
 
-(setq-default fill-column nomis-right-margin-column)
+(setq-default fill-column nomis/right-margin-column)
 
 (defun fci-mode-off () (fci-mode -1))
 

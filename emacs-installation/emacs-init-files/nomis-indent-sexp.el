@@ -62,17 +62,17 @@
 ;; -   M-q in clojure and elisp   paredit-reindent-defun
 
 (nomis/define-indent-command indent-pp-sexp
-  (nomis-start-of-this-or-enclosing-form)
+  (nomis/start-of-this-or-enclosing-form)
   (%do-indentation%))
 
 (nomis/define-indent-command prog-indent-sexp
-  (nomis-start-of-this-or-enclosing-form)
+  (nomis/start-of-this-or-enclosing-form)
   (%do-indentation%))
 
 (nomis/define-indent-command paredit-reindent-defun
-  (nomis-beginning-of-top-level-form)
+  (nomis/beginning-of-top-level-form)
   (let* ((not-in-a-top-level-symbol-p
-          (nomis-looking-at-bracketed-sexp-start)))
+          (nomis/looking-at-bracketed-sexp-start)))
     (if not-in-a-top-level-symbol-p
         (%do-indentation%)
       ;; We are on a top-level symbol. `paredit-reindent-defun`

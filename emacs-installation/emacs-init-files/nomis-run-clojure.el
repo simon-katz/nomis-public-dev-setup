@@ -1,4 +1,4 @@
-;;;; Init stuff -- nomis-run-clojure
+;;;; Init stuff -- nomis/run-clojure
 
 ;;## ;;;; ****
 ;;## ;;;; + Ring bell when you get a Clojure error.
@@ -6,12 +6,12 @@
 ;;## ;;;;
 
 
-(defvar nomis-newline-string "
+(defvar nomis/newline-string "
 ")
 
 (defun transform-string-value (value)
   (s-replace "\\n"
-             nomis-newline-string
+             nomis/newline-string
              value))
 
 (defun nomis/run-clojure-and-insert-result (clojure-form-as-string)

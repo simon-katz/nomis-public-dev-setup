@@ -9,14 +9,14 @@
 
 ;;;; ___________________________________________________________________________
 
-(defun nomis-scroll-down-in-place (&optional n)
+(defun nomis/scroll-down-in-place (&optional n)
   "Like scroll-down-line, except move point to keep it at the same position
 in the display."
   (interactive "p")
   (scroll-down-line n)
   (previous-line n))
 
-(defun nomis-scroll-up-in-place (&optional n)
+(defun nomis/scroll-up-in-place (&optional n)
   "Like scroll-up-line, except move point to keep it at the same position
 in the display."
   (interactive "p")
@@ -25,14 +25,14 @@ in the display."
 
 (define-key global-map (kbd "C-M-S-<up>")   'scroll-down-line)
 (define-key global-map (kbd "C-M-S-<down>") 'scroll-up-line)
-(define-key global-map (kbd "C-S-<up>")     'nomis-scroll-down-in-place)
-(define-key global-map (kbd "C-S-<down>")   'nomis-scroll-up-in-place)
+(define-key global-map (kbd "C-S-<up>")     'nomis/scroll-down-in-place)
+(define-key global-map (kbd "C-S-<down>")   'nomis/scroll-up-in-place)
 
 ;;;; ___________________________________________________________________________
 
 (defconst go-left-right-amount 40)
 
-(defun nomis-go-right-lots ()
+(defun nomis/go-right-lots ()
   (interactive)
   (let ((current (point))
         (line-end (line-end-position)))
@@ -42,7 +42,7 @@ in the display."
                       (+ current go-left-right-amount))))
         (goto-char new)))))
 
-(defun nomis-go-left-lots ()
+(defun nomis/go-left-lots ()
   (interactive)
   (let ((current (point))
         (line-end (line-beginning-position)))
@@ -52,8 +52,8 @@ in the display."
                       (- current go-left-right-amount))))
         (goto-char new)))))
 
-(define-key global-map (kbd "C-S-<right>") 'nomis-go-right-lots)
-(define-key global-map (kbd "C-S-<left>") 'nomis-go-left-lots)
+(define-key global-map (kbd "C-S-<right>") 'nomis/go-right-lots)
+(define-key global-map (kbd "C-S-<left>") 'nomis/go-left-lots)
 
 ;;;; ___________________________________________________________________________
 

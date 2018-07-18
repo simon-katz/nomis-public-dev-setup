@@ -114,7 +114,7 @@
 (require 'nomis-clj-refactor-fixes)
 (require 'cljr-helm)
 
-(defun nomis-setup-clj-refactor-mode ()
+(defun nomis/setup-clj-refactor-mode ()
   (clj-refactor-mode 1)
   (yas-minor-mode 1) ; for adding require/use/import statements
   (nomis/cljr-add-keybindings))
@@ -134,7 +134,7 @@
 
 (add-hook 'clojure-mode-hook 'whitespace-mode)
 
-(defun nomis-set-comment-column-to-zero ()
+(defun nomis/set-comment-column-to-zero ()
   (set (make-local-variable 'comment-column)
        0))
 
@@ -142,9 +142,9 @@
       (hook-funs-always `(rainbow-delimiters-mode
                           paredit-mode
                           paxedit-mode
-                          nomis-set-comment-column-to-zero
+                          nomis/set-comment-column-to-zero
                           subword-mode
-                          nomis-setup-clj-refactor-mode
+                          nomis/setup-clj-refactor-mode
                           ;; aggressive-indent-mode
                           ))
       (hooks-when-repl-exists '(cider-mode-hook

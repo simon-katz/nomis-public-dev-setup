@@ -87,23 +87,23 @@
 ;;; - plop 'plop' plop
 ;;; - plop 'plop` plop
 
-(defun nomis-highlight-symbol-quoting-in-text ()
+(defun nomis/highlight-symbol-quoting-in-text ()
   (dolist (regex '("`\\(.+?\\)[`']"))
     (font-lock-add-keywords nil
                             `((,regex 1 font-lock-constant-face prepend))
                             t ; add at end -- otherwise breaks highlighting in org mode
                             )))
 
-(add-hook 'text-mode-hook 'nomis-highlight-symbol-quoting-in-text)
-(add-hook 'prog-mode-hook 'nomis-highlight-symbol-quoting-in-text)
+(add-hook 'text-mode-hook 'nomis/highlight-symbol-quoting-in-text)
+(add-hook 'prog-mode-hook 'nomis/highlight-symbol-quoting-in-text)
 
 ;;;; ___________________________________________________________________________
 ;;;; Symbol highlighting
 
 (progn
   (require 'nomis-idle-highlight-mode)
-  (defun nomis-turn-on-idle-highlight-mode ()
-    (nomis-idle-highlight-mode t))
-  (add-hook 'prog-mode-hook 'nomis-turn-on-idle-highlight-mode))
+  (defun nomis/turn-on-idle-highlight-mode ()
+    (nomis/idle-highlight-mode t))
+  (add-hook 'prog-mode-hook 'nomis/turn-on-idle-highlight-mode))
 
 (provide 'nomis-highlighting)

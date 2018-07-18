@@ -13,7 +13,7 @@
           (frame-list))
     (select-frame current-frame t)))
 
-(defun nomis-set-alternative-frame-background ()
+(defun nomis/set-alternative-frame-background ()
   (interactive)
   ;; (set-my-frame-options "light cyan")
   ;; (set-my-frame-options "gray85")
@@ -30,7 +30,7 @@
   ;; (set-my-frame-options "lightyellow1")
   (set-my-frame-options "cornsilk2"))
 
-(defun nomis-set-default-frame-background ()
+(defun nomis/set-default-frame-background ()
   (interactive)
   (set-my-frame-options "#f5f5f5"))
 

@@ -17,7 +17,7 @@
           "bundle"
           ".idea"
           ;; "labrepl*/public/javascripts/jquery.js"
-          ;; "emacs-configuration/nomis-addons/cygwin-mount.el"
+          ;; "emacs-configuration/nomis/addons/cygwin-mount.el"
           "node_modules"))
   (defvar *extra-ignored-files*
     '(".ido.last"
@@ -68,7 +68,7 @@
 ;;;;   work. Looks like `grep-read-files` does some weird side-effecty stuff.
 ;;;;   In any case, I don't understand and I gave up on that approach.
 
-(defun -nomis-rgrep-interactive-stuff (all-p)
+(defun -nomis/rgrep-interactive-stuff (all-p)
   (progn
     (grep-compute-defaults)
     (cond
@@ -86,33 +86,33 @@
                (confirm (equal current-prefix-arg '(4))))
           (list regexp files dir confirm))))))
 
-(defun nomis-rgrep (regexp &optional files dir confirm)
+(defun nomis/rgrep (regexp &optional files dir confirm)
   "A variation of `rgrep` that:
 - uses `ido-read-directory-name` for nicer directory navigation."
-  (interactive (-nomis-rgrep-interactive-stuff nil))
+  (interactive (-nomis/rgrep-interactive-stuff nil))
   (rgrep regexp files dir confirm))
 
-(defun nomis-rgrep-all-unignored-files (regexp &optional files dir confirm)
+(defun nomis/rgrep-all-unignored-files (regexp &optional files dir confirm)
   "A variation of `rgrep` that:
 - uses `ido-read-directory-name` for nicer directory navigation
 - searches all (unignored) files."
-  (interactive (-nomis-rgrep-interactive-stuff t))
+  (interactive (-nomis/rgrep-interactive-stuff t))
   (rgrep regexp files dir confirm))
 
-(defun nomis-grep-logs-dirs-include ()
+(defun nomis/grep-logs-dirs-include ()
   (interactive)
   (setq grep-find-ignored-directories
         (remove logs-dir-name
                 grep-find-ignored-directories)))
 
-(defun nomis-grep-logs-dirs-exclude ()
+(defun nomis/grep-logs-dirs-exclude ()
   (interactive)
   (setq grep-find-ignored-directories
         (cons logs-dir-name
               grep-find-ignored-directories)))
 
-;; (define-key global-map (kbd "H-q g a") 'nomis-rgrep)
-;; (define-key global-map (kbd "H-q g g") 'nomis-rgrep-all-unignored-files)
+;; (define-key global-map (kbd "H-q g a") 'nomis/rgrep)
+;; (define-key global-map (kbd "H-q g g") 'nomis/rgrep-all-unignored-files)
 
 ;;;; ___________________________________________________________________________
 ;;;; ---- Stuff for rgrep and lgrep ----

@@ -12,11 +12,11 @@
 (load-file-relative-to-this-file "ensure-expected-emacs-version")
 (load-file-relative-to-this-file "set-up-package-stuff")
 
-(defun nomis-load-file-name ()
+(defun nomis/load-file-name ()
   (file-truename (or load-file-name (buffer-file-name))))
 
-(defun nomis-load-file-directory ()
-  (file-name-directory (nomis-load-file-name)))
+(defun nomis/load-file-directory ()
+  (file-name-directory (nomis/load-file-name)))
 
 ;;;; ___________________________________________________________________________
 ;;;; ---- exec-path-from-shell ----
@@ -26,14 +26,14 @@
   (exec-path-from-shell-initialize))
 
 ;;;; ___________________________________________________________________________
-;;;; ---- i-am-nomis-p ----
+;;;; ---- i-am-nomis/p ----
 
-(defvar nomis-personal-emacs-init-file
-  (concat (nomis-load-file-directory)
+(defvar nomis/personal-emacs-init-file
+  (concat (nomis/load-file-directory)
           "../../emacs-configuration-personal/nomis-personal-emacs-init.el"))
 
-(defvar i-am-nomis-p
-  (file-exists-p nomis-personal-emacs-init-file))
+(defvar i-am-nomis/p
+  (file-exists-p nomis/personal-emacs-init-file))
 
 ;;;; ___________________________________________________________________________
 
@@ -43,17 +43,17 @@
     (normal-top-level-add-subdirs-to-load-path)))
 
 (add-dir-and-normal-subdirs-to-load-path
- (concat (nomis-load-file-directory)
+ (concat (nomis/load-file-directory)
          "emacs-init-files"))
 
-(when i-am-nomis-p ; #### What about compiling?
-  (add-to-list 'load-path (concat (nomis-load-file-directory)
+(when i-am-nomis/p ; #### What about compiling?
+  (add-to-list 'load-path (concat (nomis/load-file-directory)
                                   "../../emacs-package-repos/align-cljlet"))
-  (add-to-list 'load-path (concat (nomis-load-file-directory)
+  (add-to-list 'load-path (concat (nomis/load-file-directory)
                                   "../../emacs-package-repos/clj-refactor"))
-  (add-to-list 'load-path (concat (nomis-load-file-directory)
+  (add-to-list 'load-path (concat (nomis/load-file-directory)
                                   "../../emacs-package-repos/cljr-helm"))
-  (add-to-list 'load-path (concat (nomis-load-file-directory)
+  (add-to-list 'load-path (concat (nomis/load-file-directory)
                                   "../../emacs-package-repos/multi-web-mode")))
 
 
@@ -209,7 +209,7 @@
 (require 'homeless)
 
 (progn
-  ;; Putting this where it belongs (in "nomis-very-general-stuff") doesn't work;
+  ;; Putting this where it belongs (in "nomis/very-general-stuff") doesn't work;
   ;; I guess something blats it.
   ;; Ah! This was probably because of issues with source files vs compiled
   ;; files, so try again.
@@ -218,8 +218,8 @@
 ;;;; ___________________________________________________________________________
 ;;;;; ---- personal ----
 
-(when i-am-nomis-p
-  (load nomis-personal-emacs-init-file))
+(when i-am-nomis/p
+  (load nomis/personal-emacs-init-file))
 
 ;;;; ___________________________________________________________________________
 ;;;;; ---- temp for playing ----

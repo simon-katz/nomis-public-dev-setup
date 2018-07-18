@@ -35,21 +35,21 @@
      (dom/button 1)
      ))
 
-;; (defvar nomis-clojure-indent-method-1-function-prefixes
+;; (defvar nomis/clojure-indent-method-1-function-prefixes
 ;;   '("dom/"))
 
-;; (defun nomis-clojure-indent-method-1-p (function-name)
-;;   (loop for prefix in nomis-clojure-indent-method-1-function-prefixes
+;; (defun nomis/clojure-indent-method-1-p (function-name)
+;;   (loop for prefix in nomis/clojure-indent-method-1-function-prefixes
 ;;         for prefix-length = (length prefix)
 ;;         thereis (and (>= (length function-name)
 ;;                          prefix-length)
 ;;                      (equal (subseq function-name 0 prefix-length)
 ;;                             prefix))))
 
-;; (defun nomis-clojure-indent-method (function)
+;; (defun nomis/clojure-indent-method (function)
 ;;   (let ((function-name (substring-no-properties function)))
 ;;     (or (get (intern-soft function-name) 'clojure-indent-function)
-;;         (when (nomis-clojure-indent-method-1-p function-name)
+;;         (when (nomis/clojure-indent-method-1-p function-name)
 ;;           1))))
 
 ;; (cond
@@ -106,7 +106,7 @@
 ;;                                (last
 ;;                                 (split-string (substring-no-properties function) "/")))))
 ;;           (setq method (or (get (intern-soft function-tail) 'clojure-indent-function)
-;;                            (nomis-clojure-indent-method function) ; jsk added this
+;;                            (nomis/clojure-indent-method function) ; jsk added this
 ;;                            ))
 ;;           (cond ((member (char-after open-paren) '(?\[ ?\{))
 ;;                  (goto-char open-paren)

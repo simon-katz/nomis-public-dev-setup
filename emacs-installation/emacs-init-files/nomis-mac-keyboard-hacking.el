@@ -48,24 +48,24 @@
   ;; The default for M-w is kill-ring-save.
   ;; Consider using M-c for that and having M-w delete a frame.
 
-  (defvar *nomis-meta-w-replacement-p* nil)
+  (defvar *nomis/meta-w-replacement-p* nil)
 
-  (defun nomis-meta-w ()
+  (defun nomis/meta-w ()
     (interactive)
-    (cl-flet ((nomis-meta-w-replacement
+    (cl-flet ((nomis/meta-w-replacement
                ()
                (ding)
                (when (prog1
                          (y-or-n-p "Really delete frame?")
                        (message nil))
                  (delete-frame))))
-      (if *nomis-meta-w-replacement-p*
-          (nomis-meta-w-replacement)
+      (if *nomis/meta-w-replacement-p*
+          (nomis/meta-w-replacement)
         (kill-ring-save (point) (mark)))))
   
-  (define-key global-map (kbd "M-w") 'nomis-meta-w))
+  (define-key global-map (kbd "M-w") 'nomis/meta-w))
 
-;; Nope -- see "nomis-undo-tree.el".
+;; Nope -- see "nomis/undo-tree.el".
 ;; (progn
 ;;   ;; Deal with M-z.
 ;;   ;; The default for M-z is zap-to-char.  I don't need that, so...
@@ -74,7 +74,7 @@
 (progn
   ;; Deal with M-x.
 
-  (defvar *nomis-meta-x-replacement* nil ; 'ignore-until-i-learn-not-to-use-it
+  (defvar *nomis/meta-x-replacement* nil ; 'ignore-until-i-learn-not-to-use-it
     "Whether to do nomis M-x replacement.
 nil
   means no.
@@ -83,60 +83,60 @@ ignore-until-i-learn-not-to-use-it
 any other value
   means do nomis M-x replacement.")
 
-  (defvar *nomis-meta-x-command-when-first-loaded*
+  (defvar *nomis/meta-x-command-when-first-loaded*
     ;; Note that this relies on any non-build-in binding of M-x being set
     ;; before this file is loaded. Hmmm, not great.
     (let ((command (key-binding (kbd "M-x"))))
-      (if (and (boundp '*nomis-meta-x-command-when-first-loaded*)
-               (eql command 'nomis-meta-x))
+      (if (and (boundp '*nomis/meta-x-command-when-first-loaded*)
+               (eql command 'nomis/meta-x))
           ;; Don't change what happened when first loaded.
-          *nomis-meta-x-command-when-first-loaded*
+          *nomis/meta-x-command-when-first-loaded*
         command)))
   
   (defun call-old-meta-x (arg)
-    (case *nomis-meta-x-command-when-first-loaded*
+    (case *nomis/meta-x-command-when-first-loaded*
       ('execute-extended-command
        (execute-extended-command arg))
       ('smex
        (smex))
       (t
        (error "Don't know how to call %s"
-              *nomis-meta-x-command-when-first-loaded*))))
+              *nomis/meta-x-command-when-first-loaded*))))
   
   (defun issue-meta-x-replacement-message ()
     (message "Use Option-x or Option-z instead of M-x")
     (ding))
   
-  (defun nomis-meta-x (arg)
+  (defun nomis/meta-x (arg)
     (interactive "p")
     (cond
-     ((null *nomis-meta-x-replacement*)
+     ((null *nomis/meta-x-replacement*)
       (call-old-meta-x arg))
-     ((eql *nomis-meta-x-replacement* 'ignore-until-i-learn-not-to-use-it)
+     ((eql *nomis/meta-x-replacement* 'ignore-until-i-learn-not-to-use-it)
       (issue-meta-x-replacement-message))
      (t
       (kill-region (point) (mark)))))
   
-  (defun nomis-option-x (arg)
+  (defun nomis/option-x (arg)
     (interactive "p")
-    (if (null *nomis-meta-x-replacement*)
+    (if (null *nomis/meta-x-replacement*)
         (insert "≈")
       (call-old-meta-x arg)))
   
-  (defun nomis-option-z (arg)
+  (defun nomis/option-z (arg)
     (interactive "p")
-    (if (null *nomis-meta-x-replacement*)
+    (if (null *nomis/meta-x-replacement*)
         (insert "Ω")
       (call-old-meta-x arg)))
   
-  (define-key global-map (kbd "M-x") 'nomis-meta-x)
+  (define-key global-map (kbd "M-x") 'nomis/meta-x)
   
   (progn
     ;; Option-x and Option-z for the thing that is usually M-x.
     ;; Option-x might seem more natural, but typing it requires nasty
     ;; finger-bending.
-    (define-key global-map "≈" 'nomis-option-x)
-    (define-key global-map "Ω" 'nomis-option-z)))
+    (define-key global-map "≈" 'nomis/option-x)
+    (define-key global-map "Ω" 'nomis/option-z)))
 
 ;;;; ___________________________________________________________________________
 

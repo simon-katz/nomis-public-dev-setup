@@ -1,21 +1,21 @@
 ;;;; Init stuff -- SEXP utils
 
-(defun nomis-looking-at-whitespace ()
+(defun nomis/looking-at-whitespace ()
   ;; (looking-at "[:space:]")
   ;; (looking-at "\\s-")
   ;; Neither of the above work, but IIUC they should.
   (looking-at "[ \t\n]"))
 
-(defun nomis-looking-at-whitespace-start-p ()
-  (and (nomis-looking-at-whitespace)
+(defun nomis/looking-at-whitespace-start-p ()
+  (and (nomis/looking-at-whitespace)
        (or (= (point) 1)
            (save-excursion
              (backward-char 1)
-             (not (nomis-looking-at-whitespace))))))
+             (not (nomis/looking-at-whitespace))))))
 
-(defun nomis-looking-between-forms ()
-  (and (nomis-looking-at-whitespace)
-       (not (nomis-looking-at-whitespace-start-p))))
+(defun nomis/looking-between-forms ()
+  (and (nomis/looking-at-whitespace)
+       (not (nomis/looking-at-whitespace-start-p))))
 
 (defvar *regexp-for-bracketed-sexp-start*
   "(\\|\\[\\|{\\|#{")
@@ -23,57 +23,57 @@
 (defvar *regexp-for-bracketed-sexp-end*
   ")\\|]\\|}")
 
-(defun nomis-looking-at-bracketed-sexp-start ()
+(defun nomis/looking-at-bracketed-sexp-start ()
   (looking-at *regexp-for-bracketed-sexp-start*))
 
-(defun -nomis-looking-at-bracketed-sexp-end ()
+(defun -nomis/looking-at-bracketed-sexp-end ()
   (looking-at *regexp-for-bracketed-sexp-end*))
 
-(defun nomis-looking-after-bracketed-sexp-end ()
-  (and (not (nomis-looking-at-bracketed-sexp-start))
+(defun nomis/looking-after-bracketed-sexp-end ()
+  (and (not (nomis/looking-at-bracketed-sexp-start))
        (and (not (= (point) 1))
             (save-excursion
               (backward-char 1)
-              (-nomis-looking-at-bracketed-sexp-end)))))
+              (-nomis/looking-at-bracketed-sexp-end)))))
 
-(defun nomis-looking-at-end-of-empty-bracketed-sexp ()
-  (and (-nomis-looking-at-bracketed-sexp-end)
+(defun nomis/looking-at-end-of-empty-bracketed-sexp ()
+  (and (-nomis/looking-at-bracketed-sexp-end)
        (and (not (= (point) 1))
             (save-excursion
               (backward-char 1)
-              (nomis-looking-at-bracketed-sexp-start)))))
+              (nomis/looking-at-bracketed-sexp-start)))))
 
-(defun nomis-looking-at-char-1-whitespace-p ()
+(defun nomis/looking-at-char-1-whitespace-p ()
   (and (= (point) 1)
-       (nomis-looking-at-whitespace)))
+       (nomis/looking-at-whitespace)))
 
-(defun nomis-looking-at-multiple-whitespace ()
-  (and (or (nomis-looking-at-whitespace)
+(defun nomis/looking-at-multiple-whitespace ()
+  (and (or (nomis/looking-at-whitespace)
            ;; FIXME What is this next bit for? When you have tests, try removing it.
            (= (point) (point-max)))
        (and (not (= (point) 1))
             (save-excursion
               (backward-char)
-              (nomis-looking-at-whitespace)))))
+              (nomis/looking-at-whitespace)))))
 
-(defun nomis-looking-after-bracketed-sexp-end-at-bracketed-sexp-end-or-whitespace ()
-  (and (nomis-looking-after-bracketed-sexp-end)
-       (or (nomis-looking-at-whitespace)
-           (-nomis-looking-at-bracketed-sexp-end))))
+(defun nomis/looking-after-bracketed-sexp-end-at-bracketed-sexp-end-or-whitespace ()
+  (and (nomis/looking-after-bracketed-sexp-end)
+       (or (nomis/looking-at-whitespace)
+           (-nomis/looking-at-bracketed-sexp-end))))
 
-(defun nomis-looking-at-whitespace-after-bracketed-sexp-start ()
-  (and (nomis-looking-at-whitespace)
+(defun nomis/looking-at-whitespace-after-bracketed-sexp-start ()
+  (and (nomis/looking-at-whitespace)
        (and (not (= (point) 1))
             (save-excursion
               (backward-char)
-              (nomis-looking-at-bracketed-sexp-start)))))
+              (nomis/looking-at-bracketed-sexp-start)))))
 
-(defun nomis-looking-at-regexp-before-bracketed-sexp-start (regexp)
+(defun nomis/looking-at-regexp-before-bracketed-sexp-start (regexp)
   (looking-at (concatenate 'string
                            regexp
                            *regexp-for-bracketed-sexp-start*)))
 
-(defun nomis-looking-at-boring-place-p ()
+(defun nomis/looking-at-boring-place-p ()
   ;; TODO: Add tests for these.
   ;;       But how?
   ;;       Can you set up a buffer, put text in it, set a position
@@ -81,57 +81,57 @@
   ;;       If you can, setting the position will be fiddly.
   ;;       Ah! Can have a function that processes a string and looks for ^ or ^^
   ;;       or something.
-  (or (nomis-looking-at-bracketed-sexp-start)
-      (nomis-looking-at-end-of-empty-bracketed-sexp)
-      (nomis-looking-at-char-1-whitespace-p)
-      (nomis-looking-at-multiple-whitespace)
-      (nomis-looking-after-bracketed-sexp-end-at-bracketed-sexp-end-or-whitespace)
-      (nomis-looking-at-whitespace-after-bracketed-sexp-start)
+  (or (nomis/looking-at-bracketed-sexp-start)
+      (nomis/looking-at-end-of-empty-bracketed-sexp)
+      (nomis/looking-at-char-1-whitespace-p)
+      (nomis/looking-at-multiple-whitespace)
+      (nomis/looking-after-bracketed-sexp-end-at-bracketed-sexp-end-or-whitespace)
+      (nomis/looking-at-whitespace-after-bracketed-sexp-start)
       (looking-at ";")
-      (nomis-looking-at-regexp-before-bracketed-sexp-start "'")
-      (nomis-looking-at-regexp-before-bracketed-sexp-start "`")
-      (nomis-looking-at-regexp-before-bracketed-sexp-start "#'")))
+      (nomis/looking-at-regexp-before-bracketed-sexp-start "'")
+      (nomis/looking-at-regexp-before-bracketed-sexp-start "`")
+      (nomis/looking-at-regexp-before-bracketed-sexp-start "#'")))
 
-(defun nomis-move-to-start-of-bracketed-sexp-around-point ()
-  (cond ((nomis-looking-at-bracketed-sexp-start)
+(defun nomis/move-to-start-of-bracketed-sexp-around-point ()
+  (cond ((nomis/looking-at-bracketed-sexp-start)
          ;; stay here
          )
-        ((or (nomis-looking-at-whitespace)
-             (nomis-looking-after-bracketed-sexp-end))
+        ((or (nomis/looking-at-whitespace)
+             (nomis/looking-after-bracketed-sexp-end))
          (backward-sexp 1))
         (t
          (ignore-errors (forward-sexp 1))
          (backward-sexp 1))))
 
-(defun nomis-beginning-of-top-level-form ()
-  (nomis-end-of-top-level-form)
+(defun nomis/beginning-of-top-level-form ()
+  (nomis/end-of-top-level-form)
   (backward-sexp))
 
-(defun nomis-end-of-top-level-form ()
-  (when (nomis-looking-at-bracketed-sexp-start)
+(defun nomis/end-of-top-level-form ()
+  (when (nomis/looking-at-bracketed-sexp-start)
     (forward-sexp))
   (while (ignore-errors (paredit-backward-up -1) t))
   (when (or
          ;; between top-level forms
-         (nomis-looking-between-forms)
+         (nomis/looking-between-forms)
          ;; in the middle of a top-level symbol
-         (not (nomis-looking-at-whitespace)))
+         (not (nomis/looking-at-whitespace)))
     (forward-sexp)))
 
-(defun nomis-start-of-this-or-enclosing-form ()
+(defun nomis/start-of-this-or-enclosing-form ()
   "If looking at beginning of bracketed sexp, stay there,
    else if looking after end of bracketed sexp, move to its start,
    else if within a bracketed sexp, move to its start,
    otherwise move to beginning of next top-level form."
-  (cond ((nomis-looking-at-bracketed-sexp-start)
+  (cond ((nomis/looking-at-bracketed-sexp-start)
          ;; stay where we are
          )
-        ((nomis-looking-after-bracketed-sexp-end)
+        ((nomis/looking-after-bracketed-sexp-end)
          (ignore-errors (backward-sexp)))
         (t
          (unless (ignore-errors (paredit-backward-up)
                                 t)
-           (if (or (nomis-looking-at-whitespace-start-p)
+           (if (or (nomis/looking-at-whitespace-start-p)
                    (= (point) (point-max)))
                (backward-sexp)
              (progn

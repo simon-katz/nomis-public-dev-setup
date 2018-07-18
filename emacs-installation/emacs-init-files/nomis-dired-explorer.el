@@ -39,40 +39,40 @@
 
 (setq dired-auto-revert-buffer t)
 
-(defun* nomis-dired-find-file-if-dir-helper (&key (beep-if-not-dir t))
+(defun* nomis/dired-find-file-if-dir-helper (&key (beep-if-not-dir t))
   (if (file-directory-p (dired-get-filename nil t))
       (dired-find-file)
     (when beep-if-not-dir
       (beep))))
 
-(defun nomis-dired-find-file-if-dir ()
+(defun nomis/dired-find-file-if-dir ()
   "Nomis Dired Explorer:
 If selected entry is a directory go into it."
   (interactive)
-  (nomis-dired-find-file-if-dir-helper :beep-if-not-dir t))
+  (nomis/dired-find-file-if-dir-helper :beep-if-not-dir t))
 
-(defun nomis-dired-previous-line-and-display (arg)
+(defun nomis/dired-previous-line-and-display (arg)
   "Nomis Dired Explorer:
 Move up lines and display file in other window."
   (interactive "p")
   (dired-previous-line arg)
   (dired-display-file))
 
-(defun nomis-dired-next-line-and-display (arg)
+(defun nomis/dired-next-line-and-display (arg)
   "Nomis Dired Explorer:
 Move down lines and display file in other window."
   (interactive "p")
   (dired-next-line arg)
   (dired-display-file))
 
-(defun nomis-dired-down-directory-and-display ()
+(defun nomis/dired-down-directory-and-display ()
   "Nomis Dired Explorer:
 Go into selected directory and display its contents in other window."
   (interactive)
-  (nomis-dired-find-file-if-dir-helper :beep-if-not-dir nil)
+  (nomis/dired-find-file-if-dir-helper :beep-if-not-dir nil)
   (dired-display-file))
 
-(defun nomis-dired-up-directory-and-display ()
+(defun nomis/dired-up-directory-and-display ()
   "Nomis Dired Explorer:
 Go up a directory and display its contents in other window."
   (interactive)
@@ -87,12 +87,12 @@ Go up a directory and display its contents in other window."
    (define-key dired-mode-map (kbd "M-<up>") 'dired-previous-line)
    (define-key dired-mode-map (kbd "M-<down>") 'dired-next-line)
    (define-key dired-mode-map (kbd "M-<left>") 'dired-up-directory)
-   (define-key dired-mode-map (kbd "M-<right>") 'nomis-dired-find-file-if-dir)
+   (define-key dired-mode-map (kbd "M-<right>") 'nomis/dired-find-file-if-dir)
    
-   (define-key dired-mode-map (kbd "M-S-<up>") 'nomis-dired-previous-line-and-display)
-   (define-key dired-mode-map (kbd "M-S-<down>") 'nomis-dired-next-line-and-display)
-   (define-key dired-mode-map (kbd "M-S-<left>") 'nomis-dired-up-directory-and-display)
-   (define-key dired-mode-map (kbd "M-S-<right>") 'nomis-dired-down-directory-and-display)))
+   (define-key dired-mode-map (kbd "M-S-<up>") 'nomis/dired-previous-line-and-display)
+   (define-key dired-mode-map (kbd "M-S-<down>") 'nomis/dired-next-line-and-display)
+   (define-key dired-mode-map (kbd "M-S-<left>") 'nomis/dired-up-directory-and-display)
+   (define-key dired-mode-map (kbd "M-S-<right>") 'nomis/dired-down-directory-and-display)))
 
 ;;;; ___________________________________________________________________________
 

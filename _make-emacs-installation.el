@@ -25,7 +25,7 @@
                       magit
                       ido-completing-read+
                       smex
-                      ;; idle-highlight-mode -- see "emacs-installation/emacs-init-files/manually-installed/nomis-idle-highlight-mode.el"
+                      ;; idle-highlight-mode -- see "emacs-installation/emacs-init-files/manually-installed/nomis/idle-highlight-mode.el"
                       ;; scala-mode2
                       undo-tree
                       ;; ac-nrepl

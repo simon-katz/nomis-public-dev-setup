@@ -6,7 +6,7 @@
 
 (magit-auto-revert-mode 0)
 
-(defun nomis-init-magit ()
+(defun nomis/init-magit ()
   (company-mode 0)
   (set-face-background 'magit-section-highlight
                        ;; default is "grey95", which is pretty much the same as
@@ -33,7 +33,7 @@
   (setq magit-display-buffer-function
         'magit-display-buffer-same-window-except-diff-v1))
 
-(add-hook 'magit-mode-hook 'nomis-init-magit)
+(add-hook 'magit-mode-hook 'nomis/init-magit)
 
 (global-set-key (kbd "C-c g") 'magit-status)
 

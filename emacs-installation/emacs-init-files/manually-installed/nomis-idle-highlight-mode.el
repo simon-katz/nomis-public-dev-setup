@@ -1,4 +1,4 @@
-;;; nomis-idle-highlight-mode.el --- highlight the word the point is on
+;;; nomis/idle-highlight-mode.el --- highlight the word the point is on
 
 ;;;; ___________________________________________________________________________
 
@@ -16,11 +16,11 @@
 ;;   H-q H-h H-;).
 ;; 
 ;; - You can easily switch the highlight face using:
-;;   - `nomis-idle-highlight-set-face-muted`
-;;   - `nomis-idle-highlight-set-face-bright`
-;;   - `nomis-idle-highlight-cycle-highlight-face`
-;;   - `nomis-idle-highlight-cycle-up-highlight-face`
-;;   - `nomis-idle-highlight-cycle-down-highlight-face`
+;;   - `nomis/idle-highlight-set-face-muted`
+;;   - `nomis/idle-highlight-set-face-bright`
+;;   - `nomis/idle-highlight-cycle-highlight-face`
+;;   - `nomis/idle-highlight-cycle-up-highlight-face`
+;;   - `nomis/idle-highlight-cycle-down-highlight-face`
 ;; 
 ;; - The default highlight face is nicer (IMO).
 ;; 
@@ -64,7 +64,7 @@
 
 ;; Based on some snippets by fledermaus from the #emacs channel.
 
-;; M-x nomis-idle-highlight-mode sets an idle timer that highlights all
+;; M-x nomis/idle-highlight-mode sets an idle timer that highlights all
 ;; occurences in the buffer of the word under the point.
 
 ;; Enabling it in a hook is recommended. But you don't want it enabled
@@ -76,7 +76,7 @@
 ;;   (make-local-variable 'column-number-mode)
 ;;   (column-number-mode t)
 ;;   (if window-system (hl-line-mode t))
-;;   (nomis-idle-highlight-mode t))
+;;   (nomis/idle-highlight-mode t))
 ;;
 ;; (add-hook 'emacs-lisp-mode-hook 'my-coding-hook)
 ;; (add-hook 'ruby-mode-hook 'my-coding-hook)
@@ -137,7 +137,7 @@
 
 ;;;; ___________________________________________________________________________
 
-(defgroup nomis-idle-highlight nil
+(defgroup nomis/idle-highlight nil
   "Highlight other occurrences of the word at point."
   :group 'faces)
 
@@ -147,11 +147,11 @@
 (defface idle-highlight-original
   '((t (:inherit region)))
   "Face used to highlight other occurrences of the word at point."
-  :group 'nomis-idle-highlight)
+  :group 'nomis/idle-highlight)
 
 (defvar muted-yellow "#fefd90")
 
-(defface nomis-idle-highlight-muted
+(defface nomis/idle-highlight-muted
   `((((min-colors 88) (background dark))
      (:background ,muted-yellow :foreground "black"))
     (((background dark)) (:background ,muted-yellow :foreground "black"))
@@ -160,8 +160,8 @@
   "Default face for hi-lock mode."
   :group 'hi-lock-faces)
 
-(defvar nomis-idle-highlight-faces
-  '(nomis-idle-highlight-muted
+(defvar nomis/idle-highlight-faces
+  '(nomis/idle-highlight-muted
     hi-yellow
     idle-highlight-original ; clashes with region marking
     hi-pink
@@ -173,90 +173,90 @@
     hi-green-b
     hi-black-hb))
 
-(defvar nomis-idle-highlight-face
-  (first nomis-idle-highlight-faces))
+(defvar nomis/idle-highlight-face
+  (first nomis/idle-highlight-faces))
 
-(defun nomis-idle-highlight-report-face ()
+(defun nomis/idle-highlight-report-face ()
   (interactive)
-  (message "nomis-idle-highlight-face = %s (index = %s)"
-           nomis-idle-highlight-face
-           (position nomis-idle-highlight-face
-                     nomis-idle-highlight-faces)))
+  (message "nomis/idle-highlight-face = %s (index = %s)"
+           nomis/idle-highlight-face
+           (position nomis/idle-highlight-face
+                     nomis/idle-highlight-faces)))
 
-(defun nomis-idle-highlight-set-face (face)
-  (setq nomis-idle-highlight-face face)
-  (nomis-idle-highlight-report-face))
+(defun nomis/idle-highlight-set-face (face)
+  (setq nomis/idle-highlight-face face)
+  (nomis/idle-highlight-report-face))
 
-(defun nomis-idle-highlight-set-face-muted ()
+(defun nomis/idle-highlight-set-face-muted ()
   (interactive)
-  (nomis-idle-highlight-set-face 'nomis-idle-highlight-muted))
+  (nomis/idle-highlight-set-face 'nomis/idle-highlight-muted))
 
-(defun nomis-idle-highlight-set-face-bright ()
+(defun nomis/idle-highlight-set-face-bright ()
   (interactive)
-  (nomis-idle-highlight-set-face 'hi-yellow))
+  (nomis/idle-highlight-set-face 'hi-yellow))
 
-(defun nomis-idle-highlight-cycle-highlight-face (n)
+(defun nomis/idle-highlight-cycle-highlight-face (n)
   (interactive "p")
-  (let* ((current-index (position nomis-idle-highlight-face
-                                  nomis-idle-highlight-faces))
+  (let* ((current-index (position nomis/idle-highlight-face
+                                  nomis/idle-highlight-faces))
          (new-index (mod (+ current-index n)
-                         (length nomis-idle-highlight-faces)))
-         (new-face (elt nomis-idle-highlight-faces
+                         (length nomis/idle-highlight-faces)))
+         (new-face (elt nomis/idle-highlight-faces
                         new-index)))
-    (nomis-idle-highlight-set-face new-face)))
+    (nomis/idle-highlight-set-face new-face)))
 
-(defun nomis-idle-highlight-cycle-up-highlight-face ()
+(defun nomis/idle-highlight-cycle-up-highlight-face ()
   (interactive)
-  (nomis-idle-highlight-cycle-highlight-face 1))
+  (nomis/idle-highlight-cycle-highlight-face 1))
 
-(defun nomis-idle-highlight-cycle-down-highlight-face ()
+(defun nomis/idle-highlight-cycle-down-highlight-face ()
   (interactive)
-  (nomis-idle-highlight-cycle-highlight-face -1))
+  (nomis/idle-highlight-cycle-highlight-face -1))
 
 ;;;; ___________________________________________________________________________
 
-(defcustom nomis-idle-highlight-exceptions '()
+(defcustom nomis/idle-highlight-exceptions '()
   "List of words to be excepted from highlighting."
-  :group 'nomis-idle-highlight
+  :group 'nomis/idle-highlight
   :type '(repeat string))
 
-(defcustom nomis-idle-highlight-idle-time 0.5
+(defcustom nomis/idle-highlight-idle-time 0.5
   "Time after which to highlight the word at point."
-  :group 'nomis-idle-highlight
+  :group 'nomis/idle-highlight
   :type 'float)
 
-(defvar nomis-idle-highlight-regexp nil
-  "Buffer-local regexp to be nomis-idle-highlighted.")
+(defvar nomis/idle-highlight-regexp nil
+  "Buffer-local regexp to be nomis/idle-highlighted.")
 
-(defvar nomis-idle-highlight-global-timer nil
+(defvar nomis/idle-highlight-global-timer nil
   "Timer to trigger highlighting.")
 
-(defvar nomis-idle-highlight-colon-at-start-matters-p
+(defvar nomis/idle-highlight-colon-at-start-matters-p
   nil)
 
 (defun nomis/toggle-idle-highlight-colon-at-start-matters ()
   (interactive)
   (message
-   "nomis-idle-highlight-colon-at-start-matters-p = %s"
-   (setq nomis-idle-highlight-colon-at-start-matters-p
-         (not nomis-idle-highlight-colon-at-start-matters-p)))
+   "nomis/idle-highlight-colon-at-start-matters-p = %s"
+   (setq nomis/idle-highlight-colon-at-start-matters-p
+         (not nomis/idle-highlight-colon-at-start-matters-p)))
   ;; When invoked with M-x, there is a delay before things change.
   ;; Something to do with waiting for idle time, I think.
   ;; (But I didn't notice this until late in th dev cycle, so maybe I changed
   ;; something.)
   ;; Anyway, force an immediate update.
-  (nomis-idle-highlight-word-at-point))
+  (nomis/idle-highlight-word-at-point))
 
 ;;;; ___________________________________________________________________________
 ;;;; Chars for symbols
 
 (defun nomis/hi/base-chars->prefix-chars (chars)
-  (if nomis-idle-highlight-colon-at-start-matters-p
+  (if nomis/idle-highlight-colon-at-start-matters-p
       chars
     (concat chars ":")))
 
 (defun nomis/hi/base-chars->body-chars (chars)
-  (if nomis-idle-highlight-colon-at-start-matters-p
+  (if nomis/idle-highlight-colon-at-start-matters-p
       (concat chars ":")
     chars))
 
@@ -373,7 +373,7 @@
                  #'nomis/ih/start-of-buffer?
                  #'backward-char))
 
-(defun nomis-idle-highlight-thing ()
+(defun nomis/idle-highlight-thing ()
   (let* ((prefix-regexp (nomis/symbol-prefix-char-regexp))
          (body-regexp   (nomis/symbol-body-char-regexp)))
     (cl-labels
@@ -424,29 +424,29 @@
           (nomis/report-char-at-point "boring char -- not highlighting")
           nil)))))
 
-(defun nomis-idle-highlight-word-at-point* ()
+(defun nomis/idle-highlight-word-at-point* ()
   "Highlight the word under the point."
-  (when nomis-idle-highlight-mode
+  (when nomis/idle-highlight-mode
     (when nomis/highlight-debug?
       (message "_____"))
-    (let* ((captured-target (nomis-idle-highlight-thing)))
-      (nomis-idle-highlight-unhighlight)
+    (let* ((captured-target (nomis/idle-highlight-thing)))
+      (nomis/idle-highlight-unhighlight)
       (when nomis/highlight-debug?
         (message "captured-target = \"%s\"" captured-target))
       (if (or (not captured-target)
               (member captured-target
-                      nomis-idle-highlight-exceptions)
+                      nomis/idle-highlight-exceptions)
               (and (eq major-mode 'org-mode)
                    (string-match-p "^\\*+$" captured-target)))
           (progn
             (when nomis/highlight-debug?
               (message "Not highlighting")))
         (progn
-          (setq nomis-idle-highlight-regexp
+          (setq nomis/idle-highlight-regexp
                 (cond ((eq (string-to-char captured-target)
                            ?\")
                        (when nomis/highlight-debug?
-                         (message "nomis-idle-highlight-word-at-point*: Pretty sure we can't get here."))
+                         (message "nomis/idle-highlight-word-at-point*: Pretty sure we can't get here."))
                        (beep)
                        (regexp-quote captured-target))
                       (t
@@ -454,38 +454,38 @@
                          (message "Looking for captured-target \"%s\"" captured-target))
                        (-> captured-target
                            symbol-name->regexp-for-highlighting))))
-          ;; (message "colon-matters-p = %s & captured-target = %s and nomis-idle-highlight-regexp = %s"
-          ;;          nomis-idle-highlight-colon-at-start-matters-p
+          ;; (message "colon-matters-p = %s & captured-target = %s and nomis/idle-highlight-regexp = %s"
+          ;;          nomis/idle-highlight-colon-at-start-matters-p
           ;;          captured-target
-          ;;          nomis-idle-highlight-regexp)
-          (when nomis-idle-highlight-regexp
+          ;;          nomis/idle-highlight-regexp)
+          (when nomis/idle-highlight-regexp
             (when nomis/highlight-debug?
-              (message "Looking for regexp \"%s\"" nomis-idle-highlight-regexp))
-            (highlight-regexp nomis-idle-highlight-regexp
-                              nomis-idle-highlight-face)))))))
+              (message "Looking for regexp \"%s\"" nomis/idle-highlight-regexp))
+            (highlight-regexp nomis/idle-highlight-regexp
+                              nomis/idle-highlight-face)))))))
 
-(defun nomis-idle-highlight-word-at-point ()
+(defun nomis/idle-highlight-word-at-point ()
   (condition-case e
-      (nomis-idle-highlight-word-at-point*)
+      (nomis/idle-highlight-word-at-point*)
     (error
-     (message "nomis-idle-highlight-word-at-point: %s"
+     (message "nomis/idle-highlight-word-at-point: %s"
               e))))
 
-(defsubst nomis-idle-highlight-unhighlight ()
-  (when nomis-idle-highlight-regexp
-    (unhighlight-regexp nomis-idle-highlight-regexp)
-    (setq nomis-idle-highlight-regexp nil)))
+(defsubst nomis/idle-highlight-unhighlight ()
+  (when nomis/idle-highlight-regexp
+    (unhighlight-regexp nomis/idle-highlight-regexp)
+    (setq nomis/idle-highlight-regexp nil)))
 
-(define-minor-mode nomis-idle-highlight-mode
+(define-minor-mode nomis/idle-highlight-mode
   "Nomis-Idle-Highlight Minor Mode"
-  :group 'nomis-idle-highlight
-  (if nomis-idle-highlight-mode
-      (progn (unless nomis-idle-highlight-global-timer
-               (setq nomis-idle-highlight-global-timer
-                     (run-with-idle-timer nomis-idle-highlight-idle-time
-                                          :repeat 'nomis-idle-highlight-word-at-point)))
-             (set (make-local-variable 'nomis-idle-highlight-regexp) nil))
-    (nomis-idle-highlight-unhighlight)))
+  :group 'nomis/idle-highlight
+  (if nomis/idle-highlight-mode
+      (progn (unless nomis/idle-highlight-global-timer
+               (setq nomis/idle-highlight-global-timer
+                     (run-with-idle-timer nomis/idle-highlight-idle-time
+                                          :repeat 'nomis/idle-highlight-word-at-point)))
+             (set (make-local-variable 'nomis/idle-highlight-regexp) nil))
+    (nomis/idle-highlight-unhighlight)))
 
 ;;;; ___________________________________________________________________________
 
@@ -499,28 +499,28 @@
 (defvar nomis/idle-highlight-stuff/initial-face-value)
 (defvar nomis/idle-highlight-stuff/initial-toggle-colon-value)
 
-(define-nomis-hydra nomis/idle-highlight-stuff
+(define-nomis/hydra nomis/idle-highlight-stuff
   :name-as-string "Idle Highlight Stuff"
   :key "H-q H-h H-h"
   :init-form   (progn
                  (setq nomis/idle-highlight-stuff/initial-face-value
-                       nomis-idle-highlight-face)
+                       nomis/idle-highlight-face)
                  (setq nomis/idle-highlight-stuff/initial-toggle-colon-value
-                       nomis-idle-highlight-colon-at-start-matters-p)
-                 (nomis-idle-highlight-report-face))
+                       nomis/idle-highlight-colon-at-start-matters-p)
+                 (nomis/idle-highlight-report-face))
   :cancel-form (progn
-                 (setq nomis-idle-highlight-face
+                 (setq nomis/idle-highlight-face
                        nomis/idle-highlight-stuff/initial-face-value)
-                 (setq nomis-idle-highlight-colon-at-start-matters-p
+                 (setq nomis/idle-highlight-colon-at-start-matters-p
                        nomis/idle-highlight-stuff/initial-toggle-colon-value)
-                 (nomis-idle-highlight-report-face))
+                 (nomis/idle-highlight-report-face))
   :hydra-heads
   (("t" nomis/toggle-idle-highlight-colon-at-start-matters
     "Toggle colon matters")
-   ("<up>"     nomis-idle-highlight-cycle-up-highlight-face   "Cycle up")
-   ("<down>"   nomis-idle-highlight-cycle-down-highlight-face "Cycle down")
-   ("M-<up>"   nomis-idle-highlight-set-face-bright           "Bright")
-   ("M-<down>" nomis-idle-highlight-set-face-muted            "Muted")))
+   ("<up>"     nomis/idle-highlight-cycle-up-highlight-face   "Cycle up")
+   ("<down>"   nomis/idle-highlight-cycle-down-highlight-face "Cycle down")
+   ("M-<up>"   nomis/idle-highlight-set-face-bright           "Bright")
+   ("M-<down>" nomis/idle-highlight-set-face-muted            "Muted")))
 
 (provide 'nomis-idle-highlight-mode)
-;;; nomis-idle-highlight-mode.el ends here
+;;; nomis/idle-highlight-mode.el ends here

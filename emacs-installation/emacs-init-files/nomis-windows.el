@@ -38,37 +38,37 @@
 ;;;; Based on something I found at
 ;;;; http://www.emacswiki.org/emacs/TransposeWindows.
 
-(defvar nomis-swapping-buffer nil)
-(defvar nomis-swapping-window nil)
+(defvar nomis/swapping-buffer nil)
+(defvar nomis/swapping-window nil)
 
-(defun nomis-swap-buffers-in-windows-setup ()
+(defun nomis/swap-buffers-in-windows-setup ()
   "Swap buffers between two windows -- setup"
   (interactive)
-  (setq nomis-swapping-buffer (current-buffer))
-  (setq nomis-swapping-window (selected-window))
+  (setq nomis/swapping-buffer (current-buffer))
+  (setq nomis/swapping-window (selected-window))
   (message "Buffer and window marked for swapping."))
 
-(defun nomis-swap-buffers-in-windows-do-it ()
+(defun nomis/swap-buffers-in-windows-do-it ()
   "Swap buffers between two windows -- do it"
   (interactive)
-  (if (and nomis-swapping-window
-           nomis-swapping-buffer)
+  (if (and nomis/swapping-window
+           nomis/swapping-buffer)
       (let ((this-buffer (current-buffer))
             (this-window (selected-window)))
-        (if (and (window-live-p nomis-swapping-window)
-                 (buffer-live-p nomis-swapping-buffer))
-            (progn (switch-to-buffer nomis-swapping-buffer)
-                   (select-window nomis-swapping-window)
+        (if (and (window-live-p nomis/swapping-window)
+                 (buffer-live-p nomis/swapping-buffer))
+            (progn (switch-to-buffer nomis/swapping-buffer)
+                   (select-window nomis/swapping-window)
                    (switch-to-buffer this-buffer)
                    (select-window this-window)
                    (message "Swapped buffers."))
           (message "Old buffer/window killed.  Aborting."))
-        (setq nomis-swapping-window this-window) ; allow for a chain of swaps
+        (setq nomis/swapping-window this-window) ; allow for a chain of swaps
         )
-    (error "Need to do `nomis-swap-buffers-in-windows-setup` first.")))
+    (error "Need to do `nomis/swap-buffers-in-windows-setup` first.")))
 
-(global-set-key (kbd "C-c C--") 'nomis-swap-buffers-in-windows-setup)
-(global-set-key (kbd "C-c C-=") 'nomis-swap-buffers-in-windows-do-it)
+(global-set-key (kbd "C-c C--") 'nomis/swap-buffers-in-windows-setup)
+(global-set-key (kbd "C-c C-=") 'nomis/swap-buffers-in-windows-do-it)
 
 ;;;; ___________________________________________________________________________
 

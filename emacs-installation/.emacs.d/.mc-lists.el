@@ -19,8 +19,8 @@
         kill-region
         mark-sexp
         markdown-exdent-or-delete
-        nomis-meta-w
-        nomis-meta-x
+        nomis/meta-w
+        nomis/meta-x
         org-beginning-of-line
         org-end-of-line
         org-force-self-insert

@@ -4,17 +4,17 @@
 
 (setq initial-scratch-message "")
 
-(defun nomis-no-op ()
+(defun nomis/no-op ()
   (interactive))
 
-;; (define-key global-map (kbd "M-<return>") 'nomis-no-op)
+;; (define-key global-map (kbd "M-<return>") 'nomis/no-op)
 
-;; (defun nomis-save-buffers-kill-terminal ()
+;; (defun nomis/save-buffers-kill-terminal ()
 ;;   (interactive)
 ;;   (when (yes-or-no-p "Really do `save-buffers-kill-terminal`?")
 ;;     (save-buffers-kill-terminal)))
 
-;; (define-key global-map (kbd "C-x C-c") 'nomis-save-buffers-kill-terminal)
+;; (define-key global-map (kbd "C-x C-c") 'nomis/save-buffers-kill-terminal)
 
 (setq confirm-kill-emacs 'y-or-n-p)
 
@@ -56,12 +56,12 @@
                                         nomis/right-curly-arrow)))
 
 
-(setq nomis-backup-directory (expand-file-name "~/.emacs-backups/"))
-(make-directory nomis-backup-directory t)
+(setq nomis/backup-directory (expand-file-name "~/.emacs-backups/"))
+(make-directory nomis/backup-directory t)
 (setq backup-directory-alist
-      `(("." . ,nomis-backup-directory)))
+      `(("." . ,nomis/backup-directory)))
 (setq auto-save-file-name-transforms
-      `((".*" ,nomis-backup-directory t)))
+      `((".*" ,nomis/backup-directory t)))
 
 (when (display-graphic-p)
   ;; (mouse-wheel-mode t)
@@ -70,9 +70,9 @@
 (setq Buffer-menu-sort-column nil) ; 2
 
 (progn
-  (defun nomis-turn-off-auto-fill-mode ()
+  (defun nomis/turn-off-auto-fill-mode ()
     (auto-fill-mode -1))
-  (add-hook 'find-file-hooks 'nomis-turn-off-auto-fill-mode))
+  (add-hook 'find-file-hooks 'nomis/turn-off-auto-fill-mode))
 
 (defalias 'yes-or-no-p 'y-or-n-p)
 

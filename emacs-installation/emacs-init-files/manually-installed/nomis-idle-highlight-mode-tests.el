@@ -1,4 +1,4 @@
-;;;; Tests for nomis-idle-highlight-mode.el
+;;;; Tests for nomis/idle-highlight-mode.el
 
 ;;;; ___________________________________________________________________________
 ;;;; ---- Notes ----
@@ -61,7 +61,7 @@ The result is the concatenation of:
 (defun niht/run-basic-test (set-mode-fun string)
   (nomis/map-over-temp-buffer set-mode-fun
                               string
-                              'nomis-idle-highlight-thing))
+                              'nomis/idle-highlight-thing))
 
 ;;;; ___________________________________________________________________________
 ;;;; ---- niht/basic-test ----
