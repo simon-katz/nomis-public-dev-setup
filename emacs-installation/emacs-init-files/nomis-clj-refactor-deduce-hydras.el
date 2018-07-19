@@ -1,9 +1,9 @@
-;;;; nomis/clj-refactor-deduce-hydras.el ---  -*- lexical-binding: t -*-
+;;;; nomis-clj-refactor-deduce-hydras.el ---  -*- lexical-binding: t -*-
 
 ;;;; Init stuff -- clj-refactor -- deduce hydras
 
 
-(defvar nomis/cljr--all-helpers-before-nomis/hacks cljr--all-helpers
+(defvar nomis/cljr--all-helpers-before-nomis-hacks cljr--all-helpers
   "The original value of `cljr--all-helpers`, used in tests.")
 
 ;;;; ___________________________________________________________________________

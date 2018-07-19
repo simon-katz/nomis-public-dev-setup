@@ -34,7 +34,7 @@
 ;;;; ___________________________________________________________________________
 ;;;; ---- Open buffers in current window ----
 
-;;;; See "nomis/ido.el" for ido tailoring.
+;;;; See "nomis-ido.el" for ido tailoring.
 
 ;;;; ___________________________________________________________________________
 ;;;; ---- Have C-x C-b open the buffer list in the current window ----

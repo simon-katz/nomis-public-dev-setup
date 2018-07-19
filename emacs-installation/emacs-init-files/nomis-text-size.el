@@ -1,4 +1,4 @@
-;;;; Init stuff -- nomis/text-size
+;;;; Init stuff -- nomis-text-size
 
 ;;;; ___________________________________________________________________________
 ;;;; ---- Globally change the font size. ----

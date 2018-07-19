@@ -1,4 +1,4 @@
-;;;; Init stuff -- nomis/run-clojure
+;;;; Init stuff -- nomis-run-clojure
 
 ;;## ;;;; ****
 ;;## ;;;; + Ring bell when you get a Clojure error.

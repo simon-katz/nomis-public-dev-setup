@@ -25,7 +25,7 @@
                                                  &rest body)
   ;; Allow this file to be reloaded without creating multiple timers.
   (declare (indent 2))
-  (let ((fun-name (intern (concat "____unlikely-prefix/nomis/timer/"
+  (let ((fun-name (intern (concat "____unlikely-prefix/nomis-timer/"
                                   (symbol-name var)))))
     `(progn
        (defvar ,var)

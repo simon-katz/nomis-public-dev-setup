@@ -65,7 +65,7 @@
   
   (define-key global-map (kbd "M-w") 'nomis/meta-w))
 
-;; Nope -- see "nomis/undo-tree.el".
+;; Nope -- see "nomis-undo-tree.el".
 ;; (progn
 ;;   ;; Deal with M-z.
 ;;   ;; The default for M-z is zap-to-char.  I don't need that, so...

@@ -1,4 +1,4 @@
-;;;; Init stuff -- nomis/key-chord
+;;;; Init stuff -- nomis-key-chord
 
 (require 'key-chord)
 (key-chord-mode 1)
