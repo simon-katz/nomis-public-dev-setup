@@ -4,9 +4,11 @@ emacs-installation/.smex-items
 emacs-installation/.emacs-places
 emacs-installation/.emacs.d/ac-comphist.dat
 emacs-installation/.emacs.d/auto-save-list/
+emacs-installation/.emacs.d/elpa/gnupg/
 emacs-installation/.emacs.d/eshell/
 emacs-installation/.emacs.d/ido.last
 emacs-installation/.emacs.d/places
 emacs-installation/.emacs.d/projectile-bookmarks.eld
 emacs-installation/.emacs.d/projectile.cache
 emacs-installation/.emacs.d/server/
+emacs-installation/.gnupg/
