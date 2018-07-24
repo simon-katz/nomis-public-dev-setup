@@ -72,9 +72,9 @@
 
 (nomis/define-indent-command paredit-reindent-defun
   (nomis/beginning-of-top-level-form)
-  (let* ((not-in-a-top-level-symbol-p
-          (nomis/looking-at-bracketed-sexp-start)))
-    (cond ((not not-in-a-top-level-symbol-p)
+  (let* ((in-a-top-level-symbol-p (not
+                                   (nomis/looking-at-bracketed-sexp-start))))
+    (cond (in-a-top-level-symbol-p
            ;; We are on a top-level symbol. `paredit-reindent-defun` would
            ;; re-indent a nearby non-symbol top-level form; instead of that
            ;; don't do anything.
