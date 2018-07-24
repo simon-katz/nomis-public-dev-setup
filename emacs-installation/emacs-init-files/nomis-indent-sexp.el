@@ -56,10 +56,11 @@
 ;;;; ___________________________________________________________________________
 ;;;; ---- Flash forms when indenting ----
 
-;; The built-in key bindings are:
-;; - C-M-q in elisp               indent-pp-sexp
-;; - C-M-q in clojure             prog-indent-sexp
-;; -   M-q in clojure and elisp   paredit-reindent-defun
+;;;; The built-in key bindings are:
+;;;; - C-M-q in elisp               indent-pp-sexp
+;;;; - C-M-q in clojure             prog-indent-sexp
+;;;; -   M-q in clojure and elisp   paredit-reindent-defun
+;;;;
 
 (nomis/define-indent-command indent-pp-sexp
   (nomis/start-of-this-or-enclosing-form)
@@ -73,12 +74,19 @@
   (nomis/beginning-of-top-level-form)
   (let* ((not-in-a-top-level-symbol-p
           (nomis/looking-at-bracketed-sexp-start)))
-    (if not-in-a-top-level-symbol-p
-        (%do-indentation%)
-      ;; We are on a top-level symbol. `paredit-reindent-defun`
-      ;; would re-indent a nearby non-symbol top-level form; instead of that
-      ;; don't do anything.
-      (nomis/beep))))
+    (cond ((not not-in-a-top-level-symbol-p)
+           ;; We are on a top-level symbol. `paredit-reindent-defun` would
+           ;; re-indent a nearby non-symbol top-level form; instead of that
+           ;; don't do anything.
+           (nomis/beep))
+          ((or (bound-and-true-p cider-mode)
+               (bound-and-true-p cider-repl-mode))
+           ;; `paredit-reindent-defun` in Clojure doesn't indent properly.
+           ;; I think it does the cljfmt thing rather than the CIDER thing.
+           ;; Instead, do something that gives proper indentation.
+           (prog-indent-sexp))
+          (t
+           (%do-indentation%)))))
 
 ;;;; ___________________________________________________________________________
 
