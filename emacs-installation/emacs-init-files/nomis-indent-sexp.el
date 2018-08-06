@@ -80,7 +80,7 @@
            ;; don't do anything.
            (nomis/beep))
           ((or (bound-and-true-p cider-mode)
-               (bound-and-true-p cider-repl-mode))
+               (eql major-mode 'cider-repl-mode))
            ;; `paredit-reindent-defun` in Clojure doesn't indent properly.
            ;; I think it does the cljfmt thing rather than the CIDER thing.
            ;; Instead, do something that gives proper indentation.
