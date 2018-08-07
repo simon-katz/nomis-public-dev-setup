@@ -194,55 +194,95 @@ See `windata-display-buffer' for setup the arguments."
               (goto-char (widget-get (car button) :from))))
       (call-interactively 'nomis/dirtree/make-dirtree))))
 
-(defun nomis/dirtree/make-dirtree/really-do-it? (root)
-  (let ((existing-roots (if (get-buffer nomis/dirtree/buffer)
-                            (-map #'nomis/dirtree/widget-file
-                                  (with-current-buffer nomis/dirtree/buffer
-                                    (nomis/dirtree/all-trees)))
-                          '())))
-    (if (member root existing-roots)
-        (progn
-          (message "The directory is already in dirtree.")
-          (nomis/beep)
-          nil)
-      (and (or (-none? (lambda (f) (s-starts-with? root f))
-                       existing-roots)
-               (yes-or-no-p
-                "A child of the directory is already in dirtree. Really show? (May have unexpected behaviour!)"))
-           (or (-none? (lambda (f) (s-starts-with? f root))
-                       existing-roots)
-               (yes-or-no-p
-                "A parent of the directory is already in dirtree. Really show? (May have unexpected behaviour!)"))))))
+(defun nomis/dirtree/make-dirtree/do-it (root select)
+  (let ((buffer (get-buffer-create nomis/dirtree/buffer))
+        tree win)
+    (with-current-buffer buffer
+      (unless (eq major-mode 'nomis/dirtree/mode)
+        (nomis/dirtree/mode))
+      (dolist (atree tree-mode-list)
+        (if (string= (widget-get atree :file) root)
+            (setq tree atree)))
+      (or tree
+          (setq tree (tree-mode-insert
+                      (nomis/dirtree/make-root-widget root)))))
+    ;; (setq win (get-buffer-window nomis/dirtree/buffer))
+    (unless win
+      ;;(setq win (get-buffer-window nomis/dirtree/buffer))
+      (setq win (apply 'windata-display-buffer nomis/dirtree/buffer nomis/dirtree/windata))
+      (select-window win))
+    (with-selected-window win
+      (unless (widget-get tree :open)
+        (widget-apply-action tree))
+      (goto-char (widget-get tree :from))
+      (recenter 1)
+      (nomis/dirtree/note-selection))
+    (if select
+        (select-window win))))
 
 (defun nomis/dirtree/make-dirtree (root select)
   "Create tree of `root' directory.
 With prefix argument select `nomis/dirtree/buffer'"
   (interactive "DDirectory: \nP")
-  (when (nomis/dirtree/make-dirtree/really-do-it? root)
-    (let ((buffer (get-buffer-create nomis/dirtree/buffer))
-          tree win)
-      (with-current-buffer buffer
-        (unless (eq major-mode 'nomis/dirtree/mode)
-          (nomis/dirtree/mode))
-        (dolist (atree tree-mode-list)
-          (if (string= (widget-get atree :file) root)
-              (setq tree atree)))
-        (or tree
-            (setq tree (tree-mode-insert
-                        (nomis/dirtree/make-root-widget root)))))
-      ;; (setq win (get-buffer-window nomis/dirtree/buffer))
-      (unless win
-        ;;(setq win (get-buffer-window nomis/dirtree/buffer))
-        (setq win (apply 'windata-display-buffer nomis/dirtree/buffer nomis/dirtree/windata))
-        (select-window win))
-      (with-selected-window win
-        (unless (widget-get tree :open)
-          (widget-apply-action tree))
-        (goto-char (widget-get tree :from))
-        (recenter 1)
-        (nomis/dirtree/note-selection))
-      (if select
-          (select-window win)))))
+  (let* ((existing-roots (if (get-buffer nomis/dirtree/buffer)
+                             (-map #'nomis/dirtree/widget-file
+                                   (with-current-buffer nomis/dirtree/buffer
+                                     (nomis/dirtree/all-trees)))
+                           '())))
+    (cl-flet ((do-it ()
+                     (nomis/dirtree/make-dirtree/do-it root select)))
+      (cond ((member root existing-roots)
+             (error "The directory is already in dirtree."))
+            ((-any? (lambda (f) (s-starts-with? f root))
+                    existing-roots)
+             (let* ((completions '(("Show requested dir within existing parent"
+                                    show-requested-within-existing)
+                                   ("Show existing parent"
+                                    show-existing-parent)
+                                   ("Show requested dir in new tree (may have unexpected behaviour!)"
+                                    show-new-tree-for-requested)
+                                   ("Cancel"
+                                    cancel)))
+                    (choice
+                     (cadr (assoc (ido-completing-read
+                                   "A parent of the requested directory is already in dirtree"
+                                   completions)
+                                  completions))))
+               (ecase choice
+                 (show-requested-within-existing
+                  (nomis/dirtree/goto-file/need-a-name root))
+                 (show-existing-parent
+                  (let ((f (-first (lambda (f) (s-starts-with? f root))
+                                   existing-roots)))
+                    (nomis/dirtree/goto-file/need-a-name f)))
+                 (show-new-tree-for-requested
+                  (do-it))
+                 (cancel
+                  (error "Cancelling dirtree request")))))
+            ((-any? (lambda (f) (s-starts-with? root f))
+                    existing-roots)
+             (let* ((completions '(("Show existing child"
+                                    show-existing-child)
+                                   ("Show requested dir in new tree (may have unexpected behaviour!)"
+                                    show-new-tree-for-requested)
+                                   ("Cancel"
+                                    cancel)))
+                    (choice
+                     (cadr (assoc (ido-completing-read
+                                   "A child of the requested directory is already in dirtree"
+                                   completions)
+                                  completions))))
+               (ecase choice
+                 (show-existing-child
+                  (let ((f (-first (lambda (f) (s-starts-with? root f))
+                                   existing-roots)))
+                    (nomis/dirtree/goto-file/need-a-name f)))
+                 (show-new-tree-for-requested
+                  (do-it))
+                 (cancel
+                  (error "Cancelling dirtree request")))))
+            (t
+             (do-it))))))
 
 (define-derived-mode nomis/dirtree/mode tree-mode "Dir-Tree"
   "A mode to display tree of directory"
@@ -908,6 +948,22 @@ Then display contents of file under point in other window.")
          (,name ,@args)
          (nomis/dirtree/display-file*)))))
 
+(defun nomis/dirtree/goto-file/internal (return-to-original-window?
+                                         filename)
+  (nomis/dirtree/with-make-dirtree-window-active
+      t
+      return-to-original-window?
+    (let* ((path (nomis/dirtree/filename->path-from-root filename)))
+      (nomis/dirtree/with-note-selection
+       (nomis/dirtree/goto-path path))
+      (when (bound-and-true-p hl-line-mode)
+        ;; Workaround for bug.
+        ;; Without this we don't have the highlighting.
+        (hl-line-mode 1)))))
+
+(defun nomis/dirtree/goto-file/need-a-name (filename)
+  (nomis/dirtree/goto-file/internal nil filename))
+
 (defun nomis/dirtree/goto-file* (return-to-original-window?)
   (let* ((filename (let* ((filename (or buffer-file-name
                                         dired-directory
@@ -920,16 +976,8 @@ Then display contents of file under point in other window.")
       (message "This buffer has no associated file.")
       (nomis/beep))
      (t
-      (nomis/dirtree/with-make-dirtree-window-active
-          t
-          return-to-original-window?
-        (let* ((path (nomis/dirtree/filename->path-from-root filename)))
-          (nomis/dirtree/with-note-selection
-           (nomis/dirtree/goto-path path))
-          (when (bound-and-true-p hl-line-mode)
-            ;; Workaround for bug.
-            ;; Without this we don't have the highlighting.
-            (hl-line-mode 1))))))))
+      (nomis/dirtree/goto-file/internal return-to-original-window?
+                                        filename)))))
 
 (defun nomis/dirtree/goto-file ()
   "Change the nomis/dirtree selection to be the current file, and go to the
