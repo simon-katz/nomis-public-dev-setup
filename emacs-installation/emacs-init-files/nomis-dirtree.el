@@ -226,9 +226,7 @@ See `windata-display-buffer' for setup the arguments."
                         ("Show existing parent"
                          :show-existing-parent)
                         ("Show requested dir in new tree (may have unexpected behaviour!)"
-                         :show-new-tree-for-requested)
-                        ("Cancel"
-                         cancel)))
+                         :show-new-tree-for-requested)))
          (action (cadr (assoc (ido-completing-read
                                "A parent of the requested directory is already in dirtree"
                                completions)
@@ -239,9 +237,7 @@ See `windata-display-buffer' for setup the arguments."
   (let* ((completions '(("Show existing child"
                          :show-existing-child)
                         ("Show requested dir in new tree (may have unexpected behaviour!)"
-                         :show-new-tree-for-requested)
-                        ("Cancel"
-                         cancel)))
+                         :show-new-tree-for-requested)))
          (action
           (cadr (assoc (ido-completing-read
                         "A child of the requested directory is already in dirtree"
@@ -272,9 +268,7 @@ With prefix argument select `nomis/dirtree/buffer'"
                                  existing-roots)))
                   (nomis/dirtree/goto-file/need-a-name f)))
                (:show-new-tree-for-requested
-                (do-it))
-               (cancel
-                (error "Cancelling dirtree request"))))
+                (do-it))))
             ((-any? (lambda (f) (s-starts-with? root f))
                     existing-roots)
              (ecase (nomis/dirtree/make-dirtree/child-already-there-action)
@@ -283,9 +277,7 @@ With prefix argument select `nomis/dirtree/buffer'"
                                  existing-roots)))
                   (nomis/dirtree/goto-file/need-a-name f)))
                (:show-new-tree-for-requested
-                (do-it))
-               (cancel
-                (error "Cancelling dirtree request"))))
+                (do-it))))
             (t
              (do-it))))))
 
