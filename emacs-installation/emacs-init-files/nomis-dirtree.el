@@ -244,25 +244,6 @@ With prefix argument select `nomis/dirtree/buffer'"
       (if select
           (select-window win)))))
 
-(defun nomis/dirtree/make-dirtree-in-buffer (root select)
-  "Create tree of `root' directory.
-With prefix argument select `nomis/dirtree/buffer'"
-  (interactive "DDirectory: \nP")
-  (when (nomis/dirtree/make-dirtree/really-do-it? root)
-    (let ((buffer (get-buffer-create nomis/dirtree/buffer))
-          tree win)
-      (with-current-buffer buffer
-        (unless (eq major-mode 'nomis/dirtree/mode)
-          (nomis/dirtree/mode))
-        (dolist (atree tree-mode-list)
-          (if (string= (widget-get atree :file) root)
-              (setq tree atree)))
-        (or tree
-            (setq tree (tree-mode-insert
-                        (nomis/dirtree/make-root-widget root)))))
-      (if select
-          (switch-to-buffer nomis/dirtree/buffer)))))
-
 (define-derived-mode nomis/dirtree/mode tree-mode "Dir-Tree"
   "A mode to display tree of directory"
   (tree-widget-set-theme "folder")
