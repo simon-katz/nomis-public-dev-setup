@@ -83,5 +83,25 @@
                              (t t)))))
 
 ;;;; ___________________________________________________________________________
+;;;; nomis/set-up-devvy-windows
+
+(defun nomis/set-up-devvy-windows-for-current-window (&optional prefix)
+  (interactive "P")
+  (cl-flet ((double-h-max-w ()
+                            (nomis/w-double)
+                            (maximize-frame-vertically)))
+    (when prefix
+      (cider-jack-in))
+    (double-h-max-w)
+    (nomis/move-frame-to-screen-right 0)
+    (split-window-horizontally)
+    (switch-to-buffer nomis/dirtree/buffer)
+    (nomis/dirtree/make-dirtree (projectile-project-root)
+                                nil)
+    (make-frame-command)
+    (double-h-max-w)
+    (switch-to-buffer (messages-buffer))))
+
+;;;; ___________________________________________________________________________
 
 (provide 'homeless)
