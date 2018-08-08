@@ -232,8 +232,8 @@ See `windata-display-buffer' for setup the arguments."
                        completions))))
     action))
 
-(defun nomis/dirtree/make-dirtree (root select)
-  "Create tree of `root' directory.
+(defun nomis/dirtree/make-dirtree (new-root select)
+  "Create tree of `new-root' directory.
 With prefix argument select `nomis/dirtree/buffer'"
   (interactive "DDirectory: \nP")
   (let* ((existing-roots (if (get-buffer nomis/dirtree/buffer)
@@ -242,14 +242,14 @@ With prefix argument select `nomis/dirtree/buffer'"
                                      (nomis/dirtree/all-trees)))
                            '())))
     (cl-flet ((do-it ()
-                     (nomis/dirtree/make-dirtree/do-it root select)))
-      (cond ((-any? (lambda (f) (s-starts-with? f root))
+                     (nomis/dirtree/make-dirtree/do-it new-root select)))
+      (cond ((-any? (lambda (f) (s-starts-with? f new-root))
                     existing-roots)
              ;; TODO Make H-\ come here, I think.
              ;;      (Hmmmm... but `H-q d` does directory and `H-/` does
              ;;      the file.)
-             (nomis/dirtree/goto-file/need-a-name root))
-            ((-any? (lambda (f) (s-starts-with? root f))
+             (nomis/dirtree/goto-file/need-a-name new-root))
+            ((-any? (lambda (f) (s-starts-with? new-root f))
                     existing-roots)
              ;; TODO Change this to do remove-child-and-show-parent.
              ;;      But need to make history continue to work.
@@ -259,7 +259,7 @@ With prefix argument select `nomis/dirtree/buffer'"
              ;;        worked.)
              (ecase (nomis/dirtree/make-dirtree/child-already-there-action)
                (:show-existing-child
-                (let ((f (-first (lambda (f) (s-starts-with? root f))
+                (let ((f (-first (lambda (f) (s-starts-with? new-root f))
                                  existing-roots)))
                   (nomis/dirtree/goto-file/need-a-name f)))
                (:show-new-tree-for-requested
