@@ -243,10 +243,11 @@ With prefix argument select `nomis/dirtree/buffer'"
                            '())))
     (cl-flet ((do-it ()
                      (nomis/dirtree/make-dirtree/do-it root select)))
-      (cond ((member root existing-roots) ; TODO Make H-\ come here, I think (Hmmmm... but `H-q d` does directory and `-\` does the file)
-             (nomis/dirtree/goto-file/need-a-name root))
-            ((-any? (lambda (f) (s-starts-with? f root))
+      (cond ((-any? (lambda (f) (s-starts-with? f root))
                     existing-roots)
+             ;; TODO Make H-\ come here, I think.
+             ;;      (Hmmmm... but `H-q d` does directory and `H-/` does
+             ;;      the file.)
              (nomis/dirtree/goto-file/need-a-name root))
             ((-any? (lambda (f) (s-starts-with? root f))
                     existing-roots)
