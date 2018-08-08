@@ -220,19 +220,6 @@ See `windata-display-buffer' for setup the arguments."
     (if select
         (select-window win))))
 
-(defun nomis/dirtree/make-dirtree/parent-already-there-action ()
-  (let* ((completions '(("Show requested dir within existing parent"
-                         :show-requested-within-existing)
-                        ("Show existing parent"
-                         :show-existing-parent)
-                        ("Show requested dir in new tree (may have unexpected behaviour!)"
-                         :show-new-tree-for-requested)))
-         (action (cadr (assoc (ido-completing-read
-                               "A parent of the requested directory is already in dirtree"
-                               completions)
-                              completions))))
-    action))
-
 (defun nomis/dirtree/make-dirtree/child-already-there-action ()
   (let* ((completions '(("Show existing child"
                          :show-existing-child)
@@ -256,21 +243,19 @@ With prefix argument select `nomis/dirtree/buffer'"
                            '())))
     (cl-flet ((do-it ()
                      (nomis/dirtree/make-dirtree/do-it root select)))
-      (cond ((member root existing-roots)
-             (error "The directory is already in dirtree."))
+      (cond ((member root existing-roots) ; TODO Make H-\ come here, I think (Hmmmm... but `H-q d` does directory and `-\` does the file)
+             (nomis/dirtree/goto-file/need-a-name root))
             ((-any? (lambda (f) (s-starts-with? f root))
                     existing-roots)
-             (ecase (nomis/dirtree/make-dirtree/parent-already-there-action)
-               (:show-requested-within-existing
-                (nomis/dirtree/goto-file/need-a-name root))
-               (:show-existing-parent
-                (let ((f (-first (lambda (f) (s-starts-with? f root))
-                                 existing-roots)))
-                  (nomis/dirtree/goto-file/need-a-name f)))
-               (:show-new-tree-for-requested
-                (do-it))))
+             (nomis/dirtree/goto-file/need-a-name root))
             ((-any? (lambda (f) (s-starts-with? root f))
                     existing-roots)
+             ;; TODO Change this to do remove-child-and-show-parent.
+             ;;      But need to make history continue to work.
+             ;;      - So first change history to record a full canonical path.
+             ;;        (I guess it doesn't ATM, otherwise your previous
+             ;;        attempt at remove-child-and-show-parent would have
+             ;;        worked.)
              (ecase (nomis/dirtree/make-dirtree/child-already-there-action)
                (:show-existing-child
                 (let ((f (-first (lambda (f) (s-starts-with? root f))
