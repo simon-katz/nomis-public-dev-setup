@@ -243,13 +243,15 @@ With prefix argument select `nomis/dirtree/buffer'"
                            '())))
     (cl-flet ((do-it ()
                      (nomis/dirtree/make-dirtree/do-it new-root select)))
-      (cond ((-any? (lambda (f) (s-starts-with? f new-root))
+      (cond ((-any? (lambda (existing-root)
+                      (s-starts-with? existing-root new-root))
                     existing-roots)
              ;; TODO Make H-\ come here, I think.
              ;;      (Hmmmm... but `H-q d` does directory and `H-/` does
              ;;      the file.)
              (nomis/dirtree/goto-file/need-a-name new-root))
-            ((-any? (lambda (f) (s-starts-with? new-root f))
+            ((-any? (lambda (existing-root)
+                      (s-starts-with? new-root existing-root))
                     existing-roots)
              ;; TODO Change this to do remove-child-and-show-parent.
              ;;      But need to make history continue to work.
@@ -259,9 +261,11 @@ With prefix argument select `nomis/dirtree/buffer'"
              ;;        worked.)
              (ecase (nomis/dirtree/make-dirtree/child-already-there-action)
                (:show-existing-child
-                (let ((f (-first (lambda (f) (s-starts-with? new-root f))
-                                 existing-roots)))
-                  (nomis/dirtree/goto-file/need-a-name f)))
+                (let ((existing-root
+                       (-first (lambda (existing-root)
+                                 (s-starts-with? new-root existing-root))
+                               existing-roots)))
+                  (nomis/dirtree/goto-file/need-a-name existing-root)))
                (:show-new-tree-for-requested
                 (do-it))))
             (t
