@@ -55,7 +55,8 @@
   (interactive)
   (save-excursion
     (delete-trailing-whitespace)
-    (indent-region (point-min) (point-max) nil)
+    (unless (member major-mode '(yaml-mode)) ; serious hack
+      (indent-region (point-min) (point-max) nil))
     (untabify (point-min) (point-max))))
 
 (global-set-key [f12] 'nomis/indent-buffer)

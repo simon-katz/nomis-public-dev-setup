@@ -206,6 +206,8 @@
 
 (require 'nomis-hide-show)
 
+(require 'nomis-yaml)
+
 (require 'homeless)
 
 (require 'string-inflection)
