@@ -150,6 +150,7 @@
 (require 'nomis-mouse-scrolling)
 (require 'nomis-avoid-window-stealing)
 (require 'nomis-right-margin)
+(require 'nomis-fci-mode)
 (require 'nomis-highlighting)
 (require 'nomis-line-numbering)
 (require 'nomis-saveplace)

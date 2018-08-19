@@ -29,10 +29,18 @@ The issues:
 
 - General:
   See https://github.com/alpaker/Fill-Column-Indicator/issues.
+
+- I'm also seeing the indicator disappear for lines longer than 80 chars (like this one).
+  And sometimes move right a bit for long but not very long lines.
 ")
+
+;;;; NOTE For this to work (or not work), you need to install
+;;;;      fill-column-indicator.
+
+(require 'nomis-right-margin)
 
 (setq-default fill-column nomis/right-margin-column)
 
-(defun fci-mode-off () (fci-mode -1))
+(setq fci-rule-color "#cc99cc")
 
 (provide 'nomis-fci-mode)

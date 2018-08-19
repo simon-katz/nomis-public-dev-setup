@@ -5,7 +5,6 @@
 (defvar nomis/right-margin-column 80)
 
 (require 'nomis-whitespace)
-(require 'nomis-fci-mode)
 (require 'column-marker)
 
 (defface nomis/column-marker-1-face '((t (:background "magenta")))
