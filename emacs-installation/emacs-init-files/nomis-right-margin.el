@@ -2,8 +2,7 @@
 
 ;;;; ___________________________________________________________________________
 
-(defvar nomis/right-margin-column 80)
-
+(require 'nomis-right-margin-column)
 (require 'nomis-whitespace)
 (require 'column-marker)
 

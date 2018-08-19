@@ -37,7 +37,7 @@ The issues:
 ;;;; NOTE For this to work (or not work), you need to install
 ;;;;      fill-column-indicator.
 
-(require 'nomis-right-margin)
+(require 'nomis-right-margin-column)
 
 (setq-default fill-column nomis/right-margin-column)
 

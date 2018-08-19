@@ -1,6 +1,7 @@
 ;;;; Init stuff -- whitespace
 
 (require 'whitespace)
+(require 'nomis-right-margin-column)
 
 (setq whitespace-line-column nomis/right-margin-column)
 
