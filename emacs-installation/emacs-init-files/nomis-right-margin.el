@@ -6,7 +6,9 @@
 (require 'nomis-whitespace)
 (require 'column-marker)
 
-(defface nomis/column-marker-1-face '((t (:background "magenta")))
+(defface nomis/column-marker-1-face `((t :box ,(list :line-width -1
+                                                     :color "red"
+                                                     :style nil)))
   "Face used for a column marker.  Usually a background color."
   :group 'faces)
 
