@@ -60,6 +60,22 @@
 
 ;;;; ___________________________________________________________________________
 
+;;;; Some lines, some long, some with whitespace at the end, some both.
+;;;; Useful when testing the stuff here.
+;;;; - Oh yes indeed, that is what this is for.      
+;;;; - Oh yes indeed, that is what this is for. Oh yes indeed, oh yes indeed, oh yes.
+;;;; - Oh yes indeed, that is what this is for. Oh yes indeed, oh yes indeed, oh yes. 
+;;;; - Oh yes indeed, that is what this is for. Oh yes indeed, oh yes indeed, oh yes.   
+;;;; - Oh yes indeed, that is what this is for. Oh yes indeed, oh yes indeed, oh 
+;;;; - Oh yes indeed, that is what this is for. Oh yes indeed, oh yes indeed, oh  
+;;;; - Oh yes indeed, that is what this is for. Oh yes indeed, oh yes indeed, oh   
+;;;; - Oh yes indeed, that is what this is for. Oh yes indeed, oh yes indeed,    
+;;;; - Oh yes indeed, that is what this is for. Oh yes indeed, oh yes indeed,     
+;;;; - Oh yes indeed, that is what this is for. Oh yes indeed, oh yes indeed,      
+;;;; - Here is a tab char -> 	 <- There.
+
+;;;; ___________________________________________________________________________
+
 (add-hook 'text-mode-hook 'nomis/set-80-column-stuff-2)
 (add-hook 'prog-mode-hook 'nomis/set-80-column-stuff-2)
 (add-hook 'org-mode-hook  'nomis/set-80-column-stuff-0)
