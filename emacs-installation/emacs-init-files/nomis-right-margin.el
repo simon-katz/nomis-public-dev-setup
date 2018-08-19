@@ -70,10 +70,8 @@
   ;; by the whitespace-mode stuff. (I guess something must run after this.)
   (run-at-time "1 sec" nil (lambda () (nomis/set-80-column-stuff-3))))
 
-(add-hook 'text-mode-hook 'nomis/set-80-column-stuff-3-after-delay)
+(add-hook 'text-mode-hook 'nomis/set-80-column-stuff-1-after-delay)
 (add-hook 'prog-mode-hook 'nomis/set-80-column-stuff-3-after-delay)
-
-(add-hook 'org-mode-hook 'nomis/set-80-column-stuff-1-after-delay)
 
 ;;;; ___________________________________________________________________________
 
