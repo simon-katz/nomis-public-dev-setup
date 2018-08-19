@@ -60,8 +60,8 @@
 
 ;;;; ___________________________________________________________________________
 
-(add-hook 'text-mode-hook 'nomis/set-80-column-stuff-3)
-(add-hook 'prog-mode-hook 'nomis/set-80-column-stuff-3)
+(add-hook 'text-mode-hook 'nomis/set-80-column-stuff-2)
+(add-hook 'prog-mode-hook 'nomis/set-80-column-stuff-2)
 (add-hook 'org-mode-hook  'nomis/set-80-column-stuff-0)
 
 ;;;; ___________________________________________________________________________
