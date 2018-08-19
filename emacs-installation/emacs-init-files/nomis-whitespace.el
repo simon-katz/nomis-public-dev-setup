@@ -11,13 +11,11 @@
   ;; Less-garish-than-default highlighting for > 80 (or whatever)
   ;; characters.
   (set-face-attribute 'whitespace-line nil
-                      :background "grey90"
-                      ;; :foreground "black"
-                      ;; :weight 'bold
-                      )
+                      :background "pink"
+                      :foreground 'unspecified)
   (set-face-attribute 'whitespace-trailing nil
                       :box (list :line-width -10
-                                 :color "red"
+                                 :color "hotpink"
                                  :style nil)))
 
 (progn
