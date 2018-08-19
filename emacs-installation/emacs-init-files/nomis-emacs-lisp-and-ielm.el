@@ -2,8 +2,6 @@
 
 ;;;; ___________________________________________________________________________
 
-(add-hook 'emacs-lisp-mode-hook 'whitespace-mode)
-
 (defvar nomis/lisp-and-ielm-mode-hook-functions
   `(rainbow-delimiters-mode
     paredit-mode

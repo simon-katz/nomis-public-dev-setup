@@ -26,7 +26,7 @@
 
 (defun nomis/set-80-column-stuff (n)
   (interactive "p")
-  (message "nomis/set-80-column-stuff setting approach to %s" n)
+  ;; (message "nomis/set-80-column-stuff setting approach to %s" n)
   (cl-flet ((w-off () (whitespace-mode 0))
             (w-on  () (whitespace-mode 1))
             (c-off () (column-marker-1 '(4)))
@@ -60,18 +60,9 @@
 
 ;;;; ___________________________________________________________________________
 
-(defun nomis/set-80-column-stuff-1-after-delay ()
-  ;; If you do this without a delay, the column-marker-1 stuff gets blatted
-  ;; by the whitespace-mode stuff. (I guess something must run after this.)
-  (run-at-time "1 sec" nil (lambda () (nomis/set-80-column-stuff-1))))
-
-(defun nomis/set-80-column-stuff-3-after-delay ()
-  ;; If you do this without a delay, the column-marker-1 stuff gets blatted
-  ;; by the whitespace-mode stuff. (I guess something must run after this.)
-  (run-at-time "1 sec" nil (lambda () (nomis/set-80-column-stuff-3))))
-
-(add-hook 'text-mode-hook 'nomis/set-80-column-stuff-1-after-delay)
-(add-hook 'prog-mode-hook 'nomis/set-80-column-stuff-3-after-delay)
+(add-hook 'text-mode-hook 'nomis/set-80-column-stuff-3)
+(add-hook 'prog-mode-hook 'nomis/set-80-column-stuff-3)
+(add-hook 'org-mode-hook  'nomis/set-80-column-stuff-0)
 
 ;;;; ___________________________________________________________________________
 

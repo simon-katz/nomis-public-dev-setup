@@ -26,6 +26,4 @@
     (nomis/whitespace-faces))
   (ad-activate 'whitespace-mode))
 
-(defun whitespace-mode-off () (whitespace-mode -1))
-
 (provide 'nomis-whitespace)
