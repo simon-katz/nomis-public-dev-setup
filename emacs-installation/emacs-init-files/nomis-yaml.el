@@ -16,5 +16,7 @@
 ;;;;   emacs "yaml" hide blocks
 ;;;; - See https://blog.chmouel.com/2016/09/07/dealing-with-yaml-in-emacs/
 ;;;; - See https://stackoverflow.com/questions/1587972/how-to-display-indentation-guides-in-emacs/4459159#4459159
+;;;;
+;;;; - Make `nomis/idle-highlight-thing` work for yaml.
 
 (provide 'nomis-yaml)
