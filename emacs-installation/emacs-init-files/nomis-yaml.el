@@ -13,11 +13,7 @@
 (add-hook 'yaml-mode-hook 'yafolding-mode)
 
 ;;;; TODO YAML -- Grab more from these places:
-;;;; - Google for:
-;;;;   emacs "yaml" hide blocks
-;;;; - See https://blog.chmouel.com/2016/09/07/dealing-with-yaml-in-emacs/
-;;;; - See https://stackoverflow.com/questions/1587972/how-to-display-indentation-guides-in-emacs/4459159#4459159
-;;;;
+;;;; - Maybe look again at https://blog.chmouel.com/2016/09/07/dealing-with-yaml-in-emacs/
 ;;;; - Make `nomis/idle-highlight-thing` work for yaml.
 
 (provide 'nomis-yaml)
