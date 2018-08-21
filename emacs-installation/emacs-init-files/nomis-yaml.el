@@ -5,11 +5,11 @@
 
 (defun nomis/setup-yaml-mode ()
   ;; (define-key yaml-mode-map "\C-m" 'newline-and-indent)
-  (highlight-indentation-mode)
-  (highlight-indentation-current-column-mode))
+  )
 
 (add-hook 'yaml-mode-hook 'nomis/setup-yaml-mode)
-
+(add-hook 'yaml-mode-hook 'highlight-indentation-mode)
+(add-hook 'yaml-mode-hook 'highlight-indentation-current-column-mode)
 
 ;;;; TODO YAML -- Grab more from these places:
 ;;;; - Google for:
