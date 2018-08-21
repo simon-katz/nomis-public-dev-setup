@@ -112,6 +112,14 @@
   (concat nomis/symbol-body-chars/default/base
           nomis/symbol-body-chars/clojure-mode/extras))
 
+;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+(defconst nomis/symbol-prefix-chars/yaml-mode/base
+  "&*")
+
+(defconst nomis/symbol-body-chars/yaml-mode/base
+  "-[:alnum:]$+_<>/'.=?^")
+
 ;;;; ___________________________________________________________________________
 
 (defconst nomis/highlight-debug? nil)
@@ -268,6 +276,7 @@
 (defun nomis/symbol-prefix-chars/current-mode ()
   (let* ((chars (case major-mode
                   (clojure-mode nomis/symbol-prefix-chars/clojure-mode/base)
+                  (yaml-mode    nomis/symbol-prefix-chars/yaml-mode/base)
                   (t            nomis/symbol-prefix-chars/default/base))))
     (-> chars
         nomis/hi/base-chars->prefix-chars)))
@@ -275,6 +284,7 @@
 (defun nomis/symbol-body-chars/current-mode ()
   (let* ((chars (case major-mode
                   (clojure-mode nomis/symbol-body-chars/clojure-mode/base)
+                  (yaml-mode    nomis/symbol-body-chars/yaml-mode/base)
                   (t            nomis/symbol-body-chars/default/base))))
     (-> chars
         nomis/hi/base-chars->body-chars)))
@@ -297,10 +307,12 @@
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 (defun nomis/start-of-symbol-regexp ()
-  ;; "\\_<" doesn't work well with Lispy symbols that contain single quotes, so:
+  ;; "\\_<" doesn't work well with Lispy symbols that contain single quotes,
+  ;; or with yaml-mode, so:
   (if (not (member major-mode
                    '(emacs-lisp-mode
-                     clojure-mode)))
+                     clojure-mode
+                     yaml-mode)))
       "\\_<"
     (let* ((simple-start (nomis/rx/or "^"
                                       (nomis/not-symbol-body-char-regexp))))
@@ -310,10 +322,12 @@
                            "'")))))
 
 (defun nomis/end-of-symbol-regexp ()
-  ;; "\\_>" doesn't work well with Lispy symbols that contain single quotes, so:
+  ;; "\\_>" doesn't work well with Lispy symbols that contain single quotes,
+  ;; or with yaml-mode, so:
   (if (not (member major-mode
                    '(emacs-lisp-mode
-                     clojure-mode)))
+                     clojure-mode
+                     yaml-mode)))
       "\\_>"
     (nomis/rx/or "$"
                  (nomis/not-symbol-body-char-regexp))))
