@@ -208,7 +208,6 @@
 (require 'nomis-hide-show)
 
 (require 'nomis-yaml)
-(require 'nomis-yaml-usability)
 
 (require 'homeless)
 

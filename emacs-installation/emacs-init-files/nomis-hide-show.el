@@ -33,9 +33,13 @@
 
 (defun nomis/hs-toggle-hiding ()
   (interactive)
-  (hs-minor-mode 1)
-  (hs-toggle-hiding)
-  (backward-char))
+  (if (or (bound-and-true-p highlight-indentation-mode)
+          (bound-and-true-p highlight-indentation-current-column-mode))
+      (nomis/toggle-fold-indentation)
+    (progn
+      (hs-minor-mode 1)
+      (hs-toggle-hiding)
+      (backward-char))))
 
 (define-key global-map (kbd "H-q H--")  'nomis/hs-hide-all)
 (define-key global-map (kbd "H-q H-[")  'nomis/hs-adjust/set-0)
