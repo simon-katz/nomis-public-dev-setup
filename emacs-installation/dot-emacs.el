@@ -207,6 +207,7 @@
 
 (require 'nomis-hide-show)
 
+(require 'nomis-yafolding)
 (require 'nomis-yaml)
 
 (require 'homeless)
