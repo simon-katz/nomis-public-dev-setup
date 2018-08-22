@@ -7,7 +7,7 @@
 
 (setq whitespace-style '(face trailing lines-tail tabs))
 
-(defun nomis/whitespace-faces ()
+(defun nomis/whitespace-faces () ; TODO Want to be able to turn these on separately, and independently for differen buffers. Perhaps not possible.
   ;; Less-garish-than-default highlighting for > 80 (or whatever)
   ;; characters.
   (set-face-attribute 'whitespace-line nil
