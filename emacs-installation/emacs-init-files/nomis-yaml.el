@@ -5,7 +5,7 @@
 
 (defun nomis/setup-yaml-mode ()
   ;; (define-key yaml-mode-map "\C-m" 'newline-and-indent)
-  )
+  (nomis/set-80-column-stuff-0))
 
 (add-hook 'yaml-mode-hook 'nomis/setup-yaml-mode)
 (add-hook 'yaml-mode-hook 'highlight-indentation-mode)
