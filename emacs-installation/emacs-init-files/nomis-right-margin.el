@@ -20,8 +20,8 @@
   (let* ((f? (bound-and-true-p fci-mode))
          (c? column-marker-1))
     (cond ((and (not f?) (not c?)) 0)
-          ((and (not f?)      c?)  1)
-          ((and      f?  (not c?)) 2)
+          ((and      f?  (not c?)) 1)
+          ((and (not f?)      c?)  2)
           (t                       3))))
 
 (defun nomis/set-80-column-stuff (n)
@@ -33,8 +33,8 @@
             (c-on  () (column-marker-1 nomis/right-margin-column)))
     (case n
       (0 (f-off) (c-off))
-      (1 (f-off) (c-on))
-      (2 (f-on)  (c-off))
+      (1 (f-on)  (c-off))
+      (2 (f-off) (c-on))
       (3 (f-on)  (c-on)))))
 
 (defun nomis/set-80-column-stuff-0 ()
