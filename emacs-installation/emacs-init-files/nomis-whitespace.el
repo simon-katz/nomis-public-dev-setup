@@ -109,12 +109,14 @@
 
 ;;;; ___________________________________________________________________________
 
-(defun nomis/whitespace-mode-off ()
-  (whitespace-mode 0))
+(defun nomis/whitespace-mode-only-trailing ()
+  (whitespace-mode 1)
+  (nomis/whitespace-line-over-80-off)
+  (nomis/whitespace-trailing-on))
 
 (add-hook 'text-mode-hook 'whitespace-mode)
 (add-hook 'prog-mode-hook 'whitespace-mode)
-(add-hook 'org-mode-hook  'nomis/whitespace-mode-off)
+(add-hook 'org-mode-hook  'nomis/whitespace-mode-only-trailing)
 
 ;;;; ___________________________________________________________________________
 
