@@ -149,6 +149,7 @@
 (require 'nomis-beep)
 (require 'nomis-mouse-scrolling)
 (require 'nomis-avoid-window-stealing)
+(require 'nomis-whitespace)
 (require 'nomis-right-margin)
 (require 'nomis-fci-mode)
 (require 'nomis-highlighting)
