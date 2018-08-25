@@ -17,7 +17,7 @@
 ;;;; ___________________________________________________________________________
 
 (defun nomis/get-80-column-stuff ()
-  (let* ((f? fci-mode)
+  (let* ((f? (bound-and-true-p fci-mode))
          (c? column-marker-1))
     (cond ((and (not f?) (not c?)) 0)
           ((and (not f?)      c?)  1)

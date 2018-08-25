@@ -24,7 +24,7 @@
 (make-variable-buffer-local 'nomis/whitespace-trailing-cookie) ; Buffer local in all buffers.
 
 (defun error-if-not-whitespace-mode ()
-  (when (not whitespace-mode)
+  (when (not (bound-and-true-p whitespace-mode))
     (error "whitespace-mode is not on")))
 
 (defun nomis/whitespace-line-over-80-on ()
