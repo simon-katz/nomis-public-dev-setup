@@ -88,6 +88,22 @@
     (3 (nomis/whitespace-line-over-80-on)
        (nomis/whitespace-trailing-on))))
 
+(defun nomis/set-whitespace-value-0 ()
+  (interactive)
+  (nomis/set-whitespace-value 0))
+
+(defun nomis/set-whitespace-value-1 ()
+  (interactive)
+  (nomis/set-whitespace-value 1))
+
+(defun nomis/set-whitespace-value-2 ()
+  (interactive)
+  (nomis/set-whitespace-value 2))
+
+(defun nomis/set-whitespace-value-3 ()
+  (interactive)
+  (nomis/set-whitespace-value 3))
+
 (defun nomis/cycle-whitespace-value ()
   (interactive)
   (error-if-not-whitespace-mode)
