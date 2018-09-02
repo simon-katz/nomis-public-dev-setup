@@ -104,22 +104,12 @@
 ;;;; clj-refactor
 
 (require 'clj-refactor)
-(require 'nomis-clj-refactor-deduce-hydras)
-
-(defun nomis/cljr-add-keybindings ()
-  (cljr-add-keybindings-with-prefix "C-c C-m")
-  ;; (cljr-add-keybindings-with-prefix "M-R") ; keep this until I stop using it
-  )
-
-(require 'nomis-clj-refactor-fixes)
-(require 'cljr-helm)
 
 (defun nomis/setup-clj-refactor-mode ()
   (clj-refactor-mode 1)
   (yas-minor-mode 1) ; for adding require/use/import statements
-  (nomis/cljr-add-keybindings))
-
-(define-key clj-refactor-map (kbd "C-c m") 'cljr-helm)
+  ;; This choice of keybinding leaves cider-macroexpand-1 unbound
+  (cljr-add-keybindings-with-prefix "C-c C-m"))
 
 ;; (setq cljr-use-multiple-cursors nil) ; t is broken with hydra and helm -- ah, I think I have fixed it with helm at least
 
