@@ -10,15 +10,25 @@
 (require 'nomis-run-clojure)
 
 ;;;; ___________________________________________________________________________
+;;;; ---- nomis/cider-version ----
+
+(defun nomis/cider-version ()
+  (let ((inhibit-message t))
+    (cider-version)))
+
+(assert (equal (nomis/cider-version)
+               (cider-version)))
+
+;;;; ___________________________________________________________________________
 ;;;; ---- Wrappers for things in Cider, to isolate dependencies and make ----
 ;;;; ---- it easier to upgrade Cider.                                    ----
 
 (cond
- ((member (cider-version)
+ ((member (nomis/cider-version)
           '("CIDER 0.7.0"))
   (defun nomis/clojure-buffer-ns ()
     (cider-find-ns)))
- ((member (cider-version)
+ ((member (nomis/cider-version)
           '("CIDER 0.8.2"
             "CIDER 0.9.1"
             "CIDER 0.10.0"
@@ -34,13 +44,13 @@
    "You need to fix nomis/clojure-buffer-ns for this version of Cider.")))
 
 (cond
- ((member (cider-version)
+ ((member (nomis/cider-version)
           '("CIDER 0.7.0"
             "CIDER 0.8.2"))
   (defun nomis/cider-repl-namespace ()
     (with-current-buffer (cider-current-repl-buffer)
       nrepl-buffer-ns)))
- ((member (cider-version)
+ ((member (nomis/cider-version)
           '("CIDER 0.9.1"
             "CIDER 0.10.0"
             "CIDER 0.12.0 (Seattle)"
@@ -50,7 +60,7 @@
   (defun nomis/cider-repl-namespace ()
     (with-current-buffer (cider-current-repl-buffer)
       cider-buffer-ns)))
- ((member (cider-version)
+ ((member (nomis/cider-version)
           '("CIDER 0.17.0 (Andalucía)"))
   (defun nomis/cider-repl-namespace ()
     (with-current-buffer (cider-current-connection)
@@ -60,16 +70,16 @@
    "You need to fix `nomis/cider-repl-namespace` for this version of Cider.")))
 
 (cond
- ((member (cider-version)
+ ((member (nomis/cider-version)
           '("CIDER 0.7.0"))
   (defun nomis/cider-find-or-create-repl-buffer ()
     (cider-find-or-create-repl-buffer)))
- ((member (cider-version)
+ ((member (nomis/cider-version)
           '("CIDER 0.8.2"
             "CIDER 0.9.1"))
   (defun nomis/cider-find-or-create-repl-buffer ()
     (cider-get-repl-buffer)))
- ((member (cider-version)
+ ((member (nomis/cider-version)
           '("CIDER 0.10.0"
             "CIDER 0.12.0 (Seattle)"
             "CIDER 0.14.0 (Berlin)"
@@ -96,7 +106,7 @@
 (defvar nomis/cider-repl--prompt-suffix "\n")
 
 (cond
- ((member (cider-version)
+ ((member (nomis/cider-version)
           '("0.5.0"
             "CIDER 0.6.0alpha (package: 20140210.622)"
             "CIDER 0.6.0"
@@ -123,7 +133,7 @@ Return the position of the prompt beginning."
             (insert-before-markers prompt))
           (set-marker cider-repl-prompt-start-mark prompt-start)
           prompt-start)))))
- ((and (member (cider-version)
+ ((and (member (nomis/cider-version)
                '("CIDER 0.8.2"))
        (not (boundp 'cider-repl-prompt-function)) ; without my modification
        )
@@ -155,7 +165,7 @@ Return the position of the prompt beginning."
           (cl-labels ((do-it ()
                              (funcall 
                               (cond
-                               ((member (cider-version)
+                               ((member (nomis/cider-version)
                                         '("CIDER 0.10.0"))
                                 'cider-repl-default-prompt)
                                (t
@@ -416,7 +426,7 @@ Really send to REPL? "
 ;;;;      the selected window. ----
 
 (cond
- ((member (cider-version)
+ ((member (nomis/cider-version)
           '("CIDER 0.9.1"))
   (defun cider-jump-to (buffer &optional pos other-window)
     "Push current point onto marker ring, and jump to BUFFER and POS.
@@ -441,7 +451,7 @@ window."
               (back-to-indentation)))
         (when pos
           (goto-char pos))))))
- ((member (cider-version)
+ ((member (nomis/cider-version)
           '("CIDER 0.10.0"
             "CIDER 0.12.0 (Seattle)"
             "CIDER 0.14.0 (Berlin)"
