@@ -4,6 +4,7 @@
   ;; Use \\ in the strings below so you don't get the highlighting here.
   '("F\\IXME"
     "F\\IX"
+    "T\\ODO-GREG" ; TODO Temp
     "T\\ODO-THINK"
     "T\\ODO-with-Picasso-on-site"
     "T\\ODO"
@@ -83,6 +84,7 @@
 ;;;; - TODO-THINKaaa
 ;;;; - [TODO]aaa
 ;;;; - TODOaaa
+;;;; - TODO-GREG
 ;;;; - [TODO-with-Picasso-on-site]/aaa
 ;;;; - TODO-with-Picasso-on-site
 ;;;; - [HACK]aaa
