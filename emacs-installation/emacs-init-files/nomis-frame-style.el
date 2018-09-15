@@ -18,7 +18,13 @@
   ;; (set-my-frame-options "light cyan")
   ;; (set-my-frame-options "gray85")
   ;; (set-my-frame-options "grey90")
-  (set-my-frame-options "grey92")
+  (set-my-frame-options (cl-case nomis/system-name
+                          (:perryman
+                           "grey85")
+                          (:sheringham
+                           "grey85")
+                          (t ; TODO Set things up for YV machine -- and make "grey85" the default
+                           "grey92")))
   ;; (set-my-frame-options "wheat1")
   ;; (set-my-frame-options "honeydew")
   ;; (set-my-frame-options "mint cream")
