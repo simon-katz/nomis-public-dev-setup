@@ -241,6 +241,11 @@
   (setq projectile-indexing-method 'alien))
 
 ;;;; ___________________________________________________________________________
+;;;; ---- YV-specific ----
+
+(require 'nomis-yv-stuff)
+
+;;;; ___________________________________________________________________________
 ;;;; ---- Local ----
 
 (let* ((local-extras-file "~/development-100/repositories/local/sk-local-settings/dot-emacs-extras.el"))
