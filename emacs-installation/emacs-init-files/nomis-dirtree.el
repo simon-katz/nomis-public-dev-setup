@@ -1249,25 +1249,26 @@ sub-subdirectories, etc, so that subsequent expansion shows only one level."
         (not nomis/dirtree/dirs-at-top?))
   (nomis/dirtree/refresh/internal))
 
-(defun nomis/dirtree/show-widget-info (widget)
+(defun nomis/dirtree/show-widget-info (widget widget-with-extras?)
   (cl-labels ((emit-info
                ()
                (let* ((inhibit-message t))
                  (message "
- ======== Widget info -- %s ========
- (car widget) = %s
- :nomis/root = %s
- :tag = %s
- :file = %s
- :open = %s
- :node = %s
- (line-end-position) = %s
- :from = %s
- :to = %s
- keys = %s
- children info (all)          = %s
- children info (no internals) = %s
+ ======== %s info -- %s ========
+ (car widget) = %S
+ :nomis/root = %S
+ :tag = %S
+ :file = %S
+ :open = %S
+ :node = %S
+ (line-end-position) = %S
+ :from = %S
+ :to = %S
+ keys = %S
+ children info (all)          = %S
+ children info (no internals) = %S
 "
+                          (if widget-with-extras? "Widget-with-extras" "Widget")
                           (car widget)
                           (car widget)
                           (widget-get widget :nomis/root)
@@ -1296,14 +1297,14 @@ sub-subdirectories, etc, so that subsequent expansion shows only one level."
 Mostly for debugging purposes."
   (interactive)
   (let* ((widget (nomis/dirtree/selected-widget/no-extras)))
-    (nomis/dirtree/show-widget-info widget)))
+    (nomis/dirtree/show-widget-info widget nil)))
 
 (defun nomis/dirtree/show-selection-with-extras-info ()
   "Display some details of selection-with-extras.
 Mostly for debugging purposes."
   (interactive)
   (let* ((widget (nomis/dirtree/selected-widget/with-extras)))
-    (nomis/dirtree/show-widget-info widget)))
+    (nomis/dirtree/show-widget-info widget t)))
 
 (defun nomis/dirtree/delete-tree/do-it ()
   (assert (tree-mode-root-linep))
