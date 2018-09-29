@@ -916,9 +916,6 @@ Then display contents of file under point in other window.")
 
 (defun nomis/dirtree/goto-file/internal (return-to-original-window?
                                          filename)
-  (when (get-buffer nomis/dirtree/buffer)
-    (save-selected-window
-      (switch-to-buffer-other-window nomis/dirtree/buffer)))
   (nomis/dirtree/with-make-dirtree-window-active
       t
       return-to-original-window?
@@ -932,7 +929,22 @@ Then display contents of file under point in other window.")
 (defun nomis/dirtree/goto-file/need-a-name (filename)
   (nomis/dirtree/goto-file/internal nil filename))
 
-(defun nomis/dirtree/goto-file* (return-to-original-window?)
+(defun nomis/dirtree/filename->dir (filename)
+  (cond ((file-regular-p filename)
+         (file-name-directory filename))
+        ((file-directory-p filename)
+         filename)
+        (t
+         (error "No such file: %S" filename))))
+
+(defun nomis/dirtree/make-dirtree-if-there-is-not-one (filename)
+  (when (not (get-buffer nomis/dirtree/buffer))
+    ;; If there isn't a dirtree buffer, create one.
+    (save-window-excursion ; without this, when no dirtree buffer exists we break `nomis/dirtree/display-file`
+      (nomis/dirtree/make-dirtree (nomis/dirtree/filename->dir filename)
+                                  t))))
+
+(defun nomis/dirtree/goto-file* ()
   (let* ((filename (let* ((filename (or buffer-file-name
                                         dired-directory
                                         ;; default-directory
@@ -944,7 +956,9 @@ Then display contents of file under point in other window.")
       (message "This buffer has no associated file.")
       (nomis/beep))
      (t
-      (nomis/dirtree/goto-file/internal return-to-original-window?
+      (nomis/dirtree/make-dirtree-if-there-is-not-one filename)
+      (switch-to-buffer-other-window nomis/dirtree/buffer)
+      (nomis/dirtree/goto-file/internal nil ; TODO Can you get rid of this arg?
                                         filename)))))
 
 (defun nomis/dirtree/goto-file ()
@@ -954,7 +968,7 @@ Then display contents of file under point in other window.")
    in the current frame, change the selection in that buffer to
    be the current buffer's file."
   (interactive)
-  (nomis/dirtree/goto-file* nil))
+  (nomis/dirtree/goto-file*))
 
 (defun nomis/dirtree/goto-file/return-to-window ()
   (interactive)
@@ -962,7 +976,8 @@ Then display contents of file under point in other window.")
    More precisely: If there is a nomis/dirtree buffer in a window
    in the current frame, change the selection in that buffer to
    be the current buffer's file."
-  (nomis/dirtree/goto-file* t))
+  (save-selected-window
+    (nomis/dirtree/goto-file*)))
 
 (defun nomis/dirtree/display-file ()
   "Display contents of file under point in other window."
