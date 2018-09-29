@@ -743,49 +743,50 @@ With prefix argument select `nomis/dirtree/buffer'"
 
 (define-error 'nomis/dirtree/file-not-found "nomis-dirtree: No such file")
 
-(cl-defun nomis/dirtree/goto-path (path
-                                   &key refresh-not-allowed?)
-  (nomis/dirtree/debug-message "Going to %s" (first (last path)))
-  (cl-labels ((goto-file-that-is-in-expansion
-               (target-file)
-               ;; If `target-file` is in the tree's expansion, make it the
-               ;; selection; otherwise throw an exception.
-               (let* ((start-file (nomis/dirtree/selected-file)))
-                 (while (not (equal target-file
-                                    (nomis/dirtree/selected-file)))
-                   (ignore-errors ; so we cycle around at end of buffer
-                     (nomis/dirtree/next-line/impl 1))
-                   (when (equal start-file
-                                (nomis/dirtree/selected-file))
-                     (signal 'nomis/dirtree/file-not-found
-                             target-file)))))
-              (search
-               ()
-               (cl-loop for (f . r) on path
-                        do (progn
-                             (goto-file-that-is-in-expansion f)
-                             (when r
-                               (nomis/dirtree/expand nil))))))
-    ;; Search. If we fail to find to find `target-file` refresh and try again.
-    (condition-case err
-        (search)
-      (nomis/dirtree/file-not-found
-       (if refresh-not-allowed?
-           (signal (car err) (cdr err))
-         (progn
-           (nomis/dirtree/refresh-tree/impl/no-arg)
-           (nomis/dirtree/goto-root/impl) ; because refresh sometimes jumps us to mad and/or bad place
-           (search)))))))
+(cl-defun nomis/dirtree/goto-filename (filename
+                                       &key refresh-not-allowed?)
+  ;; TODO You also have `nomis/dirtree/goto-file` and similar
+  ;;      - Need some renaming.
+  (let* ((path (nomis/dirtree/filename->path-from-root filename)))
+    (nomis/dirtree/debug-message "Going to %s" (first (last path)))
+    (cl-labels ((goto-file-that-is-in-expansion
+                 (target-file)
+                 ;; If `target-file` is in the tree's expansion, make it the
+                 ;; selection; otherwise throw an exception.
+                 (let* ((start-file (nomis/dirtree/selected-file)))
+                   (while (not (equal target-file
+                                      (nomis/dirtree/selected-file)))
+                     (ignore-errors ; so we cycle around at end of buffer
+                       (nomis/dirtree/next-line/impl 1))
+                     (when (equal start-file
+                                  (nomis/dirtree/selected-file))
+                       (signal 'nomis/dirtree/file-not-found
+                               target-file)))))
+                (search
+                 ()
+                 (cl-loop for (f . r) on path
+                          do (progn
+                               (goto-file-that-is-in-expansion f)
+                               (when r
+                                 (nomis/dirtree/expand nil))))))
+      ;; Search. If we fail to find to find `target-file` refresh and try again.
+      (condition-case err
+          (search)
+        (nomis/dirtree/file-not-found
+         (if refresh-not-allowed?
+             (signal (car err) (cdr err))
+           (progn
+             (nomis/dirtree/refresh-tree/impl/no-arg)
+             (nomis/dirtree/goto-root/impl) ; because refresh sometimes jumps us to mad and/or bad place
+             (search))))))))
 
 (defun nomis/dirtree/with-return-to-selected-file-fun (fun)
   (let* ((file-to-return-to (nomis/dirtree/selected-file))
          (res (funcall fun)))
-    (-> file-to-return-to
-        ;; We use goto-path here rather than goto-file-that-is-in-expansion
-        ;; because the selected file will not be in the expansion if the called
-        ;; `fun` does a refresh and if the selected file has been deleted.
-        nomis/dirtree/filename->path-from-root
-        (nomis/dirtree/goto-path :refresh-not-allowed? t))
+    ;; We use goto-path here rather than goto-file-that-is-in-expansion
+    ;; because the selected file will not be in the expansion if the called
+    ;; `fun` does a refresh and if the selected file has been deleted.
+    (nomis/dirtree/goto-filename file-to-return-to :refresh-not-allowed? t)
     res))
 
 (defmacro nomis/dirtree/with-return-to-selected-file (&rest body)
@@ -859,7 +860,8 @@ With prefix argument select `nomis/dirtree/buffer'"
     (push *nomis/dirtree/paths/current*
           *nomis/dirtree/paths/future-list*)
     (setq *nomis/dirtree/paths/current* path)
-    (nomis/dirtree/goto-path path)))
+    (nomis/dirtree/goto-filename (first (last path)) ; TODO Change history to store filenames
+                                 )))
 
 (defun nomis/dirtree/history-step-forward-impl ()
   (assert (not (nomis/dirtree/no-future?)))
@@ -867,7 +869,7 @@ With prefix argument select `nomis/dirtree/buffer'"
     (push *nomis/dirtree/paths/current*
           *nomis/dirtree/paths/history-list*)
     (setq *nomis/dirtree/paths/current* path)
-    (nomis/dirtree/goto-path path)))
+    (nomis/dirtree/goto-filename (first (last path)))))
 
 ;;;; ---------------------------------------------------------------------------
 ;;;; User-visible commands.
@@ -922,13 +924,12 @@ Then display contents of file under point in other window.")
   (nomis/dirtree/with-make-dirtree-window-active
       t
       return-to-original-window?
-    (let* ((path (nomis/dirtree/filename->path-from-root filename)))
-      (nomis/dirtree/with-note-selection
-       (nomis/dirtree/goto-path path))
-      (when (bound-and-true-p hl-line-mode)
-        ;; Workaround for bug.
-        ;; Without this we don't have the highlighting.
-        (hl-line-mode 1)))))
+    (nomis/dirtree/with-note-selection
+     (nomis/dirtree/goto-filename filename))
+    (when (bound-and-true-p hl-line-mode)
+      ;; Workaround for bug.
+      ;; Without this we don't have the highlighting.
+      (hl-line-mode 1))))
 
 (defun nomis/dirtree/goto-file/need-a-name (filename)
   (nomis/dirtree/goto-file/internal nil filename))
@@ -1226,13 +1227,11 @@ sub-subdirectories, etc, so that subsequent expansion shows only one level."
 (defun nomis/dirtree/show-only-selection (arg)
   (interactive "P")
   (let* ((collapse-all-trees? arg)
-         (filename (-> (nomis/dirtree/selected-widget/with-extras)
-                       nomis/dirtree/widget-file))
-         (path (nomis/dirtree/filename->path-from-root filename)))
+         (filename (nomis/dirtree/selected-file)))
     (if collapse-all-trees?
         (nomis/dirtree/collapse-recursively-all-trees)
       (collapse-recursively (nomis/dirtree/root-widget-no-arg)))
-    (nomis/dirtree/goto-path path)))
+    (nomis/dirtree/goto-filename filename)))
 
 (defun nomis/dirtree/show-only-selection/collapse-other-trees ()
   (interactive)
