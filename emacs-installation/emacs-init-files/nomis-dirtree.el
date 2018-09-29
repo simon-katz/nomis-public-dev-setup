@@ -916,8 +916,9 @@ Then display contents of file under point in other window.")
 
 (defun nomis/dirtree/goto-file/internal (return-to-original-window?
                                          filename)
-  (when (get-buffer nomis/dirtree/buffer) ; FIXME HACK TEMP: This breaks H-M-/. TODO Re-visit this.
-    (switch-to-buffer-other-window nomis/dirtree/buffer))
+  (when (get-buffer nomis/dirtree/buffer)
+    (save-selected-window
+      (switch-to-buffer-other-window nomis/dirtree/buffer)))
   (nomis/dirtree/with-make-dirtree-window-active
       t
       return-to-original-window?
