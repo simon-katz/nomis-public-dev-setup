@@ -220,56 +220,36 @@ See `windata-display-buffer' for setup the arguments."
     (if select
         (select-window win))))
 
-(defun nomis/dirtree/make-dirtree/child-already-there-action ()
-  (let* ((completions '(("Show existing child"
-                         :show-existing-child)
-                        ("Show requested dir in new tree (may have unexpected behaviour!)"
-                         :show-new-tree-for-requested)))
-         (action
-          (cadr (assoc (ido-completing-read
-                        "A child of the requested directory is already in dirtree"
-                        completions)
-                       completions))))
-    action))
-
 (defun nomis/dirtree/make-dirtree (new-root select)
   "Create tree of `new-root' directory.
 With prefix argument select `nomis/dirtree/buffer'"
   (interactive "DDirectory: \nP")
-  (let* ((existing-roots (if (get-buffer nomis/dirtree/buffer)
-                             (-map #'nomis/dirtree/widget-file
-                                   (with-current-buffer nomis/dirtree/buffer
-                                     (nomis/dirtree/all-trees)))
-                           '())))
-    (cl-flet ((do-it ()
-                     (nomis/dirtree/make-dirtree/do-it new-root select)))
-      (cond ((-any? (lambda (existing-root)
-                      (s-starts-with? existing-root new-root))
-                    existing-roots)
-             ;; TODO Make H-\ come here, I think.
-             ;;      (Hmmmm... but `H-q d` does directory and `H-/` does
-             ;;      the file.)
-             (nomis/dirtree/goto-file/need-a-name new-root))
-            ((-any? (lambda (existing-root)
-                      (s-starts-with? new-root existing-root))
-                    existing-roots)
-             ;; TODO Change this to do remove-child-and-show-parent.
-             ;;      But need to make history continue to work.
-             ;;      - So first change history to record a full canonical path.
-             ;;        (I guess it doesn't ATM, otherwise your previous
-             ;;        attempt at remove-child-and-show-parent would have
-             ;;        worked.)
-             (ecase (nomis/dirtree/make-dirtree/child-already-there-action)
-               (:show-existing-child
-                (let ((existing-root
-                       (-first (lambda (existing-root)
-                                 (s-starts-with? new-root existing-root))
-                               existing-roots)))
-                  (nomis/dirtree/goto-file/need-a-name existing-root)))
-               (:show-new-tree-for-requested
-                (do-it))))
-            (t
-             (do-it))))))
+  (cl-flet ((do-it ()
+                   (nomis/dirtree/make-dirtree/do-it new-root select)))
+    (let* ((existing-roots (if (get-buffer nomis/dirtree/buffer)
+                               (-map #'nomis/dirtree/widget-file
+                                     (with-current-buffer nomis/dirtree/buffer
+                                       (nomis/dirtree/all-trees)))
+                             '())))
+      (if (-any? (lambda (existing-root)
+                   (s-starts-with? existing-root new-root))
+                 existing-roots)
+          ;; We already have `new-root` in dirtree.
+          ;; TODO Make H-\ come here, I think.
+          ;;      (Hmmmm... but `H-q d` does directory and `H-/` does
+          ;;      the file.)
+          (nomis/dirtree/goto-file/need-a-name new-root)
+        ;; Remove any existing roots that are children of `new-root`, then
+        ;; show a new tree for `new-root`.
+        (let* ((existing-roots-to-remove
+                (-filter (lambda (existing-root)
+                           (s-starts-with? new-root existing-root))
+                         existing-roots)))
+          (mapc (lambda (existing-root)
+                  (nomis/dirtree/goto-file/need-a-name existing-root)
+                  (nomis/dirtree/delete-tree/do-it))
+                existing-roots-to-remove)
+          (do-it))))))
 
 (define-derived-mode nomis/dirtree/mode tree-mode "Dir-Tree"
   "A mode to display tree of directory"
