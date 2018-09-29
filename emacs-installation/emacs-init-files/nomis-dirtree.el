@@ -238,7 +238,7 @@ With prefix argument select `nomis/dirtree/buffer'"
           ;; TODO Make H-\ come here, I think.
           ;;      (Hmmmm... but `H-q d` does directory and `H-/` does
           ;;      the file.)
-          (nomis/dirtree/goto-file/need-a-name new-root)
+          (nomis/dirtree/goto-file/internal new-root)
         ;; Remove any existing roots that are children of `new-root`, then
         ;; show a new tree for `new-root`.
         (let* ((existing-roots-to-remove
@@ -246,7 +246,7 @@ With prefix argument select `nomis/dirtree/buffer'"
                            (s-starts-with? new-root existing-root))
                          existing-roots)))
           (mapc (lambda (existing-root)
-                  (nomis/dirtree/goto-file/need-a-name existing-root)
+                  (nomis/dirtree/goto-file/internal existing-root)
                   (nomis/dirtree/delete-tree/do-it))
                 existing-roots-to-remove)
           (do-it))))))
@@ -924,9 +924,6 @@ Then display contents of file under point in other window.")
       ;; Workaround for bug.
       ;; Without this we don't have the highlighting.
       (hl-line-mode 1))))
-
-(defun nomis/dirtree/goto-file/need-a-name (filename)
-  (nomis/dirtree/goto-file/internal filename))
 
 (defun nomis/dirtree/filename->dir (filename)
   (cond ((file-regular-p filename)
