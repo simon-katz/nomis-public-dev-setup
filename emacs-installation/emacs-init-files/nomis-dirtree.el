@@ -806,17 +806,17 @@ With prefix argument select `nomis/dirtree/buffer'"
 
 (defvar *nomis/dirtree/inhibit-history?* nil)
 
-(defvar *nomis/dirtree/paths/current* nil)
-(defvar *nomis/dirtree/paths/history-list* '())
-(defvar *nomis/dirtree/paths/future-list* '())
+(defvar *nomis/dirtree/filenames/current* nil)
+(defvar *nomis/dirtree/filenames/history-list* '())
+(defvar *nomis/dirtree/filenames/future-list* '())
 
 (defvar *nomis/dirtree/max-history-size* 100)
 
 (defun nomis/dirtree/clear-history ()
   (interactive)
-  (setq *nomis/dirtree/paths/history-list* '())
-  (setq *nomis/dirtree/paths/future-list* '())
-  (setq *nomis/dirtree/paths/current* (nomis/dirtree/file-path))
+  (setq *nomis/dirtree/filenames/history-list* '())
+  (setq *nomis/dirtree/filenames/future-list* '())
+  (setq *nomis/dirtree/filenames/current* (nomis/dirtree/selected-file))
   (message "Cleared history.")
   (nomis/grab-user-attention/low))
 
@@ -824,19 +824,17 @@ With prefix argument select `nomis/dirtree/buffer'"
   (if (null (nomis/dirtree/selected-widget/with-extras))
       (message "Not on a widget")
     (unless (or *nomis/dirtree/inhibit-history?*
-                (equal (first (last ; O(n) -- OK I guess
-                               *nomis/dirtree/paths/current*))
+                (equal *nomis/dirtree/filenames/current*
                        (nomis/dirtree/selected-file)))
       (nomis/dirtree/debug-message "Noting selection %s"
                                    (nomis/dirtree/selected-file))
-      (when *nomis/dirtree/paths/current*
-        (setq *nomis/dirtree/paths/history-list*
-              (seq-take ; O(n) -- OK I guess
-               (cons *nomis/dirtree/paths/current*
-                     *nomis/dirtree/paths/history-list*)
-               *nomis/dirtree/max-history-size*)))
-      (setq *nomis/dirtree/paths/current* (nomis/dirtree/file-path))
-      (setq *nomis/dirtree/paths/future-list* '()))))
+      (when *nomis/dirtree/filenames/current*
+        (setq *nomis/dirtree/filenames/history-list*
+              (seq-take (cons *nomis/dirtree/filenames/current*
+                              *nomis/dirtree/filenames/history-list*)
+                        *nomis/dirtree/max-history-size*)))
+      (setq *nomis/dirtree/filenames/current* (nomis/dirtree/selected-file))
+      (setq *nomis/dirtree/filenames/future-list* '()))))
 
 (defun nomis/dirtree/with-note-selection-fun (fun)
   (nomis/dirtree/note-selection)
@@ -849,27 +847,26 @@ With prefix argument select `nomis/dirtree/buffer'"
   `(nomis/dirtree/with-note-selection-fun (lambda () ,@body)))
 
 (defun nomis/dirtree/no-history? ()
-  (null *nomis/dirtree/paths/history-list*))
+  (null *nomis/dirtree/filenames/history-list*))
 
 (defun nomis/dirtree/no-future? ()
-  (null *nomis/dirtree/paths/future-list*))
+  (null *nomis/dirtree/filenames/future-list*))
 
 (defun nomis/dirtree/history-step-back-impl ()
   (assert (not (nomis/dirtree/no-history?)))
-  (let* ((path (pop *nomis/dirtree/paths/history-list*)))
-    (push *nomis/dirtree/paths/current*
-          *nomis/dirtree/paths/future-list*)
-    (setq *nomis/dirtree/paths/current* path)
-    (nomis/dirtree/goto-filename (first (last path)) ; TODO Change history to store filenames
-                                 )))
+  (let* ((filename (pop *nomis/dirtree/filenames/history-list*)))
+    (push *nomis/dirtree/filenames/current*
+          *nomis/dirtree/filenames/future-list*)
+    (setq *nomis/dirtree/filenames/current* filename)
+    (nomis/dirtree/goto-filename filename)))
 
 (defun nomis/dirtree/history-step-forward-impl ()
   (assert (not (nomis/dirtree/no-future?)))
-  (let* ((path (pop *nomis/dirtree/paths/future-list*)))
-    (push *nomis/dirtree/paths/current*
-          *nomis/dirtree/paths/history-list*)
-    (setq *nomis/dirtree/paths/current* path)
-    (nomis/dirtree/goto-filename (first (last path)))))
+  (let* ((filename (pop *nomis/dirtree/filenames/future-list*)))
+    (push *nomis/dirtree/filenames/current*
+          *nomis/dirtree/filenames/history-list*)
+    (setq *nomis/dirtree/filenames/current* filename)
+    (nomis/dirtree/goto-filename filename)))
 
 ;;;; ---------------------------------------------------------------------------
 ;;;; User-visible commands.
