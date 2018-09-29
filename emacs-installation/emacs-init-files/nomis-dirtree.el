@@ -914,11 +914,10 @@ Then display contents of file under point in other window.")
          (,name ,@args)
          (nomis/dirtree/display-file*)))))
 
-(defun nomis/dirtree/goto-file/internal (return-to-original-window?
-                                         filename)
+(defun nomis/dirtree/goto-file/internal (filename)
   (nomis/dirtree/with-make-dirtree-window-active
       t
-      return-to-original-window?
+      nil ; TODO Can you get rid of this arg?
     (nomis/dirtree/with-note-selection
      (nomis/dirtree/goto-filename filename))
     (when (bound-and-true-p hl-line-mode)
@@ -927,7 +926,7 @@ Then display contents of file under point in other window.")
       (hl-line-mode 1))))
 
 (defun nomis/dirtree/goto-file/need-a-name (filename)
-  (nomis/dirtree/goto-file/internal nil filename))
+  (nomis/dirtree/goto-file/internal filename))
 
 (defun nomis/dirtree/filename->dir (filename)
   (cond ((file-regular-p filename)
@@ -958,8 +957,7 @@ Then display contents of file under point in other window.")
      (t
       (nomis/dirtree/make-dirtree-if-there-is-not-one filename)
       (switch-to-buffer-other-window nomis/dirtree/buffer)
-      (nomis/dirtree/goto-file/internal nil ; TODO Can you get rid of this arg?
-                                        filename)))))
+      (nomis/dirtree/goto-file/internal filename)))))
 
 (defun nomis/dirtree/goto-file ()
   "Change the nomis/dirtree selection to be the current file, and go to the
