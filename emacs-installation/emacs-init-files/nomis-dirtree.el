@@ -384,7 +384,7 @@ With prefix argument select `nomis/dirtree/buffer'"
     (cond
      ((null dirtree-window)
       (when message-if-no-dirtree-buffer?
-        (message "There's no dirtee window.")
+        (message "There's no dirtree window.")
         (nomis/beep)))
      (t
       (let* ((original-window (selected-window)))
@@ -609,7 +609,7 @@ With prefix argument select `nomis/dirtree/buffer'"
     "node_modules"
     "out"
     "target"
-    "zzzz-nomis-dirtee-test-keep-collapsed"))
+    "zzzz-nomis-dirtree-test-keep-collapsed"))
 
 (defun nomis/dirtree/directory-to-keep-collapsed?/fullname (name)
   (some (lambda (no-expand-name)
