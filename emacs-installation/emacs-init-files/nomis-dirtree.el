@@ -917,7 +917,7 @@ Then display contents of file under point in other window.")
 (defun nomis/dirtree/goto-file/internal (filename)
   (nomis/dirtree/with-make-dirtree-window-active
       t
-      nil ; TODO Can you get rid of this arg?
+      nil
     (nomis/dirtree/with-note-selection
      (nomis/dirtree/goto-filename filename))
     (when (bound-and-true-p hl-line-mode)
