@@ -394,7 +394,7 @@ With prefix argument select `nomis/dirtree/buffer'"
                              (window-buffer dirtree-window))))
       (if (null dirtree-window)
           (progn
-            (message "Not sure this is expected -- dirtree-window is null.")
+            (message "dirtree-window is null. This can happen when nomis/dirtree/buffer exists but is not being displayed in any frame.")
             (do-it))
         (let* ((original-window (selected-window)))
           (unwind-protect
