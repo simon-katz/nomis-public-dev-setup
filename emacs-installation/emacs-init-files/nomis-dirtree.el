@@ -1015,7 +1015,17 @@ Then display contents of file under point in other window.")
 (defun nomis/dirtree/goto-file/return-to-window ()
   "Like `nomis/dirtree/goto-file` except keep the current window selected."
   (interactive)
-  (nomis/dirtree/goto-file* :return-to-original-window? t))
+  (let* ((original-window (selected-window))
+         (original-buffer (current-buffer)))
+    (nomis/dirtree/goto-file* :return-to-original-window? t)
+    (unless (eql original-buffer (current-buffer))
+      ;; When we are displaying a dired buffer,
+      ;; the `(switch-to-buffer-other-window nomis/dirtree/buffer)` call
+      ;; displays the dirtree buffer in both a new window and the current
+      ;; window. Weird.
+      ;; This is a hack to fix that.
+      (message "Restoring original buffer (not sure why it has changed).")
+      (switch-to-buffer original-buffer))))
 
 (defun nomis/dirtree/display-file ()
   "Display contents of file under point in other window."
