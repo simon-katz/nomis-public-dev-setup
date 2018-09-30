@@ -1369,8 +1369,8 @@ Mostly for debugging purposes."
       (nomis/dirtree/delete-tree/do-it))))
 
 (define-key global-map (kbd "H-q d") 'nomis/dirtree/make-dirtree)
-(define-key global-map (kbd "H-/")   'nomis/dirtree/goto-file)
-(define-key global-map (kbd "H-M-/") 'nomis/dirtree/goto-file/return-to-window)
+(define-key global-map (kbd "H-/")   'nomis/dirtree/goto-file/return-to-window)
+(define-key global-map (kbd "H-M-/") 'nomis/dirtree/goto-file)
 
 (cl-labels ((dk (k f)
                 (define-key nomis/dirtree/mode-map k f)))
