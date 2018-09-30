@@ -703,11 +703,14 @@ With prefix argument select `nomis/dirtree/buffer'"
                           ""
                           s)))))
 
+(defun nomis/dirtree/filename->root-widget/no-error (filename)
+  (cl-find-if (lambda (w)
+                (s-starts-with? (nomis/dirtree/widget-file w)
+                                filename))
+              (nomis/dirtree/all-trees)))
+
 (defun nomis/dirtree/filename->root-widget (filename)
-  (let* ((widget (cl-find-if (lambda (w)
-                               (s-starts-with? (nomis/dirtree/widget-file w)
-                                               filename))
-                             (nomis/dirtree/all-trees))))
+  (let* ((widget (nomis/dirtree/filename->root-widget/no-error filename)))
     (assert widget
             nil
             "File is not in dirtree: %s"
@@ -933,9 +936,15 @@ Then display contents of file under point in other window.")
         (t
          (error "No such file: %S" filename))))
 
+(defun nomis/dirtree/has-file? (filename)
+  (nomis/dirtree/with-make-dirtree-window-active
+      nil
+      t
+    (nomis/dirtree/filename->root-widget/no-error filename)))
+
 (defun nomis/dirtree/make-dirtree-if-there-is-not-one (filename)
-  (when (not (get-buffer nomis/dirtree/buffer))
-    ;; If there isn't a dirtree buffer, create one.
+  (when (not (and (get-buffer nomis/dirtree/buffer)
+                  (nomis/dirtree/has-file? filename)))
     (save-window-excursion ; without this, when no dirtree buffer exists we break `nomis/dirtree/display-file`
       (nomis/dirtree/make-dirtree (nomis/dirtree/filename->dir filename)
                                   t))))
@@ -969,7 +978,7 @@ Then display contents of file under point in other window.")
        current frame, display it in another window in the current frame.
      - If no nomis/dirtree buffer exists, create one that shows d and
        display it in another window in the current frame.
-   - TODO If d is not already shown in the dirtree buffer, make it so.
+   - If d is not already shown in the dirtree buffer, show it.
    - Change the nomis/dirtree selection to be f.
    - Select the window that contains nomis/dirtree buffer."
   (interactive)
