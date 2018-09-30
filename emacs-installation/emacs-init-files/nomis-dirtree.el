@@ -962,8 +962,9 @@ Then display contents of file under point in other window.")
            (frame (make-frame)))
       (select-frame frame)
       (unwind-protect
-          (nomis/dirtree/make-dirtree (nomis/dirtree/filename->dir filename)
-                                      nil)
+          (let* ((*nomis/dirtree/inhibit-history?* t))
+            (nomis/dirtree/make-dirtree (nomis/dirtree/filename->dir filename)
+                                        nil))
         (delete-frame)
         (select-frame-set-input-focus original-frame)))))
 
