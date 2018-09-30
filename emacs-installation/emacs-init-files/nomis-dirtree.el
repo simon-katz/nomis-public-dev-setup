@@ -961,9 +961,15 @@ Then display contents of file under point in other window.")
       (message "This buffer has no associated file.")
       (nomis/beep))
      (t
-      (nomis/dirtree/make-dirtree-if-there-is-not-one filename)
-      (switch-to-buffer-other-window nomis/dirtree/buffer)
-      (nomis/dirtree/goto-file/internal filename)))))
+      (let ((single-window-in-frame? (= 1 (length (window-list)))))
+        (nomis/dirtree/make-dirtree-if-there-is-not-one filename)
+        (switch-to-buffer-other-window nomis/dirtree/buffer)
+        (nomis/dirtree/goto-file/internal filename)
+        (when (and single-window-in-frame?
+                   (fboundp 'flop-frame))
+          ;; If we now have side-by-side windows, arrange them so that
+          ;; dirtree buffer is on the left.
+          (flop-frame)))))))
 
 (defun nomis/dirtree/goto-file ()
   "Do the following:
