@@ -917,10 +917,11 @@ Then display contents of file under point in other window.")
          (,name ,@args)
          (nomis/dirtree/display-file*)))))
 
-(defun nomis/dirtree/goto-file/internal (filename)
+(cl-defun nomis/dirtree/goto-file/internal (filename
+                                            &optional return-to-original-window?)
   (nomis/dirtree/with-make-dirtree-window-active
       t
-      nil
+      return-to-original-window?
     (nomis/dirtree/with-note-selection
      (nomis/dirtree/goto-filename filename))
     (when (bound-and-true-p hl-line-mode)
@@ -945,11 +946,16 @@ Then display contents of file under point in other window.")
 (defun nomis/dirtree/make-dirtree-if-there-is-not-one (filename)
   (when (not (and (get-buffer nomis/dirtree/buffer)
                   (nomis/dirtree/has-file? filename)))
-    (save-window-excursion ; without this, when no dirtree buffer exists we break `nomis/dirtree/display-file`
+    ;; Create the nomis/dirtree buffer in a new frame. If you don't do this
+    ;; you can't arrange for `nomis/dirtree/goto-file/return-to-window`
+    ;; to work.
+    (let* ((frame (make-frame)))
+      (select-frame frame)
       (nomis/dirtree/make-dirtree (nomis/dirtree/filename->dir filename)
-                                  t))))
+                                  nil)
+      (delete-frame))))
 
-(defun nomis/dirtree/goto-file* ()
+(cl-defun nomis/dirtree/goto-file* (&key return-to-original-window?)
   (let* ((filename (let* ((filename (or buffer-file-name
                                         dired-directory
                                         ;; default-directory
@@ -961,10 +967,13 @@ Then display contents of file under point in other window.")
       (message "This buffer has no associated file.")
       (nomis/beep))
      (t
-      (let ((single-window-in-frame? (= 1 (length (window-list)))))
+      (let* ((single-window-in-frame? (= 1 (length (window-list))))
+             (original-window (selected-window)))
         (nomis/dirtree/make-dirtree-if-there-is-not-one filename)
         (switch-to-buffer-other-window nomis/dirtree/buffer)
-        (nomis/dirtree/goto-file/internal filename)
+        (when return-to-original-window?
+          (select-window original-window))
+        (nomis/dirtree/goto-file/internal filename return-to-original-window?)
         (when (and single-window-in-frame?
                    (fboundp 'flop-frame))
           ;; If we now have side-by-side windows, arrange them so that
@@ -991,10 +1000,9 @@ Then display contents of file under point in other window.")
   (nomis/dirtree/goto-file*))
 
 (defun nomis/dirtree/goto-file/return-to-window ()
-  (interactive)
   "Like `nomis/dirtree/goto-file` except keep the current window selected."
-  (save-selected-window
-    (nomis/dirtree/goto-file*)))
+  (interactive)
+  (nomis/dirtree/goto-file* :return-to-original-window? t))
 
 (defun nomis/dirtree/display-file ()
   "Display contents of file under point in other window."
