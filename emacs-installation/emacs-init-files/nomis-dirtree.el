@@ -961,10 +961,11 @@ Then display contents of file under point in other window.")
     (let* ((original-frame (selected-frame))
            (frame (make-frame)))
       (select-frame frame)
-      (nomis/dirtree/make-dirtree (nomis/dirtree/filename->dir filename)
-                                  nil)
-      (delete-frame)
-      (select-frame-set-input-focus original-frame))))
+      (unwind-protect
+          (nomis/dirtree/make-dirtree (nomis/dirtree/filename->dir filename)
+                                      nil)
+        (delete-frame)
+        (select-frame-set-input-focus original-frame)))))
 
 (cl-defun nomis/dirtree/goto-file* (&key return-to-original-window?)
   (let* ((filename (let* ((filename (or buffer-file-name
