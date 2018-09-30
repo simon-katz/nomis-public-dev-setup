@@ -957,20 +957,27 @@ Then display contents of file under point in other window.")
       (nomis/dirtree/goto-file/internal filename)))))
 
 (defun nomis/dirtree/goto-file ()
-  "Change the nomis/dirtree selection to be the current file, and go to the
-   nomis/dirtree buffer.
-   More precisely: If there is a nomis/dirtree buffer in a window
-   in the current frame, change the selection in that buffer to
-   be the current buffer's file."
+  "Do the following:
+   - Make a note of the current buffer's file; call it f.
+     (If the current buffer is a dired buffer, f will be a directory.)
+   - Let d be:
+     - if f is a directory, then f
+     - if f is an ordinary file, then f's directory.
+   - One of the following:
+     - If there's a nomis/dirtree buffer in the current frame, do nothing.
+     - If a nomis/dirtree buffer exists but it is not displayed in the
+       current frame, display it in another window in the current frame.
+     - If no nomis/dirtree buffer exists, create one that shows d and
+       display it in another window in the current frame.
+   - TODO If d is not already shown in the dirtree buffer, make it so.
+   - Change the nomis/dirtree selection to be f.
+   - Select the window that contains nomis/dirtree buffer."
   (interactive)
   (nomis/dirtree/goto-file*))
 
 (defun nomis/dirtree/goto-file/return-to-window ()
   (interactive)
-  "Change the nomis/dirtree selection to be the current file.
-   More precisely: If there is a nomis/dirtree buffer in a window
-   in the current frame, change the selection in that buffer to
-   be the current buffer's file."
+  "Like `nomis/dirtree/goto-file` except keep the current window selected."
   (save-selected-window
     (nomis/dirtree/goto-file*)))
 
