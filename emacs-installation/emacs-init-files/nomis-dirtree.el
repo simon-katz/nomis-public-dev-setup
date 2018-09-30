@@ -238,7 +238,15 @@ With prefix argument select `nomis/dirtree/buffer'"
           ;; TODO Make H-\ come here, I think.
           ;;      (Hmmmm... but `H-q d` does directory and `H-/` does
           ;;      the file.)
-          (nomis/dirtree/goto-file/internal new-root)
+          (let* ((single-window-in-frame? (= 1 (length (window-list)))))
+            ;; TODO Maybe remove duplication with `nomis/dirtree/goto-file*`.
+            (switch-to-buffer-other-window nomis/dirtree/buffer)
+            (when (and single-window-in-frame?
+                       (fboundp 'flop-frame))
+              ;; If we now have side-by-side windows, arrange them so that
+              ;; dirtree buffer is on the left.
+              (flop-frame))
+            (nomis/dirtree/goto-file/internal new-root))
         ;; Remove any existing roots that are children of `new-root`, then
         ;; show a new tree for `new-root`.
         (let* ((existing-roots-to-remove
@@ -374,36 +382,46 @@ With prefix argument select `nomis/dirtree/buffer'"
 ;;;; ---------------------------------------------------------------------------
 ;;;; nomis/dirtree/with-make-dirtree-window-active
 
-(defun nomis/dirtree/with-make-dirtree-window-active-fun
-    (message-if-no-dirtree-buffer?
-     return-to-original-window?
-     fun)
-  (let* ((dirtree-window (nomis/find-window-in-any-frame nomis/dirtree/buffer))
-         (dirtree-buffer (when dirtree-window
-                           (window-buffer dirtree-window))))
-    (cond
-     ((null dirtree-window)
-      (when message-if-no-dirtree-buffer?
-        (message "There's no dirtree window.")
-        (nomis/beep)))
-     (t
-      (let* ((original-window (selected-window)))
-        (unwind-protect
-            (progn
-              (select-window dirtree-window)
-              (funcall fun))
-          (when return-to-original-window?
-            (select-window original-window))))))))
+;;;; Without this:
+;;;; - If you changing the selection in the dirtree buffer, it doesn't work.
+;;;; - If you auto-delete (from the file watcher code), the selection gets
+;;;;   screwed up.
 
-(defmacro nomis/dirtree/with-make-dirtree-window-active
-    (message-if-no-dirtree-buffer?
-     return-to-original-window?
-     &rest body)
-  (declare (indent 2))
+(defun nomis/dirtree/with-make-dirtree-window-active-fun (fun)
+  (cl-flet ((do-it () (funcall fun)))
+    (let* ((dirtree-window (nomis/find-window-in-any-frame nomis/dirtree/buffer))
+           (dirtree-buffer (when dirtree-window
+                             (window-buffer dirtree-window))))
+      (if (null dirtree-window)
+          (progn
+            (message "Not sure this is expected -- dirtree-window is null.")
+            (do-it))
+        (let* ((original-window (selected-window)))
+          (unwind-protect
+              (progn
+                (select-window dirtree-window)
+                (do-it))
+            (select-window original-window)))))))
+
+(defmacro nomis/dirtree/with-make-dirtree-window-active (&rest body)
+  (declare (indent 0))
   `(nomis/dirtree/with-make-dirtree-window-active-fun
-    ,message-if-no-dirtree-buffer?
-    ,return-to-original-window?
     (lambda () ,@body)))
+
+;;;; ---------------------------------------------------------------------------
+;;;; with-dirtree-buffer-if-it-exists
+
+(defun with-dirtree-buffer-if-it-exists-fun (fun)
+  (cl-flet ((do-it () (funcall fun)))
+    (if (get-buffer nomis/dirtree/buffer)
+        (with-current-buffer nomis/dirtree/buffer
+          (nomis/dirtree/with-make-dirtree-window-active
+            (do-it)))
+      (do-it))))
+
+(defmacro with-dirtree-buffer-if-it-exists (&rest body)
+  (declare (indent 0))
+  `(with-dirtree-buffer-if-it-exists-fun (lambda () ,@body)))
 
 ;;;; ---------------------------------------------------------------------------
 ;;;; nomis/dirtree/auto-refresh?
@@ -443,9 +461,7 @@ With prefix argument select `nomis/dirtree/buffer'"
                         (file-notify-valid-p (cdr entry)))))))
 
 (defun nomis/dirtree/remove-roots-whose-dirs-are-deleted ()
-  (nomis/dirtree/with-make-dirtree-window-active
-      t
-      t
+  (with-dirtree-buffer-if-it-exists
     (loop for tree in (copy-list (nomis/dirtree/all-trees))
           unless (file-exists-p (nomis/dirtree/widget-file tree))
           do (progn
@@ -454,9 +470,7 @@ With prefix argument select `nomis/dirtree/buffer'"
 
 (defun nomis/dirtree/refresh-after-finding-buffer ()
   (condition-case err
-      (nomis/dirtree/with-make-dirtree-window-active
-          nil
-          t
+      (with-dirtree-buffer-if-it-exists
         (nomis/dirtree/refresh/internal))
     (nomis/dirtree/file-not-found
      ;; We get here if the selected file is deleted -- not a problem.
@@ -917,11 +931,8 @@ Then display contents of file under point in other window.")
          (,name ,@args)
          (nomis/dirtree/display-file*)))))
 
-(cl-defun nomis/dirtree/goto-file/internal (filename
-                                            &optional return-to-original-window?)
-  (nomis/dirtree/with-make-dirtree-window-active
-      t
-      return-to-original-window?
+(defun nomis/dirtree/goto-file/internal (filename)
+  (with-dirtree-buffer-if-it-exists
     (nomis/dirtree/with-note-selection
      (nomis/dirtree/goto-filename filename))
     (when (bound-and-true-p hl-line-mode)
@@ -938,9 +949,7 @@ Then display contents of file under point in other window.")
          (error "No such file: %S" filename))))
 
 (defun nomis/dirtree/has-file? (filename)
-  (nomis/dirtree/with-make-dirtree-window-active
-      nil
-      t
+  (with-dirtree-buffer-if-it-exists
     (nomis/dirtree/filename->root-widget/no-error filename)))
 
 (defun nomis/dirtree/make-dirtree-if-there-is-not-one (filename)
@@ -973,7 +982,7 @@ Then display contents of file under point in other window.")
         (switch-to-buffer-other-window nomis/dirtree/buffer)
         (when return-to-original-window?
           (select-window original-window))
-        (nomis/dirtree/goto-file/internal filename return-to-original-window?)
+        (nomis/dirtree/goto-file/internal filename)
         (when (and single-window-in-frame?
                    (fboundp 'flop-frame))
           ;; If we now have side-by-side windows, arrange them so that
@@ -1344,9 +1353,10 @@ Mostly for debugging purposes."
     (nomis/dirtree/show-widget-info widget t)))
 
 (defun nomis/dirtree/delete-tree/do-it ()
-  (assert (tree-mode-root-linep))
-  (nomis/dirtree/collapse-all) ; an easy way to remove watchers.
-  (tree-mode-delete (tree-mode-tree-ap)))
+  (with-dirtree-buffer-if-it-exists
+    (assert (tree-mode-root-linep))
+    (nomis/dirtree/collapse-all) ; an easy way to remove watchers.
+    (tree-mode-delete (tree-mode-tree-ap))))
 
 (defun nomis/dirtree/delete-tree ()
   "Delete tree containing selection from the dirtree buffer."
