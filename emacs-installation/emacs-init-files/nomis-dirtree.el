@@ -41,10 +41,6 @@
 ;;;; - Understand the details of how tree-mode sets up children and does the
 ;;;    refresh. And then think about how to roll your own refresh.
 
-;;;; Feature:
-;;;; Maybe add feature to make tree selection follow file in current buffer.
-;;;; - Use an idle timer -- maybe combine with the auto-refresh timer.
-
 ;;;; Faster history:
 ;;;; - Record buffer positions in the history.
 ;;;; - When navigating history, before the (expensive) current approach, check
@@ -380,12 +376,28 @@ With prefix argument select `nomis/dirtree/buffer'"
   (tree-mode-previous-sib n))
 
 ;;;; ---------------------------------------------------------------------------
+;;;; Misc utilities
+
+(defun nomis/dirtree/filename-in-selected-window ()
+  (let* ((filename (or buffer-file-name
+                       dired-directory
+                       ;; default-directory
+                       )))
+    (when filename
+      (expand-file-name filename))))
+
+;;;; ---------------------------------------------------------------------------
 ;;;; nomis/dirtree/with-make-dirtree-window-active
 
 ;;;; Without this:
 ;;;; - If you changing the selection in the dirtree buffer, it doesn't work.
 ;;;; - If you auto-delete (from the file watcher code), the selection gets
 ;;;;   screwed up.
+
+;;;; TODO If there are multiple dirtree windows, the work is only done in
+;;;;      one of them.
+;;;;      This leads to bugs.
+;;;;      - eg in follow-selection.
 
 (defun nomis/dirtree/with-make-dirtree-window-active-fun (fun)
   (cl-flet ((do-it () (funcall fun)))
@@ -452,6 +464,18 @@ With prefix argument select `nomis/dirtree/buffer'"
                        nomis/dirtree/expanded-directories)))
 
 ;;;; ---------------------------------------------------------------------------
+;;;; nomis/dirtree/follow-selected-buffer?
+
+(defvar nomis/dirtree/follow-selected-buffer? nil)
+
+(defun nomis/dirtree/toggle-follow-selected-buffer? ()
+  (interactive)
+  (setf nomis/dirtree/follow-selected-buffer?
+        (not nomis/dirtree/follow-selected-buffer?))
+  (message "nomis-dirtree follow-selected-buffer turned %s"
+           (if nomis/dirtree/follow-selected-buffer? "on" "off")))
+
+;;;; ---------------------------------------------------------------------------
 ;;;; Stuff to do on scheduled refresh
 
 (defun nomis/dirtree/remove-watchers-of-deleted-dirs ()
@@ -475,6 +499,26 @@ With prefix argument select `nomis/dirtree/buffer'"
     (nomis/dirtree/file-not-found
      ;; We get here if the selected file is deleted -- not a problem.
      )))
+
+(defun nomis/dirtree/goto-file-for-follow-selected-buffer ()
+  (when (and nomis/dirtree/follow-selected-buffer?
+             (nomis/find-window-in-frame nomis/dirtree/buffer))
+    ;; TODO Maybe show the following in dirtree buffer (perhaps using a colour):
+    ;;      - Auto-refresh off
+    ;;      - Follow-selected-buffer off.
+    ;;      - Selected buffer has no file.
+    ;;      - Selected buffer's file is not in dirtree.
+    (condition-case err
+        (let* ((filename (nomis/dirtree/filename-in-selected-window)))
+          (when (and filename
+                     (nomis/dirtree/has-file? filename))
+            (nomis/dirtree/goto-file/internal filename)))
+      (error
+       ;; TODO Sometimes we expect errors. Make this reporting conditional on
+       ;;      a debug toggle. Perhaps use `nomis/dirtree/debug-message`.
+       (message "Error in nomis/dirtree/refresh-timer %s %s"
+                (car err)
+                (cdr err))))))
 
 ;;;; ---------------------------------------------------------------------------
 ;;;; Refreshing and scheduling refreshes
@@ -501,6 +545,7 @@ With prefix argument select `nomis/dirtree/buffer'"
     nomis/dirtree/refresh-interval
   (when nomis/dirtree/refresh-scheduled?
     (nomis/dirtree/refresh))
+  (nomis/dirtree/goto-file-for-follow-selected-buffer)
   `(:repeat ,nomis/dirtree/refresh-interval) ; TODO This is a weird way of specifying the repeat interval
   )
 
@@ -976,12 +1021,7 @@ Then display contents of file under point in other window.")
         (select-frame-set-input-focus original-frame)))))
 
 (cl-defun nomis/dirtree/goto-file* (&key return-to-original-window?)
-  (let* ((filename (let* ((filename (or buffer-file-name
-                                        dired-directory
-                                        ;; default-directory
-                                        )))
-                     (when filename
-                       (expand-file-name filename)))))
+  (let* ((filename (nomis/dirtree/filename-in-selected-window)))
     (cond
      ((null filename)
       (message "This buffer has no associated file.")
@@ -1401,6 +1441,7 @@ Mostly for debugging purposes."
   (dk (kbd "g")             'nomis/dirtree/refresh)
 
   (dk (kbd "a")             'nomis/dirtree/toggle-auto-refresh)
+  (dk (kbd "f")             'nomis/dirtree/toggle-follow-selected-buffer?)
 
   (dk (kbd "<RET>")         'nomis/dirtree/display-file)
   (dk (kbd "C-<return>")    'nomis/dirtree/display-file)
