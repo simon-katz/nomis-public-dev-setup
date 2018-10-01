@@ -398,10 +398,13 @@ With prefix argument select `nomis/dirtree/buffer'"
 ;;;;      one of them.
 ;;;;      This leads to bugs.
 ;;;;      - eg in follow-selection.
+;;;;      I think the other frame(s) will jump to the dirtree buffer, which is
+;;;       damned annoying.
 
 (defun nomis/dirtree/with-make-dirtree-window-active-fun (fun)
   (cl-flet ((do-it () (funcall fun)))
-    (let* ((dirtree-window (nomis/find-window-in-any-frame nomis/dirtree/buffer))
+    (let* ((dirtree-window (nomis/find-window-in-any-frame-pref-this-one
+                            nomis/dirtree/buffer))
            (dirtree-buffer (when dirtree-window
                              (window-buffer dirtree-window))))
       (if (null dirtree-window)
@@ -528,7 +531,8 @@ With prefix argument select `nomis/dirtree/buffer'"
 
 (defun nomis/dirtree/refresh ()
   (interactive)
-  (when (nomis/find-window-in-any-frame nomis/dirtree/buffer)
+  (when (nomis/find-window-in-any-frame-pref-this-one
+         nomis/dirtree/buffer)
     (condition-case err
         (progn
           (nomis/dirtree/remove-watchers-of-deleted-dirs)

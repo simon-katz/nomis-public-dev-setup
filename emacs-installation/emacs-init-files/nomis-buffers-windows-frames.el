@@ -19,6 +19,11 @@
         when w
         return w))
 
+(cl-defun nomis/find-window-in-any-frame-pref-this-one (buffer-name
+                                                        &optional frame)
+  (or (nomis/find-window-in-frame buffer-name frame)
+      (nomis/find-window-in-any-frame buffer-name)))
+
 ;;;; ___________________________________________________________________________
 
 (provide 'nomis-buffers-windows-frames)
