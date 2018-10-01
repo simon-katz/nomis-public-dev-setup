@@ -764,38 +764,45 @@ With prefix argument select `nomis/dirtree/buffer'"
                                        &key refresh-not-allowed?)
   ;; TODO You also have `nomis/dirtree/goto-file` and similar
   ;;      - Need some renaming.
-  (let* ((path (nomis/dirtree/filename->path-from-root filename)))
-    (nomis/dirtree/debug-message "Going to %s" (first (last path)))
-    (cl-labels ((goto-file-that-is-in-expansion
-                 (target-file)
-                 ;; If `target-file` is in the tree's expansion, make it the
-                 ;; selection; otherwise throw an exception.
-                 (let* ((start-file (nomis/dirtree/selected-file)))
-                   (while (not (equal target-file
-                                      (nomis/dirtree/selected-file)))
-                     (ignore-errors ; so we cycle around at end of buffer
-                       (nomis/dirtree/next-line/impl 1))
-                     (when (equal start-file
-                                  (nomis/dirtree/selected-file))
-                       (signal 'nomis/dirtree/file-not-found
-                               target-file)))))
-                (search
-                 ()
-                 (cl-loop for (f . r) on path
-                          do (progn
-                               (goto-file-that-is-in-expansion f)
-                               (when r
-                                 (nomis/dirtree/expand nil))))))
-      ;; Search. If we fail to find to find `target-file` refresh and try again.
-      (condition-case err
-          (search)
-        (nomis/dirtree/file-not-found
-         (if refresh-not-allowed?
-             (signal (car err) (cdr err))
-           (progn
-             (nomis/dirtree/refresh-tree/impl/no-arg)
-             (nomis/dirtree/goto-root/impl) ; because refresh sometimes jumps us to mad and/or bad place
-             (search))))))))
+  (if (equal filename (nomis/dirtree/selected-file))
+      (nomis/dirtree/debug-message
+       "nomis/dirtree/goto-filename -- already there -- %S"
+       filename)
+    (nomis/dirtree/debug-message
+     "==== nomis/dirtree/goto-filename -- searching -- %S"
+     filename)
+    (let* ((path (nomis/dirtree/filename->path-from-root filename)))
+      (nomis/dirtree/debug-message "Going to %s" (first (last path)))
+      (cl-labels ((goto-file-that-is-in-expansion
+                   (target-file)
+                   ;; If `target-file` is in the tree's expansion, make it the
+                   ;; selection; otherwise throw an exception.
+                   (let* ((start-file (nomis/dirtree/selected-file)))
+                     (while (not (equal target-file
+                                        (nomis/dirtree/selected-file)))
+                       (ignore-errors ; so we cycle around at end of buffer
+                         (nomis/dirtree/next-line/impl 1))
+                       (when (equal start-file
+                                    (nomis/dirtree/selected-file))
+                         (signal 'nomis/dirtree/file-not-found
+                                 target-file)))))
+                  (search
+                   ()
+                   (cl-loop for (f . r) on path
+                            do (progn
+                                 (goto-file-that-is-in-expansion f)
+                                 (when r
+                                   (nomis/dirtree/expand nil))))))
+        ;; Search. If we fail to find to find `target-file` refresh and try again.
+        (condition-case err
+            (search)
+          (nomis/dirtree/file-not-found
+           (if refresh-not-allowed?
+               (signal (car err) (cdr err))
+             (progn
+               (nomis/dirtree/refresh-tree/impl/no-arg)
+               (nomis/dirtree/goto-root/impl) ; because refresh sometimes jumps us to mad and/or bad place
+               (search)))))))))
 
 (defun nomis/dirtree/with-return-to-selected-file-fun (fun)
   (let* ((file-to-return-to (nomis/dirtree/selected-file))
