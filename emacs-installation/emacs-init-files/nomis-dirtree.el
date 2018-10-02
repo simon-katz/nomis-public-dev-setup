@@ -475,6 +475,7 @@ With prefix argument select `nomis/dirtree/buffer'"
   (interactive)
   (setf nomis/dirtree/follow-selected-buffer?
         (not nomis/dirtree/follow-selected-buffer?))
+  (nomis/dirtree/set-face)
   (message "nomis-dirtree follow-selected-buffer turned %s"
            (if nomis/dirtree/follow-selected-buffer? "on" "off")))
 
@@ -519,9 +520,55 @@ With prefix argument select `nomis/dirtree/buffer'"
       (error
        ;; TODO Sometimes we expect errors. Make this reporting conditional on
        ;;      a debug toggle. Perhaps use `nomis/dirtree/debug-message`.
-       (message "Error in nomis/dirtree/refresh-timer %s %s"
-                (car err)
-                (cdr err))))))
+       (message
+        "Error in nomis/dirtree/goto-file-for-follow-selected-buffer %s %s"
+        (car err)
+        (cdr err))))))
+
+(defface nomis/dirtree/face/follow/file-not-there
+  ;; Copied from font-lock-string-face
+  '((((class grayscale) (background light)) :foreground "DimGray" :slant italic)
+    (((class grayscale) (background dark))  :foreground "LightGray" :slant italic)
+    (((class color) (min-colors 88) (background light)) :foreground "VioletRed4")
+    (((class color) (min-colors 88) (background dark))  :foreground "LightSalmon")
+    (((class color) (min-colors 16) (background light)) :foreground "RosyBrown")
+    (((class color) (min-colors 16) (background dark))  :foreground "LightSalmon")
+    (((class color) (min-colors 8)) :foreground "green")
+    (t :slant italic))
+  "Font Lock mode face used to highlight strings."
+  :group 'font-lock-faces)
+
+(defface nomis/dirtree/face/follow/file-there
+  ;; Copied from font-lock-function-name-face
+  '((((class color) (min-colors 88) (background light)) :foreground "Blue1")
+    (((class color) (min-colors 88) (background dark))  :foreground "LightSkyBlue")
+    (((class color) (min-colors 16) (background light)) :foreground "Blue")
+    (((class color) (min-colors 16) (background dark))  :foreground "LightSkyBlue")
+    (((class color) (min-colors 8)) :foreground "blue" ; :weight bold
+     )
+    (t :inverse-video t :weight bold))
+  "Font Lock mode face used to highlight function names."
+  :group 'font-lock-faces)
+
+(defun nomis/dirtree/set-face ()
+  (when (get-buffer nomis/dirtree/buffer)
+    (let* ((foo (if nomis/dirtree/auto-refresh?
+                    'org-agenda-structure
+                  'default))
+           (bar (if nomis/dirtree/follow-selected-buffer?
+                    ;; TODO Duplicated code here.
+                    (if (let* ((filename (nomis/dirtree/filename-in-selected-window)))
+                          (and filename
+                               (nomis/dirtree/has-file? filename)))
+                        'nomis/dirtree/face/follow/file-there
+                      'nomis/dirtree/face/follow/file-not-there)
+                  'default)))
+      ;; TODO You have two dimensions
+      ;;      So something like:
+      ;;      - Use bold/non-bold for auto-refresh on/off
+      ;;      - Use colour for follow-related info.
+      (with-dirtree-buffer-if-it-exists
+        (buffer-face-set bar)))))
 
 ;;;; ---------------------------------------------------------------------------
 ;;;; Refreshing and scheduling refreshes
@@ -550,6 +597,7 @@ With prefix argument select `nomis/dirtree/buffer'"
   (when nomis/dirtree/refresh-scheduled?
     (nomis/dirtree/refresh))
   (nomis/dirtree/goto-file-for-follow-selected-buffer)
+  (nomis/dirtree/set-face)
   `(:repeat ,nomis/dirtree/refresh-interval) ; TODO This is a weird way of specifying the repeat interval
   )
 
@@ -575,6 +623,7 @@ With prefix argument select `nomis/dirtree/buffer'"
   (if nomis/dirtree/auto-refresh?
       (nomis/dirtree/turn-off-auto-refresh)
     (nomis/dirtree/turn-on-auto-refresh))
+  (nomis/dirtree/set-face)
   (message "nomis-dirtree auto refresh turned %s"
            (if nomis/dirtree/auto-refresh? "on" "off")))
 
