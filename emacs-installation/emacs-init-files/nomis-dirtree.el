@@ -399,7 +399,8 @@ With prefix argument select `nomis/dirtree/buffer'"
   (assert (get-buffer nomis/dirtree/buffer))
   (cl-flet ((do-it () (funcall fun)))
     (save-selected-window
-      (let* ((w (nomis/find-window-in-any-frame nomis/dirtree/buffer)))
+      (let* ((w (nomis/find-window-in-any-frame-pref-this-one
+                 nomis/dirtree/buffer)))
         (if w
             (progn
               (select-window w)
