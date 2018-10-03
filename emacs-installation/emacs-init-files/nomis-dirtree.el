@@ -387,56 +387,48 @@ With prefix argument select `nomis/dirtree/buffer'"
       (expand-file-name filename))))
 
 ;;;; ---------------------------------------------------------------------------
-;;;; nomis/dirtree/with-make-dirtree-window-active
+;;;; with-run-in-single-dirtree-window
 
-;;;; Without this:
+;;;; Without `with-run-in-single-dirtree-window`
+;;;; and `with-run-in-all-dirtree-windows`:
 ;;;; - If you changing the selection in the dirtree buffer, it doesn't work.
 ;;;; - If you auto-delete (from the file watcher code), the selection gets
 ;;;;   screwed up.
 
-;;;; TODO If there are multiple dirtree windows, the work is only done in
-;;;;      one of them.
-;;;;      This leads to bugs.
-;;;;      - eg in follow-selection.
-;;;;      I think the other frame(s) will jump to the dirtree buffer, which is
-;;;       damned annoying.
-
-(defun nomis/dirtree/with-make-dirtree-window-active-fun (fun)
+(defun with-run-in-single-dirtree-window-fun (fun)
+  (assert (get-buffer nomis/dirtree/buffer))
   (cl-flet ((do-it () (funcall fun)))
-    (let* ((dirtree-window (nomis/find-window-in-any-frame-pref-this-one
-                            nomis/dirtree/buffer))
-           (dirtree-buffer (when dirtree-window
-                             (window-buffer dirtree-window))))
-      (if (null dirtree-window)
-          (progn
-            (message "dirtree-window is null. This can happen when nomis/dirtree/buffer exists but is not being displayed in any frame.")
-            (do-it))
-        (let* ((original-window (selected-window)))
-          (unwind-protect
-              (progn
-                (select-window dirtree-window)
-                (do-it))
-            (select-window original-window)))))))
+    (save-selected-window
+      (let* ((w (nomis/find-window-in-any-frame nomis/dirtree/buffer)))
+        (if w
+            (progn
+              (select-window w)
+              (do-it))
+          (with-current-buffer nomis/dirtree/buffer
+            (do-it)))))))
 
-(defmacro nomis/dirtree/with-make-dirtree-window-active (&rest body)
+(defmacro with-run-in-single-dirtree-window (&rest body)
   (declare (indent 0))
-  `(nomis/dirtree/with-make-dirtree-window-active-fun
-    (lambda () ,@body)))
+  `(with-run-in-single-dirtree-window-fun (lambda () ,@body)))
 
 ;;;; ---------------------------------------------------------------------------
-;;;; with-dirtree-buffer-if-it-exists
+;;;; with-run-in-all-dirtree-windows
 
-(defun with-dirtree-buffer-if-it-exists-fun (fun)
+;;;; TODO Maybe you don't need this. Is it simply that the selection gets
+;;;;      messed up? If so, you can restore the selection (as you do elsewhere).
+;;;;      - (nomis/dirtree/goto-file/internal *nomis/dirtree/filenames/current*)
+
+(defun with-run-in-all-dirtree-windows-fun (fun)
   (cl-flet ((do-it () (funcall fun)))
-    (if (get-buffer nomis/dirtree/buffer)
-        (with-current-buffer nomis/dirtree/buffer
-          (nomis/dirtree/with-make-dirtree-window-active
-            (do-it)))
-      (do-it))))
+    (save-selected-window
+      (loop for w in (get-buffer-window-list nomis/dirtree/buffer nil t)
+            do (progn
+                 (select-window w)
+                 (do-it))))))
 
-(defmacro with-dirtree-buffer-if-it-exists (&rest body)
+(defmacro with-run-in-all-dirtree-windows (&rest body)
   (declare (indent 0))
-  `(with-dirtree-buffer-if-it-exists-fun (lambda () ,@body)))
+  `(with-run-in-all-dirtree-windows-fun (lambda () ,@body)))
 
 ;;;; ---------------------------------------------------------------------------
 ;;;; nomis/dirtree/auto-refresh?
@@ -489,7 +481,7 @@ With prefix argument select `nomis/dirtree/buffer'"
                         (file-notify-valid-p (cdr entry)))))))
 
 (defun nomis/dirtree/remove-roots-whose-dirs-are-deleted ()
-  (with-dirtree-buffer-if-it-exists
+  (with-run-in-all-dirtree-windows
     (loop for tree in (copy-list (nomis/dirtree/all-trees))
           unless (file-exists-p (nomis/dirtree/widget-file tree))
           do (progn
@@ -498,7 +490,7 @@ With prefix argument select `nomis/dirtree/buffer'"
 
 (defun nomis/dirtree/refresh-after-finding-buffer ()
   (condition-case err
-      (with-dirtree-buffer-if-it-exists
+      (with-run-in-all-dirtree-windows
         (nomis/dirtree/refresh/internal))
     (nomis/dirtree/file-not-found
      ;; We get here if the selected file is deleted -- not a problem.
@@ -506,7 +498,7 @@ With prefix argument select `nomis/dirtree/buffer'"
 
 (defun nomis/dirtree/goto-file-for-follow-selected-buffer ()
   (when (and nomis/dirtree/follow-selected-buffer?
-             (nomis/find-window-in-frame nomis/dirtree/buffer))
+             (get-buffer nomis/dirtree/buffer))
     ;; TODO Maybe show the following in dirtree buffer (perhaps using a colour):
     ;;      - Auto-refresh off
     ;;      - Follow-selected-buffer off.
@@ -567,7 +559,7 @@ With prefix argument select `nomis/dirtree/buffer'"
       ;;      So something like:
       ;;      - Use bold/non-bold for auto-refresh on/off
       ;;      - Use colour for follow-related info.
-      (with-dirtree-buffer-if-it-exists
+      (with-current-buffer nomis/dirtree/buffer
         (buffer-face-set bar)))))
 
 ;;;; ---------------------------------------------------------------------------
@@ -585,7 +577,10 @@ With prefix argument select `nomis/dirtree/buffer'"
           (nomis/dirtree/remove-watchers-of-deleted-dirs)
           (nomis/dirtree/remove-roots-whose-dirs-are-deleted)
           (nomis/dirtree/refresh-after-finding-buffer)
-          (setq nomis/dirtree/refresh-scheduled? nil))
+          (setq nomis/dirtree/refresh-scheduled? nil)
+          ;; Overcome a bug where selection gets lost when files are created
+          ;; or deleted.
+          (nomis/dirtree/goto-file/internal *nomis/dirtree/filenames/current*))
       (error
        (message "Error in nomis/dirtree/refresh %s %s"
                 (car err)
@@ -594,10 +589,11 @@ With prefix argument select `nomis/dirtree/buffer'"
 (nomis/def-timer-with-relative-repeats
     nomis/dirtree/refresh-timer
     nomis/dirtree/refresh-interval
-  (when nomis/dirtree/refresh-scheduled?
-    (nomis/dirtree/refresh))
-  (nomis/dirtree/goto-file-for-follow-selected-buffer)
-  (nomis/dirtree/set-face)
+  (when (get-buffer nomis/dirtree/buffer)
+    (when nomis/dirtree/refresh-scheduled?
+      (nomis/dirtree/refresh))
+    (nomis/dirtree/goto-file-for-follow-selected-buffer)
+    (nomis/dirtree/set-face))
   `(:repeat ,nomis/dirtree/refresh-interval) ; TODO This is a weird way of specifying the repeat interval
   )
 
@@ -1039,7 +1035,7 @@ Then display contents of file under point in other window.")
          (nomis/dirtree/display-file*)))))
 
 (defun nomis/dirtree/goto-file/internal (filename)
-  (with-dirtree-buffer-if-it-exists
+  (with-run-in-all-dirtree-windows
     (nomis/dirtree/with-note-selection
      (nomis/dirtree/goto-filename filename))
     (when (bound-and-true-p hl-line-mode)
@@ -1056,7 +1052,8 @@ Then display contents of file under point in other window.")
          (error "No such file: %S" filename))))
 
 (defun nomis/dirtree/has-file? (filename)
-  (with-dirtree-buffer-if-it-exists
+  (assert (get-buffer nomis/dirtree/buffer))
+  (with-current-buffer nomis/dirtree/buffer
     (nomis/dirtree/filename->root-widget/no-error filename)))
 
 (defun nomis/dirtree/make-dirtree-if-there-is-not-one (filename)
@@ -1469,7 +1466,8 @@ Mostly for debugging purposes."
     (nomis/dirtree/show-widget-info widget t)))
 
 (defun nomis/dirtree/delete-tree/do-it ()
-  (with-dirtree-buffer-if-it-exists
+  (assert (get-buffer nomis/dirtree/buffer))
+  (with-run-in-single-dirtree-window dirtree-buffer-if-it-exists
     (assert (tree-mode-root-linep))
     (nomis/dirtree/collapse-all) ; an easy way to remove watchers.
     (tree-mode-delete (tree-mode-tree-ap))))
