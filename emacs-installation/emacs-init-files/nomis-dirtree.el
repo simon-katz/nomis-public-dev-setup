@@ -1467,7 +1467,7 @@ Mostly for debugging purposes."
 
 (defun nomis/dirtree/delete-tree/do-it ()
   (assert (get-buffer nomis/dirtree/buffer))
-  (with-run-in-single-dirtree-window dirtree-buffer-if-it-exists
+  (with-run-in-single-dirtree-window
     (assert (tree-mode-root-linep))
     (nomis/dirtree/collapse-all) ; an easy way to remove watchers.
     (tree-mode-delete (tree-mode-tree-ap))))
