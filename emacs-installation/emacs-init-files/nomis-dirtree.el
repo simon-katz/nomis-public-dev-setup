@@ -58,17 +58,8 @@
 ;;;; - Tidy.
 
 ;;;; ___________________________________________________________________________
-
-(defvar *nomis/dirtree/print-debug-messages?* nil)
-
-(defun nomis/dirtree/debug-message (format-string &rest args)
-  (when *nomis/dirtree/print-debug-messages?*
-    (apply #'message format-string args )))
-
 ;;;; ___________________________________________________________________________
-;;;; ___________________________________________________________________________
-;;;; Initially we have the original dirtree, with much modification.
-;;;; I don't have a deep understanding of this, but I've hacked it a fair bit.
+;;;; Requires
 
 (eval-when-compile
   (require 'cl))
@@ -83,6 +74,34 @@
 (require 'nomis-buffers-windows-frames)
 (require 'nomis-files)
 (require 'nomis-timers)
+
+;;;; ___________________________________________________________________________
+;;;; ___________________________________________________________________________
+;;;; We'll start with some of my stuff.
+
+;;;; ___________________________________________________________________________
+;;;; Debug logging
+
+(defvar *nomis/dirtree/print-debug-messages?* nil)
+
+(defun nomis/dirtree/debug-message (format-string &rest args)
+  (when *nomis/dirtree/print-debug-messages?*
+    (apply #'message format-string args )))
+
+;;;; ___________________________________________________________________________
+;;;; Settings -- intended for tailoring
+
+(defvar nomis/dirtree/no-auto-refresh-bg "Grey80")
+(defvar nomis/dirtree/follow-and-file-in-dirtree-fg "Blue")
+(defvar nomis/dirtree/follow-and-file-not-in-dirtree-fg "VioletRed4")
+
+(defvar nomis/dirtree/auto-refresh? nil)
+(defvar nomis/dirtree/follow-selected-buffer? nil)
+
+;;;; ___________________________________________________________________________
+;;;; ___________________________________________________________________________
+;;;; Next we have the original dirtree, with much modification.
+;;;; I don't have a deep understanding of this, but I've hacked it a fair bit.
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ;;;; Resume the original dirtree, with much modification.
@@ -321,7 +340,18 @@ With prefix argument select `nomis/dirtree/buffer'"
 
 ;;;; ___________________________________________________________________________
 ;;;; ___________________________________________________________________________
-;;;; My stuff.
+;;;; Finally, the rest of my stuff.
+
+;;;; ___________________________________________________________________________
+;;;; Misc utilities
+
+(defun nomis/dirtree/filename-in-selected-window ()
+  (let* ((filename (or buffer-file-name
+                       dired-directory
+                       ;; default-directory
+                       )))
+    (when filename
+      (expand-file-name filename))))
 
 ;;;; ___________________________________________________________________________
 ;;;; Get rid of annoying messages.
@@ -378,17 +408,7 @@ With prefix argument select `nomis/dirtree/buffer'"
   (tree-mode-previous-sib n))
 
 ;;;; ___________________________________________________________________________
-;;;; Settings
-
-(defvar nomis/dirtree/auto-refresh? nil)
-
-(defvar nomis/dirtree/follow-selected-buffer? nil)
-
-;;;; ___________________________________________________________________________
-
-(defvar nomis/dirtree/no-auto-refresh-bg "Grey80")
-(defvar nomis/dirtree/follow-and-file-in-dirtree-fg "Blue")
-(defvar nomis/dirtree/follow-and-file-not-in-dirtree-fg "VioletRed4")
+;;;; Buffer face
 
 (defun nomis/dirtree/make-face-kvs ()
   (list :background
@@ -459,17 +479,6 @@ With prefix argument select `nomis/dirtree/buffer'"
   (nomis/dirtree/set-face)
   (message "nomis-dirtree auto refresh turned %s"
            (if nomis/dirtree/auto-refresh? "on" "off")))
-
-;;;; ___________________________________________________________________________
-;;;; Misc utilities
-
-(defun nomis/dirtree/filename-in-selected-window ()
-  (let* ((filename (or buffer-file-name
-                       dired-directory
-                       ;; default-directory
-                       )))
-    (when filename
-      (expand-file-name filename))))
 
 ;;;; ___________________________________________________________________________
 ;;;; with-run-in-single-dirtree-window
