@@ -386,50 +386,38 @@ With prefix argument select `nomis/dirtree/buffer'"
 
 ;;;; ___________________________________________________________________________
 
-(defface nomis/dirtree/face/follow/file-not-there
-  ;; Copied from font-lock-string-face
-  '((((class grayscale) (background light)) :foreground "DimGray" :slant italic)
-    (((class grayscale) (background dark))  :foreground "LightGray" :slant italic)
-    (((class color) (min-colors 88) (background light)) :foreground "VioletRed4")
-    (((class color) (min-colors 88) (background dark))  :foreground "LightSalmon")
-    (((class color) (min-colors 16) (background light)) :foreground "RosyBrown")
-    (((class color) (min-colors 16) (background dark))  :foreground "LightSalmon")
-    (((class color) (min-colors 8)) :foreground "green")
-    (t :slant italic))
-  "Font Lock mode face used to highlight strings."
-  :group 'font-lock-faces)
+(defvar nomis/dirtree/no-auto-refresh-bg "Grey80")
+(defvar nomis/dirtree/follow-and-file-in-dirtree-fg "Blue")
+(defvar nomis/dirtree/follow-and-file-not-in-dirtree-fg "VioletRed4")
 
-(defface nomis/dirtree/face/follow/file-there
-  ;; Copied from font-lock-function-name-face
-  '((((class color) (min-colors 88) (background light)) :foreground "Blue1")
-    (((class color) (min-colors 88) (background dark))  :foreground "LightSkyBlue")
-    (((class color) (min-colors 16) (background light)) :foreground "Blue")
-    (((class color) (min-colors 16) (background dark))  :foreground "LightSkyBlue")
-    (((class color) (min-colors 8)) :foreground "blue" ; :weight bold
-     )
-    (t :inverse-video t :weight bold))
-  "Font Lock mode face used to highlight function names."
-  :group 'font-lock-faces)
+(defun nomis/dirtree/make-face-kvs ()
+  (list :background
+        (if nomis/dirtree/auto-refresh?
+            'unspecified
+          nomis/dirtree/no-auto-refresh-bg)
+        :foreground
+        (cond ((not nomis/dirtree/follow-selected-buffer?)
+               'unspecified)
+              ((let* ((filename (nomis/dirtree/filename-in-selected-window)))
+                 (and filename
+                      (nomis/dirtree/has-file? filename)))
+               nomis/dirtree/follow-and-file-in-dirtree-fg)
+              (t
+               nomis/dirtree/follow-and-file-not-in-dirtree-fg))))
+
+(defvar nomis/dirtree/face-cookie nil)
 
 (defun nomis/dirtree/set-face ()
   (when (get-buffer nomis/dirtree/buffer)
-    (let* ((foo (if nomis/dirtree/auto-refresh?
-                    'org-agenda-structure
-                  'default))
-           (bar (if nomis/dirtree/follow-selected-buffer?
-                    ;; TODO Duplicated code here.
-                    (if (let* ((filename (nomis/dirtree/filename-in-selected-window)))
-                          (and filename
-                               (nomis/dirtree/has-file? filename)))
-                        'nomis/dirtree/face/follow/file-there
-                      'nomis/dirtree/face/follow/file-not-there)
-                  'default)))
-      ;; TODO You have two dimensions
-      ;;      So something like:
-      ;;      - Use bold/non-bold for auto-refresh on/off
-      ;;      - Use colour for follow-related info.
+    (let* ((face-kvs (nomis/dirtree/make-face-kvs)))
       (with-current-buffer nomis/dirtree/buffer
-        (buffer-face-set bar)))))
+        (face-remap-reset-base 'default)
+        (when nomis/dirtree/face-cookie
+          (face-remap-remove-relative nomis/dirtree/face-cookie)
+          (setq nomis/dirtree/face-cookie nil))
+        (setq nomis/dirtree/face-cookie
+              (face-remap-add-relative 'default
+                                       (list face-kvs)))))))
 
 ;;;; ___________________________________________________________________________
 ;;;; nomis/dirtree/toggle-follow-selected-buffer?
@@ -598,11 +586,6 @@ With prefix argument select `nomis/dirtree/buffer'"
 (defun nomis/dirtree/goto-file-for-follow-selected-buffer ()
   (when (and nomis/dirtree/follow-selected-buffer?
              (get-buffer nomis/dirtree/buffer))
-    ;; TODO Maybe show the following in dirtree buffer (perhaps using a colour):
-    ;;      - Auto-refresh off
-    ;;      - Follow-selected-buffer off.
-    ;;      - Selected buffer has no file.
-    ;;      - Selected buffer's file is not in dirtree.
     (condition-case err
         (let* ((filename (nomis/dirtree/filename-in-selected-window)))
           (when (and filename
