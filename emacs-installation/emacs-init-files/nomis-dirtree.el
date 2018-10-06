@@ -614,8 +614,7 @@ With prefix argument select `nomis/dirtree/buffer'"
        (message
         "Error in nomis/dirtree/goto-file-for-follow-selected-buffer %s %s"
         (car err)
-        (cdr err)))))
-  (nomis/dirtree/set-face))
+        (cdr err))))))
 
 (nomis/def-timer-with-relative-repeats
     nomis/dirtree/refresh-timer
@@ -623,7 +622,8 @@ With prefix argument select `nomis/dirtree/buffer'"
   (when (get-buffer nomis/dirtree/buffer)
     (when nomis/dirtree/refresh-scheduled?
       (nomis/dirtree/refresh/plain))
-    (nomis/dirtree/goto-file-for-follow-selected-buffer))
+    (nomis/dirtree/goto-file-for-follow-selected-buffer)
+    (nomis/dirtree/set-face))
   `(:repeat ,nomis/dirtree/refresh-interval) ; TODO This is a weird way of specifying the repeat interval
   )
 
