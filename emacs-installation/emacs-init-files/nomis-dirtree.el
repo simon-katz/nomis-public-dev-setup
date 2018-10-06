@@ -324,10 +324,6 @@ With prefix argument select `nomis/dirtree/buffer'"
 ;;;; My stuff.
 
 ;;;; ___________________________________________________________________________
-
-;;;; TODO Replace all -------- separators wth ________
-
-;;;; ---------------------------------------------------------------------------
 ;;;; Get rid of annoying messages.
 
 ;;;; `widget-move` has a call to `widget-echo-help`, which causes annoying
@@ -349,7 +345,7 @@ With prefix argument select `nomis/dirtree/buffer'"
                   (apply orig-fun args)))
               `((name . ,advice-name))))
 
-;;;; ---------------------------------------------------------------------------
+;;;; ___________________________________________________________________________
 ;;;; Wrappers for tree mode stuff
 
 (defun nomis/dirtree/all-trees ()
@@ -435,7 +431,7 @@ With prefix argument select `nomis/dirtree/buffer'"
       (with-current-buffer nomis/dirtree/buffer
         (buffer-face-set bar)))))
 
-;;;; ---------------------------------------------------------------------------
+;;;; ___________________________________________________________________________
 ;;;; nomis/dirtree/toggle-follow-selected-buffer?
 
 (defun nomis/dirtree/toggle-follow-selected-buffer? ()
@@ -446,7 +442,7 @@ With prefix argument select `nomis/dirtree/buffer'"
   (message "nomis-dirtree follow-selected-buffer turned %s"
            (if nomis/dirtree/follow-selected-buffer? "on" "off")))
 
-;;;; ---------------------------------------------------------------------------
+;;;; ___________________________________________________________________________
 ;;;; nomis/dirtree/toggle-auto-refresh
 
 (defun nomis/dirtree/turn-on-auto-refresh ()
@@ -473,7 +469,7 @@ With prefix argument select `nomis/dirtree/buffer'"
   (message "nomis-dirtree auto refresh turned %s"
            (if nomis/dirtree/auto-refresh? "on" "off")))
 
-;;;; ---------------------------------------------------------------------------
+;;;; ___________________________________________________________________________
 ;;;; Misc utilities
 
 (defun nomis/dirtree/filename-in-selected-window ()
@@ -484,7 +480,7 @@ With prefix argument select `nomis/dirtree/buffer'"
     (when filename
       (expand-file-name filename))))
 
-;;;; ---------------------------------------------------------------------------
+;;;; ___________________________________________________________________________
 ;;;; with-run-in-single-dirtree-window
 
 ;;;; Without `with-run-in-single-dirtree-window`
@@ -510,7 +506,7 @@ With prefix argument select `nomis/dirtree/buffer'"
   (declare (indent 0))
   `(with-run-in-single-dirtree-window-fun (lambda () ,@body)))
 
-;;;; ---------------------------------------------------------------------------
+;;;; ___________________________________________________________________________
 ;;;; with-run-in-all-dirtree-windows
 
 (defvar *doing-run-in-all-dirtree-windows?* nil)
@@ -529,7 +525,7 @@ With prefix argument select `nomis/dirtree/buffer'"
   (declare (indent 0))
   `(with-run-in-all-dirtree-windows-fun (lambda () ,@body)))
 
-;;;; ---------------------------------------------------------------------------
+;;;; ___________________________________________________________________________
 ;;;; nomis/dirtree/expanded-directories
 ;;;; nomis/dirtree/directory-watchers
 
@@ -555,7 +551,7 @@ With prefix argument select `nomis/dirtree/buffer'"
         (-remove-first (-partial #'equal directory)
                        nomis/dirtree/expanded-directories)))
 
-;;;; ---------------------------------------------------------------------------
+;;;; ___________________________________________________________________________
 ;;;; Refreshing and scheduling refreshes
 
 (defvar nomis/dirtree/refresh-scheduled? nil)
@@ -631,7 +627,7 @@ With prefix argument select `nomis/dirtree/buffer'"
   `(:repeat ,nomis/dirtree/refresh-interval) ; TODO This is a weird way of specifying the repeat interval
   )
 
-;;;; ---------------------------------------------------------------------------
+;;;; ___________________________________________________________________________
 ;;;; File watchers
 
 (defun nomis/dirtree/handle-watch-event (event)
@@ -676,7 +672,7 @@ With prefix argument select `nomis/dirtree/buffer'"
   (when nomis/dirtree/auto-refresh?
     (nomis/dirtree/remove-directory-watcher directory)))
 
-;;;; ---------------------------------------------------------------------------
+;;;; ___________________________________________________________________________
 ;;;; nomis/dirtree/kill-buffer-hook
 
 (cl-defun nomis/dirtree/kill-buffer-hook (&rest args)
@@ -688,7 +684,7 @@ With prefix argument select `nomis/dirtree/buffer'"
 (add-hook 'kill-buffer-hook
           'nomis/dirtree/kill-buffer-hook)
 
-;;;; ---------------------------------------------------------------------------
+;;;; ___________________________________________________________________________
 ;;;; Widget and file stuff.
 
 ;;;; FIXME Would be nice to have clearer separation of the widget and
@@ -848,7 +844,7 @@ With prefix argument select `nomis/dirtree/buffer'"
   (mapc #'collapse-recursively
         (nomis/dirtree/all-trees)))
 
-;;;; ---------------------------------------------------------------------------
+;;;; ___________________________________________________________________________
 ;;;; Navigation
 
 (defun nomis/dirtree/goto-widget (widget)
@@ -929,7 +925,7 @@ With prefix argument select `nomis/dirtree/buffer'"
    (mapc #'nomis/dirtree/refresh-tree/impl/with-arg
          (nomis/dirtree/all-trees))))
 
-;;;; ---------------------------------------------------------------------------
+;;;; ___________________________________________________________________________
 ;;;; History
 
 (defvar *nomis/dirtree/inhibit-history?* nil)
@@ -996,7 +992,7 @@ With prefix argument select `nomis/dirtree/buffer'"
     (setq *nomis/dirtree/filenames/current* filename)
     (nomis/dirtree/goto-filename filename)))
 
-;;;; ---------------------------------------------------------------------------
+;;;; ___________________________________________________________________________
 ;;;; User-visible commands.
 
 (defun nomis/dirtree/display-file* ()
