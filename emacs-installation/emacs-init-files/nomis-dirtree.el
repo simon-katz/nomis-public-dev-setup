@@ -89,14 +89,33 @@
     (apply #'message format-string args )))
 
 ;;;; ___________________________________________________________________________
-;;;; Settings -- intended for tailoring
-
-(defvar nomis/dirtree/no-auto-refresh-bg "Grey80")
-(defvar nomis/dirtree/follow-and-file-in-dirtree-fg "Blue")
-(defvar nomis/dirtree/follow-and-file-not-in-dirtree-fg "VioletRed4")
+;;;; Settings -- can be customised
 
 (defvar nomis/dirtree/auto-refresh? nil)
+(defvar nomis/dirtree/auto-refresh-interval-secs 2)
+
 (defvar nomis/dirtree/follow-selected-buffer? nil)
+
+(defvar nomis/dirtree/max-history-size 100)
+
+(defvar nomis/dirtree/dirs-at-top? nil)
+(defvar nomis/dirtree/hl-line-background "Grey90")
+(defvar nomis/dirtree/no-auto-refresh-bg "Grey80")
+(defvar nomis/dirtree/file-in-dirtree-fg-when-following "Blue")
+(defvar nomis/dirtree/file-not-in-dirtree-fg-when-following "VioletRed4")
+
+(defvar nomis/dirtree/dirs-to-keep-collapsed-unless-forced
+  '("\\.emacs\\.d"
+    "\\.git"
+    "\\.idea"
+    "\\.repl"
+    "\\.vagrant"
+    "\\.sync"
+    "checkouts"
+    "node_modules"
+    "out"
+    "target"
+    "zzzz-nomis-dirtree-test-keep-collapsed"))
 
 ;;;; ___________________________________________________________________________
 ;;;; ___________________________________________________________________________
@@ -280,11 +299,11 @@ With prefix argument select `nomis/dirtree/buffer'"
   (tree-widget-set-theme "folder")
   (hl-line-mode)
   (face-remap-add-relative 'hl-line
-                           (list (list :background "grey90"
-                                       :box nil))))
+                           (list
+                            (list :background nomis/dirtree/hl-line-background
+                                  :box nil))))
 
 (defconst nomis/dirtree/approach-to-children :new)
-(defconst nomis/dirtree/dirs-at-top? nil)
 
 (defun nomis/dirtree/setup-children (tree)
   "expand directory"
@@ -421,9 +440,9 @@ With prefix argument select `nomis/dirtree/buffer'"
               ((let* ((filename (nomis/dirtree/filename-in-selected-window)))
                  (and filename
                       (nomis/dirtree/has-file? filename)))
-               nomis/dirtree/follow-and-file-in-dirtree-fg)
+               nomis/dirtree/file-in-dirtree-fg-when-following)
               (t
-               nomis/dirtree/follow-and-file-not-in-dirtree-fg))))
+               nomis/dirtree/file-not-in-dirtree-fg-when-following))))
 
 (defvar nomis/dirtree/face-cookie nil)
 (defvar nomis/dirtree/previous-face-kvs nil)
@@ -555,7 +574,6 @@ With prefix argument select `nomis/dirtree/buffer'"
 ;;;; Refreshing and scheduling refreshes
 
 (defvar nomis/dirtree/refresh-scheduled? nil)
-(defvar nomis/dirtree/refresh-interval 2)
 
 (defun nomis/dirtree/refresh/plain ()
   (interactive)
@@ -613,13 +631,13 @@ With prefix argument select `nomis/dirtree/buffer'"
 
 (nomis/def-timer-with-relative-repeats
     nomis/dirtree/refresh-timer
-    nomis/dirtree/refresh-interval
+    nomis/dirtree/auto-refresh-interval-secs
   (when (get-buffer nomis/dirtree/buffer)
     (when nomis/dirtree/refresh-scheduled?
       (nomis/dirtree/refresh/plain))
     (nomis/dirtree/goto-file-for-follow-selected-buffer)
     (nomis/dirtree/set-face))
-  `(:repeat ,nomis/dirtree/refresh-interval) ; TODO This is a weird way of specifying the repeat interval
+  `(:repeat ,nomis/dirtree/auto-refresh-interval-secs) ; TODO This is a weird way of specifying the repeat interval
   )
 
 ;;;; ___________________________________________________________________________
@@ -705,30 +723,17 @@ With prefix argument select `nomis/dirtree/buffer'"
       (-> (nomis/dirtree/widget-file widget)
           nomis/dirtree/note-directory-collapsed))))
 
-(defvar *nomis/dirtree/dirs-to-keep-collapsed-unless-forced*
-  '("\\.emacs\\.d"
-    "\\.git"
-    "\\.idea"
-    "\\.repl"
-    "\\.vagrant"
-    "\\.sync"
-    "checkouts"
-    "node_modules"
-    "out"
-    "target"
-    "zzzz-nomis-dirtree-test-keep-collapsed"))
-
 (defun nomis/dirtree/directory-to-keep-collapsed?/fullname (name)
   (some (lambda (no-expand-name)
           (string-match (concat "/" no-expand-name "/" "$")
                         name))
-        *nomis/dirtree/dirs-to-keep-collapsed-unless-forced*))
+        nomis/dirtree/dirs-to-keep-collapsed-unless-forced))
 
 (defun nomis/dirtree/directory-to-keep-collapsed?/basename (basename)
   (let* ((res (some (lambda (no-expand-name)
                       (string-match (concat "^" no-expand-name "$")
                                     basename))
-                    *nomis/dirtree/dirs-to-keep-collapsed-unless-forced*)))
+                    nomis/dirtree/dirs-to-keep-collapsed-unless-forced)))
     res))
 
 (defun nomis/dirtree/widget-file (widget)
@@ -929,8 +934,6 @@ With prefix argument select `nomis/dirtree/buffer'"
 (defvar *nomis/dirtree/filenames/history-list* '())
 (defvar *nomis/dirtree/filenames/future-list* '())
 
-(defvar *nomis/dirtree/max-history-size* 100)
-
 (defun nomis/dirtree/clear-history ()
   (interactive)
   (setq *nomis/dirtree/filenames/history-list* '())
@@ -951,7 +954,7 @@ With prefix argument select `nomis/dirtree/buffer'"
         (setq *nomis/dirtree/filenames/history-list*
               (seq-take (cons *nomis/dirtree/filenames/current*
                               *nomis/dirtree/filenames/history-list*)
-                        *nomis/dirtree/max-history-size*)))
+                        nomis/dirtree/max-history-size)))
       (setq *nomis/dirtree/filenames/current* (nomis/dirtree/selected-file))
       (setq *nomis/dirtree/filenames/future-list* '()))))
 
