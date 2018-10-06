@@ -475,26 +475,6 @@ With prefix argument select `nomis/dirtree/buffer'"
 ;;;; ---------------------------------------------------------------------------
 ;;;; Stuff to do on scheduled refresh
 
-(defun nomis/dirtree/remove-watchers-of-deleted-dirs ()
-  (setq nomis/dirtree/directory-watchers
-        (->> nomis/dirtree/directory-watchers
-             (-filter (lambda (entry)
-                        (file-notify-valid-p (cdr entry)))))))
-
-(defun nomis/dirtree/remove-roots-whose-dirs-are-deleted ()
-  (loop for tree in (copy-list (nomis/dirtree/all-trees))
-        unless (file-exists-p (nomis/dirtree/widget-file tree))
-        do (progn
-             (nomis/dirtree/goto-widget tree)
-             (nomis/dirtree/delete-tree/do-it))))
-
-(defun nomis/dirtree/refresh-allowing-file-not-found ()
-  (condition-case err
-      (nomis/dirtree/refresh/internal)
-    (nomis/dirtree/file-not-found
-     ;; We get here if the selected file is deleted -- not a problem.
-     )))
-
 (defun nomis/dirtree/goto-file-for-follow-selected-buffer ()
   (when (and nomis/dirtree/follow-selected-buffer?
              (get-buffer nomis/dirtree/buffer))
@@ -567,14 +547,32 @@ With prefix argument select `nomis/dirtree/buffer'"
 (defvar nomis/dirtree/refresh-scheduled? nil)
 (defvar nomis/dirtree/refresh-interval 2)
 
-(defun nomis/dirtree/refresh ()
+(defun nomis/dirtree/refresh/plain ()
   (interactive)
-  (when (nomis/find-window-in-any-frame-pref-this-one
-         nomis/dirtree/buffer)
+  (when (nomis/find-window-in-any-frame-pref-this-one nomis/dirtree/buffer)
     (condition-case err
-        (progn
-          (nomis/dirtree/remove-watchers-of-deleted-dirs)
+        (cl-flet ((nomis/dirtree/remove-watchers-of-deleted-dirs
+                   ()
+                   (setq nomis/dirtree/directory-watchers
+                         (->> nomis/dirtree/directory-watchers
+                              (-filter (lambda (entry)
+                                         (file-notify-valid-p (cdr entry)))))))
+                  (nomis/dirtree/remove-roots-whose-dirs-are-deleted
+                   ()
+                   (loop for tree in (copy-list (nomis/dirtree/all-trees))
+                         unless (file-exists-p (nomis/dirtree/widget-file tree))
+                         do (progn
+                              (nomis/dirtree/goto-widget tree)
+                              (nomis/dirtree/delete-tree/do-it))))
+                  (nomis/dirtree/refresh-allowing-file-not-found
+                   ()
+                   (condition-case err
+                       (nomis/dirtree/refresh/internal)
+                     (nomis/dirtree/file-not-found
+                      ;; We get here if the selected file is deleted -- not a problem.
+                      ))))
           (with-run-in-all-dirtree-windows
+            (nomis/dirtree/remove-watchers-of-deleted-dirs)
             (nomis/dirtree/remove-roots-whose-dirs-are-deleted)
             (nomis/dirtree/refresh-allowing-file-not-found))
           (setq nomis/dirtree/refresh-scheduled? nil)
@@ -583,7 +581,7 @@ With prefix argument select `nomis/dirtree/buffer'"
           (when (nomis/dirtree/has-file? *nomis/dirtree/filenames/current*)
             (nomis/dirtree/goto-file/internal *nomis/dirtree/filenames/current*)))
       (error
-       (message "Error in nomis/dirtree/refresh %s %s"
+       (message "Error in nomis/dirtree/refresh/plain %s %s"
                 (car err)
                 (cdr err))))))
 
@@ -592,7 +590,7 @@ With prefix argument select `nomis/dirtree/buffer'"
     nomis/dirtree/refresh-interval
   (when (get-buffer nomis/dirtree/buffer)
     (when nomis/dirtree/refresh-scheduled?
-      (nomis/dirtree/refresh))
+      (nomis/dirtree/refresh/plain))
     (nomis/dirtree/goto-file-for-follow-selected-buffer)
     (nomis/dirtree/set-face))
   `(:repeat ,nomis/dirtree/refresh-interval) ; TODO This is a weird way of specifying the repeat interval
@@ -604,7 +602,7 @@ With prefix argument select `nomis/dirtree/buffer'"
   (when (not nomis/dirtree/auto-refresh?)
     (assert (null nomis/dirtree/directory-watchers))
     (setq nomis/dirtree/auto-refresh? t)
-    (nomis/dirtree/refresh)
+    (nomis/dirtree/refresh/plain)
     (mapc #'nomis/dirtree/add-directory-watcher
           nomis/dirtree/expanded-directories)))
 
@@ -1492,7 +1490,7 @@ Mostly for debugging purposes."
 
   (define-key widget-keymap (kbd "<RET>") nil)
 
-  (dk (kbd "g")             'nomis/dirtree/refresh)
+  (dk (kbd "g")             'nomis/dirtree/refresh/plain)
 
   (dk (kbd "a")             'nomis/dirtree/toggle-auto-refresh)
   (dk (kbd "f")             'nomis/dirtree/toggle-follow-selected-buffer?)
