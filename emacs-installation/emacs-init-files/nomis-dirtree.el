@@ -415,17 +415,17 @@ With prefix argument select `nomis/dirtree/buffer'"
 ;;;; ---------------------------------------------------------------------------
 ;;;; with-run-in-all-dirtree-windows
 
-;;;; TODO Maybe you don't need this. Is it simply that the selection gets
-;;;;      messed up? If so, you can restore the selection (as you do elsewhere).
-;;;;      - (nomis/dirtree/goto-file/internal *nomis/dirtree/filenames/current*)
+(defvar *doing-run-in-all-dirtree-windows?* nil)
 
 (defun with-run-in-all-dirtree-windows-fun (fun)
   (cl-flet ((do-it () (funcall fun)))
-    (save-selected-window
-      (loop for w in (get-buffer-window-list nomis/dirtree/buffer nil t)
-            do (progn
-                 (select-window w)
-                 (do-it))))))
+    (if *doing-run-in-all-dirtree-windows?*
+        (do-it)
+      (save-selected-window
+        (loop for w in (get-buffer-window-list nomis/dirtree/buffer nil t)
+              do (progn
+                   (select-window w)
+                   (do-it)))))))
 
 (defmacro with-run-in-all-dirtree-windows (&rest body)
   (declare (indent 0))
