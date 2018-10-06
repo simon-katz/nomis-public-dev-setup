@@ -66,6 +66,7 @@
     (apply #'message format-string args )))
 
 ;;;; ___________________________________________________________________________
+;;;; ___________________________________________________________________________
 ;;;; Initially we have the original dirtree, with much modification.
 ;;;; I don't have a deep understanding of this, but I've hacked it a fair bit.
 
@@ -319,7 +320,12 @@ With prefix argument select `nomis/dirtree/buffer'"
                      files-and-dirs))))))))
 
 ;;;; ___________________________________________________________________________
+;;;; ___________________________________________________________________________
 ;;;; My stuff.
+
+;;;; ___________________________________________________________________________
+
+;;;; TODO Replace all -------- separators wth ________
 
 ;;;; ---------------------------------------------------------------------------
 ;;;; Get rid of annoying messages.
@@ -374,6 +380,98 @@ With prefix argument select `nomis/dirtree/buffer'"
 
 (defun nomis/dirtree/previous-sib/impl (n)
   (tree-mode-previous-sib n))
+
+;;;; ___________________________________________________________________________
+;;;; Settings
+
+(defvar nomis/dirtree/auto-refresh? nil)
+
+(defvar nomis/dirtree/follow-selected-buffer? nil)
+
+;;;; ___________________________________________________________________________
+
+(defface nomis/dirtree/face/follow/file-not-there
+  ;; Copied from font-lock-string-face
+  '((((class grayscale) (background light)) :foreground "DimGray" :slant italic)
+    (((class grayscale) (background dark))  :foreground "LightGray" :slant italic)
+    (((class color) (min-colors 88) (background light)) :foreground "VioletRed4")
+    (((class color) (min-colors 88) (background dark))  :foreground "LightSalmon")
+    (((class color) (min-colors 16) (background light)) :foreground "RosyBrown")
+    (((class color) (min-colors 16) (background dark))  :foreground "LightSalmon")
+    (((class color) (min-colors 8)) :foreground "green")
+    (t :slant italic))
+  "Font Lock mode face used to highlight strings."
+  :group 'font-lock-faces)
+
+(defface nomis/dirtree/face/follow/file-there
+  ;; Copied from font-lock-function-name-face
+  '((((class color) (min-colors 88) (background light)) :foreground "Blue1")
+    (((class color) (min-colors 88) (background dark))  :foreground "LightSkyBlue")
+    (((class color) (min-colors 16) (background light)) :foreground "Blue")
+    (((class color) (min-colors 16) (background dark))  :foreground "LightSkyBlue")
+    (((class color) (min-colors 8)) :foreground "blue" ; :weight bold
+     )
+    (t :inverse-video t :weight bold))
+  "Font Lock mode face used to highlight function names."
+  :group 'font-lock-faces)
+
+(defun nomis/dirtree/set-face ()
+  (when (get-buffer nomis/dirtree/buffer)
+    (let* ((foo (if nomis/dirtree/auto-refresh?
+                    'org-agenda-structure
+                  'default))
+           (bar (if nomis/dirtree/follow-selected-buffer?
+                    ;; TODO Duplicated code here.
+                    (if (let* ((filename (nomis/dirtree/filename-in-selected-window)))
+                          (and filename
+                               (nomis/dirtree/has-file? filename)))
+                        'nomis/dirtree/face/follow/file-there
+                      'nomis/dirtree/face/follow/file-not-there)
+                  'default)))
+      ;; TODO You have two dimensions
+      ;;      So something like:
+      ;;      - Use bold/non-bold for auto-refresh on/off
+      ;;      - Use colour for follow-related info.
+      (with-current-buffer nomis/dirtree/buffer
+        (buffer-face-set bar)))))
+
+;;;; ---------------------------------------------------------------------------
+;;;; nomis/dirtree/toggle-follow-selected-buffer?
+
+(defun nomis/dirtree/toggle-follow-selected-buffer? ()
+  (interactive)
+  (setf nomis/dirtree/follow-selected-buffer?
+        (not nomis/dirtree/follow-selected-buffer?))
+  (nomis/dirtree/set-face)
+  (message "nomis-dirtree follow-selected-buffer turned %s"
+           (if nomis/dirtree/follow-selected-buffer? "on" "off")))
+
+;;;; ---------------------------------------------------------------------------
+;;;; nomis/dirtree/toggle-auto-refresh
+
+(defun nomis/dirtree/turn-on-auto-refresh ()
+  (when (not nomis/dirtree/auto-refresh?)
+    (assert (null nomis/dirtree/directory-watchers))
+    (setq nomis/dirtree/auto-refresh? t)
+    (nomis/dirtree/refresh/plain)
+    (mapc #'nomis/dirtree/add-directory-watcher
+          nomis/dirtree/expanded-directories)))
+
+(defun nomis/dirtree/turn-off-auto-refresh ()
+  (when nomis/dirtree/auto-refresh?
+    (setq nomis/dirtree/auto-refresh? nil)
+    (mapc #'nomis/dirtree/remove-directory-watcher
+          nomis/dirtree/expanded-directories)
+    (assert (null nomis/dirtree/directory-watchers))))
+
+(defun nomis/dirtree/toggle-auto-refresh ()
+  (interactive)
+  (if nomis/dirtree/auto-refresh?
+      (nomis/dirtree/turn-off-auto-refresh)
+    (nomis/dirtree/turn-on-auto-refresh))
+  (nomis/dirtree/set-face)
+  (message "nomis-dirtree auto refresh turned %s"
+           (if nomis/dirtree/auto-refresh? "on" "off")))
 
 ;;;; ---------------------------------------------------------------------------
 ;;;; Misc utilities
@@ -432,13 +530,11 @@ With prefix argument select `nomis/dirtree/buffer'"
   `(with-run-in-all-dirtree-windows-fun (lambda () ,@body)))
 
 ;;;; ---------------------------------------------------------------------------
-;;;; nomis/dirtree/auto-refresh?
 ;;;; nomis/dirtree/expanded-directories
 ;;;; nomis/dirtree/directory-watchers
 
 (require 'filenotify)
 
-(defvar nomis/dirtree/auto-refresh? nil)
 (defvar nomis/dirtree/expanded-directories '())
 (defvar nomis/dirtree/directory-watchers '())
 
@@ -458,88 +554,6 @@ With prefix argument select `nomis/dirtree/buffer'"
         ;; trees, so the same dir can be here twice.
         (-remove-first (-partial #'equal directory)
                        nomis/dirtree/expanded-directories)))
-
-;;;; ---------------------------------------------------------------------------
-;;;; nomis/dirtree/follow-selected-buffer?
-
-(defvar nomis/dirtree/follow-selected-buffer? nil)
-
-(defun nomis/dirtree/toggle-follow-selected-buffer? ()
-  (interactive)
-  (setf nomis/dirtree/follow-selected-buffer?
-        (not nomis/dirtree/follow-selected-buffer?))
-  (nomis/dirtree/set-face)
-  (message "nomis-dirtree follow-selected-buffer turned %s"
-           (if nomis/dirtree/follow-selected-buffer? "on" "off")))
-
-;;;; ---------------------------------------------------------------------------
-;;;; Stuff to do on scheduled refresh
-
-(defun nomis/dirtree/goto-file-for-follow-selected-buffer ()
-  (when (and nomis/dirtree/follow-selected-buffer?
-             (get-buffer nomis/dirtree/buffer))
-    ;; TODO Maybe show the following in dirtree buffer (perhaps using a colour):
-    ;;      - Auto-refresh off
-    ;;      - Follow-selected-buffer off.
-    ;;      - Selected buffer has no file.
-    ;;      - Selected buffer's file is not in dirtree.
-    (condition-case err
-        (let* ((filename (nomis/dirtree/filename-in-selected-window)))
-          (when (and filename
-                     (nomis/dirtree/has-file? filename))
-            (nomis/dirtree/goto-file/internal filename)))
-      (error
-       ;; TODO Sometimes we expect errors. Make this reporting conditional on
-       ;;      a debug toggle. Perhaps use `nomis/dirtree/debug-message`.
-       (message
-        "Error in nomis/dirtree/goto-file-for-follow-selected-buffer %s %s"
-        (car err)
-        (cdr err))))))
-
-(defface nomis/dirtree/face/follow/file-not-there
-  ;; Copied from font-lock-string-face
-  '((((class grayscale) (background light)) :foreground "DimGray" :slant italic)
-    (((class grayscale) (background dark))  :foreground "LightGray" :slant italic)
-    (((class color) (min-colors 88) (background light)) :foreground "VioletRed4")
-    (((class color) (min-colors 88) (background dark))  :foreground "LightSalmon")
-    (((class color) (min-colors 16) (background light)) :foreground "RosyBrown")
-    (((class color) (min-colors 16) (background dark))  :foreground "LightSalmon")
-    (((class color) (min-colors 8)) :foreground "green")
-    (t :slant italic))
-  "Font Lock mode face used to highlight strings."
-  :group 'font-lock-faces)
-
-(defface nomis/dirtree/face/follow/file-there
-  ;; Copied from font-lock-function-name-face
-  '((((class color) (min-colors 88) (background light)) :foreground "Blue1")
-    (((class color) (min-colors 88) (background dark))  :foreground "LightSkyBlue")
-    (((class color) (min-colors 16) (background light)) :foreground "Blue")
-    (((class color) (min-colors 16) (background dark))  :foreground "LightSkyBlue")
-    (((class color) (min-colors 8)) :foreground "blue" ; :weight bold
-     )
-    (t :inverse-video t :weight bold))
-  "Font Lock mode face used to highlight function names."
-  :group 'font-lock-faces)
-
-(defun nomis/dirtree/set-face ()
-  (when (get-buffer nomis/dirtree/buffer)
-    (let* ((foo (if nomis/dirtree/auto-refresh?
-                    'org-agenda-structure
-                  'default))
-           (bar (if nomis/dirtree/follow-selected-buffer?
-                    ;; TODO Duplicated code here.
-                    (if (let* ((filename (nomis/dirtree/filename-in-selected-window)))
-                          (and filename
-                               (nomis/dirtree/has-file? filename)))
-                        'nomis/dirtree/face/follow/file-there
-                      'nomis/dirtree/face/follow/file-not-there)
-                  'default)))
-      ;; TODO You have two dimensions
-      ;;      So something like:
-      ;;      - Use bold/non-bold for auto-refresh on/off
-      ;;      - Use colour for follow-related info.
-      (with-current-buffer nomis/dirtree/buffer
-        (buffer-face-set bar)))))
 
 ;;;; ---------------------------------------------------------------------------
 ;;;; Refreshing and scheduling refreshes
@@ -585,6 +599,27 @@ With prefix argument select `nomis/dirtree/buffer'"
                 (car err)
                 (cdr err))))))
 
+(defun nomis/dirtree/goto-file-for-follow-selected-buffer ()
+  (when (and nomis/dirtree/follow-selected-buffer?
+             (get-buffer nomis/dirtree/buffer))
+    ;; TODO Maybe show the following in dirtree buffer (perhaps using a colour):
+    ;;      - Auto-refresh off
+    ;;      - Follow-selected-buffer off.
+    ;;      - Selected buffer has no file.
+    ;;      - Selected buffer's file is not in dirtree.
+    (condition-case err
+        (let* ((filename (nomis/dirtree/filename-in-selected-window)))
+          (when (and filename
+                     (nomis/dirtree/has-file? filename))
+            (nomis/dirtree/goto-file/internal filename)))
+      (error
+       ;; TODO Sometimes we expect errors. Make this reporting conditional on
+       ;;      a debug toggle. Perhaps use `nomis/dirtree/debug-message`.
+       (message
+        "Error in nomis/dirtree/goto-file-for-follow-selected-buffer %s %s"
+        (car err)
+        (cdr err))))))
+
 (nomis/def-timer-with-relative-repeats
     nomis/dirtree/refresh-timer
     nomis/dirtree/refresh-interval
@@ -595,32 +630,6 @@ With prefix argument select `nomis/dirtree/buffer'"
     (nomis/dirtree/set-face))
   `(:repeat ,nomis/dirtree/refresh-interval) ; TODO This is a weird way of specifying the repeat interval
   )
-
-;;;; ---------------------------------------------------------------------------
-
-(defun nomis/dirtree/turn-on-auto-refresh ()
-  (when (not nomis/dirtree/auto-refresh?)
-    (assert (null nomis/dirtree/directory-watchers))
-    (setq nomis/dirtree/auto-refresh? t)
-    (nomis/dirtree/refresh/plain)
-    (mapc #'nomis/dirtree/add-directory-watcher
-          nomis/dirtree/expanded-directories)))
-
-(defun nomis/dirtree/turn-off-auto-refresh ()
-  (when nomis/dirtree/auto-refresh?
-    (setq nomis/dirtree/auto-refresh? nil)
-    (mapc #'nomis/dirtree/remove-directory-watcher
-          nomis/dirtree/expanded-directories)
-    (assert (null nomis/dirtree/directory-watchers))))
-
-(defun nomis/dirtree/toggle-auto-refresh ()
-  (interactive)
-  (if nomis/dirtree/auto-refresh?
-      (nomis/dirtree/turn-off-auto-refresh)
-    (nomis/dirtree/turn-on-auto-refresh))
-  (nomis/dirtree/set-face)
-  (message "nomis-dirtree auto refresh turned %s"
-           (if nomis/dirtree/auto-refresh? "on" "off")))
 
 ;;;; ---------------------------------------------------------------------------
 ;;;; File watchers
