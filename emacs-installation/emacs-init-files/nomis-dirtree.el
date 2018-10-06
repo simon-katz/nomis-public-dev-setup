@@ -406,18 +406,21 @@ With prefix argument select `nomis/dirtree/buffer'"
                nomis/dirtree/follow-and-file-not-in-dirtree-fg))))
 
 (defvar nomis/dirtree/face-cookie nil)
+(defvar nomis/dirtree/previous-face-kvs nil)
 
 (defun nomis/dirtree/set-face ()
   (when (get-buffer nomis/dirtree/buffer)
     (let* ((face-kvs (nomis/dirtree/make-face-kvs)))
-      (with-current-buffer nomis/dirtree/buffer
-        (face-remap-reset-base 'default)
-        (when nomis/dirtree/face-cookie
-          (face-remap-remove-relative nomis/dirtree/face-cookie)
-          (setq nomis/dirtree/face-cookie nil))
-        (setq nomis/dirtree/face-cookie
-              (face-remap-add-relative 'default
-                                       (list face-kvs)))))))
+      (unless (equal face-kvs nomis/dirtree/previous-face-kvs)
+        (setq nomis/dirtree/previous-face-kvs face-kvs)
+        (with-current-buffer nomis/dirtree/buffer
+          (face-remap-reset-base 'default)
+          (when nomis/dirtree/face-cookie
+            (face-remap-remove-relative nomis/dirtree/face-cookie)
+            (setq nomis/dirtree/face-cookie nil))
+          (setq nomis/dirtree/face-cookie
+                (face-remap-add-relative 'default
+                                         (list face-kvs))))))))
 
 ;;;; ___________________________________________________________________________
 ;;;; nomis/dirtree/toggle-follow-selected-buffer?
