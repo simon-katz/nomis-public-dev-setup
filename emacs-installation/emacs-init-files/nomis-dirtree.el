@@ -482,17 +482,15 @@ With prefix argument select `nomis/dirtree/buffer'"
                         (file-notify-valid-p (cdr entry)))))))
 
 (defun nomis/dirtree/remove-roots-whose-dirs-are-deleted ()
-  (with-run-in-all-dirtree-windows
-    (loop for tree in (copy-list (nomis/dirtree/all-trees))
-          unless (file-exists-p (nomis/dirtree/widget-file tree))
-          do (progn
-               (nomis/dirtree/goto-widget tree)
-               (nomis/dirtree/delete-tree/do-it)))))
+  (loop for tree in (copy-list (nomis/dirtree/all-trees))
+        unless (file-exists-p (nomis/dirtree/widget-file tree))
+        do (progn
+             (nomis/dirtree/goto-widget tree)
+             (nomis/dirtree/delete-tree/do-it))))
 
-(defun nomis/dirtree/refresh-after-finding-buffer ()
+(defun nomis/dirtree/refresh-allowing-file-not-found ()
   (condition-case err
-      (with-run-in-all-dirtree-windows
-        (nomis/dirtree/refresh/internal))
+      (nomis/dirtree/refresh/internal)
     (nomis/dirtree/file-not-found
      ;; We get here if the selected file is deleted -- not a problem.
      )))
@@ -576,8 +574,9 @@ With prefix argument select `nomis/dirtree/buffer'"
     (condition-case err
         (progn
           (nomis/dirtree/remove-watchers-of-deleted-dirs)
-          (nomis/dirtree/remove-roots-whose-dirs-are-deleted)
-          (nomis/dirtree/refresh-after-finding-buffer)
+          (with-run-in-all-dirtree-windows
+            (nomis/dirtree/remove-roots-whose-dirs-are-deleted)
+            (nomis/dirtree/refresh-allowing-file-not-found))
           (setq nomis/dirtree/refresh-scheduled? nil)
           ;; Overcome a bug where selection gets lost when files are created
           ;; or deleted.
