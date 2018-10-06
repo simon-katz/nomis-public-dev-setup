@@ -581,7 +581,8 @@ With prefix argument select `nomis/dirtree/buffer'"
           (setq nomis/dirtree/refresh-scheduled? nil)
           ;; Overcome a bug where selection gets lost when files are created
           ;; or deleted.
-          (nomis/dirtree/goto-file/internal *nomis/dirtree/filenames/current*))
+          (when (nomis/dirtree/has-file? *nomis/dirtree/filenames/current*)
+            (nomis/dirtree/goto-file/internal *nomis/dirtree/filenames/current*)))
       (error
        (message "Error in nomis/dirtree/refresh %s %s"
                 (car err)
