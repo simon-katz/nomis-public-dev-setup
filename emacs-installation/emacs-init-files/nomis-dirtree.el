@@ -367,75 +367,6 @@ With prefix argument select `nomis/dirtree/buffer'"
 ;;;; Finally, the rest of my stuff.
 
 ;;;; ___________________________________________________________________________
-;;;; Macros
-
-(defmacro nomis/dirtree/with-run-in-dirtree-window-or-buffer (&rest body)
-  (declare (indent 0))
-  `(nomis/dirtree/with-run-in-dirtree-window-or-buffer-fun (lambda () ,@body)))
-
-(defmacro nomis/dirtree/with-run-in-dirtree-buffer (&rest body)
-  (declare (indent 0))
-  `(nomis/dirtree/with-run-in-dirtree-buffer-fun (lambda () ,@body)))
-
-(defmacro nomis/dirtree/with-run-in-all-dirtree-windows (&rest body)
-  (declare (indent 0))
-  `(nomis/dirtree/with-run-in-all-dirtree-windows-fun (lambda () ,@body)))
-
-(defmacro nomis/dirtree/with-return-to-selected-file (&rest body)
-  (declare (indent 0))
-  `(nomis/dirtree/with-return-to-selected-file-fun (lambda () ,@body)))
-
-(cl-defmacro nomis/dirtree/with-fix-selection-in-all-windows (&body body)
-  (declare (indent 0))
-  `(progn
-     (nomis/dirtree/with-fix-selection-in-all-windows-fun (lambda () ,@body))))
-
-(cl-defmacro nomis/dirtree/with-run-in-dirtree-window-and-fixup-selection
-    (&body body)
-  (declare (indent 0))
-  `(nomis/dirtree/with-run-in-dirtree-window-and-fixup-selection-fun
-    (lambda () ,@body)))
-
-(defmacro nomis/dirtree/with-note-selection (&rest body)
-  `(nomis/dirtree/with-note-selection-fun (lambda () ,@body)))
-
-(cl-defmacro nomis/dirtree/define-command/with-and-without-and-display
-    ;; FIXME Can you make M-. work for the `name-for-and-display` function?
-    ;;       See `find-function-regexp-alist` for pointers.
-    ;;       I found a reference to that at https://emacs.stackexchange.com/questions/31042/how-can-i-record-where-a-function-is-defined-if-its-done-indirectly
-    (name
-     name-for-and-display
-     args
-     &key
-     doc-string
-     preamble
-     body
-     no-record-history?)
-  (declare (indent 3))
-  (let* ((doc-string (concat doc-string
-                             (unless no-record-history?
-                               "
-Record history -- record the selection before and after moving around."))))
-    `(progn
-       (defun ,name (,@args)
-         ,doc-string
-         ,@preamble
-         (cl-labels ((do-it () ,@body))
-           (nomis/dirtree/with-fix-selection-in-all-windows
-             ;; TODO More thought needed.
-             ;;      - Where does this (above) call belong? (Maybe here.)
-             ,(if no-record-history?
-                  `(do-it)
-                `(nomis/dirtree/with-note-selection (do-it))))))
-       (defun ,name-for-and-display (,@args)
-         ,(concat doc-string
-                  "
-Then display contents of file under point in other window.")
-         ,@preamble
-         (,name ,@args)
-         (nomis/dirtree/display-file*)))))
-
-;;;; ___________________________________________________________________________
 ;;;; Misc utilities
 
 (defun nomis/dirtree/filename-in-selected-window ()
@@ -597,6 +528,10 @@ Then display contents of file under point in other window.")
           (with-current-buffer nomis/dirtree/buffer
             (do-it)))))))
 
+(defmacro nomis/dirtree/with-run-in-dirtree-window-or-buffer (&rest body)
+  (declare (indent 0))
+  `(nomis/dirtree/with-run-in-dirtree-window-or-buffer-fun (lambda () ,@body)))
+
 ;;;; ___________________________________________________________________________
 ;;;; nomis/dirtree/with-run-in-dirtree-buffer
 
@@ -605,6 +540,10 @@ Then display contents of file under point in other window.")
   (cl-flet ((do-it () (funcall fun)))
     (with-current-buffer nomis/dirtree/buffer
       (do-it))))
+
+(defmacro nomis/dirtree/with-run-in-dirtree-buffer (&rest body)
+  (declare (indent 0))
+  `(nomis/dirtree/with-run-in-dirtree-buffer-fun (lambda () ,@body)))
 
 ;;;; ___________________________________________________________________________
 ;;;; nomis/dirtree/with-run-in-all-dirtree-windows
@@ -623,6 +562,10 @@ Then display contents of file under point in other window.")
                 do (progn
                      (select-window w)
                      (do-it))))))))
+
+(defmacro nomis/dirtree/with-run-in-all-dirtree-windows (&rest body)
+  (declare (indent 0))
+  `(nomis/dirtree/with-run-in-all-dirtree-windows-fun (lambda () ,@body)))
 
 ;;;; ___________________________________________________________________________
 ;;;; nomis/dirtree/expanded-directories
@@ -1004,6 +947,10 @@ Then display contents of file under point in other window.")
        ))
     res))
 
+(defmacro nomis/dirtree/with-return-to-selected-file (&rest body)
+  (declare (indent 0))
+  `(nomis/dirtree/with-return-to-selected-file-fun (lambda () ,@body)))
+
 (defun nomis/dirtree/goto-file-in-all-dirtree-windows (filename)
   (nomis/dirtree/with-run-in-all-dirtree-windows
     ;; Refreshing the tree after files have been created or deleted
@@ -1028,6 +975,11 @@ Then display contents of file under point in other window.")
       (funcall fun)
     (nomis/dirtree/fix-selection-in-all-windows)))
 
+(cl-defmacro nomis/dirtree/with-fix-selection-in-all-windows (&body body)
+  (declare (indent 0))
+  `(progn
+     (nomis/dirtree/with-fix-selection-in-all-windows-fun (lambda () ,@body))))
+
 (defvar *in-nomis/dirtree/with-run-in-dirtree-window-and-fixup-selection?* nil)
 
 (defun nomis/dirtree/with-run-in-dirtree-window-and-fixup-selection-fun (fun)
@@ -1046,6 +998,10 @@ Then display contents of file under point in other window.")
                (do-it)
              (nomis/dirtree/goto-file-in-all-dirtree-windows
               file-to-return-to))))))))
+
+(cl-defmacro nomis/dirtree/with-run-in-dirtree-window-and-fixup-selection (&body body) ; TODO Move this and others to before first use (do we need that in Emacs Lisp? yes, see https://github.com/bbatsov/emacs-lisp-style-guide/issues/31)
+  (declare (indent 0))
+  `(nomis/dirtree/with-run-in-dirtree-window-and-fixup-selection-fun (lambda () ,@body)))
 
 (defun nomis/dirtree/refresh-tree (tree)
   (error "nomis/dirtree/refresh-tree is unused, right?")
@@ -1097,6 +1053,9 @@ Then display contents of file under point in other window.")
         (funcall fun))
     (nomis/dirtree/note-selection)))
 
+(defmacro nomis/dirtree/with-note-selection (&rest body)
+  `(nomis/dirtree/with-note-selection-fun (lambda () ,@body)))
+
 (defun nomis/dirtree/no-history? ()
   (null *nomis/dirtree/filenames/history-list*))
 
@@ -1128,6 +1087,42 @@ Then display contents of file under point in other window.")
     (let* ((file (nomis/dirtree/selected-file)))
       (when file
         (find-file-other-window file)))))
+
+(cl-defmacro nomis/dirtree/define-command/with-and-without-and-display
+    ;; FIXME Can you make M-. work for the `name-for-and-display` function?
+    ;;       See `find-function-regexp-alist` for pointers.
+    ;;       I found a reference to that at https://emacs.stackexchange.com/questions/31042/how-can-i-record-where-a-function-is-defined-if-its-done-indirectly
+    (name
+     name-for-and-display
+     args
+     &key
+     doc-string
+     preamble
+     body
+     no-record-history?)
+  (declare (indent 3))
+  (let* ((doc-string (concat doc-string
+                             (unless no-record-history?
+                               "
+Record history -- record the selection before and after moving around."))))
+    `(progn
+       (defun ,name (,@args)
+         ,doc-string
+         ,@preamble
+         (cl-labels ((do-it () ,@body))
+           (nomis/dirtree/with-fix-selection-in-all-windows
+             ;; TODO More thought needed.
+             ;;      - Where does this (above) call belong? (Maybe here.)
+             ,(if no-record-history?
+                  `(do-it)
+                `(nomis/dirtree/with-note-selection (do-it))))))
+       (defun ,name-for-and-display (,@args)
+         ,(concat doc-string
+                  "
+Then display contents of file under point in other window.")
+         ,@preamble
+         (,name ,@args)
+         (nomis/dirtree/display-file*)))))
 
 (cl-defun nomis/dirtree/goto-file/internal (filename &key force?)
   (nomis/dirtree/with-run-in-all-dirtree-windows ; nomis/dirtree/with-run-in-dirtree-window-and-fixup-selection TODO Won't work. Why? (The selection changes but not "properly" -- the thing that running in a window fixes.)
