@@ -185,8 +185,8 @@ See `windata-display-buffer' for setup the arguments."
 
 (cl-defun nomis/dirtree/make-widget (file-&-basename
                                      &key root?)
-  ;; FIXME Maybe the basename here, and simplify other stuff.
-  ;;       (But sorting is on the basename, so maybe not.)
+  ;; TODO Maybe the basename here, and simplify other stuff.
+  ;;      (But sorting is on the basename, so maybe not.)
   (if (file-directory-p (car file-&-basename))
       (nomis/dirtree/make-directory-widget file-&-basename
                                            :root? root?)
@@ -400,9 +400,9 @@ With prefix argument select `nomis/dirtree/buffer'"
   `(nomis/dirtree/with-note-selection-fun (lambda () ,@body)))
 
 (cl-defmacro nomis/dirtree/define-command/with-and-without-and-display
-    ;; FIXME Can you make M-. work for the `name-for-and-display` function?
-    ;;       See `find-function-regexp-alist` for pointers.
-    ;;       I found a reference to that at https://emacs.stackexchange.com/questions/31042/how-can-i-record-where-a-function-is-defined-if-its-done-indirectly
+    ;; TODO Can you make M-. work for the `name-for-and-display` function?
+    ;;      See `find-function-regexp-alist` for pointers.
+    ;;      I found a reference to that at https://emacs.stackexchange.com/questions/31042/how-can-i-record-where-a-function-is-defined-if-its-done-indirectly
     (name
      name-for-and-display
      args
@@ -770,11 +770,11 @@ Then display contents of file under point in other window.")
 ;;;; ___________________________________________________________________________
 ;;;; Widget and file stuff.
 
-;;;; FIXME Would be nice to have clearer separation of the widget and
-;;;;       file domains.
+;;;; TODO Would be nice to have clearer separation of the widget and
+;;;;      file domains.
 
-;;;; FIXME Make with-arg and no-arg versions of everything use consistent
-;;;;       naming.
+;;;; TODO Make with-arg and no-arg versions of everything use consistent
+;;;;      naming.
 
 (defun nomis/dirtree/expanded? (widget)
   (widget-get widget :open))
@@ -1008,8 +1008,7 @@ Then display contents of file under point in other window.")
   (nomis/dirtree/with-run-in-all-dirtree-windows
     ;; Refreshing the tree after files have been created or deleted
     ;; sometimes changes the selection to something mad and/or bad, so fix
-    ;; things up. TODO Perhaps add an arg to say whether this needs to be
-    ;; done.
+    ;; things up.
     (condition-case err
         (nomis/dirtree/goto-filename filename
                                      :refresh-not-allowed? t
@@ -1167,7 +1166,7 @@ Then display contents of file under point in other window.")
         (delete-frame)
         (select-frame-set-input-focus original-frame)))))
 
-(defun nomis/dirtree/goto-file/no-create-window () ; FIXME Maybe combine with `nomis/dirtree/goto-file*`
+(defun nomis/dirtree/goto-file/no-create-window () ; TODO Maybe combine with `nomis/dirtree/goto-file*`
   "Do the following:
    - If no nomis/dirtree buffer exists, issue an error message and do no more.
    - Make a note of the current buffer's file; call it f.
@@ -1627,7 +1626,7 @@ Mostly for debugging purposes."
 (define-key global-map (kbd "H-q d") 'nomis/dirtree/make-dirtree)
 (define-key global-map (kbd "H-/")   'nomis/dirtree/goto-file/return-to-window)
 (define-key global-map (kbd "H-M-/") 'nomis/dirtree/goto-file)
-(define-key global-map (kbd "H-C-/") 'nomis/dirtree/goto-file/no-create-window) ; TODO Turn this binding off and check it's not used by something else
+(define-key global-map (kbd "H-C-/") 'nomis/dirtree/goto-file/no-create-window)
 
 (cl-labels ((dk (k f)
                 (define-key nomis/dirtree/mode-map k f)))
