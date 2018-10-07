@@ -1135,7 +1135,7 @@ Then display contents of file under point in other window.")
          (nomis/dirtree/display-file*)))))
 
 (cl-defun nomis/dirtree/goto-file/internal (filename &key force?)
-  (nomis/dirtree/with-run-in-dirtree-window-and-fixup-selection
+  (nomis/dirtree/with-run-in-all-dirtree-windows ; nomis/dirtree/with-run-in-dirtree-window-and-fixup-selection TODO Won't work. Why? (When using goto-file*, The selection changes but not "properly" -- the thing that running in a window fixes.)
     (nomis/dirtree/with-note-selection
      (nomis/dirtree/goto-filename filename :force? force?))
     (when (bound-and-true-p hl-line-mode)
