@@ -592,8 +592,10 @@ With prefix argument select `nomis/dirtree/buffer'"
         (progn
           (message "**** In a nested call of `nomis/dirtree/with-run-in-dirtree-window-and-fixup-selection-fun` -- don't want this.")
           (do-it))
+      ;; TODO Are we doing too much here?
+      ;;      Maybe some of this belongs in the callers that need it.
       (nomis/dirtree/with-run-in-dirtree-window-or-buffer
-        (nomis/dirtree/with-note-selection ; TODO Are we doing to much here? Maybe this belongs in the callers that need it.
+        (nomis/dirtree/with-note-selection
          (let* ((*in-nomis/dirtree/with-run-in-dirtree-window-and-fixup-selection?* t))
            (unwind-protect
                (do-it)
