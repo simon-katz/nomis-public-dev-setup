@@ -91,7 +91,7 @@
 ;;;; ___________________________________________________________________________
 ;;;; Settings -- can be customised
 
-(defvar nomis/dirtree/auto-refresh? nil)
+(defvar nomis/dirtree/auto-refresh? t)
 (defvar nomis/dirtree/auto-refresh-interval-secs 2)
 
 (defvar nomis/dirtree/follow-selected-buffer? nil)

@@ -180,7 +180,6 @@
 
 (require 'nomis-dired)
 (require 'nomis-dirtree)
-(require 'nomis-dirtree-nomis-settings)
 
 (require 'nomis-shell-stuff)
 (require 'nomis-eshell)
