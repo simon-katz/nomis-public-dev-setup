@@ -565,11 +565,14 @@ With prefix argument select `nomis/dirtree/buffer'"
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ;;;; nomis/dirtree/with-fix-selection-in-all-windows
 
+(defun nomis/dirtree/fix-selection-in-all-windows ()
+  (nomis/dirtree/goto-file-in-all-dirtree-windows
+   *nomis/dirtree/filenames/current*))
+
 (defun nomis/dirtree/with-fix-selection-in-all-windows-fun (fun)
   (prog1
       (funcall fun)
-    (nomis/dirtree/goto-file-in-all-dirtree-windows
-     *nomis/dirtree/filenames/current*)))
+    (nomis/dirtree/fix-selection-in-all-windows)))
 
 (cl-defmacro nomis/dirtree/with-fix-selection-in-all-windows (&body body)
   (declare (indent 0))
@@ -591,27 +594,16 @@ With prefix argument select `nomis/dirtree/buffer'"
           (do-it))
       (nomis/dirtree/with-run-in-dirtree-window-or-buffer
         (nomis/dirtree/with-note-selection ; TODO Are we doing to much here? Maybe this belongs in the callers that need it.
-         (let* ((*in-nomis/dirtree/with-run-in-dirtree-window-and-fixup-selection?* t)
-                (file-to-return-to (nomis/dirtree/selected-file)))
+         (let* ((*in-nomis/dirtree/with-run-in-dirtree-window-and-fixup-selection?* t))
            (unwind-protect
                (do-it)
-             ;; ********************************
-             ;; TODO Consider whether this `file-to-return-to` thing is
-             ;;      right for all callers.
-             ;;      eg What if a file is deleted?
-             ;;         In the old days, when you had those paths, did goto-file
-             ;;         find the existing parent dir? And have you broken that
-             ;;         by checking for a files's existence before trying to go
-             ;;         to the file?
-             ;;         Maybe use
-             ;;         `nomis/dirtree/with-fix-selection-in-all-windows`.
-             ;; ********************************
-             (nomis/dirtree/goto-file-in-all-dirtree-windows
-              file-to-return-to))))))))
+             (nomis/dirtree/fix-selection-in-all-windows))))))))
 
-(cl-defmacro nomis/dirtree/with-run-in-dirtree-window-and-fixup-selection (&body body) ; TODO Move this and others to before first use (do we need that in Emacs Lisp? yes, see https://github.com/bbatsov/emacs-lisp-style-guide/issues/31)
+(cl-defmacro nomis/dirtree/with-run-in-dirtree-window-and-fixup-selection
+    (&body body)
   (declare (indent 0))
-  `(nomis/dirtree/with-run-in-dirtree-window-and-fixup-selection-fun (lambda () ,@body)))
+  `(nomis/dirtree/with-run-in-dirtree-window-and-fixup-selection-fun
+    (lambda () ,@body)))
 
 ;;;; ___________________________________________________________________________
 ;;;; Buffer face
@@ -1141,7 +1133,7 @@ Then display contents of file under point in other window.")
          (nomis/dirtree/display-file*)))))
 
 (cl-defun nomis/dirtree/goto-file/internal (filename &key force?)
-  (nomis/dirtree/with-run-in-all-dirtree-windows ; nomis/dirtree/with-run-in-dirtree-window-and-fixup-selection TODO Won't work. Why? (The selection changes but not "properly" -- the thing that running in a window fixes.)
+  (nomis/dirtree/with-run-in-dirtree-window-and-fixup-selection
     (nomis/dirtree/with-note-selection
      (nomis/dirtree/goto-filename filename :force? force?))
     (when (bound-and-true-p hl-line-mode)
