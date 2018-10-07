@@ -1052,7 +1052,7 @@ With prefix argument select `nomis/dirtree/buffer'"
                  (search))))))))))
 
 (defun nomis/dirtree/with-return-to-selected-file-fun (fun)
-  (error "nomis/dirtree/with-return-to-selected-file-fun is unused, right?")
+  (error "nomis/dirtree/with-return-to-selected-file-fun is unused, right? -- seems you now have `nomis/dirtree/with-fix-selection-in-all-windows` instead.")
   (let* ((file-to-return-to (nomis/dirtree/selected-file))
          (res (funcall fun)))
     ;; We use goto-filename here rather than goto-file-that-is-in-expansion
