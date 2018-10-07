@@ -118,6 +118,11 @@
     "zzzz-nomis-dirtree-test-keep-collapsed"))
 
 ;;;; ___________________________________________________________________________
+;;;; Variables that need to be defined early
+
+(defvar *nomis/dirtree/inhibit-history?* nil)
+
+;;;; ___________________________________________________________________________
 ;;;; ___________________________________________________________________________
 ;;;; Next we have the original dirtree, with much modification.
 ;;;; I don't have a deep understanding of this, but I've hacked it a fair bit.
@@ -500,15 +505,15 @@ With prefix argument select `nomis/dirtree/buffer'"
            (if nomis/dirtree/auto-refresh? "on" "off")))
 
 ;;;; ___________________________________________________________________________
-;;;; with-run-in-single-dirtree-window
+;;;; nomis/dirtree/with-run-in-dirtree-window-or-buffer
 
-;;;; Without `with-run-in-single-dirtree-window`
-;;;; and `with-run-in-all-dirtree-windows`:
+;;;; Without `nomis/dirtree/with-run-in-dirtree-window-or-buffer`
+;;;; and `nomis/dirtree/with-run-in-all-dirtree-windows`:
 ;;;; - If you changing the selection in the dirtree buffer, it doesn't work.
 ;;;; - If you auto-delete (from the file watcher code), the selection gets
 ;;;;   screwed up.
 
-(defun with-run-in-single-dirtree-window-fun (fun)
+(defun nomis/dirtree/with-run-in-dirtree-window-or-buffer-fun (fun)
   (assert (get-buffer nomis/dirtree/buffer))
   (cl-flet ((do-it () (funcall fun)))
     (save-selected-window
@@ -516,33 +521,51 @@ With prefix argument select `nomis/dirtree/buffer'"
                  nomis/dirtree/buffer)))
         (if w
             (progn
+              (nomis/dirtree/debug-message "Running in window -- %S" w)
               (select-window w)
               (do-it))
+          (nomis/dirtree/debug-message "Not running in a window")
           (with-current-buffer nomis/dirtree/buffer
             (do-it)))))))
 
-(defmacro with-run-in-single-dirtree-window (&rest body)
+(defmacro nomis/dirtree/with-run-in-dirtree-window-or-buffer (&rest body)
   (declare (indent 0))
-  `(with-run-in-single-dirtree-window-fun (lambda () ,@body)))
+  `(nomis/dirtree/with-run-in-dirtree-window-or-buffer-fun (lambda () ,@body)))
 
 ;;;; ___________________________________________________________________________
-;;;; with-run-in-all-dirtree-windows
+;;;; nomis/dirtree/with-run-in-dirtree-buffer
+
+(defun nomis/dirtree/with-run-in-dirtree-buffer-fun (fun)
+  (assert (get-buffer nomis/dirtree/buffer))
+  (cl-flet ((do-it () (funcall fun)))
+    (with-current-buffer nomis/dirtree/buffer
+      (do-it))))
+
+(defmacro nomis/dirtree/with-run-in-dirtree-buffer (&rest body)
+  (declare (indent 0))
+  `(nomis/dirtree/with-run-in-dirtree-buffer-fun (lambda () ,@body)))
+
+;;;; ___________________________________________________________________________
+;;;; nomis/dirtree/with-run-in-all-dirtree-windows
 
 (defvar *doing-run-in-all-dirtree-windows?* nil)
 
-(defun with-run-in-all-dirtree-windows-fun (fun)
+(defun nomis/dirtree/with-run-in-all-dirtree-windows-fun (fun)
   (cl-flet ((do-it () (funcall fun)))
     (if *doing-run-in-all-dirtree-windows?*
-        (do-it)
-      (save-selected-window
-        (loop for w in (get-buffer-window-list nomis/dirtree/buffer nil t)
-              do (progn
-                   (select-window w)
-                   (do-it)))))))
+        (progn
+          (message "**** In nested call of nomis/dirtree/with-run-in-all-dirtree-windows-fun")
+          (do-it))
+      (let* ((*doing-run-in-all-dirtree-windows?* t))
+        (save-selected-window
+          (loop for w in (get-buffer-window-list nomis/dirtree/buffer nil t)
+                do (progn
+                     (select-window w)
+                     (do-it))))))))
 
-(defmacro with-run-in-all-dirtree-windows (&rest body)
+(defmacro nomis/dirtree/with-run-in-all-dirtree-windows (&rest body)
   (declare (indent 0))
-  `(with-run-in-all-dirtree-windows-fun (lambda () ,@body)))
+  `(nomis/dirtree/with-run-in-all-dirtree-windows-fun (lambda () ,@body)))
 
 ;;;; ___________________________________________________________________________
 ;;;; nomis/dirtree/expanded-directories
@@ -591,23 +614,13 @@ With prefix argument select `nomis/dirtree/buffer'"
                          unless (file-exists-p (nomis/dirtree/widget-file tree))
                          do (progn
                               (nomis/dirtree/goto-widget tree)
-                              (nomis/dirtree/delete-tree/do-it))))
-                  (nomis/dirtree/refresh-allowing-file-not-found
-                   ()
-                   (condition-case err
-                       (nomis/dirtree/refresh/internal)
-                     (nomis/dirtree/file-not-found
-                      ;; We get here if the selected file is deleted -- not a problem.
-                      ))))
-          (with-run-in-all-dirtree-windows
-            (nomis/dirtree/remove-watchers-of-deleted-dirs)
-            (nomis/dirtree/remove-roots-whose-dirs-are-deleted)
-            (nomis/dirtree/refresh-allowing-file-not-found))
-          (setq nomis/dirtree/refresh-scheduled? nil)
-          ;; Overcome a bug where selection gets lost when files are created
-          ;; or deleted.
-          (when (nomis/dirtree/has-file? *nomis/dirtree/filenames/current*)
-            (nomis/dirtree/goto-file/internal *nomis/dirtree/filenames/current*)))
+                              (nomis/dirtree/delete-tree/do-it)))))
+          (let* ((*nomis/dirtree/inhibit-history?* t))
+            (nomis/dirtree/with-run-in-dirtree-window-and-fixup-selection
+              (nomis/dirtree/remove-watchers-of-deleted-dirs)
+              (nomis/dirtree/remove-roots-whose-dirs-are-deleted)
+              (nomis/dirtree/refresh/internal)))
+          (setq nomis/dirtree/refresh-scheduled? nil))
       (error
        (message "Error in nomis/dirtree/refresh/plain %s %s"
                 (car err)
@@ -759,6 +772,13 @@ With prefix argument select `nomis/dirtree/buffer'"
   (widget-at (1- (line-end-position))))
 
 (defun nomis/dirtree/selected-widget/with-extras ()
+  ;; TODO Add more of these assertions.
+  (assert (equal (buffer-name (current-buffer))
+                 nomis/dirtree/buffer)
+          t
+          "Buffer name is %s, but wanted %s"
+          (buffer-name (current-buffer))
+          nomis/dirtree/buffer)
   (when (= (point) (point-max))
     ;; We're at that nasty place at the end of the buffer.
     ;; Doing this allows eg `nomis/dirtree/goto-file` when at that place.
@@ -821,12 +841,13 @@ With prefix argument select `nomis/dirtree/buffer'"
                                 filename))
               (nomis/dirtree/all-trees)))
 
+(define-error 'nomis/dirtree/no-widget "nomis-dirtree: No selected widget")
+
 (defun nomis/dirtree/filename->root-widget (filename)
   (let* ((widget (nomis/dirtree/filename->root-widget/no-error filename)))
-    (assert widget
-            nil
-            "File is not in dirtree: %s"
-            filename)
+    (when (null widget)
+      (signal 'nomis/dirtree/no-widget
+              filename))
     widget))
 
 (defun nomis/dirtree/filename->root-filename (filename)
@@ -859,10 +880,13 @@ With prefix argument select `nomis/dirtree/buffer'"
 (define-error 'nomis/dirtree/file-not-found "nomis-dirtree: No such file")
 
 (cl-defun nomis/dirtree/goto-filename (filename
-                                       &key refresh-not-allowed?)
+                                       &key refresh-not-allowed? force?)
+  ;; TODO `force?` doesn't seem to be needed. Why not?
   ;; TODO You also have `nomis/dirtree/goto-file` and similar
   ;;      - Need some renaming.
-  (if (equal filename (nomis/dirtree/selected-file))
+  (if (and (not force?)
+           (equal filename (or (ignore-errors (nomis/dirtree/selected-file))
+                               :no-selection)))
       (progn
         (nomis/dirtree/debug-message
          "nomis/dirtree/goto-filename -- already there -- %S"
@@ -871,7 +895,11 @@ With prefix argument select `nomis/dirtree/buffer'"
       (nomis/dirtree/debug-message
        "==== nomis/dirtree/goto-filename -- searching -- %S"
        filename)
-      (let* ((path (nomis/dirtree/filename->path-from-root filename)))
+      (let* ((path (condition-case err
+                       (nomis/dirtree/filename->path-from-root filename)
+                     (nomis/dirtree/no-widget
+                      (signal 'nomis/dirtree/file-not-found
+                              filename)))))
         (nomis/dirtree/debug-message "Going to %s" (first (last path)))
         (cl-labels ((goto-file-that-is-in-expansion
                      (target-file)
@@ -907,28 +935,85 @@ With prefix argument select `nomis/dirtree/buffer'"
 (defun nomis/dirtree/with-return-to-selected-file-fun (fun)
   (let* ((file-to-return-to (nomis/dirtree/selected-file))
          (res (funcall fun)))
-    ;; We use goto-path here rather than goto-file-that-is-in-expansion
+    ;; We use goto-filename here rather than goto-file-that-is-in-expansion
     ;; because the selected file will not be in the expansion if the called
     ;; `fun` does a refresh and if the selected file has been deleted.
-    (nomis/dirtree/goto-filename file-to-return-to :refresh-not-allowed? t)
+    (condition-case err
+        (nomis/dirtree/goto-filename file-to-return-to
+                                     :refresh-not-allowed? t
+                                     :force? t)
+      (nomis/dirtree/file-not-found
+       ;; We get here if the selected file has been deleted -- not a problem.
+       ))
     res))
 
 (defmacro nomis/dirtree/with-return-to-selected-file (&rest body)
+  (declare (indent 0))
   `(nomis/dirtree/with-return-to-selected-file-fun (lambda () ,@body)))
 
+(defun nomis/dirtree/goto-file-in-all-dirtree-windows (filename)
+  (nomis/dirtree/with-run-in-all-dirtree-windows
+    ;; Refreshing the tree after files have been created or deleted
+    ;; sometimes changes the selection to something mad and/or bad, so fix
+    ;; things up. TODO Perhaps add an arg to say whether this needs to be
+    ;; done.
+    (condition-case err
+        (nomis/dirtree/goto-filename filename
+                                     :refresh-not-allowed? t
+                                     :force? t)
+      (nomis/dirtree/file-not-found
+       ;; We get here if the selected file has been deleted -- not a
+       ;; problem.
+       ))))
+
+(defun nomis/dirtree/fix-selection-in-all-windows ()
+  (nomis/dirtree/goto-file-in-all-dirtree-windows
+   *nomis/dirtree/filenames/current*))
+
+(defun nomis/dirtree/with-fix-selection-in-all-windows-fun (fun)
+  (prog1
+      (funcall fun)
+    (nomis/dirtree/fix-selection-in-all-windows)))
+
+(cl-defmacro nomis/dirtree/with-fix-selection-in-all-windows (&body body)
+  (declare (indent 0))
+  `(progn
+     (nomis/dirtree/with-fix-selection-in-all-windows-fun (lambda () ,@body))))
+
+(defvar *in-nomis/dirtree/with-run-in-dirtree-window-and-fixup-selection?* nil)
+
+(defun nomis/dirtree/with-run-in-dirtree-window-and-fixup-selection-fun (fun)
+  (assert (get-buffer nomis/dirtree/buffer))
+  (assert (not *doing-run-in-all-dirtree-windows?*))
+  (cl-flet ((do-it () (funcall fun)))
+    (if *in-nomis/dirtree/with-run-in-dirtree-window-and-fixup-selection?*
+        (progn
+          (message "**** In a nested call of `nomis/dirtree/with-run-in-dirtree-window-and-fixup-selection-fun` -- don't want this.")
+          (do-it))
+      (nomis/dirtree/with-run-in-dirtree-window-or-buffer
+        (nomis/dirtree/with-note-selection ; TODO Are we doing to much here? Maybe this belongs in the callers that need it.
+         (let* ((*in-nomis/dirtree/with-run-in-dirtree-window-and-fixup-selection?* t)
+                (file-to-return-to (nomis/dirtree/selected-file)))
+           (unwind-protect
+               (do-it)
+             (nomis/dirtree/goto-file-in-all-dirtree-windows
+              file-to-return-to))))))))
+
+(cl-defmacro nomis/dirtree/with-run-in-dirtree-window-and-fixup-selection (&body body) ; TODO Move this and others to before first use (do we need that in Emacs Lisp? yes, see https://github.com/bbatsov/emacs-lisp-style-guide/issues/31)
+  (declare (indent 0))
+  `(nomis/dirtree/with-run-in-dirtree-window-and-fixup-selection-fun (lambda () ,@body)))
+
 (defun nomis/dirtree/refresh-tree (tree)
+  (error "nomis/dirtree/refresh-tree is unused, right?")
   (nomis/dirtree/with-return-to-selected-file ; because refresh sometimes jumps us to mad and/or bad place
-   (nomis/dirtree/refresh-tree/impl/with-arg tree)))
+    (nomis/dirtree/refresh-tree/impl/with-arg tree)))
 
 (defun nomis/dirtree/refresh/internal ()
-  (nomis/dirtree/with-return-to-selected-file ; because refresh sometimes jumps us to mad and/or bad place
-   (mapc #'nomis/dirtree/refresh-tree/impl/with-arg
-         (nomis/dirtree/all-trees))))
+  (mapc #'nomis/dirtree/refresh-tree/impl/with-arg
+        (nomis/dirtree/all-trees)))
 
 ;;;; ___________________________________________________________________________
 ;;;; History
-
-(defvar *nomis/dirtree/inhibit-history?* nil)
 
 (defvar *nomis/dirtree/filenames/current* nil)
 (defvar *nomis/dirtree/filenames/history-list* '())
@@ -943,20 +1028,23 @@ With prefix argument select `nomis/dirtree/buffer'"
   (nomis/grab-user-attention/low))
 
 (defun nomis/dirtree/note-selection ()
-  (if (null (nomis/dirtree/selected-widget/with-extras))
-      (message "Not on a widget")
-    (unless (or *nomis/dirtree/inhibit-history?*
-                (equal *nomis/dirtree/filenames/current*
-                       (nomis/dirtree/selected-file)))
-      (nomis/dirtree/debug-message "Noting selection %s"
-                                   (nomis/dirtree/selected-file))
-      (when *nomis/dirtree/filenames/current*
-        (setq *nomis/dirtree/filenames/history-list*
-              (seq-take (cons *nomis/dirtree/filenames/current*
-                              *nomis/dirtree/filenames/history-list*)
-                        nomis/dirtree/max-history-size)))
-      (setq *nomis/dirtree/filenames/current* (nomis/dirtree/selected-file))
-      (setq *nomis/dirtree/filenames/future-list* '()))))
+  (when (nomis/dirtree/selected-widget/with-extras)
+    (if (or *nomis/dirtree/inhibit-history?*
+            (equal *nomis/dirtree/filenames/current*
+                   (nomis/dirtree/selected-file)))
+        (nomis/dirtree/debug-message "nomis/dirtree/note-selection 1 -- %s"
+                                     "NOT NOTING SELECTION")
+      (progn
+        (nomis/dirtree/debug-message "nomis/dirtree/note-selection 2 -- %s %s"
+                                     "NOTING SELECTION"
+                                     (nomis/dirtree/selected-file))
+        (when *nomis/dirtree/filenames/current*
+          (setq *nomis/dirtree/filenames/history-list*
+                (seq-take (cons *nomis/dirtree/filenames/current*
+                                *nomis/dirtree/filenames/history-list*)
+                          nomis/dirtree/max-history-size)))
+        (setq *nomis/dirtree/filenames/current* (nomis/dirtree/selected-file))
+        (setq *nomis/dirtree/filenames/future-list* '())))))
 
 (defun nomis/dirtree/with-note-selection-fun (fun)
   (nomis/dirtree/note-selection)
@@ -1021,13 +1109,13 @@ Record history -- record the selection before and after moving around."))))
        (defun ,name (,@args)
          ,doc-string
          ,@preamble
-         (cl-labels ((do-it
-                      ()
-                      ,@body))
-           ,(if no-record-history?
-                `(do-it)
-              `(nomis/dirtree/with-note-selection
-                (do-it)))))
+         (cl-labels ((do-it () ,@body))
+           (nomis/dirtree/with-fix-selection-in-all-windows
+             ;; TODO More thought needed.
+             ;;      - Where does this (above) call belong? (Maybe here.)
+             ,(if no-record-history?
+                  `(do-it)
+                `(nomis/dirtree/with-note-selection (do-it))))))
        (defun ,name-for-and-display (,@args)
          ,(concat doc-string
                   "
@@ -1036,10 +1124,10 @@ Then display contents of file under point in other window.")
          (,name ,@args)
          (nomis/dirtree/display-file*)))))
 
-(defun nomis/dirtree/goto-file/internal (filename)
-  (with-run-in-all-dirtree-windows
+(cl-defun nomis/dirtree/goto-file/internal (filename &key force?)
+  (nomis/dirtree/with-run-in-all-dirtree-windows ; nomis/dirtree/with-run-in-dirtree-window-and-fixup-selection TODO Won't work. Why? (The selection changes but not "properly" -- the thing that running in a window fixes.)
     (nomis/dirtree/with-note-selection
-     (nomis/dirtree/goto-filename filename))
+     (nomis/dirtree/goto-filename filename :force? force?))
     (when (bound-and-true-p hl-line-mode)
       ;; Workaround for bug.
       ;; Without this we don't have the highlighting.
@@ -1074,6 +1162,30 @@ Then display contents of file under point in other window.")
         (delete-frame)
         (select-frame-set-input-focus original-frame)))))
 
+(defun nomis/dirtree/goto-file/no-create-window () ; FIXME Maybe combine with `nomis/dirtree/goto-file*`
+  "Do the following:
+   - If no nomis/dirtree buffer exists, issue an error message and do no more.
+   - Make a note of the current buffer's file; call it f.
+     (If the current buffer is a dired buffer, f will be a directory.)
+   - Let d be:
+     - if f is a directory, then f
+     - if f is an ordinary file, then f's directory.
+   - Change the nomis/dirtree selection to be f (in all nomis/dirtree windows)."
+  (interactive)
+  (let* ((filename (nomis/dirtree/filename-in-selected-window)))
+    (cond
+     ((null filename)
+      (message "This buffer has no associated file.")
+      (nomis/beep))
+     ((null (get-buffer nomis/dirtree/buffer))
+      ((message "There's no nomis/dirtree window")
+       (nomis/beep)))
+     (t
+      (nomis/dirtree/with-fix-selection-in-all-windows ; TODO This is beginning to be a pattern
+        (nomis/dirtree/with-run-in-dirtree-buffer
+          (nomis/dirtree/with-note-selection
+           (nomis/dirtree/goto-filename filename))))))))
+
 (cl-defun nomis/dirtree/goto-file* (&key return-to-original-window?)
   (let* ((filename (nomis/dirtree/filename-in-selected-window)))
     (cond
@@ -1084,11 +1196,16 @@ Then display contents of file under point in other window.")
       (let* ((single-window-in-frame? (= 1 (length (window-list))))
              (original-window (selected-window)))
         (nomis/dirtree/make-dirtree-if-there-is-not-one filename)
-        (switch-to-buffer-other-window nomis/dirtree/buffer)
-        (when return-to-original-window?
-          (select-window original-window))
-        (nomis/dirtree/goto-file/internal filename)
+        (unwind-protect
+            (nomis/dirtree/with-run-in-dirtree-buffer
+              (nomis/dirtree/with-note-selection
+               ;; If there isn't a dirtree buffer in this window, create one.
+               (switch-to-buffer-other-window nomis/dirtree/buffer)
+               (nomis/dirtree/goto-file/internal filename)))
+          (when return-to-original-window?
+            (select-window original-window)))
         (when (and single-window-in-frame?
+                   (= 2 (length (window-list)))
                    (fboundp 'flop-frame))
           ;; If we now have side-by-side windows, arrange them so that
           ;; dirtree buffer is on the left.
@@ -1408,7 +1525,25 @@ sub-subdirectories, etc, so that subsequent expansion shows only one level."
   (interactive)
   (setq nomis/dirtree/dirs-at-top?
         (not nomis/dirtree/dirs-at-top?))
-  (nomis/dirtree/refresh/internal))
+  (case 3
+    (1
+     ;; This is broken, but was working I think.
+     ;; It mostly works, but sometimes it doesn't keep the selection
+     ;; properly.
+     (nomis/dirtree/with-fix-selection-in-all-windows
+       (nomis/dirtree/with-run-in-dirtree-buffer
+         (nomis/dirtree/refresh/internal))))
+    (2
+     ;; This is broken in the same way as 1.
+     (nomis/dirtree/with-fix-selection-in-all-windows
+       (nomis/dirtree/with-run-in-dirtree-window-or-buffer
+         (nomis/dirtree/refresh/internal))))
+    (3
+     (nomis/dirtree/with-fix-selection-in-all-windows
+       (nomis/dirtree/with-run-in-all-dirtree-windows
+         (nomis/dirtree/refresh/internal)))))
+  (message "nomis-dirtree dirs at top turned %s"
+           (if nomis/dirtree/dirs-at-top? "on" "off")))
 
 (defun nomis/dirtree/show-widget-info (widget widget-with-extras?)
   (cl-labels ((emit-info
@@ -1469,7 +1604,7 @@ Mostly for debugging purposes."
 
 (defun nomis/dirtree/delete-tree/do-it ()
   (assert (get-buffer nomis/dirtree/buffer))
-  (with-run-in-single-dirtree-window
+  (nomis/dirtree/with-run-in-dirtree-buffer
     (assert (tree-mode-root-linep))
     (nomis/dirtree/collapse-all) ; an easy way to remove watchers.
     (tree-mode-delete (tree-mode-tree-ap))))
@@ -1487,6 +1622,7 @@ Mostly for debugging purposes."
 (define-key global-map (kbd "H-q d") 'nomis/dirtree/make-dirtree)
 (define-key global-map (kbd "H-/")   'nomis/dirtree/goto-file/return-to-window)
 (define-key global-map (kbd "H-M-/") 'nomis/dirtree/goto-file)
+(define-key global-map (kbd "H-C-/") 'nomis/dirtree/goto-file/no-create-window) ; TODO Turn this binding off and check it's not used by something else
 
 (cl-labels ((dk (k f)
                 (define-key nomis/dirtree/mode-map k f)))
