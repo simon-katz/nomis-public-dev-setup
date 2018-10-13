@@ -70,6 +70,8 @@
 (require 's)
 (require 'dash)
 
+(require 'vc) ; not sure this is needed -- maybe always there
+
 (require 'nomis-core-utils)
 (require 'nomis-buffers-windows-frames)
 (require 'nomis-files)
@@ -374,6 +376,11 @@ With prefix argument select `nomis/dirtree/buffer'"
                        dired-directory
                        ;; default-directory
                        )))
+    (when filename
+      (expand-file-name filename))))
+
+(defun nomis/dirtree/vc-root-dir ()
+  (let* ((filename (vc-root-dir)))
     (when filename
       (expand-file-name filename))))
 
@@ -1172,7 +1179,7 @@ Then display contents of file under point in other window.")
         (delete-frame)
         (select-frame-set-input-focus original-frame)))))
 
-(defun nomis/dirtree/goto-file/no-create-window () ; TODO Maybe combine with `nomis/dirtree/goto-file*`
+(defun nomis/dirtree/goto-file/no-create-window () ; TODO Combine with `nomis/dirtree/goto-file*`
   "Do the following:
    - If no nomis/dirtree buffer exists, issue an error message and do no more.
    - Make a note of the current buffer's file; call it f.
@@ -1197,7 +1204,9 @@ Then display contents of file under point in other window.")
            (nomis/dirtree/goto-filename filename))))))))
 
 (cl-defun nomis/dirtree/goto-file* (&key return-to-original-window?)
-  (let* ((filename (nomis/dirtree/filename-in-selected-window)))
+  (let* ((filename (nomis/dirtree/filename-in-selected-window))
+         (dirname (or (nomis/dirtree/vc-root-dir)
+                      filename)))
     (cond
      ((null filename)
       (message "This buffer has no associated file.")
@@ -1205,7 +1214,7 @@ Then display contents of file under point in other window.")
      (t
       (let* ((single-window-in-frame? (= 1 (length (window-list))))
              (original-window (selected-window)))
-        (nomis/dirtree/make-dirtree-if-there-is-not-one filename)
+        (nomis/dirtree/make-dirtree-if-there-is-not-one dirname)
         (unwind-protect
             (nomis/dirtree/with-run-in-dirtree-buffer
               (nomis/dirtree/with-note-selection
