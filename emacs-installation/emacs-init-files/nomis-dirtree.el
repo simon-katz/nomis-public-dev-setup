@@ -380,7 +380,7 @@ With prefix argument select `nomis/dirtree/buffer'"
       (expand-file-name filename))))
 
 (defun nomis/dirtree/vc-root-dir ()
-  (let* ((filename (vc-root-dir)))
+  (let* ((filename (ignore-errors (vc-root-dir))))
     (when filename
       (expand-file-name filename))))
 
