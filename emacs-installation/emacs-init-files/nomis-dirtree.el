@@ -552,7 +552,7 @@ With prefix argument select `nomis/dirtree/buffer'"
   `(nomis/dirtree/with-run-in-dirtree-buffer-fun (lambda () ,@body)))
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-;;;; nomis/dirtree/with-run-in-all-dirtree-windows
+;;;; nomis/dirtree/with-run-in-all-dirtree-windows -- NOW USED ONLY ONCE
 
 (defvar *doing-run-in-all-dirtree-windows?* nil)
 
@@ -572,6 +572,20 @@ With prefix argument select `nomis/dirtree/buffer'"
 (defmacro nomis/dirtree/with-run-in-all-dirtree-windows (&rest body)
   (declare (indent 0))
   `(nomis/dirtree/with-run-in-all-dirtree-windows-fun (lambda () ,@body)))
+
+;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+;;;; nomis/dirtree/goto-file-in-all-dirtree-windows
+
+(defun nomis/dirtree/goto-file-in-all-dirtree-windows (filename)
+  (nomis/dirtree/with-run-in-all-dirtree-windows
+    (condition-case err
+        (nomis/dirtree/goto-filename filename
+                                     :refresh-not-allowed? t
+                                     :force? t)
+      (nomis/dirtree/file-not-found
+       ;; We get here if the selected file has been deleted -- not a
+       ;; problem.
+       ))))
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ;;;; nomis/dirtree/with-fix-selection-in-all-windows
@@ -1079,20 +1093,6 @@ With prefix argument select `nomis/dirtree/buffer'"
 (defmacro nomis/dirtree/with-return-to-selected-file (&rest body)
   (declare (indent 0))
   `(nomis/dirtree/with-return-to-selected-file-fun (lambda () ,@body)))
-
-(defun nomis/dirtree/goto-file-in-all-dirtree-windows (filename)
-  (nomis/dirtree/with-run-in-all-dirtree-windows
-    ;; Refreshing the tree after files have been created or deleted
-    ;; sometimes changes the selection to something mad and/or bad, so fix
-    ;; things up.
-    (condition-case err
-        (nomis/dirtree/goto-filename filename
-                                     :refresh-not-allowed? t
-                                     :force? t)
-      (nomis/dirtree/file-not-found
-       ;; We get here if the selected file has been deleted -- not a
-       ;; problem.
-       ))))
 
 (defun nomis/dirtree/refresh-tree (tree)
   (error "nomis/dirtree/refresh-tree is unused, right?")
