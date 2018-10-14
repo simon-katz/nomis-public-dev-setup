@@ -10,6 +10,9 @@
 
 (setq mouse-wheel-progressive-speed nil) ; trackpad scrolls too fast when non-nil
 
+(setq mouse-wheel-tilt-scroll t)
+(setq mouse-wheel-flip-direction t)
+
 ;;;; ___________________________________________________________________________
 
 (provide 'nomis-mouse-scrolling)
