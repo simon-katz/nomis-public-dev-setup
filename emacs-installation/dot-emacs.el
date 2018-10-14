@@ -48,6 +48,10 @@
 
 (when i-am-nomis/p ; #### What about compiling?
   (add-to-list 'load-path (concat (nomis/load-file-directory)
+                                  "../../emacs-package-repos/cider"))
+  (add-to-list 'load-path (concat (nomis/load-file-directory)
+                                  "../../emacs-package-repos/clj-refactor"))
+  (add-to-list 'load-path (concat (nomis/load-file-directory)
                                   "../../emacs-package-repos/align-cljlet"))
   (add-to-list 'load-path (concat (nomis/load-file-directory)
                                   "../../emacs-package-repos/cljr-helm"))
