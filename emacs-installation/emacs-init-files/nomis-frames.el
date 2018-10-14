@@ -47,13 +47,13 @@
 ;;;; ___________________________________________________________________________
 ;;;; ---- Frame size ----
 
-(defvar nomis/extra-width-for-each-window 90)
+(defconst nomis/extra-width-for-each-window 90)
 
-(defvar nomis/single-window-frame-width 85)
-(defvar nomis/double-window-frame-width (+ nomis/single-window-frame-width
-                                           nomis/extra-width-for-each-window))
-(defvar nomis/triple-window-frame-width (+ nomis/double-window-frame-width
-                                           nomis/extra-width-for-each-window))
+(defconst nomis/single-window-frame-width 85)
+(defconst nomis/double-window-frame-width (+ nomis/single-window-frame-width
+                                             nomis/extra-width-for-each-window))
+(defconst nomis/triple-window-frame-width (+ nomis/double-window-frame-width
+                                             nomis/extra-width-for-each-window))
 
 ;;;; ___________________________________________________________________________
 ;;;; ---- Cycle frames ----
@@ -72,7 +72,7 @@
 ;;;; ___________________________________________________________________________
 ;;;; ---- Default frame size ----
 
-(defvar nomis/window-height
+(defconst nomis/window-height
   (cl-case nomis/system-name
     (:chivers
      ;; 1200 pixels
@@ -100,20 +100,20 @@
     (t
      66)))
 
-(defvar nomis/frame-prefs (append
-                           (if (and i-am-nomis/p
-                                    nomis/window-height)
-                               `((height . ,nomis/window-height) ; Broken when people have thingy bar at the bottom of the screen.  (Also, this depends on a particular font size.)
-                                 )
-                             '())
-                           `((width  . ,nomis/single-window-frame-width)
-                             (top . 0)
-                             ;; (left . 140)
-                             ;; (font . "4.System VIO")
-                             ;; (foreground-color . "Black")
-                             (background-color . "#f5f5f5")
-                             ;;(cursor-color . "SkyBlue")
-                             )))
+(defconst nomis/frame-prefs (append
+                             (if (and i-am-nomis/p
+                                      nomis/window-height)
+                                 `((height . ,nomis/window-height) ; Broken when people have thingy bar at the bottom of the screen.  (Also, this depends on a particular font size.)
+                                   )
+                               '())
+                             `((width  . ,nomis/single-window-frame-width)
+                               (top . 0)
+                               ;; (left . 140)
+                               ;; (font . "4.System VIO")
+                               ;; (foreground-color . "Black")
+                               (background-color . "#f5f5f5")
+                               ;;(cursor-color . "SkyBlue")
+                               )))
 ;; (setq initial-frame-alist (append nomis/frame-prefs initial-frame-alist))
 (setq default-frame-alist (append nomis/frame-prefs default-frame-alist))
 
@@ -214,7 +214,7 @@
 ;;;; ___________________________________________________________________________
 ;;;; ---- Commands to adjust frames -- move to top, bottom, left, right ----
 
-(defvar nomis/-screen-pixel-adjustments
+(defconst nomis/-screen-pixel-adjustments
   `((:top . ,window-mgr-title-bar-pixel-height)
     (:bottom . 0)
     (:left . 0)
