@@ -552,40 +552,24 @@ With prefix argument select `nomis/dirtree/buffer'"
   `(nomis/dirtree/with-run-in-dirtree-buffer-fun (lambda () ,@body)))
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-;;;; nomis/dirtree/with-run-in-all-dirtree-windows -- NOW USED ONLY ONCE
-
-(defvar *doing-run-in-all-dirtree-windows?* nil)
-
-(defun nomis/dirtree/with-run-in-all-dirtree-windows-fun (fun)
-  (cl-flet ((do-it () (funcall fun)))
-    (if *doing-run-in-all-dirtree-windows?*
-        (progn
-          (message "**** In nested call of nomis/dirtree/with-run-in-all-dirtree-windows-fun")
-          (do-it))
-      (let* ((*doing-run-in-all-dirtree-windows?* t))
-        (save-selected-window
-          (loop for w in (get-buffer-window-list nomis/dirtree/buffer nil t)
-                do (progn
-                     (select-window w)
-                     (do-it))))))))
-
-(defmacro nomis/dirtree/with-run-in-all-dirtree-windows (&rest body)
-  (declare (indent 0))
-  `(nomis/dirtree/with-run-in-all-dirtree-windows-fun (lambda () ,@body)))
-
-;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ;;;; nomis/dirtree/goto-file-in-all-dirtree-windows
 
 (defun nomis/dirtree/goto-file-in-all-dirtree-windows (filename)
-  (nomis/dirtree/with-run-in-all-dirtree-windows
-    (condition-case err
-        (nomis/dirtree/goto-filename filename
-                                     :refresh-not-allowed? t
-                                     :force? t)
-      (nomis/dirtree/file-not-found
-       ;; We get here if the selected file has been deleted -- not a
-       ;; problem.
-       ))))
+  (cl-flet ((do-it
+             (lambda ()
+               (condition-case err
+                   (nomis/dirtree/goto-filename filename
+                                                :refresh-not-allowed? t
+                                                :force? t)
+                 (nomis/dirtree/file-not-found
+                  ;; We get here if the selected file has been deleted -- not a
+                  ;; problem.
+                  )))))
+    (save-selected-window
+      (loop for w in (get-buffer-window-list nomis/dirtree/buffer nil t)
+            do (progn
+                 (select-window w)
+                 (do-it))))))
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ;;;; nomis/dirtree/with-fix-selection-in-all-windows
@@ -611,7 +595,6 @@ With prefix argument select `nomis/dirtree/buffer'"
 
 (defun nomis/dirtree/with-run-in-dirtree-window-and-fixup-selection-fun (fun)
   (assert (get-buffer nomis/dirtree/buffer))
-  (assert (not *doing-run-in-all-dirtree-windows?*))
   (cl-flet ((do-it () (funcall fun)))
     (if *in-nomis/dirtree/with-run-in-dirtree-window-and-fixup-selection?*
         (progn
