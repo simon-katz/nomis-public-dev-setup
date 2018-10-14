@@ -1003,6 +1003,8 @@ With prefix argument select `nomis/dirtree/buffer'"
 
 (define-error 'nomis/dirtree/file-not-found "nomis-dirtree: No such file")
 
+(defvar *nomis/dirtree/goto-filename/start-at-root?* nil)
+
 (cl-defun nomis/dirtree/goto-filename (filename
                                        &key refresh-not-allowed? force?)
   ;; TODO `force?` doesn't seem to be needed. Why not?
@@ -1046,6 +1048,8 @@ With prefix argument select `nomis/dirtree/buffer'"
                                    (when r
                                      (nomis/dirtree/expand nil))))))
           ;; Search. If we fail to find to find `target-file` refresh and try again.
+          (when *nomis/dirtree/goto-filename/start-at-root?*
+            (nomis/dirtree/goto-root/impl))
           (condition-case err
               (search)
             (nomis/dirtree/file-not-found
@@ -1547,25 +1551,23 @@ sub-subdirectories, etc, so that subsequent expansion shows only one level."
 
 (defun nomis/dirtree/toggle-dirtree-dirs-at-top ()
   (interactive)
+  (progn
+    ;; There are times when we aren't on the selection, so note where we are.
+    ;; (Not sure this is needed.)
+    (nomis/dirtree/note-selection :force? t))
   (setq nomis/dirtree/dirs-at-top?
         (not nomis/dirtree/dirs-at-top?))
-  (case 3
-    (1
-     ;; This is broken, but was working I think.
-     ;; It mostly works, but sometimes it doesn't keep the selection
-     ;; properly.
-     (nomis/dirtree/with-fix-selection-in-all-windows
-       (nomis/dirtree/with-run-in-dirtree-buffer
-         (nomis/dirtree/refresh/internal))))
-    (2
-     ;; This is broken in the same way as 1.
-     (nomis/dirtree/with-fix-selection-in-all-windows
-       (nomis/dirtree/with-run-in-dirtree-window-or-buffer
-         (nomis/dirtree/refresh/internal))))
-    (3
-     (nomis/dirtree/with-fix-selection-in-all-windows
-       (nomis/dirtree/with-run-in-all-dirtree-windows
-         (nomis/dirtree/refresh/internal)))))
+  (let* ((*nomis/dirtree/goto-filename/start-at-root?*
+          ;; Without this, sometimes (randomly) we fail to find the current
+          ;; selection. I think the cause of this may be that in
+          ;; `nomis/dirtree/goto-filename`, when we call
+          ;; `nomis/dirtree/next-line/impl` it sometimes doesn't move.
+          ;; I've only ever noticed this when toggling
+          ;; `nomis/dirtree/dirs-at-top?`.
+          t))
+    (nomis/dirtree/with-fix-selection-in-all-windows
+      (nomis/dirtree/with-run-in-dirtree-buffer
+        (nomis/dirtree/refresh/internal))))
   (message "nomis-dirtree dirs at top turned %s"
            (if nomis/dirtree/dirs-at-top? "on" "off")))
 
