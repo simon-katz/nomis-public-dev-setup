@@ -1631,7 +1631,7 @@ Mostly for debugging purposes."
 (define-key global-map (kbd "H-q d") 'nomis/dirtree/make-dirtree)
 (define-key global-map (kbd "H-/")   'nomis/dirtree/goto-file/return-to-window)
 (define-key global-map (kbd "H-M-/") 'nomis/dirtree/goto-file)
-(define-key global-map (kbd "H-C-/") 'nomis/dirtree/goto-file/no-create-window)
+(define-key global-map (kbd "H-÷")   'nomis/dirtree/goto-file/no-create-window)
 
 (cl-labels ((dk (k f)
                 (define-key nomis/dirtree/mode-map k f)))
