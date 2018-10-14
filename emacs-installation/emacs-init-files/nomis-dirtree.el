@@ -453,24 +453,28 @@ With prefix argument select `nomis/dirtree/buffer'"
   (message "Cleared history.")
   (nomis/grab-user-attention/low))
 
-(defun nomis/dirtree/note-selection ()
+(cl-defun nomis/dirtree/note-selection (&key force?)
   (when (nomis/dirtree/selected-widget/with-extras)
-    (if (or *nomis/dirtree/inhibit-history?*
-            (equal *nomis/dirtree/filenames/current*
-                   (nomis/dirtree/selected-file)))
-        (nomis/dirtree/debug-message "nomis/dirtree/note-selection 1 -- %s"
-                                     "NOT NOTING SELECTION")
-      (progn
-        (nomis/dirtree/debug-message "nomis/dirtree/note-selection 2 -- %s %s"
-                                     "NOTING SELECTION"
-                                     (nomis/dirtree/selected-file))
-        (when *nomis/dirtree/filenames/current*
-          (setq *nomis/dirtree/filenames/history-list*
-                (seq-take (cons *nomis/dirtree/filenames/current*
-                                *nomis/dirtree/filenames/history-list*)
-                          nomis/dirtree/max-history-size)))
-        (setq *nomis/dirtree/filenames/current* (nomis/dirtree/selected-file))
-        (setq *nomis/dirtree/filenames/future-list* '())))))
+    (cond
+     ((and *nomis/dirtree/inhibit-history?*
+           (not force?))
+      (nomis/dirtree/debug-message "nomis/dirtree/note-selection 1a -- %s"
+                                   "NOT NOTING SELECTION because inhibited"))
+     ((equal *nomis/dirtree/filenames/current*
+             (nomis/dirtree/selected-file))
+      (nomis/dirtree/debug-message "nomis/dirtree/note-selection 1b -- %s"
+                                   "NOT NOTING SELECTION because same"))
+     (t
+      (nomis/dirtree/debug-message "nomis/dirtree/note-selection 2 -- %s %s"
+                                   "NOTING SELECTION"
+                                   (nomis/dirtree/selected-file))
+      (when *nomis/dirtree/filenames/current*
+        (setq *nomis/dirtree/filenames/history-list*
+              (seq-take (cons *nomis/dirtree/filenames/current*
+                              *nomis/dirtree/filenames/history-list*)
+                        nomis/dirtree/max-history-size)))
+      (setq *nomis/dirtree/filenames/current* (nomis/dirtree/selected-file))
+      (setq *nomis/dirtree/filenames/future-list* '())))))
 
 (defun nomis/dirtree/with-note-selection-fun (fun)
   (nomis/dirtree/note-selection)
@@ -1142,9 +1146,10 @@ Then display contents of file under point in other window.")
          (nomis/dirtree/display-file*)))))
 
 (cl-defun nomis/dirtree/goto-file/internal (filename &key force?)
-  (nomis/dirtree/with-run-in-all-dirtree-windows ; nomis/dirtree/with-run-in-dirtree-window-and-fixup-selection TODO Won't work. Why? (When using goto-file*, The selection changes but not "properly" -- the thing that running in a window fixes.)
+  (nomis/dirtree/with-run-in-dirtree-window-and-fixup-selection
     (nomis/dirtree/with-note-selection
-     (nomis/dirtree/goto-filename filename :force? force?))
+     (nomis/dirtree/goto-filename filename :force? force?)
+     (nomis/dirtree/note-selection :force? t))
     (when (bound-and-true-p hl-line-mode)
       ;; Workaround for bug.
       ;; Without this we don't have the highlighting.
