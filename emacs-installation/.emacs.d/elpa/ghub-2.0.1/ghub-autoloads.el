@@ -1,9 +1,12 @@
 ;;; ghub-autoloads.el --- automatically extracted autoloads
 ;;
 ;;; Code:
-(add-to-list 'load-path (directory-file-name (or (file-name-directory #$) (car load-path))))
+
+(add-to-list 'load-path (directory-file-name
+                         (or (file-name-directory #$) (car load-path))))
+
 
-;;;### (autoloads nil "ghub" "ghub.el" (23338 45323 0 0))
+;;;### (autoloads nil "ghub" "ghub.el" (0 0 0 0))
 ;;; Generated autoloads from ghub.el
 
 (autoload 'ghub-create-token "ghub" "\
@@ -23,9 +26,18 @@ has to provide several values including their password.
 
 \(fn HOST USERNAME PACKAGE)" t nil)
 
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "ghub" '("auth-source-netrc-parse-next-interesting@save-match-data" "ghub-")))
+
 ;;;***
 
-;;;### (autoloads nil nil ("ghub-pkg.el") (23338 45323 0 0))
+;;;### (autoloads nil "glab" "glab.el" (0 0 0 0))
+;;; Generated autoloads from glab.el
+
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "glab" '("glab-default-host")))
+
+;;;***
+
+;;;### (autoloads nil nil ("ghub-pkg.el") (0 0 0 0))
 
 ;;;***
 
@@ -33,5 +45,6 @@ has to provide several values including their password.
 ;; version-control: never
 ;; no-byte-compile: t
 ;; no-update-autoloads: t
+;; coding: utf-8
 ;; End:
 ;;; ghub-autoloads.el ends here

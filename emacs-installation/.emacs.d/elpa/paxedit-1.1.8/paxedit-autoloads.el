@@ -1,9 +1,12 @@
 ;;; paxedit-autoloads.el --- automatically extracted autoloads
 ;;
 ;;; Code:
-(add-to-list 'load-path (directory-file-name (or (file-name-directory #$) (car load-path))))
+
+(add-to-list 'load-path (directory-file-name
+                         (or (file-name-directory #$) (car load-path))))
+
 
-;;;### (autoloads nil "paxedit" "paxedit.el" (23338 45317 0 0))
+;;;### (autoloads nil "paxedit" "paxedit.el" (0 0 0 0))
 ;;; Generated autoloads from paxedit.el
 
 (autoload 'paxedit-whitespace-delete-left "paxedit" "\
@@ -626,11 +629,14 @@ left of the cursor.
 
 \(fn &optional ARG)" t nil)
 
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "paxedit" '("paxedit-" "defun-paxedit-")))
+
 ;;;***
 
 ;; Local Variables:
 ;; version-control: never
 ;; no-byte-compile: t
 ;; no-update-autoloads: t
+;; coding: utf-8
 ;; End:
 ;;; paxedit-autoloads.el ends here

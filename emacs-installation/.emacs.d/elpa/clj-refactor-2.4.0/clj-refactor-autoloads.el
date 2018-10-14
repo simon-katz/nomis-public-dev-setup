@@ -1,11 +1,14 @@
 ;;; clj-refactor-autoloads.el --- automatically extracted autoloads
 ;;
 ;;; Code:
-(add-to-list 'load-path (directory-file-name (or (file-name-directory #$) (car load-path))))
+
+(add-to-list 'load-path (directory-file-name
+                         (or (file-name-directory #$) (car load-path))))
+
 
-;;;### (autoloads nil "clj-refactor" "clj-refactor.el" (23436 3156
-;;;;;;  0 0))
-;;; Generated autoloads from clj-refactor.el
+;;;### (autoloads nil "clj-refactor" "../../../../../../../../../.emacs.d/elpa/clj-refactor-2.4.0/clj-refactor.el"
+;;;;;;  "a337c7cc1facf01fbad670feb4d43686")
+;;; Generated autoloads from ../../../../../../../../../.emacs.d/elpa/clj-refactor-2.4.0/clj-refactor.el
 
 (autoload 'cljr-add-keybindings-with-prefix "clj-refactor" "\
 Bind keys in `cljr--all-helpers' under a PREFIX key.
@@ -334,11 +337,23 @@ A mode to keep the clj-refactor keybindings.
 \\{clj-refactor-map}
 
 \(fn &optional ARG)" t nil)
+
+;;;### (autoloads "actual autoloads are elsewhere" "clj-refactor"
+;;;;;;  "../../../../../../../../../.emacs.d/elpa/clj-refactor-2.4.0/clj-refactor.el"
+;;;;;;  (0 0 0 0))
+;;; Generated autoloads from ../../../../../../../../../.emacs.d/elpa/clj-refactor-2.4.0/clj-refactor.el
+
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "clj-refactor" '("cjr--occurrence-count" "clj" "hydra-cljr-" "*cljr--noninteractive*")))
+
+;;;***
 
 ;;;***
 
-;;;### (autoloads nil nil ("clj-refactor-compat.el" "clj-refactor-pkg.el")
-;;;;;;  (23436 3156 0 0))
+;;;### (autoloads nil nil ("../../../../../../../../../.emacs.d/elpa/clj-refactor-2.4.0/clj-refactor-autoloads.el"
+;;;;;;  "../../../../../../../../../.emacs.d/elpa/clj-refactor-2.4.0/clj-refactor-compat.el"
+;;;;;;  "../../../../../../../../../.emacs.d/elpa/clj-refactor-2.4.0/clj-refactor-pkg.el"
+;;;;;;  "../../../../../../../../../.emacs.d/elpa/clj-refactor-2.4.0/clj-refactor.el")
+;;;;;;  (0 0 0 0))
 
 ;;;***
 
@@ -346,5 +361,6 @@ A mode to keep the clj-refactor keybindings.
 ;; version-control: never
 ;; no-byte-compile: t
 ;; no-update-autoloads: t
+;; coding: utf-8
 ;; End:
 ;;; clj-refactor-autoloads.el ends here

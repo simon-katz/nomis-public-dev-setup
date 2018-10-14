@@ -1,9 +1,12 @@
 ;;; discover-autoloads.el --- automatically extracted autoloads
 ;;
 ;;; Code:
-(add-to-list 'load-path (directory-file-name (or (file-name-directory #$) (car load-path))))
+
+(add-to-list 'load-path (directory-file-name
+                         (or (file-name-directory #$) (car load-path))))
+
 
-;;;### (autoloads nil "discover" "discover.el" (23420 33142 0 0))
+;;;### (autoloads nil "discover" "discover.el" (0 0 0 0))
 ;;; Generated autoloads from discover.el
 
 (autoload 'discover-show-context-menu "discover" "\
@@ -107,11 +110,14 @@ See `discover-mode' for more information on Discover mode.
 
 \(fn &optional ARG)" t nil)
 
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "discover" '("discover-")))
+
 ;;;***
 
 ;; Local Variables:
 ;; version-control: never
 ;; no-byte-compile: t
 ;; no-update-autoloads: t
+;; coding: utf-8
 ;; End:
 ;;; discover-autoloads.el ends here

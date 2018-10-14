@@ -52,7 +52,12 @@
                       helm
                       ido-vertical-mode
                       aggressive-indent
-                      which-key))
+                      which-key
+                      fill-column-indicator
+                      yaml-mode
+                      yafolding
+                      highlight-indentation
+                      discover))
 
 (dolist (p my-packages)
   (when (not (package-installed-p p))

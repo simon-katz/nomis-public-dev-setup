@@ -1,9 +1,15 @@
 ;;; pos-tip-autoloads.el --- automatically extracted autoloads
 ;;
 ;;; Code:
-(add-to-list 'load-path (directory-file-name (or (file-name-directory #$) (car load-path))))
+
+(add-to-list 'load-path (directory-file-name
+                         (or (file-name-directory #$) (car load-path))))
+
 
-;;;### (autoloads nil nil ("pos-tip.el") (23338 45319 0 0))
+;;;### (autoloads nil "pos-tip" "pos-tip.el" (0 0 0 0))
+;;; Generated autoloads from pos-tip.el
+
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "pos-tip" '("pos-tip-")))
 
 ;;;***
 
@@ -11,5 +17,6 @@
 ;; version-control: never
 ;; no-byte-compile: t
 ;; no-update-autoloads: t
+;; coding: utf-8
 ;; End:
 ;;; pos-tip-autoloads.el ends here

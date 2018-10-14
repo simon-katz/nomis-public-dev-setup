@@ -1,9 +1,12 @@
 ;;; yasnippet-autoloads.el --- automatically extracted autoloads
 ;;
 ;;; Code:
-(add-to-list 'load-path (directory-file-name (or (file-name-directory #$) (car load-path))))
+
+(add-to-list 'load-path (directory-file-name
+                         (or (file-name-directory #$) (car load-path))))
+
 
-;;;### (autoloads nil "yasnippet" "yasnippet.el" (23338 45356 0 0))
+;;;### (autoloads nil "yasnippet" "yasnippet.el" (0 0 0 0))
 ;;; Generated autoloads from yasnippet.el
 
 (autoload 'yas-minor-mode "yasnippet" "\
@@ -45,9 +48,7 @@ See `yas-minor-mode' for more information on Yas minor mode.
 \(fn &optional ARG)" t nil)
 (autoload 'snippet-mode "yasnippet" "A mode for editing yasnippets" t nil)
 
-;;;***
-
-;;;### (autoloads nil nil ("yasnippet-pkg.el") (23338 45351 0 0))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "yasnippet" '("yas" "help-snippet-def" "snippet-mode-map" "last-buffer-undo-list")))
 
 ;;;***
 
@@ -55,5 +56,6 @@ See `yas-minor-mode' for more information on Yas minor mode.
 ;; version-control: never
 ;; no-byte-compile: t
 ;; no-update-autoloads: t
+;; coding: utf-8
 ;; End:
 ;;; yasnippet-autoloads.el ends here
