@@ -36,7 +36,9 @@
             "CIDER 0.14.0 (Berlin)"
             "CIDER 0.15.0 (London)"
             "CIDER 0.16.0 (Riga)"
-            "CIDER 0.17.0 (Andalucía)"))
+            "CIDER 0.17.0 (Andalucía)"
+            "CIDER 0.18.0 (Saigon)"
+            "CIDER 0.18.1snapshot"))
   (defun nomis/clojure-buffer-ns ()
     (clojure-find-ns)))
  (t
@@ -61,7 +63,9 @@
     (with-current-buffer (cider-current-repl-buffer)
       cider-buffer-ns)))
  ((member (nomis/cider-version)
-          '("CIDER 0.17.0 (Andalucía)"))
+          '("CIDER 0.17.0 (Andalucía)"
+            "CIDER 0.18.0 (Saigon)"
+            "CIDER 0.18.1snapshot"))
   (defun nomis/cider-repl-namespace ()
     (with-current-buffer (cider-current-connection)
       cider-buffer-ns)))
@@ -85,7 +89,9 @@
             "CIDER 0.14.0 (Berlin)"
             "CIDER 0.15.0 (London)"
             "CIDER 0.16.0 (Riga)"
-            "CIDER 0.17.0 (Andalucía)"))
+            "CIDER 0.17.0 (Andalucía)"
+            "CIDER 0.18.0 (Saigon)"
+            "CIDER 0.18.1snapshot"))
   (defun nomis/cider-find-or-create-repl-buffer ()
     (cider-current-connection)))
  (t
@@ -163,7 +169,7 @@ Return the position of the prompt beginning."
   (setq cider-repl-prompt-function
         (lambda (namespace)
           (cl-labels ((do-it ()
-                             (funcall 
+                             (funcall
                               (cond
                                ((member (nomis/cider-version)
                                         '("CIDER 0.10.0"))
@@ -305,7 +311,7 @@ Really send to REPL? "
                    ((:send-top-level-form) (grab-text t))
                    ((:send-selection-or-form-around-point) (grab-text nil))
                    ((:send-return) nil)
-                   (t (error "Bad action")))) 
+                   (t (error "Bad action"))))
                 (show-cider-repl-buffer-and-send-text-to-it
                  (text)
                  (cl-labels ((insert-text () (insert text)))
@@ -340,7 +346,7 @@ Really send to REPL? "
 
 ;;## ;;;; ___________________________________________________________________________
 ;;## ;;;; ---- nomis/cider-rearrange-string-into-lines ----
-;;## 
+;;##
 ;;## ;;;; ****
 ;;## ;;;; + Ensure `nomis/grab-text' has no free variables.
 ;;## ;;;;
@@ -355,7 +361,7 @@ Really send to REPL? "
 ;;##   ;; which says:
 ;;##   ;;   thanks to “Pascal J Bourguignon”
 ;;##   ;;   and "TheFlyingDutchman <zzbba...@aol.com>". 2010-09-02
-;;##   ;; 
+;;##   ;;
 ;;##   ;; I changed insert-file-contents to insert-file-contents-literally
 ;;##   (with-temp-buffer
 ;;##     (insert-file-contents-literally filePath)
@@ -387,22 +393,22 @@ Really send to REPL? "
   'nomis/cider-rearrange-string-into-lines)
 
 ;;## ;;;; ___________________________________________________________________________
-;;## 
+;;##
 ;;## ;;;; TODO: Tidy; just hacked for now.
-;;## 
+;;##
 ;;## ;; Alternative approach (From
 ;;## ;; https://news.ycombinator.com/item?id=5819487) This technique will
 ;;## ;; display the output in the minibuffer, the latter will display it in
 ;;## ;; the repl.
-;;## 
+;;##
 ;;## (defun nrepl-refresh ()
 ;;##   (interactive)
 ;;##   (nrepl-interactive-eval "(clojure.tools.namespace.repl/refresh)"))
-;;## 
+;;##
 ;;## (defun nrepl-reset ()
 ;;##   (interactive)
 ;;##   (nrepl-interactive-eval "(user/reset)"))
-;;## 
+;;##
 ;;## (defun nrepl-refresh-to-repl ()
 ;;##   (interactive)
 ;;##   (set-buffer "*nrepl*")
@@ -411,7 +417,7 @@ Really send to REPL? "
 ;;##   (nrepl-return)
 ;;##   ;; (goto-char (point-max))
 ;;##   )
-;;## 
+;;##
 ;;## (defun nrepl-reset-to-repl ()
 ;;##   (interactive)
 ;;##   (set-buffer "*nrepl*")
@@ -505,8 +511,8 @@ If OTHER-WINDOW is non-nil don't reuse current window."
           (message "Can't find %s in %s" pos (buffer-file-name))))
        (t nil)))))
  (t
-  (message-box
-   "You need to fix your cider-jump-to stuff for this version of Cider.")))
+  ;; This seems to be OK now (CIDER 0.18.1snapshot).
+  ))
 
 ;;;; ___________________________________________________________________________
 

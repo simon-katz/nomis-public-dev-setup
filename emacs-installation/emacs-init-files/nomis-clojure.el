@@ -23,6 +23,15 @@
     ;; - 0.9.0-snapshot (2015-02-23)
     ;; Maybe a bug.
     (require 'cider-macroexpansion)))
+
+(progn
+  (unless (featurep 'cider-find)
+    ;; Needed in:
+    ;; - CIDER 0.18.1snapshot
+    ;; - (I haven't tried CIDER 0.18.0 (Saigon).)
+    ;; Surely a bug.
+    (require 'cider-find)))
+
 (require 'nomis-cider-extras)
 
 (setq nrepl-buffer-name-separator "--")
