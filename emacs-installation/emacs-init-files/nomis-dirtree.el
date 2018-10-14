@@ -1057,31 +1057,6 @@ With prefix argument select `nomis/dirtree/buffer'"
                  (nomis/dirtree/goto-root/impl) ; because refresh sometimes jumps us to mad and/or bad place
                  (search))))))))))
 
-(defun nomis/dirtree/with-return-to-selected-file-fun (fun)
-  (error "nomis/dirtree/with-return-to-selected-file-fun is unused, right? -- seems you now have `nomis/dirtree/with-fix-selection-in-all-windows` instead.")
-  (let* ((file-to-return-to (nomis/dirtree/selected-file))
-         (res (funcall fun)))
-    ;; We use goto-filename here rather than goto-file-that-is-in-expansion
-    ;; because the selected file will not be in the expansion if the called
-    ;; `fun` does a refresh and if the selected file has been deleted.
-    (condition-case err
-        (nomis/dirtree/goto-filename file-to-return-to
-                                     :refresh-not-allowed? t
-                                     :force? t)
-      (nomis/dirtree/file-not-found
-       ;; We get here if the selected file has been deleted -- not a problem.
-       ))
-    res))
-
-(defmacro nomis/dirtree/with-return-to-selected-file (&rest body)
-  (declare (indent 0))
-  `(nomis/dirtree/with-return-to-selected-file-fun (lambda () ,@body)))
-
-(defun nomis/dirtree/refresh-tree (tree)
-  (error "nomis/dirtree/refresh-tree is unused, right?")
-  (nomis/dirtree/with-return-to-selected-file ; because refresh sometimes jumps us to mad and/or bad place
-    (nomis/dirtree/refresh-tree/impl/with-arg tree)))
-
 (defun nomis/dirtree/refresh/internal ()
   (mapc #'nomis/dirtree/refresh-tree/impl/with-arg
         (nomis/dirtree/all-trees)))
