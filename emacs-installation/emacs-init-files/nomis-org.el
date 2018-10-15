@@ -90,9 +90,9 @@
   (interactive)
   (case 1
     (1
-     (nomis/with-temporary-invisible-changes ()
-       (org-meta-return) ; this does what it does and also makes point visible
-       ))
+     (when (get-char-property (point) 'invisible)
+       ;; Make point visible and leave subtree collapsed
+       (dotimes (_ 3) (org-cycle))))
     (2
      ;; This makes lots of stuff visible, but seems to be the "official" way.
      ;; Leave this here as a point of interest.
