@@ -243,7 +243,10 @@ subheading at this level in the previous parent."
   (defun nomis/setup-org-keys ()
     ;; I don't like RETURN in org agenda giving ORG-AGENDA-SWITCH-TO.
     ;; I prefer this:
-    (org-defkey org-agenda-mode-map "\C-m" 'org-agenda-show-and-scroll-up))
+    (org-defkey org-agenda-mode-map "\C-m" 'org-agenda-show-and-scroll-up)
+    ;; Stuff that got changed when I upgraded to Emacs 26.1 -- this is mad!
+    (org-defkey org-mode-map (kbd "M-S-<down>") 'org-move-subtree-down)
+    (org-defkey org-mode-map (kbd "M-S-<up>")   'org-move-subtree-up))
   (add-hook 'org-mode-hook 'nomis/setup-org-keys))
 
 (add-hook 'org-mode-hook 'nomis/turn-on-idle-highlight-mode)
