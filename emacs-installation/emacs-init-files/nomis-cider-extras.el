@@ -463,7 +463,9 @@ window."
             "CIDER 0.14.0 (Berlin)"
             "CIDER 0.15.0 (London)"
             "CIDER 0.16.0 (Riga)"
-            "CIDER 0.17.0 (Andalucía)"))
+            "CIDER 0.17.0 (Andalucía)"
+            "CIDER 0.18.0 (Saigon)"
+            "CIDER 0.18.1snapshot"))
   (defun cider-jump-to (buffer &optional pos other-window)
     "Push current point onto marker ring, and jump to BUFFER and POS.
 POS can be either a number, a cons, or a symbol.
@@ -511,8 +513,8 @@ If OTHER-WINDOW is non-nil don't reuse current window."
           (message "Can't find %s in %s" pos (buffer-file-name))))
        (t nil)))))
  (t
-  ;; This seems to be OK now (CIDER 0.18.1snapshot).
-  ))
+  (message-box
+   "You need to fix `cider-jump-to` for this version of Cider.")))
 
 ;;;; ___________________________________________________________________________
 
