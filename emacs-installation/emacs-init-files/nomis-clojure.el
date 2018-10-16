@@ -25,6 +25,8 @@
     (require 'cider-macroexpansion)))
 
 (progn
+  ;; TODO You have done this wrong.
+  ;;      See https://docs.cider.mx/en/latest/hacking_on_cider/
   (unless (featurep 'cider-find)
     ;; Needed in:
     ;; - CIDER 0.18.1snapshot
