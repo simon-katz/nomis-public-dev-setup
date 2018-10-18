@@ -19,6 +19,7 @@
      (facts 'defun)
      (against-background 'defun)
      (provided 0)
+     (for-all 2)
      ;; core.match
      (match 1)
      ;; Om
