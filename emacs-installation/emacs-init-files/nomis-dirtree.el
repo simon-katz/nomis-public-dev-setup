@@ -104,6 +104,7 @@
 (defvar nomis/dirtree/hl-line-background "Grey90")
 (defvar nomis/dirtree/no-auto-refresh-bg "Grey80")
 (defvar nomis/dirtree/file-in-dirtree-fg-when-following "Blue")
+(defvar nomis/dirtree/file-in-dirtree-fg-when-following-but-no-auto "LightSteelBlue")
 (defvar nomis/dirtree/file-not-in-dirtree-fg-when-following "VioletRed4")
 
 (defvar nomis/dirtree/dirs-to-keep-collapsed-unless-forced
@@ -624,14 +625,15 @@ With prefix argument select `nomis/dirtree/buffer'"
             'unspecified
           nomis/dirtree/no-auto-refresh-bg)
         :foreground
-        (cond ((not nomis/dirtree/follow-selected-buffer?)
-               'unspecified)
-              ((let* ((filename (nomis/dirtree/filename-in-selected-window)))
-                 (and filename
-                      (nomis/dirtree/has-file? filename)))
-               nomis/dirtree/file-in-dirtree-fg-when-following)
-              (t
-               nomis/dirtree/file-not-in-dirtree-fg-when-following))))
+        (if (not nomis/dirtree/follow-selected-buffer?)
+            'unspecified
+          (let* ((filename (nomis/dirtree/filename-in-selected-window)))
+            (if (and filename
+                     (nomis/dirtree/has-file? filename))
+                (if (nomis/dirtree/within-directory-to-keep-collapsed? filename)
+                    nomis/dirtree/file-in-dirtree-fg-when-following-but-no-auto
+                  nomis/dirtree/file-in-dirtree-fg-when-following)
+              nomis/dirtree/file-not-in-dirtree-fg-when-following)))))
 
 (defvar nomis/dirtree/face-cookie nil)
 (defvar nomis/dirtree/previous-face-kvs nil)
@@ -753,7 +755,15 @@ With prefix argument select `nomis/dirtree/buffer'"
     (condition-case err
         (let* ((filename (nomis/dirtree/filename-in-selected-window)))
           (when (and filename
-                     (nomis/dirtree/has-file? filename))
+                     (nomis/dirtree/has-file? filename)
+                     (progn
+                       ;; This is broad-brush.
+                       ;; If the directory is already expanded then ideally
+                       ;; we should select `filename`, but we don't.
+                       ;; However, we do give different-coloured feedback so
+                       ;; that's OK as a compromise.
+                       (not (nomis/dirtree/within-directory-to-keep-collapsed?
+                             filename))))
             (nomis/dirtree/goto-file/internal filename)))
       (error
        ;; TODO Sometimes we expect errors. Make this reporting conditional on
@@ -869,6 +879,12 @@ With prefix argument select `nomis/dirtree/buffer'"
                                     basename))
                     nomis/dirtree/dirs-to-keep-collapsed-unless-forced)))
     res))
+
+(defun nomis/dirtree/within-directory-to-keep-collapsed? (name)
+  (some (lambda (no-expand-name)
+          (string-match (concat "/" no-expand-name "/")
+                        name))
+        nomis/dirtree/dirs-to-keep-collapsed-unless-forced))
 
 (defun nomis/dirtree/widget-file (widget)
   (widget-get widget :file))
