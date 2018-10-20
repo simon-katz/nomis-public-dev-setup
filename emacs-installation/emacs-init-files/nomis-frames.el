@@ -49,7 +49,7 @@
 
 (defconst nomis/extra-width-for-each-window 90)
 
-(defconst nomis/single-window-frame-width 85)
+(defconst nomis/single-window-frame-width 86)
 (defconst nomis/double-window-frame-width (+ nomis/single-window-frame-width
                                              nomis/extra-width-for-each-window))
 (defconst nomis/triple-window-frame-width (+ nomis/double-window-frame-width
