@@ -84,24 +84,31 @@
                              (t t)))))
 
 ;;;; ___________________________________________________________________________
-;;;; nomis/set-up-devvy-windows
+;;;; nomis/set-up-devvy-windows-for-clj-and-jack-in
 
-(defun nomis/set-up-devvy-windows-for-current-window (&optional prefix)
+(defun nomis/set-up-devvy-windows-for-clj-and-jack-in (&optional prefix)
   (interactive "P")
   (cl-flet ((double-h-max-w ()
                             (nomis/w-double)
                             (maximize-frame-vertically)))
-    (when prefix
-      (cider-jack-in))
+    (unless prefix
+      (cider-jack-in-clj nil))
     (double-h-max-w)
     (nomis/move-frame-to-screen-right 0)
     (split-window-horizontally)
-    (switch-to-buffer nomis/dirtree/buffer)
-    (nomis/dirtree/make-dirtree (projectile-project-root)
-                                nil)
+    (nomis/dirtree/goto-file/return-to-window)
+    (when (fboundp 'flop-frame) (flop-frame)) ; I don't know why this is needed
     (make-frame-command)
     (double-h-max-w)
-    (switch-to-buffer (messages-buffer))))
+    (switch-to-buffer (messages-buffer))
+    (split-window-vertically)
+    (other-window 1)
+    (let* ((nrepl-server-buffer (-find (lambda (b) (s-starts-with? "*nrepl-server"
+                                                                   (buffer-name b)))
+                                       (buffer-list))))
+      (if nrepl-server-buffer
+          (switch-to-buffer nrepl-server-buffer)
+        (message "Didn't find nrepl-server-buffer")))))
 
 ;;;; ___________________________________________________________________________
 
