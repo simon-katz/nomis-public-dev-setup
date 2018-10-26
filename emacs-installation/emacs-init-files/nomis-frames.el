@@ -47,7 +47,7 @@
 ;;;; ___________________________________________________________________________
 ;;;; ---- Frame size ----
 
-(defconst nomis/extra-width-for-each-window 90)
+(defconst nomis/extra-width-for-each-window 92)
 
 (defconst nomis/single-window-frame-width 86)
 (defconst nomis/double-window-frame-width (+ nomis/single-window-frame-width
