@@ -28,22 +28,9 @@
           '("CIDER 0.7.0"))
   (defun nomis/clojure-buffer-ns ()
     (cider-find-ns)))
- ((member (nomis/cider-version)
-          '("CIDER 0.8.2"
-            "CIDER 0.9.1"
-            "CIDER 0.10.0"
-            "CIDER 0.12.0 (Seattle)"
-            "CIDER 0.14.0 (Berlin)"
-            "CIDER 0.15.0 (London)"
-            "CIDER 0.16.0 (Riga)"
-            "CIDER 0.17.0 (Andalucía)"
-            "CIDER 0.18.0 (Saigon)"
-            "CIDER 0.18.1snapshot"))
-  (defun nomis/clojure-buffer-ns ()
-    (clojure-find-ns)))
  (t
-  (message-box
-   "You need to fix nomis/clojure-buffer-ns for this version of Cider.")))
+  (defun nomis/clojure-buffer-ns ()
+    (clojure-find-ns))))
 
 (cond
  ((member (nomis/cider-version)
@@ -62,16 +49,10 @@
   (defun nomis/cider-repl-namespace ()
     (with-current-buffer (cider-current-repl-buffer)
       cider-buffer-ns)))
- ((member (nomis/cider-version)
-          '("CIDER 0.17.0 (Andalucía)"
-            "CIDER 0.18.0 (Saigon)"
-            "CIDER 0.18.1snapshot"))
+ (t
   (defun nomis/cider-repl-namespace ()
     (with-current-buffer (cider-current-connection)
-      cider-buffer-ns)))
- (t
-  (message-box
-   "You need to fix `nomis/cider-repl-namespace` for this version of Cider.")))
+      cider-buffer-ns))))
 
 (cond
  ((member (nomis/cider-version)
@@ -83,20 +64,9 @@
             "CIDER 0.9.1"))
   (defun nomis/cider-find-or-create-repl-buffer ()
     (cider-get-repl-buffer)))
- ((member (nomis/cider-version)
-          '("CIDER 0.10.0"
-            "CIDER 0.12.0 (Seattle)"
-            "CIDER 0.14.0 (Berlin)"
-            "CIDER 0.15.0 (London)"
-            "CIDER 0.16.0 (Riga)"
-            "CIDER 0.17.0 (Andalucía)"
-            "CIDER 0.18.0 (Saigon)"
-            "CIDER 0.18.1snapshot"))
-  (defun nomis/cider-find-or-create-repl-buffer ()
-    (cider-current-connection)))
  (t
-  (message-box
-   "You need to fix `nomis/cider-find-or-create-repl-buffer` for this version of Cider.")))
+  (defun nomis/cider-find-or-create-repl-buffer ()
+    (cider-current-connection))))
 
 
 ;;;; ___________________________________________________________________________
@@ -465,7 +435,8 @@ window."
             "CIDER 0.16.0 (Riga)"
             "CIDER 0.17.0 (Andalucía)"
             "CIDER 0.18.0 (Saigon)"
-            "CIDER 0.18.1snapshot"))
+            "CIDER 0.18.1snapshot"
+            "CIDER 0.19.0snapshot"))
   (defun cider-jump-to (buffer &optional pos other-window)
     "Push current point onto marker ring, and jump to BUFFER and POS.
 POS can be either a number, a cons, or a symbol.
