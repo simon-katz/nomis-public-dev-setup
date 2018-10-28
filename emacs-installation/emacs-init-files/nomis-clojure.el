@@ -17,22 +17,13 @@
 
 (progn
   (require 'cider)
+  (require 'cider-autoloads) ; needed when you have your own local CIDER repo
   (unless (featurep 'cider-macroexpansion)
     ;; Needed in:
     ;; - 0.8.2
     ;; - 0.9.0-snapshot (2015-02-23)
     ;; Maybe a bug.
     (require 'cider-macroexpansion)))
-
-(progn
-  ;; TODO You have done this wrong.
-  ;;      See https://docs.cider.mx/en/latest/hacking_on_cider/
-  (unless (featurep 'cider-find)
-    ;; Needed in:
-    ;; - CIDER 0.18.1snapshot
-    ;; - (I haven't tried CIDER 0.18.0 (Saigon).)
-    ;; Surely a bug.
-    (require 'cider-find)))
 
 (require 'nomis-cider-extras)
 
