@@ -251,6 +251,23 @@
                          (alist-get :left nomis/-screen-pixel-adjustments))))
     (move-frame-to-screen-left n-pixels-v2)))
 
+(defun nomis/main-monitor-width () ; hacky and possibly buggy
+  (->> (display-monitor-attributes-list)
+       first
+       (assq 'geometry)
+       (nth 3)))
+
+(defun move-frame-to-screen-right-HACKED-BY-NOMIS (arg &optional frame)
+  "A hacked copy of `move-frame-to-screen-right` that uses
+`nomis/main-monitor-width`."
+  (interactive (list (if current-prefix-arg
+                         (* (frame-char-width) (prefix-numeric-value current-prefix-arg))
+                       0)
+                     (get-a-frame (read-frame "Frame: " nil 'EXISTING))))
+  (modify-frame-parameters
+   frame ; Hard-code 7 here - what does it depend on?
+   `((left . ,(- (nomis/main-monitor-width) (+ (frame-pixel-width) 7 arg))))))
+
 (defun nomis/move-frame-to-screen-right (n-chars)
   (interactive (list (if current-prefix-arg
                          (prefix-numeric-value current-prefix-arg)
@@ -258,7 +275,7 @@
   (let* ((n-pixels (* n-chars (frame-char-width)))
          (n-pixels-v2 (- n-pixels
                          (alist-get :right nomis/-screen-pixel-adjustments))))
-    (move-frame-to-screen-right n-pixels-v2)))
+    (move-frame-to-screen-right-HACKED-BY-NOMIS n-pixels-v2)))
 
 ;;;; ___________________________________________________________________________
 
