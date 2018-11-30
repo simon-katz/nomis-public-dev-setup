@@ -17,6 +17,7 @@
      ;; Midje
      (fact 'defun)
      (facts 'defun)
+     (fact-group 'defun)
      (against-background 'defun)
      (provided 0)
      (for-all 2)
