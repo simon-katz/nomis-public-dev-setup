@@ -60,7 +60,8 @@
                       yaml-mode
                       yafolding
                       highlight-indentation
-                      discover))
+                      discover
+                      flycheck-joker))
 
 (dolist (p my-packages)
   (when (not (package-installed-p p))

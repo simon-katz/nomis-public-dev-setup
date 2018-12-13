@@ -6,6 +6,7 @@
 (require 'clojure-mode)
 (require 'nomis-clojure-mode-fixes)
 (require 'nomis-clojure-mode-extras)
+(require 'flycheck-joker)
 
 (define-key clojure-mode-map (kbd "RET") 'newline-and-indent)
 
@@ -136,7 +137,7 @@
                           subword-mode
                           nomis/setup-clj-refactor-mode
                           ;; aggressive-indent-mode
-                          ))
+                          flycheck-mode))
       (hooks-when-repl-exists '(cider-mode-hook
                                 cider-repl-mode-hook))
       (hooks-always '(clojure-mode-hook
