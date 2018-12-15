@@ -51,6 +51,8 @@
 
 (global-set-key [f11] 'nomis/untabify-buffer)
 
+;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
 (defun nomis/indent-buffer ()
   (interactive)
   (save-excursion
@@ -60,6 +62,24 @@
     (untabify (point-min) (point-max))))
 
 (global-set-key [f12] 'nomis/indent-buffer)
+
+;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+(defun nomis/indent-all-clj-files-in-project ()
+  (interactive)
+  (let* ((filenames (directory-files-recursively (nomis/dirtree/vc-root-dir)
+                                                 ".*\\.clj")))
+    (dolist (filename filenames)
+      (message "Indenting %s" filename)
+      (let* ((existing-buffer? (find-buffer-visiting filename))
+             (buffer (find-file-noselect filename)))
+        (with-current-buffer buffer
+          (let* ((inhibit-message t))
+            (nomis/indent-buffer))
+          (save-buffer))
+        (unless existing-buffer?
+          (kill-buffer buffer)))))
+  (message "Finished indenting all clj files in project."))
 
 ;;;; ___________________________________________________________________________
 
