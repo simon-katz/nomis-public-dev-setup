@@ -65,10 +65,22 @@
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-(defun nomis/indent-all-clj-files-in-project ()
-  (interactive)
-  (let* ((filenames (directory-files-recursively (nomis/dirtree/vc-root-dir)
-                                                 ".*\\.clj")))
+(defun nomis/git-dirty? ()
+  (let* ((default-directory (nomis/dirtree/vc-root-dir))
+         (output (shell-command-to-string
+                  "test -z \"$(git status --porcelain)\" || echo -n \"dirty\""))
+         (dirty? (equal output "dirty")))
+    dirty?))
+
+(defun nomis/indent-all-clj-files-in-project (force-when-dirty?)
+  (interactive "P")
+  (when (and (not force-when-dirty?)
+             (nomis/git-dirty?))
+    (error (s-join " "
+                   '("I won't indent all files when the Git repo is dirty."
+                     "Use a prefix arg to force."))))
+  (let* ((root-dir (nomis/dirtree/vc-root-dir))
+         (filenames (directory-files-recursively root-dir ".*\\.clj")))
     (dolist (filename filenames)
       (message "Indenting %s" filename)
       (let* ((existing-buffer? (find-buffer-visiting filename))
@@ -78,8 +90,13 @@
             (nomis/indent-buffer))
           (save-buffer))
         (unless existing-buffer?
-          (kill-buffer buffer)))))
-  (message "Finished indenting all clj files in project."))
+          (kill-buffer buffer))))
+    (let* ((default-directory root-dir)
+           (commands '("git add ."
+                       "git commit --no-verify -m apply-local-formatting")))
+      (shell-command-to-string (s-join " ; " commands))))
+  (magit-refresh)
+  (message "Finished indenting all clj files in project, and commiting."))
 
 ;;;; ___________________________________________________________________________
 
