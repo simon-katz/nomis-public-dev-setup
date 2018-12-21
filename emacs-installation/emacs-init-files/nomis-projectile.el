@@ -28,6 +28,35 @@
 
 (setq projectile-create-missing-test-files t)
 
+;;;; ___________________________________________________________________________
+
+;;;; If a Leiningen project has a ".midje.clj" file, Projectile thinks test
+;;;; files have a "t_" prefix rather than a "_test" suffix.
+;;;; I think Projectile is confused on two counts:
+;;;; - It treats Midje projects differently depending on whether they have a
+;;;;   ".midje.clj" file.
+;;;;   - Ah, it needs a way to distinguish Midje projects from clojure.test
+;;;;     projects, because the `:test` entries in the project types are
+;;;;     different.
+;;;; - I've never seen the "t_" prefix used in a Midje project (or indeed any
+;;;;   Clojure project).
+;;;;
+;;;; This hack fixes my problem, but might well break things for other people.
+;;;;
+;;;; TODO Think more about the proper fix for this. Can you just hack the
+;;;;      test prefix and suffix?
+;;;; TODO-open-source-contribution: Projectile and ".midje.clj" files.
+;;;;     - First try to just hack prefix and suffix.
+;;;;     - First ask why it's as it is and get agreement on the fix.
+
+(advice-add 'projectile-project-type
+            :around
+            (lambda (orig-fun &rest args)
+              (let ((res (apply orig-fun args)))
+                (if (equal res 'lein-midje)
+                    'lein-test
+                  res)))
+            '((name . nomis/hack-projectile-midje-projects)))
 
 ;;;; ___________________________________________________________________________
 
