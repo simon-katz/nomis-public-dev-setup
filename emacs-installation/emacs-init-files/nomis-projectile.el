@@ -24,6 +24,10 @@
 (define-key projectile-mode-map (kbd "H-o f") 'projectile-find-file)
 (define-key projectile-mode-map (kbd "H-o g") 'projectile-grep)
 
+;;;; ___________________________________________________________________________
+
+(setq projectile-create-missing-test-files t)
+
 
 ;;;; ___________________________________________________________________________
 
