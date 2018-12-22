@@ -72,7 +72,7 @@
          (dirty? (equal output "dirty")))
     dirty?))
 
-(defun nomis/indent-all-clj-files-in-project (force-when-dirty?)
+(defun nomis/indent-all-clj-files-in-project-and-commit (force-when-dirty?)
   (interactive "P")
   (when (and (not force-when-dirty?)
              (nomis/git-dirty?))
