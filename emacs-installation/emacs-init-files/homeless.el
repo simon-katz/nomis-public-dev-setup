@@ -72,7 +72,7 @@
          (dirty? (equal output "dirty")))
     dirty?))
 
-(defun nomis/indent-all-clj-files-in-project-and-commit (force-when-dirty?)
+(defun nomis/indent-all-clj-files-in-project (force-when-dirty?)
   (interactive "P")
   (when (and (not force-when-dirty?)
              (nomis/git-dirty?))
@@ -90,13 +90,20 @@
             (nomis/indent-buffer))
           (save-buffer))
         (unless existing-buffer?
-          (kill-buffer buffer))))
+          (kill-buffer buffer)))))
+  (when (featurep 'magit) (magit-refresh))
+  (message "Finished indenting all clj files in project."))
+
+(defun nomis/indent-all-clj-files-in-project-and-commit (force-when-dirty?)
+  (interactive "P")
+  (let* ((root-dir (nomis/dirtree/vc-root-dir)))
+    (nomis/indent-all-clj-files-in-project force-when-dirty?)
     (let* ((default-directory root-dir)
            (commands '("git add ."
-                       "git commit --no-verify -m apply-local-formatting")))
+                       "git commit -m apply-local-formatting")))
       (shell-command-to-string (s-join " ; " commands))))
-  (magit-refresh)
-  (message "Finished indenting all clj files in project, and commiting."))
+  (when (featurep 'magit) (magit-refresh))
+  (message "Finished indenting all clj files in project and committing."))
 
 ;;;; ___________________________________________________________________________
 
