@@ -85,60 +85,6 @@
 ;;; Code:
 
 ;;;; ___________________________________________________________________________
-;;;; nomis/symbol-prefix-chars
-;;;; nomis/symbol-body-chars
-
-;; (cl-loop for m in '(fred
-;;                     emacs-lisp-mode
-;;                     clojure-mode
-;;                     yaml-mode)
-;;          collect (list m
-;;                        (nomis/symbol-prefix-chars m)
-;;                        (nomis/symbol-body-chars m)))
-
-(require 'cl-generic)
-
-(cl-defgeneric nomis/symbol-prefix-chars (major-mode)
-  "Characters other than whitespace that can prefix a symbol/identifier."
-  "")
-
-(cl-defgeneric nomis/symbol-body-chars (major-mode)
-  "Characters that can be part of a symbol/identifier."
-  "[:alnum:]_")
-
-;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-(defmethod nomis/symbol-prefix-chars ((major-mode (eql emacs-lisp-mode)))
-  "'`#,")
-
-(defmethod nomis/symbol-body-chars ((major-mode (eql emacs-lisp-mode)))
-  ;; Note the position of the "-" at the beginning. So when augmenting this,
-  ;; you must add at the end (otherwise you will introduce a range when creating
-  ;; regexps using `nomis/rx/make-char-match-regexp/broken`).
-  ;; Horrible.
-  "-[:alnum:]$&*+_<>/'.=?^!")
-
-;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-(defmethod nomis/symbol-prefix-chars ((major-mode (eql clojure-mode)))
-  "'`#@~^")
-
-(defmethod nomis/symbol-body-chars ((major-mode (eql clojure-mode)))
-  ;; Note the position of the "-" at the beginning. So when augmenting this,
-  ;; you must add at the end (otherwise you will introduce a range when creating
-  ;; regexps using `nomis/rx/make-char-match-regexp/broken`).
-  ;; Horrible.
-  "-[:alnum:]$&*+_<>/'.=?^!")
-
-;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-(defmethod nomis/symbol-prefix-chars ((major-mode (eql yaml-mode)))
-  "&*")
-
-(defmethod nomis/symbol-body-chars ((major-mode (eql yaml-mode)))
-  "-[:alnum:]$+_<>/'.=?^")
-
-;;;; ___________________________________________________________________________
 
 (defconst nomis/highlight-debug? nil)
 
@@ -275,6 +221,61 @@
 
 ;;;; ___________________________________________________________________________
 ;;;; Chars for symbols
+;;;; - nomis/symbol-prefix-chars
+;;;; - nomis/symbol-body-chars
+
+;; (cl-loop for m in '(fred
+;;                     emacs-lisp-mode
+;;                     clojure-mode
+;;                     yaml-mode)
+;;          collect (list m
+;;                        (nomis/symbol-prefix-chars m)
+;;                        (nomis/symbol-body-chars m)))
+
+(require 'cl-generic)
+
+(cl-defgeneric nomis/symbol-prefix-chars (major-mode)
+  "Characters other than whitespace that can prefix a symbol/identifier."
+  "")
+
+(cl-defgeneric nomis/symbol-body-chars (major-mode)
+  "Characters that can be part of a symbol/identifier."
+  "[:alnum:]_")
+
+;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+(defmethod nomis/symbol-prefix-chars ((major-mode (eql emacs-lisp-mode)))
+  "'`#,")
+
+(defmethod nomis/symbol-body-chars ((major-mode (eql emacs-lisp-mode)))
+  ;; Note the position of the "-" at the beginning. So when augmenting this,
+  ;; you must add at the end (otherwise you will introduce a range when creating
+  ;; regexps using `nomis/rx/make-char-match-regexp/broken`).
+  ;; Horrible.
+  "-[:alnum:]$&*+_<>/'.=?^!")
+
+;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+(defmethod nomis/symbol-prefix-chars ((major-mode (eql clojure-mode)))
+  "'`#@~^")
+
+(defmethod nomis/symbol-body-chars ((major-mode (eql clojure-mode)))
+  ;; Note the position of the "-" at the beginning. So when augmenting this,
+  ;; you must add at the end (otherwise you will introduce a range when creating
+  ;; regexps using `nomis/rx/make-char-match-regexp/broken`).
+  ;; Horrible.
+  "-[:alnum:]$&*+_<>/'.=?^!")
+
+;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+(defmethod nomis/symbol-prefix-chars ((major-mode (eql yaml-mode)))
+  "&*")
+
+(defmethod nomis/symbol-body-chars ((major-mode (eql yaml-mode)))
+  "-[:alnum:]$+_<>/'.=?^")
+
+;;;; ___________________________________________________________________________
+;;;; Hacking Chars for symbols
 
 (defun nomis/hi/base-chars->prefix-chars (chars)
   (if nomis/idle-highlight-colon-at-start-matters-p
