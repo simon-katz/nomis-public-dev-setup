@@ -85,24 +85,33 @@
 ;;; Code:
 
 ;;;; ___________________________________________________________________________
+;;;; nomis/symbol-prefix-chars
+;;;; nomis/symbol-body-chars
 
-;;;; TODO Use multimethods. One of:
-;;;;      - `cl-defgeneric`
-;;;;      - https://github.com/skeeto/predd
-;;;;      - Something else
+;; (cl-loop for m in '(fred
+;;                     emacs-lisp-mode
+;;                     clojure-mode
+;;                     yaml-mode)
+;;          collect (list m
+;;                        (nomis/symbol-prefix-chars m)
+;;                        (nomis/symbol-body-chars m)))
 
-(defconst nomis/symbol-prefix-chars/default/base
+(require 'cl-generic)
+
+(cl-defgeneric nomis/symbol-prefix-chars (major-mode)
+  "Characters other than whitespace that can prefix a symbol/identifier."
   "")
 
-(defconst nomis/symbol-body-chars/default/base
+(cl-defgeneric nomis/symbol-body-chars (major-mode)
+  "Characters that can be part of a symbol/identifier."
   "[:alnum:]_")
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-(defconst nomis/symbol-prefix-chars/emacs-lisp/base
+(defmethod nomis/symbol-prefix-chars ((major-mode (eql emacs-lisp-mode)))
   "'`#,")
 
-(defconst nomis/symbol-body-chars/emacs-lisp/base
+(defmethod nomis/symbol-body-chars ((major-mode (eql emacs-lisp-mode)))
   ;; Note the position of the "-" at the beginning. So when augmenting this,
   ;; you must add at the end (otherwise you will introduce a range when creating
   ;; regexps using `nomis/rx/make-char-match-regexp/broken`).
@@ -111,10 +120,10 @@
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-(defconst nomis/symbol-prefix-chars/clojure-mode/base
+(defmethod nomis/symbol-prefix-chars ((major-mode (eql clojure-mode)))
   "'`#@~^")
 
-(defconst nomis/symbol-body-chars/clojure-mode/base
+(defmethod nomis/symbol-body-chars ((major-mode (eql clojure-mode)))
   ;; Note the position of the "-" at the beginning. So when augmenting this,
   ;; you must add at the end (otherwise you will introduce a range when creating
   ;; regexps using `nomis/rx/make-char-match-regexp/broken`).
@@ -123,10 +132,10 @@
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-(defconst nomis/symbol-prefix-chars/yaml-mode/base
+(defmethod nomis/symbol-prefix-chars ((major-mode (eql yaml-mode)))
   "&*")
 
-(defconst nomis/symbol-body-chars/yaml-mode/base
+(defmethod nomis/symbol-body-chars ((major-mode (eql yaml-mode)))
   "-[:alnum:]$+_<>/'.=?^")
 
 ;;;; ___________________________________________________________________________
@@ -283,22 +292,12 @@
 ;;       above, and memoise the top-level functions.
 
 (defun nomis/symbol-prefix-chars/current-mode ()
-  (let* ((chars (case major-mode
-                  (emacs-lisp-mode nomis/symbol-prefix-chars/emacs-lisp/base)
-                  (clojure-mode    nomis/symbol-prefix-chars/clojure-mode/base)
-                  (yaml-mode       nomis/symbol-prefix-chars/yaml-mode/base)
-                  (t               nomis/symbol-prefix-chars/default/base))))
-    (-> chars
-        nomis/hi/base-chars->prefix-chars)))
+  (-> (nomis/symbol-prefix-chars major-mode)
+      nomis/hi/base-chars->prefix-chars))
 
 (defun nomis/symbol-body-chars/current-mode ()
-  (let* ((chars (case major-mode
-                  (emacs-lisp-mode nomis/symbol-body-chars/emacs-lisp/base)
-                  (clojure-mode    nomis/symbol-body-chars/clojure-mode/base)
-                  (yaml-mode       nomis/symbol-body-chars/yaml-mode/base)
-                  (t               nomis/symbol-body-chars/default/base))))
-    (-> chars
-        nomis/hi/base-chars->body-chars)))
+  (-> (nomis/symbol-body-chars major-mode)
+      nomis/hi/base-chars->body-chars))
 
 ;;;; ___________________________________________________________________________
 ;;;; Regular expressions for symbols
