@@ -86,10 +86,23 @@
 
 ;;;; ___________________________________________________________________________
 
+;;;; TODO Use multimethods. One of:
+;;;;      - `cl-defgeneric`
+;;;;      - https://github.com/skeeto/predd
+;;;;      - Something else
+
 (defconst nomis/symbol-prefix-chars/default/base
-  "'`#,")
+  "")
 
 (defconst nomis/symbol-body-chars/default/base
+  "[:alnum:]_")
+
+;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+(defconst nomis/symbol-prefix-chars/emacs-lisp/base
+  "'`#,")
+
+(defconst nomis/symbol-body-chars/emacs-lisp/base
   ;; Note the position of the "-" at the beginning. So when augmenting this,
   ;; you must add at the end (otherwise you will introduce a range when creating
   ;; regexps using `nomis/rx/make-char-match-regexp/broken`).
@@ -98,19 +111,15 @@
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-(defconst nomis/symbol-prefix-chars/clojure-mode/extras
-  "@^~")
-
-(defconst nomis/symbol-body-chars/clojure-mode/extras
-  "")
-
 (defconst nomis/symbol-prefix-chars/clojure-mode/base
-  (concat nomis/symbol-prefix-chars/default/base
-          nomis/symbol-prefix-chars/clojure-mode/extras))
+  "'`#@~^")
 
 (defconst nomis/symbol-body-chars/clojure-mode/base
-  (concat nomis/symbol-body-chars/default/base
-          nomis/symbol-body-chars/clojure-mode/extras))
+  ;; Note the position of the "-" at the beginning. So when augmenting this,
+  ;; you must add at the end (otherwise you will introduce a range when creating
+  ;; regexps using `nomis/rx/make-char-match-regexp/broken`).
+  ;; Horrible.
+  "-[:alnum:]$&*+_<>/'.=?^!")
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -275,17 +284,19 @@
 
 (defun nomis/symbol-prefix-chars/current-mode ()
   (let* ((chars (case major-mode
-                  (clojure-mode nomis/symbol-prefix-chars/clojure-mode/base)
-                  (yaml-mode    nomis/symbol-prefix-chars/yaml-mode/base)
-                  (t            nomis/symbol-prefix-chars/default/base))))
+                  (emacs-lisp-mode nomis/symbol-prefix-chars/emacs-lisp/base)
+                  (clojure-mode    nomis/symbol-prefix-chars/clojure-mode/base)
+                  (yaml-mode       nomis/symbol-prefix-chars/yaml-mode/base)
+                  (t               nomis/symbol-prefix-chars/default/base))))
     (-> chars
         nomis/hi/base-chars->prefix-chars)))
 
 (defun nomis/symbol-body-chars/current-mode ()
   (let* ((chars (case major-mode
-                  (clojure-mode nomis/symbol-body-chars/clojure-mode/base)
-                  (yaml-mode    nomis/symbol-body-chars/yaml-mode/base)
-                  (t            nomis/symbol-body-chars/default/base))))
+                  (emacs-lisp-mode nomis/symbol-body-chars/emacs-lisp/base)
+                  (clojure-mode    nomis/symbol-body-chars/clojure-mode/base)
+                  (yaml-mode       nomis/symbol-body-chars/yaml-mode/base)
+                  (t               nomis/symbol-body-chars/default/base))))
     (-> chars
         nomis/hi/base-chars->body-chars)))
 
