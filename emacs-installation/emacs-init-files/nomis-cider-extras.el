@@ -449,7 +449,13 @@ window."
                 :around
                 (lambda (orig-fun buffer &rest other-args)
                   (if *nomis/cider-jump-to/reuse-selected-window?*
-                      (switch-to-buffer buffer nil t)
+                      (case 2
+                        ;; See https://github.com/clojure-emacs/cider/issues/2499
+                        ;; Either of these should work.
+                        (1 (switch-to-buffer buffer nil t))
+                        (2 (funcall orig-fun
+                                    buffer
+                                    '((display-buffer-same-window)))))
                     (apply orig-fun buffer other-args)))
                 `((name . ,advice-name)))))
  (t
