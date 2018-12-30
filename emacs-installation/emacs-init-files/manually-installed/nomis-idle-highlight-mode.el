@@ -220,6 +220,13 @@
   (nomis/idle-highlight-word-at-point))
 
 ;;;; ___________________________________________________________________________
+
+(defun nomis/clojure-like-mode? (m)
+  (member m
+          '(clojure-mode
+            clojurescript-mode)))
+
+;;;; ___________________________________________________________________________
 ;;;; Chars for symbols
 ;;;; - nomis/symbol-prefix-chars
 ;;;; - nomis/symbol-body-chars
@@ -328,10 +335,10 @@
 (defun nomis/start-of-symbol-regexp ()
   ;; "\\_<" doesn't work well with Lispy symbols that contain single quotes,
   ;; or with yaml-mode, so:
-  (if (not (member major-mode
-                   '(emacs-lisp-mode
-                     clojure-mode
-                     yaml-mode)))
+  (if (not (or (nomis/clojure-like-mode? major-mode)
+               (member major-mode
+                       '(emacs-lisp-mode
+                         yaml-mode))))
       "\\_<"
     (let* ((simple-start (nomis/rx/or "^"
                                       (nomis/not-symbol-body-char-regexp))))
@@ -343,10 +350,10 @@
 (defun nomis/end-of-symbol-regexp ()
   ;; "\\_>" doesn't work well with Lispy symbols that contain single quotes,
   ;; or with yaml-mode, so:
-  (if (not (member major-mode
-                   '(emacs-lisp-mode
-                     clojure-mode
-                     yaml-mode)))
+  (if (not (or (nomis/clojure-like-mode? major-mode)
+               (member major-mode
+                       '(emacs-lisp-mode
+                         yaml-mode))))
       "\\_>"
     (nomis/rx/or "$"
                  (nomis/not-symbol-body-char-regexp))))
@@ -373,7 +380,7 @@
            ;; Need `nomis/rx/one-or-more` because, unfortunately, our regexps
            ;; use up extra chars at start and end.
            (concat (nomis/ih/regexp-quote symbol-name)
-                   (when (eq major-mode 'clojure-mode)
+                   (when (nomis/clojure-like-mode? major-mode)
                      (nomis/rx/or ""
                                   "/.*?" ; for namespace names or aliases
                                   ))
