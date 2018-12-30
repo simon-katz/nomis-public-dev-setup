@@ -6,6 +6,26 @@
 
 (magit-auto-revert-mode 0)
 
+(defun nomis/magit-insert-pushed-commits ()
+  "Insert section showing pushed commits.
+Show the last `magit-log-section-commit-count' commits."
+  (when (magit-git-success "rev-parse" "@{upstream}")
+    (let* ((pushed (magit-rev-parse "@{upstream}"))
+           (start (format "%s~%s" pushed magit-log-section-commit-count
+                          ))
+           (range (and (magit-rev-verify start)
+                       (concat start ".." "@{upstream}"))))
+      (magit-insert-section (recent
+                             range)
+        (magit-insert-heading
+          (format (propertize "Recently merged into %s:" 'face 'magit-section-heading)
+                  (magit-get-upstream-branch)))
+        (magit-insert-log range
+                          (cons (format "-n%d" magit-log-section-commit-count
+                                        )
+                                (--remove (string-prefix-p "-n" it)
+                                          magit-log-section-arguments)))))))
+
 (defun nomis/init-magit ()
   (company-mode 0)
   (set-face-background 'magit-section-highlight
@@ -36,8 +56,16 @@
     ;; The behaviour of only showing unpushed commits is annoying with my
     ;; "apply-local-formatting" stuff, so show all recent commits instead:
     (magit-add-section-hook 'magit-status-sections-hook
-                            'magit-insert-recent-commits
+                            'nomis/temp-to-delete
                             'magit-insert-unpushed-to-upstream-or-recent
+                            'replace)
+    (magit-add-section-hook 'magit-status-sections-hook
+                            'magit-insert-unpushed-to-upstream
+                            'nomis/temp-to-delete
+                            nil)
+    (magit-add-section-hook 'magit-status-sections-hook
+                            'nomis/magit-insert-pushed-commits
+                            'nomis/temp-to-delete
                             'replace)))
 
 (add-hook 'magit-mode-hook 'nomis/init-magit)
