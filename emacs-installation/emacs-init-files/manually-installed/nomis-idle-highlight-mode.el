@@ -268,6 +268,14 @@
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+(defmethod nomis/symbol-prefix-chars ((major-mode (eql clojurescript-mode)))
+  (nomis/symbol-prefix-chars 'clojure-mode))
+
+(defmethod nomis/symbol-body-chars ((major-mode (eql clojurescript-mode)))
+  (nomis/symbol-body-chars 'clojure-mode))
+
+;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
 (defmethod nomis/symbol-prefix-chars ((major-mode (eql yaml-mode)))
   "&*")
 
