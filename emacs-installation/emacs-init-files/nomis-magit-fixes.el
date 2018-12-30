@@ -17,7 +17,7 @@
   (with-eval-after-load 'magit-autorevert
 
     (magit-auto-revert-mode 0)
-    
+
     (define-key magit-mode-map "©" ; Option-g on a Mac
       'revert-all-unmodified-buffers-in-git-repo)))
 
@@ -26,7 +26,8 @@
   (cond
    ((member magit-version '("2.10.3"
                             "2.11.0"
-                            "2.13.0"))
+                            "2.13.0"
+                            "2.90.1"))
     (-nomis/fix-magit-auto-revert/2.10.3))
    (t
     (message-box (s-join " "
