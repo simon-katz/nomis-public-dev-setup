@@ -31,7 +31,14 @@
   (setq magit-diff-highlight-trailing t)
   ;; (setq git-commit-summary-max-length 999)
   (setq magit-display-buffer-function
-        'magit-display-buffer-same-window-except-diff-v1))
+        'magit-display-buffer-same-window-except-diff-v1)
+  (progn
+    ;; The behaviour of only showing unpushed commits is annoying with my
+    ;; "apply-local-formatting" stuff, so show all recent commits instead:
+    (magit-add-section-hook 'magit-status-sections-hook
+                            'magit-insert-recent-commits
+                            'magit-insert-unpushed-to-upstream-or-recent
+                            'replace)))
 
 (add-hook 'magit-mode-hook 'nomis/init-magit)
 
