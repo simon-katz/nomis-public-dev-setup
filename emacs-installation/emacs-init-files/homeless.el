@@ -72,6 +72,12 @@
          (dirty? (equal output "dirty")))
     dirty?))
 
+(defun nomis/clojure-files-in-repo ()
+  (let* ((root-dir (nomis/dirtree/vc-root-dir))
+         (filenames (directory-files-recursively root-dir
+                                                 "\.clj[sxc]?$")))
+    filenames))
+
 (defun nomis/indent-all-clj-files-in-project (force-when-dirty?)
   (interactive "P")
   (when (and (not force-when-dirty?)
@@ -79,8 +85,7 @@
     (error (s-join " "
                    '("I won't indent all files when the Git repo is dirty."
                      "Use a prefix arg to force."))))
-  (let* ((root-dir (nomis/dirtree/vc-root-dir))
-         (filenames (directory-files-recursively root-dir ".*\\.clj")))
+  (let* ((filenames (nomis/clojure-files-in-repo)))
     (dolist (filename filenames)
       (message "Indenting %s" filename)
       (let* ((existing-buffer? (find-buffer-visiting filename))
@@ -96,14 +101,18 @@
 
 (defun nomis/indent-all-clj-files-in-project-and-commit (force-when-dirty?)
   (interactive "P")
-  (let* ((root-dir (nomis/dirtree/vc-root-dir)))
+  (let* ((committed? nil)
+         (root-dir (nomis/dirtree/vc-root-dir)))
     (nomis/indent-all-clj-files-in-project force-when-dirty?)
-    (let* ((default-directory root-dir)
-           (commands '("git add ."
-                       "git commit -m apply-local-formatting")))
-      (shell-command-to-string (s-join " ; " commands))))
-  (when (featurep 'magit) (magit-refresh))
-  (message "Finished indenting all clj files in project and committing."))
+    (let* ((default-directory root-dir))
+      (shell-command-to-string "git add .")
+      (when (nomis/git-dirty?)
+        (shell-command-to-string "git commit -m apply-local-formatting")
+        (setq committed? t)))
+    (when (featurep 'magit) (magit-refresh))
+    (if committed?
+        (message "Finished indenting all clj files in project and committing.")
+      (message "Repo is clean after reformatting -- not commiting"))))
 
 ;;;; ___________________________________________________________________________
 
