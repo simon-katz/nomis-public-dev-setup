@@ -1635,9 +1635,9 @@ Mostly for debugging purposes."
   (dk (kbd "a")             'nomis/dirtree/toggle-auto-refresh)
   (dk (kbd "f")             'nomis/dirtree/toggle-follow-selected-buffer?)
 
-  (dk (kbd "<RET>")         'nomis/dirtree/display-file)
-  (dk (kbd "C-<return>")    'nomis/dirtree/display-file)
-  (dk (kbd "S-<return>")    'nomis/dirtree/display-file-and-goto-other-window)
+  (dk (kbd "<SPC>")         'nomis/dirtree/display-file)
+  (dk (kbd "C-<SPC>")       'nomis/dirtree/display-file)
+  (dk (kbd "<return>")      'nomis/dirtree/display-file-and-goto-other-window)
 
   (dk (kbd "o")             'nomis/dirtree/open-in-default-app)
 
@@ -1678,13 +1678,13 @@ Mostly for debugging purposes."
   (dk (kbd "M-S-<right>")   'nomis/dirtree/expand-all)
   (dk (kbd "M-S-<left>")    'nomis/dirtree/collapse-all)
 
-  (dk (kbd "<SPC>")         'nomis/dirtree/scroll-up)
-  (dk (kbd "C-<SPC>")       'nomis/dirtree/scroll-up-and-display)
+  ;; (dk (kbd "<SPC>")         'nomis/dirtree/scroll-up)
+  ;; (dk (kbd "C-<SPC>")       'nomis/dirtree/scroll-up-and-display)
 
-  (dk (kbd "<DEL>")         'nomis/dirtree/scroll-down)
-  (dk (kbd "<backspace>")   'nomis/dirtree/scroll-down)
-  (dk (kbd "C-<DEL>")       'nomis/dirtree/scroll-down-and-display)
-  (dk (kbd "C-<backspace>") 'nomis/dirtree/scroll-down-and-display)
+  ;; (dk (kbd "<DEL>")         'nomis/dirtree/scroll-down)
+  ;; (dk (kbd "<backspace>")   'nomis/dirtree/scroll-down)
+  ;; (dk (kbd "C-<DEL>")       'nomis/dirtree/scroll-down-and-display)
+  ;; (dk (kbd "C-<backspace>") 'nomis/dirtree/scroll-down-and-display)
 
   (dk (kbd "H-1")           'nomis/dirtree/show-only-selection)
   (dk (kbd "H-!")           'nomis/dirtree/show-only-selection/collapse-other-trees)
