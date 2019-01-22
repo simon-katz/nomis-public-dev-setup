@@ -55,5 +55,6 @@
         helm-maybe-exit-minibuffer
         nomis/cljr--hydra/code-menu/cljr-introduce-let-and-exit
         nomis/cljr--hydra/code-menu/cljr-move-to-let-and-exit
+        nomis/indent-buffer
         other-frame
         ))
