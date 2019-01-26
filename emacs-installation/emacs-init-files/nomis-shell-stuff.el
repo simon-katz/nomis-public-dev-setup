@@ -1,5 +1,9 @@
 ;;;; Init stuff -- Shell stuff.
 
+
+(add-hook 'sh-mode-hook 'flycheck-mode)
+
+
 (defun shell-region (start end)
   ;; Copied from http://stackoverflow.com/questions/6286579/emacs-shell-mode-how-to-send-region-to-shell.
   "Execute contents of region in an inferior shell."
