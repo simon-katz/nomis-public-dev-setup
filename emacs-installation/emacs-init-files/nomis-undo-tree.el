@@ -22,6 +22,11 @@
   )
 
 ;;;; ___________________________________________________________________________
+;;;; Set up `undo-tree-visualizer-selection-mode` by default
+
+(add-hook 'undo-tree-visualizer-mode-hook 'undo-tree-visualizer-selection-mode)
+
+;;;; ___________________________________________________________________________
 ;;;; diff direction
 
 (defvar *nomis/undo-tree/invert-diff-in-selection-mode?* t)
