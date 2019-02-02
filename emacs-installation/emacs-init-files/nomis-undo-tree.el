@@ -8,6 +8,10 @@
 
 ;; (setq undo-tree-auto-save-history t) ; apparently there are bugs
 
+(setq undo-tree-visualizer-timestamps t)
+(setq undo-tree-visualizer-relative-timestamps nil)
+(setq undo-tree-visualizer-diff t)
+
 (defadvice undo-tree-make-history-save-file-name
     (after undo-tree activate)
   (setq ad-return-value (concat ad-return-value ".gz")))
