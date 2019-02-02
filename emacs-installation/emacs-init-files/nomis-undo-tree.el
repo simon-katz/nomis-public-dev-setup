@@ -45,7 +45,7 @@
         (not *nomis/undo-tree/invert-diff-in-selection-mode?*))
   (when undo-tree-visualizer-diff (undo-tree-visualizer-update-diff
                                    undo-tree-visualizer-selected-node))
-  (message "*nomis/undo-tree/invert-diff-in-selection-mode?* turned %s"
+  (message "Invert diff turned %s"
            (if *nomis/undo-tree/invert-diff-in-selection-mode?* "on" "off")))
 
 (define-key undo-tree-visualizer-mode-map
