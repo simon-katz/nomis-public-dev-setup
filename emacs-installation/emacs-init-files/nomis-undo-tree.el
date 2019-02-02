@@ -4,7 +4,9 @@
 
 (global-undo-tree-mode)
 
-(setq undo-tree-auto-save-history t)
+(setq undo-tree-enable-undo-in-region nil) ; apparently there are bugs
+
+;; (setq undo-tree-auto-save-history t) ; apparently there are bugs
 
 (defadvice undo-tree-make-history-save-file-name
     (after undo-tree activate)
