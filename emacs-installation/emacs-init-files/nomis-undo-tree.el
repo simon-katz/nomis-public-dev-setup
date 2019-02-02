@@ -35,7 +35,7 @@
 ;;;; ___________________________________________________________________________
 ;;;; diff direction
 
-(defvar *nomis/undo-tree/invert-diff-in-selection-mode?* t)
+(defvar *nomis/undo-tree/invert-diff-in-selection-mode?* nil)
 
 (defvar *nomis/undo-tree/in-undo-tree-diff?* nil)
 
