@@ -43,6 +43,7 @@
   (interactive)
   (setf *nomis/undo-tree/invert-diff-in-selection-mode?*
         (not *nomis/undo-tree/invert-diff-in-selection-mode?*))
+  (nomis/undo-tree/set-face)
   (when undo-tree-visualizer-diff (undo-tree-visualizer-update-diff
                                    undo-tree-visualizer-selected-node))
   (message "Invert diff turned %s"
@@ -70,6 +71,42 @@
                            *nomis/undo-tree/invert-diff-in-selection-mode?*)
                       (apply orig-fun new old other-args)
                     (apply orig-fun old new other-args))))
+              `((name . ,advice-name))))
+
+;;;; ___________________________________________________________________________
+;;;; Buffer face
+
+;;;; TODO This was a copy and paste of `nomis/dirtree/set-face`. Extract the
+;;;;      common pattern.
+
+(defun nomis/undo-tree/make-face-kvs ()
+  (list :background
+        (if *nomis/undo-tree/invert-diff-in-selection-mode?*
+            "mint cream"
+          'unspecified)))
+
+(defvar nomis/undo-tree/face-cookie nil)
+(defvar nomis/undo-tree/previous-face-kvs nil)
+
+(defun nomis/undo-tree/set-face (&optional force)
+  (when (get-buffer undo-tree-visualizer-buffer-name)
+    (let* ((face-kvs (nomis/undo-tree/make-face-kvs)))
+      (when (or force
+                (not (equal face-kvs nomis/undo-tree/previous-face-kvs)))
+        (setq nomis/undo-tree/previous-face-kvs face-kvs)
+        (with-current-buffer undo-tree-visualizer-buffer-name
+          (face-remap-reset-base 'default)
+          (when nomis/undo-tree/face-cookie
+            (face-remap-remove-relative nomis/undo-tree/face-cookie)
+            (setq nomis/undo-tree/face-cookie nil))
+          (setq nomis/undo-tree/face-cookie
+                (face-remap-add-relative 'default
+                                         (list face-kvs))))))))
+
+(let* ((advice-name '-nomis/undo-tree/set-face))
+  (advice-add 'undo-tree-visualize
+              :after
+              (lambda () (nomis/undo-tree/set-face t))
               `((name . ,advice-name))))
 
 ;;;; ___________________________________________________________________________
