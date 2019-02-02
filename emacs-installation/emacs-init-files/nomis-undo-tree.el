@@ -6,6 +6,12 @@
 
 (setq undo-tree-auto-save-history t)
 
+(defadvice undo-tree-make-history-save-file-name
+    (after undo-tree activate)
+  (setq ad-return-value (concat ad-return-value ".gz")))
+
+(push "~undo-tree~" ido-ignore-files)
+
 (progn
   ;; The default for M-z is zap-to-char.  I don't need that, so...
 
