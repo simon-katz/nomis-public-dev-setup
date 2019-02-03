@@ -35,19 +35,19 @@
 ;;;; ___________________________________________________________________________
 ;;;; diff direction
 
-(defvar *nomis/undo-tree/invert-diff-in-selection-mode?* nil)
+(defvar *nomis/undo-tree/invert-diff?* nil)
 
 (defvar *nomis/undo-tree/in-undo-tree-diff?* nil)
 
 (defun nomis/undo-tree/toggle-invert-diff-in-selection-mode ()
   (interactive)
-  (setf *nomis/undo-tree/invert-diff-in-selection-mode?*
-        (not *nomis/undo-tree/invert-diff-in-selection-mode?*))
+  (setf *nomis/undo-tree/invert-diff?*
+        (not *nomis/undo-tree/invert-diff?*))
   (nomis/undo-tree/set-face)
   (when undo-tree-visualizer-diff (undo-tree-visualizer-update-diff
                                    undo-tree-visualizer-selected-node))
   (message "Invert diff turned %s"
-           (if *nomis/undo-tree/invert-diff-in-selection-mode?* "on" "off")))
+           (if *nomis/undo-tree/invert-diff?* "on" "off")))
 
 (define-key undo-tree-visualizer-mode-map
   "D"
@@ -63,14 +63,10 @@
   (advice-add 'diff-no-select
               :around
               (lambda (orig-fun old new &rest other-args)
-                (let* ((selection-mode? (with-current-buffer
-                                            undo-tree-visualizer-buffer-name
-                                          undo-tree-visualizer-selection-mode)))
-                  (if (and selection-mode?
-                           *nomis/undo-tree/in-undo-tree-diff?*
-                           *nomis/undo-tree/invert-diff-in-selection-mode?*)
-                      (apply orig-fun new old other-args)
-                    (apply orig-fun old new other-args))))
+                (if (and *nomis/undo-tree/in-undo-tree-diff?*
+                         *nomis/undo-tree/invert-diff?*)
+                    (apply orig-fun new old other-args)
+                  (apply orig-fun old new other-args)))
               `((name . ,advice-name))))
 
 ;;;; ___________________________________________________________________________
@@ -81,7 +77,7 @@
 
 (defun nomis/undo-tree/make-face-kvs ()
   (list :background
-        (if *nomis/undo-tree/invert-diff-in-selection-mode?*
+        (if *nomis/undo-tree/invert-diff?*
             "mint cream"
           'unspecified)))
 
