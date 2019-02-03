@@ -10,7 +10,6 @@
 
 (setq undo-tree-visualizer-timestamps t)
 (setq undo-tree-visualizer-relative-timestamps nil)
-(setq undo-tree-visualizer-diff t)
 
 (defadvice undo-tree-make-history-save-file-name
     (after undo-tree activate)
@@ -31,6 +30,17 @@
 ;;;; Set up `undo-tree-visualizer-selection-mode` by default
 
 (add-hook 'undo-tree-visualizer-mode-hook 'undo-tree-visualizer-selection-mode)
+
+;;;; ___________________________________________________________________________
+;;;; Show diff by default
+
+;;;; (setq undo-tree-visualizer-diff t) ; This seems to get forgotten. So:
+
+(defvar nomis/undo-tree/visualizer-diff t)
+
+(defun nomis/undo-tree/fix-show-diff ()
+  (when nomis/undo-tree/visualizer-diff
+    (undo-tree-visualizer-show-diff)))
 
 ;;;; ___________________________________________________________________________
 ;;;; diff direction
@@ -99,10 +109,14 @@
                 (face-remap-add-relative 'default
                                          (list face-kvs))))))))
 
+;;;; ___________________________________________________________________________
+
 (let* ((advice-name '-nomis/undo-tree/set-face))
   (advice-add 'undo-tree-visualize
               :after
-              (lambda () (nomis/undo-tree/set-face t))
+              (lambda ()
+                (nomis/undo-tree/set-face t)
+                (nomis/undo-tree/fix-show-diff))
               `((name . ,advice-name))))
 
 ;;;; ___________________________________________________________________________
