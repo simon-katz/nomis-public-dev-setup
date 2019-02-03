@@ -2,7 +2,7 @@
 
 (require 'undo-tree)
 
-(global-undo-tree-mode)
+;; (global-undo-tree-mode) ; Ah. It turns out I rely on the ordinary undo.
 
 (setq undo-tree-enable-undo-in-region nil) ; apparently there are bugs
 
