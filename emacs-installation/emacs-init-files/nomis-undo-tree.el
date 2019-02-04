@@ -38,9 +38,13 @@
 
 (defvar nomis/undo-tree/visualizer-diff t)
 
-(defun nomis/undo-tree/fix-show-diff ()
-  (when nomis/undo-tree/visualizer-diff
-    (undo-tree-visualizer-show-diff)))
+(let* ((advice-name '-nomis/undo-tree/fix-show-diff))
+  (advice-add 'undo-tree-visualize
+              :after
+              (lambda ()
+                (when nomis/undo-tree/visualizer-diff
+                  (undo-tree-visualizer-show-diff)))
+              `((name . ,advice-name))))
 
 ;;;; ___________________________________________________________________________
 ;;;; diff direction
@@ -109,14 +113,11 @@
                 (face-remap-add-relative 'default
                                          (list face-kvs))))))))
 
-;;;; ___________________________________________________________________________
-
 (let* ((advice-name '-nomis/undo-tree/set-face))
   (advice-add 'undo-tree-visualize
               :after
               (lambda ()
-                (nomis/undo-tree/set-face t)
-                (nomis/undo-tree/fix-show-diff))
+                (nomis/undo-tree/set-face t))
               `((name . ,advice-name))))
 
 ;;;; ___________________________________________________________________________
