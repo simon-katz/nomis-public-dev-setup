@@ -43,6 +43,7 @@
         paredit-open-square
         paredit-raise-sexp
         paredit-semicolon
+        sh-assignment
         transpose-sexps
         wdired-finish-edit
         yaml-electric-backspace
