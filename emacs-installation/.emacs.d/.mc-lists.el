@@ -19,6 +19,7 @@
         kill-region
         mark-sexp
         markdown-exdent-or-delete
+        markdown-outdent-or-delete
         nomis/meta-w
         nomis/meta-x
         org-beginning-of-line
