@@ -458,6 +458,13 @@ window."
                                     '((display-buffer-same-window)))))
                     (apply orig-fun buffer other-args)))
                 `((name . ,advice-name)))))
+ ((member (nomis/cider-version)
+          '("CIDER 0.21.0 (New York)"
+            "CIDER 0.22.0snapshot"))
+  ;; This seems to be fixed now.
+  ;; - Oh, but by something outside of Cider.
+  ;;   - The advice wasn't needed when I reverted to Cider 0.19.0snapshot.
+  )
  (t
   (message-box
    "You need to fix `cider-jump-to` for this version of Cider.")))
