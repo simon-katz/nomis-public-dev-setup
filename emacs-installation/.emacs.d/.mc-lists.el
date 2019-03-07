@@ -32,6 +32,7 @@
         org-yank
         paredit-backslash
         paredit-backward-up
+        paredit-close-round
         paredit-doublequote
         paredit-forward-barf-sexp
         paredit-forward-delete
