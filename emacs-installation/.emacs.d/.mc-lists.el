@@ -23,6 +23,7 @@
         nomis/meta-w
         nomis/meta-x
         org-beginning-of-line
+        org-cycle
         org-end-of-line
         org-force-self-insert
         org-kill-line
