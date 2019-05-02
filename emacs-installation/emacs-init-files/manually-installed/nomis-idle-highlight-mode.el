@@ -247,7 +247,7 @@
 
 (cl-defgeneric nomis/symbol-body-chars (major-mode)
   "Characters that can be part of a symbol/identifier."
-  "[:alnum:]_")
+  "[:alnum:]_♭♯")
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
