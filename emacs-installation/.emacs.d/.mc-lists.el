@@ -30,6 +30,7 @@
         org-meta-return
         org-self-insert-command
         org-shiftmetaleft
+        org-shifttab
         org-yank
         paredit-backslash
         paredit-backward-up
