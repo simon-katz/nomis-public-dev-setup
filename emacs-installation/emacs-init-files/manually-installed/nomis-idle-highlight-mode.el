@@ -366,6 +366,9 @@
   ;; the search, but I couldn't make it work.
   ;; Perhaps a bug -- see https://lists.gnu.org/archive/html/bug-gnu-emacs/2016-02/msg02002.html
   ;; JSK 2017-09-13
+  ;;
+  ;; Oh, you can do `(setq font-lock-keywords-case-fold-search t)`
+  ;; - that seems to be buffer-local.
   (if (eq major-mode 'emacs-lisp-mode)
       (nomis/rx/or
        ;; This is only approximately correct. It doesn't work for mixed-case
