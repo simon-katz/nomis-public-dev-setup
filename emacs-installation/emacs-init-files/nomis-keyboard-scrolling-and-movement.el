@@ -30,6 +30,37 @@ in the display."
 
 ;;;; ___________________________________________________________________________
 
+(defun nomis/scroll-down-other-window (&optional n)
+  "Do scroll-down-line in other window."
+  (interactive "p")
+  (with-selected-window (other-window-for-scrolling)
+    (scroll-down-line n)))
+
+(defun nomis/scroll-up-other-window (&optional n)
+  "Do scroll-up-line in other window."
+  (interactive "p")
+  (with-selected-window (other-window-for-scrolling)
+    (scroll-up-line n)))
+
+(defun nomis/scroll-down-in-place-other-window (&optional n)
+  "Do nomis/scroll-down-in-place in other window."
+  (interactive "p")
+  (with-selected-window (other-window-for-scrolling)
+    (nomis/scroll-down-in-place n)))
+
+(defun nomis/scroll-up-in-place-other-window (&optional n)
+  "Do nomis/scroll-up-in-place in other window."
+  (interactive "p")
+  (with-selected-window (other-window-for-scrolling)
+    (nomis/scroll-up-in-place n)))
+
+(define-key global-map (kbd "<M-S-prior>") 'nomis/scroll-down-other-window)
+(define-key global-map (kbd "<M-S-next>")  'nomis/scroll-up-other-window)
+(define-key global-map (kbd "<S-prior>")   'nomis/scroll-down-in-place-other-window)
+(define-key global-map (kbd "<S-next>")    'nomis/scroll-up-in-place-other-window)
+
+;;;; ___________________________________________________________________________
+
 (defconst go-left-right-amount 40)
 
 (defun nomis/go-right-lots ()
