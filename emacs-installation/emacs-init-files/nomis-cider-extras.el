@@ -259,19 +259,16 @@ Control of evaluation:
 
 (defun nomis/cider-send-to-repl-helper (arg action)
   ;; TODO: Maybe instead of ACTION, should have a function to do whatever.
-  (when (or nomis/cider-send-to-repl-always-p
-            (null (nomis/clojure-buffer-ns))
-            (equal (nomis/clojure-buffer-ns)
-                   (nomis/cider-repl-namespace))
-            (let ((user-happy-with-namespace-p
-                   (y-or-n-p
-                    (format "Buffer ns (%s) and REPL ns (%s) are different.
-Really send to REPL? "
-                            (nomis/clojure-buffer-ns)
-                            (nomis/cider-repl-namespace)))))
-              (if user-happy-with-namespace-p
-                  t
-                (error "Not in this namespace!"))))
+  (let ((change-namespace-p
+         (and (not nomis/cider-send-to-repl-always-p)
+              (not (null (nomis/clojure-buffer-ns))) ; maybe this is always non-nil
+              (not (equal (nomis/clojure-buffer-ns)
+                          (nomis/cider-repl-namespace)))
+              (y-or-n-p
+               (format "Buffer ns (%s) and REPL window ns (%s) are different.
+Do you want to change the REPL window's namespace? (c-G to abort)"
+                       (nomis/clojure-buffer-ns)
+                       (nomis/cider-repl-namespace))))))
     (cl-labels ((grab-text
                  (top-level-p)
                  (nomis/grab-text :top-level-p top-level-p :delete-p nil))
@@ -311,6 +308,13 @@ Really send to REPL? "
                        (cider-repl-return)
                        (select-frame-set-input-focus original-frame)
                        (select-window original-window))))))
+      (when change-namespace-p
+        (let* ((in-ns-text (s-concat "(in-ns '"
+                                     (nomis/clojure-buffer-ns)
+                                     ")")))
+          (show-cider-repl-buffer-and-send-text-to-it in-ns-text))
+        (sleep-for 0.5) ; is there a better way?
+        )
       (show-cider-repl-buffer-and-send-text-to-it (the-text)))))
 
 
