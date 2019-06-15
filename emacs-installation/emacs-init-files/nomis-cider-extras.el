@@ -264,11 +264,12 @@ Control of evaluation:
               (not (null (nomis/clojure-buffer-ns))) ; maybe this is always non-nil
               (not (equal (nomis/clojure-buffer-ns)
                           (nomis/cider-repl-namespace)))
-              (y-or-n-p
-               (format "Buffer ns (%s) and REPL window ns (%s) are different.
-Do you want to change the REPL window's namespace? (c-G to abort)"
-                       (nomis/clojure-buffer-ns)
-                       (nomis/cider-repl-namespace))))))
+              ;; (y-or-n-p
+;;                (format "Buffer ns (%s) and REPL window ns (%s) are different.
+;; Do you want to change the REPL window's namespace? (c-G to abort)"
+;;                        (nomis/clojure-buffer-ns)
+;;                        (nomis/cider-repl-namespace)))
+              )))
     (cl-labels ((grab-text
                  (top-level-p)
                  (nomis/grab-text :top-level-p top-level-p :delete-p nil))
