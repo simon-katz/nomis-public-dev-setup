@@ -259,65 +259,64 @@ Control of evaluation:
 
 (defun nomis/cider-send-to-repl-helper (arg action)
   ;; TODO: Maybe instead of ACTION, should have a function to do whatever.
-  (let ()
-    (cl-labels ((grab-text
-                 (top-level-p)
-                 (nomis/grab-text :top-level-p top-level-p :delete-p nil))
-                (the-text
-                 ()
-                 (case action
-                   ((:send-top-level-form) (grab-text t))
-                   ((:send-selection-or-form-around-point) (grab-text nil))
-                   ((:send-return) nil)
-                   (t (error "Bad action"))))
-                (show-cider-repl-buffer-and-send-text-to-it
-                 (text)
-                 (cl-labels ((insert-text () (insert text)))
-                   (let* ((original-frame (selected-frame))
-                          (original-window (selected-window)))
-                     (set-buffer (nomis/cider-find-or-create-repl-buffer))
-                     (unless (eq (current-buffer) (window-buffer))
-                       (let* ((window (get-buffer-window (current-buffer)
-                                                         t)))
-                         (if window
-                             (progn
-                               (select-frame-set-input-focus (window-frame window))
-                               (select-window window))
-                           (pop-to-buffer (current-buffer) t))))
-                     (goto-char (point-max))
-                     (unless (null text)
-                       (when nomis/cider-send-to-buffer-print-newline-first-p
-                         (newline))
-                       (when nomis/cider-send-to-buffer-do-return-first-p
-                         (cider-repl-return)
-                         (sleep-for 0.25))
-                       (insert-text)
-                       (backward-sexp)
-                       (paredit-reindent-defun)
-                       (forward-sexp))
-                     (when (null arg)
+  (cl-labels ((grab-text
+               (top-level-p)
+               (nomis/grab-text :top-level-p top-level-p :delete-p nil))
+              (the-text
+               ()
+               (case action
+                 ((:send-top-level-form) (grab-text t))
+                 ((:send-selection-or-form-around-point) (grab-text nil))
+                 ((:send-return) nil)
+                 (t (error "Bad action"))))
+              (show-cider-repl-buffer-and-send-text-to-it
+               (text)
+               (cl-labels ((insert-text () (insert text)))
+                 (let* ((original-frame (selected-frame))
+                        (original-window (selected-window)))
+                   (set-buffer (nomis/cider-find-or-create-repl-buffer))
+                   (unless (eq (current-buffer) (window-buffer))
+                     (let* ((window (get-buffer-window (current-buffer)
+                                                       t)))
+                       (if window
+                           (progn
+                             (select-frame-set-input-focus (window-frame window))
+                             (select-window window))
+                         (pop-to-buffer (current-buffer) t))))
+                   (goto-char (point-max))
+                   (unless (null text)
+                     (when nomis/cider-send-to-buffer-print-newline-first-p
+                       (newline))
+                     (when nomis/cider-send-to-buffer-do-return-first-p
                        (cider-repl-return)
-                       (select-frame-set-input-focus original-frame)
-                       (select-window original-window))))))
-      (let ((change-namespace-p
-             (and (not nomis/cider-send-to-repl-always-p)
-                  (not (null (nomis/clojure-buffer-ns))) ; maybe this is always non-nil
-                  (not (equal (nomis/clojure-buffer-ns)
-                              (nomis/cider-repl-namespace)))
-                  ;; (y-or-n-p
-                  ;;                (format "Buffer ns (%s) and REPL window ns (%s) are different.
-                  ;; Do you want to change the REPL window's namespace? (c-G to abort)"
-                  ;;                        (nomis/clojure-buffer-ns)
-                  ;;                        (nomis/cider-repl-namespace)))
-                  )))
-        (when change-namespace-p
-          (let* ((in-ns-text (s-concat "(in-ns '"
-                                       (nomis/clojure-buffer-ns)
-                                       ")")))
-            (show-cider-repl-buffer-and-send-text-to-it in-ns-text))
-          (sleep-for 0.5) ; is there a better way?
-          ))
-      (show-cider-repl-buffer-and-send-text-to-it (the-text)))))
+                       (sleep-for 0.25))
+                     (insert-text)
+                     (backward-sexp)
+                     (paredit-reindent-defun)
+                     (forward-sexp))
+                   (when (null arg)
+                     (cider-repl-return)
+                     (select-frame-set-input-focus original-frame)
+                     (select-window original-window))))))
+    (let ((change-namespace-p
+           (and (not nomis/cider-send-to-repl-always-p)
+                (not (null (nomis/clojure-buffer-ns))) ; maybe this is always non-nil
+                (not (equal (nomis/clojure-buffer-ns)
+                            (nomis/cider-repl-namespace)))
+                ;; (y-or-n-p
+                ;;                (format "Buffer ns (%s) and REPL window ns (%s) are different.
+                ;; Do you want to change the REPL window's namespace? (c-G to abort)"
+                ;;                        (nomis/clojure-buffer-ns)
+                ;;                        (nomis/cider-repl-namespace)))
+                )))
+      (when change-namespace-p
+        (let* ((in-ns-text (s-concat "(in-ns '"
+                                     (nomis/clojure-buffer-ns)
+                                     ")")))
+          (show-cider-repl-buffer-and-send-text-to-it in-ns-text))
+        (sleep-for 0.5) ; is there a better way?
+        ))
+    (show-cider-repl-buffer-and-send-text-to-it (the-text))))
 
 
 ;;## ;;;; ___________________________________________________________________________
