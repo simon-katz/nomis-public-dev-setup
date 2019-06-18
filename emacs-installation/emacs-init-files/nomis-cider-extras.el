@@ -282,7 +282,7 @@ Control of evaluation:
                            (progn
                              (select-frame-set-input-focus (window-frame window))
                              (select-window window))
-                         (pop-to-buffer (current-buffer) t))))
+                         (display-buffer-pop-up-frame (current-buffer) '()))))
                    (goto-char (point-max))
                    (unless (null text)
                      (when nomis/cider-send-to-buffer-print-newline-first-p
