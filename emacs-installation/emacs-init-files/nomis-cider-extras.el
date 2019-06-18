@@ -259,17 +259,7 @@ Control of evaluation:
 
 (defun nomis/cider-send-to-repl-helper (arg action)
   ;; TODO: Maybe instead of ACTION, should have a function to do whatever.
-  (let ((change-namespace-p
-         (and (not nomis/cider-send-to-repl-always-p)
-              (not (null (nomis/clojure-buffer-ns))) ; maybe this is always non-nil
-              (not (equal (nomis/clojure-buffer-ns)
-                          (nomis/cider-repl-namespace)))
-              ;; (y-or-n-p
-;;                (format "Buffer ns (%s) and REPL window ns (%s) are different.
-;; Do you want to change the REPL window's namespace? (c-G to abort)"
-;;                        (nomis/clojure-buffer-ns)
-;;                        (nomis/cider-repl-namespace)))
-              )))
+  (let ()
     (cl-labels ((grab-text
                  (top-level-p)
                  (nomis/grab-text :top-level-p top-level-p :delete-p nil))
@@ -309,13 +299,24 @@ Control of evaluation:
                        (cider-repl-return)
                        (select-frame-set-input-focus original-frame)
                        (select-window original-window))))))
-      (when change-namespace-p
-        (let* ((in-ns-text (s-concat "(in-ns '"
-                                     (nomis/clojure-buffer-ns)
-                                     ")")))
-          (show-cider-repl-buffer-and-send-text-to-it in-ns-text))
-        (sleep-for 0.5) ; is there a better way?
-        )
+      (let ((change-namespace-p
+             (and (not nomis/cider-send-to-repl-always-p)
+                  (not (null (nomis/clojure-buffer-ns))) ; maybe this is always non-nil
+                  (not (equal (nomis/clojure-buffer-ns)
+                              (nomis/cider-repl-namespace)))
+                  ;; (y-or-n-p
+                  ;;                (format "Buffer ns (%s) and REPL window ns (%s) are different.
+                  ;; Do you want to change the REPL window's namespace? (c-G to abort)"
+                  ;;                        (nomis/clojure-buffer-ns)
+                  ;;                        (nomis/cider-repl-namespace)))
+                  )))
+        (when change-namespace-p
+          (let* ((in-ns-text (s-concat "(in-ns '"
+                                       (nomis/clojure-buffer-ns)
+                                       ")")))
+            (show-cider-repl-buffer-and-send-text-to-it in-ns-text))
+          (sleep-for 0.5) ; is there a better way?
+          ))
       (show-cider-repl-buffer-and-send-text-to-it (the-text)))))
 
 
