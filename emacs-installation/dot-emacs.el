@@ -130,6 +130,8 @@
 (require 'nomis-key-chord)
 (require 'nomis-hydra)
 
+(require 'nomis-line-move-visual)
+
 ;;;; ---- Lisp and Clojure stuff probably good for anyone ----
 
 (require 'nomis-paredit)
