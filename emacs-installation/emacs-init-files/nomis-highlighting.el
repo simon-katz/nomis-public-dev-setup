@@ -1,6 +1,29 @@
 ;;;; Init stuff -- Misc highlighting.
 
 ;;;; ___________________________________________________________________________
+;;;; Buffers
+
+(defvar *nomis/unselected-buffer-background*
+  (case 2
+    (1 "grey91")
+    (2 "grey88")))
+
+(defun nomis/grey-out-unselected-buffers ()
+  ;; Copied from
+  ;; https://stackoverflow.com/questions/33195122/highlight-current-active-window
+  "Add a grey background to all buffers other than the current buffer."
+  (walk-windows (lambda (w)
+                  (unless (eq w (selected-window))
+                    (with-current-buffer (window-buffer w)
+                      (buffer-face-set
+                       `(:background ,*nomis/unselected-buffer-background*)))))
+                t
+                t)
+  (buffer-face-set 'default))
+
+(add-hook 'buffer-list-update-hook 'nomis/grey-out-unselected-buffers)
+
+;;;; ___________________________________________________________________________
 ;;;; Mode line
 
 ;;; Defaults:
