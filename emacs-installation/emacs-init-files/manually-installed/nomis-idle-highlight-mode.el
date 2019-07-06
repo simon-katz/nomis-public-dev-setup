@@ -504,8 +504,10 @@
           (when nomis/idle-highlight-regexp
             (when nomis/highlight-debug?
               (message "Looking for regexp \"%s\"" nomis/idle-highlight-regexp))
-            (highlight-regexp nomis/idle-highlight-regexp
-                              nomis/idle-highlight-face)))))))
+            (hlt-highlight-regexp-region (point-min)
+                                         (point-max)
+                                         nomis/idle-highlight-regexp
+                                         nomis/idle-highlight-face)))))))
 
 (defun nomis/idle-highlight-word-at-point ()
   (condition-case e
@@ -516,7 +518,8 @@
 
 (defsubst nomis/idle-highlight-unhighlight ()
   (when nomis/idle-highlight-regexp
-    (unhighlight-regexp nomis/idle-highlight-regexp)
+    (hlt-unhighlight-region (point-min)
+                            (point-max))
     (setq nomis/idle-highlight-regexp nil)))
 
 (define-minor-mode nomis/idle-highlight-mode
