@@ -14,7 +14,10 @@
  :fred
  @fred
  :fred
- ^:fred foo ; This is Elisp, not Clojure, so ^ is not treated specially.
+ ^fred foo ; This is Elisp, not Clojure, so ^ is not treated specially.
+ ^fred
+ :^fred
+ :^fred
  #'fred
  'fred
  `fred
