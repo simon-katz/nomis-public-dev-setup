@@ -7,14 +7,25 @@
 
 ;;; Move cursor through the following and check all is good.
 
-(fred
- fred fred fred
- fred  fred
+(fred fred fred fred fred fred
+ fred  fred  fred  fred  fred  fred
+ fred   fred   fred   fred   fred   fred
+
+ :fred :fred :fred :fred :fred :fred
+ :fred  :fred  :fred  :fred  :fred  :fred
+ :fred   :fred   :fred   :fred   :fred   :fred
+
+ fred
+ fred fred fred fred    jim    fred
+ fred       jim
+
  @fred
  :fred
  @fred
  :fred
+
  ^:fred foo
+
  #'fred
  'fred
  `fred
@@ -22,8 +33,10 @@
  '''```fred
  ,fred
  ,fred
+
  ~fred
  ~fred
+
  "fred"
  "fred"
  FRED
@@ -53,6 +66,7 @@
  fred'a'b
  fred'&
  jim'fred
+ jim
  jim
 
  fred/a
