@@ -17,7 +17,14 @@
 
 ;;;; ___________________________________________________________________________
 
+(defun nomis/rx/wrap (regexp)
+  "Return a non-capturing group that wraps `regexp`."
+  (concat "\\(?:"
+          regexp
+          "\\)"))
+
 (defun nomis/rx/or (&rest regexes)
+  "Return a non-capturing group that combines `regexes` with an or."
   (concat "\\(?:"
           (apply 'concat
                  (-interpose "\\|"
@@ -25,9 +32,16 @@
           "\\)"))
 
 (defun nomis/rx/one-or-more (regexp)
+  "Return a non-capturing group that matches one or more of `regexp`."
   (concat "\\(?:"
           regexp
           "\\)+"))
+
+(defun nomis/rx/zero-or-more (regexp)
+  "Return a non-capturing group that matches zero or more of `regexp`."
+  (concat "\\(?:"
+          regexp
+          "\\)*"))
 
 ;;;; ___________________________________________________________________________
 
