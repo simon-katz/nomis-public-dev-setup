@@ -23,6 +23,13 @@
           regexp
           "\\)"))
 
+(defun nomis/rx/optional (regexp)
+  "Return a non-capturing group that matches zero or one occurences
+of `regexp`."
+  (concat "\\(?:"
+          regexp
+          "\\)?"))
+
 (defun nomis/rx/or (&rest regexes)
   "Return a non-capturing group that combines `regexes` with an or."
   (concat "\\(?:"

@@ -90,10 +90,11 @@
 ;;;; ___________________________________________________________________________
 
 (defvar nomis/ih/approach :new)
+(defvar nomis/ih/use-simple-regexps-p nil)
 
 ;;;; ___________________________________________________________________________
 
-(defconst nomis/highlight-debug? nil)
+(defconst nomis/highlight-debug? t)
 
 (defun nomis/report-char-at-point (&optional msg)
   (when nomis/highlight-debug?
@@ -299,14 +300,10 @@
 ;;;; ___________________________________________________________________________
 ;;;; Hacking Chars for symbols
 
-(defvar *nomis/ih/activity*) ; TODO Consider adding extra functions and not having this
-
 (defun nomis/hi/base-chars->prefix-chars (chars)
-  (ecase *nomis/ih/activity*
-    (:grabbing-text (if nomis/idle-highlight-colon-at-start-matters-p
-                        chars
-                      (concat chars ":")))
-    (:highlighting chars)))
+  (if nomis/idle-highlight-colon-at-start-matters-p
+      chars
+    (concat chars ":")))
 
 (defun nomis/hi/base-chars->body-chars (chars)
   (if nomis/idle-highlight-colon-at-start-matters-p
@@ -343,36 +340,27 @@
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-(defun nomis/start-of-symbol-regexp ()
-  ;; "\\_<" doesn't work well with Lispy symbols that contain single quotes,
-  ;; or with yaml-mode, so:
-  (if (not (or (nomis/clojure-like-mode? major-mode)
-               (member major-mode
-                       '(emacs-lisp-mode
-                         yaml-mode))))
-      "\\_<"
-    (let* ((simple-start (nomis/rx/or "^"
-                                      (let* (;; (nomis/idle-highlight-colon-at-start-matters-p t)
-                                             (*nomis/ih/activity* :highlighting))
-                                        (nomis/not-symbol-body-char-regexp)))))
-      ;; TODO Simplify: concatenate `simple-start` with optional quote
-      (nomis/rx/or simple-start
-                   ;; We allow single quotes in symbol bodies, so:
-                   (concat simple-start
-                           "'")))))
+(defun nomis/ih/use-hack-for-symbol-boundaries? ()
+  ;; "\\_<" and "\\_>" don't work well with Lispy symbols that contain
+  ;; single quotes, or with yaml-mode, so we need this.
+  (or (nomis/clojure-like-mode? major-mode)
+      (member major-mode
+              '(emacs-lisp-mode
+                yaml-mode))))
 
-(defun nomis/end-of-symbol-regexp ()
-  ;; "\\_>" doesn't work well with Lispy symbols that contain single quotes,
-  ;; or with yaml-mode, so:
-  (if (not (or (nomis/clojure-like-mode? major-mode)
-               (member major-mode
-                       '(emacs-lisp-mode
-                         yaml-mode))))
-      "\\_>"
-    (nomis/rx/or "$"
-                 (let* (;; (nomis/idle-highlight-colon-at-start-matters-p t)
-                        (*nomis/ih/activity* :highlighting))
-                   (nomis/not-symbol-body-char-regexp)))))
+(defun nomis/hacky-start-of-symbol-regexp ()
+  (assert (nomis/ih/use-hack-for-symbol-boundaries?))
+  (nomis/rx/or "^"
+               (if nomis/ih/use-simple-regexps-p
+                   " "
+                 (nomis/not-symbol-body-char-regexp))))
+
+(defun nomis/hacky-end-of-symbol-regexp ()
+  (assert (nomis/ih/use-hack-for-symbol-boundaries?))
+  (nomis/rx/or "$"
+               (if nomis/ih/use-simple-regexps-p
+                   " "
+                 (nomis/not-symbol-body-char-regexp))))
 
 
 
@@ -392,7 +380,8 @@
   ;;
   ;; Oh, you can do `(setq font-lock-keywords-case-fold-search t)`
   ;; - that seems to be buffer-local.
-  (if (eq major-mode 'emacs-lisp-mode)
+  (if (and (eq major-mode 'emacs-lisp-mode)
+           (not nomis/ih/use-simple-regexps-p))
       (nomis/rx/or
        ;; This is only approximately correct. It doesn't work for mixed-case
        ;; things. Never mind.
@@ -401,24 +390,39 @@
     (regexp-quote string)))
 
 (defun symbol-name->regexp-for-highlighting (symbol-name)
-  (concat (nomis/start-of-symbol-regexp)
-          (nomis/rx/one-or-more
-           ;; Need `nomis/rx/one-or-more` because, unfortunately, our regexps
-           ;; use up extra chars at start and end.
-           (concat (unless nomis/idle-highlight-colon-at-start-matters-p
-                     ":?" ; allow an optional colon
-                     )
-                   (nomis/ih/regexp-quote symbol-name)
-                   (when (nomis/clojure-like-mode? major-mode)
-                     (nomis/rx/or ""
-                                  "/.*?" ; for namespace names or aliases
-                                  ))
-                   (nomis/end-of-symbol-regexp)
-                   (when (eql nomis/ih/approach :new)
-                     ;; The following is needed when there are two spaces
-                     ;; between repetitions.
-                     ;; See `++demo-of-hlt-highlight-maybe-bug++`.
-                     (nomis/rx/zero-or-more "[ \t]*"))))))
+  (let* ((symbol-regexp (nomis/ih/regexp-quote symbol-name)))
+    (if (not (nomis/ih/use-hack-for-symbol-boundaries?))
+        ;; This doesn't take `nomis/idle-highlight-colon-at-start-matters-p`
+        ;; into account, but I guess that's OK because we won't get here
+        ;; when colons are in the language.
+        (concat "\\_<" symbol-regexp "\\_>")
+      ;; We make our own regexps for just-before and just-after symbols.
+      ;; We match a character before and after each symbol, so two symbols
+      ;; separated by a single character require special treatment.
+      (concat (nomis/hacky-start-of-symbol-regexp)
+              (let* ((hacked-symbol-regexp
+                      (concat
+                       "'?" ; should this be in `nomis/hacky-start-of-symbol-regexp`?
+                       (when (and (not nomis/idle-highlight-colon-at-start-matters-p)
+                                  (not (string= (substring symbol-name 0 1)
+                                                ":")))
+                         ":?")
+                       symbol-regexp)))
+                (nomis/rx/one-or-more
+                 (concat hacked-symbol-regexp
+                         (when (nomis/clojure-like-mode? major-mode)
+                           (nomis/rx/or ""
+                                        "/.*?" ; for namespace names or aliases
+                                        ))
+                         (ecase nomis/ih/approach
+                           (:old
+                            (nomis/hacky-end-of-symbol-regexp))
+                           (:new
+                            (nomis/rx/one-or-more
+                             ;; one-or-more is needed to work around a bug when
+                             ;; there are two spaces between repetitions.
+                             ;; See `++demo-of-hlt-highlight-maybe-bug++`.
+                             (nomis/hacky-end-of-symbol-regexp)))))))))))
 
 ;;;; ___________________________________________________________________________
 ;;;; Demo that the libraries used by `:old` and `:new` values for
@@ -490,8 +494,7 @@
                  #'backward-char))
 
 (defun nomis/idle-highlight-thing ()
-  (let* ((*nomis/ih/activity* :grabbing-text)
-         (prefix-regexp (nomis/symbol-prefix-char-regexp))
+  (let* ((prefix-regexp (nomis/symbol-prefix-char-regexp))
          (body-regexp   (nomis/symbol-body-char-regexp)))
     (cl-labels
         ((looking-at-symbol-prefix? () (looking-at-p prefix-regexp))
@@ -541,50 +544,57 @@
           (nomis/report-char-at-point "boring char -- not highlighting")
           nil)))))
 
+(defun nomis/idle-highlight-word-at-point** ()
+  (interactive)
+  (when nomis/highlight-debug?
+    (message "_____"))
+  (let* ((captured-target (nomis/idle-highlight-thing)))
+    (nomis/idle-highlight-unhighlight)
+    (when nomis/highlight-debug?
+      (message "captured-target = \"%s\"" captured-target))
+    (if (or (not captured-target)
+            (member captured-target
+                    nomis/idle-highlight-exceptions)
+            (and (eq major-mode 'org-mode)
+                 (string-match-p "^\\*+$" captured-target)))
+        (progn
+          (when nomis/highlight-debug?
+            (message "Not highlighting")))
+      (progn
+        (setq nomis/idle-highlight-regexp
+              (cond ((eq (string-to-char captured-target)
+                         ?\")
+                     (when nomis/highlight-debug?
+                       (message "nomis/idle-highlight-word-at-point*: Pretty sure we can't get here."))
+                     (beep)
+                     (regexp-quote captured-target))
+                    (t
+                     (when nomis/highlight-debug?
+                       (message "Looking for captured-target \"%s\"" captured-target))
+                     (-> captured-target
+                         symbol-name->regexp-for-highlighting))))
+        (when nomis/idle-highlight-regexp
+          (when nomis/highlight-debug?
+            (message "nomis/ih/approach = %s"
+                     nomis/ih/approach)
+            (message "colon-matters-p = %s"
+                     nomis/idle-highlight-colon-at-start-matters-p)
+            (message "captured-target = %s"
+                     captured-target)
+            (message "Looking for regexp \"%s\""
+                     nomis/idle-highlight-regexp))
+          (ecase nomis/ih/approach
+            (:old (highlight-regexp nomis/idle-highlight-regexp
+                                    nomis/idle-highlight-face))
+            (:new (hlt-highlight-regexp-region (point-min)
+                                               (point-max)
+                                               nomis/idle-highlight-regexp
+                                               nomis/idle-highlight-face))))))))
+
 (defun nomis/idle-highlight-word-at-point* ()
   "Highlight the word under the point."
   (when nomis/idle-highlight-mode
-    (when nomis/highlight-debug?
-      (message "_____"))
-    (let* ((captured-target (nomis/idle-highlight-thing)))
-      (nomis/idle-highlight-unhighlight)
-      (when nomis/highlight-debug?
-        (message "captured-target = \"%s\"" captured-target))
-      (if (or (not captured-target)
-              (member captured-target
-                      nomis/idle-highlight-exceptions)
-              (and (eq major-mode 'org-mode)
-                   (string-match-p "^\\*+$" captured-target)))
-          (progn
-            (when nomis/highlight-debug?
-              (message "Not highlighting")))
-        (progn
-          (setq nomis/idle-highlight-regexp
-                (cond ((eq (string-to-char captured-target)
-                           ?\")
-                       (when nomis/highlight-debug?
-                         (message "nomis/idle-highlight-word-at-point*: Pretty sure we can't get here."))
-                       (beep)
-                       (regexp-quote captured-target))
-                      (t
-                       (when nomis/highlight-debug?
-                         (message "Looking for captured-target \"%s\"" captured-target))
-                       (-> captured-target
-                           symbol-name->regexp-for-highlighting))))
-          (when nomis/idle-highlight-regexp
-            (when nomis/highlight-debug?
-              (message "colon-matters-p = %s & captured-target = %s"
-                       nomis/idle-highlight-colon-at-start-matters-p
-                       captured-target)
-              (message "Looking for regexp \"%s\"" nomis/idle-highlight-regexp)
-              (print nomis/idle-highlight-regexp))
-            (ecase nomis/ih/approach
-              (:old (highlight-regexp nomis/idle-highlight-regexp
-                                      nomis/idle-highlight-face))
-              (:new (hlt-highlight-regexp-region (point-min)
-                                                 (point-max)
-                                                 nomis/idle-highlight-regexp
-                                                 nomis/idle-highlight-face)))))))))
+    (nomis/idle-highlight-word-at-point**)))
 
 (defun nomis/idle-highlight-word-at-point ()
   (condition-case e

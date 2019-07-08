@@ -7,13 +7,21 @@
 
 ;;; Move cursor through the following and check all is good.
 
-(fred fred fred fred fred fred
+(fred
+ fred      xxxxx ; check: don't highlight loads of whitespace
+ fred fred fred fred fred fred
  fred  fred  fred  fred  fred  fred
  fred   fred   fred   fred   fred   fred
+ fred   fred   'fred   fred   fred   fred
+ 'fred     
 
+ :fred
+ :fred     xxxxx ; check: don't highlight loads of whitespace
  :fred :fred :fred :fred :fred :fred
  :fred  :fred  :fred  :fred  :fred  :fred
  :fred   :fred   :fred   :fred   :fred   :fred
+ :fred   :fred   ':fred   :fred   :fred   :fred
+ ':fred     
 
  fred
  fred fred fred fred    jim    fred
