@@ -8,16 +8,33 @@
 ;;; Move cursor through the following and check all is good.
 
 (fred
- fred fred fred
- fred  fred
+ fred      xxxxx ; check: don't highlight loads of whitespace
+ fred fred fred fred fred fred
+ fred  fred  fred  fred  fred  fred
+ fred   fred   fred   fred   fred   fred
+ fred   fred   'fred   fred   fred   fred
+ 'fred     
+
+ :fred
+ :fred     xxxxx ; check: don't highlight loads of whitespace
+ :fred :fred :fred :fred :fred :fred
+ :fred  :fred  :fred  :fred  :fred  :fred
+ :fred   :fred   :fred   :fred   :fred   :fred
+ :fred   :fred   ':fred   :fred   :fred   :fred
+ ':fred     
+
+ fred
+ fred fred fred fred    jim    fred
+ fred       jim
+
  @fred ; This is Elisp, not Clojure, so @ is not treated specially.
- :fred
  @fred
- :fred
+
  ^fred foo ; This is Elisp, not Clojure, so ^ is not treated specially.
  ^fred
  :^fred
  :^fred
+
  #'fred
  'fred
  `fred
@@ -25,8 +42,10 @@
  '''```fred
  ,fred
  ,fred
+
  ~fred ; This is Elisp, not Clojure, so ~ is not treated specially.
  ~fred
+
  "fred"
  "fred"
  FRED
@@ -56,6 +75,7 @@
  fred'a'b
  fred'&
  jim'fred
+ jim
  jim
 
  fred/a
@@ -146,6 +166,8 @@ fred() ; FIXME No highlighting when on open parenthesis.
 ;;;^above after the semicolons ; (and after this one too)
 
 ;; After the following symbol, check highlighting for all following points.
+;; - There are two blank lines at the end of the file! (Noted in case they ever
+;;   get lost.)
 ;; (There was a bug when at end of file, when highlighting would incorrectly
 ;; happen.)
 final-stuff-with-blank-lines-following
