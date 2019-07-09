@@ -90,10 +90,11 @@
 ;;;; ___________________________________________________________________________
 ;;;; Demo that the libraries used by `:old` and `:new` values for
 ;;;; `nomis/ih/approach` behave differently.
-;;;; Run the code in the comment and observe the effects on the yy and zz.
-;;;; Looks like a bug. You can see on line (z3) what is being consumed by
-;;;; the regexps. Seems that the search might be starting one character after
-;;;; the previous match.
+;;;; Run the code in the comment and observe the effects on the lines marked
+;;;; with (x), (y), (z) etc.
+;;;; Looks like a bug.
+;;;; It seems that the search might be starting one character after the
+;;;; previous match.
 ;;;; With:
 ;;;;   GNU Emacs 26.1 (build 1, x86_64-apple-darwin14.5.0, NS appkit-1348.17
 ;;;;   Version 10.10.5 (Build 14F2511)) of 2018-05-31
@@ -101,7 +102,12 @@
 
 ;;;; See bug report at https://www.emacswiki.org/emacs/Comments_on_HighlightLibrary
 
-(defvar ++demo-of-hlt-highlight-maybe-bug++)
+;;;; We fix this with:
+(require 'nomis-highlight-hacks)
+;;;; ...and we bind `*nomis/hlt/no-leave-gaps?*`.
+
+(defvar ++demo-of-hlt-highlight-maybe-bug++
+  "Emacs bug! Without a value, M-. fails!")
 
 (defmacro nomis/ih/comment (&body body)
   ;; Maybe put this somewhere general as `nomis/comment`.
@@ -110,24 +116,42 @@
 
 (nomis/ih/comment
 
- (progn
-   (highlight-regexp " yy " 'hi-green)
-   (hlt-highlight-regexp-region (point-min)
-                                (point-max)
-                                " zz "
-                                'hi-pink))
+ (cl-flet ((highlight (regexp)
+                      (highlight-regexp regexp 'hi-green))
+           (hlt-highlight (regexp)
+                          (hlt-highlight-regexp-region (point-min)
+                                                       (point-max)
+                                                       regexp
+                                                       'hi-green)))
+   (highlight "xxxx")
+   (hlt-highlight "yyyy")
+   (let* ((*nomis/hlt/no-leave-gaps?* t)) (hlt-highlight "zzzz"))
+   (highlight " xx ")
+   (hlt-highlight " yy ")
+   (let* ((*nomis/hlt/no-leave-gaps?* t)) (hlt-highlight " zz ")))
 
  (progn
-   (unhighlight-regexp " yy ")
+   (unhighlight-regexp "xxxx")
+   (unhighlight-regexp " xx ")
    (hlt-unhighlight-region (point-min)
                            (point-max)))
 
+ ;; (x)  xxxxxxxxxxxxxxxxxxxxxxxxxxxx <-- As expected -- all highlighted.
+ ;;
+ ;; (y)  yyyyyyyyyyyyyyyyyyyyyyyyyyyy <-- BUG -- SOME NOT HIGHLIGHTED.
+ ;;
+ ;; (z)  zzzzzzzzzzzzzzzzzzzzzzzzzzzz <-- Bug fixed.
+
+ ;; (x1) xx xx xx xx xx xx            <-- As expected -- need more spaces.
+ ;; (x2) xx  xx  xx  xx  xx  xx       <-- As expected -- all highlighted.
+ ;; (x3) xx   xx   xx   xx   xx   xx  <-- As expected -- all highlighted.
+ ;;
  ;; (y1) yy yy yy yy yy yy            <-- As expected -- need more spaces.
- ;; (y2) yy  yy  yy  yy  yy  yy       <-- As expected -- all highlighted.
+ ;; (y2) yy  yy  yy  yy  yy  yy       <-- BUG -- SOME NOT HIGHLIGHTED.
  ;; (y3) yy   yy   yy   yy   yy   yy  <-- As expected -- all highlighted.
  ;;
  ;; (z1) zz zz zz zz zz zz            <-- As expected -- need more spaces.
- ;; (z2) zz  zz  zz  zz  zz  zz       <-- BUG -- SOME NOT HIGHLIGHTED.
+ ;; (z2) zz  zz  zz  zz  zz  zz       <-- Bug fixed.
  ;; (z3) zz   zz   zz   zz   zz   zz  <-- As expected -- all highlighted.
  )
 
@@ -451,15 +475,7 @@
         (concat (nomis/hacky-start-of-symbol-regexp)
                 (nomis/rx/one-or-more
                  (concat hacked-symbol-regexp
-                         (ecase nomis/ih/approach
-                           (:old
-                            (nomis/hacky-end-of-symbol-regexp))
-                           (:new
-                            (nomis/rx/one-or-more
-                             ;; one-or-more is needed to work around a bug when
-                             ;; there are exactly two spaces between repetitions.
-                             ;; See `++demo-of-hlt-highlight-maybe-bug++`.
-                             (nomis/hacky-end-of-symbol-regexp)))))))))))
+                         (nomis/hacky-end-of-symbol-regexp))))))))
 
 ;;;; ___________________________________________________________________________
 
@@ -581,10 +597,11 @@
           (ecase nomis/ih/approach
             (:old (highlight-regexp nomis/idle-highlight-regexp
                                     nomis/idle-highlight-face))
-            (:new (hlt-highlight-regexp-region (point-min)
-                                               (point-max)
-                                               nomis/idle-highlight-regexp
-                                               nomis/idle-highlight-face))))))))
+            (:new (let* ((*nomis/hlt/no-leave-gaps?* t))
+                    (hlt-highlight-regexp-region (point-min)
+                                                 (point-max)
+                                                 nomis/idle-highlight-regexp
+                                                 nomis/idle-highlight-face)))))))))
 
 (defun nomis/idle-highlight-word-at-point* ()
   "Highlight the word under the point."
