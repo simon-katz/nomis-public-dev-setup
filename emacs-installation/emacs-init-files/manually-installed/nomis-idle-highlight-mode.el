@@ -440,9 +440,6 @@
         ;; into account, but I guess that's OK because we won't get here
         ;; when colons are in the language.
         (concat "\\_<" symbol-regexp "\\_>")
-      ;; We make our own regexps for just-before and just-after symbols.
-      ;; We match a character before and after each symbol, so two symbols
-      ;; separated by a single character require special treatment.
       (let* ((hacked-symbol-regexp
               (concat
                "'?"
@@ -455,6 +452,10 @@
                  (nomis/rx/or ""
                               "/.*?" ; for namespace names or aliases
                               )))))
+        ;; We make our own regexps for just-before and just-after symbols, and
+        ;; so we match a character before and after each symbol. This means that
+        ;; two symbols separated by a single character require special
+        ;; treatment.
         (concat (nomis/hacky-start-of-symbol-regexp)
                 (nomis/rx/one-or-more
                  (concat hacked-symbol-regexp
