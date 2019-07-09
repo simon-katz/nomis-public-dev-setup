@@ -141,7 +141,7 @@
 ;;;; ___________________________________________________________________________
 
 (defvar nomis/ih/approach :new)
-(defvar nomis/ih/use-simple-regexps-p nil)
+(defvar nomis/ih/use-simple-regexps-p nil) ; to help with debugging
 
 ;;;; ___________________________________________________________________________
 
@@ -399,16 +399,10 @@
               '(emacs-lisp-mode
                 yaml-mode))))
 
-(defun nomis/hacky-start-of-symbol-regexp ()
+(defun nomis/hacky-non-symbol-char-regexp ()
   (assert (nomis/ih/use-hack-for-symbol-boundaries?))
   (nomis/rx/or "^"
-               (if nomis/ih/use-simple-regexps-p
-                   " "
-                 (nomis/not-symbol-body-char-regexp))))
-
-(defun nomis/hacky-end-of-symbol-regexp ()
-  (assert (nomis/ih/use-hack-for-symbol-boundaries?))
-  (nomis/rx/or "$"
+               "$"
                (if nomis/ih/use-simple-regexps-p
                    " "
                  (nomis/not-symbol-body-char-regexp))))
@@ -440,7 +434,9 @@
         ;; into account, but I guess that's OK because we won't get here
         ;; when colons are in the language.
         (concat "\\_<" symbol-regexp "\\_>")
-      (let* ((hacked-symbol-regexp
+      (let* ((non-symbol-char-regexp
+              (nomis/hacky-non-symbol-char-regexp))
+             (hacked-symbol-regexp
               (concat
                "'?"
                (when (and (not nomis/idle-highlight-colon-at-start-matters-p)
@@ -456,10 +452,10 @@
         ;; so we match a character before and after each symbol. This means that
         ;; two symbols separated by a single character require special
         ;; treatment.
-        (concat (nomis/hacky-start-of-symbol-regexp)
+        (concat non-symbol-char-regexp
                 (nomis/rx/one-or-more
                  (concat hacked-symbol-regexp
-                         (nomis/hacky-end-of-symbol-regexp))))))))
+                         non-symbol-char-regexp)))))))
 
 ;;;; ___________________________________________________________________________
 
