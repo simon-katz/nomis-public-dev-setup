@@ -54,6 +54,8 @@
                                              nomis/extra-width-for-each-window))
 (defconst nomis/triple-window-frame-width (+ nomis/double-window-frame-width
                                              nomis/extra-width-for-each-window))
+(defconst nomis/quadruple-window-frame-width (+ nomis/triple-window-frame-width
+                                                nomis/extra-width-for-each-window))
 
 ;;;; ___________________________________________________________________________
 ;;;; ---- Cycle frames ----
@@ -161,6 +163,10 @@
   (defun nomis/w-triple ()
     (interactive)
     (nomis/set-frame-width* nomis/triple-window-frame-width))
+
+  (defun nomis/w-quadruple ()
+    (interactive)
+    (nomis/set-frame-width* nomis/quadruple-window-frame-width))
 
   (defun nomis/set-frame-height* (height)
     (set-frame-height (selected-frame) height))
@@ -371,6 +377,7 @@
 (define-key global-map (kbd "H-q 1") 'nomis/w-single)
 (define-key global-map (kbd "H-q 2") 'nomis/w-double)
 (define-key global-map (kbd "H-q 3") 'nomis/w-triple)
+(define-key global-map (kbd "H-q 4") 'nomis/w-quadruple)
 (define-key global-map (kbd "H-q v") 'maximize-frame-vertically)
 (define-key global-map (kbd "H-q V") 'nomis/maximize-frame-vertically-assuming-toolbar-of-size-arg)
 (define-key global-map (kbd "H-q h") 'maximize-frame-horizontally)
