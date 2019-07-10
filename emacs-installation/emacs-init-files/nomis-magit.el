@@ -26,7 +26,7 @@ Show the last `magit-log-section-commit-count' commits."
                                 (--remove (string-prefix-p "-n" it)
                                           magit-log-section-arguments)))))))
 
-(defun nomis/init-magit ()
+(defun nomis/init-magit-mode ()
   (company-mode 0)
   (set-face-background 'magit-section-highlight
                        ;; default is "grey95", which is pretty much the same as
@@ -68,7 +68,7 @@ Show the last `magit-log-section-commit-count' commits."
                             'nomis/temp-to-delete
                             'replace)))
 
-(add-hook 'magit-mode-hook 'nomis/init-magit)
+(add-hook 'magit-mode-hook 'nomis/init-magit-mode)
 
 (global-set-key (kbd "C-c g") 'magit-status)
 
