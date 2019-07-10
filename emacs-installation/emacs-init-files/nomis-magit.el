@@ -70,6 +70,12 @@ Show the last `magit-log-section-commit-count' commits."
 
 (add-hook 'magit-mode-hook 'nomis/init-magit-mode)
 
+(defun nomis/init-magit-status-mode ()
+  ;; (visual-line-mode 1) ; -- No -- the status buffer gets confused when you expand and collapse sections
+  )
+
+(add-hook 'magit-status-mode-hook 'nomis/init-magit-status-mode)
+
 (global-set-key (kbd "C-c g") 'magit-status)
 
 
