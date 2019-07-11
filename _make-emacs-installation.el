@@ -61,7 +61,8 @@
                       yafolding
                       highlight-indentation
                       discover
-                      flycheck-joker))
+                      flycheck-joker
+                      cl-format))
 
 (dolist (p my-packages)
   (when (not (package-installed-p p))
