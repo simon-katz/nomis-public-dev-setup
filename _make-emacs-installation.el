@@ -62,6 +62,7 @@
                       highlight-indentation
                       discover
                       flycheck-joker
+                      treepy
                       cl-format))
 
 (dolist (p my-packages)

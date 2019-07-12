@@ -1,0 +1,141 @@
+;;; nomis-window-config.el --- Frame and window configurations -*- lexical-binding: t -*-
+
+(progn) ; this-stops-hs-hide-all-from-hiding-the-next-comment
+
+;;;; _______________ Requires __________________________________________________
+
+(require 'nomis-save-and-read-data)
+(require 'treepy)
+(require 'cl-format)
+
+;;;; _______________ Customizable variables ____________________________________
+
+(defvar nomis/wc/directory
+  "~/.emacs-nomis-frame-window-config/")
+
+(defvar nomis/wc/root-dir-for-searches nil)
+
+;;;; _______________ Public functions etc ______________________________________
+
+(defun nomis/wc/save (wc-name)
+  (interactive (list (--nomis/wc/interactive-wc-name-stuff :save)))
+  (make-directory nomis/wc/directory t)
+  (nomis/save-to-file (--nomis/wc/wc-name->filename wc-name)
+                      (window-state-get nil t)
+                      :pretty? t)
+  (message "Saved window config: %s" wc-name))
+
+(defun nomis/wc/restore (wc-name)
+  (interactive (list (--nomis/wc/interactive-wc-name-stuff :restore)))
+  (let* ((filename (--nomis/wc/wc-name->filename wc-name))
+         (window-state (nomis/read-from-file filename))
+         (hacked-window-state (--nomis/wc/window-state/replace-unknown-buffers
+                               window-state)))
+    (window-state-put hacked-window-state
+                      (frame-root-window))
+    (message "Restored window config: %s"
+             wc-name)))
+
+(defun nomis/wc/search-for-file ()
+  (interactive)
+  (let* ((filename (--nomis/wc/proxy-buffer-name->buffer-name (buffer-name)))
+         (root-directory (read-directory-name
+                          (format "Search for %s\nRoot of search: "
+                                  filename)
+                          nomis/wc/root-dir-for-searches
+                          nil
+                          t)))
+    (find-name-dired root-directory
+                     filename)))
+
+(prog1 (define-prefix-command 'nomis/wc/keymap)
+  (define-key nomis/wc/keymap (kbd "s") 'nomis/wc/save)
+  (define-key nomis/wc/keymap (kbd "r") 'nomis/wc/restore)
+  (define-key nomis/wc/keymap (kbd "/") 'nomis/wc/search-for-file))
+
+;;;; _______________ Private things ____________________________________________
+
+(defconst --nomis/wc/file-suffix
+  ".window-config")
+
+(defun --nomis/wc/wc-name->filename (wc-name)
+  (concat nomis/wc/directory wc-name --nomis/wc/file-suffix))
+
+(defun --nomis/wc/interactive-wc-name-stuff (save-or-restore)
+  (let* ((wc-names (->> (directory-files nomis/wc/directory)
+                        (-remove (lambda (filename)
+                                   (member filename
+                                           (list "." ".."))))
+                        (-filter (lambda (filename)
+                                   (s-ends-with? --nomis/wc/file-suffix
+                                                 filename)))
+                        (-map (lambda (filename)
+                                (s-replace --nomis/wc/file-suffix
+                                           ""
+                                           filename))))))
+    (when (and (null wc-names)
+               (eq save-or-restore :restore))
+      (error "No saved configurations"))
+    (completing-read "Name: "
+                     wc-names
+                     nil
+                     (ecase save-or-restore
+                       (:save nil)
+                       (:restore t))
+                     nil
+                     'nomis/wc/wc-name-history
+                     (ecase save-or-restore
+                       (:save "")
+                       (:restore (first wc-names))))))
+
+(defconst --nomis/wc/no-such-buffer-prefix "*NO-SUCH-BUFFER--")
+(defconst --nomis/wc/no-such-buffer-suffix "*")
+
+(defun --nomis/wc/buffer-name->proxy-buffer-name (buffer-name)
+  (concat --nomis/wc/no-such-buffer-prefix
+          buffer-name
+          --nomis/wc/no-such-buffer-suffix))
+
+(defun --nomis/wc/proxy-buffer-name->buffer-name (proxy-buffer-name)
+  (let* ((prefix --nomis/wc/no-such-buffer-prefix)
+         (suffix --nomis/wc/no-such-buffer-suffix))
+    (if (or (not (s-starts-with? prefix proxy-buffer-name))
+            (not (s-ends-with? suffix proxy-buffer-name)))
+        (progn
+          (error "This buffer is not a NO-SUCH-BUFFER buffer")
+          (nomis/beep))
+      (->> proxy-buffer-name
+           (replace-regexp-in-string (concat "^" (regexp-quote prefix))
+                                     "")
+           (replace-regexp-in-string (concat (regexp-quote suffix) "$")
+                                     "")))))
+
+(defun --nomis/wc/get-or-create-buffer-for-no-such-buffer (buffer-name)
+  (let* ((proxy-buffer-name (--nomis/wc/buffer-name->proxy-buffer-name
+                             buffer-name)))
+    (or (get-buffer proxy-buffer-name)
+        (let* ((buffer (generate-new-buffer proxy-buffer-name)))
+          (with-current-buffer buffer
+            (insert (format "NO SUCH BUFFER: %s\n"
+                            buffer-name))
+            (insert (format "To search for the file, use the command `nomis/wc/search-for-file`.\n"))
+            (read-only-mode 1))
+          buffer))))
+
+(defun --nomis/wc/window-state/replace-unknown-buffers (window-state)
+  (->> window-state
+       (treepy-prewalk
+        (lambda (form)
+          (if (not (and (listp form)
+                        (eq (first form) 'buffer)
+                        (not (get-buffer (second form)))))
+              form
+            (let* ((buffer-name (second form))
+                   (proxy-buffer-name (--nomis/wc/buffer-name->proxy-buffer-name
+                                       buffer-name)))
+              (--nomis/wc/get-or-create-buffer-for-no-such-buffer buffer-name)
+              (-replace-at 1 proxy-buffer-name form)))))))
+
+;;;; ___________________________________________________________________________
+
+(provide 'nomis-window-config)

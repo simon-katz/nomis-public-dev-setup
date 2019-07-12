@@ -162,6 +162,9 @@
 
 (require 'nomis-buffers-windows-frames)
 
+(require 'nomis-window-config)
+(require 'nomis-window-config-settings)
+
 (when (display-graphic-p)
   (require 'nomis-screens)
   (require 'nomis-frames))
