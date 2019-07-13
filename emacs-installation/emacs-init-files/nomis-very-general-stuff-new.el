@@ -35,4 +35,11 @@ This allows you to temporarily modify read-only buffers too."
 
 ;;;; ___________________________________________________________________________
 
+(progn
+  ;; These are useful when using `visual-line-mode`.
+  (define-key global-map (kbd "C-S-a") 'beginning-of-line)
+  (define-key global-map (kbd "C-S-e") 'end-of-line))
+
+;;;; ___________________________________________________________________________
+
 (provide 'nomis-very-general-stuff-new)
