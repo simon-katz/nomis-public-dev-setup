@@ -433,7 +433,7 @@
         ;; This doesn't take `nomis/idle-highlight-colon-at-start-matters-p`
         ;; into account, but I guess that's OK because we won't get here
         ;; when colons are in the language.
-        (concat "\\_<" symbol-regexp "\\_>")
+        (concat "\\<" symbol-regexp "\\>") ; word (not symbol) boundaries
       (let* ((non-symbol-char-regexp
               (nomis/hacky-non-symbol-char-regexp))
              (hacked-symbol-regexp
