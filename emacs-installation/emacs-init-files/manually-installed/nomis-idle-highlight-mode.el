@@ -394,10 +394,15 @@
 (defun nomis/ih/use-hack-for-symbol-boundaries? ()
   ;; "\\_<" and "\\_>" don't work well with Lispy symbols that contain
   ;; single quotes, or with yaml-mode, so we need this.
-  (or (nomis/clojure-like-mode? major-mode)
-      (member major-mode
-              '(emacs-lisp-mode
-                yaml-mode))))
+  (case 2
+    (1 (or (nomis/clojure-like-mode? major-mode)
+             (member major-mode
+                     '(emacs-lisp-mode
+                       yaml-mode))))
+    (2
+     ;; This gives me what I want when I have characters like ♭ and ♯ in
+     ;; text documents.
+     t)))
 
 (defun nomis/hacky-non-symbol-char-regexp ()
   (assert (nomis/ih/use-hack-for-symbol-boundaries?))
