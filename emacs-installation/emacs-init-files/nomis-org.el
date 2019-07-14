@@ -1,5 +1,7 @@
 ;;;; ________ * Init stuff -- Org Mode.
 
+(progn) ; this-stops-hs-hide-all-from-hiding-the-next-comment
+
 ;;;; ________ ** Require things
 
 (progn
@@ -168,6 +170,8 @@ subheading at this level in the previous parent."
 (define-key org-mode-map [remap org-backward-heading-same-level]
   'nomis/org-backward-heading-same-level-with-extras)
 
+(define-key org-mode-map (kbd "M-.") 'org-open-at-point)
+(define-key org-mode-map (kbd "M-,") 'org-mark-ring-goto)
 
 ;;;; ________ *** Refiling
 
