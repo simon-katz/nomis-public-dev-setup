@@ -261,6 +261,11 @@ subheading at this level in the previous parent."
 
 (setq orgstruct-heading-prefix-regexp ";* *_* ")
 
+
+;;;; ________ *** Display -- misc
+
+(setq org-ellipsis " ▶")
+
 ;;;; ________ *** Display -- links
 
 (defun nomis/org-show-link-destination ()
