@@ -1086,7 +1086,12 @@ With prefix argument select `nomis/dirtree/buffer'"
   (save-selected-window
     (let* ((file (nomis/dirtree/selected-file)))
       (when file
-        (find-file-other-window file)))))
+        (find-file-other-window file))))
+  (progn
+    ;; A hack, because my `buffer-list-update-hook` hook appears not to
+    ;; be happening.
+    (when (functionp 'nomis/grey-out-unselected-buffers)
+      (nomis/grey-out-unselected-buffers))))
 
 (cl-defmacro nomis/dirtree/define-command/with-and-without-and-display
     ;; TODO Can you make M-. work for the `name-for-and-display` function?
