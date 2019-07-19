@@ -1,5 +1,9 @@
 ;;;; Init stuff -- Watch words.
 
+(defvar nomis/watch-words/finger-pointers
+  ;; Use \\ in the strings below so you don't get the highlighting here.
+  '("-\\-.+--▶"))
+
 (defvar nomis/watch-words/high-priority
   ;; Use \\ in the strings below so you don't get the highlighting here.
   '("F\\IXME"
@@ -25,6 +29,15 @@
                               string))
                   nomis/watch-words/high-priority)))
 
+(defface nomis/watch-word-face/no-priority
+  `((t (:foreground ,(case 2
+                       (1 "gray27")
+                       (2 "DodgerBlue3"))
+                    :bold t
+                    :italic t
+                    )))
+  "Face for low priority watch words.")
+
 (defface nomis/watch-word-face/low-priority
   '((t (:foreground "White"
                     :background "Pink4"
@@ -42,6 +55,10 @@
       (princ w))
     (princ "\\)")))
 
+(defun nomis/make-regex-from-watchwords/basic (watch-words)
+  (nomis/make-regex-from-watchwords-helper watch-words
+                                           nil))
+
 (defun nomis/make-regex-from-watchwords/simple (watch-words)
   (nomis/make-regex-from-watchwords-helper watch-words
                                            t))
@@ -53,6 +70,12 @@
     (nomis/make-regex-from-watchwords-helper bracketed-watch-words
                                              nil)))
 
+(defun nomis/add-watch-words*/basic (watch-words face)
+  (font-lock-add-keywords
+   nil
+   `((,(nomis/make-regex-from-watchwords/basic watch-words)
+      0 ',face t))))
+
 (defun nomis/add-watch-words* (watch-words face)
   (font-lock-add-keywords
    nil
@@ -62,6 +85,8 @@
       0 ',face t))))
 
 (defun nomis/add-watch-words ()
+  (nomis/add-watch-words*/basic nomis/watch-words/finger-pointers
+                                'nomis/watch-word-face/no-priority)
   (nomis/add-watch-words* nomis/watch-words/low-priority
                           'nomis/watch-word-face/low-priority)
   (nomis/add-watch-words* nomis/watch-words/high-priority
@@ -114,6 +139,8 @@
 ;;;; - xNOCOMMITaaa
 ;;;; - [xREMAINING-ISSUE]aaa
 ;;;; - xREMAINING-ISSUEaaa
+
+;;;; - --x-y-z--▶
 
 ;;;; ___________________________________________________________________________
 
