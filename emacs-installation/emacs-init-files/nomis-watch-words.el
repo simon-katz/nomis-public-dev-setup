@@ -99,7 +99,7 @@
 ;;;; Stuff for testing the above:
 
 ;;;; - [QUESTION/ACTION]aaa
-;;;; - QUESTION/ACTION
+;;;; - QUESTION/ACTIONaaa
 ;;;; - [FIXME]aaa
 ;;;; - FIXMEaaa
 ;;;; - [FIX]aaa
@@ -108,8 +108,8 @@
 ;;;; - TODO-THINKaaa
 ;;;; - [TODO]aaa
 ;;;; - TODOaaa
-;;;; - [TODO-with-Picasso-on-site]/aaa
-;;;; - TODO-with-Picasso-on-site
+;;;; - [TODO-with-Picasso-on-site]aaa
+;;;; - TODO-with-Picasso-on-siteaaa
 ;;;; - [HACK]aaa
 ;;;; - HACKaaa
 ;;;; - [REFACTOR]aaa
@@ -120,7 +120,7 @@
 ;;;; - REMAINING-ISSUEaaa
 
 ;;;; - [xQUESTION/ACTION]aaa
-;;;; - xQUESTION/ACTION
+;;;; - xQUESTION/ACTIONaaa
 ;;;; - [xFIXME]aaa
 ;;;; - xFIXMEaaa
 ;;;; - [xFIX]aaa
@@ -129,8 +129,8 @@
 ;;;; - xTODO-THINKaaa
 ;;;; - [xTODO]aaa
 ;;;; - xTODOaaa
-;;;; - [xTODO-with-Picasso-on-site]/aaa
-;;;; - xTODO-with-Picasso-on-site
+;;;; - [xTODO-with-Picasso-on-site]aaa
+;;;; - xTODO-with-Picasso-on-siteaaa
 ;;;; - [xHACK]aaa
 ;;;; - xHACKaaa
 ;;;; - [xREFACTOR]aaa
