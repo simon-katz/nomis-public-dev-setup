@@ -132,6 +132,8 @@
 
 (require 'nomis-line-move-visual)
 
+(require 'nomis-special-characters)
+
 ;;;; ---- Lisp and Clojure stuff probably good for anyone ----
 
 (require 'nomis-paredit)
