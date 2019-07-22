@@ -2,7 +2,10 @@
 
 (defvar nomis/ww/regexps/finger-pointers
   ;; Use \\ in the strings below so you don't get the highlighting here.
-  '("-\\-.+--▶"))
+  '("-\\▶"
+    "--\\▶"
+    "---\\▶"
+    "--.*--\\▶"))
 
 (defvar nomis/ww/regexps/high-priority
   ;; Use \\ in the strings below so you don't get the highlighting here.
@@ -132,6 +135,14 @@
 ;;;; - xREMAINING-ISSUEaaa
 ;;;; - aaaxREMAINING-ISSUEaaa   ---- no highlighting
 
+;;;; - aaa[-▶]aaa
+;;;; - aaa-▶aaa
+;;;; - aaa[--▶]aaa
+;;;; - aaa--▶aaa
+;;;; - aaa[---▶]aaa
+;;;; - aaa---▶aaa
+;;;; - aaa[----▶]aaa
+;;;; - aaa----▶aaa
 ;;;; - aaa[--x-y-z--▶]aaa
 ;;;; - aaa--x-y-z--▶aaa
 
