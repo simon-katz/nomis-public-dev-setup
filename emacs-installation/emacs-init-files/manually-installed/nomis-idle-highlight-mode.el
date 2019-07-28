@@ -290,6 +290,10 @@
 
 (cl-defgeneric nomis/symbol-body-chars (major-mode)
   "Characters that can be part of a symbol/identifier."
+  ;; Note the position of the "-" at the beginning. So when augmenting this,
+  ;; you must add at the end (otherwise you will introduce a range when creating
+  ;; regexps using `nomis/rx/make-char-match-regexp/broken`).
+  ;; Horrible.
   "-[:alnum:]_♭♯")
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -330,6 +334,10 @@
   "&*")
 
 (defmethod nomis/symbol-body-chars ((major-mode (eql yaml-mode)))
+  ;; Note the position of the "-" at the beginning. So when augmenting this,
+  ;; you must add at the end (otherwise you will introduce a range when creating
+  ;; regexps using `nomis/rx/make-char-match-regexp/broken`).
+  ;; Horrible.
   "-[:alnum:]$+_<>/'.=?^")
 
 ;;;; ___________________________________________________________________________
@@ -354,14 +362,16 @@
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 (defun nomis/hi/base-chars->prefix-chars (chars)
-  (if nomis/idle-highlight-colon-at-start-matters-p
-      chars
-    (concat chars ":")))
+  (concat chars
+          (unless nomis/idle-highlight-colon-at-start-matters-p
+            ":")))
 
 (defun nomis/hi/base-chars->body-chars (chars)
-  (if nomis/idle-highlight-colon-at-start-matters-p
-      (concat chars ":")
-    chars))
+  (concat chars
+          ;; These must go at the end, because you have regexps that start
+          ;; with "-".
+          (when nomis/idle-highlight-colon-at-start-matters-p
+            ":")))
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
