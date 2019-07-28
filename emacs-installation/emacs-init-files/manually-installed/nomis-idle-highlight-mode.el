@@ -361,6 +361,30 @@
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+(defvar nomis/ih/extra-body-chars "")
+
+(defun nomis/ih/toggle-include-in-body-extras (char)
+  (assert (characterp char))
+  (let* ((string (string char))
+         (contains? (s-contains? string nomis/ih/extra-body-chars)))
+    (setq nomis/ih/extra-body-chars
+          (if contains?
+              (s-replace string "" nomis/ih/extra-body-chars)
+            (concat string nomis/ih/extra-body-chars)))
+    (message "nomis/ih/extra-body-chars = %S" nomis/ih/extra-body-chars))
+  ;; When invoked with M-x, there is a delay before things change.
+  ;; Something to do with waiting for idle time, I think.
+  ;; (But I didn't notice this until late in th dev cycle, so maybe I changed
+  ;; something.)
+  ;; Anyway, force an immediate update.
+  (nomis/idle-highlight-word-at-point))
+
+(defun nomis/ih/toggle-include-in-body-extras/slash ()
+  (interactive)
+  (nomis/ih/toggle-include-in-body-extras ?/))
+
+;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
 (defun nomis/hi/base-chars->prefix-chars (chars)
   (concat chars
           (unless nomis/idle-highlight-colon-at-start-matters-p
@@ -371,7 +395,8 @@
           ;; These must go at the end, because you have regexps that start
           ;; with "-".
           (when nomis/idle-highlight-colon-at-start-matters-p
-            ":")))
+            ":")
+          nomis/ih/extra-body-chars))
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
