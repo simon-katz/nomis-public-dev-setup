@@ -17,4 +17,19 @@
 
 ;;;; ___________________________________________________________________________
 
+(progn
+
+  (defun string->list-of-chars (s)
+    ;; Is there a built-in way to do this?
+    ;; Blimey!
+    (append s nil))
+
+  (assert (equal (string->list-of-chars "")
+                 '()))
+
+  (assert (equal (string->list-of-chars "abc")
+                 '(?a ?b ?c))))
+
+;;;; ___________________________________________________________________________
+
 (provide 'nomis-string-utilities)

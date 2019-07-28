@@ -284,6 +284,11 @@
 
 (require 'cl-generic)
 
+;;;; TODO `nomis/symbol-prefix-chars` and `nomis/symbol-body-chars` and the
+;;;;      functions that build on them are misnamed.
+;;;;      - They are things that go between [ and ] in a regexp.
+;;;;      SO you need to be careful when changing these.
+
 (cl-defgeneric nomis/symbol-prefix-chars (major-mode)
   "Characters other than whitespace that can prefix a symbol/identifier."
   "")

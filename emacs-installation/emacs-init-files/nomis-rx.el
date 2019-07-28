@@ -5,6 +5,30 @@
 
 ;;;; ___________________________________________________________________________
 
+;;;; I looked into fixing these. 2019-07-28
+;;;;
+;;;; A few points:
+;;;;
+;;;; They're misnamed -- the args are things that go between [ and ] in
+;;;; a regexp.
+;;;;
+;;;; See https://www.gnu.org/software/emacs/manual/html_node/elisp/Regexp-Special.html
+;;;; - It says "The usual regexp special characters are not special inside a
+;;;;   character alternative. A completely different set of characters is
+;;;;   special inside character alternatives: ‘]’, ‘-’ and ‘^’.".
+;;;;
+;;;; You had some assertions around:
+;;;; - 93 ; ?]  (an uncommented ?] caused bracket matching problems!)
+;;;; - ?-
+;;;; - ?^
+;;;; - `(aref str 0)`
+;;;; - `(rest (string->list-of-chars str))`
+;;;;
+;;;; It's not easy to check the arguments for being valid to go between [ and ]
+;;;; because you can have eg [:alnum:] as part of the arg.
+;;;;
+;;;; So for now I've given up.
+
 (defun nomis/rx/make-char-match-regexp/broken (str)
   (concat "["
           str
