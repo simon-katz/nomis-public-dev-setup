@@ -262,22 +262,6 @@
 (defvar nomis/idle-highlight-global-timer nil
   "Timer to trigger highlighting.")
 
-(defvar nomis/idle-highlight-colon-at-start-matters-p
-  nil)
-
-(defun nomis/toggle-idle-highlight-colon-at-start-matters ()
-  (interactive)
-  (message
-   "nomis/idle-highlight-colon-at-start-matters-p = %s"
-   (setq nomis/idle-highlight-colon-at-start-matters-p
-         (not nomis/idle-highlight-colon-at-start-matters-p)))
-  ;; When invoked with M-x, there is a delay before things change.
-  ;; Something to do with waiting for idle time, I think.
-  ;; (But I didn't notice this until late in th dev cycle, so maybe I changed
-  ;; something.)
-  ;; Anyway, force an immediate update.
-  (nomis/idle-highlight-word-at-point))
-
 ;;;; ___________________________________________________________________________
 
 (defun nomis/clojure-like-mode? (m)
@@ -350,6 +334,24 @@
 
 ;;;; ___________________________________________________________________________
 ;;;; Hacking Chars for symbols
+
+(defvar nomis/idle-highlight-colon-at-start-matters-p
+  nil)
+
+(defun nomis/toggle-idle-highlight-colon-at-start-matters ()
+  (interactive)
+  (message
+   "nomis/idle-highlight-colon-at-start-matters-p = %s"
+   (setq nomis/idle-highlight-colon-at-start-matters-p
+         (not nomis/idle-highlight-colon-at-start-matters-p)))
+  ;; When invoked with M-x, there is a delay before things change.
+  ;; Something to do with waiting for idle time, I think.
+  ;; (But I didn't notice this until late in th dev cycle, so maybe I changed
+  ;; something.)
+  ;; Anyway, force an immediate update.
+  (nomis/idle-highlight-word-at-point))
+
+;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 (defun nomis/hi/base-chars->prefix-chars (chars)
   (if nomis/idle-highlight-colon-at-start-matters-p
