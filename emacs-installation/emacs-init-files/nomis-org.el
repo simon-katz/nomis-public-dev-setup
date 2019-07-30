@@ -66,7 +66,11 @@
   ;; Scrolling
   (setq org-cycle-hook
         (remq 'org-optimize-window-after-visibility-change
-              org-cycle-hook)))
+              org-cycle-hook))
+
+  ;; Misc
+  (visual-line-mode 1) ; Try this for a while and see whether you like it
+  )
 
 (add-hook 'org-mode-hook 'nomis/org-mode)
 
