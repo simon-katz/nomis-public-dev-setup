@@ -6,7 +6,7 @@
 ;;;; Reverting buffers.
 ;;;; Copy-and-hack of http://www.emacswiki.org/emacs/RevertBuffer.
 
-(defun _revert-all-buffers (buffer-predicate)
+(defun -nomis/revert-all-buffers (buffer-predicate)
   (let (failures '())
     (dolist (buf (buffer-list))
       (with-current-buffer buf
@@ -22,25 +22,25 @@
                  (s-join " " (cons "Failures: " failures))
                ""))))
 
-(defun revert-all-unmodified-buffers ()
+(defun nomis/revert-all-unmodified-buffers ()
   "Refreshes all open unmodified buffers from their files."
   (interactive)
-  (_revert-all-buffers (lambda (b) (not (buffer-modified-p b)))) )
+  (-nomis/revert-all-buffers (lambda (b) (not (buffer-modified-p b)))) )
 
-(defun revert-all-modified-buffers ()
+(defun nomis/revert-all-modified-buffers ()
   "Refreshes all open modified buffers from their files."
   ;; Copied from http://www.emacswiki.org/emacs/RevertBuffer, and renamed.
   (interactive)
   (when (y-or-n-p "Really revert modified buffers? You will lose stuff.")
-    (_revert-all-buffers 'buffer-modified-p)) )
+    (-nomis/revert-all-buffers 'buffer-modified-p)) )
 
-(defun revert-all-unmodified-buffers-in-git-repo ()
+(defun nomis/revert-all-unmodified-buffers-in-git-repo ()
   "Refreshes all open unmodified buffers in current buffer's Git repo
  from their files."
   (interactive)
-  (_revert-all-buffers (lambda (b)
-                         (and (not (buffer-modified-p b))
-                              (magit-auto-revert-repository-buffer-p b)))))
+  (-nomis/revert-all-buffers (lambda (b)
+                               (and (not (buffer-modified-p b))
+                                    (magit-auto-revert-repository-buffer-p b)))))
 
 ;;;; ___________________________________________________________________________
 

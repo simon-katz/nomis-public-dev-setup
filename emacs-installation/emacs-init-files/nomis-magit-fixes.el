@@ -8,7 +8,7 @@
 ;;;; I've simplified things since the first version of this stuff:
 ;;;; - Be happy with completely turning off Magit's reverting, even when a
 ;;;;   Magit operation changes files.
-;;;; - Add a keybinding for `revert-all-unmodified-buffers-in-git-repo`
+;;;; - Add a keybinding for `nomis/revert-all-unmodified-buffers-in-git-repo`
 ;;;;   in `magit-mode-map`.
 ;;;; This will save me thinking each time I upgrade Magit.
 
@@ -19,7 +19,7 @@
     (magit-auto-revert-mode 0)
 
     (define-key magit-mode-map "©" ; Option-g on a Mac
-      'revert-all-unmodified-buffers-in-git-repo)))
+      'nomis/revert-all-unmodified-buffers-in-git-repo)))
 
 
 (defun -nomis/fix-magit-auto-revert ()
