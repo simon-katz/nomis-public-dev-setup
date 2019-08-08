@@ -53,6 +53,8 @@
 (setq cider-repl-history-highlight-current-entry t)
 (setq cider-repl-history-highlight-inserted-item t)
 
+(setq clojure-toplevel-inside-comment-form t)
+
 (setq cider-eval-result-prefix ";; => ")
 
 (setq cider-repl-result-prefix ";; =>\n")
