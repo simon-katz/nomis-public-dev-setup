@@ -18,18 +18,18 @@
 ;;;; _______________ Public functions etc ______________________________________
 
 (defun nomis/wc/save (wc-name)
-  (interactive (list (--nomis/wc/interactive-wc-name-stuff :save)))
+  (interactive (list (-nomis/wc/interactive-wc-name-stuff :save)))
   (make-directory nomis/wc/directory t)
-  (nomis/save-to-file (--nomis/wc/wc-name->filename wc-name)
+  (nomis/save-to-file (-nomis/wc/wc-name->filename wc-name)
                       (window-state-get nil t)
                       :pretty? t)
   (message "Saved window config: %s" wc-name))
 
 (defun nomis/wc/restore (wc-name)
-  (interactive (list (--nomis/wc/interactive-wc-name-stuff :restore)))
-  (let* ((filename (--nomis/wc/wc-name->filename wc-name))
+  (interactive (list (-nomis/wc/interactive-wc-name-stuff :restore)))
+  (let* ((filename (-nomis/wc/wc-name->filename wc-name))
          (window-state (nomis/read-from-file filename))
-         (hacked-window-state (--nomis/wc/window-state/replace-unknown-buffers
+         (hacked-window-state (-nomis/wc/window-state/replace-unknown-buffers
                                window-state)))
     (window-state-put hacked-window-state
                       (frame-root-window))
@@ -38,7 +38,7 @@
 
 (defun nomis/wc/search-for-file ()
   (interactive)
-  (let* ((filename (--nomis/wc/proxy-buffer-name->buffer-name (buffer-name)))
+  (let* ((filename (-nomis/wc/proxy-buffer-name->buffer-name (buffer-name)))
          (root-directory (read-directory-name
                           (format "Search for %s\nRoot of search: "
                                   filename)
@@ -55,22 +55,22 @@
 
 ;;;; _______________ Private things ____________________________________________
 
-(defconst --nomis/wc/file-suffix
+(defconst -nomis/wc/file-suffix
   ".window-config")
 
-(defun --nomis/wc/wc-name->filename (wc-name)
-  (concat nomis/wc/directory wc-name --nomis/wc/file-suffix))
+(defun -nomis/wc/wc-name->filename (wc-name)
+  (concat nomis/wc/directory wc-name -nomis/wc/file-suffix))
 
-(defun --nomis/wc/interactive-wc-name-stuff (save-or-restore)
+(defun -nomis/wc/interactive-wc-name-stuff (save-or-restore)
   (let* ((wc-names (->> (directory-files nomis/wc/directory)
                         (-remove (lambda (filename)
                                    (member filename
                                            (list "." ".."))))
                         (-filter (lambda (filename)
-                                   (s-ends-with? --nomis/wc/file-suffix
+                                   (s-ends-with? -nomis/wc/file-suffix
                                                  filename)))
                         (-map (lambda (filename)
-                                (s-replace --nomis/wc/file-suffix
+                                (s-replace -nomis/wc/file-suffix
                                            ""
                                            filename))))))
     (when (and (null wc-names)
@@ -88,17 +88,17 @@
                        (:save "")
                        (:restore (first wc-names))))))
 
-(defconst --nomis/wc/no-such-buffer-prefix "*NO-SUCH-BUFFER--")
-(defconst --nomis/wc/no-such-buffer-suffix "*")
+(defconst -nomis/wc/no-such-buffer-prefix "*NO-SUCH-BUFFER--")
+(defconst -nomis/wc/no-such-buffer-suffix "*")
 
-(defun --nomis/wc/buffer-name->proxy-buffer-name (buffer-name)
-  (concat --nomis/wc/no-such-buffer-prefix
+(defun -nomis/wc/buffer-name->proxy-buffer-name (buffer-name)
+  (concat -nomis/wc/no-such-buffer-prefix
           buffer-name
-          --nomis/wc/no-such-buffer-suffix))
+          -nomis/wc/no-such-buffer-suffix))
 
-(defun --nomis/wc/proxy-buffer-name->buffer-name (proxy-buffer-name)
-  (let* ((prefix --nomis/wc/no-such-buffer-prefix)
-         (suffix --nomis/wc/no-such-buffer-suffix))
+(defun -nomis/wc/proxy-buffer-name->buffer-name (proxy-buffer-name)
+  (let* ((prefix -nomis/wc/no-such-buffer-prefix)
+         (suffix -nomis/wc/no-such-buffer-suffix))
     (if (or (not (s-starts-with? prefix proxy-buffer-name))
             (not (s-ends-with? suffix proxy-buffer-name)))
         (progn
@@ -110,8 +110,8 @@
            (replace-regexp-in-string (concat (regexp-quote suffix) "$")
                                      "")))))
 
-(defun --nomis/wc/get-or-create-buffer-for-no-such-buffer (buffer-name)
-  (let* ((proxy-buffer-name (--nomis/wc/buffer-name->proxy-buffer-name
+(defun -nomis/wc/get-or-create-buffer-for-no-such-buffer (buffer-name)
+  (let* ((proxy-buffer-name (-nomis/wc/buffer-name->proxy-buffer-name
                              buffer-name)))
     (or (get-buffer proxy-buffer-name)
         (let* ((buffer (generate-new-buffer proxy-buffer-name)))
@@ -122,7 +122,7 @@
             (read-only-mode 1))
           buffer))))
 
-(defun --nomis/wc/window-state/replace-unknown-buffers (window-state)
+(defun -nomis/wc/window-state/replace-unknown-buffers (window-state)
   (->> window-state
        (treepy-prewalk
         (lambda (form)
@@ -131,9 +131,9 @@
                         (not (get-buffer (second form)))))
               form
             (let* ((buffer-name (second form))
-                   (proxy-buffer-name (--nomis/wc/buffer-name->proxy-buffer-name
+                   (proxy-buffer-name (-nomis/wc/buffer-name->proxy-buffer-name
                                        buffer-name)))
-              (--nomis/wc/get-or-create-buffer-for-no-such-buffer buffer-name)
+              (-nomis/wc/get-or-create-buffer-for-no-such-buffer buffer-name)
               (-replace-at 1 proxy-buffer-name form)))))))
 
 ;;;; ___________________________________________________________________________
