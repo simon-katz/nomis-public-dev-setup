@@ -323,7 +323,7 @@
   ;; you must add at the end (otherwise you will introduce a range when creating
   ;; regexps using `nomis/rx/make-char-match-regexp/broken`).
   ;; Horrible.
-  "-[:alnum:]$&*+_<>/'.=?^!")
+  "-[:alnum:]$&*+_<>/'.=?^!•●")
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
