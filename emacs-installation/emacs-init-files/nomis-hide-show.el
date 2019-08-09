@@ -7,21 +7,27 @@
 
 ;;;; ___________________________________________________________________________
 
-(setq hs-hide-comments-when-hiding-all nil)
+;;;; The fiddling you are doing with `hs-hide-comments-when-hiding-all` means
+;;;; that:
+;;;; - When you do a hide-all, comments are not hidden.
+;;;; - Subsequent hide-alls toggle the hiding of comments.
+;;;; This is reset when you do a show-all.
 
-;;;; ___________________________________________________________________________
+(make-variable-buffer-local 'hs-hide-comments-when-hiding-all)
 
 (defun nomis/hs-hide-all ()
   (interactive)
   (hs-minor-mode 1)
   (hs-hide-all)
   (nomis/beginning-of-top-level-form) ; without this, a following show command does not-very-nice positioning of the cursor
-  )
+  (setq hs-hide-comments-when-hiding-all
+        (not hs-hide-comments-when-hiding-all)))
 
 (defun nomis/hs-show-all ()
   (interactive)
   (hs-minor-mode 1)
-  (hs-show-all))
+  (hs-show-all)
+  (setq hs-hide-comments-when-hiding-all nil))
 
 (defun nomis/hs-hide-block ()
   (interactive)
