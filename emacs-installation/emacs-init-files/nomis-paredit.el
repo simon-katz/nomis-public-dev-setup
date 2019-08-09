@@ -26,7 +26,16 @@
      ;; I can do without.)
      (when (equal system-type 'darwin)
        (define-key paredit-mode-map (kbd "M-d")
-         'paredit-forward-down))))
+         'paredit-forward-down))
+
+     ;; Weird bug: point was sometimes moving to beginning-of-defun when I
+     ;; was deleting a character.
+     (when (eql paredit-version 24)
+       (advice-add 'paredit-current-parse-state
+                   :around
+                   (lambda (orig-fun)
+                     (save-excursion (funcall orig-fun)))
+                   '((name . save-excursion))))))
 
 ;;;; ___________________________________________________________________________
 
