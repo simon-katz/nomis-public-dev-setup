@@ -6,6 +6,14 @@
 (require 'nomis-hydra)
 
 ;;;; ___________________________________________________________________________
+;;;; Stuff to maybe move
+
+(require 'subr-x)
+
+(defun nomis/line-at-point-without-newline ()
+  (string-remove-suffix "\n" (thing-at-point 'line t)))
+
+;;;; ___________________________________________________________________________
 
 ;;;; The fiddling you are doing with `hs-hide-comments-when-hiding-all` means
 ;;;; that:
@@ -85,18 +93,40 @@
 (key-chord-define-global "q8"  'nomis/hs-adjust/set-level/8)
 (key-chord-define-global "q9"  'nomis/hs-adjust/set-level/9)
 
+;;;; ___________________________________________________________________________
+;;;; Set up `hs-set-up-overlay`
+
+(defvar nomis/hs-top-level-separator-comment-regexp
+  (concat ";;;;"
+          (nomis/rx/or " _*"
+                       (concat (nomis/rx/wrap " -") "*"))
+          "$"))
+
+(defun nomis/hs-top-level-separator-comment? (s)
+  (string-match-p nomis/hs-top-level-separator-comment-regexp
+                  s))
+
+(defun nomis/hs-use-simple-ellipsis? (ov)
+  (let* ((line (save-excursion
+                 (goto-char (overlay-start ov))
+                 (nomis/line-at-point-without-newline))))
+    (nomis/hs-top-level-separator-comment? line)))
+
 (defun nomis/display-hs-hidden-stuff (ov)
-  (when (eq 'code (overlay-get ov 'hs))
-    (overlay-put ov 'help-echo
-                 (buffer-substring (overlay-start ov)
-                                   (overlay-end ov)))
-    (overlay-put ov 'display
-                 (propertize (format "......... / %d"
+  (overlay-put ov 'help-echo
+               (buffer-substring (overlay-start ov)
+                                 (overlay-end ov)))
+  (overlay-put ov 'display
+               (propertize (if (nomis/hs-use-simple-ellipsis? ov)
+                               "▶"
+                             (format " ▶▶▶/%d"
                                      (count-lines (overlay-start ov)
-                                                  (overlay-end ov)))
-                             'face 'font-lock-type-face))))
+                                                  (overlay-end ov))))
+                           'face 'font-lock-type-face)))
 
 (setq hs-set-up-overlay 'nomis/display-hs-hidden-stuff)
+
+;;;; ___________________________________________________________________________
 
 (defadvice goto-line (after expand-after-goto-line
                             activate compile)
