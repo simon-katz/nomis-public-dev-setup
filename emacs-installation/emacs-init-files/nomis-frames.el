@@ -47,9 +47,20 @@
 ;;;; ___________________________________________________________________________
 ;;;; ---- Frame size ----
 
-(defconst nomis/extra-width-for-each-window 92)
+(defconst nomis/make-windows-one-char-wider? t)
 
-(defconst nomis/single-window-frame-width 86)
+(defconst nomis/extra-width-for-each-window
+  (let* ((v 92))
+    (if nomis/make-windows-one-char-wider?
+        (1+ v)
+      v)))
+
+(defconst nomis/single-window-frame-width
+  (let* ((v 86))
+    (if nomis/make-windows-one-char-wider?
+        (1+ v)
+      v)))
+
 (defconst nomis/double-window-frame-width (+ nomis/single-window-frame-width
                                              nomis/extra-width-for-each-window))
 (defconst nomis/triple-window-frame-width (+ nomis/double-window-frame-width
