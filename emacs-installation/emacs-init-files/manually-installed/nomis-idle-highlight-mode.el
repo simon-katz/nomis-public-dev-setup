@@ -646,7 +646,8 @@
     (ecase nomis/ih/approach
       (:old (unhighlight-regexp nomis/idle-highlight-regexp))
       (:new (hlt-unhighlight-region (point-min)
-                                    (point-max))))
+                                    (point-max)
+                                    nomis/idle-highlight-face)))
     (setq nomis/idle-highlight-regexp nil)))
 
 (define-minor-mode nomis/idle-highlight-mode
