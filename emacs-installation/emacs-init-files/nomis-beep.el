@@ -75,7 +75,7 @@
                  :secs secs)))
 
 (defun nomis/grab-user-attention/high (&optional secs)
-  (let* ((secs (or sec 2)))
+  (let* ((secs (or secs 2)))
     (nomis/flash :bg *nomis/grab-user-attention/high/background*
                  :secs secs)))
 
