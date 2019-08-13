@@ -5,7 +5,7 @@
 
 (defun nomis/setup-yaml-mode ()
   ;; (define-key yaml-mode-map "\C-m" 'newline-and-indent)
-  (nomis/set-whitespace-value-2)
+  (nomis/wwo/set-binary-encoding-2)
   (nomis/set-80-column-stuff-0))
 
 (add-hook 'yaml-mode-hook 'nomis/setup-yaml-mode)
