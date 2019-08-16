@@ -85,6 +85,7 @@
 (define-key global-map (kbd "H-q H-l")  'nomis/hs/adjust/set-level)
 (define-key global-map (kbd "H-q H-\\") 'nomis/hs/adjust/more)
 (define-key global-map (kbd "H-q H-]")  'nomis/hs/adjust/show-all)
+(define-key global-map (kbd "H-q H-p")  'nomis/hs/adjust/show-all-for-top-level)
 (define-key global-map (kbd "H-q H-=")  'nomis/hs/show-all)
 (define-key global-map (kbd "H-q H-/")  'nomis/hs/toggle-hiding)
 (define-key global-map (kbd "H-q H-0")  'nomis/hs/adjust/set-level/0)
@@ -254,6 +255,12 @@
     (nomis/hs/hide-block)
     (nomis/hs/show-block)))
 
+(defun nomis/hs/adjust/show-all-for-top-level ()
+  (interactive)
+  (save-excursion
+    (nomis/beginning-of-top-level-form)
+    (nomis/hs/adjust/show-all)))
+
 (defun nomis/hs/adjust/show-all/and-exit ()
   ;; This exists to overcome a bug in Hydra when you have both
   ;;     :exit t
@@ -277,6 +284,7 @@
    ("'"  nomis/hs/adjust/less      "Less")
    ("\\" nomis/hs/adjust/more      "More")
    ("]"  nomis/hs/adjust/show-all  "Show this form")
+   ("p"  nomis/hs/adjust/show-all-for-top-level  "Show top-level form")
    ("="  nomis/hs/show-all         "Show All")
    ("/"  nomis/hs/toggle-hiding    "Toggle")
    ("0"  nomis/hs/adjust/set-level/0)
