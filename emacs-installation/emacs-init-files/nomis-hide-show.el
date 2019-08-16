@@ -1,17 +1,38 @@
 ;;;; Init stuff -- nomis-hide-show
 
+;;;; TODO Consider more use of
+;;;;          `nomis/goto-beginning-of-sexp/or-end/forward`
+;;;;      and `nomis/goto-beginning-of-sexp/or-end/backward`.
+
 ;;;; ___________________________________________________________________________
 
+(require 'hideshow)
+(require 'cl)
+(require 'subr-x)
+(require 'nomis-sexp-utils)
 (require 'nomis-key-chord)
 (require 'nomis-hydra)
 
 ;;;; ___________________________________________________________________________
 ;;;; Stuff to maybe move
 
-(require 'subr-x)
-
 (defun nomis/line-at-point-without-newline ()
   (string-remove-suffix "\n" (thing-at-point 'line t)))
+
+;;;; ___________________________________________________________________________
+;;;; hide-show utilities
+
+(defun nomis/hs/looking-at-beginning-of-hidden-sexp? ()
+  (and (nomis/looking-at-bracketed-sexp-start)
+       (hs-already-hidden-p)))
+
+(cl-defmacro nomis/hs/with-only-if-looking-at-bracketed-sexp-start (&body body)
+  ;; Use this when the body would move the cursor when not looking at
+  ;; bracketed sexp start -- eg for `hs-show-block`, which moves the cursor
+  ;; up a level when on an operator.
+  (declare (indent 0))
+  `(when (nomis/looking-at-bracketed-sexp-start)
+     ,@body))
 
 ;;;; ___________________________________________________________________________
 
@@ -39,21 +60,24 @@
 
 (defun nomis/hs/hide-block ()
   (interactive)
-  (hs-minor-mode 1)
-  (hs-hide-block)
-  (backward-char))
+  (nomis/hs/with-only-if-looking-at-bracketed-sexp-start
+    (hs-minor-mode 1)
+    (hs-hide-block)
+    (backward-char)))
 
 (defun nomis/hs/show-block ()
   (interactive)
-  (hs-minor-mode 1)
-  (hs-show-block)
-  (backward-char))
+  (nomis/hs/with-only-if-looking-at-bracketed-sexp-start
+    (hs-minor-mode 1)
+    (hs-show-block)
+    (backward-char)))
 
 (defun nomis/hs/toggle-hiding ()
   (interactive)
-  (hs-minor-mode 1)
-  (hs-toggle-hiding)
-  (backward-char))
+  (nomis/hs/with-only-if-looking-at-bracketed-sexp-start
+    (hs-minor-mode 1)
+    (hs-toggle-hiding)
+    (backward-char)))
 
 (define-key global-map (kbd "H-q H--")  'nomis/hs/hide-all)
 (define-key global-map (kbd "H-q H-[")  'nomis/hs/adjust/set-0)
@@ -142,10 +166,11 @@
 
 (defun nomis/hs/adjust/set-level (n)
   (interactive "p")
-  (setq nomis/hs/adjust/level n)
-  (if (zerop n)
-      (nomis/hs/hide-block)
-    (hs-hide-level nomis/hs/adjust/level)))
+  (nomis/hs/with-only-if-looking-at-bracketed-sexp-start
+    (setq nomis/hs/adjust/level n)
+    (if (zerop n)
+        (nomis/hs/hide-block)
+      (hs-hide-level nomis/hs/adjust/level))))
 
 (defun nomis/hs/adjust/set-level/0 ()
   (interactive)
@@ -200,11 +225,13 @@
 
 (defun nomis/hs/adjust/less (n)
   (interactive "p")
-  (nomis/hs/adjust/inc-level (- n)))
+  (nomis/hs/with-only-if-looking-at-bracketed-sexp-start
+    (nomis/hs/adjust/inc-level (- n))))
 
 (defun nomis/hs/adjust/more (n)
   (interactive "p")
-  (nomis/hs/adjust/inc-level n))
+  (nomis/hs/with-only-if-looking-at-bracketed-sexp-start
+    (nomis/hs/adjust/inc-level n)))
 
 (defun nomis/hs/adjust/set-0 ()
   (interactive)
@@ -223,8 +250,9 @@
   (interactive)
   ;; This exists to overcome a bug when showing all when level shown is 1,
   ;; whereby the cursor moved weirdly and fucked things up.
-  (nomis/hs/hide-block)
-  (nomis/hs/show-block))
+  (nomis/hs/with-only-if-looking-at-bracketed-sexp-start
+    (nomis/hs/hide-block)
+    (nomis/hs/show-block)))
 
 (defun nomis/hs/adjust/show-all/and-exit ()
   ;; This exists to overcome a bug in Hydra when you have both
@@ -261,5 +289,122 @@
    ("7"  nomis/hs/adjust/set-level/7)
    ("8"  nomis/hs/adjust/set-level/8)
    ("9"  nomis/hs/adjust/set-level/9)))
+
+;;;; ___________________________________________________________________________
+;;;; nomis/hs/step-forward
+;;;; nomis/hs/step-backward
+
+(defvar nomis/hs/step-forward-position
+  :before-form)
+
+(defun nomis/hs/step-forward ()
+  "Roughly: Hide the current form, then move forward a form and show it.
+
+Details:
+
+If we can't move forward (because point is near the end of the
+buffer or because we're at or after the last subform of a form),
+issue a message saying we can't move forward.
+
+Otherwise, if point is at the beginning of an sexp, do the following:
+- If the sexp is hidden, show it.
+- Otherwise:
+  - If the current sexp can be hidden then hide it.
+  - If there is a next sexp at this level, move to its beginning
+    and show it. Otherwise move to the end of the current sexp.
+
+Otherwise, go to the beginning of the sexp after point and show it."
+  (interactive)
+  (hs-minor-mode 1)
+  (cl-flet ((error--cannot-move
+             ()
+             (error "Can't move forward")))
+    (case nomis/hs/step-forward-position
+      (:before-form
+       (cond ((not (nomis/can-forward-sexp?))
+              (error--cannot-move))
+             ((nomis/looking-at-beginning-of-sexp/kinda?)
+              (if (nomis/hs/looking-at-beginning-of-hidden-sexp?)
+                  (nomis/hs/adjust/show-all)
+                (progn
+                  (nomis/hs/adjust/set-0)
+                  (forward-sexp)
+                  (nomis/goto-beginning-of-sexp/or-end/forward)
+                  (nomis/hs/adjust/show-all))))
+             (t
+              (nomis/goto-beginning-of-sexp/or-end/forward)
+              (nomis/hs/adjust/show-all))))
+      (:after-form
+       (if (not (nomis/can-forward-sexp?))
+           (cond ((not (nomis/can-backward-sexp?))
+                  (error--cannot-move))
+                 ((save-excursion
+                    (backward-sexp)
+                    (nomis/hs/looking-at-beginning-of-hidden-sexp?))
+                  (error--cannot-move))
+                 (t
+                  (save-excursion
+                    (backward-sexp)
+                    (nomis/hs/adjust/set-0)
+                    (unless (nomis/hs/looking-at-beginning-of-hidden-sexp?)
+                      ;; Hiding had no effect.
+                      (error--cannot-move)))))
+         (progn
+           (forward-sexp)
+           (save-excursion
+             (backward-sexp)
+             (save-excursion
+               (when (nomis/can-backward-sexp?)
+                 (backward-sexp)
+                 (nomis/hs/adjust/set-0)))
+             (nomis/hs/adjust/show-all))))))))
+
+(defun nomis/hs/step-backward ()
+  "Roughly: Hide the current form, then move backward a form and show it.
+
+Details:
+
+If we can't move backward (because point is near the beginning
+of the buffer or because we're at or before the first subform of
+a form):
+- if the current sexp is being shown and can be hidden, hide it;
+- otherwise issue a message saying we can't move backward.
+
+Otherwise, if point is at the beginning of an sexp, do the following:
+- If the current sexp can be hidden then hide it.
+- Move backward an sexp, and show that sexp.
+
+Otherwise, go to the beginning of the sexp before point and show it."
+  (interactive)
+  (hs-minor-mode 1)
+  (cond ((not (nomis/can-backward-sexp?))
+         (cl-flet ((error--cannot-move
+                    ()
+                    (error "Can't move backward")))
+           (if (nomis/hs/looking-at-beginning-of-hidden-sexp?)
+               (error--cannot-move)
+             (progn
+               (nomis/hs/adjust/set-0)
+               (unless (nomis/hs/looking-at-beginning-of-hidden-sexp?)
+                 ;; Hiding had no effect.
+                 (error--cannot-move))))))
+        ((nomis/looking-at-beginning-of-sexp/kinda?)
+         (nomis/hs/adjust/set-0)
+         (backward-sexp)
+         (nomis/hs/adjust/show-all))
+        (t
+         (nomis/goto-beginning-of-sexp/or-end/backward)
+         (nomis/hs/adjust/show-all))))
+
+(define-key global-map (kbd "H-]") 'nomis/hs/step-forward)
+(define-key global-map (kbd "H-[") 'nomis/hs/step-backward)
+
+;;;; Key chords only work for chars whose codes are in the range 32..126 -- see
+;;;; limitations in `key-chord`. So you can't use the cursor keys. Annoying!
+;;;; If you want key chords, maybe try these:
+;;;; (key-chord-define-global "qj" 'nomis/hs/step-forward)
+;;;; (key-chord-define-global "qk" 'nomis/hs/step-backward)
+
+;;;; ___________________________________________________________________________
 
 (provide 'nomis-hide-show)

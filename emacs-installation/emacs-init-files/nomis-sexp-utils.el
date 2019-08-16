@@ -92,16 +92,126 @@
       (nomis/looking-at-regexp-before-bracketed-sexp-start "`")
       (nomis/looking-at-regexp-before-bracketed-sexp-start "#'")))
 
+(defun -nomis/forward-sexp-gives-no-error?
+    ()
+  (save-excursion
+    (condition-case nil
+        (progn (forward-sexp) t)
+      (error nil))))
+
+(defun -nomis/backward-sexp-gives-no-error?
+    ()
+  (save-excursion
+    (condition-case nil
+        (progn (backward-sexp) t)
+      (error nil))))
+
+(defun nomis/at-top-level? ()
+  (save-excursion
+    (condition-case nil
+        (progn (paredit-backward-up) nil)
+      (error t))))
+
+(defun nomis/can-forward-sexp? ()
+  ;; This is complicated, because `forward-sexp` behaves differently at end
+  ;; of file and inside-and-at-end-of a `(...)` form.
+  (cond ((not (nomis/at-top-level?))
+         (-nomis/forward-sexp-gives-no-error?))
+        ((and (thing-at-point 'symbol)
+              (save-excursion (ignore-errors (forward-char) t))
+              (save-excursion (forward-char) (thing-at-point 'symbol)))
+         ;; We're on a top-level symbol (and not after its end).
+         t)
+        (t
+         (or (bobp) ; should really check that there's an sexp ahead
+             (condition-case nil
+                 (not (= (save-excursion
+                           (let* ((pos (point)))
+                             (backward-sexp)
+                             (point)))
+                         (save-excursion
+                           (let* ((pos (point)))
+                             (forward-sexp)
+                             (backward-sexp)
+                             (point)))))
+               (error nil))))))
+
+(defun nomis/can-backward-sexp? ()
+  ;; This is complicated, because `backward-sexp` behaves differently at end
+  ;; of file and inside-and-at-beginning-of a `(...)` form.
+  (cond ((not (nomis/at-top-level?))
+         (-nomis/backward-sexp-gives-no-error?))
+        ((and (thing-at-point 'symbol)
+              (save-excursion (ignore-errors (backward-char) t))
+              (save-excursion (backward-char) (thing-at-point 'symbol)))
+         ;; We're on a top-level symbol, but not at its start
+         t)
+        (t
+         (condition-case nil
+             (not (= (save-excursion
+                       (let* ((pos (point)))
+                         (forward-sexp)
+                         (point)))
+                     (save-excursion
+                       (let* ((pos (point)))
+                         (backward-sexp)
+                         (forward-sexp)
+                         (point)))))
+           (error nil)))))
+
+(defun nomis/looking-at-beginning-of-sexp/kinda? ()
+  "t if point can be arrived at with a `(backward-sexp)`, nil otherwise.
+
+Note, for example, that for a quoted sexp, point would have to be
+on the quote for this to return t."
+  (and (nomis/can-forward-sexp?)
+       (= (save-excursion (forward-sexp) (backward-sexp) (point))
+          (point))))
+
+(defun nomis/in-middle-of-symbol-ish? ()
+  "t if point is in the middle of a symbol-and-any-prefix-characters,
+nil otherwise.
+Examples (| denotes cursor position):
+    |xxxx -- nil
+    x|xxx -- t
+    xxx|x -- t
+    xxxx| -- nil
+    |'xxxx -- nil
+    '|xxxx -- t"
+  (and (nomis/can-forward-sexp?)
+       (< (save-excursion (forward-sexp) (backward-sexp) (point))
+          (point))))
+
+(defun nomis/goto-beginning-of-sexp/or-end/forward ()
+  "If point is at the beginning of an sexp, stay there.
+Otherwise, if there is an sexp that begins after point and is at
+the same level as point, go to its beginning.
+Otherwise, if on a symbol, move to the end of the symbol.
+Otherwise, stay at point."
+  (when (nomis/in-middle-of-symbol-ish?)
+    (forward-sexp))
+  (when (nomis/can-forward-sexp?)
+    (forward-sexp)
+    (backward-sexp)))
+
+(defun nomis/goto-beginning-of-sexp/or-end/backward ()
+  "Like `nomis/goto-beginning-of-sexp/or-end` followed by `backward-sexp`.
+This is the same as `backward-sexp`, but the intention is
+slightly different.
+Note that we can't end up at the end of an sexp unless we are
+inside an empty form, in which case we get an error."
+  (backward-sexp))
+
 (defun nomis/move-to-start-of-bracketed-sexp-around-point ()
   (cond ((nomis/looking-at-bracketed-sexp-start)
          ;; stay here
          )
         ((or (nomis/looking-at-whitespace)
              (nomis/looking-after-bracketed-sexp-end))
-         (backward-sexp 1))
+         (backward-sexp))
         (t
-         (ignore-errors (forward-sexp 1))
-         (backward-sexp 1))))
+         (ignore-errors (forward-sexp))
+         (backward-sexp))))
 
 (defun nomis/beginning-of-top-level-form ()
   (nomis/end-of-top-level-form)
