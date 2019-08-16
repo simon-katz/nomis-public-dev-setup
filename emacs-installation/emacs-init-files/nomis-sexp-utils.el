@@ -202,6 +202,33 @@ Note that we can't end up at the end of an sexp unless we are
 inside an empty form, in which case we get an error."
   (backward-sexp))
 
+(defun nomis/next-sexp (&optional arg)
+  "The inverse of `backward-sexp`, so you can step forward over forms with
+point going to the beginning of each form.
+If ARG is 1 or not supplied: go to the beginning of the next sexp.
+If ARG is supplied, go to the beginning of the next-but-ARG-minus-1'th sexp."
+  (interactive "^p")
+  (let* ((hacked-arg-1 (or arg 1))
+         (hacked-arg-2 (if (nomis/looking-at-beginning-of-sexp/kinda?)
+                           hacked-arg-1
+                         (1- hacked-arg-1))))
+    (unless (zerop hacked-arg-2)
+      ;; The above test is probably not necessary, but the behaviour of
+      ;; `forward-sexp` is not documented when arg is zero, and it's better
+      ;; to be safe.
+      (forward-sexp hacked-arg-2))
+    (if (-nomis/forward-sexp-gives-no-error?)
+        (nomis/goto-beginning-of-sexp/or-end/forward)
+      (forward-sexp) ; produce an error, for consistency with `forward-sexp`
+      )))
+
+(defun nomis/set-up-next-sexp-key ()
+  (define-key paredit-mode-map (kbd "H-M-f") 'nomis/next-sexp)
+  ;; (define-key paredit-mode-map (kbd "H-M-b") 'backward-sexp) ; key doesn't work on my Mac
+  )
+
+(add-hook 'paredit-mode-hook 'nomis/set-up-next-sexp-key)
+
 (defun nomis/move-to-start-of-bracketed-sexp-around-point ()
   (cond ((nomis/looking-at-bracketed-sexp-start)
          ;; stay here
