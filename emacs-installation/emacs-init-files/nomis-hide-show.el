@@ -12,6 +12,7 @@
 (require 'nomis-sexp-utils)
 (require 'nomis-key-chord)
 (require 'nomis-hydra)
+(require 'nomis-scrolling)
 
 ;;;; ___________________________________________________________________________
 ;;;; Stuff to maybe move
@@ -406,6 +407,23 @@ Otherwise, go to the beginning of the sexp before point and show it."
 
 (define-key global-map (kbd "H-]") 'nomis/hs/step-forward)
 (define-key global-map (kbd "H-[") 'nomis/hs/step-backward)
+
+;;;; ___________________________________________________________________________
+;;;; nomis/hs/step-forward-and-recenter
+;;;; nomis/hs/step-backward-and-recenter
+
+(defun nomis/hs/step-forward-and-recenter ()
+  (interactive)
+  (nomis/with-maintain-line-no-in-window
+    (nomis/hs/step-forward)))
+
+(defun nomis/hs/step-backward-and-recenter ()
+  (interactive)
+  (nomis/with-maintain-line-no-in-window
+    (nomis/hs/step-backward)))
+
+(define-key global-map (kbd "H-C-]") 'nomis/hs/step-forward-and-recenter)
+(define-key global-map (kbd "H-C-[") 'nomis/hs/step-backward-and-recenter)
 
 ;;;; Key chords only work for chars whose codes are in the range 32..126 -- see
 ;;;; limitations in `key-chord`. So you can't use the cursor keys. Annoying!
