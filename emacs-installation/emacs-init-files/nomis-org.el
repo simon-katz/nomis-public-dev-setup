@@ -40,6 +40,23 @@
                'find-file
                org-link-frame-setup)))
 
+;;;; ________ *** Hiding and showing
+
+(defun -nomis/org-show-only (detail)
+  (org-overview)
+  (org-show-set-visibility detail))
+
+(defun nomis/org-show-only/ancestors ()
+  (interactive)
+  (-nomis/org-show-only 'ancestors))
+
+(defun nomis/org-show-only/canonical ()
+  (interactive)
+  (-nomis/org-show-only 'canonical))
+
+(define-key org-mode-map (kbd "M-[") 'nomis/org-show-only/ancestors)
+(define-key org-mode-map (kbd "M-]") 'nomis/org-show-only/canonical)
+
 ;;;; ________ *** Priorities
 
 (setq org-highest-priority ?1)
