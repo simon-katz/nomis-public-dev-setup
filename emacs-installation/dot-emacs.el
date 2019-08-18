@@ -134,6 +134,8 @@
 
 (require 'nomis-special-characters)
 
+(require 'nomis-dictionaries-etc)
+
 ;;;; ---- Lisp and Clojure stuff probably good for anyone ----
 
 (require 'nomis-paredit)
