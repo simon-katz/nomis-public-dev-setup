@@ -241,6 +241,94 @@ subheading at this level in the previous parent."
 (define-key org-mode-map (kbd "M-.") 'org-open-at-point)
 (define-key org-mode-map (kbd "M-,") 'org-mark-ring-goto)
 
+;;;; ________ *** Stepping
+
+(defun -nomis/org/collapse ()
+  (nomis/org-show-point)
+  (org-overview)
+  (org-show-set-visibility 'canonical))
+
+(defun -nomis/org/expand ()
+  (nomis/org-show-point)
+  (-nomis/org/collapse)
+  (case 3
+    ;; I tried various approaches until I found one that seems to work.
+    (1 (outline-show-children 99))
+    (2 (dotimes (_ 5)
+         ;; The 5 should work no matter how many levels there are below
+         ;; this one. It does if you hit TAB five times.
+         (org-cycle)))
+    (3 (org-map-tree #'org-cycle) ; see also `org-map-tree` if you copy this
+       )))
+
+(defvar -nomis/org/step/previous-direction nil)
+(defvar -nomis/org/step/previous-state nil)
+
+(defun -nomis/org/step/impl (n)
+  (let* ((direction (if (< n 0) :backward :forward)))
+    (cl-flet* ((previous-command-was-a-nomis-org-step?
+                ()
+                (member last-command '(nomis/org/step-backward
+                                       nomis/org/step-forward)))
+               (collapse-already-attempted?
+                ()
+                (member -nomis/org/step/previous-state
+                        '(:cannot-move-and-collapsed
+                          :cannot-move-and-issued-error)))
+               (change-of-direction-when-collapsed?
+                ()
+                (and (not (eql direction -nomis/org/step/previous-direction))
+                     (collapse-already-attempted?)))
+               (record-new-state
+                (x)
+                (setq -nomis/org/step/previous-direction direction)
+                (setq -nomis/org/step/previous-state x))
+               (expand
+                ()
+                (-nomis/org/expand)
+                (record-new-state :tried-to-expand))
+               (collapse
+                ()
+                (-nomis/org/collapse)
+                (record-new-state :cannot-move-and-collapsed))
+               (tried-to-go-to-far
+                ()
+                (record-new-state :cannot-move-and-issued-error)
+                (nomis/grab-user-attention/low)
+                (error (if (< n 0)
+                           "No previous heading at this level"
+                         "No next heading at this level"))))
+      (org-back-to-heading t)
+      (cond ((not (previous-command-was-a-nomis-org-step?))
+             (expand))
+            ((change-of-direction-when-collapsed?)
+             (expand))
+            (t
+             (-nomis/org/collapse)
+             (let* ((starting-point (point)))
+               (org-forward-heading-same-level n t)
+               (let* ((moved? (not (= (point) starting-point))))
+                 (cond (moved?
+                        ;; We moved. Expand the newly-arrived at heading.
+                        (expand))
+                       ((collapse-already-attempted?)
+                        ;; We didn't move, and we've already tried to collapse.
+                        (tried-to-go-to-far))
+                       (t
+                        ;; We didn't move, and we haven't yet tried to collapse.
+                        (collapse))))))))))
+
+(defun nomis/org/step-forward ()
+  (interactive)
+  (-nomis/org/step/impl 1))
+
+(defun nomis/org/step-backward ()
+  (interactive)
+  (-nomis/org/step/impl -1))
+
+(define-key org-mode-map (kbd "H-]") 'nomis/org/step-forward)
+(define-key org-mode-map (kbd "H-[") 'nomis/org/step-backward)
+
 ;;;; ________ *** Refiling
 
 ;;;; - I haven't quite got this nice (or maybe I did).
