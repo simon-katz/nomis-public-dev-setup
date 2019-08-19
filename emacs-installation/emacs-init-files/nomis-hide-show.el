@@ -47,7 +47,6 @@
 
 (defun nomis/hs/hide-all ()
   (interactive)
-  (hs-minor-mode 1)
   (hs-hide-all)
   (nomis/beginning-of-top-level-form) ; without this, a following show command does not-very-nice positioning of the cursor
   (setq hs-hide-comments-when-hiding-all
@@ -55,50 +54,46 @@
 
 (defun nomis/hs/show-all ()
   (interactive)
-  (hs-minor-mode 1)
   (hs-show-all)
   (setq hs-hide-comments-when-hiding-all nil))
 
 (defun nomis/hs/hide-block ()
   (interactive)
   (nomis/hs/with-only-if-looking-at-bracketed-sexp-start
-    (hs-minor-mode 1)
     (hs-hide-block)
     (backward-char)))
 
 (defun nomis/hs/show-block ()
   (interactive)
   (nomis/hs/with-only-if-looking-at-bracketed-sexp-start
-    (hs-minor-mode 1)
     (hs-show-block)
     (backward-char)))
 
 (defun nomis/hs/toggle-hiding ()
   (interactive)
   (nomis/hs/with-only-if-looking-at-bracketed-sexp-start
-    (hs-minor-mode 1)
     (hs-toggle-hiding)
     (backward-char)))
 
-(define-key global-map (kbd "H-q H--")  'nomis/hs/hide-all)
-(define-key global-map (kbd "H-q H-[")  'nomis/hs/adjust/set-0)
-(define-key global-map (kbd "H-q H-'")  'nomis/hs/adjust/less)
-(define-key global-map (kbd "H-q H-l")  'nomis/hs/adjust/set-level)
-(define-key global-map (kbd "H-q H-\\") 'nomis/hs/adjust/more)
-(define-key global-map (kbd "H-q H-]")  'nomis/hs/adjust/show-all)
-(define-key global-map (kbd "H-q H-p")  'nomis/hs/adjust/show-all-for-top-level)
-(define-key global-map (kbd "H-q H-=")  'nomis/hs/show-all)
-(define-key global-map (kbd "H-q H-/")  'nomis/hs/toggle-hiding)
-(define-key global-map (kbd "H-q H-0")  'nomis/hs/adjust/set-level/0)
-(define-key global-map (kbd "H-q H-1")  'nomis/hs/adjust/set-level/1)
-(define-key global-map (kbd "H-q H-2")  'nomis/hs/adjust/set-level/2)
-(define-key global-map (kbd "H-q H-3")  'nomis/hs/adjust/set-level/3)
-(define-key global-map (kbd "H-q H-4")  'nomis/hs/adjust/set-level/4)
-(define-key global-map (kbd "H-q H-5")  'nomis/hs/adjust/set-level/5)
-(define-key global-map (kbd "H-q H-6")  'nomis/hs/adjust/set-level/6)
-(define-key global-map (kbd "H-q H-7")  'nomis/hs/adjust/set-level/7)
-(define-key global-map (kbd "H-q H-8")  'nomis/hs/adjust/set-level/8)
-(define-key global-map (kbd "H-q H-9")  'nomis/hs/adjust/set-level/9)
+(define-key prog-mode-map (kbd "H-q H--")  'nomis/hs/hide-all)
+(define-key prog-mode-map (kbd "H-q H-[")  'nomis/hs/adjust/set-0)
+(define-key prog-mode-map (kbd "H-q H-'")  'nomis/hs/adjust/less)
+(define-key prog-mode-map (kbd "H-q H-l")  'nomis/hs/adjust/set-level)
+(define-key prog-mode-map (kbd "H-q H-\\") 'nomis/hs/adjust/more)
+(define-key prog-mode-map (kbd "H-q H-]")  'nomis/hs/adjust/show-all)
+(define-key prog-mode-map (kbd "H-q H-p")  'nomis/hs/adjust/show-all-for-top-level)
+(define-key prog-mode-map (kbd "H-q H-=")  'nomis/hs/show-all)
+(define-key prog-mode-map (kbd "H-q H-/")  'nomis/hs/toggle-hiding)
+(define-key prog-mode-map (kbd "H-q H-0")  'nomis/hs/adjust/set-level/0)
+(define-key prog-mode-map (kbd "H-q H-1")  'nomis/hs/adjust/set-level/1)
+(define-key prog-mode-map (kbd "H-q H-2")  'nomis/hs/adjust/set-level/2)
+(define-key prog-mode-map (kbd "H-q H-3")  'nomis/hs/adjust/set-level/3)
+(define-key prog-mode-map (kbd "H-q H-4")  'nomis/hs/adjust/set-level/4)
+(define-key prog-mode-map (kbd "H-q H-5")  'nomis/hs/adjust/set-level/5)
+(define-key prog-mode-map (kbd "H-q H-6")  'nomis/hs/adjust/set-level/6)
+(define-key prog-mode-map (kbd "H-q H-7")  'nomis/hs/adjust/set-level/7)
+(define-key prog-mode-map (kbd "H-q H-8")  'nomis/hs/adjust/set-level/8)
+(define-key prog-mode-map (kbd "H-q H-9")  'nomis/hs/adjust/set-level/9)
 
 (key-chord-define-global "q-"  'nomis/hs/hide-all)
 (key-chord-define-global "q["  'nomis/hs/adjust/set-0)
@@ -158,7 +153,6 @@
                             activate compile)
   "hideshow-expand affected block when using goto-line in a collapsed buffer"
   (save-excursion
-    (hs-minor-mode 1)
     (hs-show-block)))
 
 ;;;; ___________________________________________________________________________
@@ -221,7 +215,6 @@
 
 (defun nomis/hs/adjust/init ()
   (interactive)
-  (hs-minor-mode 1)
   ;; Set to last-set level. Useful when working on the same form a second time.
   (nomis/hs/adjust/set-level nomis/hs/adjust/level))
 
@@ -324,7 +317,6 @@ Otherwise, if point is at the beginning of an sexp, do the following:
 
 Otherwise, go to the beginning of the sexp after point and show it."
   (interactive)
-  (hs-minor-mode 1)
   (cl-flet ((error--cannot-move
              ()
              (error "Can't move forward")))
@@ -385,7 +377,6 @@ Otherwise, if point is at the beginning of an sexp, do the following:
 
 Otherwise, go to the beginning of the sexp before point and show it."
   (interactive)
-  (hs-minor-mode 1)
   (cond ((not (nomis/can-backward-sexp?))
          (cl-flet ((error--cannot-move
                     ()
@@ -405,8 +396,8 @@ Otherwise, go to the beginning of the sexp before point and show it."
          (nomis/goto-beginning-of-sexp/or-end/backward)
          (nomis/hs/adjust/show-all))))
 
-(define-key global-map (kbd "H-]") 'nomis/hs/step-forward)
-(define-key global-map (kbd "H-[") 'nomis/hs/step-backward)
+(define-key prog-mode-map (kbd "H-]") 'nomis/hs/step-forward)
+(define-key prog-mode-map (kbd "H-[") 'nomis/hs/step-backward)
 
 ;;;; ___________________________________________________________________________
 ;;;; nomis/hs/step-forward-and-recenter
@@ -422,14 +413,21 @@ Otherwise, go to the beginning of the sexp before point and show it."
   (nomis/with-maintain-line-no-in-window
     (nomis/hs/step-backward)))
 
-(define-key global-map (kbd "H-C-]") 'nomis/hs/step-forward-and-recenter)
-(define-key global-map (kbd "H-C-[") 'nomis/hs/step-backward-and-recenter)
+(define-key prog-mode-map (kbd "H-C-]") 'nomis/hs/step-forward-and-recenter)
+(define-key prog-mode-map (kbd "H-C-[") 'nomis/hs/step-backward-and-recenter)
 
 ;;;; Key chords only work for chars whose codes are in the range 32..126 -- see
 ;;;; limitations in `key-chord`. So you can't use the cursor keys. Annoying!
 ;;;; If you want key chords, maybe try these:
 ;;;; (key-chord-define-global "qj" 'nomis/hs/step-forward)
 ;;;; (key-chord-define-global "qk" 'nomis/hs/step-backward)
+
+;;;; ___________________________________________________________________________
+
+(defun nomis/turn-on-hs-minor-mode ()
+  (hs-minor-mode 1))
+
+(add-hook 'prog-mode-hook 'nomis/turn-on-hs-minor-mode)
 
 ;;;; ___________________________________________________________________________
 
