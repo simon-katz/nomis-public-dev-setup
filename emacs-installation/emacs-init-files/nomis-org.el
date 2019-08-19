@@ -122,7 +122,7 @@
 
   ;; Copying and pasting
   (setq org-yank-adjusted-subtrees t)
-  
+
   ;; Exporting
   ;; (setq org-export-headline-levels 3)
   ;; (setq org-export-initial-scope 'subtree) ; you can set this when running `org-export-dispatch`
@@ -277,9 +277,9 @@ subheading at this level in the previous parent."
 
 ;; (defun nomis/org-refile-setup ()
 ;;   (setq org-refile-targets '((nil :maxlevel . 9)
-;;                              (org-agenda-files :maxlevel . 9)) 
-;;         org-refile-use-outline-path nil ; 'file 
-;;         org-outline-path-complete-in-steps nil 
+;;                              (org-agenda-files :maxlevel . 9))
+;;         org-refile-use-outline-path nil ; 'file
+;;         org-outline-path-complete-in-steps nil
 ;;         org-refile-allow-creating-parent-nodes nil
 ;;         org-completion-use-ido t))
 
