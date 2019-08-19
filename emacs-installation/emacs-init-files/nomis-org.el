@@ -40,22 +40,69 @@
                'find-file
                org-link-frame-setup)))
 
-;;;; ________ *** Hiding and showing
+;;;; ________ *** Hiding and showing -- cycling
 
 (defun -nomis/org-show-only (detail)
   (org-overview)
   (org-show-set-visibility detail))
 
-(defun nomis/org-show-only/ancestors ()
-  (interactive)
-  (-nomis/org-show-only 'ancestors))
+(defvar -nomis/org-show-only/cycle/visibility-spans
+  ;;  See `org-show-context-detail`.
+  '(minimal
+    local
+    ancestors
+    lineage
+    tree
+    canonical))
 
-(defun nomis/org-show-only/canonical ()
-  (interactive)
-  (-nomis/org-show-only 'canonical))
+(defvar -nomis/org-show-only/cycle/previous-place nil)
+(defvar -nomis/org-show-only/cycle/previous-action-index -1)
 
-(define-key org-mode-map (kbd "M-[") 'nomis/org-show-only/ancestors)
-(define-key org-mode-map (kbd "M-]") 'nomis/org-show-only/canonical)
+(defun -nomis/org-show-only/cycle/next-position (n)
+  (let* ((current-place (list (current-buffer)
+                              (point)))
+         (previous-place -nomis/org-show-only/cycle/previous-place))
+    (setq -nomis/org-show-only/cycle/previous-place
+          current-place)
+    (let* ((prev-action-index -nomis/org-show-only/cycle/previous-action-index)
+           (action-index (if (not (equal current-place previous-place))
+                             (position (if (< n 0) 'ancestors 'tree)
+                                       -nomis/org-show-only/cycle/visibility-spans)
+                           (+ n prev-action-index)))
+           (ok? (<= 0
+                    action-index
+                    (1- (length -nomis/org-show-only/cycle/visibility-spans)))))
+      (if ok?
+          (progn
+            (setq -nomis/org-show-only/cycle/previous-action-index
+                  action-index)
+            action-index)
+        nil))))
+
+(defun nomis/org-show-only/cycle/impl (n)
+  (let* ((pos (-nomis/org-show-only/cycle/next-position n)))
+    (if (null pos)
+        (progn
+          (if (< n 0)
+              (message "Already at min span")
+            (message "Already at max span"))
+          (nomis/grab-user-attention/low))
+      (let* ((visibility-span (nth pos
+                                   -nomis/org-show-only/cycle/visibility-spans)))
+        (message "Setting visibility-span = %s"
+                 visibility-span)
+        (-nomis/org-show-only visibility-span)))))
+
+(defun nomis/org-show-only/cycle/more ()
+  (interactive)
+  (nomis/org-show-only/cycle/impl 1))
+
+(defun nomis/org-show-only/cycle/less ()
+  (interactive)
+  (nomis/org-show-only/cycle/impl -1))
+
+(define-key org-mode-map (kbd "H-M-.") 'nomis/org-show-only/cycle/more)
+(define-key org-mode-map (kbd "H-M-,") 'nomis/org-show-only/cycle/less)
 
 ;;;; ________ *** Priorities
 
