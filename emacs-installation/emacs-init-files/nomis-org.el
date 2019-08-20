@@ -8,6 +8,7 @@
   (setq org-replace-disputed-keys t) ; must be done before requiring org
   (require 'org))
 
+(require 'org-bullets)
 (require 'cl)
 (require 'dash)
 
@@ -447,6 +448,25 @@ subheading at this level in the previous parent."
 ;;;; ________ *** Display -- misc
 
 (setq org-ellipsis " ▶")
+
+(setq org-bullets-bullet-list '("⦿"
+                                "■"
+                                "●"
+                                "▶"
+                                "✖"
+                                "♣"
+                                "◑"
+                                "◒"
+                                "◐"
+                                "◓"
+                                "◮"
+                                "◭"
+                                "➀" "➁" "➂" "➃" "➄" "➅" "➆" "➇" "➈" "➉"
+                                ;; "➊" "➋" "➌" "➍" "➎" "➏" "➐" "➑" "➒" "➓"
+                                ;; "█" "▊" "▌" "▎"
+                                ))
+
+(add-hook 'org-mode-hook 'org-bullets-mode)
 
 ;;;; ________ *** Display -- links
 
