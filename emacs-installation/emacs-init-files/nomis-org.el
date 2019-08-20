@@ -157,6 +157,10 @@
 
 ;;;; ________ *** Navigation
 
+(defun nomis/org/goto-root ()
+  (interactive)
+  (while (ignore-errors (outline-up-heading 1))))
+
 (defun nomis/org-show-point ()
   (interactive)
   (case 1
