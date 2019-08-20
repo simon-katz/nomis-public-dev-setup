@@ -41,6 +41,20 @@
                'find-file
                org-link-frame-setup)))
 
+;;;; ________ *** Hiding and showing -- level across whole file
+
+(defun nomis/org/show-all-to-level (&optional n)
+  "Expand all roots to show n levels. Do not hide anything that is already
+being displayed."
+  (interactive "^p")
+  (save-excursion
+    (org-map-entries (lambda ()
+                       (let* ((level (nth 1 (org-heading-components))))
+                         (when (= level 1)
+                           (outline-show-children (1- n)))))
+                     t
+                     'file)))
+
 ;;;; ________ *** Hiding and showing -- cycling
 
 (defun -nomis/org-show-only (detail)
