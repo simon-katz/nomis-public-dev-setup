@@ -95,24 +95,24 @@
 (define-key prog-mode-map (kbd "H-q H-8")  'nomis/hs/adjust/set-level/8)
 (define-key prog-mode-map (kbd "H-q H-9")  'nomis/hs/adjust/set-level/9)
 
-(key-chord-define-global "q-"  'nomis/hs/hide-all)
-(key-chord-define-global "q["  'nomis/hs/adjust/set-0)
-(key-chord-define-global "q'"  'nomis/hs/adjust/less)
-(key-chord-define-global "ql"  'nomis/hs/adjust/set-level)
-(key-chord-define-global "q\\" 'nomis/hs/adjust/more)
-(key-chord-define-global "q]"  'nomis/hs/adjust/show-all)
-(key-chord-define-global "q="  'nomis/hs/show-all)
-(key-chord-define-global "q/"  'nomis/hs/toggle-hiding)
-(key-chord-define-global "q0"  'nomis/hs/adjust/set-level/0)
-(key-chord-define-global "q1"  'nomis/hs/adjust/set-level/1)
-(key-chord-define-global "q2"  'nomis/hs/adjust/set-level/2)
-(key-chord-define-global "q3"  'nomis/hs/adjust/set-level/3)
-(key-chord-define-global "q4"  'nomis/hs/adjust/set-level/4)
-(key-chord-define-global "q5"  'nomis/hs/adjust/set-level/5)
-(key-chord-define-global "q6"  'nomis/hs/adjust/set-level/6)
-(key-chord-define-global "q7"  'nomis/hs/adjust/set-level/7)
-(key-chord-define-global "q8"  'nomis/hs/adjust/set-level/8)
-(key-chord-define-global "q9"  'nomis/hs/adjust/set-level/9)
+(key-chord-define prog-mode-map "q-"  'nomis/hs/hide-all)
+(key-chord-define prog-mode-map "q["  'nomis/hs/adjust/set-0)
+(key-chord-define prog-mode-map "q'"  'nomis/hs/adjust/less)
+(key-chord-define prog-mode-map "ql"  'nomis/hs/adjust/set-level)
+(key-chord-define prog-mode-map "q\\" 'nomis/hs/adjust/more)
+(key-chord-define prog-mode-map "q]"  'nomis/hs/adjust/show-all)
+(key-chord-define prog-mode-map "q="  'nomis/hs/show-all)
+(key-chord-define prog-mode-map "q/"  'nomis/hs/toggle-hiding)
+(key-chord-define prog-mode-map "q0"  'nomis/hs/adjust/set-level/0)
+(key-chord-define prog-mode-map "q1"  'nomis/hs/adjust/set-level/1)
+(key-chord-define prog-mode-map "q2"  'nomis/hs/adjust/set-level/2)
+(key-chord-define prog-mode-map "q3"  'nomis/hs/adjust/set-level/3)
+(key-chord-define prog-mode-map "q4"  'nomis/hs/adjust/set-level/4)
+(key-chord-define prog-mode-map "q5"  'nomis/hs/adjust/set-level/5)
+(key-chord-define prog-mode-map "q6"  'nomis/hs/adjust/set-level/6)
+(key-chord-define prog-mode-map "q7"  'nomis/hs/adjust/set-level/7)
+(key-chord-define prog-mode-map "q8"  'nomis/hs/adjust/set-level/8)
+(key-chord-define prog-mode-map "q9"  'nomis/hs/adjust/set-level/9)
 
 ;;;; ___________________________________________________________________________
 ;;;; Set up `hs-set-up-overlay`
@@ -419,8 +419,8 @@ Otherwise, go to the beginning of the sexp before point and show it."
 ;;;; Key chords only work for chars whose codes are in the range 32..126 -- see
 ;;;; limitations in `key-chord`. So you can't use the cursor keys. Annoying!
 ;;;; If you want key chords, maybe try these:
-;;;; (key-chord-define-global "qj" 'nomis/hs/step-forward)
-;;;; (key-chord-define-global "qk" 'nomis/hs/step-backward)
+;;;; (key-chord-define prog-mode-map "qj" 'nomis/hs/step-forward)
+;;;; (key-chord-define prog-mode-map "qk" 'nomis/hs/step-backward)
 
 ;;;; ___________________________________________________________________________
 
