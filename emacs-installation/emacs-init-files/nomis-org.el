@@ -264,12 +264,13 @@ subheading at this level in the previous parent."
 (defvar -nomis/org/step/previous-direction nil)
 (defvar -nomis/org/step/previous-state nil)
 
-(defun -nomis/org/step/impl (n)
+(defvar -nomis/org/step/functions '())
+
+(defun -nomis/org/step/impl (n jumping-parent-allowed?)
   (let* ((direction (if (< n 0) :backward :forward)))
     (cl-flet* ((previous-command-was-a-nomis-org-step?
                 ()
-                (member last-command '(nomis/org/step-backward
-                                       nomis/org/step-forward)))
+                (member last-command -nomis/org/step/functions))
                (collapse-already-attempted?
                 ()
                 (member -nomis/org/step/previous-state
@@ -306,7 +307,12 @@ subheading at this level in the previous parent."
             (t
              (-nomis/org/collapse)
              (let* ((starting-point (point)))
-               (org-forward-heading-same-level n t)
+               (if jumping-parent-allowed?
+                   (nomis/-org-heading-same-level-with-extras/helper
+                    (case n
+                      (1 :forward)
+                      (-1 :backward)))
+                 (org-forward-heading-same-level n t))
                (let* ((moved? (not (= (point) starting-point))))
                  (cond (moved?
                         ;; We moved. Expand the newly-arrived at heading.
@@ -318,16 +324,32 @@ subheading at this level in the previous parent."
                         ;; We didn't move, and we haven't yet tried to collapse.
                         (collapse))))))))))
 
-(defun nomis/org/step-forward ()
-  (interactive)
-  (-nomis/org/step/impl 1))
+(cl-defmacro define-nomis-org-step-command (name arglist &body body)
+  (declare (indent 2))
+  `(progn
+     (pushnew ',name -nomis/org/step/functions)
+     (defun ,name ,arglist ,@body)))
 
-(defun nomis/org/step-backward ()
+(define-nomis-org-step-command nomis/org/step-forward ()
   (interactive)
-  (-nomis/org/step/impl -1))
+  (-nomis/org/step/impl 1 nil))
+
+(define-nomis-org-step-command nomis/org/step-backward ()
+  (interactive)
+  (-nomis/org/step/impl -1 nil))
+
+(define-nomis-org-step-command nomis/org/step-forward/jumping-parent-allowed ()
+  (interactive)
+  (-nomis/org/step/impl 1 t))
+
+(define-nomis-org-step-command nomis/org/step-backward/jumping-parent-allowed ()
+  (interactive)
+  (-nomis/org/step/impl -1 t))
 
 (define-key org-mode-map (kbd "H-]") 'nomis/org/step-forward)
 (define-key org-mode-map (kbd "H-[") 'nomis/org/step-backward)
+(define-key org-mode-map (kbd "H-M-]") 'nomis/org/step-forward/jumping-parent-allowed)
+(define-key org-mode-map (kbd "H-M-[") 'nomis/org/step-backward/jumping-parent-allowed)
 
 ;;;; ________ *** Refiling
 
