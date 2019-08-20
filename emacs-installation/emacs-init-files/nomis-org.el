@@ -246,12 +246,21 @@ subheading at this level in the previous parent."
 
 (defun -nomis/org/collapse ()
   (nomis/org-show-point)
-  (org-overview)
-  (org-show-set-visibility 'canonical))
+  (case 2
+    (1
+     ;; This hides too much stuff.
+     (org-overview)
+     (org-show-set-visibility 'canonical))
+    (2
+     ;; This hides just the subtree under the headline at point.
+     ;; Idea from http://christiantietze.de/posts/2019/06/org-fold-heading/.
+     ;; But what does `org-flag-subtree` do, is it part of the org public API,
+     ;; and why can't I find any useful info by googling?
+     (org-flag-subtree t))))
 
 (defun -nomis/org/expand ()
   (nomis/org-show-point)
-  (-nomis/org/collapse)
+  (-nomis/org/collapse) ; so that we can expand in a predicable way
   (case 3
     ;; I tried various approaches until I found one that seems to work.
     (1 (outline-show-children 99))
