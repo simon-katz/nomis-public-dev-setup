@@ -1,8 +1,9 @@
-;;;; ________ * Init stuff -- Org Mode.
+;;;; Init stuff -- Org Mode
 
 (progn) ; this-stops-hs-hide-all-from-hiding-the-next-comment
 
-;;;; ________ ** Require things
+;;;; ___________________________________________________________________________
+;;;; ____ * Require things
 
 (progn
   (setq org-replace-disputed-keys t) ; must be done before requiring org
@@ -12,7 +13,8 @@
 (require 'cl)
 (require 'dash)
 
-;;;; ________ ** Stuff everyone needs
+;;;; ___________________________________________________________________________
+;;;; ____ * Stuff everyone needs
 
 ;;; The following lines are always needed. Choose your own keys.
 
@@ -22,9 +24,8 @@
 (global-set-key "\C-ca" 'org-agenda)
 (global-set-key "\C-cb" 'org-iswitchb)
 
-;;;; ________ ** Personal tailoring
-
-;;;; ________ *** General
+;;;; ___________________________________________________________________________
+;;;; ____ * General
 
 (setq org-directory "~/org")
 
@@ -41,7 +42,8 @@
                'find-file
                org-link-frame-setup)))
 
-;;;; ________ *** Hiding and showing -- level across whole file
+;;;; ___________________________________________________________________________
+;;;; ____ * Hiding and showing -- level across whole file
 
 (defun nomis/org/show-all-to-level (&optional n)
   "Expand all roots to show n levels. Do not hide anything that is already
@@ -55,7 +57,8 @@ being displayed."
                      t
                      'file)))
 
-;;;; ________ *** Hiding and showing -- cycling
+;;;; ___________________________________________________________________________
+;;;; ____ * Hiding and showing -- cycling
 
 (defun -nomis/org-show-only (detail)
   (org-overview)
@@ -119,13 +122,15 @@ being displayed."
 (define-key org-mode-map (kbd "H-M-.") 'nomis/org-show-only/cycle/more)
 (define-key org-mode-map (kbd "H-M-,") 'nomis/org-show-only/cycle/less)
 
-;;;; ________ *** Priorities
+;;;; ___________________________________________________________________________
+;;;; ____ * Priorities
 
 (setq org-highest-priority ?1)
 (setq org-lowest-priority  ?9)
 (setq org-default-priority ?2)
 
-;;;; ________ *** Org mode hook function
+;;;; ___________________________________________________________________________
+;;;; ____ * Org mode hook function
 
 (defun nomis/org-mode ()
   ;; Layout
@@ -153,12 +158,14 @@ being displayed."
 
 (add-hook 'org-mode-hook 'nomis/org-mode)
 
-;;;; ________ *** Dependencies
+;;;; ___________________________________________________________________________
+;;;; ____ * Dependencies
 
 (setq org-enforce-todo-dependencies t)
 ;; (setq org-agenda-dim-blocked-tasks 'invisible) ; actually the default dimmimg is nice -- you can see more info
 
-;;;; ________ *** Capture
+;;;; ___________________________________________________________________________
+;;;; ____ * Capture
 
 (setq org-default-notes-file
       (concat org-directory
@@ -169,7 +176,8 @@ being displayed."
 
 (define-key global-map "\C-cc" 'org-capture)
 
-;;;; ________ *** Navigation
+;;;; ___________________________________________________________________________
+;;;; ____ * Navigation
 
 (defun nomis/org/goto-root ()
   (interactive)
@@ -260,7 +268,8 @@ subheading at this level in the previous parent."
 (define-key org-mode-map (kbd "M-.") 'org-open-at-point)
 (define-key org-mode-map (kbd "M-,") 'org-mark-ring-goto)
 
-;;;; ________ *** Stepping
+;;;; ___________________________________________________________________________
+;;;; ____ * Stepping
 
 (defun -nomis/org/collapse ()
   (nomis/org-show-point)
@@ -379,14 +388,16 @@ subheading at this level in the previous parent."
 (define-key org-mode-map (kbd "H-M-]") 'nomis/org/step-forward/jumping-parent-allowed)
 (define-key org-mode-map (kbd "H-M-[") 'nomis/org/step-backward/jumping-parent-allowed)
 
-;;;; ________ *** Refiling
+;;;; ___________________________________________________________________________
+;;;; ____ * Refiling
 
 ;;;; - I haven't quite got this nice (or maybe I did).
 ;;;; - BUT:
 ;;;;   After a refile, undo only undoes what happened in one buffer, even
 ;;;;   though two buffers have been modified. That's crappy.
 
-;;;; ________ **** Play #1
+;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+;;;; ____ Play #1
 
 ;; (progn org-use-fast-todo-selection)
 
@@ -397,7 +408,8 @@ subheading at this level in the previous parent."
 ;; (setq org-refile-allow-creating-parent-nodes 'confirm)
 ;; (setq org-completion-use-ido nil)
 
-;;;; ________ **** Play #2 -- 2017-08-10
+;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+;;;; ____ Play #2 -- 2017-08-10
 
 ;; (defun nomis/org-refile-values ()
 ;;   (list org-refile-targets
@@ -421,7 +433,8 @@ subheading at this level in the previous parent."
 ;;         org-refile-allow-creating-parent-nodes nil
 ;;         org-completion-use-ido t))
 
-;;;; ________ *** Agendas
+;;;; ___________________________________________________________________________
+;;;; ____ * Agendas
 
 (require 'org-agenda)
 
@@ -461,18 +474,21 @@ subheading at this level in the previous parent."
 
 (add-hook 'org-mode-hook 'nomis/turn-on-idle-highlight-mode)
 
-;;;; ________ *** Fontify code in code blocks
+;;;; ___________________________________________________________________________
+;;;; ____ * Fontify code in code blocks
 
 (setq org-src-fontify-natively t)
 
-;;;; ________ *** orgstruct
+;;;; ___________________________________________________________________________
+;;;; ____ * orgstruct
 
 ;; To use, enable orgstruct-mode or orgstruct++-mode
 
 (setq orgstruct-heading-prefix-regexp ";* *_* ")
 
 
-;;;; ________ *** Display -- misc
+;;;; ___________________________________________________________________________
+;;;; ____ * Display -- misc
 
 (setq org-ellipsis " ▶")
 
@@ -495,7 +511,8 @@ subheading at this level in the previous parent."
 
 (add-hook 'org-mode-hook 'org-bullets-mode)
 
-;;;; ________ *** Display -- links
+;;;; ___________________________________________________________________________
+;;;; ____ * Display -- links
 
 (defun nomis/org-show-link-destination ()
   ;; Copied with changes from
@@ -512,7 +529,8 @@ subheading at this level in the previous parent."
 (add-hook 'post-command-hook 'nomis/org-show-link-destination)
 
 
-;;;; ________ *** Display -- blog faces
+;;;; ___________________________________________________________________________
+;;;; ____ * Display -- blog faces
 
 (defconst nomis/org-blog-faces
   '((org-level-1 . (:inherit outline-1 :weight bold :height 1.3
@@ -540,7 +558,8 @@ subheading at this level in the previous parent."
         (not nomis/org-blog-stuff-on-p)))
 
 
-;;;; ________ *** Export
+;;;; ___________________________________________________________________________
+;;;; ____ * Export1
 
 (defun get-string-from-file (path)
   "Return filePath's file content."
@@ -659,6 +678,7 @@ subheading at this level in the previous parent."
 ;;                        ;; :stderr output-buffer
 ;;                        )))))
 
-;;;; ________ ** end
+;;;; ___________________________________________________________________________
+;;;; * End
 
 (provide 'nomis-org)
