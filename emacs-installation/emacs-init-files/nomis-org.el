@@ -484,7 +484,7 @@ subheading at this level in the previous parent."
 
 ;; To use, enable orgstruct-mode or orgstruct++-mode
 
-(setq orgstruct-heading-prefix-regexp ";* *_* ")
+(setq orgstruct-heading-prefix-regexp ";+ *\\(?:_+ \\)?")
 
 
 ;;;; ___________________________________________________________________________
