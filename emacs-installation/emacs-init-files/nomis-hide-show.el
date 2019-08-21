@@ -43,6 +43,7 @@
 ;;;; - Subsequent hide-alls toggle the hiding of comments.
 ;;;; This is reset when you do a show-all.
 
+(setq hs-hide-comments-when-hiding-all nil)
 (make-variable-buffer-local 'hs-hide-comments-when-hiding-all)
 
 (defun nomis/hs/hide-all ()
