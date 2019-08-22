@@ -113,12 +113,12 @@
 
 ;;;; ---- This is here because of a problem when it was later ----
 
-(require 'nomis-org) ; When this was later in the file my setting of
-                     ; `org-replace-disputed-keys` wasn't working.
-                     ; Something must be loading org-mode.
-                     ; (That didn't used to happen. It's a change in the
-                     ; last few days.)
-                     ; -- jsk 2014-08-13
+(require 'nomis-org-setup) ; When this was later in the file my setting of
+                           ; `org-replace-disputed-keys` wasn't working.
+                           ; Something must be loading org-mode.
+                           ; (That didn't used to happen. It's a change in the
+                           ; last few days.)
+                           ; -- jsk 2014-08-13
 
 ;;;; ---- General stuff ----
 

@@ -5,24 +5,10 @@
 ;;;; ___________________________________________________________________________
 ;;;; ____ * Require things
 
-(progn
-  (setq org-replace-disputed-keys t) ; must be done before requiring org
-  (require 'org))
-
+(require 'org)
 (require 'org-bullets)
 (require 'cl)
 (require 'dash)
-
-;;;; ___________________________________________________________________________
-;;;; ____ * Stuff everyone needs
-
-;;; The following lines are always needed. Choose your own keys.
-
-(add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))
-(add-hook 'org-mode-hook 'turn-on-font-lock) ; not needed when global-font-lock-mode is on
-(global-set-key "\C-cl" 'org-store-link)
-(global-set-key "\C-ca" 'org-agenda)
-(global-set-key "\C-cb" 'org-iswitchb)
 
 ;;;; ___________________________________________________________________________
 ;;;; ____ * General
@@ -56,8 +42,6 @@
                ""
              (concat "    "
                      (nomis/point-etc-string)))))
-
-(define-key org-mode-map (kbd "C-c =") 'nomis/org/report-org-info)
 
 ;;;; ___________________________________________________________________________
 ;;;; ____ * Hiding and showing -- level across whole file
@@ -136,9 +120,6 @@ being displayed."
   (interactive)
   (nomis/org-show-only/cycle/impl -1))
 
-(define-key org-mode-map (kbd "H-M-.") 'nomis/org-show-only/cycle/more)
-(define-key org-mode-map (kbd "H-M-,") 'nomis/org-show-only/cycle/less)
-
 ;;;; ___________________________________________________________________________
 ;;;; ____ * Priorities
 
@@ -190,8 +171,6 @@ being displayed."
               (substring (symbol-name nomis/system-name)
                          1)
               ".org"))
-
-(define-key global-map "\C-cc" 'org-capture)
 
 ;;;; ___________________________________________________________________________
 ;;;; ____ * Navigation
@@ -267,9 +246,6 @@ subheading at this level in the next parent."
   (interactive)
   (nomis/-org-heading-same-level-with-extras/helper :forward))
 
-(define-key org-mode-map [remap org-forward-heading-same-level]
-  'nomis/org-forward-heading-same-level-with-extras)
-
 (defun nomis/org-backward-heading-same-level-with-extras ()
   "A replacement for `org-backward-heading-same-level`.
 Move backward one subheading at same level as this one.
@@ -278,12 +254,6 @@ If this is the first subheading within its parent, move to the last
 subheading at this level in the previous parent."
   (interactive)
   (nomis/-org-heading-same-level-with-extras/helper :backward))
-
-(define-key org-mode-map [remap org-backward-heading-same-level]
-  'nomis/org-backward-heading-same-level-with-extras)
-
-(define-key org-mode-map (kbd "M-.") 'org-open-at-point)
-(define-key org-mode-map (kbd "M-,") 'org-mark-ring-goto)
 
 ;;;; ___________________________________________________________________________
 ;;;; ____ * Stepping
@@ -400,11 +370,6 @@ subheading at this level in the previous parent."
   (interactive)
   (-nomis/org/step/impl -1 t))
 
-(define-key org-mode-map (kbd "H-]") 'nomis/org/step-forward)
-(define-key org-mode-map (kbd "H-[") 'nomis/org/step-backward)
-(define-key org-mode-map (kbd "H-M-]") 'nomis/org/step-forward/jumping-parent-allowed)
-(define-key org-mode-map (kbd "H-M-[") 'nomis/org/step-backward/jumping-parent-allowed)
-
 ;;;; ___________________________________________________________________________
 ;;;; ____ * Refiling
 
@@ -478,18 +443,6 @@ subheading at this level in the previous parent."
      (point-min) (point-max) '(mouse-face t)))
   (add-hook 'org-finalize-agenda-hook
             'nomis/org-finalize-agenda-hook))
-
-(progn
-  (defun nomis/setup-org-keys ()
-    ;; I don't like RETURN in org agenda giving ORG-AGENDA-SWITCH-TO.
-    ;; I prefer this:
-    (org-defkey org-agenda-mode-map "\C-m" 'org-agenda-show-and-scroll-up)
-    ;; Stuff that got changed when I upgraded to Emacs 26.1 -- this is mad!
-    (org-defkey org-mode-map (kbd "M-S-<down>") 'org-move-subtree-down)
-    (org-defkey org-mode-map (kbd "M-S-<up>")   'org-move-subtree-up))
-  (add-hook 'org-mode-hook 'nomis/setup-org-keys))
-
-(add-hook 'org-mode-hook 'nomis/turn-on-idle-highlight-mode)
 
 ;;;; ___________________________________________________________________________
 ;;;; ____ * Fontify code in code blocks
@@ -573,35 +526,6 @@ subheading at this level in the previous parent."
                    (org-element-property :raw-link object)))))))
 
 (add-hook 'post-command-hook 'nomis/org-show-link-destination)
-
-
-;;;; ___________________________________________________________________________
-;;;; ____ * Display -- blog faces
-
-(defconst nomis/org-blog-faces
-  '((org-level-1 . (:inherit outline-1 :weight bold :height 1.3
-                             :box (:line-width 2
-                                               :color "grey75"
-                                               :style released-button)))
-    (org-level-2 . (:inherit outline-2 :weight bold :height 1.2))
-    (org-level-3 . (:inherit outline-3 :weight bold :height 1.1))
-    (org-level-7 . nil)))
-
-(defvar nomis/org-blog-stuff-on-p nil)
-
-(defun nomis/toggle-org-blog-stuff ()
-  (interactive)
-  (make-local-variable 'nomis/org-blog-stuff-on-p)
-  (make-local-variable 'face-remapping-alist)
-  (setq face-remapping-alist
-        (if nomis/org-blog-stuff-on-p
-            (let* ((org-blog-faces-keys (-map 'car nomis/org-blog-faces)))
-              (-remove (lambda (x) (memq (car x) org-blog-faces-keys))
-                       face-remapping-alist))
-          (append nomis/org-blog-faces
-                  face-remapping-alist)))
-  (setq nomis/org-blog-stuff-on-p
-        (not nomis/org-blog-stuff-on-p)))
 
 
 ;;;; ___________________________________________________________________________
