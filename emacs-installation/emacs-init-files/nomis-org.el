@@ -482,9 +482,36 @@ subheading at this level in the previous parent."
 ;;;; ___________________________________________________________________________
 ;;;; ____ * orgstruct
 
-;; To use, enable orgstruct-mode or orgstruct++-mode
+;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+;;;; ____ orgstruct-mode general
+
+;;;; To use, enable orgstruct-mode or orgstruct++-mode
 
 (setq orgstruct-heading-prefix-regexp ";+ *\\(?:_+ \\)?")
+
+;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+;;;; ____ orgstruct-mode display
+
+(defvar nomis/orgstruct-display-table nil
+  ;; Approach copied from `org-display-table` stuff.
+  "The display table for orgstruct-mode when `org-ellipsis' is non-nil.")
+
+(defun nomis/orgstruct-set-up-display-table ()
+  (if (not (member org-version
+                   '("9.1.9")))
+      (progn
+        (nomis/grab-user-attention/low)
+        (message "•••• You need to check `nomis/orgstruct-set-up-display-table` for this version of Org mode."))
+    (when (and (stringp org-ellipsis) (not (equal "" org-ellipsis)))
+      (unless nomis/orgstruct-display-table
+        (setq nomis/orgstruct-display-table (make-display-table)))
+      (set-display-table-slot
+       nomis/orgstruct-display-table 4
+       (vconcat (mapcar (lambda (c) (make-glyph-code c 'org-ellipsis))
+		        org-ellipsis)))
+      (setq buffer-display-table nomis/orgstruct-display-table))))
+
+(add-hook 'orgstruct-mode-hook 'nomis/orgstruct-set-up-display-table)
 
 
 ;;;; ___________________________________________________________________________
