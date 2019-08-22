@@ -22,7 +22,7 @@
 (global-set-key "\C-ca" 'org-agenda)
 (global-set-key "\C-cb" 'org-iswitchb)
 
-(define-key global-map "\C-cc" 'org-capture)
+(org-defkey global-map "\C-cc" 'org-capture)
 
 ;;;; ___________________________________________________________________________
 ;;;; ____ * Hooks
@@ -32,26 +32,26 @@
 ;;;; ___________________________________________________________________________
 ;;;; ____ * Reporting
 
-(define-key org-mode-map (kbd "C-c =") 'nomis/org/report-org-info)
+(org-defkey org-mode-map (kbd "C-c =") 'nomis/org/report-org-info)
 
 ;;;; ___________________________________________________________________________
 ;;;; ____ * Navigation and cycling
 
-(define-key org-mode-map (kbd "M-.") 'org-open-at-point)
-(define-key org-mode-map (kbd "M-,") 'org-mark-ring-goto)
+(org-defkey org-mode-map (kbd "M-.") 'org-open-at-point)
+(org-defkey org-mode-map (kbd "M-,") 'org-mark-ring-goto)
 
-(define-key org-mode-map (kbd "H-M-.") 'nomis/org-show-only/cycle/more)
-(define-key org-mode-map (kbd "H-M-,") 'nomis/org-show-only/cycle/less)
+(org-defkey org-mode-map (kbd "H-M-.") 'nomis/org-show-only/cycle/more)
+(org-defkey org-mode-map (kbd "H-M-,") 'nomis/org-show-only/cycle/less)
 
-(define-key org-mode-map [remap org-forward-heading-same-level]
-  'nomis/org-forward-heading-same-level-with-extras)
-(define-key org-mode-map [remap org-backward-heading-same-level]
-  'nomis/org-backward-heading-same-level-with-extras)
+(org-defkey org-mode-map [remap org-forward-heading-same-level]
+            'nomis/org-forward-heading-same-level-with-extras)
+(org-defkey org-mode-map [remap org-backward-heading-same-level]
+            'nomis/org-backward-heading-same-level-with-extras)
 
-(define-key org-mode-map (kbd "H-]") 'nomis/org/step-forward)
-(define-key org-mode-map (kbd "H-[") 'nomis/org/step-backward)
-(define-key org-mode-map (kbd "H-M-]") 'nomis/org/step-forward/jumping-parent-allowed)
-(define-key org-mode-map (kbd "H-M-[") 'nomis/org/step-backward/jumping-parent-allowed)
+(org-defkey org-mode-map (kbd "H-]") 'nomis/org/step-forward)
+(org-defkey org-mode-map (kbd "H-[") 'nomis/org/step-backward)
+(org-defkey org-mode-map (kbd "H-M-]") 'nomis/org/step-forward/jumping-parent-allowed)
+(org-defkey org-mode-map (kbd "H-M-[") 'nomis/org/step-backward/jumping-parent-allowed)
 
 ;;;; ___________________________________________________________________________
 ;;;; ____ * Agenda
