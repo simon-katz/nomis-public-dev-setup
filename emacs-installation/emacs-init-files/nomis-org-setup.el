@@ -3,9 +3,28 @@
 ;;;; ___________________________________________________________________________
 ;;;; ____ * Require things
 
-(progn
-  (setq org-replace-disputed-keys t) ; must be done before requiring org
-  (require 'nomis-org))
+(require 'cl)
+
+(progn ; require nomis-org
+  (cl-flet
+      ((do-stuff-that-must-be-done-before-requiring-org
+        ()
+        (setq org-replace-disputed-keys t)
+        (setq org-disputed-keys
+              '(([(shift up)]               . [(meta p)])
+                ([(shift down)]             . [(meta n)])
+                ;; M-- was being taken away from `negative-argument`, so
+                ;; change the following from the default value of
+                ;; `org-disputed-keys`.
+                ;; I'd really like to have no keys on the RHS, but I think
+                ;; that's not possible. So add alt, hyper and control to get
+                ;; unlikely-to-be-wanted key chords.
+                ([(shift left)]             . [(alt hyper control meta -)])
+                ([(shift right)]            . [(alt hyper control meta +)])
+                ([(control shift right)]    . [(alt hyper control meta shift +)])
+                ([(control shift left)]     . [(alt hyper control meta shift -)])))))
+    (do-stuff-that-must-be-done-before-requiring-org)
+    (require 'nomis-org)))
 
 (require 'nomis-org-personal)
 
