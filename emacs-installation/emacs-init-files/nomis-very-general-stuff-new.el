@@ -42,4 +42,17 @@ This allows you to temporarily modify read-only buffers too."
 
 ;;;; ___________________________________________________________________________
 
+(define-key global-map (kbd "H-0") 'digit-argument)
+(define-key global-map (kbd "H-1") 'digit-argument)
+(define-key global-map (kbd "H-2") 'digit-argument)
+(define-key global-map (kbd "H-3") 'digit-argument)
+(define-key global-map (kbd "H-4") 'digit-argument)
+(define-key global-map (kbd "H-5") 'digit-argument)
+(define-key global-map (kbd "H-6") 'digit-argument)
+(define-key global-map (kbd "H-7") 'digit-argument)
+(define-key global-map (kbd "H-8") 'digit-argument)
+(define-key global-map (kbd "H-9") 'digit-argument)
+
+;;;; ___________________________________________________________________________
+
 (provide 'nomis-very-general-stuff-new)
