@@ -489,6 +489,8 @@ subheading at this level in the previous parent."
 
 (setq orgstruct-heading-prefix-regexp ";+ *\\(?:_+ \\)?")
 
+(add-hook 'prog-mode-hook 'orgstruct-mode)
+
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ;;;; ____ orgstruct-mode display
 
