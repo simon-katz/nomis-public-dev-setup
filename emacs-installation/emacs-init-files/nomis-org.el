@@ -48,10 +48,16 @@
 (defun nomis/org/current-level ()
   (nth 1 (org-heading-components)))
 
-(defun nomis/org/current-level/msg ()
+(defun nomis/org/report-org-info ()
   (interactive)
-  (message "Current level = %s"
-           (nomis/org/current-level)))
+  (message "Current level = %s%s"
+           (nomis/org/current-level)
+           (if (not (fboundp 'nomis/point-etc-string))
+               ""
+             (concat "    "
+                     (nomis/point-etc-string)))))
+
+(define-key org-mode-map (kbd "C-c =") 'nomis/org/report-org-info)
 
 ;;;; ___________________________________________________________________________
 ;;;; ____ * Hiding and showing -- level across whole file
