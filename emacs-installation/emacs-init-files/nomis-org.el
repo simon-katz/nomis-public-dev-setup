@@ -43,6 +43,17 @@
                org-link-frame-setup)))
 
 ;;;; ___________________________________________________________________________
+;;;; ____ * Towards a nicer API
+
+(defun nomis/org/current-level ()
+  (nth 1 (org-heading-components)))
+
+(defun nomis/org/current-level/msg ()
+  (interactive)
+  (message "Current level = %s"
+           (nomis/org/current-level)))
+
+;;;; ___________________________________________________________________________
 ;;;; ____ * Hiding and showing -- level across whole file
 
 (defun nomis/org/show-all-to-level (&optional n)
@@ -51,7 +62,7 @@ being displayed."
   (interactive "^p")
   (save-excursion
     (org-map-entries (lambda ()
-                       (let* ((level (nth 1 (org-heading-components))))
+                       (let* ((level (nomis/org/current-level)))
                          (when (= level 1)
                            (outline-show-children (1- n)))))
                      t
