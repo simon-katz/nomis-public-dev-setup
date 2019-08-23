@@ -84,7 +84,7 @@ And `org-reveal` is interactive, so, yes, there are times when
 
 Details:
 
-If N is positive, expand to show N levels. Any headlines at level N
+If N is not negative, expand to show N levels. Any headlines at level N
 will be collapsed.
 
 If N is negative, expand to show (abs N) levels, but do not hide anything
@@ -100,25 +100,35 @@ that is already being displayed."
 ;;;; ____ ** show-children/incremental
 
 (nomis/define-repeated-command-stuff
- -nomis/org/define-show-children-command
- -nomis/org/show-children/with-stuff
- -nomis/org/show-children/incremental/functions
- (max 0 (+ %previous-value% %in-value%)))
+    -nomis/org/show-children/incremental
+  -nomis/org/show-children/define-command
+  -nomis/org/show-children/incremental/with-stuff
+  -nomis/org/show-children/incremental/with-stuff/set-0
+  -nomis/org/show-children/incremental/functions
+  -nomis/org/show-children/incremental/previous-values
+  (let* ((v (+ %previous-value% %in-value%)))
+    (when (< v 0) (nomis/grab-user-attention/low))
+    (max 0 v)))
 
-(-nomis/org/define-show-children-command
+(defun nomis/org/show-children/set-0 ()
+  (interactive)
+  (-nomis/org/show-children/incremental/with-stuff/set-0
+    (nomis/org/show-children 0)))
+
+(-nomis/org/show-children/define-command
     nomis/org/show-children/incremental/less
     ()
   (interactive)
-  (-nomis/org/show-children/with-stuff
+  (-nomis/org/show-children/incremental/with-stuff
       0
       -1
     (nomis/org/show-children %value%)))
 
-(-nomis/org/define-show-children-command
+(-nomis/org/show-children/define-command
     nomis/org/show-children/incremental/more
     ()
   (interactive)
-  (-nomis/org/show-children/with-stuff
+  (-nomis/org/show-children/incremental/with-stuff
       1
       1
     (nomis/org/show-children %value%)))
@@ -142,31 +152,41 @@ But see ++about-uses-of-org-reveal++"
 ;;;; ____ ** show-children-from-root/incremental
 
 (nomis/define-repeated-command-stuff
- -nomis/org/define-show-children-from-root-command
- -nomis/org/show-children-from-root/with-stuff
- -nomis/org/show-children-from-root/incremental/functions
- (max 0 (+ %previous-value% %in-value%)))
+    -nomis/org/show-children-from-root/incremental
+  -nomis/org/show-children-from-root/define-command
+  -nomis/org/show-children-from-root/incremental/with-stuff
+  -nomis/org/show-children-from-root/incremental/with-stuff/set-0
+  -nomis/org/show-children-from-root/incremental/functions
+  -nomis/org/show-children-from-root/incremental/previous-values
+  (let* ((v (+ %previous-value% %in-value%)))
+    (when (< v 0) (nomis/grab-user-attention/low))
+    (max 0 v)))
 
-(-nomis/org/define-show-children-from-root-command
+(defun nomis/org/show-children-from-root/set-0 ()
+  (interactive)
+  (-nomis/org/show-children-from-root/incremental/with-stuff/set-0
+    (nomis/org/show-children-from-root 0)))
+
+(-nomis/org/show-children-from-root/define-command
     nomis/org/show-children-from-root/incremental/less
     ()
   (interactive)
-  (-nomis/org/show-children-from-root/with-stuff
+  (-nomis/org/show-children-from-root/incremental/with-stuff
       0
       -1
     (nomis/org/show-children-from-root %value%)))
 
-(-nomis/org/define-show-children-from-root-command
+(-nomis/org/show-children-from-root/define-command
     nomis/org/show-children-from-root/incremental/more
     ()
   (interactive)
-  (-nomis/org/show-children-from-root/with-stuff
+  (-nomis/org/show-children-from-root/incremental/with-stuff
       1
       1
     (nomis/org/show-children-from-root %value%)))
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-;;;; ____ * show-children-from-all-roots
+;;;; ____ ** show-children-from-all-roots
 
 (defun nomis/org/show-children-from-all-roots (n)
   "Call `nomis/org/show-children` on all root headlines, with N as
@@ -185,25 +205,35 @@ But see ++about-uses-of-org-reveal++"
 ;;;; ____ ** show-children-from-all-roots/incremental
 
 (nomis/define-repeated-command-stuff
- -nomis/org/define-show-children-from-all-roots-command
- -nomis/org/show-children-from-all-roots/with-stuff
- -nomis/org/show-children-from-all-roots/incremental/functions
- (max 0 (+ %previous-value% %in-value%)))
+    -nomis/org/show-children-from-all-roots/incremental
+  -nomis/org/show-children-from-all-roots/define-command
+  -nomis/org/show-children-from-all-roots/incremental/with-stuff
+  -nomis/org/show-children-from-all-roots/incremental/with-stuff/set-0
+  -nomis/org/show-children-from-all-roots/incremental/functions
+  -nomis/org/show-children-from-all-roots/incremental/previous-values
+  (let* ((v (+ %previous-value% %in-value%)))
+    (when (< v 0) (nomis/grab-user-attention/low))
+    (max 0 v)))
 
-(-nomis/org/define-show-children-from-all-roots-command
+(defun nomis/org/show-children-from-all-roots/set-0 ()
+  (interactive)
+  (-nomis/org/show-children-from-all-roots/incremental/with-stuff/set-0
+    (nomis/org/show-children-from-all-roots 0)))
+
+(-nomis/org/show-children-from-all-roots/define-command
     nomis/org/show-children-from-all-roots/incremental/less
     ()
   (interactive)
-  (-nomis/org/show-children-from-all-roots/with-stuff
+  (-nomis/org/show-children-from-all-roots/incremental/with-stuff
       0
       -1
     (nomis/org/show-children-from-all-roots %value%)))
 
-(-nomis/org/define-show-children-from-all-roots-command
+(-nomis/org/show-children-from-all-roots/define-command
     nomis/org/show-children-from-all-roots/incremental/more
     ()
   (interactive)
-  (-nomis/org/show-children-from-all-roots/with-stuff
+  (-nomis/org/show-children-from-all-roots/incremental/with-stuff
       1
       1
     (nomis/org/show-children-from-all-roots %value%)))
@@ -212,7 +242,11 @@ But see ++about-uses-of-org-reveal++"
 ;;;; ____ * Hiding and showing -- cycling
 
 (defun -nomis/org-show-only (detail)
-  (org-overview)
+  (case 1
+    (1 (org-overview))
+    (2 (save-excursion
+         (nomis/org/goto-root)
+         (-nomis/org/collapse))))
   (org-show-set-visibility detail))
 
 (defvar -nomis/org-show-only/cycle/visibility-spans
@@ -228,7 +262,7 @@ But see ++about-uses-of-org-reveal++"
 (defvar -nomis/org-show-only/cycle/previous-action-index -1)
 
 (defun -nomis/org-show-only/cycle/next-position (n)
-  ;; TODO Instead of `previous-place`, use the last-command approach.
+  ;; TODO Use the new approach.
   (let* ((current-place (list (current-buffer)
                               (point)))
          (previous-place -nomis/org-show-only/cycle/previous-place))

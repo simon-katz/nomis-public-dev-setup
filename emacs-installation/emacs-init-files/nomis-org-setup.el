@@ -56,47 +56,55 @@
 ;;;; ___________________________________________________________________________
 ;;;; ____ * Navigation and cycling
 
+;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+;;;; ____ ** Following links
+
 (org-defkey org-mode-map (kbd "M-.") 'org-open-at-point)
 (org-defkey org-mode-map (kbd "M-,") 'org-mark-ring-goto)
 
-(org-defkey org-mode-map
-            (kbd "H-q H-'")
-            'nomis/org/show-children/incremental/less)
-(org-defkey org-mode-map
-            (kbd "H-q H-\\")
-            'nomis/org/show-children/incremental/more)
+;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+;;;; ____ ** "Visibility" -- the org-show-only stuff (which is badly named)
 
-(org-defkey org-mode-map
-            (kbd "H-q H-[")
-            'nomis/org/show-children-from-root/incremental/less)
-(org-defkey org-mode-map
-            (kbd "H-q H-]")
-            'nomis/org/show-children-from-root/incremental/more)
+(org-defkey org-mode-map (kbd "H-C-\\") 'nomis/org-show-only/cycle/more)
+(org-defkey org-mode-map (kbd "H-C-'") 'nomis/org-show-only/cycle/less)
 
-(org-defkey org-mode-map
-            (kbd "H-q H--")
-            'nomis/org/show-children-from-all-roots/incremental/less)
-(org-defkey org-mode-map
-            (kbd "H-q H-=")
-            'nomis/org/show-children-from-all-roots/incremental/more)
+;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+;;;; ____ ** Expand/collapse
 
-(org-defkey org-mode-map (kbd "H-M-.") 'nomis/org-show-only/cycle/more)
-(org-defkey org-mode-map (kbd "H-M-,") 'nomis/org-show-only/cycle/less)
+(org-defkey org-mode-map (kbd "H-M-'")  'nomis/org/show-children/set-0)
+;; (org-defkey org-mode-map (kbd "H-M-\\") 'nomis/org/show-children/...)
+(org-defkey org-mode-map (kbd "H-M-[")  'nomis/org/show-children-from-root/set-0)
+;; (org-defkey org-mode-map (kbd "H-M-]")  'nomis/org/show-children-from-root/...)
+(org-defkey org-mode-map (kbd "H-M--")  'nomis/org/show-children-from-all-roots/set-0)
+;; (org-defkey org-mode-map (kbd "H-M-=")  'nomis/org/show-children-from-all-roots/...)
 
-(org-defkey org-mode-map [remap org-forward-heading-same-level]
-            'nomis/org-forward-heading-same-level-with-extras)
-(org-defkey org-mode-map [remap org-backward-heading-same-level]
-            'nomis/org-backward-heading-same-level-with-extras)
+(org-defkey org-mode-map (kbd "H-'")  'nomis/org/show-children/incremental/less)
+(org-defkey org-mode-map (kbd "H-\\") 'nomis/org/show-children/incremental/more)
+(org-defkey org-mode-map (kbd "H-[")  'nomis/org/show-children-from-root/incremental/less)
+(org-defkey org-mode-map (kbd "H-]")  'nomis/org/show-children-from-root/incremental/more)
+(org-defkey org-mode-map (kbd "H--")  'nomis/org/show-children-from-all-roots/incremental/less)
+(org-defkey org-mode-map (kbd "H-=")  'nomis/org/show-children-from-all-roots/incremental/more)
 
-(org-defkey org-mode-map (kbd "H-]") 'nomis/org/step-forward)
-(org-defkey org-mode-map (kbd "H-[") 'nomis/org/step-backward)
-(org-defkey org-mode-map (kbd "H-M-]") 'nomis/org/step-forward/jumping-parent-allowed)
-(org-defkey org-mode-map (kbd "H-M-[") 'nomis/org/step-backward/jumping-parent-allowed)
+;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+;;;; ____ ** Movement
+
+(org-defkey org-mode-map (kbd "H-.") 'org-forward-heading-same-level) ; also C-c C-f
+(org-defkey org-mode-map (kbd "H-,") 'org-backward-heading-same-level) ; also C-c C-b
+(org-defkey org-mode-map (kbd "H-C-.") 'nomis/org-forward-heading-same-level-with-extras)
+(org-defkey org-mode-map (kbd "H-C-,") 'nomis/org-backward-heading-same-level-with-extras)
+
+;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+;;;; ____ ** Movement + expand/collapse
+
+(org-defkey org-mode-map (kbd "H-M-.") 'nomis/org/step-forward)
+(org-defkey org-mode-map (kbd "H-M-,") 'nomis/org/step-backward)
+(org-defkey org-mode-map (kbd "H-C-M-.") 'nomis/org/step-forward/jumping-parent-allowed)
+(org-defkey org-mode-map (kbd "H-C-M-,") 'nomis/org/step-backward/jumping-parent-allowed)
 
 ;;;; ___________________________________________________________________________
 ;;;; ____ * Agenda
 
-(progn
+(progn ; TODO This is not only agenda stuff (contrary to the comment above), and this does not need to be done in a hook (or else everything should go in a hook)
   (defun nomis/setup-org-keys ()
     ;; I don't like RETURN in org agenda giving ORG-AGENDA-SWITCH-TO.
     ;; I prefer this:
