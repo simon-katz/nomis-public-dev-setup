@@ -55,4 +55,10 @@ This allows you to temporarily modify read-only buffers too."
 
 ;;;; ___________________________________________________________________________
 
+;;;; I have lots of H-<something> key bindings. This lets me recenter without
+;;;; much hand movement when using those commands. (C-l is the default.)
+(define-key global-map (kbd "H-l") 'recenter-top-bottom)
+
+;;;; ___________________________________________________________________________
+
 (provide 'nomis-very-general-stuff-new)
