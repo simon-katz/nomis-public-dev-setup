@@ -59,6 +59,27 @@
 (org-defkey org-mode-map (kbd "M-.") 'org-open-at-point)
 (org-defkey org-mode-map (kbd "M-,") 'org-mark-ring-goto)
 
+(org-defkey org-mode-map
+            (kbd "H-q H-'")
+            'nomis/org/show-children/incremental/less)
+(org-defkey org-mode-map
+            (kbd "H-q H-\\")
+            'nomis/org/show-children/incremental/more)
+
+(org-defkey org-mode-map
+            (kbd "H-q H-[")
+            'nomis/org/show-children-from-root/incremental/less)
+(org-defkey org-mode-map
+            (kbd "H-q H-]")
+            'nomis/org/show-children-from-root/incremental/more)
+
+(org-defkey org-mode-map
+            (kbd "H-q H--")
+            'nomis/org/show-children-from-all-roots/incremental/less)
+(org-defkey org-mode-map
+            (kbd "H-q H-=")
+            'nomis/org/show-children-from-all-roots/incremental/more)
+
 (org-defkey org-mode-map (kbd "H-M-.") 'nomis/org-show-only/cycle/more)
 (org-defkey org-mode-map (kbd "H-M-,") 'nomis/org-show-only/cycle/less)
 

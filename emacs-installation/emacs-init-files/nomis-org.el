@@ -9,6 +9,7 @@
 (require 'org-bullets)
 (require 'cl)
 (require 'dash)
+(require 'nomis-repeated-commands)
 
 ;;;; ___________________________________________________________________________
 ;;;; ____ * General
@@ -31,6 +32,38 @@
 ;;;; ___________________________________________________________________________
 ;;;; ____ * Towards a nicer API
 
+;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+;;;; ____ ** Last command
+
+(defun nomis/org/last-command ()
+  (or (bound-and-true-p *nomis/smex/last-command*)
+      last-command))
+
+;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+;;;; ____ ** Misc
+
+(defconst ++about-uses-of-org-reveal++
+  "Without certain ueses of `org-reveal`, point gets automatically reset
+to a visible point.
+This seems to happen in idle time.
+
+I'm sure I had point being hidden before in some situation --
+maybe not this situation -- and later revealing would take me
+back to where I had previously been.
+
+And `org-reveal` is interactive, so, yes, there are times when
+  point is not visible.")
+
+(defun nomis/org/map-roots (fun &optional match scope &rest skip)
+  (apply #'org-map-entries
+         (lambda ()
+           (let* ((level (nomis/org/current-level)))
+             (when (= level 1)
+               (funcall fun))))
+         match
+         scope
+         skip))
+
 (defun nomis/org/current-level ()
   (nth 1 (org-heading-components)))
 
@@ -43,20 +76,137 @@
              (concat "    "
                      (nomis/point-etc-string)))))
 
-;;;; ___________________________________________________________________________
-;;;; ____ * Hiding and showing -- level across whole file
+;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+;;;; ____ ** show-children
 
-(defun nomis/org/show-all-to-level (&optional n)
-  "Expand all roots to show n levels. Do not hide anything that is already
-being displayed."
+(defun nomis/org/show-children (n)
+  "Expand current headline to n levels.
+
+Details:
+
+If N is positive, expand to show N levels. Any headlines at level N
+will be collapsed.
+
+If N is negative, expand to show (abs N) levels, but do not hide anything
+that is already being displayed."
+  (interactive "^p")
+  (let* ((collapse? (>= n 0))
+         (n (abs n)))
+    (when collapse?
+      (-nomis/org/collapse))
+    (outline-show-children n)))
+
+;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+;;;; ____ ** show-children/incremental
+
+(nomis/define-repeated-command-stuff
+ -nomis/org/define-show-children-command
+ -nomis/org/show-children/with-stuff
+ -nomis/org/show-children/incremental/functions
+ (max 0 (+ %previous-value% %in-value%)))
+
+(-nomis/org/define-show-children-command
+    nomis/org/show-children/incremental/less
+    ()
+  (interactive)
+  (-nomis/org/show-children/with-stuff
+      0
+      -1
+    (nomis/org/show-children %value%)))
+
+(-nomis/org/define-show-children-command
+    nomis/org/show-children/incremental/more
+    ()
+  (interactive)
+  (-nomis/org/show-children/with-stuff
+      1
+      1
+    (nomis/org/show-children %value%)))
+
+;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+;;;; ____ ** show-children-from-root
+
+(defun nomis/org/show-children-from-root (n)
+  (interactive "^p")
+  "Call `nomis/org/show-children` on the current root headline, with N as
+the parameter.
+When done, call `org-reveal` so that the current point is shown.
+But see ++about-uses-of-org-reveal++"
+  (save-excursion
+    (nomis/org/goto-root)
+    (nomis/org/show-children n))
+  (org-reveal) ; see ++about-uses-of-org-reveal++
+  )
+
+;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+;;;; ____ ** show-children-from-root/incremental
+
+(nomis/define-repeated-command-stuff
+ -nomis/org/define-show-children-from-root-command
+ -nomis/org/show-children-from-root/with-stuff
+ -nomis/org/show-children-from-root/incremental/functions
+ (max 0 (+ %previous-value% %in-value%)))
+
+(-nomis/org/define-show-children-from-root-command
+    nomis/org/show-children-from-root/incremental/less
+    ()
+  (interactive)
+  (-nomis/org/show-children-from-root/with-stuff
+      0
+      -1
+    (nomis/org/show-children-from-root %value%)))
+
+(-nomis/org/define-show-children-from-root-command
+    nomis/org/show-children-from-root/incremental/more
+    ()
+  (interactive)
+  (-nomis/org/show-children-from-root/with-stuff
+      1
+      1
+    (nomis/org/show-children-from-root %value%)))
+
+;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+;;;; ____ * show-children-from-all-roots
+
+(defun nomis/org/show-children-from-all-roots (n)
+  "Call `nomis/org/show-children` on all root headlines, with N as
+the parameter.
+When done, call `org-reveal` so that the current point is shown.
+But see ++about-uses-of-org-reveal++"
   (interactive "^p")
   (save-excursion
-    (org-map-entries (lambda ()
-                       (let* ((level (nomis/org/current-level)))
-                         (when (= level 1)
-                           (outline-show-children (1- n)))))
-                     t
-                     'file)))
+    (nomis/org/map-roots (lambda () (nomis/org/show-children n))
+                         t
+                         'file))
+  (org-reveal) ; see ++about-uses-of-org-reveal++
+  )
+
+;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+;;;; ____ ** show-children-from-all-roots/incremental
+
+(nomis/define-repeated-command-stuff
+ -nomis/org/define-show-children-from-all-roots-command
+ -nomis/org/show-children-from-all-roots/with-stuff
+ -nomis/org/show-children-from-all-roots/incremental/functions
+ (max 0 (+ %previous-value% %in-value%)))
+
+(-nomis/org/define-show-children-from-all-roots-command
+    nomis/org/show-children-from-all-roots/incremental/less
+    ()
+  (interactive)
+  (-nomis/org/show-children-from-all-roots/with-stuff
+      0
+      -1
+    (nomis/org/show-children-from-all-roots %value%)))
+
+(-nomis/org/define-show-children-from-all-roots-command
+    nomis/org/show-children-from-all-roots/incremental/more
+    ()
+  (interactive)
+  (-nomis/org/show-children-from-all-roots/with-stuff
+      1
+      1
+    (nomis/org/show-children-from-all-roots %value%)))
 
 ;;;; ___________________________________________________________________________
 ;;;; ____ * Hiding and showing -- cycling
@@ -78,6 +228,7 @@ being displayed."
 (defvar -nomis/org-show-only/cycle/previous-action-index -1)
 
 (defun -nomis/org-show-only/cycle/next-position (n)
+  ;; TODO Instead of `previous-place`, use the last-command approach.
   (let* ((current-place (list (current-buffer)
                               (point)))
          (previous-place -nomis/org-show-only/cycle/previous-place))
@@ -294,7 +445,7 @@ subheading at this level in the previous parent."
   (let* ((direction (if (< n 0) :backward :forward)))
     (cl-flet* ((previous-command-was-a-nomis-org-step?
                 ()
-                (member last-command -nomis/org/step/functions))
+                (member (nomis/org/last-command) -nomis/org/step/functions))
                (collapse-already-attempted?
                 ()
                 (member -nomis/org/step/previous-state
@@ -480,7 +631,7 @@ subheading at this level in the previous parent."
       (set-display-table-slot
        nomis/orgstruct-display-table 4
        (vconcat (mapcar (lambda (c) (make-glyph-code c 'org-ellipsis))
-		        org-ellipsis)))
+                        org-ellipsis)))
       (setq buffer-display-table nomis/orgstruct-display-table))))
 
 (add-hook 'orgstruct-mode-hook 'nomis/orgstruct-set-up-display-table)
