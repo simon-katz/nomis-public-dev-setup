@@ -303,15 +303,39 @@
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-(defmethod nomis/symbol-prefix-chars ((major-mode (eql emacs-lisp-mode)))
+(defconst nomis/symbol-prefix-chars/emacs-lisp
   "'`#,")
+
+(defconst nomis/symbol-body-chars/emacs-lisp
+  ;; Note the position of the "-" at the beginning. So when augmenting this,
+  ;; you must add at the end (otherwise you will introduce a range when creating
+  ;; regexps using `nomis/rx/make-char-match-regexp/broken`).
+  ;; Horrible.
+  "-[:alnum:]$&*+_<>/'.=?^!@~%")
+
+;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+(defmethod nomis/symbol-prefix-chars ((major-mode (eql emacs-lisp-mode)))
+  nomis/symbol-prefix-chars/emacs-lisp)
 
 (defmethod nomis/symbol-body-chars ((major-mode (eql emacs-lisp-mode)))
   ;; Note the position of the "-" at the beginning. So when augmenting this,
   ;; you must add at the end (otherwise you will introduce a range when creating
   ;; regexps using `nomis/rx/make-char-match-regexp/broken`).
   ;; Horrible.
-  "-[:alnum:]$&*+_<>/'.=?^!@~%")
+  nomis/symbol-body-chars/emacs-lisp)
+
+;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+(defmethod nomis/symbol-prefix-chars ((major-mode (eql inferior-emacs-lisp-mode)))
+  nomis/symbol-prefix-chars/emacs-lisp)
+
+(defmethod nomis/symbol-body-chars ((major-mode (eql inferior-emacs-lisp-mode)))
+  ;; Note the position of the "-" at the beginning. So when augmenting this,
+  ;; you must add at the end (otherwise you will introduce a range when creating
+  ;; regexps using `nomis/rx/make-char-match-regexp/broken`).
+  ;; Horrible.
+  nomis/symbol-body-chars/emacs-lisp)
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
