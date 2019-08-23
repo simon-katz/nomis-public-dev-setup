@@ -1,7 +1,7 @@
-;; Init stuff -- ido.
+;; Init stuff -- ido and smex
 
 ;;;; ___________________________________________________________________________
-;;;; ---- ido----
+;;;; ____ * ido
 
 ;;;; See https://www.emacswiki.org/emacs/InteractivelyDoThings
 
@@ -40,7 +40,7 @@
                       :foreground nil))
 
 ;;;; ___________________________________________________________________________
-;;;; ---- smex ----
+;;;; ____ * smex normal stuff
 
 ;;;; See https://www.emacswiki.org/emacs/Smex
 
@@ -63,5 +63,26 @@
 (global-set-key (kbd "C-c C-c M-x") 'execute-extended-command)
 
 ;;;; ___________________________________________________________________________
+;;;; ____ * smex -- Hack to allow overcoming of smex breaking `last-command`
+
+;;;;`last-command` doesn't work with smex. Sheesh!
+;;;; Here's a hack to allow that to be overcome.
+;;;; Use:
+;;;;     `(or (bound-and-true-p *nomis/smex/last-command*) last-command)`
+;;;;
+;;;; TODO Maybe also need to make this work with `smex-major-mode-commands`,
+;;;;      which you've never used.
+
+(defvar *nomis/smex/last-command* nil)
+
+(advice-add 'smex
+            :around
+            (lambda (orig-fun &rest args)
+              (let* ((*nomis/smex/last-command* last-command))
+                (apply orig-fun args)))
+            '((name . allow-overcoming-of-smex-blatting-last-command)))
+
+;;;; ___________________________________________________________________________
+;;;; ____ * End
 
 (provide 'nomis-ido-and-smex)
