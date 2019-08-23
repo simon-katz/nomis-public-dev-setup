@@ -268,6 +268,7 @@
 (define-nomis/hydra nomis/hs/adjust
   :name-as-string "Hide-show incremental"
   :key "H-q H-q"
+  :keymap hs-minor-mode-map
   :vars (nomis/hs/adjust/saved-level)
   :init-form    (progn
                   (setq nomis/hs/adjust/saved-level nomis/hs/adjust/level)
