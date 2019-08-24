@@ -42,18 +42,6 @@
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ;;;; ____ ** Misc
 
-(defconst ++about-uses-of-org-reveal++
-  "Without certain ueses of `org-reveal`, point gets automatically reset
-to a visible point.
-This seems to happen in idle time.
-
-I'm sure I had point being hidden before in some situation --
-maybe not this situation -- and later revealing would take me
-back to where I had previously been.
-
-And `org-reveal` is interactive, so, yes, there are times when
-  point is not visible.")
-
 (defun nomis/org/map-roots (fun &optional match scope &rest skip)
   (apply #'org-map-entries
          (lambda ()
@@ -66,6 +54,20 @@ And `org-reveal` is interactive, so, yes, there are times when
 
 (defun nomis/org/current-level ()
   (nth 1 (org-heading-components)))
+
+(defun nomis/org/n-levels-below-point ()
+  (let* ((current-level
+          (nomis/org/current-level))
+         (max-level-beneath
+          (let* ((sofar 0))
+            (org-map-entries (lambda (&rest _)
+                               (setq sofar (max (nomis/org/current-level)
+                                                sofar)))
+                             t
+                             'tree)
+            sofar)))
+    (- max-level-beneath
+       current-level)))
 
 (defun nomis/org/report-org-info ()
   (interactive)
@@ -101,8 +103,9 @@ that is already being displayed."
 
 (nomis/define-repeated-command-stuff
     -nomis/org/show-children/incremental
-  -nomis/org/show-children/incremental/with-stuff
-  -nomis/org/show-children/incremental/with-stuff/set-0
+  nomis/org/show-children
+  -nomis/org/show-children/incremental/with-stuff/incremental
+  -nomis/org/show-children/incremental/with-stuff/set
   -nomis/org/show-children/incremental/previous-values
   (let* ((v (+ %previous-value% %in-value%)))
     (when (< v 0) (nomis/grab-user-attention/low))
@@ -110,22 +113,15 @@ that is already being displayed."
 
 (defun nomis/org/show-children/set-0 ()
   (interactive)
-  (-nomis/org/show-children/incremental/with-stuff/set-0
-    (nomis/org/show-children 0)))
+  (-nomis/org/show-children/incremental/with-stuff/set 0))
 
 (defun nomis/org/show-children/incremental/less ()
   (interactive)
-  (-nomis/org/show-children/incremental/with-stuff
-      0
-      -1
-    (nomis/org/show-children %value%)))
+  (-nomis/org/show-children/incremental/with-stuff/incremental 0 -1))
 
 (defun nomis/org/show-children/incremental/more ()
   (interactive)
-  (-nomis/org/show-children/incremental/with-stuff
-      1
-      1
-    (nomis/org/show-children %value%)))
+  (-nomis/org/show-children/incremental/with-stuff/incremental 1 1))
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ;;;; ____ ** show-children-from-root
@@ -147,8 +143,9 @@ But see ++about-uses-of-org-reveal++"
 
 (nomis/define-repeated-command-stuff
     -nomis/org/show-children-from-root/incremental
-  -nomis/org/show-children-from-root/incremental/with-stuff
-  -nomis/org/show-children-from-root/incremental/with-stuff/set-0
+  nomis/org/show-children-from-root
+  -nomis/org/show-children-from-root/incremental/with-stuff/incremental
+  -nomis/org/show-children-from-root/incremental/with-stuff/set
   -nomis/org/show-children-from-root/incremental/previous-values
   (let* ((v (+ %previous-value% %in-value%)))
     (when (< v 0) (nomis/grab-user-attention/low))
@@ -156,22 +153,16 @@ But see ++about-uses-of-org-reveal++"
 
 (defun nomis/org/show-children-from-root/set-0 ()
   (interactive)
-  (-nomis/org/show-children-from-root/incremental/with-stuff/set-0
-    (nomis/org/show-children-from-root 0)))
+  (let* ((v 0))
+    (-nomis/org/show-children-from-root/incremental/with-stuff/set 0)))
 
 (defun nomis/org/show-children-from-root/incremental/less ()
   (interactive)
-  (-nomis/org/show-children-from-root/incremental/with-stuff
-      0
-      -1
-    (nomis/org/show-children-from-root %value%)))
+  (-nomis/org/show-children-from-root/incremental/with-stuff/incremental 0 -1))
 
 (defun nomis/org/show-children-from-root/incremental/more ()
   (interactive)
-  (-nomis/org/show-children-from-root/incremental/with-stuff
-      1
-      1
-    (nomis/org/show-children-from-root %value%)))
+  (-nomis/org/show-children-from-root/incremental/with-stuff/incremental 1 1))
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ;;;; ____ ** show-children-from-all-roots
@@ -194,8 +185,9 @@ But see ++about-uses-of-org-reveal++"
 
 (nomis/define-repeated-command-stuff
     -nomis/org/show-children-from-all-roots/incremental
-  -nomis/org/show-children-from-all-roots/incremental/with-stuff
-  -nomis/org/show-children-from-all-roots/incremental/with-stuff/set-0
+  nomis/org/show-children-from-all-roots
+  -nomis/org/show-children-from-all-roots/incremental/with-stuff/incremental
+  -nomis/org/show-children-from-all-roots/incremental/with-stuff/set
   -nomis/org/show-children-from-all-roots/incremental/previous-values
   (let* ((v (+ %previous-value% %in-value%)))
     (when (< v 0) (nomis/grab-user-attention/low))
@@ -203,22 +195,20 @@ But see ++about-uses-of-org-reveal++"
 
 (defun nomis/org/show-children-from-all-roots/set-0 ()
   (interactive)
-  (-nomis/org/show-children-from-all-roots/incremental/with-stuff/set-0
-    (nomis/org/show-children-from-all-roots 0)))
+  (let* ((v 0))
+    (-nomis/org/show-children-from-all-roots/incremental/with-stuff/set 0)))
 
 (defun nomis/org/show-children-from-all-roots/incremental/less ()
   (interactive)
-  (-nomis/org/show-children-from-all-roots/incremental/with-stuff
-      0
-      -1
-    (nomis/org/show-children-from-all-roots %value%)))
+  (-nomis/org/show-children-from-all-roots/incremental/with-stuff/incremental
+   0
+   -1))
 
 (defun nomis/org/show-children-from-all-roots/incremental/more ()
   (interactive)
-  (-nomis/org/show-children-from-all-roots/incremental/with-stuff
-      1
-      1
-    (nomis/org/show-children-from-all-roots %value%)))
+  (-nomis/org/show-children-from-all-roots/incremental/with-stuff/incremental
+   1
+   1))
 
 ;;;; ___________________________________________________________________________
 ;;;; ____ * Hiding and showing -- cycling

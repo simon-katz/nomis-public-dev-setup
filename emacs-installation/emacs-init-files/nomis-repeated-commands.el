@@ -3,19 +3,17 @@
 ;;;; ___________________________________________________________________________
 ;;;; ____ * TODO
 
+(defconst ++about-uses-of-org-reveal++
+  "Without certain ueses of `org-reveal`, point gets automatically reset
+to a visible point.
+This seems to happen in idle time.
 
-;;;; TODO Add commands for fully expanding. Use the following:
-;; (defun nomis/org/n-levels-below-point ()
-;;   (let* ((current-level (nomis/org/current-level))
-;;          (max-level-beneath (let* ((sofar 0))
-;;                               (org-map-entries (lambda (&rest _)
-;;                                                  (setq sofar (max (nomis/org/current-level)
-;;                                                                   sofar)))
-;;                                                t
-;;                                                'tree)
-;;                               sofar)))
-;;     (- max-level-beneath
-;;        current-level)))
+I'm sure I had point being hidden before in some situation --
+maybe not this situation -- and later revealing would take me
+back to where I had previously been.
+
+And `org-reveal` is interactive, so, yes, there are times when
+  point is not visible.")
 
 ;;;; TODO Sometimes things take a long time and a busy cursor would be useful.
 
@@ -44,8 +42,9 @@
 
 ;;;; TODO Use of `ht-find`: Can you just lookup by key?
 
-;;;; TODO Getting rid of old markers.
+;;;; TODO Getting rid of old markers: `(set-marker m1 nil)`.
 ;;;;      - When buffer closes.
+;;;;      - A time limit? (No, I don't think so.)
 ;;;;      - More? eg by time? by number for a buffer?
 
 ;;;; ___________________________________________________________________________
@@ -118,7 +117,7 @@
 (defun -nomis/drcs/do-the-biz (name
                                previous-values-ht
                                value-fun
-                               body-fun)
+                               fun-to-call-with-new-value)
   (let* ((current-place (list (point)
                               (current-buffer)))
          (previous-value (ht-get previous-values-ht
@@ -164,17 +163,15 @@
       ;; the hash table.
       (set-marker previous-marker nil))
     (prog1
-        (funcall body-fun new-value)
+        (funcall fun-to-call-with-new-value new-value)
       (if (featurep 'popup)
           (popup-tip (format "[%s]" new-value))
         (message "%s value = %s" name new-value)))))
 
-
-
-
 (cl-defmacro nomis/define-repeated-command-stuff (name
-                                                  with-stuff-name
-                                                  with-stuff-name/set-0
+                                                  fun-to-call-with-new-value
+                                                  with-stuff-name/incremental
+                                                  with-stuff-name/set
                                                   previous-values-var-name
                                                   next-value)
   (declare (indent 1))
@@ -182,37 +179,29 @@
 
      (defvar ,name nil) ; so that definition can be found -- and must provide a value for that to work!
 
-     ;; TODO Have an optional time limit.
-     ;; TODO Use markers. (Markers are = to positions. Can you use = for ht test?)
-     ;;      Remember `(set-marker m1 nil)` so things don't get slower and slower. -- and need to purge.
-     (setq ,previous-values-var-name (ht-create 'nomis/drcs/ht-test))
+     (defvar ,previous-values-var-name (ht-create 'nomis/drcs/ht-test))
 
-     (cl-defmacro ,with-stuff-name (initial-value
-                                    in-value
-                                    &body body)
-       (declare (indent 2))
-       `(progn
-          (-nomis/drcs/debug-message "________________________________________")
-          (-nomis/drcs/do-the-biz ',',name
-                                  ,',previous-values-var-name
-                                  (lambda (previous-value)
-                                    (if previous-value
-                                        (let* ((%in-value% ,in-value)
-                                               (%previous-value% previous-value))
-                                          ,',next-value)
-                                      ,initial-value))
-                                  (lambda (%value%) ,@body))))
+     (defun ,with-stuff-name/incremental (initial-value
+                                          in-value)
+       (-nomis/drcs/debug-message "________________________________________")
+       (-nomis/drcs/do-the-biz ',name
+                               ,previous-values-var-name
+                               (lambda (previous-value)
+                                 (if previous-value
+                                     (let* ((%in-value% in-value)
+                                            (%previous-value% previous-value))
+                                       ,next-value)
+                                   initial-value))
+                               ',fun-to-call-with-new-value))
 
-     (cl-defmacro ,with-stuff-name/set-0 (&body body)
-       (declare (indent 0))
+     (defun ,with-stuff-name/set (value)
        ;; TODO This is hacky. Need to update the previous-value thing.
        ;;      Some refactoring needed.
-       `(progn
-          (-nomis/drcs/debug-message "________________________________________")
-          (-nomis/drcs/do-the-biz ',',name
-                                  ,',previous-values-var-name
-                                  (lambda (_) 0)
-                                  (lambda (_) ,@body))))))
+       (-nomis/drcs/debug-message "________________________________________")
+       (-nomis/drcs/do-the-biz ',name
+                               ,previous-values-var-name
+                               (lambda (_) value)
+                               ',fun-to-call-with-new-value))))
 
 ;;;; ___________________________________________________________________________
 ;;;; * End
