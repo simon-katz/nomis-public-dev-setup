@@ -173,10 +173,8 @@
 
 
 (cl-defmacro nomis/define-repeated-command-stuff (name
-                                                  command-definer-name ; TODO No longer needed
                                                   with-stuff-name
                                                   with-stuff-name/set-0
-                                                  functions-var-name ; TODO No longer needed
                                                   previous-values-var-name
                                                   next-value)
   (declare (indent 1))
@@ -184,18 +182,10 @@
 
      (defvar ,name nil) ; so that definition can be found -- and must provide a value for that to work!
 
-     (defvar ,functions-var-name '())
-
      ;; TODO Have an optional time limit.
      ;; TODO Use markers. (Markers are = to positions. Can you use = for ht test?)
      ;;      Remember `(set-marker m1 nil)` so things don't get slower and slower. -- and need to purge.
      (setq ,previous-values-var-name (ht-create 'nomis/drcs/ht-test))
-
-     (cl-defmacro ,command-definer-name (name arglist &body body)
-       (declare (indent 2))
-       `(progn
-          (pushnew ',name ,',functions-var-name)
-          (defun ,name ,arglist ,@body)))
 
      (cl-defmacro ,with-stuff-name (initial-value
                                     in-value

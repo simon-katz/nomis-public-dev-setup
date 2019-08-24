@@ -101,10 +101,8 @@ that is already being displayed."
 
 (nomis/define-repeated-command-stuff
     -nomis/org/show-children/incremental
-  -nomis/org/show-children/define-command
   -nomis/org/show-children/incremental/with-stuff
   -nomis/org/show-children/incremental/with-stuff/set-0
-  -nomis/org/show-children/incremental/functions
   -nomis/org/show-children/incremental/previous-values
   (let* ((v (+ %previous-value% %in-value%)))
     (when (< v 0) (nomis/grab-user-attention/low))
@@ -115,18 +113,14 @@ that is already being displayed."
   (-nomis/org/show-children/incremental/with-stuff/set-0
     (nomis/org/show-children 0)))
 
-(-nomis/org/show-children/define-command
-    nomis/org/show-children/incremental/less
-    ()
+(defun nomis/org/show-children/incremental/less ()
   (interactive)
   (-nomis/org/show-children/incremental/with-stuff
       0
       -1
     (nomis/org/show-children %value%)))
 
-(-nomis/org/show-children/define-command
-    nomis/org/show-children/incremental/more
-    ()
+(defun nomis/org/show-children/incremental/more ()
   (interactive)
   (-nomis/org/show-children/incremental/with-stuff
       1
@@ -153,10 +147,8 @@ But see ++about-uses-of-org-reveal++"
 
 (nomis/define-repeated-command-stuff
     -nomis/org/show-children-from-root/incremental
-  -nomis/org/show-children-from-root/define-command
   -nomis/org/show-children-from-root/incremental/with-stuff
   -nomis/org/show-children-from-root/incremental/with-stuff/set-0
-  -nomis/org/show-children-from-root/incremental/functions
   -nomis/org/show-children-from-root/incremental/previous-values
   (let* ((v (+ %previous-value% %in-value%)))
     (when (< v 0) (nomis/grab-user-attention/low))
@@ -167,18 +159,14 @@ But see ++about-uses-of-org-reveal++"
   (-nomis/org/show-children-from-root/incremental/with-stuff/set-0
     (nomis/org/show-children-from-root 0)))
 
-(-nomis/org/show-children-from-root/define-command
-    nomis/org/show-children-from-root/incremental/less
-    ()
+(defun nomis/org/show-children-from-root/incremental/less ()
   (interactive)
   (-nomis/org/show-children-from-root/incremental/with-stuff
       0
       -1
     (nomis/org/show-children-from-root %value%)))
 
-(-nomis/org/show-children-from-root/define-command
-    nomis/org/show-children-from-root/incremental/more
-    ()
+(defun nomis/org/show-children-from-root/incremental/more ()
   (interactive)
   (-nomis/org/show-children-from-root/incremental/with-stuff
       1
@@ -206,10 +194,8 @@ But see ++about-uses-of-org-reveal++"
 
 (nomis/define-repeated-command-stuff
     -nomis/org/show-children-from-all-roots/incremental
-  -nomis/org/show-children-from-all-roots/define-command
   -nomis/org/show-children-from-all-roots/incremental/with-stuff
   -nomis/org/show-children-from-all-roots/incremental/with-stuff/set-0
-  -nomis/org/show-children-from-all-roots/incremental/functions
   -nomis/org/show-children-from-all-roots/incremental/previous-values
   (let* ((v (+ %previous-value% %in-value%)))
     (when (< v 0) (nomis/grab-user-attention/low))
@@ -220,18 +206,14 @@ But see ++about-uses-of-org-reveal++"
   (-nomis/org/show-children-from-all-roots/incremental/with-stuff/set-0
     (nomis/org/show-children-from-all-roots 0)))
 
-(-nomis/org/show-children-from-all-roots/define-command
-    nomis/org/show-children-from-all-roots/incremental/less
-    ()
+(defun nomis/org/show-children-from-all-roots/incremental/less ()
   (interactive)
   (-nomis/org/show-children-from-all-roots/incremental/with-stuff
       0
       -1
     (nomis/org/show-children-from-all-roots %value%)))
 
-(-nomis/org/show-children-from-all-roots/define-command
-    nomis/org/show-children-from-all-roots/incremental/more
-    ()
+(defun nomis/org/show-children-from-all-roots/incremental/more ()
   (interactive)
   (-nomis/org/show-children-from-all-roots/incremental/with-stuff
       1
