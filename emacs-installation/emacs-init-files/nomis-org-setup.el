@@ -72,11 +72,11 @@
 ;;;; ____ ** Expand/collapse
 
 (org-defkey org-mode-map (kbd "H-M-'")  'nomis/org/show-children/set-0)
-;; (org-defkey org-mode-map (kbd "H-M-\\") 'nomis/org/show-children/...)
+(org-defkey org-mode-map (kbd "H-M-\\") 'nomis/org/show-children/fully-expand)
 (org-defkey org-mode-map (kbd "H-M-[")  'nomis/org/show-children-from-root/set-0)
-;; (org-defkey org-mode-map (kbd "H-M-]")  'nomis/org/show-children-from-root/...)
+(org-defkey org-mode-map (kbd "H-M-]")  'nomis/org/show-children-from-root/fully-expand)
 (org-defkey org-mode-map (kbd "H-M--")  'nomis/org/show-children-from-all-roots/set-0)
-;; (org-defkey org-mode-map (kbd "H-M-=")  'nomis/org/show-children-from-all-roots/...)
+(org-defkey org-mode-map (kbd "H-M-=")  'nomis/org/show-children-from-all-roots/fully-expand)
 
 (org-defkey org-mode-map (kbd "H-'")  'nomis/org/show-children/incremental/less)
 (org-defkey org-mode-map (kbd "H-\\") 'nomis/org/show-children/incremental/more)

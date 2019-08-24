@@ -17,8 +17,6 @@ And `org-reveal` is interactive, so, yes, there are times when
 
 ;;;; TODO Sometimes things take a long time and a busy cursor would be useful.
 
-;;;; TODO Command to set a particular level and remember the setting.
-
 ;;;; TODO Command to show all roots to current headline's level.
 
 ;;;; TODO Want to not have to show point. Can you have it not move point when
