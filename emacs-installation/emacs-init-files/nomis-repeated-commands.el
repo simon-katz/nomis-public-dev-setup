@@ -15,6 +15,10 @@ back to where I had previously been.
 And `org-reveal` is interactive, so, yes, there are times when
   point is not visible.")
 
+;;;; TODO Look at expansion of headlines with bodies (or whatever they
+;;;;      are called).
+;;;;      (Bodies are not being expanded. Maybe want a way to expand them.)
+
 ;;;; TODO For from-root and for from-all-roots, make the initial value be the
 ;;;;      current level.
 
@@ -122,6 +126,13 @@ And `org-reveal` is interactive, so, yes, there are times when
 ;;         (ht-get xx-ht (list 100 :some-buffer))
 ;;         (ht-get xx-ht (list m2 :some-buffer))))
 
+(defun -nomis/drcs/bring-within-range (v maximum)
+  (when (or (< v 0)
+            (> v maximum))
+    (nomis/grab-user-attention/low))
+  (min (max 0 v)
+       maximum))
+
 (defvar -nomis/drcs/most-recent-popup nil)
 
 (defun -nomis/drcs/do-the-biz (name
@@ -207,7 +218,7 @@ And `org-reveal` is interactive, so, yes, there are times when
                                                   with-stuff-name/incremental
                                                   with-stuff-name/set
                                                   previous-values-var-name
-                                                  next-value
+                                                  maximum-function
                                                   level-reporting-fun)
   (declare (indent 1))
   `(progn
@@ -222,11 +233,12 @@ And `org-reveal` is interactive, so, yes, there are times when
        (-nomis/drcs/do-the-biz ',name
                                ,previous-values-var-name
                                (lambda (previous-value)
-                                 (if previous-value
-                                     (let* ((%in-value% in-value)
-                                            (%previous-value% previous-value))
-                                       ,next-value)
-                                   initial-value))
+                                 (let* ((value (if previous-value
+                                                   (+ previous-value in-value)
+                                                 initial-value))
+                                        (maximum (funcall ,maximum-function)))
+                                   (-nomis/drcs/bring-within-range value
+                                                                   maximum)))
                                ',fun-to-call-with-new-value
                                ,level-reporting-fun))
 
@@ -236,7 +248,10 @@ And `org-reveal` is interactive, so, yes, there are times when
        (-nomis/drcs/debug-message "________________________________________")
        (-nomis/drcs/do-the-biz ',name
                                ,previous-values-var-name
-                               (lambda (_) value)
+                               (lambda (_)
+                                 (let* ((maximum (funcall ,maximum-function)))
+                                   (-nomis/drcs/bring-within-range value
+                                                                   maximum)))
                                ',fun-to-call-with-new-value
                                ,level-reporting-fun))))
 

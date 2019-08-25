@@ -121,13 +121,7 @@ that is already being displayed."
   -nomis/org/show-children/incremental/with-stuff/incremental
   -nomis/org/show-children/incremental/with-stuff/set
   -nomis/org/show-children/incremental/previous-values
-  (let* ((v (+ %previous-value% %in-value%))
-         (maximum (nomis/org/levels/n-below-point)))
-    (when (or (< v 0)
-              (> v maximum))
-      (nomis/grab-user-attention/low))
-    (min (max 0 v)
-         maximum))
+  (lambda () (nomis/org/levels/n-below-point))
   (lambda (v)
     (format "[%s of %s]"
             v
@@ -175,13 +169,7 @@ But see ++about-uses-of-org-reveal++"
   -nomis/org/show-children-from-root/incremental/with-stuff/incremental
   -nomis/org/show-children-from-root/incremental/with-stuff/set
   -nomis/org/show-children-from-root/incremental/previous-values
-  (let* ((v (+ %previous-value% %in-value%))
-         (maximum (nomis/org/levels/max-below-root)))
-    (when (or (< v 0)
-              (> v maximum))
-      (nomis/grab-user-attention/low))
-    (min (max 0 v)
-         maximum))
+  (lambda () (nomis/org/levels/max-below-root))
   (lambda (v)
     (format "[%s of %s] from root"
             v
@@ -238,13 +226,7 @@ But see ++about-uses-of-org-reveal++"
   -nomis/org/show-children-from-all-roots/incremental/with-stuff/incremental
   -nomis/org/show-children-from-all-roots/incremental/with-stuff/set
   -nomis/org/show-children-from-all-roots/incremental/previous-values
-  (let* ((v (+ %previous-value% %in-value%))
-         (maximum (nomis/org/levels/max-in-buffer)))
-    (when (or (< v 0)
-              (> v maximum))
-      (nomis/grab-user-attention/low))
-    (min (max 0 v)
-         maximum))
+  (lambda () (nomis/org/levels/max-in-buffer))
   (lambda (v)
     (format "[%s of %s] from all roots"
             v
