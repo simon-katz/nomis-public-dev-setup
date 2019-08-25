@@ -137,6 +137,7 @@ And `org-reveal` is interactive, so, yes, there are times when
 
 (defun -nomis/drcs/do-the-biz (name
                                previous-values-ht
+                               maximum
                                value-fun
                                new-value-action-fun
                                level-reporting-fun)
@@ -186,7 +187,9 @@ And `org-reveal` is interactive, so, yes, there are times when
       (set-marker previous-marker nil))
     (prog1
         (funcall new-value-action-fun new-value)
-      (let* ((msg (funcall level-reporting-fun new-value)))
+      (let* ((msg (funcall level-reporting-fun
+                           new-value
+                           maximum)))
         (if (not (featurep 'popup))
             (message "%s value = %s" name new-value)
           (run-at-time 0
@@ -230,30 +233,32 @@ And `org-reveal` is interactive, so, yes, there are times when
      (defun ,with-stuff-name/incremental (initial-value
                                           in-value)
        (-nomis/drcs/debug-message "________________________________________")
-       (-nomis/drcs/do-the-biz ',name
-                               ,previous-values-var-name
-                               (lambda (previous-value)
-                                 (let* ((value (if previous-value
-                                                   (+ previous-value in-value)
-                                                 initial-value))
-                                        (maximum (funcall ,maximum-fun)))
-                                   (-nomis/drcs/bring-within-range value
-                                                                   maximum)))
-                               ,new-value-action-fun
-                               ,level-reporting-fun))
+       (let* ((maximum (funcall ,maximum-fun)))
+         (-nomis/drcs/do-the-biz ',name
+                                 ,previous-values-var-name
+                                 maximum
+                                 (lambda (previous-value)
+                                   (let* ((value (if previous-value
+                                                     (+ previous-value in-value)
+                                                   initial-value)))
+                                     (-nomis/drcs/bring-within-range value
+                                                                     maximum)))
+                                 ,new-value-action-fun
+                                 ,level-reporting-fun)))
 
      (defun ,with-stuff-name/set (value)
        ;; TODO This is hacky. Need to update the previous-value thing.
        ;;      Some refactoring needed.
        (-nomis/drcs/debug-message "________________________________________")
-       (-nomis/drcs/do-the-biz ',name
-                               ,previous-values-var-name
-                               (lambda (_)
-                                 (let* ((maximum (funcall ,maximum-fun)))
+       (let* ((maximum (funcall ,maximum-fun)))
+         (-nomis/drcs/do-the-biz ',name
+                                 ,previous-values-var-name
+                                 maximum
+                                 (lambda (_)
                                    (-nomis/drcs/bring-within-range value
-                                                                   maximum)))
-                               ,new-value-action-fun
-                               ,level-reporting-fun))))
+                                                                   maximum))
+                                 ,new-value-action-fun
+                                 ,level-reporting-fun)))))
 
 ;;;; ___________________________________________________________________________
 ;;;; * End

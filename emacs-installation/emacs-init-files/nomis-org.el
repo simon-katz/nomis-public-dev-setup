@@ -121,11 +121,7 @@ that is already being displayed."
   -nomis/org/show-children/incremental/with-stuff/set
   -nomis/org/show-children/incremental/previous-values
   #'nomis/org/levels/n-below-point
-  (lambda (v)
-    (format "[%s of %s]"
-            v
-            (nomis/org/levels/n-below-point) ; TODO Maybe too expensive
-            ))
+  (lambda (v maximum) (format "[%s of %s]" v maximum))
   #'nomis/org/show-children)
 
 (defun nomis/org/show-children/set-0 ()
@@ -169,11 +165,7 @@ But see ++about-uses-of-org-reveal++"
   -nomis/org/show-children-from-root/incremental/with-stuff/set
   -nomis/org/show-children-from-root/incremental/previous-values
   #'nomis/org/levels/max-below-root
-  (lambda (v)
-    (format "[%s of %s] from root"
-            v
-            (nomis/org/levels/max-below-root) ; TODO Maybe too expensive
-            ))
+  (lambda (v maximum) (format "[%s of %s] from root" v maximum))
   #'nomis/org/show-children-from-root)
 
 (defun nomis/org/show-children-from-root/set-0 ()
@@ -226,11 +218,7 @@ But see ++about-uses-of-org-reveal++"
   -nomis/org/show-children-from-all-roots/incremental/with-stuff/set
   -nomis/org/show-children-from-all-roots/incremental/previous-values
   #'nomis/org/levels/max-in-buffer
-  (lambda (v)
-    (format "[%s of %s] from all roots"
-            v
-            (nomis/org/levels/max-in-buffer) ; TODO Maybe too expensive
-            ))
+  (lambda (v maximum) (format "[%s of %s] from all roots" v maximum))
   #'nomis/org/show-children-from-all-roots)
 
 (defun nomis/org/show-children-from-all-roots/set-0 ()
