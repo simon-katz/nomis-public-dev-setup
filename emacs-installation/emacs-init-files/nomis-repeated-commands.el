@@ -15,35 +15,45 @@ back to where I had previously been.
 And `org-reveal` is interactive, so, yes, there are times when
   point is not visible.")
 
-;;;; TODO Sometimes things take a long time and a busy cursor would be useful.
+;;;; TODO For from-root and for from-all-roots, make the initial value be the
+;;;;      current level.
 
-;;;; TODO Command to show all roots to current headline's level.
-
-;;;; TODO Want to not have to show point. Can you have it not move point when
-;;;;      you hide point?
-
-;;;; TODO Can you show the popup for just a brief time?
-
-;;;; TODO The positions you record should be for the headline that is being
-;;;;      worked on.
-;;;;      So somtimes the current root and not point.
-;;;;      And for the commands whose scope is the whole file you don't need to
-;;;;      record positions.
-
-;;;; TODO At the beginning of the commands, go to beginning of the headline so
-;;;;      that the position lookup works well.
-;;;;      Do this inside a `save-excursion`.
-
-;;;; TODO Fix the nasty macros.
-;;;;      - Can you functionify some of it?
-;;;;      - Macro hygiene.
-
-;;;; TODO Use of `ht-find`: Can you just lookup by key?
+;;;; TODO Ellipsis symbols disappear in some places while popup is being
+;;;;      displayed.
 
 ;;;; TODO Getting rid of old markers: `(set-marker m1 nil)`.
 ;;;;      - When buffer closes.
 ;;;;      - A time limit? (No, I don't think so.)
 ;;;;      - More? eg by time? by number for a buffer?
+
+;;;; TODO Want to not have to show point. Can you have it not move point when
+;;;;      you hide point?
+;;;;      - This has started doing what you want for the `from-all-roots` stuff.
+;;;;        Is that related to the `save-excursion`s you've added?
+;;;;        - Yes! I've added `save-excursion`s for the `from-root` stuff,
+;;;;          and that's doing the same.
+;;;;     - Cool, buy why?
+
+;;;; TODO Put the popup stuff somewhere new.
+
+;;;; TODO Get rid of the hash table. Use something simple.
+;;;; TODO Use of `ht-find`: Can you just lookup by key?
+
+;;;; TODO Sometimes things take a long time and a busy cursor would be useful.
+
+;;;; TODO At the beginning of the commands, go to beginning of
+;;;;      - the headline, or
+;;;;      - the current top-level headline
+;;;;      as appropriate that the position lookup works well.
+;;;;      Do this inside a `save-excursion`.
+;;;;      For the commands whose scope is the whole file you don't need to
+;;;;      record positions (or record a position of 1 always).
+
+;;;; TODO Fix the nasty macros.
+;;;;      - Can you functionify some of it?
+;;;;      - Macro hygiene.
+
+;;;; TODO Command to show all roots to current headline's level.
 
 ;;;; ___________________________________________________________________________
 ;;;; ____ * Require things
@@ -112,10 +122,13 @@ And `org-reveal` is interactive, so, yes, there are times when
 ;;         (ht-get xx-ht (list 100 :some-buffer))
 ;;         (ht-get xx-ht (list m2 :some-buffer))))
 
+(defvar -nomis/drcs/most-recent-popup nil)
+
 (defun -nomis/drcs/do-the-biz (name
                                previous-values-ht
                                value-fun
-                               fun-to-call-with-new-value)
+                               fun-to-call-with-new-value
+                               level-reporting-fun)
   (let* ((current-place (list (point)
                               (current-buffer)))
          (previous-value (ht-get previous-values-ht
@@ -162,16 +175,40 @@ And `org-reveal` is interactive, so, yes, there are times when
       (set-marker previous-marker nil))
     (prog1
         (funcall fun-to-call-with-new-value new-value)
-      (if (featurep 'popup)
-          (popup-tip (format "[%s]" new-value))
-        (message "%s value = %s" name new-value)))))
+      (let* ((msg (funcall level-reporting-fun new-value)))
+        (if (not (featurep 'popup))
+            (message "%s value = %s" name new-value)
+          (run-at-time 0
+                       nil
+                       (lambda ()
+                         (when (and -nomis/drcs/most-recent-popup
+                                    (popup-live-p -nomis/drcs/most-recent-popup))
+                           (popup-delete -nomis/drcs/most-recent-popup)
+                           (setq -nomis/drcs/most-recent-popup nil))
+                         (let* ((popup
+                                 (popup-tip msg
+                                            :nowait t
+                                            :point (save-excursion
+                                                     (unless (get-char-property
+                                                              (point)
+                                                              'invisible)
+                                                       (ignore-errors
+                                                         (previous-line)))
+                                                     (point)))))
+                           (setq -nomis/drcs/most-recent-popup popup)
+                           (run-at-time 1
+                                        nil
+                                        (lambda ()
+                                          (when (popup-live-p popup)
+                                            (popup-delete popup))))))))))))
 
 (cl-defmacro nomis/define-repeated-command-stuff (name
                                                   fun-to-call-with-new-value
                                                   with-stuff-name/incremental
                                                   with-stuff-name/set
                                                   previous-values-var-name
-                                                  next-value)
+                                                  next-value
+                                                  level-reporting-fun)
   (declare (indent 1))
   `(progn
 
@@ -190,7 +227,8 @@ And `org-reveal` is interactive, so, yes, there are times when
                                             (%previous-value% previous-value))
                                        ,next-value)
                                    initial-value))
-                               ',fun-to-call-with-new-value))
+                               ',fun-to-call-with-new-value
+                               ,level-reporting-fun))
 
      (defun ,with-stuff-name/set (value)
        ;; TODO This is hacky. Need to update the previous-value thing.
@@ -199,7 +237,8 @@ And `org-reveal` is interactive, so, yes, there are times when
        (-nomis/drcs/do-the-biz ',name
                                ,previous-values-var-name
                                (lambda (_) value)
-                               ',fun-to-call-with-new-value))))
+                               ',fun-to-call-with-new-value
+                               ,level-reporting-fun))))
 
 ;;;; ___________________________________________________________________________
 ;;;; * End

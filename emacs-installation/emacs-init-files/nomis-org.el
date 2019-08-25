@@ -55,7 +55,7 @@
 (defun nomis/org/current-level ()
   (nth 1 (org-heading-components)))
 
-(defun nomis/org/n-levels-below-point ()
+(defun nomis/org/levels/n-below-point ()
   (let* ((current-level
           (nomis/org/current-level))
          (max-level-beneath
@@ -69,12 +69,12 @@
     (- max-level-beneath
        current-level)))
 
-(defun nomis/org/n-levels-below-root () ; TODO These names need work (this, `nomis/org/n-levels-below-point`, `nomis/org/n-levels-in-buffer`)
+(defun nomis/org/levels/max-below-root ()
   (save-excursion
     (nomis/org/goto-root)
-    (nomis/org/n-levels-below-point)))
+    (nomis/org/levels/n-below-point)))
 
-(defun nomis/org/n-levels-in-buffer ()
+(defun nomis/org/levels/max-in-buffer ()
   (let* ((sofar 0))
     (org-map-entries (lambda (&rest _)
                        (setq sofar (max (nomis/org/current-level)
@@ -122,12 +122,17 @@ that is already being displayed."
   -nomis/org/show-children/incremental/with-stuff/set
   -nomis/org/show-children/incremental/previous-values
   (let* ((v (+ %previous-value% %in-value%))
-         (maximum (nomis/org/n-levels-below-point)))
+         (maximum (nomis/org/levels/n-below-point)))
     (when (or (< v 0)
               (> v maximum))
       (nomis/grab-user-attention/low))
     (min (max 0 v)
-         maximum)))
+         maximum))
+  (lambda (v)
+    (format "[%s of %s]"
+            v
+            (nomis/org/levels/n-below-point) ; TODO Maybe too expensive
+            )))
 
 (defun nomis/org/show-children/set-0 ()
   (interactive)
@@ -136,7 +141,7 @@ that is already being displayed."
 (defun nomis/org/show-children/fully-expand ()
   (interactive)
   (-nomis/org/show-children/incremental/with-stuff/set
-   (nomis/org/n-levels-below-point)))
+   (nomis/org/levels/n-below-point)))
 
 (defun nomis/org/show-children/incremental/less ()
   (interactive)
@@ -171,29 +176,42 @@ But see ++about-uses-of-org-reveal++"
   -nomis/org/show-children-from-root/incremental/with-stuff/set
   -nomis/org/show-children-from-root/incremental/previous-values
   (let* ((v (+ %previous-value% %in-value%))
-         (maximum (nomis/org/n-levels-below-root)))
+         (maximum (nomis/org/levels/max-below-root)))
     (when (or (< v 0)
               (> v maximum))
       (nomis/grab-user-attention/low))
     (min (max 0 v)
-         maximum)))
+         maximum))
+  (lambda (v)
+    (format "[%s of %s] from root"
+            v
+            (nomis/org/levels/max-below-root) ; TODO Maybe too expensive
+            )))
 
 (defun nomis/org/show-children-from-root/set-0 ()
   (interactive)
-  (-nomis/org/show-children-from-root/incremental/with-stuff/set 0))
+  (save-excursion
+    (nomis/org/goto-root) ; share the same point->level mapping
+    (-nomis/org/show-children-from-root/incremental/with-stuff/set 0)))
 
 (defun nomis/org/show-children-from-root/fully-expand ()
   (interactive)
-  (-nomis/org/show-children-from-root/incremental/with-stuff/set
-   (nomis/org/n-levels-below-root)))
+  (save-excursion
+    (nomis/org/goto-root) ; share the same point->level mapping
+    (-nomis/org/show-children-from-root/incremental/with-stuff/set
+     (nomis/org/levels/max-below-root))))
 
 (defun nomis/org/show-children-from-root/incremental/less ()
   (interactive)
-  (-nomis/org/show-children-from-root/incremental/with-stuff/incremental 0 -1))
+  (save-excursion
+    (nomis/org/goto-root) ; share the same point->level mapping
+    (-nomis/org/show-children-from-root/incremental/with-stuff/incremental 0 -1)))
 
 (defun nomis/org/show-children-from-root/incremental/more ()
   (interactive)
-  (-nomis/org/show-children-from-root/incremental/with-stuff/incremental 1 1))
+  (save-excursion
+    (nomis/org/goto-root) ; share the same point->level mapping
+    (-nomis/org/show-children-from-root/incremental/with-stuff/incremental 1 1)))
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ;;;; ____ ** show-children-from-all-roots
@@ -221,33 +239,46 @@ But see ++about-uses-of-org-reveal++"
   -nomis/org/show-children-from-all-roots/incremental/with-stuff/set
   -nomis/org/show-children-from-all-roots/incremental/previous-values
   (let* ((v (+ %previous-value% %in-value%))
-         (maximum (nomis/org/n-levels-in-buffer)))
+         (maximum (nomis/org/levels/max-in-buffer)))
     (when (or (< v 0)
               (> v maximum))
       (nomis/grab-user-attention/low))
     (min (max 0 v)
-         maximum)))
+         maximum))
+  (lambda (v)
+    (format "[%s of %s] from all roots"
+            v
+            (nomis/org/levels/max-in-buffer) ; TODO Maybe too expensive
+            )))
 
 (defun nomis/org/show-children-from-all-roots/set-0 ()
   (interactive)
-  (-nomis/org/show-children-from-all-roots/incremental/with-stuff/set 0))
+  (save-excursion
+    (goto-char 1) ; share the same point->level mapping
+    (-nomis/org/show-children-from-all-roots/incremental/with-stuff/set 0)))
 
 (defun nomis/org/show-children-from-all-roots/fully-expand ()
   (interactive)
-  (-nomis/org/show-children-from-all-roots/incremental/with-stuff/set
-   (nomis/org/n-levels-in-buffer)))
+  (save-excursion
+    (goto-char 1) ; share the same point->level mapping
+    (-nomis/org/show-children-from-all-roots/incremental/with-stuff/set
+     (nomis/org/levels/max-in-buffer))))
 
 (defun nomis/org/show-children-from-all-roots/incremental/less ()
   (interactive)
-  (-nomis/org/show-children-from-all-roots/incremental/with-stuff/incremental
-   0
-   -1))
+  (save-excursion
+    (goto-char 1) ; share the same point->level mapping
+    (-nomis/org/show-children-from-all-roots/incremental/with-stuff/incremental
+     0
+     -1)))
 
 (defun nomis/org/show-children-from-all-roots/incremental/more ()
   (interactive)
-  (-nomis/org/show-children-from-all-roots/incremental/with-stuff/incremental
-   1
-   1))
+  (save-excursion
+    (goto-char 1) ; share the same point->level mapping
+    (-nomis/org/show-children-from-all-roots/incremental/with-stuff/incremental
+     1
+     1)))
 
 ;;;; ___________________________________________________________________________
 ;;;; ____ * Hiding and showing -- cycling
