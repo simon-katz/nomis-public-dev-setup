@@ -110,6 +110,7 @@
 
 (require 'nomis-core-utils)
 (require 'nomis-very-general-stuff-new)
+(require 'nomis-message-window)
 
 ;;;; ---- This is here because of a problem when it was later ----
 
