@@ -138,7 +138,7 @@ And `org-reveal` is interactive, so, yes, there are times when
 (defun -nomis/drcs/do-the-biz (name
                                previous-values-ht
                                value-fun
-                               fun-to-call-with-new-value
+                               new-value-action-fun
                                level-reporting-fun)
   (let* ((current-place (list (point)
                               (current-buffer)))
@@ -185,7 +185,7 @@ And `org-reveal` is interactive, so, yes, there are times when
       ;; the hash table.
       (set-marker previous-marker nil))
     (prog1
-        (funcall fun-to-call-with-new-value new-value)
+        (funcall new-value-action-fun new-value)
       (let* ((msg (funcall level-reporting-fun new-value)))
         (if (not (featurep 'popup))
             (message "%s value = %s" name new-value)
@@ -214,7 +214,7 @@ And `org-reveal` is interactive, so, yes, there are times when
                                             (popup-delete popup))))))))))))
 
 (cl-defmacro nomis/define-repeated-command-stuff (name
-                                                  fun-to-call-with-new-value
+                                                  new-value-action-fun
                                                   with-stuff-name/incremental
                                                   with-stuff-name/set
                                                   previous-values-var-name
@@ -239,7 +239,7 @@ And `org-reveal` is interactive, so, yes, there are times when
                                         (maximum (funcall ,maximum-function)))
                                    (-nomis/drcs/bring-within-range value
                                                                    maximum)))
-                               ',fun-to-call-with-new-value
+                               ,new-value-action-fun
                                ,level-reporting-fun))
 
      (defun ,with-stuff-name/set (value)
@@ -252,7 +252,7 @@ And `org-reveal` is interactive, so, yes, there are times when
                                  (let* ((maximum (funcall ,maximum-function)))
                                    (-nomis/drcs/bring-within-range value
                                                                    maximum)))
-                               ',fun-to-call-with-new-value
+                               ,new-value-action-fun
                                ,level-reporting-fun))))
 
 ;;;; ___________________________________________________________________________

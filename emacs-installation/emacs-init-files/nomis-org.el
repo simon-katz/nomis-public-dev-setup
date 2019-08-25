@@ -117,7 +117,7 @@ that is already being displayed."
 
 (nomis/define-repeated-command-stuff
     -nomis/org/show-children/incremental
-  nomis/org/show-children
+  (lambda (v) (nomis/org/show-children v))
   -nomis/org/show-children/incremental/with-stuff/incremental
   -nomis/org/show-children/incremental/with-stuff/set
   -nomis/org/show-children/incremental/previous-values
@@ -165,7 +165,7 @@ But see ++about-uses-of-org-reveal++"
 
 (nomis/define-repeated-command-stuff
     -nomis/org/show-children-from-root/incremental
-  nomis/org/show-children-from-root
+  (lambda (v) (nomis/org/show-children-from-root v))
   -nomis/org/show-children-from-root/incremental/with-stuff/incremental
   -nomis/org/show-children-from-root/incremental/with-stuff/set
   -nomis/org/show-children-from-root/incremental/previous-values
@@ -222,7 +222,7 @@ But see ++about-uses-of-org-reveal++"
 
 (nomis/define-repeated-command-stuff
     -nomis/org/show-children-from-all-roots/incremental
-  nomis/org/show-children-from-all-roots
+  (lambda (v) (nomis/org/show-children-from-all-roots v))
   -nomis/org/show-children-from-all-roots/incremental/with-stuff/incremental
   -nomis/org/show-children-from-all-roots/incremental/with-stuff/set
   -nomis/org/show-children-from-all-roots/incremental/previous-values
