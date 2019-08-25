@@ -214,12 +214,12 @@ And `org-reveal` is interactive, so, yes, there are times when
                                             (popup-delete popup))))))))))))
 
 (cl-defmacro nomis/define-repeated-command-stuff (name
-                                                  new-value-action-fun
                                                   with-stuff-name/incremental
                                                   with-stuff-name/set
                                                   previous-values-var-name
-                                                  maximum-function
-                                                  level-reporting-fun)
+                                                  maximum-fun
+                                                  level-reporting-fun
+                                                  new-value-action-fun)
   (declare (indent 1))
   `(progn
 
@@ -236,7 +236,7 @@ And `org-reveal` is interactive, so, yes, there are times when
                                  (let* ((value (if previous-value
                                                    (+ previous-value in-value)
                                                  initial-value))
-                                        (maximum (funcall ,maximum-function)))
+                                        (maximum (funcall ,maximum-fun)))
                                    (-nomis/drcs/bring-within-range value
                                                                    maximum)))
                                ,new-value-action-fun
@@ -249,7 +249,7 @@ And `org-reveal` is interactive, so, yes, there are times when
        (-nomis/drcs/do-the-biz ',name
                                ,previous-values-var-name
                                (lambda (_)
-                                 (let* ((maximum (funcall ,maximum-function)))
+                                 (let* ((maximum (funcall ,maximum-fun)))
                                    (-nomis/drcs/bring-within-range value
                                                                    maximum)))
                                ,new-value-action-fun
