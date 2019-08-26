@@ -83,8 +83,6 @@ And `org-reveal` is interactive, so, yes, there are times when
 ;;;;      - Can you functionify some of it?
 ;;;;      - Macro hygiene.
 
-;;;; TODO Command to show all roots to current headline's level.
-
 ;;;; ___________________________________________________________________________
 ;;;; ____ * Require things
 
@@ -497,6 +495,15 @@ But see ++about-uses-of-org-reveal++"
       (nomis/org/with-show-children-from-all-roots-stuff
         (-nomis/org/show-children-from-all-roots/incremental/with-stuff/set
          new-level)))))
+
+;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+;;;; ____ ** nomis/org/show-all-to-current-level
+
+(defun nomis/org/show-all-to-current-level ()
+  (interactive)
+  (nomis/org/with-show-children-from-all-roots-stuff
+    (-nomis/org/show-children-from-all-roots/incremental/with-stuff/set
+     (nomis/org/current-level))))
 
 ;;;; ___________________________________________________________________________
 ;;;; ____ * Hiding and showing -- cycling

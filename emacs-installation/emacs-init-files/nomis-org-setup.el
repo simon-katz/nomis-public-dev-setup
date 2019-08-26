@@ -71,6 +71,8 @@
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ;;;; ____ ** Expand/collapse
 
+(org-defkey org-mode-map (kbd "H-q =") 'nomis/org/show-all-to-current-level)
+
 (org-defkey org-mode-map (kbd "H-M-'")  'nomis/org/show-children/set-0)
 (org-defkey org-mode-map (kbd "H-M-\\") 'nomis/org/show-children/fully-expand)
 (org-defkey org-mode-map (kbd "H-M-[")  'nomis/org/show-children-from-root/set-0)
