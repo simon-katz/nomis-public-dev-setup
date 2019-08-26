@@ -233,14 +233,14 @@ And `org-reveal` is interactive, so, yes, there are times when
      (defvar ,previous-values-var-name (ht-create 'nomis/drcs/ht-test))
 
      (defun ,with-stuff-name/incremental (initial-value
-                                          in-value)
+                                          increment)
        (let* ((maximum (funcall ,maximum-fun)))
          (-nomis/drcs/do-the-biz ',name
                                  ,previous-values-var-name
                                  maximum
                                  (lambda (previous-value)
                                    (if previous-value
-                                       (+ previous-value in-value)
+                                       (+ previous-value increment)
                                      initial-value))
                                  ,new-value-action-fun
                                  ,level-reporting-fun)))

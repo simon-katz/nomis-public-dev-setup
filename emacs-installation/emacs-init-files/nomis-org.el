@@ -42,6 +42,9 @@
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ;;;; ____ ** Misc
 
+(defun nomis/org/point-is-visible? ()
+  (not (get-char-property (point) 'invisible)))
+
 (defun nomis/org/map-roots (fun &optional match scope &rest skip)
   (apply #'org-map-entries
          (lambda ()
@@ -380,7 +383,7 @@ But see ++about-uses-of-org-reveal++"
   (interactive)
   (case 1
     (1
-     (when (get-char-property (point) 'invisible)
+     (unless (nomis/org/point-is-visible?)
        ;; Make point visible and leave subtree collapsed
        (dotimes (_ 3) (org-cycle))))
     (2
