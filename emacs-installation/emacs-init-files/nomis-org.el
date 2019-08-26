@@ -5,6 +5,8 @@
 ;;;; ___________________________________________________________________________
 ;;;; ____ * TODOs
 
+;;;; TODO Finish destroying `nomis-repeated-commands`, or put new stuff there.
+
 ;;;; TODO Look into which `save-excursion`s and `(goto-char 1)`s are needed.
 
 ;;;; TODO Set up lexical binding.
