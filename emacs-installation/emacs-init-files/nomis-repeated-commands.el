@@ -15,6 +15,15 @@ back to where I had previously been.
 And `org-reveal` is interactive, so, yes, there are times when
   point is not visible.")
 
+;;;; TODO So, are you moving away from the incremental thing?
+;;;;      - (No... Ah! - Add a timer purge with a small timeout?)
+;;;;      - (No... Ah! - Use the last-command thing, and command families, and
+;;;;        place.)
+;;;;      - Oh, I think you /are/ scrapping the incremental thing -- tree-info!
+;;;;        - Stateless is good.
+
+;;;; TODO When getting to 0 or max, first flash then cycle.
+
 ;;;; TODO Look at expansion of headlines with bodies (or whatever they
 ;;;;      are called).
 ;;;;      (Bodies are not being expanded. Maybe want a way to expand them.)
@@ -133,14 +142,18 @@ And `org-reveal` is interactive, so, yes, there are times when
   (min (max 0 v)
        maximum))
 
+(defvar *nomis/drcs/level-formatter* nil)
+
+(defun -nomis/drcs/default-level-formatter (v maximum)
+  (format "[%s / %s]" v maximum))
+
 (defvar -nomis/drcs/most-recent-popup nil)
 
 (defun -nomis/drcs/do-the-biz (name
                                previous-values-ht
                                maximum
                                value-fun
-                               new-value-action-fun
-                               level-reporting-fun)
+                               new-value-action-fun)
   (-nomis/drcs/debug-message "________________________________________")
   (let* ((current-place (list (point)
                               (current-buffer)))
@@ -189,7 +202,8 @@ And `org-reveal` is interactive, so, yes, there are times when
       (set-marker previous-marker nil))
     (prog1
         (funcall new-value-action-fun new-value)
-      (let* ((msg (funcall level-reporting-fun
+      (let* ((msg (funcall (or *nomis/drcs/level-formatter*
+                               #'-nomis/drcs/default-level-formatter)
                            new-value
                            maximum)))
         (if (not (featurep 'popup))
@@ -223,7 +237,6 @@ And `org-reveal` is interactive, so, yes, there are times when
                                                   with-stuff-name/set
                                                   previous-values-var-name
                                                   maximum-fun
-                                                  level-reporting-fun
                                                   new-value-action-fun)
   (declare (indent 1))
   `(progn
@@ -242,8 +255,7 @@ And `org-reveal` is interactive, so, yes, there are times when
                                    (if previous-value
                                        (+ previous-value increment)
                                      initial-value))
-                                 ,new-value-action-fun
-                                 ,level-reporting-fun)))
+                                 ,new-value-action-fun)))
 
      (defun ,with-stuff-name/set (value)
        (let* ((maximum (funcall ,maximum-fun)))
@@ -251,8 +263,7 @@ And `org-reveal` is interactive, so, yes, there are times when
                                  ,previous-values-var-name
                                  maximum
                                  (lambda (_) value)
-                                 ,new-value-action-fun
-                                 ,level-reporting-fun)))))
+                                 ,new-value-action-fun)))))
 
 ;;;; ___________________________________________________________________________
 ;;;; * End
