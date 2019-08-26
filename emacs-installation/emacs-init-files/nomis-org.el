@@ -232,9 +232,7 @@ that is already being displayed."
 
 (nomis/define-repeated-command-stuff
     -nomis/org/show-children/incremental
-  -nomis/org/show-children/incremental/with-stuff/incremental
   -nomis/org/show-children/incremental/with-stuff/set ; TODO Can you just use `nomis/org/show-children`? -- Ah! Is it just the popup you still need?
-  -nomis/org/show-children/incremental/previous-values
   #'nomis/org/levels/n-below-point
   #'nomis/org/show-children)
 
@@ -312,9 +310,7 @@ But see ++about-uses-of-org-reveal++"
 
 (nomis/define-repeated-command-stuff
     -nomis/org/show-children-from-root/incremental
-  -nomis/org/show-children-from-root/incremental/with-stuff/incremental
   -nomis/org/show-children-from-root/incremental/with-stuff/set
-  -nomis/org/show-children-from-root/incremental/previous-values
   #'nomis/org/levels/max-below-root
   #'nomis/org/show-children-from-root)
 
@@ -376,9 +372,7 @@ But see ++about-uses-of-org-reveal++"
 
 (nomis/define-repeated-command-stuff
     -nomis/org/show-children-from-all-roots/incremental
-  -nomis/org/show-children-from-all-roots/incremental/with-stuff/incremental
   -nomis/org/show-children-from-all-roots/incremental/with-stuff/set
-  -nomis/org/show-children-from-all-roots/incremental/previous-values
   #'nomis/org/levels/max-in-buffer
   #'nomis/org/show-children-from-all-roots)
 

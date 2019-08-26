@@ -71,69 +71,10 @@ And `org-reveal` is interactive, so, yes, there are times when
 ;;;; ___________________________________________________________________________
 ;;;; ____ * Require things
 
-(require 'ht)
 (require 'popup nil t)
 
 ;;;; ___________________________________________________________________________
-;;;; * Debug support
-
-(defvar -nomis/drcs/debug? nil)
-
-(defun -nomis/drcs/debug-message (format-string &rest args)
-  (when -nomis/drcs/debug?
-    (apply #'message format-string args)))
-
-;;;; ___________________________________________________________________________
 ;;;; * nomis/define-repeated-command-stuff
-
-(defun -nomis/drcs/place= (place1 place2)
-  (-nomis/drcs/debug-message ">>>> Comparing %s and %s" place1 place2)
-  (let* ((res (condition-case err
-                  (and (= ; This can compare positions (which are integers) and markers.
-                        (first place1)
-                        (first place2))
-                       (equal (rest place1)
-                              (rest place2)))
-                (error
-                 (nomis/grab-user-attention/high)
-                 (-nomis/drcs/debug-message "******** -nomis/drcs/place= error: %s" (cdr err))
-                 (-nomis/drcs/debug-message "place1 = %s" place1)
-                 (-nomis/drcs/debug-message "place2 = %s" place2)
-                 nil))))
-    (-nomis/drcs/debug-message "<<<< Comparing -- result is %s" res)
-    res))
-
-(defun -nomis/drcs/hash (place)
-  (let* ((res (let* ((marker-or-position (first place))
-                     (position (if (markerp marker-or-position)
-                                   (marker-position marker-or-position)
-                                 marker-or-position)))
-                (+ ;; (sxhash-eq position)  ; TODO Oh, you can't hash on the position, because the position changes.
-                 (sxhash-equal (rest place))))))
-    (-nomis/drcs/debug-message "Hash result = %s" res)
-    res))
-
-(define-hash-table-test 'nomis/drcs/ht-test
-  '-nomis/drcs/place=
-  '-nomis/drcs/hash)
-
-;; (progn
-
-;;   (defun nomis/make-marker (v) ; use (point-marker)
-;;     (let* ((m (make-marker)))
-;;       (set-marker m v)
-;;       m))
-
-;;   (defvar xx-ht (ht-create 'nomis/drcs/ht-test))
-
-;;   (setq m1 (nomis/make-marker 100))
-;;   (setq m2 (nomis/make-marker 200))
-
-;;   (ht-set! xx-ht (list m1 :some-buffer) 999)
-
-;;   (list (ht-get xx-ht (list m1 :some-buffer))
-;;         (ht-get xx-ht (list 100 :some-buffer))
-;;         (ht-get xx-ht (list m2 :some-buffer))))
 
 (defun -nomis/drcs/bring-within-range (v maximum)
   (when (or (< v 0)
@@ -150,56 +91,11 @@ And `org-reveal` is interactive, so, yes, there are times when
 (defvar -nomis/drcs/most-recent-popup nil)
 
 (defun -nomis/drcs/do-the-biz (name
-                               previous-values-ht
                                maximum
-                               value-fun
+                               value
                                new-value-action-fun)
-  (-nomis/drcs/debug-message "________________________________________")
-  (let* ((current-place (list (point)
-                              (current-buffer)))
-         (previous-value (ht-get previous-values-ht
-                                 current-place))
-         (previous-marker (when previous-value
-                            (let* ((kv (ht-find (lambda (k v) (-nomis/drcs/place= k current-place))
-                                                previous-values-ht))
-                                   (marker (caar kv)))
-                              (-nomis/drcs/debug-message "kv = %s" kv)
-                              (assert (markerp marker))
-                              marker)))
-         (_ (-nomis/drcs/debug-message "previous-value = %s" previous-value))
-         (new-value (-> (funcall value-fun previous-value)
+  (let* ((new-value (-> value
                         (-nomis/drcs/bring-within-range maximum))))
-    ;; We remove the current entry because we want to nullify old markers.
-    ;; If we didn't remove the current entry, when we update, the key with
-    ;; the old marker would stay in the table and the value would be
-    ;; replaced.
-    ;; Maybe you could not create a marker when the key is not already
-    ;; in the table, but then you would be relying on hash table
-    ;; implementation details.
-    (ht-remove! previous-values-ht
-                current-place)
-    (ht-set! previous-values-ht
-             (let* ((marker (point-marker)))
-               (set-marker-insertion-type marker t)
-               (list marker
-                     (current-buffer)))
-             new-value)
-    (when previous-marker
-      (-nomis/drcs/debug-message "Nullifying marker %s" previous-marker)
-      ;; Debugging: I think this assertion might fail.
-      ;; **** YOU ARE HERE. THIS IS FAILING AFTER YOU INSERT TEXT IN THE
-      ;;      BUFFER, BUT IT"S OK BEFORE THAT.
-      (let* ((kv (ht-find (lambda (k v) (-nomis/drcs/place= k current-place))
-                          previous-values-ht))
-             (marker (caar kv)))
-        (-nomis/drcs/debug-message "marker = %s" marker)
-        (-nomis/drcs/debug-message "previous-marker = %s" previous-marker)
-        (assert (not (eql marker previous-marker))))
-      ;; Stop no-longer needed marker from slowing down editing, and
-      ;; allow it to be garbage collected.
-      ;; Do this now, after updating the hash table, otherwise you break
-      ;; the hash table.
-      (set-marker previous-marker nil))
     (prog1
         (funcall new-value-action-fun new-value)
       (let* ((msg (funcall (or *nomis/drcs/level-formatter*
@@ -233,9 +129,7 @@ And `org-reveal` is interactive, so, yes, there are times when
                                             (popup-delete popup))))))))))))
 
 (cl-defmacro nomis/define-repeated-command-stuff (name
-                                                  with-stuff-name/incremental
                                                   with-stuff-name/set
-                                                  previous-values-var-name
                                                   maximum-fun
                                                   new-value-action-fun)
   (declare (indent 1))
@@ -243,26 +137,11 @@ And `org-reveal` is interactive, so, yes, there are times when
 
      (defvar ,name nil) ; so that definition can be found -- and must provide a value for that to work!
 
-     (defvar ,previous-values-var-name (ht-create 'nomis/drcs/ht-test))
-
-     (defun ,with-stuff-name/incremental (initial-value
-                                          increment)
-       (let* ((maximum (funcall ,maximum-fun)))
-         (-nomis/drcs/do-the-biz ',name
-                                 ,previous-values-var-name
-                                 maximum
-                                 (lambda (previous-value)
-                                   (if previous-value
-                                       (+ previous-value increment)
-                                     initial-value))
-                                 ,new-value-action-fun)))
-
      (defun ,with-stuff-name/set (value)
        (let* ((maximum (funcall ,maximum-fun)))
          (-nomis/drcs/do-the-biz ',name
-                                 ,previous-values-var-name
                                  maximum
-                                 (lambda (_) value)
+                                 value
                                  ,new-value-action-fun)))))
 
 ;;;; ___________________________________________________________________________
