@@ -17,19 +17,6 @@
 ;;;; TODO There's a bug in incremental collapsing when there a child is more
 ;;;;      than one level deeper than its parent.
 
-;;;; TODO ++about-uses-of-org-reveal++ (This may be already-dealt-with.)
-(defconst ++about-uses-of-org-reveal++
-  "Without certain ueses of `org-reveal`, point gets automatically reset
-to a visible point.
-This seems to happen in idle time.
-
-I'm sure I had point being hidden before in some situation --
-maybe not this situation -- and later revealing would take me
-back to where I had previously been.
-
-And `org-reveal` is interactive, so, yes, there are times when
-  point is not visible.")
-
 ;;;; TODO When getting to 0 or max, first flash then cycle.
 
 ;;;; TODO Look at expansion of headlines with bodies (or whatever they
@@ -359,14 +346,10 @@ that is already being displayed."
 (defun norg/show-children-from-root (n)
   (interactive "^p")
   "Call `norg/show-children` on the current root headline, with N as
-the parameter.
-When done, call `org-reveal` so that the current point is shown.
-But see ++about-uses-of-org-reveal++"
+the parameter."
   (save-excursion
     (norg/goto-root)
-    (norg/show-children n))
-  (org-reveal) ; see ++about-uses-of-org-reveal++
-  )
+    (norg/show-children n)))
 
 ;;;; ___________________________________________________________________________
 ;;;; ____ * show-children-from-root/incremental
@@ -412,24 +395,15 @@ But see ++about-uses-of-org-reveal++"
 
 (defun norg/show-children-from-all-roots (n)
   "Call `norg/show-children` on all root headlines, with N as
-the parameter.
-When done, call `org-reveal` so that the current point is shown.
-But see ++about-uses-of-org-reveal++"
+the parameter."
   (interactive "^p")
-  (norg/map-roots (lambda () (norg/show-children n)))
-  (org-reveal) ; see ++about-uses-of-org-reveal++
-  )
+  (norg/map-roots (lambda () (norg/show-children n))))
 
 ;;;; ___________________________________________________________________________
 ;;;; ____ * show-children-from-all-roots/incremental
 
 (defun -norg/set-level-etc/show-children-from-all-roots (level)
-  (-norg/set-level-etc (lambda (n)
-                         ;; TODO Don't need to move point, right?
-                         ;;      So can simplify this a lot.
-                         (save-excursion
-                           (goto-char 1)
-                           (norg/show-children-from-all-roots n)))
+  (-norg/set-level-etc #'norg/show-children-from-all-roots
                        level
                        (norg/levels/max-in-buffer)
                        "[%s of %s] from all roots"))
