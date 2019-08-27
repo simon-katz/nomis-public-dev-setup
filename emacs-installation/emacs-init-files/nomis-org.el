@@ -3,6 +3,16 @@
 (progn) ; this-stops-hs-hide-all-from-hiding-the-next-comment
 
 ;;;; ___________________________________________________________________________
+;;;; ____ * TODOs
+
+;;;; TODO Get rid of `nomis-org-personal` and move the stuff to here.
+
+;;;; TODO This is a mix of personal things and things that could be good in
+;;;;      a library.
+;;;;      Move stuff to "nomis-org-setup.el".
+;;;;      Maybe have a third file for just key bindings.
+
+;;;; ___________________________________________________________________________
 ;;;; ____ * Require things
 
 (require 'norg)

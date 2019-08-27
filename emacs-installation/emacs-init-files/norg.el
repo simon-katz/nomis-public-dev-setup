@@ -9,15 +9,8 @@
 
 ;;;; TODO Look into which `save-excursion`s and `(goto-char 1)`s are needed.
 
-;;;; TODO Set up lexical binding.
-
 ;;;; TODO There's a bug in incremental collapsing when there a child is more
 ;;;;      than one level deeper than its parent.
-
-;;;; TODO This is a mix of personal things and things that could be good in
-;;;;      a library.
-;;;;      Move stuff to "nomis-org-setup.el".
-;;;;      Maybe have a third file for just key bindings.
 
 ;;;; TODO ++about-uses-of-org-reveal++ (This may be already-dealt-with.)
 (defconst ++about-uses-of-org-reveal++
@@ -32,29 +25,14 @@ back to where I had previously been.
 And `org-reveal` is interactive, so, yes, there are times when
   point is not visible.")
 
-;;;; TODO So, are you moving away from the incremental thing?
-;;;;      - (No... Ah! - Add a timer purge with a small timeout?)
-;;;;      - (No... Ah! - Use the last-command thing, and command families, and
-;;;;        place.)
-;;;;      - Oh, I think you /are/ scrapping the incremental thing -- tree-info!
-;;;;        - Stateless is good.
-
 ;;;; TODO When getting to 0 or max, first flash then cycle.
 
 ;;;; TODO Look at expansion of headlines with bodies (or whatever they
 ;;;;      are called).
 ;;;;      (Bodies are not being expanded. Maybe want a way to expand them.)
 
-;;;; TODO For from-root and for from-all-roots, make the initial value be the
-;;;;      current level.
-
 ;;;; TODO Ellipsis symbols disappear in some places while popup is being
 ;;;;      displayed.
-
-;;;; TODO Getting rid of old markers: `(set-marker m1 nil)`.
-;;;;      - When buffer closes.
-;;;;      - A time limit? (No, I don't think so.)
-;;;;      - More? eg by time? by number for a buffer?
 
 ;;;; TODO Want to not have to show point. Can you have it not move point when
 ;;;;      you hide point?
@@ -65,9 +43,6 @@ And `org-reveal` is interactive, so, yes, there are times when
 ;;;;     - Cool, buy why?
 
 ;;;; TODO Put the popup stuff somewhere new.
-
-;;;; TODO Get rid of the hash table. Use something simple.
-;;;; TODO Use of `ht-find`: Can you just lookup by key?
 
 ;;;; TODO Sometimes things take a long time and a busy cursor would be useful.
 
