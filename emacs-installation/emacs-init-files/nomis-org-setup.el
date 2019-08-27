@@ -26,8 +26,6 @@
     (do-stuff-that-must-be-done-before-requiring-org)
     (require 'nomis-org)))
 
-(require 'nomis-org-personal)
-
 ;;;; ___________________________________________________________________________
 ;;;; ____ * General
 
