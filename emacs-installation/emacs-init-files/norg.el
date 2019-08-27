@@ -5,6 +5,8 @@
 ;;;; ___________________________________________________________________________
 ;;;; ____ * TODOs
 
+;;;; TODO Remove all mentions of `nomis`.
+
 ;;;; TODO You don't need both `norg/levels/max-in-buffer` and `-norg/max-level`.
 
 ;;;; TODO When `tree-info` is not supplied as an arg, maybe use a different
@@ -73,16 +75,13 @@ And `org-reveal` is interactive, so, yes, there are times when
 (require 'nomis-repeated-commands)
 
 ;;;; ___________________________________________________________________________
-;;;; ____ * Towards a nicer API
-
-;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-;;;; ____ ** Infinity
+;;;; ____ * Infinity
 
 (defconst -norg/plus-infinity   1.0e+INF)
 (defconst -norg/minus-infinity -1.0e+INF)
 
-;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-;;;; ____ ** Some wrappers for org functionality
+;;;; ___________________________________________________________________________
+;;;; ____ * Some wrappers for org functionality
 
 (defun norg/report-org-info ()
   (interactive)
@@ -154,8 +153,8 @@ And `org-reveal` is interactive, so, yes, there are times when
     (3 (org-map-tree #'org-cycle) ; see also `org-map-tree` if you copy this
        )))
 
-;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-;;;; ____ ** Things I did before I had tree-info -- perhaps redo with tree-info
+;;;; ___________________________________________________________________________
+;;;; ____ * Things I did before I had tree-info -- perhaps redo with tree-info
 
 (defun -norg/levels/below-point-helper (pred-of-no-args
                                         reducing-function)
@@ -204,8 +203,8 @@ And `org-reveal` is interactive, so, yes, there are times when
                      'file)
     sofar))
 
-;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-;;;; ____ ** The idea of tree-info, and things that use it
+;;;; ___________________________________________________________________________
+;;;; ____ * The idea of tree-info, and things that use it
 
 (defun -norg/tree-info ()
   (org-map-entries (lambda ()
@@ -271,8 +270,8 @@ And `org-reveal` is interactive, so, yes, there are times when
     ;;      convert. Be consistent.
     (- v (norg/current-level))))
 
-;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-;;;; ____ ** show-children
+;;;; ___________________________________________________________________________
+;;;; ____ * show-children
 
 (defun norg/show-children (n)
   "Expand current headline to n levels.
@@ -291,8 +290,8 @@ that is already being displayed."
       (-norg/collapse))
     (outline-show-children n)))
 
-;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-;;;; ____ ** show-children/incremental
+;;;; ___________________________________________________________________________
+;;;; ____ * show-children/incremental
 
 (nomis/define-repeated-command-stuff
     -norg/show-children/incremental
@@ -354,8 +353,8 @@ that is already being displayed."
   (norg/with-show-children-stuff
     (norg/show-children/incremental/more/impl)))
 
-;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-;;;; ____ ** show-children-from-root
+;;;; ___________________________________________________________________________
+;;;; ____ * show-children-from-root
 
 (defun norg/show-children-from-root (n)
   (interactive "^p")
@@ -369,8 +368,8 @@ But see ++about-uses-of-org-reveal++"
   (org-reveal) ; see ++about-uses-of-org-reveal++
   )
 
-;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-;;;; ____ ** show-children-from-root/incremental
+;;;; ___________________________________________________________________________
+;;;; ____ * show-children-from-root/incremental
 
 (nomis/define-repeated-command-stuff
     -norg/show-children-from-root/incremental
@@ -418,8 +417,8 @@ But see ++about-uses-of-org-reveal++"
     (norg/with-show-children-from-root-stuff
       (norg/show-children/incremental/more/impl))))
 
-;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-;;;; ____ ** show-children-from-all-roots
+;;;; ___________________________________________________________________________
+;;;; ____ * show-children-from-all-roots
 
 (defun norg/show-children-from-all-roots (n)
   "Call `norg/show-children` on all root headlines, with N as
@@ -431,8 +430,8 @@ But see ++about-uses-of-org-reveal++"
   (org-reveal) ; see ++about-uses-of-org-reveal++
   )
 
-;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-;;;; ____ ** show-children-from-all-roots/incremental
+;;;; ___________________________________________________________________________
+;;;; ____ * show-children-from-all-roots/incremental
 
 (nomis/define-repeated-command-stuff
     -norg/show-children-from-all-roots/incremental
@@ -494,13 +493,16 @@ But see ++about-uses-of-org-reveal++"
         (-norg/show-children-from-all-roots/incremental/with-stuff/set
          new-level)))))
 
-;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-;;;; ____ ** norg/show-all-to-current-level
+;;;; ___________________________________________________________________________
+;;;; ____ * norg/show-all-to-current-level
 
 (defun norg/show-all-to-current-level ()
   (interactive)
   (norg/with-show-children-from-all-roots-stuff
     (-norg/show-children-from-all-roots/incremental/with-stuff/set
      (1- (norg/current-level)))))
+
+;;;; ___________________________________________________________________________
+;;;; * End
 
 (provide 'norg)
