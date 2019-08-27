@@ -12,8 +12,6 @@
 ;;;; TODO When `tree-info` is not supplied as an arg, maybe use a different
 ;;;;      approach (and don't get tree-info).
 
-;;;; TODO Finish destroying `nomis-repeated-commands`, or put new stuff there.
-
 ;;;; TODO Look into which `save-excursion`s and `(goto-char 1)`s are needed.
 
 ;;;; TODO There's a bug in incremental collapsing when there a child is more
@@ -72,7 +70,19 @@ And `org-reveal` is interactive, so, yes, there are times when
 (require 'cl)
 (require 'dash)
 (require 'dash-functional)
-(require 'nomis-repeated-commands)
+
+;;;; ___________________________________________________________________________
+;;;; ____ * Tailoring other functionality
+
+;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+;;;; ____ ** norg/popup/message
+
+(defun norg/popup/message (format-string &rest args)
+  (apply (if (not (featurep 'nomis-popup))
+             #'message
+           #'nomis/popup/message)
+         format-string
+         args))
 
 ;;;; ___________________________________________________________________________
 ;;;; ____ * Infinity
@@ -271,6 +281,29 @@ And `org-reveal` is interactive, so, yes, there are times when
     (- v (norg/current-level))))
 
 ;;;; ___________________________________________________________________________
+;;;; ____ * -norg/set-level-etc
+
+(defun -norg/bring-within-range (v maximum)
+  (when (or (< v 0)
+            (> v maximum))
+    (nomis/grab-user-attention/low))
+  (min (max 0 v)
+       maximum))
+
+(defun -norg/set-level-etc (new-value-action-fun
+                            new-level/maybe-out-of-range
+                            maximum
+                            message-format-string)
+  (let* ((new-level (-> new-level/maybe-out-of-range
+                        (-norg/bring-within-range maximum))))
+    (prog1
+        (funcall new-value-action-fun new-level)
+      (funcall #'norg/popup/message
+               message-format-string
+               new-level
+               maximum))))
+
+;;;; ___________________________________________________________________________
 ;;;; ____ * show-children
 
 (defun norg/show-children (n)
@@ -291,70 +324,34 @@ that is already being displayed."
     (outline-show-children n)))
 
 ;;;; ___________________________________________________________________________
-;;;; ____ * *-norg/level-format-string*
-
-(defvar *-norg/level-format-string* nil)
-
-;;;; ___________________________________________________________________________
 ;;;; ____ * show-children/incremental
 
-(nomis/define-repeated-command-stuff
-    -norg/show-children/incremental
-  -norg/show-children/incremental/with-stuff/set
-  #'norg/levels/n-below-point
-  #'norg/show-children)
-
-(defun norg/with-show-children-stuff* (fun)
-  (let* ((*-norg/level-format-string*
-          (or *-norg/level-format-string*
-              "[%s of %s]")))
-    (funcall fun)))
-
-(cl-defmacro norg/with-show-children-stuff (&body body)
-  (declare (indent 0))
-  `(norg/with-show-children-stuff* (lambda () ,@body)))
-
-(defun norg/show-children/set-0/impl ()
-  (interactive)
-  (let* ((new-level 0))
-    (-norg/show-children/incremental/with-stuff/set new-level)))
-
-(defun norg/show-children/fully-expand/impl ()
-  (interactive)
-  (let* ((new-level (norg/levels/n-below-point)))
-    (-norg/show-children/incremental/with-stuff/set new-level)))
-
-(defun norg/show-children/incremental/less/impl ()
-  (interactive)
-  (let* ((new-level (norg/levels/level-for-incremental-contract)))
-    (-norg/show-children/incremental/with-stuff/set new-level)))
-
-(defun norg/show-children/incremental/more/impl ()
-  (interactive)
-  (let* ((new-level
-          (or (norg/levels/smallest-invisible-level-below-point/or-nil)
-              -norg/plus-infinity)))
-    (-norg/show-children/incremental/with-stuff/set new-level)))
+(defun -norg/set-level-etc/show-children (level)
+  (-norg/set-level-etc #'norg/show-children
+                       level
+                       (norg/levels/n-below-point)
+                       "[%s / %s]"))
 
 (defun norg/show-children/set-0 ()
   (interactive)
-  (norg/with-show-children-stuff
-    (norg/show-children/set-0/impl)))
+  (-> 0
+      -norg/set-level-etc/show-children))
 
 (defun norg/show-children/fully-expand ()
   (interactive)
-  (norg/with-show-children-stuff
-    (norg/show-children/fully-expand/impl)))
+  (-> (norg/levels/n-below-point)
+      -norg/set-level-etc/show-children))
 
 (defun norg/show-children/incremental/less ()
   (interactive)
-  (norg/with-show-children-stuff
-    (norg/show-children/incremental/less/impl)))
+  (-> (norg/levels/level-for-incremental-contract)
+      -norg/set-level-etc/show-children))
 
 (defun norg/show-children/incremental/more ()
   (interactive)
-  (norg/with-show-children-stuff
-    (norg/show-children/incremental/more/impl)))
+  (-> (or (norg/levels/smallest-invisible-level-below-point/or-nil)
+          -norg/plus-infinity)
+      -norg/set-level-etc/show-children))
 
 ;;;; ___________________________________________________________________________
 ;;;; ____ * show-children-from-root
@@ -374,49 +371,41 @@ But see ++about-uses-of-org-reveal++"
 ;;;; ___________________________________________________________________________
 ;;;; ____ * show-children-from-root/incremental
 
-(nomis/define-repeated-command-stuff
-    -norg/show-children-from-root/incremental
-  -norg/show-children-from-root/incremental/with-stuff/set
-  #'norg/levels/max-below-root
-  #'norg/show-children-from-root)
-
-(defun norg/with-show-children-from-root-stuff* (fun)
-  (let* ((*-norg/level-format-string*
-          (or *-norg/level-format-string*
-              "[%s of %s] from root")))
-    (funcall fun)))
-
-(cl-defmacro norg/with-show-children-from-root-stuff (&body body)
-  (declare (indent 0))
-  `(norg/with-show-children-from-root-stuff* (lambda () ,@body)))
+(defun -norg/set-level-etc/show-children-from-root (level)
+  (-norg/set-level-etc (lambda (n)
+                         (save-excursion
+                           (norg/goto-root)
+                           (norg/show-children n)))
+                       level
+                       (norg/levels/max-below-root)
+                       "[%s of %s] from root"))
 
 (defun norg/show-children-from-root/set-0 ()
   (interactive)
-  (save-excursion
-    (norg/goto-root)
-    (norg/with-show-children-from-root-stuff
-      (norg/show-children/set-0/impl))))
+  (-> 0
+      -norg/set-level-etc/show-children-from-root))
 
 (defun norg/show-children-from-root/fully-expand ()
   (interactive)
-  (save-excursion
-    (norg/goto-root)
-    (norg/with-show-children-from-root-stuff
-      (norg/show-children/fully-expand/impl))))
+  (-> (save-excursion
+        (norg/goto-root)
+        (norg/levels/n-below-point))
+      -norg/set-level-etc/show-children-from-root))
 
 (defun norg/show-children-from-root/incremental/less ()
   (interactive)
-  (save-excursion
-    (norg/goto-root)
-    (norg/with-show-children-from-root-stuff
-      (norg/show-children/incremental/less/impl))))
+  (-> (save-excursion
+        (norg/goto-root)
+        (norg/levels/level-for-incremental-contract))
+      -norg/set-level-etc/show-children-from-root))
 
 (defun norg/show-children-from-root/incremental/more ()
   (interactive)
-  (save-excursion
-    (norg/goto-root)
-    (norg/with-show-children-from-root-stuff
-      (norg/show-children/incremental/more/impl))))
+  (-> (save-excursion
+        (norg/goto-root)
+        (or (norg/levels/smallest-invisible-level-below-point/or-nil)
+            -norg/plus-infinity))
+      -norg/set-level-etc/show-children-from-root))
 
 ;;;; ___________________________________________________________________________
 ;;;; ____ * show-children-from-all-roots
@@ -434,72 +423,50 @@ But see ++about-uses-of-org-reveal++"
 ;;;; ___________________________________________________________________________
 ;;;; ____ * show-children-from-all-roots/incremental
 
-(nomis/define-repeated-command-stuff
-    -norg/show-children-from-all-roots/incremental
-  -norg/show-children-from-all-roots/incremental/with-stuff/set
-  #'norg/levels/max-in-buffer
-  #'norg/show-children-from-all-roots)
-
-(defun norg/with-show-children-from-all-roots-stuff* (fun)
-  (let* ((*-norg/level-format-string*
-          (or *-norg/level-format-string*
-              "[%s of %s] from all roots")))
-    (funcall fun)))
-
-(cl-defmacro norg/with-show-children-from-all-roots-stuff (&body body)
-  (declare (indent 0))
-  `(norg/with-show-children-from-all-roots-stuff* (lambda () ,@body)))
+(defun -norg/set-level-etc/show-children-from-all-roots (level)
+  (-norg/set-level-etc (lambda (n)
+                         ;; TODO Don't need to move point, right?
+                         ;;      So can simplify this a lot.
+                         (save-excursion
+                           (goto-char 1)
+                           (norg/show-children-from-all-roots n)))
+                       level
+                       (norg/levels/max-in-buffer)
+                       "[%s of %s] from all roots"))
 
 (defun norg/show-children-from-all-roots/set-0 ()
   (interactive)
-  (save-excursion ; Keep this -- it allows point to become hidden
-    (goto-char 1) ; share the same point->level mapping
-    (let* ((new-level 0))
-      (norg/with-show-children-from-all-roots-stuff
-        (-norg/show-children-from-all-roots/incremental/with-stuff/set
-         new-level)))))
+  (-> 0
+      -norg/set-level-etc/show-children-from-all-roots))
 
 (defun norg/show-children-from-all-roots/fully-expand ()
   (interactive)
-  (save-excursion ; Keep this -- it allows point to become hidden
-    (goto-char 1) ; share the same point->level mapping
-    (let* ((new-level (norg/levels/max-in-buffer)))
-      (norg/with-show-children-from-all-roots-stuff
-        (-norg/show-children-from-all-roots/incremental/with-stuff/set
-         new-level)))))
+  (-> (norg/levels/max-in-buffer)
+      -norg/set-level-etc/show-children-from-all-roots))
 
 (defun norg/show-children-from-all-roots/incremental/less ()
   (interactive)
-  (save-excursion ; Keep this -- it allows point to become hidden
-    (goto-char 1) ; share the same point->level mapping
-    (let* ((new-level (->> (norg/map-roots
-                            #'norg/levels/level-for-incremental-contract)
-                           (apply #'max))))
-      (norg/with-show-children-from-all-roots-stuff
-        (-norg/show-children-from-all-roots/incremental/with-stuff/set
-         new-level)))))
+  (-> (->> (norg/map-roots
+            #'norg/levels/level-for-incremental-contract)
+           (apply #'max))
+      -norg/set-level-etc/show-children-from-all-roots))
 
 (defun norg/show-children-from-all-roots/incremental/more ()
   (interactive)
-  (save-excursion ; Keep this -- it allows point to become hidden
-    (goto-char 1) ; share the same point->level mapping
-    (let* ((new-level (->> (norg/map-roots
-                            (lambda ()
-                              (or (norg/levels/smallest-invisible-level-below-point/or-nil)
-                                  -norg/plus-infinity)))
-                           (apply #'min))))
-      (norg/with-show-children-from-all-roots-stuff
-        (-norg/show-children-from-all-roots/incremental/with-stuff/set
-         new-level)))))
+  (-> (->> (norg/map-roots
+            (lambda ()
+              (or (norg/levels/smallest-invisible-level-below-point/or-nil)
+                  -norg/plus-infinity)))
+           (apply #'min))
+      -norg/set-level-etc/show-children-from-all-roots))
 
 ;;;; ___________________________________________________________________________
 ;;;; ____ * norg/show-all-to-current-level
 
 (defun norg/show-all-to-current-level ()
   (interactive)
-  (norg/with-show-children-from-all-roots-stuff
-    (-norg/show-children-from-all-roots/incremental/with-stuff/set
-     (1- (norg/current-level)))))
+  (-> (1- (norg/current-level))
+      -norg/set-level-etc/show-children-from-all-roots))
 
 ;;;; ___________________________________________________________________________
 ;;;; * End
