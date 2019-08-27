@@ -23,7 +23,7 @@
 ;;;; ___________________________________________________________________________
 ;;;; ____ * Reporting
 
-(org-defkey org-mode-map (kbd "C-c =") 'nomis/org/report-org-info)
+(org-defkey org-mode-map (kbd "C-c =") 'norg/report-org-info)
 
 ;;;; ___________________________________________________________________________
 ;;;; ____ * Navigation and cycling
@@ -43,21 +43,21 @@
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ;;;; ____ ** Expand/collapse
 
-(org-defkey org-mode-map (kbd "H-q =") 'nomis/org/show-all-to-current-level)
+(org-defkey org-mode-map (kbd "H-q =") 'norg/show-all-to-current-level)
 
-(org-defkey org-mode-map (kbd "H-M-'")  'nomis/org/show-children/set-0)
-(org-defkey org-mode-map (kbd "H-M-\\") 'nomis/org/show-children/fully-expand)
-(org-defkey org-mode-map (kbd "H-M-[")  'nomis/org/show-children-from-root/set-0)
-(org-defkey org-mode-map (kbd "H-M-]")  'nomis/org/show-children-from-root/fully-expand)
-(org-defkey org-mode-map (kbd "H-M--")  'nomis/org/show-children-from-all-roots/set-0)
-(org-defkey org-mode-map (kbd "H-M-=")  'nomis/org/show-children-from-all-roots/fully-expand)
+(org-defkey org-mode-map (kbd "H-M-'")  'norg/show-children/set-0)
+(org-defkey org-mode-map (kbd "H-M-\\") 'norg/show-children/fully-expand)
+(org-defkey org-mode-map (kbd "H-M-[")  'norg/show-children-from-root/set-0)
+(org-defkey org-mode-map (kbd "H-M-]")  'norg/show-children-from-root/fully-expand)
+(org-defkey org-mode-map (kbd "H-M--")  'norg/show-children-from-all-roots/set-0)
+(org-defkey org-mode-map (kbd "H-M-=")  'norg/show-children-from-all-roots/fully-expand)
 
-(org-defkey org-mode-map (kbd "H-'")  'nomis/org/show-children/incremental/less)
-(org-defkey org-mode-map (kbd "H-\\") 'nomis/org/show-children/incremental/more)
-(org-defkey org-mode-map (kbd "H-[")  'nomis/org/show-children-from-root/incremental/less)
-(org-defkey org-mode-map (kbd "H-]")  'nomis/org/show-children-from-root/incremental/more)
-(org-defkey org-mode-map (kbd "H--")  'nomis/org/show-children-from-all-roots/incremental/less)
-(org-defkey org-mode-map (kbd "H-=")  'nomis/org/show-children-from-all-roots/incremental/more)
+(org-defkey org-mode-map (kbd "H-'")  'norg/show-children/incremental/less)
+(org-defkey org-mode-map (kbd "H-\\") 'norg/show-children/incremental/more)
+(org-defkey org-mode-map (kbd "H-[")  'norg/show-children-from-root/incremental/less)
+(org-defkey org-mode-map (kbd "H-]")  'norg/show-children-from-root/incremental/more)
+(org-defkey org-mode-map (kbd "H--")  'norg/show-children-from-all-roots/incremental/less)
+(org-defkey org-mode-map (kbd "H-=")  'norg/show-children-from-all-roots/incremental/more)
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ;;;; ____ ** Movement

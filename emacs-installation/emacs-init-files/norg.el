@@ -5,6 +5,11 @@
 ;;;; ___________________________________________________________________________
 ;;;; ____ * TODOs
 
+;;;; TODO You don't need both `norg/levels/max-in-buffer` and `-norg/max-level`.
+
+;;;; TODO When `tree-info` is not supplied as an arg, maybe use a different
+;;;;      approach (and don't get tree-info).
+
 ;;;; TODO Finish destroying `nomis-repeated-commands`, or put new stuff there.
 
 ;;;; TODO Look into which `save-excursion`s and `(goto-char 1)`s are needed.
@@ -73,50 +78,94 @@ And `org-reveal` is interactive, so, yes, there are times when
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ;;;; ____ ** Infinity
 
-(defconst -nomis/org/plus-infinity   1.0e+INF)
-(defconst -nomis/org/minus-infinity -1.0e+INF)
+(defconst -norg/plus-infinity   1.0e+INF)
+(defconst -norg/minus-infinity -1.0e+INF)
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ;;;; ____ ** Some wrappers for org functionality
 
-(defun nomis/org/report-org-info ()
+(defun norg/report-org-info ()
   (interactive)
   (message "Current level = %s%s"
-           (nomis/org/current-level)
+           (norg/current-level)
            (if (not (fboundp 'nomis/point-etc-string))
                ""
              (concat "    "
                      (nomis/point-etc-string)))))
 
-(defun nomis/org/point-is-visible? ()
+(defun norg/point-is-visible? ()
   (not (get-char-property (point) 'invisible)))
 
-(defun nomis/org/map-roots (fun)
+(defun norg/map-roots (fun)
   (let* ((dummy (cons nil nil)))
     (remove dummy
             (org-map-entries (lambda ()
-                               (let* ((level (nomis/org/current-level)))
+                               (let* ((level (norg/current-level)))
                                  (if (= level 1)
                                      (funcall fun)
                                    dummy)))
                              t
                              'file))))
 
-(defun nomis/org/current-level ()
+(defun norg/current-level ()
   (nth 1 (org-heading-components)))
+
+(defun norg/goto-root ()
+  (interactive)
+  (while (ignore-errors (outline-up-heading 1))))
+
+(defun norg/show-point ()
+  (interactive)
+  (case 1
+    (1
+     (unless (norg/point-is-visible?)
+       ;; Make point visible and leave subtree collapsed
+       (dotimes (_ 3) (org-cycle))))
+    (2
+     ;; This makes lots of stuff visible, but seems to be the "official" way.
+     ;; Leave this here as a point of interest.
+     (let ((org-catch-invisible-edits 'show))
+       (org-check-before-invisible-edit 'insert)))))
+
+(defun -norg/collapse ()
+  (norg/show-point)
+  (case 2
+    (1
+     ;; This hides too much stuff.
+     (org-overview)
+     (org-show-set-visibility 'canonical))
+    (2
+     ;; This hides just the subtree under the headline at point.
+     ;; Idea from http://christiantietze.de/posts/2019/06/org-fold-heading/.
+     ;; But what does `org-flag-subtree` do, is it part of the org public API,
+     ;; and why can't I find any useful info by googling?
+     (org-flag-subtree t))))
+
+(defun -norg/expand ()
+  (norg/show-point)
+  (-norg/collapse) ; so that we can expand in a predicable way
+  (case 3
+    ;; I tried various approaches until I found one that seems to work.
+    (1 (outline-show-children 99))
+    (2 (dotimes (_ 5)
+         ;; The 5 should work no matter how many levels there are below
+         ;; this one. It does if you hit TAB five times.
+         (org-cycle)))
+    (3 (org-map-tree #'org-cycle) ; see also `org-map-tree` if you copy this
+       )))
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ;;;; ____ ** Things I did before I had tree-info -- perhaps redo with tree-info
 
-(defun -nomis/org/levels/below-point-helper (pred-of-no-args
-                                             reducing-function)
+(defun -norg/levels/below-point-helper (pred-of-no-args
+                                        reducing-function)
   ;; TODO Think about what `reduce` does.
   ;;      Maybe add initial value, and value to return when you get a nil.
   (let* ((max-level-beneath
           (let* ((sofar nil))
             (org-map-entries (lambda ()
                                (when (funcall pred-of-no-args)
-                                 (let* ((v (nomis/org/current-level)))
+                                 (let* ((v (norg/current-level)))
                                    (setq sofar
                                          (if (null sofar)
                                              v
@@ -129,27 +178,27 @@ And `org-reveal` is interactive, so, yes, there are times when
     (if (null max-level-beneath)
         nil
       (- max-level-beneath
-         (nomis/org/current-level)))))
+         (norg/current-level)))))
 
-(defun nomis/org/levels/n-below-point ()
-  (-nomis/org/levels/below-point-helper (lambda () t)
-                                        #'max))
+(defun norg/levels/n-below-point ()
+  (-norg/levels/below-point-helper (lambda () t)
+                                   #'max))
 
-(defun nomis/org/levels/smallest-invisible-level-below-point/or-nil ()
+(defun norg/levels/smallest-invisible-level-below-point/or-nil ()
   (let* ((not-visible? (-compose #'not
-                                 #'nomis/org/point-is-visible?)))
-    (-nomis/org/levels/below-point-helper not-visible?
-                                          #'min)))
+                                 #'norg/point-is-visible?)))
+    (-norg/levels/below-point-helper not-visible?
+                                     #'min)))
 
-(defun nomis/org/levels/max-below-root ()
+(defun norg/levels/max-below-root ()
   (save-excursion
-    (nomis/org/goto-root)
-    (nomis/org/levels/n-below-point)))
+    (norg/goto-root)
+    (norg/levels/n-below-point)))
 
-(defun nomis/org/levels/max-in-buffer ()
+(defun norg/levels/max-in-buffer ()
   (let* ((sofar 0))
     (org-map-entries (lambda ()
-                       (setq sofar (max (nomis/org/current-level)
+                       (setq sofar (max (norg/current-level)
                                         sofar)))
                      t
                      'file)
@@ -158,16 +207,16 @@ And `org-reveal` is interactive, so, yes, there are times when
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ;;;; ____ ** The idea of tree-info, and things that use it
 
-(defun -nomis/org/tree-info ()
+(defun -norg/tree-info ()
   (org-map-entries (lambda ()
-                     (list (nomis/org/current-level)
-                           (nomis/org/point-is-visible?)))
+                     (list (norg/current-level)
+                           (norg/point-is-visible?)))
                    t
                    'tree))
 
-(defun -nomis/org/tree-info/with-dummy-invisible-levels ()
+(defun -norg/tree-info/with-dummy-invisible-levels ()
   (let* ((dummy-initial-entry '(:dummy-first t nil))
-         (basic-info (-nomis/org/tree-info)))
+         (basic-info (-norg/tree-info)))
     (cl-loop for ((prev-level prev-visible?) . ((level visible?) . _))
              on (cons dummy-initial-entry
                       basic-info)
@@ -189,25 +238,25 @@ And `org-reveal` is interactive, so, yes, there are times when
                       visible?
                       nil))))
 
-(defun -nomis/org/max-level (&optional tree-info)
-  (setq tree-info (or tree-info (-nomis/org/tree-info)))
+(defun -norg/max-level (&optional tree-info)
+  (setq tree-info (or tree-info (-norg/tree-info)))
   (cl-loop for (level visible? dummy?)
            in tree-info
            when (not dummy?)
            maximize level))
 
-(defun -nomis/org/fully-expanded? (&optional tree-info)
-  (setq tree-info (or tree-info (-nomis/org/tree-info)))
+(defun -norg/fully-expanded? (&optional tree-info)
+  (setq tree-info (or tree-info (-norg/tree-info)))
   (cl-loop for (level visible? dummy?)
            in tree-info
            when (not dummy?)
            always visible?))
 
-(defun nomis/org/levels/level-for-incremental-contract (&optional tree-info)
+(defun norg/levels/level-for-incremental-contract (&optional tree-info)
   ;; Collapse the most-deeply-nested expanded level, and expand everything
   ;; else to that level.
   (setq tree-info (or tree-info
-                      (-nomis/org/tree-info/with-dummy-invisible-levels)))
+                      (-norg/tree-info/with-dummy-invisible-levels)))
   (let* ((v (let* ((initial-invisible-levels
                     (cl-loop for ((prev-level prev-visible?)
                                   . ((level visible?) . _))
@@ -220,12 +269,12 @@ And `org-reveal` is interactive, so, yes, there are times when
               (- (apply #'max initial-invisible-levels) 2))))
     ;; TODO Rationlise where you count levels from. This is a place where you
     ;;      convert. Be consistent.
-    (- v (nomis/org/current-level))))
+    (- v (norg/current-level))))
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ;;;; ____ ** show-children
 
-(defun nomis/org/show-children (n)
+(defun norg/show-children (n)
   "Expand current headline to n levels.
 
 Details:
@@ -239,84 +288,84 @@ that is already being displayed."
   (let* ((collapse? (>= n 0))
          (n (abs n)))
     (when collapse?
-      (-nomis/org/collapse))
+      (-norg/collapse))
     (outline-show-children n)))
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ;;;; ____ ** show-children/incremental
 
 (nomis/define-repeated-command-stuff
-    -nomis/org/show-children/incremental
-  -nomis/org/show-children/incremental/with-stuff/set ; TODO Can you just use `nomis/org/show-children`? -- Ah! Is it just the popup you still need?
-  #'nomis/org/levels/n-below-point
-  #'nomis/org/show-children)
+    -norg/show-children/incremental
+  -norg/show-children/incremental/with-stuff/set ; TODO Can you just use `norg/show-children`? -- Ah! Is it just the popup you still need?
+  #'norg/levels/n-below-point
+  #'norg/show-children)
 
-(defun nomis/org/show-children/level-formatter (v maximum)
+(defun norg/show-children/level-formatter (v maximum)
   (format "[%s of %s]" v maximum))
 
-(defun nomis/org/with-show-children-stuff* (fun)
+(defun norg/with-show-children-stuff* (fun)
   (let* ((*nomis/drcs/level-formatter*
-          #'nomis/org/show-children/level-formatter))
+          #'norg/show-children/level-formatter))
     (funcall fun)))
 
-(cl-defmacro nomis/org/with-show-children-stuff (&body body)
+(cl-defmacro norg/with-show-children-stuff (&body body)
   (declare (indent 0))
-  `(nomis/org/with-show-children-stuff* (lambda () ,@body)))
+  `(norg/with-show-children-stuff* (lambda () ,@body)))
 
-(defun nomis/org/show-children/set-0/impl ()
+(defun norg/show-children/set-0/impl ()
   (interactive)
   (let* ((new-level 0))
-    (-nomis/org/show-children/incremental/with-stuff/set new-level)))
+    (-norg/show-children/incremental/with-stuff/set new-level)))
 
-(defun nomis/org/show-children/fully-expand/impl ()
+(defun norg/show-children/fully-expand/impl ()
   (interactive)
-  (let* ((new-level (nomis/org/levels/n-below-point)))
-    (-nomis/org/show-children/incremental/with-stuff/set new-level)))
+  (let* ((new-level (norg/levels/n-below-point)))
+    (-norg/show-children/incremental/with-stuff/set new-level)))
 
-(defun nomis/org/show-children/incremental/less/impl ()
+(defun norg/show-children/incremental/less/impl ()
   (interactive)
-  (let* ((new-level (nomis/org/levels/level-for-incremental-contract)))
-    (-nomis/org/show-children/incremental/with-stuff/set new-level)))
+  (let* ((new-level (norg/levels/level-for-incremental-contract)))
+    (-norg/show-children/incremental/with-stuff/set new-level)))
 
-(defun nomis/org/show-children/incremental/more/impl ()
+(defun norg/show-children/incremental/more/impl ()
   (interactive)
   (let* ((new-level
-          (or (nomis/org/levels/smallest-invisible-level-below-point/or-nil)
-              -nomis/org/plus-infinity)))
-    (-nomis/org/show-children/incremental/with-stuff/set new-level)))
+          (or (norg/levels/smallest-invisible-level-below-point/or-nil)
+              -norg/plus-infinity)))
+    (-norg/show-children/incremental/with-stuff/set new-level)))
 
-(defun nomis/org/show-children/set-0 ()
+(defun norg/show-children/set-0 ()
   (interactive)
-  (nomis/org/with-show-children-stuff
-    (nomis/org/show-children/set-0/impl)))
+  (norg/with-show-children-stuff
+    (norg/show-children/set-0/impl)))
 
-(defun nomis/org/show-children/fully-expand ()
+(defun norg/show-children/fully-expand ()
   (interactive)
-  (nomis/org/with-show-children-stuff
-    (nomis/org/show-children/fully-expand/impl)))
+  (norg/with-show-children-stuff
+    (norg/show-children/fully-expand/impl)))
 
-(defun nomis/org/show-children/incremental/less ()
+(defun norg/show-children/incremental/less ()
   (interactive)
-  (nomis/org/with-show-children-stuff
-    (nomis/org/show-children/incremental/less/impl)))
+  (norg/with-show-children-stuff
+    (norg/show-children/incremental/less/impl)))
 
-(defun nomis/org/show-children/incremental/more ()
+(defun norg/show-children/incremental/more ()
   (interactive)
-  (nomis/org/with-show-children-stuff
-    (nomis/org/show-children/incremental/more/impl)))
+  (norg/with-show-children-stuff
+    (norg/show-children/incremental/more/impl)))
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ;;;; ____ ** show-children-from-root
 
-(defun nomis/org/show-children-from-root (n)
+(defun norg/show-children-from-root (n)
   (interactive "^p")
-  "Call `nomis/org/show-children` on the current root headline, with N as
+  "Call `norg/show-children` on the current root headline, with N as
 the parameter.
 When done, call `org-reveal` so that the current point is shown.
 But see ++about-uses-of-org-reveal++"
   (save-excursion
-    (nomis/org/goto-root)
-    (nomis/org/show-children n))
+    (norg/goto-root)
+    (norg/show-children n))
   (org-reveal) ; see ++about-uses-of-org-reveal++
   )
 
@@ -324,61 +373,61 @@ But see ++about-uses-of-org-reveal++"
 ;;;; ____ ** show-children-from-root/incremental
 
 (nomis/define-repeated-command-stuff
-    -nomis/org/show-children-from-root/incremental
-  -nomis/org/show-children-from-root/incremental/with-stuff/set
-  #'nomis/org/levels/max-below-root
-  #'nomis/org/show-children-from-root)
+    -norg/show-children-from-root/incremental
+  -norg/show-children-from-root/incremental/with-stuff/set
+  #'norg/levels/max-below-root
+  #'norg/show-children-from-root)
 
-(defun nomis/org/show-children-from-root/level-formatter (v maximum)
+(defun norg/show-children-from-root/level-formatter (v maximum)
   (format "[%s of %s] from root" v maximum))
 
-(defun nomis/org/with-show-children-from-root-stuff* (fun)
+(defun norg/with-show-children-from-root-stuff* (fun)
   (let* ((*nomis/drcs/level-formatter*
-          #'nomis/org/show-children-from-root/level-formatter))
+          #'norg/show-children-from-root/level-formatter))
     (funcall fun)))
 
-(cl-defmacro nomis/org/with-show-children-from-root-stuff (&body body)
+(cl-defmacro norg/with-show-children-from-root-stuff (&body body)
   (declare (indent 0))
-  `(nomis/org/with-show-children-from-root-stuff* (lambda () ,@body)))
+  `(norg/with-show-children-from-root-stuff* (lambda () ,@body)))
 
-(defun nomis/org/show-children-from-root/set-0 ()
+(defun norg/show-children-from-root/set-0 ()
   (interactive)
   (save-excursion
-    (nomis/org/goto-root)
-    (nomis/org/with-show-children-from-root-stuff
-      (nomis/org/show-children/set-0/impl))))
+    (norg/goto-root)
+    (norg/with-show-children-from-root-stuff
+      (norg/show-children/set-0/impl))))
 
-(defun nomis/org/show-children-from-root/fully-expand ()
+(defun norg/show-children-from-root/fully-expand ()
   (interactive)
   (save-excursion
-    (nomis/org/goto-root)
-    (nomis/org/with-show-children-from-root-stuff
-      (nomis/org/show-children/fully-expand/impl))))
+    (norg/goto-root)
+    (norg/with-show-children-from-root-stuff
+      (norg/show-children/fully-expand/impl))))
 
-(defun nomis/org/show-children-from-root/incremental/less ()
+(defun norg/show-children-from-root/incremental/less ()
   (interactive)
   (save-excursion
-    (nomis/org/goto-root)
-    (nomis/org/with-show-children-from-root-stuff
-      (nomis/org/show-children/incremental/less/impl))))
+    (norg/goto-root)
+    (norg/with-show-children-from-root-stuff
+      (norg/show-children/incremental/less/impl))))
 
-(defun nomis/org/show-children-from-root/incremental/more ()
+(defun norg/show-children-from-root/incremental/more ()
   (interactive)
   (save-excursion
-    (nomis/org/goto-root)
-    (nomis/org/with-show-children-from-root-stuff
-      (nomis/org/show-children/incremental/more/impl))))
+    (norg/goto-root)
+    (norg/with-show-children-from-root-stuff
+      (norg/show-children/incremental/more/impl))))
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ;;;; ____ ** show-children-from-all-roots
 
-(defun nomis/org/show-children-from-all-roots (n)
-  "Call `nomis/org/show-children` on all root headlines, with N as
+(defun norg/show-children-from-all-roots (n)
+  "Call `norg/show-children` on all root headlines, with N as
 the parameter.
 When done, call `org-reveal` so that the current point is shown.
 But see ++about-uses-of-org-reveal++"
   (interactive "^p")
-  (nomis/org/map-roots (lambda () (nomis/org/show-children n)))
+  (norg/map-roots (lambda () (norg/show-children n)))
   (org-reveal) ; see ++about-uses-of-org-reveal++
   )
 
@@ -386,72 +435,72 @@ But see ++about-uses-of-org-reveal++"
 ;;;; ____ ** show-children-from-all-roots/incremental
 
 (nomis/define-repeated-command-stuff
-    -nomis/org/show-children-from-all-roots/incremental
-  -nomis/org/show-children-from-all-roots/incremental/with-stuff/set
-  #'nomis/org/levels/max-in-buffer
-  #'nomis/org/show-children-from-all-roots)
+    -norg/show-children-from-all-roots/incremental
+  -norg/show-children-from-all-roots/incremental/with-stuff/set
+  #'norg/levels/max-in-buffer
+  #'norg/show-children-from-all-roots)
 
-(defun nomis/org/show-children-from-all-roots/level-formatter (v maximum)
+(defun norg/show-children-from-all-roots/level-formatter (v maximum)
   (format "[%s of %s] from all roots" v maximum))
 
-(defun nomis/org/with-show-children-from-all-roots-stuff* (fun)
+(defun norg/with-show-children-from-all-roots-stuff* (fun)
   (let* ((*nomis/drcs/level-formatter*
-          #'nomis/org/show-children-from-all-roots/level-formatter))
+          #'norg/show-children-from-all-roots/level-formatter))
     (funcall fun)))
 
-(cl-defmacro nomis/org/with-show-children-from-all-roots-stuff (&body body)
+(cl-defmacro norg/with-show-children-from-all-roots-stuff (&body body)
   (declare (indent 0))
-  `(nomis/org/with-show-children-from-all-roots-stuff* (lambda () ,@body)))
+  `(norg/with-show-children-from-all-roots-stuff* (lambda () ,@body)))
 
-(defun nomis/org/show-children-from-all-roots/set-0 ()
+(defun norg/show-children-from-all-roots/set-0 ()
   (interactive)
   (save-excursion ; Keep this -- it allows point to become hidden
     (goto-char 1) ; share the same point->level mapping
     (let* ((new-level 0))
-      (nomis/org/with-show-children-from-all-roots-stuff
-        (-nomis/org/show-children-from-all-roots/incremental/with-stuff/set
+      (norg/with-show-children-from-all-roots-stuff
+        (-norg/show-children-from-all-roots/incremental/with-stuff/set
          new-level)))))
 
-(defun nomis/org/show-children-from-all-roots/fully-expand ()
+(defun norg/show-children-from-all-roots/fully-expand ()
   (interactive)
   (save-excursion ; Keep this -- it allows point to become hidden
     (goto-char 1) ; share the same point->level mapping
-    (let* ((new-level (nomis/org/levels/max-in-buffer)))
-      (nomis/org/with-show-children-from-all-roots-stuff
-        (-nomis/org/show-children-from-all-roots/incremental/with-stuff/set
+    (let* ((new-level (norg/levels/max-in-buffer)))
+      (norg/with-show-children-from-all-roots-stuff
+        (-norg/show-children-from-all-roots/incremental/with-stuff/set
          new-level)))))
 
-(defun nomis/org/show-children-from-all-roots/incremental/less ()
+(defun norg/show-children-from-all-roots/incremental/less ()
   (interactive)
   (save-excursion ; Keep this -- it allows point to become hidden
     (goto-char 1) ; share the same point->level mapping
-    (let* ((new-level (->> (nomis/org/map-roots
-                            #'nomis/org/levels/level-for-incremental-contract)
+    (let* ((new-level (->> (norg/map-roots
+                            #'norg/levels/level-for-incremental-contract)
                            (apply #'max))))
-      (nomis/org/with-show-children-from-all-roots-stuff
-        (-nomis/org/show-children-from-all-roots/incremental/with-stuff/set
+      (norg/with-show-children-from-all-roots-stuff
+        (-norg/show-children-from-all-roots/incremental/with-stuff/set
          new-level)))))
 
-(defun nomis/org/show-children-from-all-roots/incremental/more ()
+(defun norg/show-children-from-all-roots/incremental/more ()
   (interactive)
   (save-excursion ; Keep this -- it allows point to become hidden
     (goto-char 1) ; share the same point->level mapping
-    (let* ((new-level (->> (nomis/org/map-roots
+    (let* ((new-level (->> (norg/map-roots
                             (lambda ()
-                              (or (nomis/org/levels/smallest-invisible-level-below-point/or-nil)
-                                  -nomis/org/plus-infinity)))
+                              (or (norg/levels/smallest-invisible-level-below-point/or-nil)
+                                  -norg/plus-infinity)))
                            (apply #'min))))
-      (nomis/org/with-show-children-from-all-roots-stuff
-        (-nomis/org/show-children-from-all-roots/incremental/with-stuff/set
+      (norg/with-show-children-from-all-roots-stuff
+        (-norg/show-children-from-all-roots/incremental/with-stuff/set
          new-level)))))
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-;;;; ____ ** nomis/org/show-all-to-current-level
+;;;; ____ ** norg/show-all-to-current-level
 
-(defun nomis/org/show-all-to-current-level ()
+(defun norg/show-all-to-current-level ()
   (interactive)
-  (nomis/org/with-show-children-from-all-roots-stuff
-    (-nomis/org/show-children-from-all-roots/incremental/with-stuff/set
-     (1- (nomis/org/current-level)))))
+  (norg/with-show-children-from-all-roots-stuff
+    (-norg/show-children-from-all-roots/incremental/with-stuff/set
+     (1- (norg/current-level)))))
 
 (provide 'norg)

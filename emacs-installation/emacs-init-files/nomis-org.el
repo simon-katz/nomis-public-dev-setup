@@ -67,8 +67,8 @@
   (case 1
     (1 (org-overview))
     (2 (save-excursion
-         (nomis/org/goto-root)
-         (-nomis/org/collapse))))
+         (norg/goto-root)
+         (-norg/collapse))))
   (org-show-set-visibility detail))
 
 (defvar -nomis/org-show-only/cycle/visibility-spans
@@ -182,32 +182,15 @@
 ;;;; ___________________________________________________________________________
 ;;;; ____ * Navigation
 
-(defun nomis/org/goto-root ()
-  (interactive)
-  (while (ignore-errors (outline-up-heading 1))))
-
-(defun nomis/org-show-point ()
-  (interactive)
-  (case 1
-    (1
-     (unless (nomis/org/point-is-visible?)
-       ;; Make point visible and leave subtree collapsed
-       (dotimes (_ 3) (org-cycle))))
-    (2
-     ;; This makes lots of stuff visible, but seems to be the "official" way.
-     ;; Leave this here as a point of interest.
-     (let ((org-catch-invisible-edits 'show))
-       (org-check-before-invisible-edit 'insert)))))
-
 (defun nomis/org-previous-heading ()
   (interactive)
   (outline-previous-heading)
-  (nomis/org-show-point))
+  (norg/show-point))
 
 (defun nomis/org-next-heading ()
   (interactive)
   (outline-next-heading)
-  (nomis/org-show-point))
+  (norg/show-point))
 
 (defun nomis/-org-heading-same-level-with-extras/helper (direction)
   (let ((start-position-fun (case direction
@@ -235,7 +218,7 @@
                        (error nil))))
         (if found-p
             (progn
-              (nomis/org-show-point)
+              (norg/show-point)
               (funcall post-search-adjust-function))
           (progn
             (org-beginning-of-line)
@@ -265,33 +248,6 @@ subheading at this level in the previous parent."
 ;;;; ___________________________________________________________________________
 ;;;; ____ * Stepping
 
-(defun -nomis/org/collapse ()
-  (nomis/org-show-point)
-  (case 2
-    (1
-     ;; This hides too much stuff.
-     (org-overview)
-     (org-show-set-visibility 'canonical))
-    (2
-     ;; This hides just the subtree under the headline at point.
-     ;; Idea from http://christiantietze.de/posts/2019/06/org-fold-heading/.
-     ;; But what does `org-flag-subtree` do, is it part of the org public API,
-     ;; and why can't I find any useful info by googling?
-     (org-flag-subtree t))))
-
-(defun -nomis/org/expand ()
-  (nomis/org-show-point)
-  (-nomis/org/collapse) ; so that we can expand in a predicable way
-  (case 3
-    ;; I tried various approaches until I found one that seems to work.
-    (1 (outline-show-children 99))
-    (2 (dotimes (_ 5)
-         ;; The 5 should work no matter how many levels there are below
-         ;; this one. It does if you hit TAB five times.
-         (org-cycle)))
-    (3 (org-map-tree #'org-cycle) ; see also `org-map-tree` if you copy this
-       )))
-
 (defvar -nomis/org/step/previous-direction nil)
 (defvar -nomis/org/step/previous-state nil)
 
@@ -317,11 +273,11 @@ subheading at this level in the previous parent."
                 (setq -nomis/org/step/previous-state x))
                (expand
                 ()
-                (-nomis/org/expand)
+                (-norg/expand)
                 (record-new-state :tried-to-expand))
                (collapse
                 ()
-                (-nomis/org/collapse)
+                (-norg/collapse)
                 (record-new-state :cannot-move-and-collapsed))
                (tried-to-go-to-far
                 ()
@@ -336,7 +292,7 @@ subheading at this level in the previous parent."
             ((change-of-direction-when-collapsed?)
              (expand))
             (t
-             (-nomis/org/collapse)
+             (-norg/collapse)
              (let* ((starting-point (point)))
                (if jumping-parent-allowed?
                    (nomis/-org-heading-same-level-with-extras/helper
