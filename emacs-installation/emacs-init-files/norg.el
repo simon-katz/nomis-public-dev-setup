@@ -459,6 +459,6 @@ But see ++about-uses-of-org-reveal++"
   (interactive)
   (nomis/org/with-show-children-from-all-roots-stuff
     (-nomis/org/show-children-from-all-roots/incremental/with-stuff/set
-     (nomis/org/current-level))))
+     (1- (nomis/org/current-level)))))
 
 (provide 'norg)
