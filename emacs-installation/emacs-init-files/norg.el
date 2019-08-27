@@ -5,6 +5,8 @@
 ;;;; ___________________________________________________________________________
 ;;;; ____ * TODOs
 
+;;;; TODO You are calculating the max twice when fully expanding.
+
 ;;;; TODO Remove all mentions of `nomis`.
 
 ;;;; TODO You don't need both `norg/levels/max-in-buffer` and `-norg/max-level`.
@@ -110,6 +112,12 @@
   (interactive)
   (while (ignore-errors (outline-up-heading 1))))
 
+(cl-defmacro norg/save-excursion-to-root (&body body)
+  (declare (indent 0))
+  `(save-excursion
+     (norg/goto-root)
+     ,@body))
+
 (defun norg/show-point ()
   (interactive)
   (case 1
@@ -188,8 +196,7 @@
       -norg/plus-infinity))
 
 (defun norg/levels/max-below-root ()
-  (save-excursion
-    (norg/goto-root)
+  (norg/save-excursion-to-root
     (norg/levels/n-below-point)))
 
 (defun norg/levels/max-in-buffer ()
@@ -347,18 +354,14 @@ that is already being displayed."
   (interactive "^p")
   "Call `norg/show-children` on the current root headline, with N as
 the parameter."
-  (save-excursion
-    (norg/goto-root)
+  (norg/save-excursion-to-root
     (norg/show-children n)))
 
 ;;;; ___________________________________________________________________________
 ;;;; ____ * show-children-from-root/incremental
 
 (defun -norg/set-level-etc/show-children-from-root (level)
-  (-norg/set-level-etc (lambda (n)
-                         (save-excursion
-                           (norg/goto-root)
-                           (norg/show-children n)))
+  (-norg/set-level-etc #'norg/show-children-from-root
                        level
                        (norg/levels/max-below-root)
                        "[%s of %s] from root"))
@@ -370,22 +373,18 @@ the parameter."
 
 (defun norg/show-children-from-root/fully-expand ()
   (interactive)
-  (-> (save-excursion
-        (norg/goto-root)
-        (norg/levels/n-below-point))
+  (-> (norg/levels/max-below-root)
       -norg/set-level-etc/show-children-from-root))
 
 (defun norg/show-children-from-root/incremental/less ()
   (interactive)
-  (-> (save-excursion
-        (norg/goto-root)
+  (-> (norg/save-excursion-to-root
         (norg/levels/level-for-incremental-contract))
       -norg/set-level-etc/show-children-from-root))
 
 (defun norg/show-children-from-root/incremental/more ()
   (interactive)
-  (-> (save-excursion
-        (norg/goto-root)
+  (-> (norg/save-excursion-to-root
         (norg/levels/smallest-invisible-level-below-point/or-infinity))
       -norg/set-level-etc/show-children-from-root))
 
