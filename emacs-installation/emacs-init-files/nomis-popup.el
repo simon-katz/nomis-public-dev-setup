@@ -29,7 +29,7 @@
                                                         (point)
                                                         'invisible)
                                                  (ignore-errors
-                                                   (previous-line)))
+                                                   (previous-line 2)))
                                                (point)))))
                      (setq -nomis/popup/most-recent-popup popup)
                      (run-at-time 1
