@@ -3,14 +3,6 @@
 (progn) ; this-stops-hs-hide-all-from-hiding-the-next-comment
 
 ;;;; ___________________________________________________________________________
-;;;; ____ * TODOs
-
-;;;; TODO This is a mix of personal things and things that could be good in
-;;;;      a library.
-;;;;      Move stuff to "nomis-org-setup.el".
-;;;;      Maybe have a third file for just key bindings.
-
-;;;; ___________________________________________________________________________
 ;;;; ____ * Require things
 
 (progn ; do-stuff-that-must-be-done-before-requiring-org
@@ -678,6 +670,11 @@ subheading at this level in the previous parent."
 ;;                                       )
 ;;                        ;; :stderr output-buffer
 ;;                        )))))
+
+;;;; ___________________________________________________________________________
+;;;; * Key bindings
+
+(require 'nomis-org-key-bindings)
 
 ;;;; ___________________________________________________________________________
 ;;;; * End
