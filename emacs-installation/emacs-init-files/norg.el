@@ -180,11 +180,12 @@
   (-norg/levels/below-point-helper (lambda () t)
                                    #'max))
 
-(defun norg/levels/smallest-invisible-level-below-point/or-nil ()
-  (let* ((not-visible? (-compose #'not
-                                 #'norg/point-is-visible?)))
-    (-norg/levels/below-point-helper not-visible?
-                                     #'min)))
+(defun norg/levels/smallest-invisible-level-below-point/or-infinity ()
+  (or (let* ((not-visible? (-compose #'not
+                                     #'norg/point-is-visible?)))
+        (-norg/levels/below-point-helper not-visible?
+                                         #'min))
+      -norg/plus-infinity))
 
 (defun norg/levels/max-below-root ()
   (save-excursion
@@ -336,8 +337,7 @@ that is already being displayed."
 
 (defun norg/show-children/incremental/more ()
   (interactive)
-  (-> (or (norg/levels/smallest-invisible-level-below-point/or-nil)
-          -norg/plus-infinity)
+  (-> (norg/levels/smallest-invisible-level-below-point/or-infinity)
       -norg/set-level-etc/show-children))
 
 ;;;; ___________________________________________________________________________
@@ -386,8 +386,7 @@ the parameter."
   (interactive)
   (-> (save-excursion
         (norg/goto-root)
-        (or (norg/levels/smallest-invisible-level-below-point/or-nil)
-            -norg/plus-infinity))
+        (norg/levels/smallest-invisible-level-below-point/or-infinity))
       -norg/set-level-etc/show-children-from-root))
 
 ;;;; ___________________________________________________________________________
@@ -420,19 +419,15 @@ the parameter."
 
 (defun norg/show-children-from-all-roots/incremental/less ()
   (interactive)
-  (-> (->> (norg/map-roots
-            #'norg/levels/level-for-incremental-contract)
-           (apply #'max))
-      -norg/set-level-etc/show-children-from-all-roots))
+  (->> (norg/map-roots #'norg/levels/level-for-incremental-contract)
+       (apply #'max)
+       -norg/set-level-etc/show-children-from-all-roots))
 
 (defun norg/show-children-from-all-roots/incremental/more ()
   (interactive)
-  (-> (->> (norg/map-roots
-            (lambda ()
-              (or (norg/levels/smallest-invisible-level-below-point/or-nil)
-                  -norg/plus-infinity)))
-           (apply #'min))
-      -norg/set-level-etc/show-children-from-all-roots))
+  (->> (norg/map-roots #'norg/levels/smallest-invisible-level-below-point/or-infinity)
+       (apply #'min)
+       -norg/set-level-etc/show-children-from-all-roots))
 
 ;;;; ___________________________________________________________________________
 ;;;; ____ * norg/show-all-to-current-level
