@@ -45,7 +45,7 @@
 (require 'dash-functional)
 
 ;;;; ___________________________________________________________________________
-;;;; ____ * Tailoring other functionality
+;;;; ____ * Tailor other functionality
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ;;;; ____ ** norg/popup/message
@@ -301,7 +301,10 @@
                maximum))))
 
 ;;;; ___________________________________________________________________________
-;;;; ____ * show-children
+;;;; ____ * Expanding and collapsing
+
+;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+;;;; ____ ** show-children
 
 (defun norg/show-children (n)
   "Expand current headline to n levels.
@@ -320,8 +323,8 @@ that is already being displayed."
       (-norg/collapse))
     (outline-show-children n)))
 
-;;;; ___________________________________________________________________________
-;;;; ____ * show-children/incremental
+;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+;;;; ____ ** show-children/incremental
 
 (defun -norg/set-level-etc/show-children (level)
   (-norg/set-level-etc #'norg/show-children
@@ -349,8 +352,8 @@ that is already being displayed."
   (-> (norg/smallest-invisible-level-below-or-infinity)
       -norg/set-level-etc/show-children))
 
-;;;; ___________________________________________________________________________
-;;;; ____ * show-children-from-root
+;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+;;;; ____ ** show-children-from-root
 
 (defun norg/show-children-from-root (n)
   (interactive "^p")
@@ -359,8 +362,8 @@ the parameter."
   (norg/save-excursion-to-root
     (norg/show-children n)))
 
-;;;; ___________________________________________________________________________
-;;;; ____ * show-children-from-root/incremental
+;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+;;;; ____ ** show-children-from-root/incremental
 
 (defun -norg/set-level-etc/show-children-from-root (level)
   (-norg/set-level-etc #'norg/show-children-from-root
@@ -388,8 +391,8 @@ the parameter."
   (-> (norg/smallest-invisible-level-below-or-infinity/root)
       -norg/set-level-etc/show-children-from-root))
 
-;;;; ___________________________________________________________________________
-;;;; ____ * show-children-from-all-roots
+;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+;;;; ____ ** show-children-from-all-roots
 
 (defun norg/show-children-from-all-roots (n)
   "Call `norg/show-children` on all root headlines, with N as
@@ -397,8 +400,8 @@ the parameter."
   (interactive "^p")
   (norg/map-roots (lambda () (norg/show-children n))))
 
-;;;; ___________________________________________________________________________
-;;;; ____ * show-children-from-all-roots/incremental
+;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+;;;; ____ ** show-children-from-all-roots/incremental
 
 (defun -norg/set-level-etc/show-children-from-all-roots (level)
   (-norg/set-level-etc #'norg/show-children-from-all-roots
@@ -426,8 +429,8 @@ the parameter."
   (->> (norg/smallest-invisible-level-below/or-infinity/buffer)
        -norg/set-level-etc/show-children-from-all-roots))
 
-;;;; ___________________________________________________________________________
-;;;; ____ * norg/show-all-to-current-level
+;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+;;;; ____ ** norg/show-all-to-current-level
 
 (defun norg/show-all-to-current-level ()
   (interactive)
@@ -435,6 +438,6 @@ the parameter."
       -norg/set-level-etc/show-children-from-all-roots))
 
 ;;;; ___________________________________________________________________________
-;;;; * End
+;;;; ____ * End
 
 (provide 'norg)
