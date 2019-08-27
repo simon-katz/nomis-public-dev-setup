@@ -5,14 +5,14 @@
 ;;;; ___________________________________________________________________________
 ;;;; ____ * TODOs
 
+;;;; TODO Have only one kind of tree-info.
+
 ;;;; TODO You are calculating the max twice when fully expanding.
 
 ;;;; TODO Remove all mentions of `nomis`.
 
 ;;;; TODO When `tree-info` is not supplied as an arg, maybe use a different
 ;;;;      approach (and don't get tree-info).
-
-;;;; TODO Look into which `save-excursion`s and `(goto-char 1)`s are needed.
 
 ;;;; TODO There's a bug in incremental collapsing when there a child is more
 ;;;;      than one level deeper than its parent.
@@ -26,16 +26,6 @@
 ;;;; TODO Ellipsis symbols disappear in some places while popup is being
 ;;;;      displayed.
 
-;;;; TODO Want to not have to show point. Can you have it not move point when
-;;;;      you hide point?
-;;;;      - This has started doing what you want for the `from-all-roots` stuff.
-;;;;        Is that related to the `save-excursion`s you've added?
-;;;;        - Yes! I've added `save-excursion`s for the `from-root` stuff,
-;;;;          and that's doing the same.
-;;;;     - Cool, buy why?
-
-;;;; TODO Put the popup stuff somewhere new.
-
 ;;;; TODO Sometimes things take a long time and a busy cursor would be useful.
 
 ;;;; TODO At the beginning of the commands, go to beginning of
@@ -45,10 +35,6 @@
 ;;;;      Do this inside a `save-excursion`.
 ;;;;      For the commands whose scope is the whole file you don't need to
 ;;;;      record positions (or record a position of 1 always).
-
-;;;; TODO Fix the nasty macros.
-;;;;      - Can you functionify some of it?
-;;;;      - Macro hygiene.
 
 ;;;; ___________________________________________________________________________
 ;;;; ____ * Require things
