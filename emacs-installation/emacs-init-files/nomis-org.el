@@ -51,6 +51,16 @@
                org-link-frame-setup)))
 
 ;;;; ___________________________________________________________________________
+;;;; ____ * Misc API-ish things -- perhaps candidates for `norg`
+
+;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+;;;; ____ ** Last command
+
+(defun nomis/org/last-command ()
+  (or (bound-and-true-p *nomis/smex/last-command*)
+      last-command))
+
+;;;; ___________________________________________________________________________
 ;;;; ____ * Hiding and showing -- cycling
 
 (defun -nomis/org-show-only (detail)

@@ -71,13 +71,6 @@ And `org-reveal` is interactive, so, yes, there are times when
 ;;;; ____ * Towards a nicer API
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-;;;; ____ ** Last command
-
-(defun nomis/org/last-command ()
-  (or (bound-and-true-p *nomis/smex/last-command*)
-      last-command))
-
-;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ;;;; ____ ** Infinity
 
 (defconst -nomis/org/plus-infinity   1.0e+INF)
