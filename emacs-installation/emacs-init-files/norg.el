@@ -9,8 +9,6 @@
 
 ;;;; TODO Remove all mentions of `nomis`.
 
-;;;; TODO You don't need both `norg/levels/max-in-buffer` and `-norg/max-level`.
-
 ;;;; TODO When `tree-info` is not supplied as an arg, maybe use a different
 ;;;;      approach (and don't get tree-info).
 
@@ -184,29 +182,16 @@
       (- max-level-beneath
          (norg/current-level)))))
 
-(defun norg/levels/n-below-point ()
+(defun norg/n-levels-below ()
   (-norg/levels/below-point-helper (lambda () t)
                                    #'max))
 
-(defun norg/levels/smallest-invisible-level-below-point/or-infinity ()
+(defun norg/smallest-invisible-level-below-or-infinity ()
   (or (let* ((not-visible? (-compose #'not
                                      #'norg/point-is-visible?)))
         (-norg/levels/below-point-helper not-visible?
                                          #'min))
       -norg/plus-infinity))
-
-(defun norg/levels/max-below-root ()
-  (norg/save-excursion-to-root
-    (norg/levels/n-below-point)))
-
-(defun norg/levels/max-in-buffer ()
-  (let* ((sofar 0))
-    (org-map-entries (lambda ()
-                       (setq sofar (max (norg/current-level)
-                                        sofar)))
-                     t
-                     'file)
-    sofar))
 
 ;;;; ___________________________________________________________________________
 ;;;; ____ * The idea of tree-info, and things that use it
@@ -242,13 +227,6 @@
                       visible?
                       nil))))
 
-(defun -norg/max-level (&optional tree-info)
-  (setq tree-info (or tree-info (-norg/tree-info)))
-  (cl-loop for (level visible? dummy?)
-           in tree-info
-           when (not dummy?)
-           maximize level))
-
 (defun -norg/fully-expanded? (&optional tree-info)
   (setq tree-info (or tree-info (-norg/tree-info)))
   (cl-loop for (level visible? dummy?)
@@ -256,7 +234,7 @@
            when (not dummy?)
            always visible?))
 
-(defun norg/levels/level-for-incremental-contract (&optional tree-info)
+(defun norg/level-for-incremental-contract (&optional tree-info)
   ;; Collapse the most-deeply-nested expanded level, and expand everything
   ;; else to that level.
   (setq tree-info (or tree-info
@@ -274,6 +252,44 @@
     ;; TODO Rationlise where you count levels from. This is a place where you
     ;;      convert. Be consistent.
     (- v (norg/current-level))))
+
+;;;; ___________________________________________________________________________
+;;;; ____ * Operations on root
+
+(defun norg/n-levels-below/root ()
+  (norg/save-excursion-to-root
+    (norg/n-levels-below)))
+
+(defun norg/level-for-incremental-contract/root ()
+  (norg/save-excursion-to-root
+    (norg/level-for-incremental-contract)))
+
+(defun norg/smallest-invisible-level-below-or-infinity/root ()
+  (norg/save-excursion-to-root
+    (norg/smallest-invisible-level-below-or-infinity)))
+
+;;;; ___________________________________________________________________________
+;;;; ____ * Operations on buffer
+
+(defun norg/levels/max-in-buffer ()
+  (let* ((sofar 0))
+    (org-map-entries (lambda ()
+                       (setq sofar (max (norg/current-level)
+                                        sofar)))
+                     t
+                     'file)
+    sofar))
+
+(defun norg/n-levels-below/buffer ()
+  (1- (norg/levels/max-in-buffer)))
+
+(defun norg/level-for-incremental-contract/buffer ()
+  (->> (norg/map-roots #'norg/level-for-incremental-contract)
+       (apply #'max)))
+
+(defun norg/smallest-invisible-level-below/or-infinity/buffer ()
+  (->> (norg/map-roots #'norg/smallest-invisible-level-below-or-infinity)
+       (apply #'min)))
 
 ;;;; ___________________________________________________________________________
 ;;;; ____ * -norg/set-level-etc
@@ -324,7 +340,7 @@ that is already being displayed."
 (defun -norg/set-level-etc/show-children (level)
   (-norg/set-level-etc #'norg/show-children
                        level
-                       (norg/levels/n-below-point)
+                       (norg/n-levels-below)
                        "[%s / %s]"))
 
 (defun norg/show-children/set-0 ()
@@ -334,17 +350,17 @@ that is already being displayed."
 
 (defun norg/show-children/fully-expand ()
   (interactive)
-  (-> (norg/levels/n-below-point)
+  (-> (norg/n-levels-below)
       -norg/set-level-etc/show-children))
 
 (defun norg/show-children/incremental/less ()
   (interactive)
-  (-> (norg/levels/level-for-incremental-contract)
+  (-> (norg/level-for-incremental-contract)
       -norg/set-level-etc/show-children))
 
 (defun norg/show-children/incremental/more ()
   (interactive)
-  (-> (norg/levels/smallest-invisible-level-below-point/or-infinity)
+  (-> (norg/smallest-invisible-level-below-or-infinity)
       -norg/set-level-etc/show-children))
 
 ;;;; ___________________________________________________________________________
@@ -363,7 +379,7 @@ the parameter."
 (defun -norg/set-level-etc/show-children-from-root (level)
   (-norg/set-level-etc #'norg/show-children-from-root
                        level
-                       (norg/levels/max-below-root)
+                       (norg/n-levels-below/root)
                        "[%s of %s] from root"))
 
 (defun norg/show-children-from-root/set-0 ()
@@ -373,19 +389,17 @@ the parameter."
 
 (defun norg/show-children-from-root/fully-expand ()
   (interactive)
-  (-> (norg/levels/max-below-root)
+  (-> (norg/n-levels-below/root)
       -norg/set-level-etc/show-children-from-root))
 
 (defun norg/show-children-from-root/incremental/less ()
   (interactive)
-  (-> (norg/save-excursion-to-root
-        (norg/levels/level-for-incremental-contract))
+  (-> (norg/level-for-incremental-contract/root)
       -norg/set-level-etc/show-children-from-root))
 
 (defun norg/show-children-from-root/incremental/more ()
   (interactive)
-  (-> (norg/save-excursion-to-root
-        (norg/levels/smallest-invisible-level-below-point/or-infinity))
+  (-> (norg/smallest-invisible-level-below-or-infinity/root)
       -norg/set-level-etc/show-children-from-root))
 
 ;;;; ___________________________________________________________________________
@@ -403,7 +417,7 @@ the parameter."
 (defun -norg/set-level-etc/show-children-from-all-roots (level)
   (-norg/set-level-etc #'norg/show-children-from-all-roots
                        level
-                       (norg/levels/max-in-buffer)
+                       (norg/n-levels-below/buffer)
                        "[%s of %s] from all roots"))
 
 (defun norg/show-children-from-all-roots/set-0 ()
@@ -413,19 +427,17 @@ the parameter."
 
 (defun norg/show-children-from-all-roots/fully-expand ()
   (interactive)
-  (-> (norg/levels/max-in-buffer)
+  (-> (norg/n-levels-below/buffer)
       -norg/set-level-etc/show-children-from-all-roots))
 
 (defun norg/show-children-from-all-roots/incremental/less ()
   (interactive)
-  (->> (norg/map-roots #'norg/levels/level-for-incremental-contract)
-       (apply #'max)
+  (->> (norg/level-for-incremental-contract/buffer)
        -norg/set-level-etc/show-children-from-all-roots))
 
 (defun norg/show-children-from-all-roots/incremental/more ()
   (interactive)
-  (->> (norg/map-roots #'norg/levels/smallest-invisible-level-below-point/or-infinity)
-       (apply #'min)
+  (->> (norg/smallest-invisible-level-below/or-infinity/buffer)
        -norg/set-level-etc/show-children-from-all-roots))
 
 ;;;; ___________________________________________________________________________
