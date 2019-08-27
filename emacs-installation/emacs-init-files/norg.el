@@ -5,14 +5,9 @@
 ;;;; ___________________________________________________________________________
 ;;;; ____ * TODOs
 
-;;;; TODO Have only one kind of tree-info.
-
 ;;;; TODO You are calculating the max twice when fully expanding.
 
 ;;;; TODO Remove all mentions of `nomis`.
-
-;;;; TODO When `tree-info` is not supplied as an arg, maybe use a different
-;;;;      approach (and don't get tree-info).
 
 ;;;; TODO There's a bug in incremental collapsing when there a child is more
 ;;;;      than one level deeper than its parent.
@@ -183,15 +178,19 @@
 ;;;; ____ * The idea of tree-info, and things that use it
 
 (defun -norg/tree-info ()
-  (org-map-entries (lambda ()
-                     (list (norg/current-level)
-                           (norg/point-is-visible?)))
-                   t
-                   'tree))
-
-(defun -norg/tree-info/with-dummy-invisible-levels ()
+  ;; This is rather expensive, because the value returned by `org-map-entries`
+  ;; is processed further and discarded.
+  ;; You could do more in `org-map-entries`, but it's fiddly because:
+  ;; - You want to collect multiple items per iteration.
+  ;;   (Solution: use nconc on lists.)
+  ;; - You want to look at two headlines at a time.
+  ;;   (Solution: record previous item in a piece of mutable state.)
   (let* ((dummy-initial-entry '(:dummy-first t nil))
-         (basic-info (-norg/tree-info)))
+         (basic-info (org-map-entries (lambda ()
+                                        (list (norg/current-level)
+                                              (norg/point-is-visible?)))
+                                      t
+                                      'tree)))
     (cl-loop for ((prev-level prev-visible?) . ((level visible?) . _))
              on (cons dummy-initial-entry
                       basic-info)
@@ -224,7 +223,7 @@
   ;; Collapse the most-deeply-nested expanded level, and expand everything
   ;; else to that level.
   (setq tree-info (or tree-info
-                      (-norg/tree-info/with-dummy-invisible-levels)))
+                      (-norg/tree-info)))
   (let* ((v (let* ((initial-invisible-levels
                     (cl-loop for ((prev-level prev-visible?)
                                   . ((level visible?) . _))
