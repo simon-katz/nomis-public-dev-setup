@@ -5,8 +5,6 @@
 ;;;; ___________________________________________________________________________
 ;;;; ____ * TODOs
 
-;;;; TODO You are calculating the max twice when fully expanding.
-
 ;;;; TODO Remove all mentions of `nomis`.
 
 ;;;; TODO There's a bug in incremental collapsing when there a child is more
@@ -290,7 +288,12 @@
                             new-level/maybe-out-of-range
                             maximum
                             message-format-string)
-  (let* ((new-level (-> new-level/maybe-out-of-range
+  (let* ((new-level (-> (if (eql new-level/maybe-out-of-range
+                                 :max)
+                            ;; The special value of `:max` means that we don't
+                            ;; have to compute the value twice.
+                            maximum
+                          new-level/maybe-out-of-range)
                         (-norg/bring-within-range maximum))))
     (prog1
         (funcall new-value-action-fun new-level)
@@ -338,7 +341,7 @@ that is already being displayed."
 
 (defun norg/show-children/fully-expand ()
   (interactive)
-  (-> (norg/n-levels-below)
+  (-> :max
       -norg/set-level-etc/show-children))
 
 (defun norg/show-children/incremental/less ()
@@ -377,7 +380,7 @@ the parameter."
 
 (defun norg/show-children-from-root/fully-expand ()
   (interactive)
-  (-> (norg/n-levels-below/root)
+  (-> :max
       -norg/set-level-etc/show-children-from-root))
 
 (defun norg/show-children-from-root/incremental/less ()
@@ -415,7 +418,7 @@ the parameter."
 
 (defun norg/show-children-from-all-roots/fully-expand ()
   (interactive)
-  (-> (norg/n-levels-below/buffer)
+  (-> :max
       -norg/set-level-etc/show-children-from-all-roots))
 
 (defun norg/show-children-from-all-roots/incremental/less ()
