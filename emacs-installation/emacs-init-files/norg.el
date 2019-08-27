@@ -291,20 +291,23 @@ that is already being displayed."
     (outline-show-children n)))
 
 ;;;; ___________________________________________________________________________
+;;;; ____ * *-norg/level-format-string*
+
+(defvar *-norg/level-format-string* nil)
+
+;;;; ___________________________________________________________________________
 ;;;; ____ * show-children/incremental
 
 (nomis/define-repeated-command-stuff
     -norg/show-children/incremental
-  -norg/show-children/incremental/with-stuff/set ; TODO Can you just use `norg/show-children`? -- Ah! Is it just the popup you still need?
+  -norg/show-children/incremental/with-stuff/set
   #'norg/levels/n-below-point
   #'norg/show-children)
 
-(defun norg/show-children/level-formatter (v maximum)
-  (format "[%s of %s]" v maximum))
-
 (defun norg/with-show-children-stuff* (fun)
-  (let* ((*nomis/drcs/level-formatter*
-          #'norg/show-children/level-formatter))
+  (let* ((*-norg/level-format-string*
+          (or *-norg/level-format-string*
+              "[%s of %s]")))
     (funcall fun)))
 
 (cl-defmacro norg/with-show-children-stuff (&body body)
@@ -377,12 +380,10 @@ But see ++about-uses-of-org-reveal++"
   #'norg/levels/max-below-root
   #'norg/show-children-from-root)
 
-(defun norg/show-children-from-root/level-formatter (v maximum)
-  (format "[%s of %s] from root" v maximum))
-
 (defun norg/with-show-children-from-root-stuff* (fun)
-  (let* ((*nomis/drcs/level-formatter*
-          #'norg/show-children-from-root/level-formatter))
+  (let* ((*-norg/level-format-string*
+          (or *-norg/level-format-string*
+              "[%s of %s] from root")))
     (funcall fun)))
 
 (cl-defmacro norg/with-show-children-from-root-stuff (&body body)
@@ -439,12 +440,10 @@ But see ++about-uses-of-org-reveal++"
   #'norg/levels/max-in-buffer
   #'norg/show-children-from-all-roots)
 
-(defun norg/show-children-from-all-roots/level-formatter (v maximum)
-  (format "[%s of %s] from all roots" v maximum))
-
 (defun norg/with-show-children-from-all-roots-stuff* (fun)
-  (let* ((*nomis/drcs/level-formatter*
-          #'norg/show-children-from-all-roots/level-formatter))
+  (let* ((*-norg/level-format-string*
+          (or *-norg/level-format-string*
+              "[%s of %s] from all roots")))
     (funcall fun)))
 
 (cl-defmacro norg/with-show-children-from-all-roots-stuff (&body body)
