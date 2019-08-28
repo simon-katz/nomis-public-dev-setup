@@ -10,9 +10,8 @@ This simply moves window-point to the end of the buffer in all windows
 that are showing the buffer."
   (interactive)
   (advice-add 'message
-              :around
+              :after
               (lambda (orig-fun &rest args)
-                (apply orig-fun args)
                 (with-current-buffer "*Messages*"
                   (goto-char (point-max))
                   (let ((windows (get-buffer-window-list (current-buffer) nil t)))
