@@ -45,8 +45,8 @@
             (cons dir-name grep-find-ignored-directories)))
     (message "%s %s -- NOTE: THIS WILL APPLY ONLY TO NEW GREP BUFFERS"
              (if (member dir-name grep-find-ignored-directories)
-                 (message "Excluding")
-               (message "Including"))
+                 "Excluding"
+               "Including")
              dir-name)))
 
 ;;;; ___________________________________________________________________________
