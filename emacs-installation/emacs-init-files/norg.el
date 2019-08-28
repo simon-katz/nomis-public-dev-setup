@@ -7,6 +7,10 @@
 
 ;;;; TODO Remove all mentions of `nomis`.
 
+;;;; TODO If you call `norg/show-children`, `norg/show-children-from-all-roots`
+;;;;      or `norg/show-children-from-all-roots` directly, you don't go through
+;;;;      the `-norg/set-level-etc` logic.
+
 ;;;; TODO There's a bug in incremental collapsing when there a child is more
 ;;;;      than one level deeper than its parent.
 
