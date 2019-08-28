@@ -52,6 +52,11 @@
 (require 'dash)
 (require 'dash-functional)
 
+;;;; Things that you might want to make into packages if you make norg into a
+;;;; package.
+
+(require 'nomis-popup nil t)
+
 ;;;; ___________________________________________________________________________
 ;;;; ____ * Tailor other functionality
 
