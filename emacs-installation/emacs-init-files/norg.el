@@ -15,6 +15,9 @@
 ;;;; TODO Look at expansion of headlines with bodies (or whatever they
 ;;;;      are called).
 ;;;;      (Bodies are not being expanded. Maybe want a way to expand them.)
+;;;;      Perhaps you could have an extra level between your current levels;
+;;;;      they'd differ by whether bodies are shown.
+;;;;      (And is there anything else apart from bodies to consider?)
 
 ;;;; TODO Ellipsis symbols disappear in some places while popup is being
 ;;;;      displayed.
@@ -28,6 +31,18 @@
 ;;;;      Do this inside a `save-excursion`.
 ;;;;      For the commands whose scope is the whole file you don't need to
 ;;;;      record positions (or record a position of 1 always).
+
+;;;; TODO Idea of treating level -1 as show only parents, and not siblings.
+;;;;      But first:
+;;;;      - Can you detect a parents-not-siblings state? (Remember: you are
+;;;;        no longer storing state for positions. (But you could in this
+;;;;        special case, I guess. But that's getting complicated. It was nice
+;;;;        to get rid of the state.))
+;;;;      - Consider whether there's anything else you might want to do with
+;;;;        visibility.
+;;;;      - Sort out visibiity issues that are mentioned above:
+;;;;        - Bodies not being expanded.
+;;;;        - (Anything else?)
 
 ;;;; ___________________________________________________________________________
 ;;;; ____ * Require things
