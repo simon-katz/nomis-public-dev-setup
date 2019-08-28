@@ -277,10 +277,11 @@
 ;;;; ___________________________________________________________________________
 ;;;; ____ * -norg/set-level-etc
 
+(defun -norg/out-of-range (v maximum)
+  (or (< v 0)
+      (> v maximum)))
+
 (defun -norg/bring-within-range (v maximum)
-  (when (or (< v 0)
-            (> v maximum))
-    (nomis/grab-user-attention/low))
   (min (max 0 v)
        maximum))
 
@@ -288,15 +289,18 @@
                             new-level/maybe-out-of-range
                             maximum
                             message-format-string)
-  (let* ((new-level (-> (if (eql new-level/maybe-out-of-range
-                                 :max)
-                            ;; The special value of `:max` means that we don't
-                            ;; have to compute the value twice.
-                            maximum
-                          new-level/maybe-out-of-range)
-                        (-norg/bring-within-range maximum))))
+  (let* ((v (-> (if (eql new-level/maybe-out-of-range
+                         :max)
+                    ;; The special value of `:max` means that we don't
+                    ;; have to compute the value twice.
+                    maximum
+                  new-level/maybe-out-of-range)))
+         (out-of-range? (-norg/out-of-range v maximum))
+         (new-level (-norg/bring-within-range v maximum)))
     (prog1
         (funcall new-value-action-fun new-level)
+      (when out-of-range?
+        (nomis/grab-user-attention/low))
       (funcall #'norg/popup/message
                message-format-string
                new-level
