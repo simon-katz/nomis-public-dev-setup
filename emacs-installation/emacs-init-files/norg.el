@@ -302,9 +302,12 @@
       (when out-of-range?
         (nomis/grab-user-attention/low))
       (funcall #'norg/popup/message
-               message-format-string
+               (concat message-format-string "%s")
                new-level
-               maximum))))
+               maximum
+               (if out-of-range?
+                   " —- can't go further than this"
+                 "")))))
 
 ;;;; ___________________________________________________________________________
 ;;;; ____ * Expanding and collapsing
