@@ -74,6 +74,37 @@
          format-string
          args))
 
+;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+;;;; ____ ** what-cursor-position
+;;;; Add org level to the output of `what-cursor-position`.
+
+(defvar norg/add-info-to-what-cursor-position?
+  t
+  "Control whether we add additional info to the message produced by
+`what-cursor-position`. This is here just in case someone might be parsing the
+message and in case adding org level messes things up.")
+
+(defvar *-norg/in-what-cursor-position?* nil)
+
+(advice-add 'what-cursor-position
+            :around
+            (lambda (orig-fun &rest args)
+              (let* ((*-norg/in-what-cursor-position?* t))
+                (apply orig-fun args)))
+            '((name . add-org-level-info)))
+
+(advice-add 'message
+            :around
+            (lambda (orig-fun &rest args)
+              (if (and norg/add-info-to-what-cursor-position?
+                       (eq major-mode 'org-mode)
+                       *-norg/in-what-cursor-position?*)
+                  (apply orig-fun
+                         (concat (first args) " org-level=%s")
+                         (append (rest args) (list (norg/current-level-or-error-string))))
+                (apply orig-fun args)))
+            '((name . add-org-level-info)))
+
 ;;;; ___________________________________________________________________________
 ;;;; ____ * Infinity
 
@@ -82,15 +113,6 @@
 
 ;;;; ___________________________________________________________________________
 ;;;; ____ * Some wrappers for org functionality
-
-(defun norg/report-org-info ()
-  (interactive)
-  (message "Current level = %s%s"
-           (norg/current-level)
-           (if (not (fboundp 'nomis/point-etc-string))
-               ""
-             (concat "    "
-                     (nomis/point-etc-string)))))
 
 (defun norg/point-is-visible? ()
   (not (get-char-property (point) 'invisible)))
@@ -108,6 +130,11 @@
 
 (defun norg/current-level ()
   (nth 1 (org-heading-components)))
+
+(defun norg/current-level-or-error-string ()
+  (condition-case err
+      (norg/current-level)
+    (error (cdr err))))
 
 (defun norg/goto-root ()
   (interactive)

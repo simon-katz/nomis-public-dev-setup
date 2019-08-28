@@ -21,11 +21,6 @@
 (add-hook 'org-mode-hook 'nomis/turn-on-idle-highlight-mode)
 
 ;;;; ___________________________________________________________________________
-;;;; ____ * Reporting
-
-(org-defkey org-mode-map (kbd "C-c =") 'norg/report-org-info)
-
-;;;; ___________________________________________________________________________
 ;;;; ____ * Navigation and cycling
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
