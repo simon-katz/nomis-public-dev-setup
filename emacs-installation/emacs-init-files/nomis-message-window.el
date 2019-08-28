@@ -11,7 +11,7 @@ that are showing the buffer."
   (interactive)
   (advice-add 'message
               :after
-              (lambda (orig-fun &rest args)
+              (lambda (&rest args)
                 (with-current-buffer "*Messages*"
                   (goto-char (point-max))
                   (let ((windows (get-buffer-window-list (current-buffer) nil t)))
