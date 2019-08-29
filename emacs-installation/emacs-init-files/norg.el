@@ -185,7 +185,7 @@ message and in case adding org level messes things up.")
      (let ((org-catch-invisible-edits 'show))
        (org-check-before-invisible-edit 'insert)))))
 
-(defun -norg/collapse ()
+(defun norg/collapse ()
   (norg/show-point) ; TODO Do you need this?
   (case 2
     (1
@@ -199,7 +199,7 @@ message and in case adding org level messes things up.")
      ;; and why can't I find any useful info by googling?
      (org-flag-subtree t))))
 
-(defun norg/expand/rename-me (n)
+(defun norg/expand (n)
   ;; Use `outline-show-children`, n), not `org-show-children`, because the
   ;; latter shows first level when n is 0.
   (outline-show-children n)
@@ -207,8 +207,8 @@ message and in case adding org level messes things up.")
                     (when (norg/point-is-visible?)
                       (outline-show-entry)))))
 
-(defun -norg/expand ()
-  (norg/expand/rename-me 1000) ; TODO magic number
+(defun norg/expand-fully ()
+  (norg/expand 1000) ; TODO magic number
   )
 
 ;;;; ___________________________________________________________________________
@@ -403,8 +403,8 @@ that is already being displayed."
   (let* ((collapse? (>= n 0))
          (n (abs n)))
     (when collapse?
-      (-norg/collapse))
-    (norg/expand/rename-me n)))
+      (norg/collapse))
+    (norg/expand n)))
 
 (defun -norg/show-children-from-point/set-level-etc (level)
   (-norg/set-level-etc #'norg/show-children-from-point*

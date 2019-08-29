@@ -68,7 +68,7 @@
     (1 (org-overview))
     (2 (save-excursion
          (norg/goto-root)
-         (-norg/collapse))))
+         (norg/collapse))))
   (org-show-set-visibility detail))
 
 (defvar -nomis/org-show-only/cycle/visibility-spans
@@ -273,11 +273,11 @@ subheading at this level in the previous parent."
                 (setq -nomis/org/step/previous-state x))
                (expand
                 ()
-                (-norg/expand)
+                (norg/expand-fully)
                 (record-new-state :tried-to-expand))
                (collapse
                 ()
-                (-norg/collapse)
+                (norg/collapse)
                 (record-new-state :cannot-move-and-collapsed))
                (tried-to-go-to-far
                 ()
@@ -292,7 +292,7 @@ subheading at this level in the previous parent."
             ((change-of-direction-when-collapsed?)
              (expand))
             (t
-             (-norg/collapse)
+             (norg/collapse)
              (let* ((starting-point (point)))
                (if jumping-parent-allowed?
                    (nomis/-org-heading-same-level-with-extras/helper
