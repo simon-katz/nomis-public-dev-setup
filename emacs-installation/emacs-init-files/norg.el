@@ -40,6 +40,18 @@
 ;;;;        - Bodies not being expanded.
 ;;;;        - (Anything else?)
 
+;;;; TODO Bug: When a M-x is used to invoke a command (even something not
+;;;;      org-related (such as `version` or `what-cursor-position)`, if the
+;;;;      point is hidden it gets changed to be a visible point.
+;;;;      To reproduce:
+;;;;      - M-x what-cursor-position
+;;;;      - Do something that hides point.
+;;;;      - M-x what-cursor-position
+;;;;        - Observe that point has not changed.
+;;;;      - M-x what-cursor-position
+;;;;        - Observe that point has changed.
+;;;;      So, it seems that after running a M-x command, point gets changed.
+
 ;;;; ___________________________________________________________________________
 ;;;; ____ * Some rejected ideas
 
