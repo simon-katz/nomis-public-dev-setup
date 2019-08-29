@@ -5,8 +5,6 @@
 ;;;; ___________________________________________________________________________
 ;;;; ____ * TODOs
 
-;;;; TODO Remove all mentions of `nomis`.
-
 ;;;; TODO If you call `norg/show-children`, `norg/show-children-from-all-roots`
 ;;;;      or `norg/show-children-from-all-roots` directly, you don't go through
 ;;;;      the `-norg/set-level-etc` logic.
@@ -68,12 +66,16 @@
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ;;;; ____ ** norg/popup/message
 
+(defvar norg/use-nomis-popup-when-available? t)
+
 (defun norg/popup/message (format-string &rest args)
-  (apply (if (not (featurep 'nomis-popup))
-             #'message
-           #'nomis/popup/message)
-         format-string
-         args))
+  (let* ((fun (if (and norg/use-nomis-popup-when-available?
+                       (featurep 'nomis-popup))
+                  #'nomis/popup/message
+                #'message)))
+    (apply fun
+           format-string
+           args)))
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ;;;; ____ ** what-cursor-position
