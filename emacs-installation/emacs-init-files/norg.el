@@ -5,12 +5,14 @@
 ;;;; ___________________________________________________________________________
 ;;;; ____ * TODOs
 
-;;;; TODO Look at expansion of headlines with bodies (or whatever they
-;;;;      are called).
-;;;;      (Bodies are not being expanded. Maybe want a way to expand them.)
+;;;; TODO Use `org-map-tree` instead of `org-map-entries` when you can.
+
+;;;; TODO Check uses of `norg/show-point`. Are they needed? Seems dodgy.
+
+;;;; TODO Expansion of headlines with bodies:
 ;;;;      Perhaps you could have an extra level between your current levels;
 ;;;;      they'd differ by whether bodies are shown.
-;;;;      (And is there anything else apart from bodies to consider?)
+;;;;      Can you detect whether bodies are shown?
 
 ;;;; TODO Ellipsis symbols disappear in some places while popup is being
 ;;;;      displayed.
@@ -184,7 +186,7 @@ message and in case adding org level messes things up.")
        (org-check-before-invisible-edit 'insert)))))
 
 (defun -norg/collapse ()
-  (norg/show-point)
+  (norg/show-point) ; TODO Do you need this?
   (case 2
     (1
      ;; This hides too much stuff.
@@ -197,18 +199,17 @@ message and in case adding org level messes things up.")
      ;; and why can't I find any useful info by googling?
      (org-flag-subtree t))))
 
+(defun norg/expand/rename-me (n)
+  ;; Use `outline-show-children`, n), not `org-show-children`, because the
+  ;; latter shows first level when n is 0.
+  (outline-show-children n)
+  (org-map-tree #'(lambda ()
+                    (when (norg/point-is-visible?)
+                      (outline-show-entry)))))
+
 (defun -norg/expand ()
-  (norg/show-point)
-  (-norg/collapse) ; so that we can expand in a predicable way
-  (case 3
-    ;; I tried various approaches until I found one that seems to work.
-    (1 (outline-show-children 99))
-    (2 (dotimes (_ 5)
-         ;; The 5 should work no matter how many levels there are below
-         ;; this one. It does if you hit TAB five times.
-         (org-cycle)))
-    (3 (org-map-tree #'org-cycle) ; see also `org-map-tree` if you copy this
-       )))
+  (norg/expand/rename-me 1000) ; TODO magic number
+  )
 
 ;;;; ___________________________________________________________________________
 ;;;; ____ * Things I did before I had tree-info -- perhaps redo with tree-info
@@ -403,7 +404,7 @@ that is already being displayed."
          (n (abs n)))
     (when collapse?
       (-norg/collapse))
-    (outline-show-children n)))
+    (norg/expand/rename-me n)))
 
 (defun -norg/show-children-from-point/set-level-etc (level)
   (-norg/set-level-etc #'norg/show-children-from-point*

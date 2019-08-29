@@ -287,7 +287,7 @@ subheading at this level in the previous parent."
                            "No previous heading at this level"
                          "No next heading at this level"))))
       (org-back-to-heading t)
-      (cond ((not (previous-command-was-a-nomis-org-step?))
+      (cond ((not (previous-command-was-a-nomis-org-step?)) ; TODO Make this detect whether we are fully expanded (and maybe the current detection of expansion level should take account of bodies -- or maybe just let that be as it comes out in the wash)
              (expand))
             ((change-of-direction-when-collapsed?)
              (expand))
