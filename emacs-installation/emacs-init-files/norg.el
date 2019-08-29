@@ -5,12 +5,6 @@
 ;;;; ___________________________________________________________________________
 ;;;; ____ * TODOs
 
-;;;; TODO If you call any of
-;;;;        `norg/show-children-from-point`
-;;;;        `norg/show-children-from-root`
-;;;;        `norg/show-children-from-all-roots`
-;;;;      directly, you don't go through the `-norg/set-level-etc` logic.
-
 ;;;; TODO There's a bug in incremental collapsing when there a child is more
 ;;;;      than one level deeper than its parent.
 
@@ -374,9 +368,9 @@ message and in case adding org level messes things up.")
 ;;;; ____ * Expanding and collapsing
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-;;;; ____ ** norg/show-children-from-point
+;;;; ____ ** norg/show-children-from-point/xxxx support
 
-(defun norg/show-children-from-point (n)
+(defun norg/show-children-from-point* (n) ; TODO You don't use the special negative arg thing. Simplify or get back that functionality.
   "Expand current headline to n levels.
 
 Details:
@@ -386,21 +380,25 @@ will be collapsed.
 
 If N is negative, expand to show (abs N) levels, but do not hide anything
 that is already being displayed."
-  (interactive "^p")
   (let* ((collapse? (>= n 0))
          (n (abs n)))
     (when collapse?
       (-norg/collapse))
     (outline-show-children n)))
 
-;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-;;;; ____ ** norg/show-children-from-point/xxxx
-
 (defun -norg/show-children-from-point/set-level-etc (level)
-  (-norg/set-level-etc #'norg/show-children-from-point
+  (-norg/set-level-etc #'norg/show-children-from-point*
                        level
                        (norg/n-levels-below)
                        "[%s / %s]"))
+
+;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+;;;; ____ ** norg/show-children-from-point/xxxx
+
+(defun norg/show-children-from-point (n)
+  (interactive "^p")
+  (-> n
+      -norg/show-children-from-point/set-level-etc))
 
 (defun norg/show-children-from-point/set-0 ()
   (interactive)
@@ -423,23 +421,27 @@ that is already being displayed."
       -norg/show-children-from-point/set-level-etc))
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-;;;; ____ ** norg/show-children-from-root
+;;;; ____ ** norg/show-children-from-root/xxxx support
 
-(defun norg/show-children-from-root (n)
-  (interactive "^p")
-  "Call `norg/show-children-from-point` on the current root headline, with N as
+(defun norg/show-children-from-root* (n)
+  "Call `norg/show-children-from-point*` on the current root headline, with N as
 the parameter."
   (norg/save-excursion-to-root
-    (norg/show-children-from-point n)))
-
-;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-;;;; ____ ** -norg/show-children-from-root/xxxx
+    (norg/show-children-from-point* n)))
 
 (defun -norg/show-children-from-root/set-level-etc (level)
-  (-norg/set-level-etc #'norg/show-children-from-root
+  (-norg/set-level-etc #'norg/show-children-from-root*
                        level
                        (norg/n-levels-below/root)
                        "[%s of %s] from root"))
+
+;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+;;;; ____ ** norg/show-children-from-root/xxxx
+
+(defun norg/show-children-from-root (n)
+  (interactive "^p")
+  (-> n
+      -norg/show-children-from-root/set-level-etc))
 
 (defun norg/show-children-from-root/set-0 ()
   (interactive)
@@ -462,22 +464,26 @@ the parameter."
       -norg/show-children-from-root/set-level-etc))
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-;;;; ____ ** norg/show-children-from-all-roots
+;;;; ____ ** norg/show-children-from-all-roots/xxxx support
 
-(defun norg/show-children-from-all-roots (n)
-  "Call `norg/show-children-from-point` on all root headlines, with N as
+(defun norg/show-children-from-all-roots* (n)
+  "Call `norg/show-children-from-point*` on all root headlines, with N as
 the parameter."
-  (interactive "^p")
-  (norg/map-roots (lambda () (norg/show-children-from-point n))))
+  (norg/map-roots (lambda () (norg/show-children-from-point* n))))
+
+(defun -norg/show-children-from-all-roots/set-level-etc (level)
+  (-norg/set-level-etc #'norg/show-children-from-all-roots*
+                       level
+                       (norg/n-levels-below/buffer)
+                       "[%s of %s] from all roots"))
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ;;;; ____ ** norg/show-children-from-all-roots/xxxx
 
-(defun -norg/show-children-from-all-roots/set-level-etc (level)
-  (-norg/set-level-etc #'norg/show-children-from-all-roots
-                       level
-                       (norg/n-levels-below/buffer)
-                       "[%s of %s] from all roots"))
+(defun norg/show-children-from-all-roots (n)
+  (interactive "^p")
+  (-> n
+      -norg/show-children-from-all-roots/set-level-etc))
 
 (defun norg/show-children-from-all-roots/set-0 ()
   (interactive)
