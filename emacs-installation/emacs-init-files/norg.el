@@ -5,11 +5,6 @@
 ;;;; ___________________________________________________________________________
 ;;;; ____ * TODOs
 
-;;;; TODO Rationalise where you count levels from.
-;;;;      `norg/level-for-incremental-contract` is a place where you
-;;;;      convert. Be consistent.
-;;;;      (Maybe you are being consistent, but check.)
-
 ;;;; TODO Look at expansion of headlines with bodies (or whatever they
 ;;;;      are called).
 ;;;;      (Bodies are not being expanded. Maybe want a way to expand them.)
@@ -21,14 +16,6 @@
 ;;;;      displayed.
 
 ;;;; TODO Sometimes things take a long time and a busy cursor would be useful.
-
-;;;; TODO At the beginning of the commands, go to beginning of
-;;;;      - the headline, or
-;;;;      - the current top-level headline
-;;;;      as appropriate that the position lookup works well.
-;;;;      Do this inside a `save-excursion`.
-;;;;      For the commands whose scope is the whole file you don't need to
-;;;;      record positions (or record a position of 1 always).
 
 ;;;; TODO Idea of treating level -1 as show only parents, and not siblings.
 ;;;;      But first:
