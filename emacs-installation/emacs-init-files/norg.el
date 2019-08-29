@@ -5,9 +5,11 @@
 ;;;; ___________________________________________________________________________
 ;;;; ____ * TODOs
 
-;;;; TODO If you call `norg/show-children`, `norg/show-children-from-all-roots`
-;;;;      or `norg/show-children-from-all-roots` directly, you don't go through
-;;;;      the `-norg/set-level-etc` logic.
+;;;; TODO If you call any of
+;;;;        `norg/show-children-from-point`
+;;;;        `norg/show-children-from-root`
+;;;;        `norg/show-children-from-all-roots`
+;;;;      directly, you don't go through the `-norg/set-level-etc` logic.
 
 ;;;; TODO There's a bug in incremental collapsing when there a child is more
 ;;;;      than one level deeper than its parent.
@@ -372,9 +374,9 @@ message and in case adding org level messes things up.")
 ;;;; ____ * Expanding and collapsing
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-;;;; ____ ** show-children
+;;;; ____ ** norg/show-children-from-point
 
-(defun norg/show-children (n)
+(defun norg/show-children-from-point (n)
   "Expand current headline to n levels.
 
 Details:
@@ -392,48 +394,48 @@ that is already being displayed."
     (outline-show-children n)))
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-;;;; ____ ** show-children/incremental
+;;;; ____ ** norg/show-children-from-point/xxxx
 
-(defun -norg/set-level-etc/show-children (level)
-  (-norg/set-level-etc #'norg/show-children
+(defun -norg/show-children-from-point/set-level-etc (level)
+  (-norg/set-level-etc #'norg/show-children-from-point
                        level
                        (norg/n-levels-below)
                        "[%s / %s]"))
 
-(defun norg/show-children/set-0 ()
+(defun norg/show-children-from-point/set-0 ()
   (interactive)
   (-> 0
-      -norg/set-level-etc/show-children))
+      -norg/show-children-from-point/set-level-etc))
 
-(defun norg/show-children/fully-expand ()
+(defun norg/show-children-from-point/fully-expand ()
   (interactive)
   (-> :max
-      -norg/set-level-etc/show-children))
+      -norg/show-children-from-point/set-level-etc))
 
-(defun norg/show-children/incremental/less ()
+(defun norg/show-children-from-point/incremental/less ()
   (interactive)
   (-> (norg/level-for-incremental-contract)
-      -norg/set-level-etc/show-children))
+      -norg/show-children-from-point/set-level-etc))
 
-(defun norg/show-children/incremental/more ()
+(defun norg/show-children-from-point/incremental/more ()
   (interactive)
   (-> (norg/smallest-invisible-level-below-or-infinity)
-      -norg/set-level-etc/show-children))
+      -norg/show-children-from-point/set-level-etc))
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-;;;; ____ ** show-children-from-root
+;;;; ____ ** norg/show-children-from-root
 
 (defun norg/show-children-from-root (n)
   (interactive "^p")
-  "Call `norg/show-children` on the current root headline, with N as
+  "Call `norg/show-children-from-point` on the current root headline, with N as
 the parameter."
   (norg/save-excursion-to-root
-    (norg/show-children n)))
+    (norg/show-children-from-point n)))
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-;;;; ____ ** show-children-from-root/incremental
+;;;; ____ ** -norg/show-children-from-root/xxxx
 
-(defun -norg/set-level-etc/show-children-from-root (level)
+(defun -norg/show-children-from-root/set-level-etc (level)
   (-norg/set-level-etc #'norg/show-children-from-root
                        level
                        (norg/n-levels-below/root)
@@ -442,36 +444,36 @@ the parameter."
 (defun norg/show-children-from-root/set-0 ()
   (interactive)
   (-> 0
-      -norg/set-level-etc/show-children-from-root))
+      -norg/show-children-from-root/set-level-etc))
 
 (defun norg/show-children-from-root/fully-expand ()
   (interactive)
   (-> :max
-      -norg/set-level-etc/show-children-from-root))
+      -norg/show-children-from-root/set-level-etc))
 
 (defun norg/show-children-from-root/incremental/less ()
   (interactive)
   (-> (norg/level-for-incremental-contract/root)
-      -norg/set-level-etc/show-children-from-root))
+      -norg/show-children-from-root/set-level-etc))
 
 (defun norg/show-children-from-root/incremental/more ()
   (interactive)
   (-> (norg/smallest-invisible-level-below-or-infinity/root)
-      -norg/set-level-etc/show-children-from-root))
+      -norg/show-children-from-root/set-level-etc))
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-;;;; ____ ** show-children-from-all-roots
+;;;; ____ ** norg/show-children-from-all-roots
 
 (defun norg/show-children-from-all-roots (n)
-  "Call `norg/show-children` on all root headlines, with N as
+  "Call `norg/show-children-from-point` on all root headlines, with N as
 the parameter."
   (interactive "^p")
-  (norg/map-roots (lambda () (norg/show-children n))))
+  (norg/map-roots (lambda () (norg/show-children-from-point n))))
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-;;;; ____ ** show-children-from-all-roots/incremental
+;;;; ____ ** norg/show-children-from-all-roots/xxxx
 
-(defun -norg/set-level-etc/show-children-from-all-roots (level)
+(defun -norg/show-children-from-all-roots/set-level-etc (level)
   (-norg/set-level-etc #'norg/show-children-from-all-roots
                        level
                        (norg/n-levels-below/buffer)
@@ -480,22 +482,22 @@ the parameter."
 (defun norg/show-children-from-all-roots/set-0 ()
   (interactive)
   (-> 0
-      -norg/set-level-etc/show-children-from-all-roots))
+      -norg/show-children-from-all-roots/set-level-etc))
 
 (defun norg/show-children-from-all-roots/fully-expand ()
   (interactive)
   (-> :max
-      -norg/set-level-etc/show-children-from-all-roots))
+      -norg/show-children-from-all-roots/set-level-etc))
 
 (defun norg/show-children-from-all-roots/incremental/less ()
   (interactive)
   (->> (norg/level-for-incremental-contract/buffer)
-       -norg/set-level-etc/show-children-from-all-roots))
+       -norg/show-children-from-all-roots/set-level-etc))
 
 (defun norg/show-children-from-all-roots/incremental/more ()
   (interactive)
   (->> (norg/smallest-invisible-level-below/or-infinity/buffer)
-       -norg/set-level-etc/show-children-from-all-roots))
+       -norg/show-children-from-all-roots/set-level-etc))
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ;;;; ____ ** norg/show-all-to-current-level
@@ -503,7 +505,7 @@ the parameter."
 (defun norg/show-all-to-current-level ()
   (interactive)
   (-> (1- (norg/current-level))
-      -norg/set-level-etc/show-children-from-all-roots))
+      -norg/show-children-from-all-roots/set-level-etc))
 
 ;;;; ___________________________________________________________________________
 ;;;; ____ * End
