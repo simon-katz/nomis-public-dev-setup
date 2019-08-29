@@ -60,6 +60,7 @@
 ;;;; package.
 
 (require 'nomis-popup nil t)
+(require 'nomis-msg nil t)
 
 ;;;; ___________________________________________________________________________
 ;;;; ____ * Tailor other functionality
@@ -350,7 +351,7 @@ message and in case adding org level messes things up.")
          (new-level (-norg/bring-within-range v maximum)))
     (prog1
         (funcall new-value-action-fun new-level)
-      (when out-of-range?
+      (when (and out-of-range? (featurep 'nomis-msg))
         (nomis/msg/grab-user-attention/low))
       (funcall #'norg/popup/message
                (concat message-format-string "%s")
