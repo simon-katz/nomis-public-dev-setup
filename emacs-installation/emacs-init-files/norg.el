@@ -140,8 +140,10 @@ message and in case adding org level messes things up.")
 ;;;; ___________________________________________________________________________
 ;;;; ____ * Some wrappers for org functionality
 
+;;;; Basic stuff
+
 (defun norg/point-is-visible? ()
-  (not (get-char-property (point) 'invisible)))
+  (not (org-invisible-p)))
 
 (defun norg/map-roots (fun)
   (let* ((dummy (cons nil nil)))
@@ -155,7 +157,9 @@ message and in case adding org level messes things up.")
                              'file))))
 
 (defun norg/current-level ()
-  (nth 1 (org-heading-components)))
+  (save-excursion
+    (org-back-to-heading t)
+    (funcall outline-level)))
 
 (defun norg/current-level-or-error-string ()
   (condition-case err
