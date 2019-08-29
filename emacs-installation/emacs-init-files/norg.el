@@ -351,7 +351,7 @@ message and in case adding org level messes things up.")
     (prog1
         (funcall new-value-action-fun new-level)
       (when out-of-range?
-        (nomis/grab-user-attention/low))
+        (nomis/msg/grab-user-attention/low))
       (funcall #'norg/popup/message
                (concat message-format-string "%s")
                new-level

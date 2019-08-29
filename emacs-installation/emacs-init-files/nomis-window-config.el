@@ -103,7 +103,7 @@
             (not (s-ends-with? suffix proxy-buffer-name)))
         (progn
           (error "This buffer is not a NO-SUCH-BUFFER buffer")
-          (nomis/beep))
+          (nomis/msg/beep))
       (->> proxy-buffer-name
            (replace-regexp-in-string (concat "^" (regexp-quote prefix))
                                      "")

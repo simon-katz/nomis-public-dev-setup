@@ -112,7 +112,7 @@
           (if (< n 0)
               (message "Already at min span")
             (message "Already at max span"))
-          (nomis/grab-user-attention/low))
+          (nomis/msg/grab-user-attention/low))
       (let* ((visibility-span (nth pos
                                    -nomis/org-show-only/cycle/visibility-spans)))
         (message "Setting visibility-span = %s"
@@ -282,7 +282,7 @@ subheading at this level in the previous parent."
                (tried-to-go-to-far
                 ()
                 (record-new-state :cannot-move-and-issued-error)
-                (nomis/grab-user-attention/low)
+                (nomis/msg/grab-user-attention/low)
                 (error (if (< n 0)
                            "No previous heading at this level"
                          "No next heading at this level"))))
@@ -435,7 +435,7 @@ subheading at this level in the previous parent."
   (if (not (member org-version
                    '("9.1.9")))
       (progn
-        (nomis/grab-user-attention/low)
+        (nomis/msg/grab-user-attention/low)
         (message "•••• You need to check `nomis/orgstruct-set-up-display-table` for this version of Org mode."))
     (when (and (stringp org-ellipsis) (not (equal "" org-ellipsis)))
       (unless nomis/orgstruct-display-table

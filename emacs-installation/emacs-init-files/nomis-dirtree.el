@@ -462,7 +462,7 @@ With prefix argument select `nomis/dirtree/buffer'"
   (setq *nomis/dirtree/filenames/future-list* '())
   (setq *nomis/dirtree/filenames/current* (nomis/dirtree/selected-file))
   (message "Cleared history.")
-  (nomis/grab-user-attention/low))
+  (nomis/msg/grab-user-attention/low))
 
 (cl-defun nomis/dirtree/note-selection (&key force?)
   (when (nomis/dirtree/selected-widget/with-extras)
@@ -1188,10 +1188,10 @@ Then display contents of file under point in other window.")
     (cond
      ((null filename)
       (message "This buffer has no associated file.")
-      (nomis/beep))
+      (nomis/msg/beep))
      ((null (get-buffer nomis/dirtree/buffer))
       ((message "There's no nomis/dirtree window")
-       (nomis/beep)))
+       (nomis/msg/beep)))
      (t
       (nomis/dirtree/with-fix-selection-in-all-windows ; TODO This is beginning to be a pattern
         (nomis/dirtree/with-run-in-dirtree-buffer
@@ -1205,7 +1205,7 @@ Then display contents of file under point in other window.")
     (cond
      ((null filename)
       (message "This buffer has no associated file.")
-      (nomis/beep))
+      (nomis/msg/beep))
      (t
       (let* ((single-window-in-frame? (= 1 (length (window-list))))
              (original-window (selected-window)))
@@ -1329,7 +1329,7 @@ Then display contents of file under point in other window.")
 
 (defvar *nomis/dirtree/no-inverse/flash-time*
   0.5
-  "For use as an arg to `nomis/grab-user-attention/low`.
+  "For use as an arg to `nomis/msg/grab-user-attention/low`.
 Example of use:
 The user pressed the right arrow (or whatever), but we won't
 be droping into a subdirectory.
@@ -1356,7 +1356,7 @@ windows mucks things up.")
                    (nomis/dirtree/widget-children widget)))
             nil
           (progn
-            (nomis/grab-user-attention/low *nomis/dirtree/no-inverse/flash-time*)))
+            (nomis/msg/grab-user-attention/low *nomis/dirtree/no-inverse/flash-time*)))
         (nomis/dirtree/next-line 1)
         (nomis/dirtree/next-line-with-expansion* (1- arg))))))
 
@@ -1627,7 +1627,7 @@ Mostly for debugging purposes."
   (if (not (tree-mode-root-linep))
       (progn
         (message "The delete-tree command only works when at the root of a tree.")
-        (nomis/beep))
+        (nomis/msg/beep))
     (when (yes-or-no-p "Delete current tree?")
       (nomis/dirtree/delete-tree/do-it))))
 

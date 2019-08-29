@@ -34,7 +34,7 @@
               (lambda (orig-fun &rest args)
                 (if (equal args '(""))
                     (progn
-                      (nomis/beep)
+                      (nomis/msg/beep)
                       (error "Not doing completion when there's nothing to complete"))
                   (apply orig-fun args)))
               `((name . if-no-prefix-do-nothing))))

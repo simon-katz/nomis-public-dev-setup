@@ -78,7 +78,7 @@
            ;; We are on a top-level symbol. `paredit-reindent-defun` would
            ;; re-indent a nearby non-symbol top-level form; instead of that
            ;; don't do anything.
-           (nomis/beep))
+           (nomis/msg/beep))
           ((or (bound-and-true-p cider-mode)
                (eql major-mode 'cider-repl-mode))
            ;; `paredit-reindent-defun` in Clojure doesn't indent properly.
