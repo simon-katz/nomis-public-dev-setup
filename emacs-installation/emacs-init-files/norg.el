@@ -5,8 +5,6 @@
 ;;;; ___________________________________________________________________________
 ;;;; ____ * TODOs
 
-;;;; TODO Use `org-map-tree` instead of `org-map-entries` when you can.
-
 ;;;; TODO Check uses of `norg/show-point`. Are they needed? Seems dodgy.
 
 ;;;; TODO Expansion of headlines with bodies:
@@ -145,17 +143,6 @@ message and in case adding org level messes things up.")
 (defun norg/point-is-visible? ()
   (not (org-invisible-p)))
 
-(defun norg/map-roots (fun)
-  (let* ((dummy (cons nil nil)))
-    (remove dummy
-            (org-map-entries (lambda ()
-                               (let* ((level (norg/current-level)))
-                                 (if (= level 1)
-                                     (funcall fun)
-                                   dummy)))
-                             t
-                             'file))))
-
 (defun norg/current-level ()
   (save-excursion
     (org-back-to-heading t)
@@ -189,6 +176,74 @@ message and in case adding org level messes things up.")
      (let ((org-catch-invisible-edits 'show))
        (org-check-before-invisible-edit 'insert)))))
 
+;;;; Support for do-ing and mapping
+
+(defun -norg/mapc-headlines-satisfying (pred-of-no-args fun)
+  (save-excursion
+    (cl-flet ((call-fun-when-pred-is-satisfied
+               ()
+               (when (funcall pred-of-no-args)
+                 (funcall fun))))
+      (beginning-of-buffer)
+      (unless (org-at-heading-p)
+        (outline-next-heading))
+      (when (org-at-heading-p)
+        (call-fun-when-pred-is-satisfied)
+        (while (progn
+                 (outline-next-heading)
+                 (not (eobp)))
+          (call-fun-when-pred-is-satisfied)))))
+  nil)
+
+(defun -norg/convert-mapc-fun-to-map-fun (do-fun) ; you also have places where you want to reduce, so could do that too, some time
+  (lambda (fun)
+    (let* ((acc '()))
+      (funcall do-fun (lambda ()
+                        (push (funcall fun)
+                              acc)))
+      (nreverse acc))))
+
+;;;; Do-ing
+
+(defun norg/mapc-entries-from-point (fun)
+  (save-excursion
+    (org-map-tree fun))
+  nil)
+
+(defun norg/mapc-entries-from-root (fun)
+  (norg/save-excursion-to-root
+    (norg/mapc-entries-from-point fun)))
+
+(defun norg/mapc-roots (fun)
+  (-norg/mapc-headlines-satisfying (lambda ()
+                                     (= (funcall outline-level) 1))
+                                   fun))
+
+(defun norg/mapc-entries-from-all-roots (fun)
+  (-norg/mapc-headlines-satisfying (lambda () t)
+                                   fun)
+  nil)
+
+;;;; Mapping
+
+(defun norg/map-entries-from-point (fun)
+  (funcall (-norg/convert-mapc-fun-to-map-fun #'norg/mapc-entries-from-point)
+           fun))
+
+(defun norg/map-entries-from-root (fun)
+  (funcall (-norg/convert-mapc-fun-to-map-fun #'norg/mapc-entries-from-root)
+           fun))
+
+(defun norg/map-roots (fun)
+  (funcall (-norg/convert-mapc-fun-to-map-fun #'norg/mapc-roots)
+           fun))
+
+(defun norg/map-entries-from-all-roots (fun)
+  (funcall (-norg/convert-mapc-fun-to-map-fun #'norg/mapc-entries-from-all-roots)
+           fun))
+
+;;;; Expanding and collapsing
+
 (defun norg/collapse ()
   (norg/show-point) ; TODO Do you need this?
   (case 2
@@ -207,9 +262,9 @@ message and in case adding org level messes things up.")
   ;; Use `outline-show-children`, n), not `org-show-children`, because the
   ;; latter shows first level when n is 0.
   (outline-show-children n)
-  (org-map-tree #'(lambda ()
-                    (when (norg/point-is-visible?)
-                      (outline-show-entry)))))
+  (norg/mapc-entries-from-point #'(lambda ()
+                                    (when (norg/point-is-visible?)
+                                      (outline-show-entry)))))
 
 (defun norg/expand-fully ()
   (norg/expand 1000) ; TODO magic number
@@ -222,19 +277,17 @@ message and in case adding org level messes things up.")
                                         reducing-function)
   ;; TODO Think about what `reduce` does.
   ;;      Maybe add initial value, and value to return when you get a nil.
-  (let* ((max-level-beneath
+  (let* ((max-level-beneath ; TODO misnomer -- max or min depends on the reducing-function
           (let* ((sofar nil))
-            (org-map-entries (lambda ()
-                               (when (funcall pred-of-no-args)
-                                 (let* ((v (norg/current-level)))
-                                   (setq sofar
-                                         (if (null sofar)
-                                             v
-                                           (funcall reducing-function
-                                                    sofar
-                                                    v))))))
-                             t
-                             'tree)
+            (norg/mapc-entries-from-point (lambda ()
+                                            (when (funcall pred-of-no-args)
+                                              (let* ((v (norg/current-level)))
+                                                (setq sofar
+                                                      (if (null sofar)
+                                                          v
+                                                        (funcall reducing-function
+                                                                 sofar
+                                                                 v)))))))
             sofar)))
     (if (null max-level-beneath)
         nil
@@ -256,19 +309,20 @@ message and in case adding org level messes things up.")
 ;;;; ____ * The idea of tree-info, and things that use it
 
 (defun -norg/tree-info ()
-  ;; This is rather expensive, because the value returned by `org-map-entries`
-  ;; is processed further and discarded.
-  ;; You could do more in `org-map-entries`, but it's fiddly because:
+  ;; This is rather expensive, because the value returned by
+  ;; `norg/map-entries-from-point` is processed further and discarded.
+  ;; You could do more in the fun passed to `norg/map-entries-from-point`, but
+  ;; it's fiddly because:
   ;; - You want to collect multiple items per iteration.
   ;;   (Solution: use nconc on lists.)
   ;; - You want to look at two headlines at a time.
   ;;   (Solution: record previous item in a piece of mutable state.)
-  (let* ((dummy-initial-entry '(:dummy-first t nil))
-         (basic-info (org-map-entries (lambda ()
-                                        (list (norg/current-level)
-                                              (norg/point-is-visible?)))
-                                      t
-                                      'tree)))
+  (let* ((dummy-initial-entry
+          '(:dummy-first t nil))
+         (basic-info
+          (norg/map-entries-from-point (lambda ()
+                                         (list (norg/current-level)
+                                               (norg/point-is-visible?))))))
     (cl-loop for ((prev-level prev-visible?) . ((level visible?) . _))
              on (cons dummy-initial-entry
                       basic-info)
@@ -335,11 +389,9 @@ message and in case adding org level messes things up.")
 
 (defun norg/levels/max-in-buffer ()
   (let* ((sofar 0))
-    (org-map-entries (lambda ()
-                       (setq sofar (max (norg/current-level)
-                                        sofar)))
-                     t
-                     'file)
+    (norg/mapc-entries-from-all-roots (lambda ()
+                                        (setq sofar (max (norg/current-level)
+                                                         sofar))))
     sofar))
 
 (defun norg/n-levels-below/buffer ()
@@ -493,7 +545,7 @@ the parameter."
 (defun norg/show-children-from-all-roots* (n)
   "Call `norg/show-children-from-point*` on all root headlines, with N as
 the parameter."
-  (norg/map-roots (lambda () (norg/show-children-from-point* n))))
+  (norg/mapc-roots (lambda () (norg/show-children-from-point* n))))
 
 (defun -norg/show-children-from-all-roots/set-level-etc (level)
   (-norg/set-level-etc #'norg/show-children-from-all-roots*
