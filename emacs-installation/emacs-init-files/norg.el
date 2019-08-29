@@ -5,8 +5,10 @@
 ;;;; ___________________________________________________________________________
 ;;;; ____ * TODOs
 
-;;;; TODO There's a bug in incremental collapsing when there a child is more
-;;;;      than one level deeper than its parent.
+;;;; TODO Rationalise where you count levels from.
+;;;;      `norg/level-for-incremental-contract` is a place where you
+;;;;      convert. Be consistent.
+;;;;      (Maybe you are being consistent, but check.)
 
 ;;;; TODO Look at expansion of headlines with bodies (or whatever they
 ;;;;      are called).
@@ -289,7 +291,7 @@ message and in case adding org level messes things up.")
   ;; else to that level.
   (setq tree-info (or tree-info
                       (-norg/tree-info)))
-  (let* ((v (let* ((initial-invisible-levels
+  (let* ((v (let* ((deepest-visible-levels
                     (cl-loop for ((prev-level prev-visible?)
                                   . ((level visible?) . _))
                              on (cons '(most-negative-fixnum t)
@@ -297,10 +299,9 @@ message and in case adding org level messes things up.")
                              when (and prev-visible?
                                        (not visible?)
                                        (> level prev-level))
-                             collect level)))
-              (- (apply #'max initial-invisible-levels) 2))))
-    ;; TODO Rationlise where you count levels from. This is a place where you
-    ;;      convert. Be consistent.
+                             collect prev-level)))
+              (- (apply #'max deepest-visible-levels)
+                 1))))
     (- v (norg/current-level))))
 
 ;;;; ___________________________________________________________________________
