@@ -12,8 +12,6 @@
 ;;;; TODO There's a bug in incremental collapsing when there a child is more
 ;;;;      than one level deeper than its parent.
 
-;;;; TODO When getting to 0 or max, first flash then cycle.
-
 ;;;; TODO Look at expansion of headlines with bodies (or whatever they
 ;;;;      are called).
 ;;;;      (Bodies are not being expanded. Maybe want a way to expand them.)
@@ -45,6 +43,13 @@
 ;;;;      - Sort out visibiity issues that are mentioned above:
 ;;;;        - Bodies not being expanded.
 ;;;;        - (Anything else?)
+
+;;;; ___________________________________________________________________________
+;;;; ____ * Some rejected ideas
+
+;;;; XXXX When getting to 0 or max, first flash then cycle.
+;;;;      REJECTED
+;;;;      This would give a modal UI. An invisibly-modal UI.
 
 ;;;; ___________________________________________________________________________
 ;;;; ____ * Require things
