@@ -15,10 +15,29 @@
 ;;;; TODO Ellipsis symbols disappear in some places while popup is being
 ;;;;      displayed.
 
-;;;; TODO Sometimes things take a long time and a busy cursor would be useful.
+;;;; TODO (Too hard! Park this for now.)
+;;;;      Sometimes things take a long time and a busy pointer would be useful.
+;;;;      Why don't you have one?
+;;;;      Emacs is supposed to do this for you.
+;;;;      Some investigation:
+;;;;      - Tested with -Q option:
+;;;;          /Applications/Emacs-26-1-2.app/Contents/MacOS/Emacs -Q
+;;;;      - Same behaviour on two Macs.
+;;;;      - There seem to be several problems:
+;;;;        - On OS X, the pointer disappears when typing. You have to move
+;;;;          the mouse to get it back. So even if you fixed this problem,
+;;;;          you wouldn't have a busy cursor when busy unless you moved the
+;;;;          pointer.
+;;;;        - Busy pointer is an I-beam, not an hourglass.
+;;;;        - Busy pointer doesn't appear as soon as it should.
+;;;;        - Busy pointer sometimes sticks until you move the mouse.
+;;;;      - Google not helping -- can't find any mention of this.
 
 ;;;; TODO Idea of treating level -1 as show only parents, and not siblings.
 ;;;;      But first:
+;;;;      - The visibility-span stuff is global, but you have things that work
+;;;;        from point and from root. So you might have to roll your own to o
+;;;;        this.
 ;;;;      - Can you detect a parents-not-siblings state? (Remember: you are
 ;;;;        no longer storing state for positions. (But you could in this
 ;;;;        special case, I guess. But that's getting complicated. It was nice
