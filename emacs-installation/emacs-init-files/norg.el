@@ -16,7 +16,8 @@
 ;;;;        - Anything else?
 ;;;;      - Perhaps you could have an extra level between your current levels;
 ;;;;        they'd differ by whether bodies are shown.
-;;;;        Can you detect whether bodies are shown?
+;;;;        - REJECTED because that's too many levels; just treat the body as
+;;;;          being one level below its headline.
 
 ;;;; TODO Ellipsis symbols disappear in some places while popup is being
 ;;;;      displayed.
