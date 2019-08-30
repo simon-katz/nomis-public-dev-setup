@@ -6,6 +6,7 @@
 ;;;; ____ * Require things
 
 (require 'popup)
+(require 'nomis-msg)
 
 ;;;; ___________________________________________________________________________
 ;;;; ____ * nomis/popup/message
@@ -37,6 +38,15 @@
                                   (lambda ()
                                     (when (popup-live-p popup)
                                       (popup-delete popup)))))))))
+
+(defvar nomis/popup/error-message-prefix "!! ")
+
+(defun nomis/popup/error-message (format-string &rest args)
+  (apply #'nomis/popup/message
+         (concat nomis/popup/error-message-prefix
+                 format-string)
+         args)
+  (nomis/msg/grab-user-attention/low))
 
 ;;;; ___________________________________________________________________________
 ;;;; * End
