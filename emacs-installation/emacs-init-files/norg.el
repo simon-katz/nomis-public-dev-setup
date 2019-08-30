@@ -5,6 +5,8 @@
 ;;;; ___________________________________________________________________________
 ;;;; ____ * TODOs
 
+;;;; TODO Review what's here and make any changes you think necessary.
+
 ;;;; TODO Bring some stuff from `nomis-org` into `norg`. See your org mode
 ;;;;      keybindings for candidates.
 
