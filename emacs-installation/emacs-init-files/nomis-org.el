@@ -248,91 +248,49 @@ subheading at this level in the previous parent."
 ;;;; ___________________________________________________________________________
 ;;;; ____ * Stepping
 
-(defvar -nomis/org/step/previous-direction nil)
-(defvar -nomis/org/step/previous-state nil)
+(defun -nomis/org/step/impl (n allow-cross-parent?)
+  (cl-flet ((try-to-move
+             ()
+             (if allow-cross-parent?
+                 (nomis/-org-heading-same-level/allow-cross-parent/helper
+                  (case n
+                    (1 :forward)
+                    (-1 :backward)))
+               (org-forward-heading-same-level n t)))
+            (tried-to-go-to-far
+             ()
+             (let* ((msg (if (< n 0)
+                             "No previous heading at this level"
+                           "No next heading at this level")))
+               (nomis/popup/error-message msg))))
+    (org-back-to-heading t)
+    (if (not (norg/fully-expanded?))
+        (norg/expand-fully)
+      (progn
+        (norg/collapse) ; if we can't move, we will re-expand
+        (let* ((starting-point (point)))
+          (try-to-move)
+          ;; Either we moved or we didn't.
+          ;; In any case, expand the current headline -- either the
+          ;; newly-arrived at one or the just-collapsed one.
+          ;; If we couldn't move, tell the user.
+          (norg/expand-fully)
+          (when (= (point) starting-point)
+            (tried-to-go-to-far)))))))
 
-(defvar -nomis/org/step/functions '())
-
-(defun -nomis/org/step/impl (n allow-cross-parent)
-  (let* ((direction (if (< n 0) :backward :forward)))
-    (cl-flet* ((previous-command-was-a-nomis-org-step?
-                ()
-                (member (nomis/org/last-command) -nomis/org/step/functions))
-               (collapse-already-attempted?
-                ()
-                (member -nomis/org/step/previous-state
-                        '(:cannot-move-and-collapsed
-                          :cannot-move-and-issued-error)))
-               (change-of-direction-when-collapsed?
-                ()
-                (and (not (eql direction -nomis/org/step/previous-direction))
-                     (collapse-already-attempted?)))
-               (record-new-state
-                (x)
-                (setq -nomis/org/step/previous-direction direction)
-                (setq -nomis/org/step/previous-state x))
-               (expand
-                ()
-                (norg/expand-fully)
-                (record-new-state :tried-to-expand))
-               (collapse
-                ()
-                (norg/collapse)
-                (record-new-state :cannot-move-and-collapsed))
-               (try-to-move
-                ()
-                (if allow-cross-parent
-                    (nomis/-org-heading-same-level/allow-cross-parent/helper
-                     (case n
-                       (1 :forward)
-                       (-1 :backward)))
-                  (org-forward-heading-same-level n t)))
-               (tried-to-go-to-far
-                ()
-                (record-new-state :cannot-move-and-issued-error)
-                (nomis/msg/grab-user-attention/low)
-                (error (if (< n 0)
-                           "No previous heading at this level"
-                         "No next heading at this level"))))
-      (org-back-to-heading t)
-      (cond ((not (previous-command-was-a-nomis-org-step?)) ; TODO Make this detect whether we are fully expanded (and maybe the current detection of expansion level should take account of bodies -- or maybe just let that be as it comes out in the wash)
-             (expand))
-            ((change-of-direction-when-collapsed?)
-             (expand))
-            (t
-             (norg/collapse)
-             (let* ((starting-point (point)))
-               (try-to-move)
-               (let* ((moved? (not (= (point) starting-point))))
-                 (cond (moved?
-                        ;; We moved. Expand the newly-arrived at heading.
-                        (expand))
-                       ((collapse-already-attempted?)
-                        ;; We didn't move, and we've already tried to collapse.
-                        (tried-to-go-to-far))
-                       (t
-                        ;; We didn't move, and we haven't yet tried to collapse.
-                        (collapse))))))))))
-
-(cl-defmacro define-nomis-org-step-command (name arglist &body body)
-  (declare (indent 2))
-  `(progn
-     (pushnew ',name -nomis/org/step/functions)
-     (defun ,name ,arglist ,@body)))
-
-(define-nomis-org-step-command nomis/org/step-forward ()
+(defun nomis/org/step-forward ()
   (interactive)
   (-nomis/org/step/impl 1 nil))
 
-(define-nomis-org-step-command nomis/org/step-backward ()
+(defun nomis/org/step-backward ()
   (interactive)
   (-nomis/org/step/impl -1 nil))
 
-(define-nomis-org-step-command nomis/org/step-forward/allow-cross-parent ()
+(defun nomis/org/step-forward/allow-cross-parent ()
   (interactive)
   (-nomis/org/step/impl 1 t))
 
-(define-nomis-org-step-command nomis/org/step-backward/allow-cross-parent ()
+(defun nomis/org/step-backward/allow-cross-parent ()
   (interactive)
   (-nomis/org/step/impl -1 t))
 

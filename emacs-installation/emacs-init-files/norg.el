@@ -349,7 +349,7 @@ message and in case adding org level messes things up.")
                       visible?
                       nil))))
 
-(defun -norg/fully-expanded? (&optional tree-info)
+(defun norg/fully-expanded? (&optional tree-info)
   (setq tree-info (or tree-info (-norg/tree-info)))
   (cl-loop for (level visible? dummy?)
            in tree-info
