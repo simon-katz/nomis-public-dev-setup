@@ -280,9 +280,12 @@ message and in case adding org level messes things up.")
   ;; Use `outline-show-children`, n), not `org-show-children`, because the
   ;; latter shows first level when n is 0.
   (outline-show-children n)
-  (norg/mapc-entries-from-point #'(lambda ()
-                                    (when (norg/point-is-visible?)
-                                      (outline-show-entry)))))
+  (let* ((level (norg/current-level)))
+    (norg/mapc-entries-from-point #'(lambda ()
+                                      (when (< (- (norg/current-level)
+                                                  level)
+                                               n)
+                                        (outline-show-entry))))))
 
 (defun norg/expand-fully ()
   (norg/expand 1000) ; TODO magic number
