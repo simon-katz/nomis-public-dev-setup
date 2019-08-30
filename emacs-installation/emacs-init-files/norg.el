@@ -5,8 +5,6 @@
 ;;;; ___________________________________________________________________________
 ;;;; ____ * TODOs
 
-;;;; TODO Check uses of `norg/show-point`. Are they needed? Seems dodgy.
-
 ;;;; TODO Expansion of headlines with bodies:
 ;;;;      Perhaps you could have an extra level between your current levels;
 ;;;;      they'd differ by whether bodies are shown.
@@ -245,7 +243,6 @@ message and in case adding org level messes things up.")
 ;;;; Expanding and collapsing
 
 (defun norg/collapse ()
-  (norg/show-point) ; TODO Do you need this?
   (case 2
     (1
      ;; This hides too much stuff.
@@ -447,7 +444,8 @@ message and in case adding org level messes things up.")
 ;;;; ____ ** norg/show-children-from-point/xxxx support
 
 (defun norg/show-children-from-point* (n) ; TODO You don't use the special negative arg thing. Simplify or get back that functionality.
-  "Expand current headline to n levels.
+  "Make point visible if it isn't already, and expand current headline to
+n levels.
 
 Details:
 
@@ -456,6 +454,7 @@ will be collapsed.
 
 If N is negative, expand to show (abs N) levels, but do not hide anything
 that is already being displayed."
+  (norg/show-point)
   (let* ((collapse? (>= n 0))
          (n (abs n)))
     (when collapse?
