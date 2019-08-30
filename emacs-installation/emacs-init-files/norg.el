@@ -5,8 +5,6 @@
 ;;;; ___________________________________________________________________________
 ;;;; ____ * TODOs
 
-;;;; TODO Review what's here and make any changes you think necessary.
-
 ;;;; TODO Bring some stuff from `nomis-org` into `norg`. See your org mode
 ;;;;      keybindings for candidates.
 
@@ -198,7 +196,7 @@ message and in case adding org level messes things up.")
           (call-fun-when-pred-is-satisfied)))))
   nil)
 
-(defun -norg/convert-mapc-fun-to-map-fun (do-fun) ; you also have places where you want to reduce, so could do that too, some time
+(defun -norg/convert-mapc-fun-to-map-fun (do-fun)
   (lambda (fun)
     (let* ((acc '()))
       (funcall do-fun (lambda ()
@@ -245,6 +243,24 @@ message and in case adding org level messes things up.")
   (funcall (-norg/convert-mapc-fun-to-map-fun #'norg/mapc-entries-from-all-roots)
            fun))
 
+;;;; Reducing (add more here if and when needed)
+
+(cl-defun norg/reduce-entries-from-point (initial-value
+                                          reducing-function
+                                          &optional
+                                          (pred-of-no-args (lambda () t)))
+  (let* ((sofar initial-value))
+    (norg/mapc-entries-from-point (lambda ()
+                                    (when (funcall pred-of-no-args)
+                                      (let* ((v (norg/current-level)))
+                                        (setq sofar
+                                              (if (null sofar)
+                                                  v
+                                                (funcall reducing-function
+                                                         sofar
+                                                         v)))))))
+    sofar))
+
 ;;;; Expanding and collapsing
 
 (defun norg/collapse ()
@@ -273,39 +289,18 @@ message and in case adding org level messes things up.")
   )
 
 ;;;; ___________________________________________________________________________
-;;;; ____ * Things I did before I had tree-info -- perhaps redo with tree-info
-
-(defun -norg/levels/below-point-helper (pred-of-no-args
-                                        reducing-function)
-  ;; TODO Think about what `reduce` does.
-  ;;      Maybe add initial value, and value to return when you get a nil.
-  (let* ((max-level-beneath ; TODO misnomer -- max or min depends on the reducing-function
-          (let* ((sofar nil))
-            (norg/mapc-entries-from-point (lambda ()
-                                            (when (funcall pred-of-no-args)
-                                              (let* ((v (norg/current-level)))
-                                                (setq sofar
-                                                      (if (null sofar)
-                                                          v
-                                                        (funcall reducing-function
-                                                                 sofar
-                                                                 v)))))))
-            sofar)))
-    (if (null max-level-beneath)
-        nil
-      (- max-level-beneath
-         (norg/current-level)))))
+;;;; ____ * Info about trees
 
 (defun norg/n-levels-below ()
-  (-norg/levels/below-point-helper (lambda () t)
-                                   #'max))
+  (- (norg/reduce-entries-from-point 0 #'max)
+     (norg/current-level)))
 
 (defun norg/smallest-invisible-level-below-or-infinity ()
-  (or (let* ((not-visible? (-compose #'not
-                                     #'norg/point-is-visible?)))
-        (-norg/levels/below-point-helper not-visible?
-                                         #'min))
-      -norg/plus-infinity))
+  (- (norg/reduce-entries-from-point -norg/plus-infinity
+                                     #'min
+                                     (-compose #'not
+                                               #'norg/point-is-visible?))
+     (norg/current-level)))
 
 ;;;; ___________________________________________________________________________
 ;;;; ____ * The idea of tree-info, and things that use it
