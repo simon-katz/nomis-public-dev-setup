@@ -279,6 +279,14 @@ subheading at this level in the previous parent."
                 ()
                 (norg/collapse)
                 (record-new-state :cannot-move-and-collapsed))
+               (try-to-move
+                ()
+                (if jumping-parent-allowed?
+                    (nomis/-org-heading-same-level-with-extras/helper
+                     (case n
+                       (1 :forward)
+                       (-1 :backward)))
+                  (org-forward-heading-same-level n t)))
                (tried-to-go-to-far
                 ()
                 (record-new-state :cannot-move-and-issued-error)
@@ -294,12 +302,7 @@ subheading at this level in the previous parent."
             (t
              (norg/collapse)
              (let* ((starting-point (point)))
-               (if jumping-parent-allowed?
-                   (nomis/-org-heading-same-level-with-extras/helper
-                    (case n
-                      (1 :forward)
-                      (-1 :backward)))
-                 (org-forward-heading-same-level n t))
+               (try-to-move)
                (let* ((moved? (not (= (point) starting-point))))
                  (cond (moved?
                         ;; We moved. Expand the newly-arrived at heading.
