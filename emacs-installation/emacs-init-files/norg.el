@@ -8,10 +8,15 @@
 ;;;; TODO Bring some stuff from `nomis-org` into `norg`. See your org mode
 ;;;;      keybindings for candidates.
 
-;;;; TODO Expansion of headlines with bodies:
-;;;;      Perhaps you could have an extra level between your current levels;
-;;;;      they'd differ by whether bodies are shown.
-;;;;      Can you detect whether bodies are shown?
+;;;; TODO Bodies:
+;;;;      - Body visibility
+;;;;        - Is there a way to know whether a node has a collapsed body?
+;;;;        - `norg/fully-expanded?` needs to take account of this.
+;;;;        - `norg/n-levels-below` needs to take account of this.
+;;;;        - Anything else?
+;;;;      - Perhaps you could have an extra level between your current levels;
+;;;;        they'd differ by whether bodies are shown.
+;;;;        Can you detect whether bodies are shown?
 
 ;;;; TODO Ellipsis symbols disappear in some places while popup is being
 ;;;;      displayed.
