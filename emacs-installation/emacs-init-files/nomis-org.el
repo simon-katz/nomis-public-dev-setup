@@ -27,6 +27,7 @@
     (require 'org)))
 
 (require 'norg)
+(require 'nomis-popup)
 (require 'org-bullets)
 (require 'cl)
 (require 'dash)
@@ -222,10 +223,10 @@
               (funcall post-search-adjust-function))
           (progn
             (org-beginning-of-line)
-            (message (concat "No more headings at this level"
-                             (when (eql direction :forward)
-                               " (but there's a bug so maybe there are...)")))
-            (beep)))))))
+            (nomis/popup/error-message "%s"
+                                       (concat "No more headings at this level"
+                                               (when (eql direction :forward)
+                                                 " (but there's a bug so maybe there are...)")))))))))
 
 (defun nomis/org/forward-heading-same-level/allow-cross-parent ()
   "Move forward one subheading at same level as this one.
