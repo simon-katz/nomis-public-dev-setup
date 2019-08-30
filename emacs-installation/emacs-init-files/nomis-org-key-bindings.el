@@ -34,7 +34,8 @@ Use H with various other keys:
         Add C to step (ie collapse then move then expand)
         Add M to visit headlines at any level
     '\\[]-= is for expanding and collapsing
-        Add M to fully expand or collapse")
+        Add M to fully expand or collapse
+        Add C to '\\ for visibility cycling of spans")
 
 (defun nomis/org/pop-up-navigation-and-cycling-help ()
   (interactive)
@@ -55,8 +56,10 @@ Use H with various other keys:
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ;;;; ____ ** "Visibility" -- the org-show-only stuff (which is badly named)
 
-;; (org-defkey org-mode-map (kbd ????) 'nomis/org-show-only/cycle/more) ; TODO
-;; (org-defkey org-mode-map (kbd ????) 'nomis/org-show-only/cycle/less) ; TODO
+;;;; I'm unsure about these, but their the best you have for now.
+
+(org-defkey org-mode-map (kbd "C-H-'")   'nomis/org-show-only/cycle/less)
+(org-defkey org-mode-map (kbd "C-H-\\")  'nomis/org-show-only/cycle/more)
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ;;;; ____ ** Expand/collapse
