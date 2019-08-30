@@ -5,8 +5,8 @@
 ;;;; ___________________________________________________________________________
 ;;;; ____ * TODOs
 
-;;;; TODO Bring `nomis/org-previous-heading` and `nomis/org-next-heading`
-;;;;      into norg.
+;;;; TODO Bring some stuff from `nomis-org` into `norg`. See your org mode
+;;;;      keybindings for candidates.
 
 ;;;; TODO Expansion of headlines with bodies:
 ;;;;      Perhaps you could have an extra level between your current levels;

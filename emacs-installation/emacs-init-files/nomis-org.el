@@ -182,17 +182,17 @@
 ;;;; ___________________________________________________________________________
 ;;;; ____ * Navigation
 
-(defun nomis/org-previous-heading ()
+(defun nomis/org/forward-heading/any-level ()
   (interactive)
   (outline-previous-heading)
   (norg/show-point))
 
-(defun nomis/org-next-heading ()
+(defun nomis/org/backward-heading/any-level ()
   (interactive)
   (outline-next-heading)
   (norg/show-point))
 
-(defun nomis/-org-heading-same-level-with-extras/helper (direction)
+(defun nomis/-org-heading-same-level/allow-cross-parent/helper (direction)
   (let ((start-position-fun (case direction
                               (:forward 'org-end-of-line)
                               (:backward 'org-beginning-of-line)))
@@ -227,23 +227,23 @@
                                " (but there's a bug so maybe there are...)")))
             (beep)))))))
 
-(defun nomis/org-forward-heading-same-level-with-extras ()
-  "A replacement for `org-forward-heading-same-level`.
-Move forward one subheading at same level as this one.
-Works when the target is invisible (and makes it visible).
-If this is the first subheading within its parent, move to the first
-subheading at this level in the next parent."
+(defun nomis/org/forward-heading-same-level/allow-cross-parent ()
+  "Move forward one subheading at same level as this one.
+Like `org-forward-heading-same-level` but:
+- when the target is invisible, make it visible
+- if this is the first subheading within its parent, move to the first
+  subheading at this level in the next parent."
   (interactive)
-  (nomis/-org-heading-same-level-with-extras/helper :forward))
+  (nomis/-org-heading-same-level/allow-cross-parent/helper :forward))
 
-(defun nomis/org-backward-heading-same-level-with-extras ()
-  "A replacement for `org-backward-heading-same-level`.
-Move backward one subheading at same level as this one.
-Works when the target is invisible (and makes it visible).
-If this is the first subheading within its parent, move to the last
+(defun nomis/org/backward-heading-same-level/allow-cross-parent ()
+  "Move backward one subheading at same level as this one.
+Like `org-backward-heading-same-level` but:
+- when the target is invisible, make it visible
+- if this is the first subheading within its parent, move to the last
 subheading at this level in the previous parent."
   (interactive)
-  (nomis/-org-heading-same-level-with-extras/helper :backward))
+  (nomis/-org-heading-same-level/allow-cross-parent/helper :backward))
 
 ;;;; ___________________________________________________________________________
 ;;;; ____ * Stepping
@@ -253,7 +253,7 @@ subheading at this level in the previous parent."
 
 (defvar -nomis/org/step/functions '())
 
-(defun -nomis/org/step/impl (n jumping-parent-allowed?)
+(defun -nomis/org/step/impl (n allow-cross-parent)
   (let* ((direction (if (< n 0) :backward :forward)))
     (cl-flet* ((previous-command-was-a-nomis-org-step?
                 ()
@@ -281,8 +281,8 @@ subheading at this level in the previous parent."
                 (record-new-state :cannot-move-and-collapsed))
                (try-to-move
                 ()
-                (if jumping-parent-allowed?
-                    (nomis/-org-heading-same-level-with-extras/helper
+                (if allow-cross-parent
+                    (nomis/-org-heading-same-level/allow-cross-parent/helper
                      (case n
                        (1 :forward)
                        (-1 :backward)))
@@ -328,11 +328,11 @@ subheading at this level in the previous parent."
   (interactive)
   (-nomis/org/step/impl -1 nil))
 
-(define-nomis-org-step-command nomis/org/step-forward/jumping-parent-allowed ()
+(define-nomis-org-step-command nomis/org/step-forward/allow-cross-parent ()
   (interactive)
   (-nomis/org/step/impl 1 t))
 
-(define-nomis-org-step-command nomis/org/step-backward/jumping-parent-allowed ()
+(define-nomis-org-step-command nomis/org/step-backward/allow-cross-parent ()
   (interactive)
   (-nomis/org/step/impl -1 t))
 

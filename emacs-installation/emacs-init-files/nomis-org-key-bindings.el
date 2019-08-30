@@ -26,9 +26,6 @@
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ;;;; ____ ** The design of some of these key chords
 
-;;;; TODO Re-order chord names to match what Emacs reports in help.
-;;;; TODO Rename some commands to make meaning clearer.
-
 (defconst -nomis/org/navigation-and-cycling-help
   "
 Use H with various other keys:
@@ -85,27 +82,27 @@ Use H with various other keys:
 
 (org-defkey org-mode-map (kbd "H-,")     'org-backward-heading-same-level) ; also C-c C-b
 (org-defkey org-mode-map (kbd "H-.")     'org-forward-heading-same-level) ; also C-c C-f
-(org-defkey org-mode-map (kbd "H-<")     'nomis/org-backward-heading-same-level-with-extras)
-(org-defkey org-mode-map (kbd "H->")     'nomis/org-forward-heading-same-level-with-extras)
+(org-defkey org-mode-map (kbd "H-<")     'nomis/org/backward-heading-same-level/allow-cross-parent)
+(org-defkey org-mode-map (kbd "H->")     'nomis/org/forward-heading-same-level/allow-cross-parent)
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ;;;; ____ ** Movement + expand/collapse
 
 (org-defkey org-mode-map (kbd "C-H-,")   'nomis/org/step-backward)
 (org-defkey org-mode-map (kbd "C-H-.")   'nomis/org/step-forward)
-(org-defkey org-mode-map (kbd "C-H-<")   'nomis/org/step-backward/jumping-parent-allowed)
-(org-defkey org-mode-map (kbd "C-H->")   'nomis/org/step-forward/jumping-parent-allowed)
+(org-defkey org-mode-map (kbd "C-H-<")   'nomis/org/step-backward/allow-cross-parent)
+(org-defkey org-mode-map (kbd "C-H->")   'nomis/org/step-forward/allow-cross-parent)
 
-(org-defkey org-mode-map (kbd "H-M-,")   'nomis/org-previous-heading)
-(org-defkey org-mode-map (kbd "H-M-.")   'nomis/org-next-heading)
+(org-defkey org-mode-map (kbd "H-M-,")   'nomis/org/forward-heading/any-level)
+(org-defkey org-mode-map (kbd "H-M-.")   'nomis/org/backward-heading/any-level)
 
-(org-defkey org-mode-map (kbd "C-H-M-,") nil) ; TODO Want something that visits headlines at any level and collapses as it goes
-(org-defkey org-mode-map (kbd "C-H-M-.") nil) ; TODO Want something that visits headlines at any level and collapses as it goes
+;; (org-defkey org-mode-map (kbd "C-H-M-,") ????) ; TODO Want something that visits headlines at any level and collapses as it goes
+;; (org-defkey org-mode-map (kbd "C-H-M-.") ????) ; TODO Want something that visits headlines at any level and collapses as it goes
 
-(org-defkey org-mode-map (kbd "H-M-<")   nil) ; No real meaning -- with the M we are already crossing parent levels
-(org-defkey org-mode-map (kbd "H-M->")   nil) ; No real meaning -- with the M we are already crossing parent levels
-(org-defkey org-mode-map (kbd "C-H-M-<") nil) ; No real meaning -- with the M we are already crossing parent levels
-(org-defkey org-mode-map (kbd "C-H-M->") nil) ; No real meaning -- with the M we are already crossing parent levels
+;; (org-defkey org-mode-map (kbd "H-M-<")   ????) ; No real meaning -- with the M we are already crossing parent levels
+;; (org-defkey org-mode-map (kbd "H-M->")   ????) ; No real meaning -- with the M we are already crossing parent levels
+;; (org-defkey org-mode-map (kbd "C-H-M-<") ????) ; No real meaning -- with the M we are already crossing parent levels
+;; (org-defkey org-mode-map (kbd "C-H-M->") ????) ; No real meaning -- with the M we are already crossing parent levels
 
 ;;;; ___________________________________________________________________________
 ;;;; ____ * Agenda
