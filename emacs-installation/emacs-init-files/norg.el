@@ -8,21 +8,34 @@
 ;;;; TODO Bring some stuff from `nomis-org` into `norg`. See your org mode
 ;;;;      keybindings for candidates.
 
-;;;; TODO Bodies:
+;;;; ___________________________________________________________________________
+;;;; ____ * Some rejected (at least for now) ideas
+
+;;;; XXXX Bodies:
+;;;;      - REJECTED for now at least.
+;;;;        - You could continue with this, but:
+;;;;          - it's not worth the effort at the moment
+;;;;          - you'd have to add calls to `-norg/body-expanded?/experimental`
+;;;;            when collecting tree-info. Maybe that will make things a fair
+;;;;            bit slower.
 ;;;;      - Body visibility
 ;;;;        - Is there a way to know whether a node has a collapsed body?
+;;;           - I think so -- see `-norg/body-expanded?/experimental`.
 ;;;;        - `norg/fully-expanded?` needs to take account of this.
 ;;;;        - `norg/n-levels-below` needs to take account of this.
+;;;;          - Oh, that needs to know whether there is a body.
+;;;;            You could find out by comparing the points of the end of the
+;;;;            headline and `(1- (progn (outline-next-preface) (point)))`.
 ;;;;        - Anything else?
 ;;;;      - Perhaps you could have an extra level between your current levels;
 ;;;;        they'd differ by whether bodies are shown.
 ;;;;        - REJECTED because that's too many levels; just treat the body as
 ;;;;          being one level below its headline.
 
-;;;; TODO Ellipsis symbols disappear in some places while popup is being
+;;;; XXXX Ellipsis symbols disappear in some places while popup is being
 ;;;;      displayed.
 
-;;;; TODO (Too hard! Park this for now.)
+;;;; XXXX (Too hard! Park this for now.)
 ;;;;      Sometimes things take a long time and a busy pointer would be useful.
 ;;;;      Why don't you have one?
 ;;;;      Emacs is supposed to do this for you.
@@ -40,7 +53,7 @@
 ;;;;        - Busy pointer sometimes sticks until you move the mouse.
 ;;;;      - Google not helping -- can't find any mention of this.
 
-;;;; TODO Idea of treating level -1 as show only parents, and not siblings.
+;;;; XXXX Idea of treating level -1 as show only parents, and not siblings.
 ;;;;      But first:
 ;;;;      - The visibility-span stuff is global, but you have things that work
 ;;;;        from point and from root. So you might have to roll your own to o
@@ -55,7 +68,7 @@
 ;;;;        - Bodies not being expanded.
 ;;;;        - (Anything else?)
 
-;;;; TODO Bug: When a M-x is used to invoke a command (even something not
+;;;; XXXX Bug: When a M-x is used to invoke a command (even something not
 ;;;;      org-related (such as `version` or `what-cursor-position)`, if the
 ;;;;      point is hidden it gets changed to be a visible point.
 ;;;;      To reproduce:
@@ -66,9 +79,6 @@
 ;;;;      - M-x what-cursor-position
 ;;;;        - Observe that point has changed.
 ;;;;      So, it seems that after running a M-x command, point gets changed.
-
-;;;; ___________________________________________________________________________
-;;;; ____ * Some rejected ideas
 
 ;;;; XXXX When getting to 0 or max, first flash then cycle.
 ;;;;      REJECTED
@@ -149,6 +159,16 @@ message and in case adding org level messes things up.")
 
 (defun norg/point-is-visible? ()
   (not (org-invisible-p)))
+
+(defun -norg/body-expanded?/experimental ()
+  ;; This simply checks whether the start of the headline and end of the item
+  ;; including any body are visible, so it might give a wrong answer.
+  (save-excursion
+    (outline-back-to-heading)
+    (let* ((start (point))
+           (end   (1- (progn (outline-next-preface) (point)))))
+      (not (or (org-invisible-p start)
+               (org-invisible-p end))))))
 
 (defun norg/current-level ()
   (save-excursion
