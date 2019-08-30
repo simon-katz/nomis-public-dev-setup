@@ -5,8 +5,8 @@
 ;;;; ___________________________________________________________________________
 ;;;; ____ * TODOs
 
-;;;; TODO Would be good to have keybindings for `nomis/org-previous-heading`
-;;;;      and `nomis/org-next-heading`, and to bring those functions into norg.
+;;;; TODO Bring `nomis/org-previous-heading` and `nomis/org-next-heading`
+;;;;      into norg.
 
 ;;;; TODO Expansion of headlines with bodies:
 ;;;;      Perhaps you could have an extra level between your current levels;
