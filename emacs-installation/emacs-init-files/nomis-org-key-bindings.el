@@ -83,8 +83,8 @@ Use H with various other keys:
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ;;;; ____ ** Movement
 
-(org-defkey org-mode-map (kbd "H-,")     'org-backward-heading-same-level) ; also C-c C-b
-(org-defkey org-mode-map (kbd "H-.")     'org-forward-heading-same-level) ; also C-c C-f
+(org-defkey org-mode-map (kbd "H-,")     'nomis/org/backward-heading-same-level)
+(org-defkey org-mode-map (kbd "H-.")     'nomis/org/forward-heading-same-level)
 (org-defkey org-mode-map (kbd "H-<")     'nomis/org/backward-heading-same-level/allow-cross-parent)
 (org-defkey org-mode-map (kbd "H->")     'nomis/org/forward-heading-same-level/allow-cross-parent)
 

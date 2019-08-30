@@ -193,7 +193,34 @@
   (outline-next-heading)
   (norg/show-point))
 
-(defun nomis/-org-heading-same-level/allow-cross-parent/helper (direction)
+(defun nomis/org/heading-same-level-helper (move-fun
+                                            error-message)
+  (org-back-to-heading)
+  (let* ((starting-point (point)))
+    (funcall move-fun 1 t)
+    (norg/show-point)
+    (when (= (point) starting-point)
+      (nomis/popup/error-message "%s" error-message))))
+
+(defun nomis/org/forward-heading-same-level ()
+  "Move forward one subheading at same level as this one.
+Like `org-forward-heading-same-level` but:
+- when the target is invisible, make it visible
+- if this is the first subheading within its parent, display a popup message."
+  (interactive)
+  (nomis/org/heading-same-level-helper #'org-forward-heading-same-level
+                                       "No next heading at this level"))
+
+(defun nomis/org/backward-heading-same-level ()
+  "Move backward one subheading at same level as this one.
+Like `org-backward-heading-same-level` but:
+- when the target is invisible, make it visible
+- if this is the first subheading within its parent, display a popup message."
+  (interactive)
+  (nomis/org/heading-same-level-helper #'org-backward-heading-same-level
+                                       "No previous heading at this level"))
+
+(defun -nomis/org-heading-same-level/allow-cross-parent/helper (direction)
   (let ((start-position-fun (case direction
                               (:forward 'org-end-of-line)
                               (:backward 'org-beginning-of-line)))
@@ -223,10 +250,14 @@
               (funcall post-search-adjust-function))
           (progn
             (org-beginning-of-line)
-            (nomis/popup/error-message "%s"
-                                       (concat "No more headings at this level"
-                                               (when (eql direction :forward)
-                                                 " (but there's a bug so maybe there are...)")))))))))
+            (let* ((msg (case direction
+                          (:forward
+                           "No next heading at this level, even across parents")
+                          (:backward
+                           "No previous heading at this level, even across parents"
+                           ;; but maybe there is -- I've seen a bug here
+                           ))))
+              (nomis/popup/error-message "%s" msg))))))))
 
 (defun nomis/org/forward-heading-same-level/allow-cross-parent ()
   "Move forward one subheading at same level as this one.
@@ -235,7 +266,7 @@ Like `org-forward-heading-same-level` but:
 - if this is the first subheading within its parent, move to the first
   subheading at this level in the next parent."
   (interactive)
-  (nomis/-org-heading-same-level/allow-cross-parent/helper :forward))
+  (-nomis/org-heading-same-level/allow-cross-parent/helper :forward))
 
 (defun nomis/org/backward-heading-same-level/allow-cross-parent ()
   "Move backward one subheading at same level as this one.
@@ -244,7 +275,7 @@ Like `org-backward-heading-same-level` but:
 - if this is the first subheading within its parent, move to the last
 subheading at this level in the previous parent."
   (interactive)
-  (nomis/-org-heading-same-level/allow-cross-parent/helper :backward))
+  (-nomis/org-heading-same-level/allow-cross-parent/helper :backward))
 
 ;;;; ___________________________________________________________________________
 ;;;; ____ * Stepping
@@ -253,16 +284,19 @@ subheading at this level in the previous parent."
   (cl-flet ((try-to-move
              ()
              (if allow-cross-parent?
-                 (nomis/-org-heading-same-level/allow-cross-parent/helper
+                 (-nomis/org-heading-same-level/allow-cross-parent/helper
                   (case n
                     (1 :forward)
                     (-1 :backward)))
                (org-forward-heading-same-level n t)))
             (tried-to-go-to-far
              ()
-             (let* ((msg (if (< n 0)
-                             "No previous heading at this level"
-                           "No next heading at this level")))
+             (let* ((msg (concat (if (< n 0)
+                                     "No previous heading at this level"
+                                   "No next heading at this level")
+                                 (if allow-cross-parent?
+                                     ", even across parents"
+                                   ""))))
                (nomis/popup/error-message msg))))
     (org-back-to-heading t)
     (if (not (norg/fully-expanded?))
