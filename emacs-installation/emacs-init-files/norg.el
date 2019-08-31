@@ -464,7 +464,10 @@ Return the nesting depth of the headline in the outline."
        (apply #'min)))
 
 ;;;; ___________________________________________________________________________
-;;;; ____ * -norg/set-level-etc
+;;;; ____ * Expanding and collapsing
+
+;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+;;;; ____ ** -norg/set-level-etc
 
 (defun -norg/out-of-range (v maximum)
   (or (< v 0)
@@ -497,9 +500,6 @@ Return the nesting depth of the headline in the outline."
                (if out-of-range?
                    " —- can't go further than this"
                  "")))))
-
-;;;; ___________________________________________________________________________
-;;;; ____ * Expanding and collapsing
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ;;;; ____ ** norg/show-children-from-point/xxxx support

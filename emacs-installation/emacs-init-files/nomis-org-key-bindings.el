@@ -56,7 +56,7 @@ Use H with various other keys:
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ;;;; ____ ** "Visibility" -- the org-show-only stuff (which is badly named)
 
-;;;; I'm unsure about these, but their the best you have for now.
+;;;; I'm unsure about these, but they're the best you have for now.
 
 (org-defkey org-mode-map (kbd "C-H-'")   'nomis/org-show-only/cycle/less)
 (org-defkey org-mode-map (kbd "C-H-\\")  'nomis/org-show-only/cycle/more)
