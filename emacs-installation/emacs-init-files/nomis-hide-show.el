@@ -319,48 +319,49 @@ Otherwise, if point is at the beginning of an sexp, do the following:
 
 Otherwise, go to the beginning of the sexp after point and show it."
   (interactive)
-  (cl-flet ((error--cannot-move
-             ()
-             (error "Can't move forward")))
-    (case nomis/hs/step-forward-position
-      (:before-form
-       (cond ((not (nomis/can-forward-sexp?))
-              (error--cannot-move))
-             ((nomis/looking-at-beginning-of-sexp/kinda?)
-              (if (nomis/hs/looking-at-beginning-of-hidden-sexp?)
-                  (nomis/hs/adjust/show-all)
-                (progn
-                  (nomis/hs/adjust/set-0)
-                  (forward-sexp)
-                  (nomis/goto-beginning-of-sexp/or-end/forward)
-                  (nomis/hs/adjust/show-all))))
-             (t
-              (nomis/goto-beginning-of-sexp/or-end/forward)
-              (nomis/hs/adjust/show-all))))
-      (:after-form
-       (if (not (nomis/can-forward-sexp?))
-           (cond ((not (nomis/can-backward-sexp?))
-                  (error--cannot-move))
-                 ((save-excursion
-                    (backward-sexp)
-                    (nomis/hs/looking-at-beginning-of-hidden-sexp?))
-                  (error--cannot-move))
-                 (t
-                  (save-excursion
-                    (backward-sexp)
+  (nomis/with-maybe-maintain-line-no-in-window
+    (cl-flet ((error--cannot-move
+               ()
+               (error "Can't move forward")))
+      (case nomis/hs/step-forward-position
+        (:before-form
+         (cond ((not (nomis/can-forward-sexp?))
+                (error--cannot-move))
+               ((nomis/looking-at-beginning-of-sexp/kinda?)
+                (if (nomis/hs/looking-at-beginning-of-hidden-sexp?)
+                    (nomis/hs/adjust/show-all)
+                  (progn
                     (nomis/hs/adjust/set-0)
-                    (unless (nomis/hs/looking-at-beginning-of-hidden-sexp?)
-                      ;; Hiding had no effect.
-                      (error--cannot-move)))))
-         (progn
-           (forward-sexp)
-           (save-excursion
-             (backward-sexp)
+                    (forward-sexp)
+                    (nomis/goto-beginning-of-sexp/or-end/forward)
+                    (nomis/hs/adjust/show-all))))
+               (t
+                (nomis/goto-beginning-of-sexp/or-end/forward)
+                (nomis/hs/adjust/show-all))))
+        (:after-form
+         (if (not (nomis/can-forward-sexp?))
+             (cond ((not (nomis/can-backward-sexp?))
+                    (error--cannot-move))
+                   ((save-excursion
+                      (backward-sexp)
+                      (nomis/hs/looking-at-beginning-of-hidden-sexp?))
+                    (error--cannot-move))
+                   (t
+                    (save-excursion
+                      (backward-sexp)
+                      (nomis/hs/adjust/set-0)
+                      (unless (nomis/hs/looking-at-beginning-of-hidden-sexp?)
+                        ;; Hiding had no effect.
+                        (error--cannot-move)))))
+           (progn
+             (forward-sexp)
              (save-excursion
-               (when (nomis/can-backward-sexp?)
-                 (backward-sexp)
-                 (nomis/hs/adjust/set-0)))
-             (nomis/hs/adjust/show-all))))))))
+               (backward-sexp)
+               (save-excursion
+                 (when (nomis/can-backward-sexp?)
+                   (backward-sexp)
+                   (nomis/hs/adjust/set-0)))
+               (nomis/hs/adjust/show-all)))))))))
 
 (defun nomis/hs/step-backward ()
   "Roughly: Hide the current form, then move backward a form and show it.
@@ -379,44 +380,29 @@ Otherwise, if point is at the beginning of an sexp, do the following:
 
 Otherwise, go to the beginning of the sexp before point and show it."
   (interactive)
-  (cond ((not (nomis/can-backward-sexp?))
-         (cl-flet ((error--cannot-move
-                    ()
-                    (error "Can't move backward")))
-           (if (nomis/hs/looking-at-beginning-of-hidden-sexp?)
-               (error--cannot-move)
-             (progn
-               (nomis/hs/adjust/set-0)
-               (unless (nomis/hs/looking-at-beginning-of-hidden-sexp?)
-                 ;; Hiding had no effect.
-                 (error--cannot-move))))))
-        ((nomis/looking-at-beginning-of-sexp/kinda?)
-         (nomis/hs/adjust/set-0)
-         (backward-sexp)
-         (nomis/hs/adjust/show-all))
-        (t
-         (nomis/goto-beginning-of-sexp/or-end/backward)
-         (nomis/hs/adjust/show-all))))
+  (nomis/with-maybe-maintain-line-no-in-window
+    (cond ((not (nomis/can-backward-sexp?))
+           (cl-flet ((error--cannot-move
+                      ()
+                      (error "Can't move backward")))
+             (if (nomis/hs/looking-at-beginning-of-hidden-sexp?)
+                 (error--cannot-move)
+               (progn
+                 (nomis/hs/adjust/set-0)
+                 (unless (nomis/hs/looking-at-beginning-of-hidden-sexp?)
+                   ;; Hiding had no effect.
+                   (error--cannot-move))))))
+          ((nomis/looking-at-beginning-of-sexp/kinda?)
+           (nomis/hs/adjust/set-0)
+           (backward-sexp)
+           (nomis/hs/adjust/show-all))
+          (t
+           (nomis/goto-beginning-of-sexp/or-end/backward)
+           (nomis/hs/adjust/show-all)))))
 
-(define-key hs-minor-mode-map (kbd "H-]") 'nomis/hs/step-forward)
-(define-key hs-minor-mode-map (kbd "H-[") 'nomis/hs/step-backward)
-
-;;;; ___________________________________________________________________________
-;;;; nomis/hs/step-forward-and-recenter
-;;;; nomis/hs/step-backward-and-recenter
-
-(defun nomis/hs/step-forward-and-recenter ()
-  (interactive)
-  (nomis/with-maintain-line-no-in-window
-    (nomis/hs/step-forward)))
-
-(defun nomis/hs/step-backward-and-recenter ()
-  (interactive)
-  (nomis/with-maintain-line-no-in-window
-    (nomis/hs/step-backward)))
-
-(define-key hs-minor-mode-map (kbd "H-C-]") 'nomis/hs/step-forward-and-recenter)
-(define-key hs-minor-mode-map (kbd "H-C-[") 'nomis/hs/step-backward-and-recenter)
+(define-key hs-minor-mode-map (kbd "H-]")     'nomis/hs/step-forward)
+(define-key hs-minor-mode-map (kbd "H-[")     'nomis/hs/step-backward)
+(define-key hs-minor-mode-map (kbd "H-q H-s") 'nomis/toggle-maintain-line-no-in-window)
 
 ;;;; Key chords only work for chars whose codes are in the range 32..126 -- see
 ;;;; limitations in `key-chord`. So you can't use the cursor keys. Annoying!
