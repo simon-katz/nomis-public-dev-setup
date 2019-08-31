@@ -3,9 +3,9 @@
 ;;;; ___________________________________________________________________________
 
 (defun -nomis/with-maintain-line-no-in-window* (fun)
-  (let* ((line-no-in-window (count-screen-lines (window-start) (point))))
+  (let* ((line-no-in-window (count-screen-lines (window-start) (point) t)))
     (prog1 (funcall fun)
-      (recenter line-no-in-window))))
+      (recenter (1- line-no-in-window)))))
 
 (cl-defmacro nomis/with-maintain-line-no-in-window (&body body)
   (declare (indent 0))
