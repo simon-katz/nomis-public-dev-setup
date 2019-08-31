@@ -24,7 +24,7 @@
 ;;;;        - `norg/n-levels-below` needs to take account of this.
 ;;;;          - Oh, that needs to know whether there is a body.
 ;;;;            You could find out by comparing the points of the end of the
-;;;;            headline and `(1- (progn (norg/next-preface) (point)))`.
+;;;;            headline and `(1- (progn (norg/w/next-preface) (point)))`.
 ;;;;        - Anything else?
 ;;;;      - Perhaps you could have an extra level between your current levels;
 ;;;;        they'd differ by whether bodies are shown.
@@ -156,36 +156,36 @@ message and in case adding org level messes things up.")
 ;;;; be safe.
 ;;;; Besides, it's useful to isolate how we use `outline` and `org`.
 
-(defalias 'norg/end-of-line 'org-end-of-line)
-(defalias 'norg/beginning-of-line 'org-beginning-of-line)
+(defalias 'norg/w/end-of-line 'org-end-of-line)
+(defalias 'norg/w/beginning-of-line 'org-beginning-of-line)
 
-(defalias 'norg/at-heading-p 'org-at-heading-p)
+(defalias 'norg/w/at-heading-p 'org-at-heading-p)
 
-(defun norg/level/must-be-at-boh ()
+(defun norg/w/level/must-be-at-boh ()
   "Point must be at the beginning of a headline.
 Return the nesting depth of the headline in the outline."
   (funcall outline-level))
 
-(defalias 'norg/next-heading 'outline-next-heading)
-(defalias 'norg/next-preface 'outline-next-preface)
-(defalias 'norg/back-to-heading 'org-back-to-heading)
-(defalias 'norg/up-heading 'outline-up-heading)
-(defalias 'norg/previous-heading 'outline-previous-heading)
+(defalias 'norg/w/next-heading 'outline-next-heading)
+(defalias 'norg/w/next-preface 'outline-next-preface)
+(defalias 'norg/w/back-to-heading 'org-back-to-heading)
+(defalias 'norg/w/up-heading 'outline-up-heading)
+(defalias 'norg/w/previous-heading 'outline-previous-heading)
 
-(defalias 'norg/show-entry 'outline-show-entry)
-(defalias 'norg/show-children 'outline-show-children) ; Not `org-show-children`, because that shows first level when n is 0
-(defalias 'norg/cycle 'org-cycle)
-(defalias 'norg/overview 'org-overview)
-(defalias 'norg/show-set-visibility 'org-show-set-visibility)
+(defalias 'norg/w/show-entry 'outline-show-entry)
+(defalias 'norg/w/show-children 'outline-show-children) ; Not `org-show-children`, because that shows first level when n is 0
+(defalias 'norg/w/cycle 'org-cycle)
+(defalias 'norg/w/overview 'org-overview)
+(defalias 'norg/w/show-set-visibility 'org-show-set-visibility)
 
-(defalias 'norg/map-tree 'org-map-tree)
+(defalias 'norg/w/map-tree 'org-map-tree)
 
-(defalias 'norg/invisible-p 'org-invisible-p)
-(defalias 'norg/flag-subtree 'org-flag-subtree)
+(defalias 'norg/w/invisible-p 'org-invisible-p)
+(defalias 'norg/w/flag-subtree 'org-flag-subtree)
 
-(defalias 'norg/check-before-invisible-edit 'org-check-before-invisible-edit)
+(defalias 'norg/w/check-before-invisible-edit 'org-check-before-invisible-edit)
 
-(defvaralias 'norg/catch-invisible-edits 'org-catch-invisible-edits)
+(defvaralias 'norg/w/catch-invisible-edits 'org-catch-invisible-edits)
 
 ;;;; ___________________________________________________________________________
 ;;;; ____ * Some wrappers for org functionality
@@ -193,22 +193,22 @@ Return the nesting depth of the headline in the outline."
 ;;;; Basic stuff
 
 (defun norg/point-is-visible? ()
-  (not (norg/invisible-p)))
+  (not (norg/w/invisible-p)))
 
 (defun -norg/body-expanded?/experimental ()
   ;; This simply checks whether the start of the headline and end of the item
   ;; including any body are visible, so it might give a wrong answer.
   (save-excursion
-    (norg/back-to-heading)
+    (norg/w/back-to-heading)
     (let* ((start (point))
-           (end   (1- (progn (norg/next-preface) (point)))))
-      (not (or (norg/invisible-p start)
-               (norg/invisible-p end))))))
+           (end   (1- (progn (norg/w/next-preface) (point)))))
+      (not (or (norg/w/invisible-p start)
+               (norg/w/invisible-p end))))))
 
 (defun norg/current-level ()
   (save-excursion
-    (norg/back-to-heading t)
-    (norg/level/must-be-at-boh)))
+    (norg/w/back-to-heading t)
+    (norg/w/level/must-be-at-boh)))
 
 (defun norg/current-level-or-error-string ()
   (condition-case err
@@ -217,7 +217,7 @@ Return the nesting depth of the headline in the outline."
 
 (defun norg/goto-root ()
   (interactive)
-  (while (ignore-errors (norg/up-heading 1))))
+  (while (ignore-errors (norg/w/up-heading 1))))
 
 (cl-defmacro norg/save-excursion-to-root (&body body)
   (declare (indent 0))
@@ -231,12 +231,12 @@ Return the nesting depth of the headline in the outline."
     (1
      (unless (norg/point-is-visible?)
        ;; Make point visible and leave subtree collapsed
-       (dotimes (_ 3) (norg/cycle))))
+       (dotimes (_ 3) (norg/w/cycle))))
     (2
      ;; This makes lots of stuff visible, but seems to be the "official" way.
      ;; Leave this here as a point of interest.
-     (let ((norg/catch-invisible-edits 'show))
-       (norg/check-before-invisible-edit 'insert)))))
+     (let ((norg/w/catch-invisible-edits 'show))
+       (norg/w/check-before-invisible-edit 'insert)))))
 
 ;;;; Support for do-ing and mapping
 
@@ -247,12 +247,12 @@ Return the nesting depth of the headline in the outline."
                (when (funcall pred-of-no-args)
                  (funcall fun))))
       (beginning-of-buffer)
-      (unless (norg/at-heading-p)
-        (norg/next-heading))
-      (when (norg/at-heading-p)
+      (unless (norg/w/at-heading-p)
+        (norg/w/next-heading))
+      (when (norg/w/at-heading-p)
         (call-fun-when-pred-is-satisfied)
         (while (progn
-                 (norg/next-heading)
+                 (norg/w/next-heading)
                  (not (eobp)))
           (call-fun-when-pred-is-satisfied)))))
   nil)
@@ -269,7 +269,7 @@ Return the nesting depth of the headline in the outline."
 
 (defun norg/mapc-entries-from-point (fun)
   (save-excursion
-    (norg/map-tree fun))
+    (norg/w/map-tree fun))
   nil)
 
 (defun norg/mapc-entries-from-root (fun)
@@ -278,7 +278,7 @@ Return the nesting depth of the headline in the outline."
 
 (defun norg/mapc-roots (fun)
   (-norg/mapc-headlines-satisfying (lambda ()
-                                     (= (norg/level/must-be-at-boh)
+                                     (= (norg/w/level/must-be-at-boh)
                                         1))
                                    fun))
 
@@ -314,7 +314,7 @@ Return the nesting depth of the headline in the outline."
   (let* ((sofar initial-value))
     (norg/mapc-entries-from-point (lambda ()
                                     (when (funcall pred-of-no-args)
-                                      (let* ((v (norg/level/must-be-at-boh)))
+                                      (let* ((v (norg/w/level/must-be-at-boh)))
                                         (setq sofar
                                               (if (null sofar)
                                                   v
@@ -329,17 +329,17 @@ Return the nesting depth of the headline in the outline."
   (case 2
     (1
      ;; This hides too much stuff.
-     (norg/overview)
-     (norg/show-set-visibility 'canonical))
+     (norg/w/overview)
+     (norg/w/show-set-visibility 'canonical))
     (2
      ;; This hides just the subtree under the headline at point.
      ;; Idea from http://christiantietze.de/posts/2019/06/org-fold-heading/.
      ;; But what does `org-flag-subtree` do, is it part of the org public API,
      ;; and why can't I find any useful info by googling?
-     (norg/flag-subtree t))))
+     (norg/w/flag-subtree t))))
 
 (defun norg/expand (n)
-  (norg/show-children n)
+  (norg/w/show-children n)
   (let* ((level (norg/current-level)))
     (norg/mapc-entries-from-point #'(lambda ()
                                       ;; TODO Why did you change this? Isn't the
@@ -348,10 +348,10 @@ Return the nesting depth of the headline in the outline."
                                               (:old
                                                (norg/point-is-visible?))
                                               (:new
-                                               (< (- (norg/level/must-be-at-boh)
+                                               (< (- (norg/w/level/must-be-at-boh)
                                                      level)
                                                   n)))
-                                        (norg/show-entry))))))
+                                        (norg/w/show-entry))))))
 
 (defun norg/expand-fully ()
   (norg/expand 1000) ; TODO magic number
@@ -364,7 +364,7 @@ Return the nesting depth of the headline in the outline."
 
 (defun -norg/heading-same-level-helper (move-fun
                                         error-message)
-  (norg/back-to-heading)
+  (norg/w/back-to-heading)
   (let* ((starting-point (point)))
     (funcall move-fun 1 t)
     (norg/show-point)
@@ -393,16 +393,16 @@ Like `org-backward-heading-same-level` but:
 
 (defun -norg/heading-same-level/allow-cross-parent/helper (direction)
   (let ((start-position-fun (case direction
-                              (:forward 'norg/end-of-line)
-                              (:backward 'norg/beginning-of-line)))
+                              (:forward 'norg/w/end-of-line)
+                              (:backward 'norg/w/beginning-of-line)))
         (re-search-function (case direction
                               (:forward 're-search-forward)
                               (:backward 're-search-backward)))
         (post-search-adjust-function (case direction
-                                       (:forward 'norg/beginning-of-line)
+                                       (:forward 'norg/w/beginning-of-line)
                                        (:backward #'(lambda ())))))
     (let* ((text-to-look-for (save-excursion
-                               (norg/beginning-of-line)
+                               (norg/w/beginning-of-line)
                                (concat (thing-at-point 'symbol)
                                        " "))))
       (funcall start-position-fun)
@@ -420,7 +420,7 @@ Like `org-backward-heading-same-level` but:
               (norg/show-point)
               (funcall post-search-adjust-function))
           (progn
-            (norg/beginning-of-line)
+            (norg/w/beginning-of-line)
             (let* ((msg (case direction
                           (:forward
                            "No next heading at this level, even across parents")
@@ -452,12 +452,12 @@ subheading at this level in the previous parent."
 
 (defun norg/forward-heading/any-level ()
   (interactive)
-  (norg/previous-heading)
+  (norg/w/previous-heading)
   (norg/show-point))
 
 (defun norg/backward-heading/any-level ()
   (interactive)
-  (norg/next-heading)
+  (norg/w/next-heading)
   (norg/show-point))
 
 ;;;; ___________________________________________________________________________
@@ -481,7 +481,7 @@ subheading at this level in the previous parent."
                                      ", even across parents"
                                    ""))))
                (nomis/popup/error-message msg))))
-    (norg/back-to-heading t)
+    (norg/w/back-to-heading t)
     (if (not (norg/fully-expanded?))
         (norg/expand-fully)
       (progn
@@ -542,7 +542,7 @@ subheading at this level in the previous parent."
           '(:dummy-first t nil))
          (basic-info
           (norg/map-entries-from-point (lambda ()
-                                         (list (norg/level/must-be-at-boh)
+                                         (list (norg/w/level/must-be-at-boh)
                                                (norg/point-is-visible?))))))
     (cl-loop for ((prev-level prev-visible?) . ((level visible?) . _))
              on (cons dummy-initial-entry
@@ -611,7 +611,7 @@ subheading at this level in the previous parent."
 (defun norg/levels/max-in-buffer ()
   (let* ((sofar 0))
     (norg/mapc-entries-from-all-roots (lambda ()
-                                        (setq sofar (max (norg/level/must-be-at-boh)
+                                        (setq sofar (max (norg/w/level/must-be-at-boh)
                                                          sofar))))
     sofar))
 
