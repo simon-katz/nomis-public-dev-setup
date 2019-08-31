@@ -111,6 +111,11 @@ H-q H-= norg/show-children-from-all-roots/to-current-level")
 ;; (org-defkey org-mode-map (kbd "C-H-M-<") ????) ; No real meaning -- with the M we are already crossing parent levels
 ;; (org-defkey org-mode-map (kbd "C-H-M->") ????) ; No real meaning -- with the M we are already crossing parent levels
 
+;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+;;;; ____ ** Maintain cursor position
+
+(org-defkey org-mode-map (kbd "H-q H-s") 'nomis/toggle-maintain-line-no-in-window)
+
 ;;;; ___________________________________________________________________________
 ;;;; ____ * Agenda
 
