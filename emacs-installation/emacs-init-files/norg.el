@@ -166,8 +166,10 @@ message and in case adding org level messes things up.")
 Return the nesting depth of the headline in the outline."
   (funcall outline-level))
 
+(defalias 'norg/w/forward-heading-same-level 'org-forward-heading-same-level)
 (defalias 'norg/w/next-heading 'outline-next-heading)
 (defalias 'norg/w/next-preface 'outline-next-preface)
+(defalias 'norg/w/backward-heading-same-level 'org-backward-heading-same-level)
 (defalias 'norg/w/back-to-heading 'org-back-to-heading)
 (defalias 'norg/w/up-heading 'outline-up-heading)
 (defalias 'norg/w/previous-heading 'outline-previous-heading)
@@ -377,7 +379,7 @@ Like `org-forward-heading-same-level` but:
 - when the target is invisible, make it visible
 - if this is the first subheading within its parent, display a popup message."
   (interactive)
-  (-norg/heading-same-level-helper #'org-forward-heading-same-level
+  (-norg/heading-same-level-helper #'norg/w/forward-heading-same-level
                                    "No next heading at this level"))
 
 (defun norg/backward-heading-same-level ()
@@ -386,7 +388,7 @@ Like `org-backward-heading-same-level` but:
 - when the target is invisible, make it visible
 - if this is the first subheading within its parent, display a popup message."
   (interactive)
-  (-norg/heading-same-level-helper #'org-backward-heading-same-level
+  (-norg/heading-same-level-helper #'norg/w/backward-heading-same-level
                                    "No previous heading at this level"))
 
 ;;;; ____ ** Forward and backward at same level, allow cross-parent
@@ -471,7 +473,7 @@ subheading at this level in the previous parent."
                   (case n
                     (1 :forward)
                     (-1 :backward)))
-               (org-forward-heading-same-level n t)))
+               (norg/w/forward-heading-same-level n t)))
             (tried-to-go-to-far
              ()
              (let* ((msg (concat (if (< n 0)
