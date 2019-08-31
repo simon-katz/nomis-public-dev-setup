@@ -101,7 +101,6 @@
 ;;;; ___________________________________________________________________________
 ;;;; ____ * Tailor other functionality
 
-;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ;;;; ____ ** norg/popup/message
 
 (defvar norg/use-nomis-popup-when-available? t)
@@ -115,7 +114,6 @@
            format-string
            args)))
 
-;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ;;;; ____ ** what-cursor-position
 ;;;; Add org level to the output of `what-cursor-position`.
 
@@ -466,7 +464,6 @@ Return the nesting depth of the headline in the outline."
 ;;;; ___________________________________________________________________________
 ;;;; ____ * Expanding and collapsing
 
-;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ;;;; ____ ** -norg/set-level-etc
 
 (defun -norg/out-of-range (v maximum)
@@ -501,7 +498,6 @@ Return the nesting depth of the headline in the outline."
                    " —- can't go further than this"
                  "")))))
 
-;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ;;;; ____ ** norg/show-children-from-point/xxxx support
 
 (defun norg/show-children-from-point* (n) ; TODO You don't use the special negative arg thing. Simplify or get back that functionality.
@@ -528,7 +524,6 @@ that is already being displayed."
                        (norg/n-levels-below)
                        "[%s / %s]"))
 
-;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ;;;; ____ ** norg/show-children-from-point/xxxx
 
 (defun norg/show-children-from-point (n)
@@ -556,7 +551,6 @@ that is already being displayed."
   (-> (norg/smallest-invisible-level-below-or-infinity)
       -norg/show-children-from-point/set-level-etc))
 
-;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ;;;; ____ ** norg/show-children-from-root/xxxx support
 
 (defun norg/show-children-from-root* (n)
@@ -571,7 +565,6 @@ the parameter."
                        (norg/n-levels-below/root)
                        "[%s of %s] from root"))
 
-;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ;;;; ____ ** norg/show-children-from-root/xxxx
 
 (defun norg/show-children-from-root (n)
@@ -599,7 +592,6 @@ the parameter."
   (-> (norg/smallest-invisible-level-below-or-infinity/root)
       -norg/show-children-from-root/set-level-etc))
 
-;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ;;;; ____ ** norg/show-children-from-all-roots/xxxx support
 
 (defun norg/show-children-from-all-roots* (n)
@@ -613,7 +605,6 @@ the parameter."
                        (norg/n-levels-below/buffer)
                        "[%s of %s] from all roots"))
 
-;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ;;;; ____ ** norg/show-children-from-all-roots/xxxx
 
 (defun norg/show-children-from-all-roots (n)
@@ -641,7 +632,6 @@ the parameter."
   (->> (norg/smallest-invisible-level-below/or-infinity/buffer)
        -norg/show-children-from-all-roots/set-level-etc))
 
-;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ;;;; ____ ** norg/show-all-to-current-level
 
 (defun norg/show-all-to-current-level ()
