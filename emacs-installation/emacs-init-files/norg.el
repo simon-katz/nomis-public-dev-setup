@@ -8,6 +8,8 @@
 ;;;; TODO Bring some stuff from `nomis-org` into `norg`. See your org mode
 ;;;;      keybindings for candidates.
 
+;;;; TODO Ensure that this doesn't use org or outline internals.
+
 ;;;; ___________________________________________________________________________
 ;;;; ____ * Some rejected (at least for now) ideas
 
