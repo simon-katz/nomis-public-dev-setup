@@ -746,6 +746,11 @@ the parameter."
   (-> (norg/smallest-invisible-level-below-or-infinity/root)
       -norg/show-children-from-root/set-level-etc))
 
+(defun norg/show-children-from-root/to-current-level ()
+  (interactive)
+  (-> (1- (norg/current-level))
+      -norg/show-children-from-root/set-level-etc))
+
 ;;;; ____ ** norg/show-children-from-all-roots/xxxx support
 
 (defun norg/show-children-from-all-roots* (n)

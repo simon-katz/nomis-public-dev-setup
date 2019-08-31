@@ -78,6 +78,7 @@ Use H with various other keys:
 (org-defkey org-mode-map (kbd "H--")     'norg/show-children-from-all-roots/incremental/less)
 (org-defkey org-mode-map (kbd "H-=")     'norg/show-children-from-all-roots/incremental/more)
 
+(org-defkey org-mode-map (kbd "H-q H-]") 'norg/show-children-from-root/to-current-level)
 (org-defkey org-mode-map (kbd "H-q H-=") 'norg/show-children-from-all-roots/to-current-level)
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
