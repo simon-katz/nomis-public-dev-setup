@@ -35,7 +35,10 @@ Use H with various other keys:
         Add M to visit headlines at any level
     '\\[]-= is for expanding and collapsing
         Add M to fully expand or collapse
-        Add C to '\\ for visibility cycling of spans")
+        Add C to '\\ for visibility cycling of spans
+
+H-q H-] norg/show-children-from-root/to-current-level
+H-q H-= norg/show-children-from-all-roots/to-current-level")
 
 (defun nomis/org/pop-up-navigation-and-cycling-help ()
   (interactive)
