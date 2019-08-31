@@ -8,8 +8,6 @@
 ;;;; TODO Bring some stuff from `nomis-org` into `norg`. See your org mode
 ;;;;      keybindings for candidates.
 
-;;;; TODO Ensure that this doesn't use org or outline internals.
-
 ;;;; ___________________________________________________________________________
 ;;;; ____ * Some rejected (at least for now) ideas
 
@@ -27,7 +25,7 @@
 ;;;;        - `norg/n-levels-below` needs to take account of this.
 ;;;;          - Oh, that needs to know whether there is a body.
 ;;;;            You could find out by comparing the points of the end of the
-;;;;            headline and `(1- (progn (outline-next-preface) (point)))`.
+;;;;            headline and `(1- (progn (norg/next-preface) (point)))`.
 ;;;;        - Anything else?
 ;;;;      - Perhaps you could have an extra level between your current levels;
 ;;;;        they'd differ by whether bodies are shown.
@@ -155,27 +153,54 @@ message and in case adding org level messes things up.")
 (defconst -norg/minus-infinity -1.0e+INF)
 
 ;;;; ___________________________________________________________________________
+;;;; ____ * Wrappers for `outline` and `org`
+
+;;;; I'm not clear about the public API of `outline` and `org`, so let's
+;;;; be safe.
+;;;; Besides, it's useful to isolate how we use `outline` and `org`.
+
+(defun norg/level/must-be-at-boh ()
+  "Point must be at the beginning of a headline.
+Return the nesting depth of the headline in the outline."
+  (funcall outline-level))
+
+(defalias 'norg/next-preface 'outline-next-preface)
+(defalias 'norg/up-heading 'outline-up-heading)
+(defalias 'norg/next-heading 'outline-next-heading)
+(defalias 'norg/show-children 'outline-show-children) ; Not `org-show-children`, because that shows first level when n is 0
+(defalias 'norg/show-entry 'outline-show-entry)
+(defalias 'norg/invisible-p 'org-invisible-p)
+(defalias 'norg/back-to-heading 'org-back-to-heading)
+(defalias 'norg/cycle 'org-cycle)
+(defalias 'norg/check-before-invisible-edit 'org-check-before-invisible-edit)
+(defalias 'norg/at-heading-p 'org-at-heading-p)
+(defalias 'norg/map-tree 'org-map-tree)
+(defalias 'norg/overview 'org-overview)
+(defalias 'norg/show-set-visibility 'org-show-set-visibility)
+(defalias 'norg/flag-subtree 'org-flag-subtree)
+
+;;;; ___________________________________________________________________________
 ;;;; ____ * Some wrappers for org functionality
 
 ;;;; Basic stuff
 
 (defun norg/point-is-visible? ()
-  (not (org-invisible-p)))
+  (not (norg/invisible-p)))
 
 (defun -norg/body-expanded?/experimental ()
   ;; This simply checks whether the start of the headline and end of the item
   ;; including any body are visible, so it might give a wrong answer.
   (save-excursion
-    (outline-back-to-heading)
+    (norg/back-to-heading)
     (let* ((start (point))
-           (end   (1- (progn (outline-next-preface) (point)))))
-      (not (or (org-invisible-p start)
-               (org-invisible-p end))))))
+           (end   (1- (progn (norg/next-preface) (point)))))
+      (not (or (norg/invisible-p start)
+               (norg/invisible-p end))))))
 
 (defun norg/current-level ()
   (save-excursion
-    (org-back-to-heading t)
-    (funcall outline-level)))
+    (norg/back-to-heading t)
+    (norg/level/must-be-at-boh)))
 
 (defun norg/current-level-or-error-string ()
   (condition-case err
@@ -184,7 +209,7 @@ message and in case adding org level messes things up.")
 
 (defun norg/goto-root ()
   (interactive)
-  (while (ignore-errors (outline-up-heading 1))))
+  (while (ignore-errors (norg/up-heading 1))))
 
 (cl-defmacro norg/save-excursion-to-root (&body body)
   (declare (indent 0))
@@ -198,12 +223,12 @@ message and in case adding org level messes things up.")
     (1
      (unless (norg/point-is-visible?)
        ;; Make point visible and leave subtree collapsed
-       (dotimes (_ 3) (org-cycle))))
+       (dotimes (_ 3) (norg/cycle))))
     (2
      ;; This makes lots of stuff visible, but seems to be the "official" way.
      ;; Leave this here as a point of interest.
      (let ((org-catch-invisible-edits 'show))
-       (org-check-before-invisible-edit 'insert)))))
+       (norg/check-before-invisible-edit 'insert)))))
 
 ;;;; Support for do-ing and mapping
 
@@ -214,12 +239,12 @@ message and in case adding org level messes things up.")
                (when (funcall pred-of-no-args)
                  (funcall fun))))
       (beginning-of-buffer)
-      (unless (org-at-heading-p)
-        (outline-next-heading))
-      (when (org-at-heading-p)
+      (unless (norg/at-heading-p)
+        (norg/next-heading))
+      (when (norg/at-heading-p)
         (call-fun-when-pred-is-satisfied)
         (while (progn
-                 (outline-next-heading)
+                 (norg/next-heading)
                  (not (eobp)))
           (call-fun-when-pred-is-satisfied)))))
   nil)
@@ -236,7 +261,7 @@ message and in case adding org level messes things up.")
 
 (defun norg/mapc-entries-from-point (fun)
   (save-excursion
-    (org-map-tree fun))
+    (norg/map-tree fun))
   nil)
 
 (defun norg/mapc-entries-from-root (fun)
@@ -245,7 +270,8 @@ message and in case adding org level messes things up.")
 
 (defun norg/mapc-roots (fun)
   (-norg/mapc-headlines-satisfying (lambda ()
-                                     (= (funcall outline-level) 1))
+                                     (= (norg/level/must-be-at-boh)
+                                        1))
                                    fun))
 
 (defun norg/mapc-entries-from-all-roots (fun)
@@ -280,7 +306,7 @@ message and in case adding org level messes things up.")
   (let* ((sofar initial-value))
     (norg/mapc-entries-from-point (lambda ()
                                     (when (funcall pred-of-no-args)
-                                      (let* ((v (norg/current-level)))
+                                      (let* ((v (norg/level/must-be-at-boh)))
                                         (setq sofar
                                               (if (null sofar)
                                                   v
@@ -295,19 +321,17 @@ message and in case adding org level messes things up.")
   (case 2
     (1
      ;; This hides too much stuff.
-     (org-overview)
-     (org-show-set-visibility 'canonical))
+     (norg/overview)
+     (norg/show-set-visibility 'canonical))
     (2
      ;; This hides just the subtree under the headline at point.
      ;; Idea from http://christiantietze.de/posts/2019/06/org-fold-heading/.
      ;; But what does `org-flag-subtree` do, is it part of the org public API,
      ;; and why can't I find any useful info by googling?
-     (org-flag-subtree t))))
+     (norg/flag-subtree t))))
 
 (defun norg/expand (n)
-  ;; Use `outline-show-children`, n), not `org-show-children`, because the
-  ;; latter shows first level when n is 0.
-  (outline-show-children n)
+  (norg/show-children n)
   (let* ((level (norg/current-level)))
     (norg/mapc-entries-from-point #'(lambda ()
                                       ;; TODO Why did you change this? Isn't the
@@ -316,10 +340,10 @@ message and in case adding org level messes things up.")
                                               (:old
                                                (norg/point-is-visible?))
                                               (:new
-                                               (< (- (norg/current-level)
+                                               (< (- (norg/level/must-be-at-boh)
                                                      level)
                                                   n)))
-                                        (outline-show-entry))))))
+                                        (norg/show-entry))))))
 
 (defun norg/expand-fully ()
   (norg/expand 1000) ; TODO magic number
@@ -355,7 +379,7 @@ message and in case adding org level messes things up.")
           '(:dummy-first t nil))
          (basic-info
           (norg/map-entries-from-point (lambda ()
-                                         (list (norg/current-level)
+                                         (list (norg/level/must-be-at-boh)
                                                (norg/point-is-visible?))))))
     (cl-loop for ((prev-level prev-visible?) . ((level visible?) . _))
              on (cons dummy-initial-entry
@@ -424,7 +448,7 @@ message and in case adding org level messes things up.")
 (defun norg/levels/max-in-buffer ()
   (let* ((sofar 0))
     (norg/mapc-entries-from-all-roots (lambda ()
-                                        (setq sofar (max (norg/current-level)
+                                        (setq sofar (max (norg/level/must-be-at-boh)
                                                          sofar))))
     sofar))
 
