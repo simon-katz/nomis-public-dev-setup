@@ -786,9 +786,7 @@ the parameter."
   (->> (norg/smallest-invisible-level-below/or-infinity/buffer)
        -norg/show-children-from-all-roots/set-level-etc))
 
-;;;; ____ ** norg/show-all-to-current-level
-
-(defun norg/show-all-to-current-level ()
+(defun norg/show-children-from-all-roots/to-current-level ()
   (interactive)
   (-> (1- (norg/current-level))
       -norg/show-children-from-all-roots/set-level-etc))
