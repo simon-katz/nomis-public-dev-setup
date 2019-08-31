@@ -129,7 +129,7 @@ message and in case adding org level messes things up.")
             (lambda (orig-fun &rest args)
               (let* ((*-norg/in-what-cursor-position?* t))
                 (apply orig-fun args)))
-            '((name . add-org-level-info)))
+            '((name . norg/add-level-info)))
 
 (advice-add 'message
             :around
@@ -141,7 +141,7 @@ message and in case adding org level messes things up.")
                          (concat (first args) " org-level=%s")
                          (append (rest args) (list (norg/current-level-or-error-string))))
                 (apply orig-fun args)))
-            '((name . add-org-level-info)))
+            '((name . norg/add-level-info)))
 
 ;;;; ___________________________________________________________________________
 ;;;; ____ * Infinity
@@ -156,6 +156,9 @@ message and in case adding org level messes things up.")
 ;;;; be safe.
 ;;;; Besides, it's useful to isolate how we use `outline` and `org`.
 
+(defalias 'norg/end-of-line 'org-end-of-line)
+(defalias 'norg/beginning-of-line 'org-beginning-of-line)
+
 (defalias 'norg/at-heading-p 'org-at-heading-p)
 
 (defun norg/level/must-be-at-boh ()
@@ -165,9 +168,9 @@ Return the nesting depth of the headline in the outline."
 
 (defalias 'norg/next-heading 'outline-next-heading)
 (defalias 'norg/next-preface 'outline-next-preface)
-
 (defalias 'norg/back-to-heading 'org-back-to-heading)
 (defalias 'norg/up-heading 'outline-up-heading)
+(defalias 'norg/previous-heading 'outline-previous-heading)
 
 (defalias 'norg/show-entry 'outline-show-entry)
 (defalias 'norg/show-children 'outline-show-children) ; Not `org-show-children`, because that shows first level when n is 0
@@ -181,6 +184,8 @@ Return the nesting depth of the headline in the outline."
 (defalias 'norg/flag-subtree 'org-flag-subtree)
 
 (defalias 'norg/check-before-invisible-edit 'org-check-before-invisible-edit)
+
+(defvaralias 'norg/catch-invisible-edits 'org-catch-invisible-edits)
 
 ;;;; ___________________________________________________________________________
 ;;;; ____ * Some wrappers for org functionality
@@ -230,7 +235,7 @@ Return the nesting depth of the headline in the outline."
     (2
      ;; This makes lots of stuff visible, but seems to be the "official" way.
      ;; Leave this here as a point of interest.
-     (let ((org-catch-invisible-edits 'show))
+     (let ((norg/catch-invisible-edits 'show))
        (norg/check-before-invisible-edit 'insert)))))
 
 ;;;; Support for do-ing and mapping
@@ -359,7 +364,7 @@ Return the nesting depth of the headline in the outline."
 
 (defun -norg/heading-same-level-helper (move-fun
                                         error-message)
-  (org-back-to-heading)
+  (norg/back-to-heading)
   (let* ((starting-point (point)))
     (funcall move-fun 1 t)
     (norg/show-point)
@@ -388,16 +393,16 @@ Like `org-backward-heading-same-level` but:
 
 (defun -norg/heading-same-level/allow-cross-parent/helper (direction)
   (let ((start-position-fun (case direction
-                              (:forward 'org-end-of-line)
-                              (:backward 'org-beginning-of-line)))
+                              (:forward 'norg/end-of-line)
+                              (:backward 'norg/beginning-of-line)))
         (re-search-function (case direction
                               (:forward 're-search-forward)
                               (:backward 're-search-backward)))
         (post-search-adjust-function (case direction
-                                       (:forward 'org-beginning-of-line)
+                                       (:forward 'norg/beginning-of-line)
                                        (:backward #'(lambda ())))))
     (let* ((text-to-look-for (save-excursion
-                               (org-beginning-of-line)
+                               (norg/beginning-of-line)
                                (concat (thing-at-point 'symbol)
                                        " "))))
       (funcall start-position-fun)
@@ -415,7 +420,7 @@ Like `org-backward-heading-same-level` but:
               (norg/show-point)
               (funcall post-search-adjust-function))
           (progn
-            (org-beginning-of-line)
+            (norg/beginning-of-line)
             (let* ((msg (case direction
                           (:forward
                            "No next heading at this level, even across parents")
@@ -447,12 +452,12 @@ subheading at this level in the previous parent."
 
 (defun norg/forward-heading/any-level ()
   (interactive)
-  (outline-previous-heading)
+  (norg/previous-heading)
   (norg/show-point))
 
 (defun norg/backward-heading/any-level ()
   (interactive)
-  (outline-next-heading)
+  (norg/next-heading)
   (norg/show-point))
 
 ;;;; ___________________________________________________________________________
@@ -476,7 +481,7 @@ subheading at this level in the previous parent."
                                      ", even across parents"
                                    ""))))
                (nomis/popup/error-message msg))))
-    (org-back-to-heading t)
+    (norg/back-to-heading t)
     (if (not (norg/fully-expanded?))
         (norg/expand-fully)
       (progn
