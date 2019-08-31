@@ -310,9 +310,15 @@ message and in case adding org level messes things up.")
   (outline-show-children n)
   (let* ((level (norg/current-level)))
     (norg/mapc-entries-from-point #'(lambda ()
-                                      (when (< (- (norg/current-level)
-                                                  level)
-                                               n)
+                                      ;; TODO Why did you change this? Isn't the
+                                      ;;      old, simpler code OK?
+                                      (when (case :old
+                                              (:old
+                                               (norg/point-is-visible?))
+                                              (:new
+                                               (< (- (norg/current-level)
+                                                     level)
+                                                  n)))
                                         (outline-show-entry))))))
 
 (defun norg/expand-fully ()
