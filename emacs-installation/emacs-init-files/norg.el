@@ -156,25 +156,31 @@ message and in case adding org level messes things up.")
 ;;;; be safe.
 ;;;; Besides, it's useful to isolate how we use `outline` and `org`.
 
+(defalias 'norg/at-heading-p 'org-at-heading-p)
+
 (defun norg/level/must-be-at-boh ()
   "Point must be at the beginning of a headline.
 Return the nesting depth of the headline in the outline."
   (funcall outline-level))
 
-(defalias 'norg/next-preface 'outline-next-preface)
-(defalias 'norg/up-heading 'outline-up-heading)
 (defalias 'norg/next-heading 'outline-next-heading)
-(defalias 'norg/show-children 'outline-show-children) ; Not `org-show-children`, because that shows first level when n is 0
-(defalias 'norg/show-entry 'outline-show-entry)
-(defalias 'norg/invisible-p 'org-invisible-p)
+(defalias 'norg/next-preface 'outline-next-preface)
+
 (defalias 'norg/back-to-heading 'org-back-to-heading)
+(defalias 'norg/up-heading 'outline-up-heading)
+
+(defalias 'norg/show-entry 'outline-show-entry)
+(defalias 'norg/show-children 'outline-show-children) ; Not `org-show-children`, because that shows first level when n is 0
 (defalias 'norg/cycle 'org-cycle)
-(defalias 'norg/check-before-invisible-edit 'org-check-before-invisible-edit)
-(defalias 'norg/at-heading-p 'org-at-heading-p)
-(defalias 'norg/map-tree 'org-map-tree)
 (defalias 'norg/overview 'org-overview)
 (defalias 'norg/show-set-visibility 'org-show-set-visibility)
+
+(defalias 'norg/map-tree 'org-map-tree)
+
+(defalias 'norg/invisible-p 'org-invisible-p)
 (defalias 'norg/flag-subtree 'org-flag-subtree)
+
+(defalias 'norg/check-before-invisible-edit 'org-check-before-invisible-edit)
 
 ;;;; ___________________________________________________________________________
 ;;;; ____ * Some wrappers for org functionality
