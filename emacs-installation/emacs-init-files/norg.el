@@ -5,8 +5,7 @@
 ;;;; ___________________________________________________________________________
 ;;;; ____ * TODOs
 
-;;;; TODO Bring some stuff from `nomis-org` into `norg`. See your org mode
-;;;;      keybindings for candidates.
+;;;; None left, apart from the rejected (for now) ones.
 
 ;;;; ___________________________________________________________________________
 ;;;; ____ * Some rejected (at least for now) ideas
@@ -346,6 +345,161 @@ Return the nesting depth of the headline in the outline."
 (defun norg/expand-fully ()
   (norg/expand 1000) ; TODO magic number
   )
+
+;;;; ___________________________________________________________________________
+;;;; ____ * Navigation
+
+;;;; ____ ** Forward and backward at same level
+
+(defun -norg/heading-same-level-helper (move-fun
+                                        error-message)
+  (org-back-to-heading)
+  (let* ((starting-point (point)))
+    (funcall move-fun 1 t)
+    (norg/show-point)
+    (when (= (point) starting-point)
+      (nomis/popup/error-message "%s" error-message))))
+
+(defun norg/forward-heading-same-level ()
+  "Move forward one subheading at same level as this one.
+Like `org-forward-heading-same-level` but:
+- when the target is invisible, make it visible
+- if this is the first subheading within its parent, display a popup message."
+  (interactive)
+  (-norg/heading-same-level-helper #'org-forward-heading-same-level
+                                   "No next heading at this level"))
+
+(defun norg/backward-heading-same-level ()
+  "Move backward one subheading at same level as this one.
+Like `org-backward-heading-same-level` but:
+- when the target is invisible, make it visible
+- if this is the first subheading within its parent, display a popup message."
+  (interactive)
+  (-norg/heading-same-level-helper #'org-backward-heading-same-level
+                                   "No previous heading at this level"))
+
+;;;; ____ ** Forward and backward at same level, allow cross-parent
+
+(defun -norg/heading-same-level/allow-cross-parent/helper (direction)
+  (let ((start-position-fun (case direction
+                              (:forward 'org-end-of-line)
+                              (:backward 'org-beginning-of-line)))
+        (re-search-function (case direction
+                              (:forward 're-search-forward)
+                              (:backward 're-search-backward)))
+        (post-search-adjust-function (case direction
+                                       (:forward 'org-beginning-of-line)
+                                       (:backward #'(lambda ())))))
+    (let* ((text-to-look-for (save-excursion
+                               (org-beginning-of-line)
+                               (concat (thing-at-point 'symbol)
+                                       " "))))
+      (funcall start-position-fun)
+      (let ((found-p (condition-case nil
+                         (progn
+                           (funcall re-search-function
+                                    (concat "^" (regexp-quote text-to-look-for))
+                                    nil
+                                    nil ;t
+                                    )
+                           t)
+                       (error nil))))
+        (if found-p
+            (progn
+              (norg/show-point)
+              (funcall post-search-adjust-function))
+          (progn
+            (org-beginning-of-line)
+            (let* ((msg (case direction
+                          (:forward
+                           "No next heading at this level, even across parents")
+                          (:backward
+                           "No previous heading at this level, even across parents"
+                           ;; but maybe there is -- I've seen a bug here
+                           ))))
+              (nomis/popup/error-message "%s" msg))))))))
+
+(defun norg/forward-heading-same-level/allow-cross-parent ()
+  "Move forward one subheading at same level as this one.
+Like `org-forward-heading-same-level` but:
+- when the target is invisible, make it visible
+- if this is the first subheading within its parent, move to the first
+  subheading at this level in the next parent."
+  (interactive)
+  (-norg/heading-same-level/allow-cross-parent/helper :forward))
+
+(defun norg/backward-heading-same-level/allow-cross-parent ()
+  "Move backward one subheading at same level as this one.
+Like `org-backward-heading-same-level` but:
+- when the target is invisible, make it visible
+- if this is the first subheading within its parent, move to the last
+subheading at this level in the previous parent."
+  (interactive)
+  (-norg/heading-same-level/allow-cross-parent/helper :backward))
+
+;;;; ____ ** Forward and backward at any level
+
+(defun norg/forward-heading/any-level ()
+  (interactive)
+  (outline-previous-heading)
+  (norg/show-point))
+
+(defun norg/backward-heading/any-level ()
+  (interactive)
+  (outline-next-heading)
+  (norg/show-point))
+
+;;;; ___________________________________________________________________________
+;;;; ____ * Stepping
+
+(defun -norg/step/impl (n allow-cross-parent?)
+  (cl-flet ((try-to-move
+             ()
+             (if allow-cross-parent?
+                 (-norg/heading-same-level/allow-cross-parent/helper
+                  (case n
+                    (1 :forward)
+                    (-1 :backward)))
+               (org-forward-heading-same-level n t)))
+            (tried-to-go-to-far
+             ()
+             (let* ((msg (concat (if (< n 0)
+                                     "No previous heading at this level"
+                                   "No next heading at this level")
+                                 (if allow-cross-parent?
+                                     ", even across parents"
+                                   ""))))
+               (nomis/popup/error-message msg))))
+    (org-back-to-heading t)
+    (if (not (norg/fully-expanded?))
+        (norg/expand-fully)
+      (progn
+        (norg/collapse) ; if we can't move, we will re-expand
+        (let* ((starting-point (point)))
+          (try-to-move)
+          ;; Either we moved or we didn't.
+          ;; In any case, expand the current headline -- either the
+          ;; newly-arrived at one or the just-collapsed one.
+          ;; If we couldn't move, tell the user.
+          (norg/expand-fully)
+          (when (= (point) starting-point)
+            (tried-to-go-to-far)))))))
+
+(defun norg/step-forward ()
+  (interactive)
+  (-norg/step/impl 1 nil))
+
+(defun norg/step-backward ()
+  (interactive)
+  (-norg/step/impl -1 nil))
+
+(defun norg/step-forward/allow-cross-parent ()
+  (interactive)
+  (-norg/step/impl 1 t))
+
+(defun norg/step-backward/allow-cross-parent ()
+  (interactive)
+  (-norg/step/impl -1 t))
 
 ;;;; ___________________________________________________________________________
 ;;;; ____ * Info about trees

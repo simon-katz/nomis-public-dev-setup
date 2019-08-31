@@ -83,21 +83,21 @@ Use H with various other keys:
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ;;;; ____ ** Movement
 
-(org-defkey org-mode-map (kbd "H-,")     'nomis/org/backward-heading-same-level)
-(org-defkey org-mode-map (kbd "H-.")     'nomis/org/forward-heading-same-level)
-(org-defkey org-mode-map (kbd "H-<")     'nomis/org/backward-heading-same-level/allow-cross-parent)
-(org-defkey org-mode-map (kbd "H->")     'nomis/org/forward-heading-same-level/allow-cross-parent)
+(org-defkey org-mode-map (kbd "H-,")     'norg/backward-heading-same-level)
+(org-defkey org-mode-map (kbd "H-.")     'norg/forward-heading-same-level)
+(org-defkey org-mode-map (kbd "H-<")     'norg/backward-heading-same-level/allow-cross-parent)
+(org-defkey org-mode-map (kbd "H->")     'norg/forward-heading-same-level/allow-cross-parent)
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ;;;; ____ ** Movement + expand/collapse
 
-(org-defkey org-mode-map (kbd "C-H-,")   'nomis/org/step-backward)
-(org-defkey org-mode-map (kbd "C-H-.")   'nomis/org/step-forward)
-(org-defkey org-mode-map (kbd "C-H-<")   'nomis/org/step-backward/allow-cross-parent)
-(org-defkey org-mode-map (kbd "C-H->")   'nomis/org/step-forward/allow-cross-parent)
+(org-defkey org-mode-map (kbd "C-H-,")   'norg/step-backward)
+(org-defkey org-mode-map (kbd "C-H-.")   'norg/step-forward)
+(org-defkey org-mode-map (kbd "C-H-<")   'norg/step-backward/allow-cross-parent)
+(org-defkey org-mode-map (kbd "C-H->")   'norg/step-forward/allow-cross-parent)
 
-(org-defkey org-mode-map (kbd "H-M-,")   'nomis/org/forward-heading/any-level)
-(org-defkey org-mode-map (kbd "H-M-.")   'nomis/org/backward-heading/any-level)
+(org-defkey org-mode-map (kbd "H-M-,")   'norg/forward-heading/any-level)
+(org-defkey org-mode-map (kbd "H-M-.")   'norg/backward-heading/any-level)
 
 ;; (org-defkey org-mode-map (kbd "C-H-M-,") ????) ; TODO Want something that visits headlines at any level and collapses as it goes
 ;; (org-defkey org-mode-map (kbd "C-H-M-.") ????) ; TODO Want something that visits headlines at any level and collapses as it goes
