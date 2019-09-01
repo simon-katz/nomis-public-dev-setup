@@ -70,21 +70,28 @@
     (hs-show-block)
     (backward-char)))
 
-(defun nomis/hs/toggle-hiding ()
+(defun nomis/hs/toggle-hiding () ; not especially useful -- you have hide all and expand all
   (interactive)
   (nomis/hs/with-only-if-looking-at-bracketed-sexp-start
     (hs-toggle-hiding)
     (backward-char)))
 
-(define-key hs-minor-mode-map (kbd "H-q H--")  'nomis/hs/hide-all)
-(define-key hs-minor-mode-map (kbd "H-q H-[")  'nomis/hs/adjust/set-0)
-(define-key hs-minor-mode-map (kbd "H-q H-'")  'nomis/hs/adjust/less)
+(defun k•• (k)
+  ;; The `(k•• ...)` key bindings match your norg key bindings.
+  ;; Work would be needed on nomis-hide-show if you wanted to make things more
+  ;; consistent.
+  (kbd k))
+
+(define-key hs-minor-mode-map (k•• "H-M--")        'nomis/hs/hide-all)
+(define-key hs-minor-mode-map (k•• "H-M-'")        'nomis/hs/adjust/set-0)
+(define-key hs-minor-mode-map (k•• "H-'")          'nomis/hs/adjust/less)
 (define-key hs-minor-mode-map (kbd "H-q H-l")  'nomis/hs/adjust/set-level)
-(define-key hs-minor-mode-map (kbd "H-q H-\\") 'nomis/hs/adjust/more)
-(define-key hs-minor-mode-map (kbd "H-q H-]")  'nomis/hs/adjust/show-all)
-(define-key hs-minor-mode-map (kbd "H-q H-p")  'nomis/hs/adjust/show-all-for-top-level)
-(define-key hs-minor-mode-map (kbd "H-q H-=")  'nomis/hs/show-all)
-(define-key hs-minor-mode-map (kbd "H-q H-/")  'nomis/hs/toggle-hiding)
+(define-key hs-minor-mode-map (k•• "H-\\")         'nomis/hs/adjust/more)
+(define-key hs-minor-mode-map (k•• "H-M-\\")       'nomis/hs/adjust/show-all)
+(define-key hs-minor-mode-map (k•• "H-M-[")        'nomis/hs/adjust/set-0-for-top-level)
+(define-key hs-minor-mode-map (k•• "H-M-]")        'nomis/hs/adjust/show-all-for-top-level)
+(define-key hs-minor-mode-map (k•• "H-M-=")        'nomis/hs/show-all)
+(define-key hs-minor-mode-map (kbd "H-q H-/")  'nomis/hs/toggle-hiding) ; not really needed
 (define-key hs-minor-mode-map (kbd "H-q H-0")  'nomis/hs/adjust/set-level/0)
 (define-key hs-minor-mode-map (kbd "H-q H-1")  'nomis/hs/adjust/set-level/1)
 (define-key hs-minor-mode-map (kbd "H-q H-2")  'nomis/hs/adjust/set-level/2)
@@ -256,6 +263,12 @@
     (nomis/beginning-of-top-level-form)
     (nomis/hs/adjust/show-all)))
 
+(defun nomis/hs/adjust/set-0-for-top-level ()
+  (interactive)
+  (save-excursion
+    (nomis/beginning-of-top-level-form)
+    (nomis/hs/adjust/set-0)))
+
 (defun nomis/hs/adjust/show-all/and-exit ()
   ;; This exists to overcome a bug in Hydra when you have both
   ;;     :exit t
@@ -400,9 +413,9 @@ Otherwise, go to the beginning of the sexp before point and show it."
            (nomis/goto-beginning-of-sexp/or-end/backward)
            (nomis/hs/adjust/show-all)))))
 
-(define-key hs-minor-mode-map (kbd "H-]")     'nomis/hs/step-forward)
-(define-key hs-minor-mode-map (kbd "H-[")     'nomis/hs/step-backward)
-(define-key hs-minor-mode-map (kbd "H-q H-s") 'nomis/toggle-maintain-line-no-in-window)
+(define-key hs-minor-mode-map (k•• "C-H-,")   'nomis/hs/step-backward)
+(define-key hs-minor-mode-map (k•• "C-H-.")   'nomis/hs/step-forward)
+(define-key hs-minor-mode-map (k•• "H-q H-s") 'nomis/toggle-maintain-line-no-in-window)
 
 ;;;; Key chords only work for chars whose codes are in the range 32..126 -- see
 ;;;; limitations in `key-chord`. So you can't use the cursor keys. Annoying!
