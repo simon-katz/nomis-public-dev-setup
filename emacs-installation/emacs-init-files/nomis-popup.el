@@ -7,6 +7,7 @@
 
 (require 'popup)
 (require 'nomis-msg)
+(require 'nomis-scrolling)
 
 ;;;; ___________________________________________________________________________
 ;;;; ____ * nomis/popup/message
@@ -27,7 +28,8 @@
                                          (point)
                                          'invisible)
                                   (ignore-errors
-                                    (previous-line 2)))
+                                    (previous-line (min (nomis/line-no-in-window)
+                                                        2))))
                                 (point)))))
       (setq -nomis/popup/most-recent-popup popup)
       (run-at-time 1
