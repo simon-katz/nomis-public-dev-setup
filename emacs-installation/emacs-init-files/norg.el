@@ -25,6 +25,8 @@
 ;;;;          - Oh, that needs to know whether there is a body.
 ;;;;            You could find out by comparing the points of the end of the
 ;;;;            headline and `(1- (progn (norg/w/next-preface) (point)))`.
+;;;;        - `norg/expand` would have to treat bodies as being a level beneath
+;;;;           their parent.
 ;;;;        - Anything else?
 ;;;;      - Perhaps you could have an extra level between your current levels;
 ;;;;        they'd differ by whether bodies are shown.
