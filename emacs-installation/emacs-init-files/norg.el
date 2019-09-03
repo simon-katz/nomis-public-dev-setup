@@ -5,42 +5,14 @@
 ;;;; ___________________________________________________________________________
 ;;;; ____ * TODOs
 
-;;;; None left, apart from the rejected (for now) ones.
+;;;; TODO Ellipsis symbols disappear in some places while popup is being
+;;;;      displayed.
+;;;;      And this causes two collapses in quick succession to get confused
+;;;;      when there are bodies -- something to do with the invisibility
+;;;;      checking, I guess.
 
 ;;;; ___________________________________________________________________________
 ;;;; ____ * Some rejected (at least for now) ideas
-
-;;;; XXXX Bodies:
-;;;;      - REJECTED for now at least.
-;;;;        - You could continue with this, but:
-;;;;          - it's not worth the effort at the moment
-;;;;          - you'd have to add calls to `-norg/body-info/experimental`
-;;;;            when collecting tree-info. Maybe that will make things a fair
-;;;;            bit slower.
-;;;;      - Body visibility
-;;;;        - Is there a way to know whether a node has a collapsed body?
-;;;;          - Yes -- see `-norg/body-info/experimental`.
-;;;;        - Things that will need to take account of this:
-;;;;          - (See `changes-needed-for-body-visibility`
-;;;;          - `norg/current-level`
-;;;;          - `norg/expand` would have to treat bodies as being a level beneath
-;;;;            their parent.
-;;;;          - `norg/n-levels-below`
-;;;;            - Oh, that needs to know whether there is a body.
-;;;;              - Done -- see `-norg/body-info/experimental`.
-;;;;          - `norg/smallest-invisible-level-below-or-infinity`
-;;;;          - `-norg/tree-info`
-;;;;          - `norg/fully-expanded?`
-;;;;          - `norg/level-for-incremental-contract`
-;;;;          - `norg/levels/max-in-buffer`
-;;;;        - Anything else?
-;;;;      - Perhaps you could have an extra level between your current levels;
-;;;;        they'd differ by whether bodies are shown.
-;;;;        - REJECTED because that's too many levels; just treat the body as
-;;;;          being one level below its headline.
-
-;;;; XXXX Ellipsis symbols disappear in some places while popup is being
-;;;;      displayed.
 
 ;;;; XXXX (Too hard! Park this for now.)
 ;;;;      Sometimes things take a long time and a busy pointer would be useful.
@@ -148,7 +120,8 @@ message and in case adding org level messes things up.")
                        *-norg/in-what-cursor-position?*)
                   (apply orig-fun
                          (concat (first args) " org-level=%s")
-                         (append (rest args) (list (norg/current-level-or-error-string))))
+                         (append (rest args)
+                                 (list (norg/current-level-or-error-string t))))
                 (apply orig-fun args)))
             '((name . norg/add-level-info)))
 
@@ -218,32 +191,62 @@ Return the nesting depth of the headline in the outline."
 
 ;;;; Basic stuff
 
-(defun norg/point-is-visible? () ; TODO Get rid of this
+(defun norg/point-is-visible? ()
   (not (norg/w/invisible-p)))
 
-(defun -norg/body-info/experimental ()
-  (save-excursion
-    (norg/w/back-to-heading)
-    (let* ((_ (norg/w/end-of-heading))
-           (end-of-heading-position (point))
-           (_ (norg/w/next-preface))
-           (end-of-preface-position (point))
-           (has-body? (not (= end-of-heading-position
-                              end-of-preface-position)))
-           (body-visible? (when has-body?
-                            (not (norg/w/invisible-p
-                                  (1- end-of-preface-position))))))
-      (list has-body?
-            body-visible?))))
+(defun -norg/has-body?/must-be-at-boh/leaving-cursor-in-body ()
+  (let* ((_ (norg/w/end-of-heading))
+         (end-of-heading-position (point))
+         (_ (norg/w/next-preface))
+         (end-of-preface-position (point))
+         (has-body? (not (= end-of-heading-position
+                            end-of-preface-position))))
+    has-body?))
 
-(defun norg/current-level () ; changes-needed-for-body-visibility -- if in a body, add 1 -- or maybe specify that this assumes you are in a heading
+(defun -norg/has-body?/must-be-at-boh ()
+  (save-excursion
+    (-norg/has-body?/must-be-at-boh/leaving-cursor-in-body)))
+
+(defun -norg/body-info ()
   (save-excursion
     (norg/w/back-to-heading t)
-    (norg/w/level/must-be-at-boh)))
+    (let* ((has-body? (-norg/has-body?/must-be-at-boh/leaving-cursor-in-body))
+           (has-visible-body? (and has-body?
+                                   (not
+                                    (norg/w/invisible-p (1- (point))))))
+           (has-invisible-body? (and has-body?
+                                     (not has-visible-body?))))
+      (list has-body?
+            has-visible-body?
+            has-invisible-body?))))
 
-(defun norg/current-level-or-error-string ()
+(defun norg/level-incl-body/must-be-at-boh ()
+  (let* ((heading-level (norg/w/level/must-be-at-boh)))
+    (+ heading-level
+       (if (-norg/has-body?/must-be-at-boh) 1 0))))
+
+(defun -norg/in-body? ()
+  (> (point)
+     (save-excursion
+       (norg/w/back-to-heading t)
+       (norg/w/end-of-heading)
+       (point))))
+
+(defun norg/current-level (&optional inc-if-in-body?)
+  "If in a heading or if `inc-if-in-body?` is falsey, return the nesting depth
+of the current heading in the outline. Otherwise return one more than that
+value."
+  (+ (save-excursion
+       (norg/w/back-to-heading t)
+       (norg/w/level/must-be-at-boh))
+     (if (and inc-if-in-body?
+              (-norg/in-body?))
+         1
+       0)))
+
+(defun norg/current-level-or-error-string (&optional inc-if-in-body?)
   (condition-case err
-      (norg/current-level)
+      (norg/current-level inc-if-in-body?)
     (error (cdr err))))
 
 (defun norg/goto-root ()
@@ -299,6 +302,9 @@ Return the nesting depth of the headline in the outline."
 ;;;; Do-ing
 
 (defun norg/mapc-entries-from-point (fun)
+  "Call FUN for the current headline and for each headline below the current
+headline.
+When in a body, \"current headline\" means the current body's parent headline."
   (save-excursion
     (norg/w/map-tree fun))
   nil)
@@ -339,19 +345,18 @@ Return the nesting depth of the headline in the outline."
 ;;;; Reducing (add more here if and when needed)
 
 (cl-defun norg/reduce-entries-from-point (initial-value
+                                          value-fun
                                           reducing-function
                                           &optional
                                           (pred-of-no-args (lambda () t)))
   (let* ((sofar initial-value))
     (norg/mapc-entries-from-point (lambda ()
                                     (when (funcall pred-of-no-args)
-                                      (let* ((v (norg/w/level/must-be-at-boh)))
+                                      (let* ((v (funcall value-fun)))
                                         (setq sofar
-                                              (if (null sofar)
-                                                  v
-                                                (funcall reducing-function
-                                                         sofar
-                                                         v)))))))
+                                              (funcall reducing-function
+                                                       sofar
+                                                       v))))))
     sofar))
 
 ;;;; Expanding and collapsing
@@ -369,19 +374,16 @@ Return the nesting depth of the headline in the outline."
      ;; and why can't I find any useful info by googling?
      (norg/w/flag-subtree t))))
 
-(defun norg/expand (n) ; changes-needed-for-body-visibility
+(defun norg/expand (n)
+  "Expand N levels below the current headline, without collapsing anything
+that's at a higher level.
+When in a body, \"current headline\" means the current body's parent headline."
   (norg/w/show-children n)
   (let* ((level (norg/current-level)))
     (norg/mapc-entries-from-point #'(lambda ()
-                                      ;; TODO Why did you change this? Isn't the
-                                      ;;      old, simpler code OK?
-                                      (when (case :old
-                                              (:old
-                                               (norg/point-is-visible?))
-                                              (:new
-                                               (< (- (norg/w/level/must-be-at-boh)
-                                                     level)
-                                                  n)))
+                                      (when (< (- (norg/w/level/must-be-at-boh)
+                                                  level)
+                                               n)
                                         (norg/w/show-entry))))))
 
 (defun norg/expand-fully ()
@@ -396,7 +398,7 @@ Return the nesting depth of the headline in the outline."
 (defun -norg/heading-same-level-helper (move-fun
                                         error-message)
   (-norg/with-maybe-maintain-line-no-in-window
-    (norg/w/back-to-heading)
+    (norg/w/back-to-heading t)
     (let* ((starting-point (point)))
       (funcall move-fun 1 t)
       (norg/show-point)
@@ -496,7 +498,7 @@ subheading at this level in the previous parent."
     (norg/show-point)))
 
 ;;;; ___________________________________________________________________________
-;;;; ____ * Stepping
+;;;; ____ * Stepping TODO This uses `norg/fully-expanded?`, and so belongs later in the file
 
 (defun -norg/step/impl (n allow-cross-parent?)
   (-norg/with-maybe-maintain-line-no-in-window
@@ -551,21 +553,42 @@ subheading at this level in the previous parent."
 ;;;; ___________________________________________________________________________
 ;;;; ____ * Info about trees
 
-(defun norg/n-levels-below () ; changes-needed-for-body-visibility
-  (- (norg/reduce-entries-from-point 0 #'max)
+(defun norg/n-levels-below ()
+  "The number of levels that exist below the current headline.
+When in a body, \"current headline\" means the current body's parent headline."
+  (- (norg/reduce-entries-from-point 0
+                                     #'norg/level-incl-body/must-be-at-boh
+                                     #'max)
      (norg/current-level)))
 
-(defun norg/smallest-invisible-level-below-or-infinity () ; changes-needed-for-body-visibility
-  (- (norg/reduce-entries-from-point -norg/plus-infinity
-                                     #'min
-                                     (-compose #'not
-                                               #'norg/point-is-visible?))
+(defun norg/smallest-invisible-level-below-or-infinity ()
+  "The level to use when incrementally expanding the current headline, or
+infinity if the current headline is fully expanded.
+When in a body, \"current headline\" means the current body's parent headline."
+  (- (norg/reduce-entries-from-point
+      -norg/plus-infinity
+      #'(lambda ()
+          (let* ((point-visible? (norg/point-is-visible?))
+                 (level (norg/w/level/must-be-at-boh)))
+            (if (not point-visible?)
+                level
+              (cl-destructuring-bind (has-body?
+                                      has-visible-body?
+                                      has-invisible-body?)
+                  (-norg/body-info)
+                (if (or (not has-body?)
+                        has-visible-body?)
+                    -norg/plus-infinity
+                  (1+ level))))))
+      #'min)
      (norg/current-level)))
 
 ;;;; ___________________________________________________________________________
 ;;;; ____ * The idea of tree-info, and things that use it
 
-(defun -norg/tree-info () ; changes-needed-for-body-visibility
+(defun -norg/tree-info ()
+  "Tree info for the current headline.
+When in a body, \"current headline\" means the current body's parent headline."
   ;; This is rather expensive, because the value returned by
   ;; `norg/map-entries-from-point` is processed further and discarded.
   ;; You could do more in the fun passed to `norg/map-entries-from-point`, but
@@ -574,41 +597,67 @@ subheading at this level in the previous parent."
   ;;   (Solution: use nconc on lists.)
   ;; - You want to look at two headlines at a time.
   ;;   (Solution: record previous item in a piece of mutable state.)
+  ;; - You'd need to do some fixing up at the end to add that final dummy
+  ;;   entry when the final item is visible.
   (let* ((dummy-initial-entry
-          '(:dummy-first t nil))
+          '(:dummy-first t :dummy-first :dummy-first :dummy-first))
          (basic-info
           (norg/map-entries-from-point (lambda ()
-                                         (list (norg/w/level/must-be-at-boh)
-                                               (norg/point-is-visible?))))))
-    (cl-loop for ((prev-level prev-visible?) . ((level visible?) . _))
+                                         (list* (norg/w/level/must-be-at-boh)
+                                                (norg/point-is-visible?)
+                                                (-norg/body-info)))))
+         (just-did-a-body? nil))
+    (cl-loop for ((prev-level prev-visible? . _)
+                  . ((level
+                      visible?
+                      has-body?
+                      has-visible-body?
+                      has-invisible-body?)
+                     . _))
              on (cons dummy-initial-entry
                       basic-info)
              for first? = (eq prev-level :dummy-first)
              for last? = (null level)
-             when (and (not first?)
-                       prev-visible?
-                       (or last?
-                           (<= level prev-level)))
-             collect (list (1+ prev-level) nil t) ; dummy invisible entry
-             unless last?
-             collect (list
-                      ;; :last? last?
-                      ;; :prev-level prev-level
-                      ;; :prev-visible? prev-visible?
-                      ;; :level level
-                      ;; :visible? visible?
-                      level
-                      visible?
-                      nil))))
+             for prev-was-visible-leaf? = (and (not just-did-a-body?)
+                                               (not first?)
+                                               prev-visible?
+                                               (or last?
+                                                   (<= level prev-level)))
 
-(defun norg/fully-expanded? (&optional tree-info); changes-needed-for-body-visibility
+             when prev-was-visible-leaf?
+             collect (list (1+ prev-level)
+                           nil
+                           t) ; dummy invisible entry
+
+             when (not last?)
+             collect (list level
+                           visible?
+                           nil)
+
+             when has-body?
+             collect (list (1+ level)
+                           has-visible-body?
+                           nil)
+
+             when has-visible-body?
+             collect (list (+ 2 level)
+                           nil
+                           t) ; dummy invisible entry
+
+             do (setq just-did-a-body? has-body?))))
+
+(defun norg/fully-expanded? (&optional tree-info)
+  "Is the tree beneath the current headline fully expanded?
+When in a body, \"current headline\" means the current body's parent headline."
   (setq tree-info (or tree-info (-norg/tree-info)))
   (cl-loop for (level visible? dummy?)
            in tree-info
            when (not dummy?)
            always visible?))
 
-(defun norg/level-for-incremental-contract (&optional tree-info) ; changes-needed-for-body-visibility
+(defun norg/level-for-incremental-contract (&optional tree-info)
+  "The level to use when incrementally collapsing the current headline.
+When in a body, \"current headline\" means the current body's parent headline."
   ;; Collapse the most-deeply-nested expanded level, and expand everything
   ;; else to that level.
   (setq tree-info (or tree-info
@@ -644,10 +693,10 @@ subheading at this level in the previous parent."
 ;;;; ___________________________________________________________________________
 ;;;; ____ * Operations on buffer
 
-(defun norg/levels/max-in-buffer () ; changes-needed-for-body-visibility
+(defun norg/levels/max-in-buffer ()
   (let* ((sofar 0))
     (norg/mapc-entries-from-all-roots (lambda ()
-                                        (setq sofar (max (norg/w/level/must-be-at-boh)
+                                        (setq sofar (max (norg/level-incl-body/must-be-at-boh)
                                                          sofar))))
     sofar))
 
@@ -729,26 +778,37 @@ that is already being displayed."
 
 (defun norg/show-children-from-point (n)
   (interactive "^p")
+  "Show N levels from the current headline, and collapse anything that's
+at a higher level.
+When in a body, \"current headline\" means the current body's parent headline."
   (-> n
       -norg/show-children-from-point/set-level-etc))
 
 (defun norg/show-children-from-point/set-0 ()
   (interactive)
+  "Fully collapse the current headline.
+When in a body, \"current headline\" means the current body's parent headline."
   (-> 0
       -norg/show-children-from-point/set-level-etc))
 
 (defun norg/show-children-from-point/fully-expand ()
   (interactive)
+  "Fully expand the current headline.
+When in a body, \"current headline\" means the current body's parent headline."
   (-> :max
       -norg/show-children-from-point/set-level-etc))
 
 (defun norg/show-children-from-point/incremental/less ()
   (interactive)
+  "Incrementally collapse the current headline.
+When in a body, \"current headline\" means the current body's parent headline."
   (-> (norg/level-for-incremental-contract)
       -norg/show-children-from-point/set-level-etc))
 
 (defun norg/show-children-from-point/incremental/more ()
   (interactive)
+  "Incrementally expand the current headline.
+When in a body, \"current headline\" means the current body's parent headline."
   (-> (norg/smallest-invisible-level-below-or-infinity)
       -norg/show-children-from-point/set-level-etc))
 
@@ -795,7 +855,7 @@ the parameter."
 
 (defun norg/show-children-from-root/to-current-level ()
   (interactive)
-  (-> (1- (norg/current-level))
+  (-> (1- (norg/current-level t))
       -norg/show-children-from-root/set-level-etc))
 
 ;;;; ____ ** norg/show-children-from-all-roots/xxxx support
@@ -840,7 +900,7 @@ the parameter."
 
 (defun norg/show-children-from-all-roots/to-current-level ()
   (interactive)
-  (-> (1- (norg/current-level))
+  (-> (1- (norg/current-level t))
       -norg/show-children-from-all-roots/set-level-etc))
 
 ;;;; ___________________________________________________________________________
