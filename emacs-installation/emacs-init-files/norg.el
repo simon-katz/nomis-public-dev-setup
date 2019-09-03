@@ -14,19 +14,25 @@
 ;;;;      - REJECTED for now at least.
 ;;;;        - You could continue with this, but:
 ;;;;          - it's not worth the effort at the moment
-;;;;          - you'd have to add calls to `-norg/body-expanded?/experimental`
+;;;;          - you'd have to add calls to `-norg/body-info/experimental`
 ;;;;            when collecting tree-info. Maybe that will make things a fair
 ;;;;            bit slower.
 ;;;;      - Body visibility
 ;;;;        - Is there a way to know whether a node has a collapsed body?
-;;;           - I think so -- see `-norg/body-expanded?/experimental`.
-;;;;        - `norg/fully-expanded?` needs to take account of this.
-;;;;        - `norg/n-levels-below` needs to take account of this.
-;;;;          - Oh, that needs to know whether there is a body.
-;;;;            You could find out by comparing the points of the end of the
-;;;;            headline and `(1- (progn (norg/w/next-preface) (point)))`.
-;;;;        - `norg/expand` would have to treat bodies as being a level beneath
-;;;;           their parent.
+;;;;          - Yes -- see `-norg/body-info/experimental`.
+;;;;        - Things that will need to take account of this:
+;;;;          - (See `changes-needed-for-body-visibility`
+;;;;          - `norg/current-level`
+;;;;          - `norg/expand` would have to treat bodies as being a level beneath
+;;;;            their parent.
+;;;;          - `norg/n-levels-below`
+;;;;            - Oh, that needs to know whether there is a body.
+;;;;              - Done -- see `-norg/body-info/experimental`.
+;;;;          - `norg/smallest-invisible-level-below-or-infinity`
+;;;;          - `-norg/tree-info`
+;;;;          - `norg/fully-expanded?`
+;;;;          - `norg/level-for-incremental-contract`
+;;;;          - `norg/levels/max-in-buffer`
 ;;;;        - Anything else?
 ;;;;      - Perhaps you could have an extra level between your current levels;
 ;;;;        they'd differ by whether bodies are shown.
@@ -182,9 +188,11 @@ message and in case adding org level messes things up.")
 Return the nesting depth of the headline in the outline."
   (funcall outline-level))
 
-(defalias 'norg/w/forward-heading-same-level 'org-forward-heading-same-level)
 (defalias 'norg/w/next-heading 'outline-next-heading)
+(defalias 'norg/w/end-of-heading 'outline-end-of-heading)
 (defalias 'norg/w/next-preface 'outline-next-preface)
+(defalias 'norg/w/forward-heading-same-level 'org-forward-heading-same-level)
+
 (defalias 'norg/w/backward-heading-same-level 'org-backward-heading-same-level)
 (defalias 'norg/w/back-to-heading 'org-back-to-heading)
 (defalias 'norg/w/up-heading 'outline-up-heading)
@@ -210,20 +218,25 @@ Return the nesting depth of the headline in the outline."
 
 ;;;; Basic stuff
 
-(defun norg/point-is-visible? ()
+(defun norg/point-is-visible? () ; TODO Get rid of this
   (not (norg/w/invisible-p)))
 
-(defun -norg/body-expanded?/experimental ()
-  ;; This simply checks whether the start of the headline and end of the item
-  ;; including any body are visible, so it might give a wrong answer.
+(defun -norg/body-info/experimental ()
   (save-excursion
     (norg/w/back-to-heading)
-    (let* ((start (point))
-           (end   (1- (progn (norg/w/next-preface) (point)))))
-      (not (or (norg/w/invisible-p start)
-               (norg/w/invisible-p end))))))
+    (let* ((_ (norg/w/end-of-heading))
+           (end-of-heading-position (point))
+           (_ (norg/w/next-preface))
+           (end-of-preface-position (point))
+           (has-body? (not (= end-of-heading-position
+                              end-of-preface-position)))
+           (body-visible? (when has-body?
+                            (not (norg/w/invisible-p
+                                  (1- end-of-preface-position))))))
+      (list has-body?
+            body-visible?))))
 
-(defun norg/current-level ()
+(defun norg/current-level () ; changes-needed-for-body-visibility -- if in a body, add 1 -- or maybe specify that this assumes you are in a heading
   (save-excursion
     (norg/w/back-to-heading t)
     (norg/w/level/must-be-at-boh)))
@@ -356,7 +369,7 @@ Return the nesting depth of the headline in the outline."
      ;; and why can't I find any useful info by googling?
      (norg/w/flag-subtree t))))
 
-(defun norg/expand (n)
+(defun norg/expand (n) ; changes-needed-for-body-visibility
   (norg/w/show-children n)
   (let* ((level (norg/current-level)))
     (norg/mapc-entries-from-point #'(lambda ()
@@ -538,11 +551,11 @@ subheading at this level in the previous parent."
 ;;;; ___________________________________________________________________________
 ;;;; ____ * Info about trees
 
-(defun norg/n-levels-below ()
+(defun norg/n-levels-below () ; changes-needed-for-body-visibility
   (- (norg/reduce-entries-from-point 0 #'max)
      (norg/current-level)))
 
-(defun norg/smallest-invisible-level-below-or-infinity ()
+(defun norg/smallest-invisible-level-below-or-infinity () ; changes-needed-for-body-visibility
   (- (norg/reduce-entries-from-point -norg/plus-infinity
                                      #'min
                                      (-compose #'not
@@ -552,7 +565,7 @@ subheading at this level in the previous parent."
 ;;;; ___________________________________________________________________________
 ;;;; ____ * The idea of tree-info, and things that use it
 
-(defun -norg/tree-info ()
+(defun -norg/tree-info () ; changes-needed-for-body-visibility
   ;; This is rather expensive, because the value returned by
   ;; `norg/map-entries-from-point` is processed further and discarded.
   ;; You could do more in the fun passed to `norg/map-entries-from-point`, but
@@ -588,14 +601,14 @@ subheading at this level in the previous parent."
                       visible?
                       nil))))
 
-(defun norg/fully-expanded? (&optional tree-info)
+(defun norg/fully-expanded? (&optional tree-info); changes-needed-for-body-visibility
   (setq tree-info (or tree-info (-norg/tree-info)))
   (cl-loop for (level visible? dummy?)
            in tree-info
            when (not dummy?)
            always visible?))
 
-(defun norg/level-for-incremental-contract (&optional tree-info)
+(defun norg/level-for-incremental-contract (&optional tree-info) ; changes-needed-for-body-visibility
   ;; Collapse the most-deeply-nested expanded level, and expand everything
   ;; else to that level.
   (setq tree-info (or tree-info
@@ -631,7 +644,7 @@ subheading at this level in the previous parent."
 ;;;; ___________________________________________________________________________
 ;;;; ____ * Operations on buffer
 
-(defun norg/levels/max-in-buffer ()
+(defun norg/levels/max-in-buffer () ; changes-needed-for-body-visibility
   (let* ((sofar 0))
     (norg/mapc-entries-from-all-roots (lambda ()
                                         (setq sofar (max (norg/w/level/must-be-at-boh)
