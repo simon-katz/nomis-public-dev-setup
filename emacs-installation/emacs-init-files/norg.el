@@ -3,17 +3,6 @@
 (progn) ; this-stops-hs-hide-all-from-hiding-the-next-comment
 
 ;;;; ___________________________________________________________________________
-;;;; ____ * TODOs
-
-;;;; TODO Ellipsis symbols disappear in some places while popup is being
-;;;;      displayed.
-;;;;      And this causes two collapses in quick succession to get confused
-;;;;      when there are bodies -- something to do with the invisibility
-;;;;      checking, I guess.
-;;;;      - This seems to have fixed itself. Weird.
-
-
-;;;; ___________________________________________________________________________
 ;;;; ____ * Some rejected (at least for now) ideas
 
 ;;;; XXXX (Too hard! Park this for now.)
