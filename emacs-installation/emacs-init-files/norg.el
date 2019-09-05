@@ -93,6 +93,12 @@
            format-string
            args)))
 
+;;;; ____ ** last-command
+
+(defun norg/last-command ()
+  (or (bound-and-true-p *nomis/smex/last-command*)
+      last-command))
+
 ;;;; ____ ** what-cursor-position
 ;;;; Add org level to the output of `what-cursor-position`.
 
@@ -499,6 +505,20 @@ subheading at this level in the previous parent."
 ;;;; ___________________________________________________________________________
 ;;;; ____ * Stepping TODO This uses `norg/fully-expanded?`, and so belongs later in the file
 
+(defvar -norg/step-command-groups '((norg/step-forward
+                                     norg/step-forward/allow-cross-parent)
+                                    (norg/step-backward
+                                     norg/step-backward/allow-cross-parent)))
+
+(defun -norg/repeat-of-step-direction? ()
+  (cl-flet ((position-in-command-groups
+             (command)
+             (-find (lambda (group) (member command group))
+                    -norg/step-command-groups)))
+    (let* ((p1 (position-in-command-groups this-command))
+           (p2 (position-in-command-groups (norg/last-command))))
+      (and p1 p2 (eq p1 p2)))))
+
 (defun -norg/step/impl (n allow-cross-parent?)
   (-norg/with-maybe-maintain-line-no-in-window
     (cl-flet ((try-to-move
@@ -519,19 +539,17 @@ subheading at this level in the previous parent."
                                      ""))))
                  (norg/popup/error-message msg))))
       (norg/w/back-to-heading t)
-      (if (not (norg/fully-expanded?))
-          (norg/expand-fully)
-        (progn
-          (norg/collapse) ; if we can't move, we will re-expand
-          (let* ((starting-point (point)))
-            (try-to-move)
-            ;; Either we moved or we didn't.
-            ;; In any case, expand the current headline -- either the
-            ;; newly-arrived at one or the just-collapsed one.
-            ;; If we couldn't move, tell the user.
+      (let* ((repeat-of-step-direction? (-norg/repeat-of-step-direction?)))
+        (if (and (not repeat-of-step-direction?) ; avoid repeated expand/contract of last heading at this level
+                 (not (norg/fully-expanded?)))
             (norg/expand-fully)
-            (when (= (point) starting-point)
-              (tried-to-go-to-far))))))))
+          (progn
+            (norg/collapse) ; if we can't move, we will re-expand
+            (let* ((starting-point (point)))
+              (try-to-move)
+              (if (= (point) starting-point)
+                  (tried-to-go-to-far)
+                (norg/expand-fully)))))))))
 
 (defun norg/step-forward ()
   (interactive)
