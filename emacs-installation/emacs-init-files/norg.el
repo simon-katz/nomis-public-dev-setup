@@ -744,7 +744,9 @@ When in a body, \"current headline\" means the current body's parent headline."
                new-level
                maximum
                (if out-of-range?
-                   " —- can't go further than this"
+                   (if (< new-level/maybe-out-of-range 0)
+                       " —- already fully collapsed"
+                     " —- already fully expanded")
                  "")))))
 
 ;;;; ____ ** norg/show-children-from-point/xxxx support
