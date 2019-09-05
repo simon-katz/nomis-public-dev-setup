@@ -12,16 +12,19 @@
 
 (defvar nomis/popup/duration 1)
 
-(defvar nomis/popup/muted-yellow "#fefd90")
+;;;; ___________________________________________________________________________
+;;;; ____ * Private parameterisation
 
-(defface nomis/popup/face
-  `((t (:foreground "black" :background ,nomis/popup/muted-yellow)))
+(defvar -nomis/popup/muted-yellow "#fefd90")
+
+(defface -nomis/popup/face
+  `((t (:foreground "black" :background ,-nomis/popup/muted-yellow)))
   "Face used for popups.")
 
-(defvar nomis/popup/pink "pink")
+(defvar -nomis/popup/pink "pink")
 
-(defface nomis/popup/error-face
-  `((t (:foreground "black" :background ,nomis/popup/pink)))
+(defface -nomis/popup/error-face
+  `((t (:foreground "black" :background ,-nomis/popup/pink)))
   "Face used for popups.")
 
 ;;;; ___________________________________________________________________________
@@ -107,7 +110,7 @@ If POS is nil, use `point' instead."
 
 (defun nomis/popup/message (format-string &rest args)
   (apply #'-nomis/popup/message*
-         'nomis/popup/face
+         '-nomis/popup/face
          format-string
          args))
 
@@ -115,7 +118,7 @@ If POS is nil, use `point' instead."
 
 (defun nomis/popup/error-message (format-string &rest args)
   (apply #'-nomis/popup/message*
-         'nomis/popup/error-face
+         '-nomis/popup/error-face
          (concat nomis/popup/error-message-prefix
                  format-string)
          args))
