@@ -80,8 +80,9 @@ If POS is nil, use `point' instead."
                                  (point)
                                  'invisible)
                           (ignore-errors
-                            (previous-line (min (nomis/line-no-in-window)
-                                                1))))
+                            (unless (= (nomis/line-no-in-window)
+                                       1)
+                              (previous-line))))
                         (point)))
            (msg-part-1-len (min len
                                 (n-chars-we-can-replace-at-pos popup-pos)))
