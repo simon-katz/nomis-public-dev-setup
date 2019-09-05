@@ -10,6 +10,8 @@
 ;;;;      And this causes two collapses in quick succession to get confused
 ;;;;      when there are bodies -- something to do with the invisibility
 ;;;;      checking, I guess.
+;;;;      - This seems to have fixed itself. Weird.
+
 
 ;;;; ___________________________________________________________________________
 ;;;; ____ * Some rejected (at least for now) ideas
