@@ -1244,20 +1244,32 @@ Then display contents of file under point in other window.")
   (interactive)
   (nomis/dirtree/goto-file*))
 
+(defvar nomis/dirtree/undo-double-goto-file-return-to-window? t)
+(defvar nomis/dirtree/previous-window-configuration nil)
+
 (defun nomis/dirtree/goto-file/return-to-window ()
   "Like `nomis/dirtree/goto-file` except keep the current window selected."
   (interactive)
-  (let* ((original-window (selected-window))
-         (original-buffer (current-buffer)))
-    (nomis/dirtree/goto-file* :return-to-original-window? t)
-    (unless (eql original-buffer (current-buffer))
-      ;; When we are displaying a dired buffer,
-      ;; the `(switch-to-buffer-other-window nomis/dirtree/buffer)` call
-      ;; displays the dirtree buffer in both a new window and the current
-      ;; window. Weird.
-      ;; This is a hack to fix that.
-      (message "Restoring original buffer (not sure why it has changed).")
-      (switch-to-buffer original-buffer))))
+  (if (and nomis/dirtree/undo-double-goto-file-return-to-window?
+           (eq last-command 'nomis/dirtree/goto-file/return-to-window)
+           nomis/dirtree/previous-window-configuration)
+      (progn
+        (set-window-configuration nomis/dirtree/previous-window-configuration)
+        (setq nomis/dirtree/previous-window-configuration nil))
+    (progn
+      (setq nomis/dirtree/previous-window-configuration
+            (current-window-configuration))
+      (let* ((original-window (selected-window))
+             (original-buffer (current-buffer)))
+        (nomis/dirtree/goto-file* :return-to-original-window? t)
+        (unless (eql original-buffer (current-buffer))
+          ;; When we are displaying a dired buffer,
+          ;; the `(switch-to-buffer-other-window nomis/dirtree/buffer)` call
+          ;; displays the dirtree buffer in both a new window and the current
+          ;; window. Weird.
+          ;; This is a hack to fix that.
+          (message "Restoring original buffer (not sure why it has changed).")
+          (switch-to-buffer original-buffer))))))
 
 (defun nomis/dirtree/display-file ()
   "Display contents of file under point in other window."
