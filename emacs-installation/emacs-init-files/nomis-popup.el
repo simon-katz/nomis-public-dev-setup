@@ -37,15 +37,20 @@
 If POS is nil, use `point' instead."
   (get-char-property (or pos (point)) 'invisible))
 
+(defun -nomis/popup/remove-existing-popups (&optional force?)
+  (when (or force?
+            (>= (float-time)
+                (+ -nomis/popup/most-recent-popup-time
+                   nomis/popup/duration)))
+    (remove-overlays nil nil 'category 'nomis-popup)))
+
+(defun -nomis/popup/remove-existing-popups/force ()
+  (-nomis/popup/remove-existing-popups t))
+
+(add-hook 'pre-command-hook '-nomis/popup/remove-existing-popups/force)
+
 (defun nomis/popup/message (format-string &rest args)
-  (cl-flet ((remove-existing-popups
-             (force?)
-             (when (or force?
-                       (>= (float-time)
-                           (+ -nomis/popup/most-recent-popup-time
-                              nomis/popup/duration)))
-               (remove-overlays nil nil 'category 'nomis-popup)))
-            (n-chars-we-can-replace-at-pos
+  (cl-flet ((n-chars-we-can-replace-at-pos
              (pos)
              (let* ((n-chars-before-eol
                      (save-excursion
@@ -55,7 +60,7 @@ If POS is nil, use `point' instead."
                          when (-nomis/popup/point-invisible? (+ pos i))
                          return (1- i))
                    n-chars-before-eol))))
-    (remove-existing-popups t)
+    (-nomis/popup/remove-existing-popups/force)
     (let* ((msg (apply #'format format-string args))
            (len (length msg))
            (popup-pos (save-excursion
@@ -91,7 +96,7 @@ If POS is nil, use `point' instead."
                      (lambda ()
                        (when (buffer-live-p buffer)
                          (with-current-buffer buffer
-                           (remove-existing-popups nil)))))))))
+                           (-nomis/popup/remove-existing-popups)))))))))
 
 (defvar nomis/popup/error-message-prefix "!! ")
 
