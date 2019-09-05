@@ -76,7 +76,14 @@ Show the last `magit-log-section-commit-count' commits."
 
 (add-hook 'magit-status-mode-hook 'nomis/init-magit-status-mode)
 
-(global-set-key (kbd "C-c g") 'magit-status)
+(defun nomis/magit/status (arg)
+  (interactive "P")
+  (when (equal arg '(4))
+    (make-frame)
+    (nomis/w-double))
+  (magit-status))
+
+(global-set-key (kbd "C-c g") 'nomis/magit/status)
 
 
 
