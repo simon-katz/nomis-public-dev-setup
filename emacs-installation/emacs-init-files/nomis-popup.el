@@ -50,6 +50,32 @@
 If POS is nil, use `point' instead."
   (get-char-property (or pos (point)) 'invisible))
 
+(defun -nomis/popup/popup-position ()
+  (save-excursion
+    ;; If point is invisible, go back to a visible point.
+    (cl-loop while (and (-nomis/popup/point-invisible?)
+                        (> (point) (point-min)))
+             do (backward-char))
+    (when (< (point) (window-start))
+      ;; The point we found is off-screen, so go forward instead.
+      (cl-loop do (forward-char)
+               while (and (-nomis/popup/point-invisible?)
+                          (< (point) (point-max)))))
+    ;; We'll pop up on the previous line if that's on-screen and visible,
+    ;; otherwise on the current line.
+    ;; We use `previous-line` and `next-line` below. Doc strings say they
+    ;; not for programmatic use, but the things it suggests to use instead
+    ;; don't do what we want -- we want screen lines (we want to jump over
+    ;; invisible lines).
+    (unless (= (nomis/line-no-in-window) 1)
+      (previous-line)
+      ;; Sometimes org mode gets into a state where there's a strange invisible
+      ;; line at the top of the window, so check for that.
+      (when (-nomis/popup/point-invisible?)
+        (next-line)))
+    ;; We're done. Where are we?
+    (point)))
+
 (defun -nomis/popup/remove-existing-popups (&optional force?)
   (when (or force?
             (>= (float-time)
@@ -75,15 +101,7 @@ If POS is nil, use `point' instead."
                    n-chars-before-eol))))
     (-nomis/popup/remove-existing-popups/force)
     (let* ((len (length msg))
-           (popup-pos (save-excursion
-                        (unless (get-char-property
-                                 (point)
-                                 'invisible)
-                          (ignore-errors
-                            (unless (= (nomis/line-no-in-window)
-                                       1)
-                              (previous-line))))
-                        (point)))
+           (popup-pos (-nomis/popup/popup-position))
            (msg-part-1-len (min len
                                 (n-chars-we-can-replace-at-pos popup-pos)))
            (ov1-start-pos popup-pos)
