@@ -15,6 +15,11 @@
 ;;;; ___________________________________________________________________________
 ;;;; ____ * Private parameterisation
 
+(defvar -nomis/popup/prefix " ")
+(defvar -nomis/popup/suffix " ")
+(defvar -nomis/popup/error-prefix " ")
+(defvar -nomis/popup/error-suffix " ")
+
 (defvar -nomis/popup/muted-yellow "#fefd90")
 
 (defface -nomis/popup/face
@@ -57,7 +62,7 @@ If POS is nil, use `point' instead."
 
 (add-hook 'pre-command-hook '-nomis/popup/remove-existing-popups/force)
 
-(defun -nomis/popup/message* (face format-string &rest args)
+(defun -nomis/popup/message* (face msg)
   (cl-flet ((n-chars-we-can-replace-at-pos
              (pos)
              (let* ((n-chars-before-eol
@@ -69,8 +74,7 @@ If POS is nil, use `point' instead."
                          return (1- i))
                    n-chars-before-eol))))
     (-nomis/popup/remove-existing-popups/force)
-    (let* ((msg (apply #'format format-string args))
-           (len (length msg))
+    (let* ((len (length msg))
            (popup-pos (save-excursion
                         (unless (get-char-property
                                  (point)
@@ -109,19 +113,16 @@ If POS is nil, use `point' instead."
                            (-nomis/popup/remove-existing-popups)))))))))
 
 (defun nomis/popup/message (format-string &rest args)
-  (apply #'-nomis/popup/message*
-         '-nomis/popup/face
-         format-string
-         args))
-
-(defvar nomis/popup/error-message-prefix "!! ")
+  (-nomis/popup/message* '-nomis/popup/face
+                         (concat -nomis/popup/prefix
+                                 (apply #'format format-string args)
+                                 -nomis/popup/suffix)))
 
 (defun nomis/popup/error-message (format-string &rest args)
-  (apply #'-nomis/popup/message*
-         '-nomis/popup/error-face
-         (concat nomis/popup/error-message-prefix
-                 format-string)
-         args))
+  (-nomis/popup/message* '-nomis/popup/error-face
+                         (concat -nomis/popup/error-prefix
+                                 (apply #'format format-string args)
+                                 -nomis/popup/error-suffix)))
 
 ;;;; ___________________________________________________________________________
 ;;;; * End
