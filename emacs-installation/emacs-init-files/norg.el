@@ -66,7 +66,6 @@
 ;;;; package.
 
 (require 'nomis-popup nil t)
-(require 'nomis-msg nil t)
 (require 'nomis-scrolling nil t)
 
 ;;;; ___________________________________________________________________________
@@ -80,6 +79,15 @@
   (let* ((fun (if (and norg/use-nomis-popup-when-available?
                        (featurep 'nomis-popup))
                   #'nomis/popup/message
+                #'message)))
+    (apply fun
+           format-string
+           args)))
+
+(defun norg/popup/error-message (format-string &rest args)
+  (let* ((fun (if (and norg/use-nomis-popup-when-available?
+                       (featurep 'nomis-popup))
+                  #'nomis/popup/error-message
                 #'message)))
     (apply fun
            format-string
@@ -394,7 +402,7 @@ When in a body, \"current headline\" means the current body's parent headline."
       (funcall move-fun 1 t)
       (norg/show-point)
       (when (= (point) starting-point)
-        (nomis/popup/error-message "%s" error-message)))))
+        (norg/popup/error-message "%s" error-message)))))
 
 (defun norg/forward-heading-same-level ()
   "Move forward one subheading at same level as this one.
@@ -454,7 +462,7 @@ Like `org-backward-heading-same-level` but:
                              "No previous heading at this level, even across parents"
                              ;; but maybe there is -- I've seen a bug here
                              ))))
-                (nomis/popup/error-message "%s" msg)))))))))
+                (norg/popup/error-message "%s" msg)))))))))
 
 (defun norg/forward-heading-same-level/allow-cross-parent ()
   "Move forward one subheading at same level as this one.
@@ -509,7 +517,7 @@ subheading at this level in the previous parent."
                                    (if allow-cross-parent?
                                        ", even across parents"
                                      ""))))
-                 (nomis/popup/error-message msg))))
+                 (norg/popup/error-message msg))))
       (norg/w/back-to-heading t)
       (if (not (norg/fully-expanded?))
           (norg/expand-fully)
@@ -729,9 +737,9 @@ When in a body, \"current headline\" means the current body's parent headline."
          (new-level (-norg/bring-within-range v maximum)))
     (prog1
         (funcall new-value-action-fun new-level)
-      (when (and out-of-range? (featurep 'nomis-msg))
-        (nomis/msg/grab-user-attention/low))
-      (funcall #'norg/popup/message
+      (funcall (if out-of-range?
+                   #'norg/popup/error-message
+                 #'norg/popup/message)
                (concat message-format-string "%s")
                new-level
                maximum
