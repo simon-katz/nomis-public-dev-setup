@@ -18,7 +18,9 @@
           ".idea"
           ;; "labrepl*/public/javascripts/jquery.js"
           ;; "emacs-configuration/nomis-addons/cygwin-mount.el"
-          "node_modules"))
+          "node_modules"
+          ".shadow-cljs"
+          "cljs-runtime"))
   (defvar *extra-ignored-files*
     '(".ido.last"
       ".smex-items"
