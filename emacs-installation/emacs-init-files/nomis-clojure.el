@@ -99,8 +99,6 @@
 ;;;; ___________________________________________________________________________
 ;;;; Misc
 
-;; (require 'cider-grimoire) -- this has disappeared -- see 31f83dfa * [#2663] Switch Grimoire over to ClojureDocs
-
 (require 'nomis-clojure-indentation)
 
 (require 'align-cljlet)
