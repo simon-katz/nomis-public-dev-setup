@@ -444,7 +444,8 @@ window."
             "CIDER 0.19.0snapshot"
             "CIDER 0.21.0 (New York)"
             "CIDER 0.22.0snapshot"
-            "CIDER 0.22.0 (São Paulo)"))
+            "CIDER 0.22.0 (São Paulo)"
+            "CIDER 0.22.1snapshot"))
   (defvar *nomis/cider-jump-to/reuse-selected-window?* nil)
   (let* ((advice-name '-nomis/cider/replace-pop-to-buffer-within-cider-jump-to))
     (advice-add 'cider-jump-to
