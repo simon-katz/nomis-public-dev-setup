@@ -27,6 +27,7 @@
       ;; ".jar"
       ;; ".exe"
       ".cider-repl-history"
+      ".lein-repl-history"
       "*.iml"
       "*.zip"
       "figwheel_server.log"
