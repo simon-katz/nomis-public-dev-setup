@@ -118,7 +118,9 @@
     "node_modules"
     "out"
     "target"
-    "zzzz-nomis-dirtree-test-keep-collapsed"))
+    "zzzz-nomis-dirtree-test-keep-collapsed"
+    "\\.shadow-cljs"
+    "cljs-runtime"))
 
 ;;;; ___________________________________________________________________________
 ;;;; Variables that need to be defined early
