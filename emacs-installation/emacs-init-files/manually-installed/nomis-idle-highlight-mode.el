@@ -267,7 +267,8 @@
 (defun nomis/clojure-like-mode? (m)
   (member m
           '(clojure-mode
-            clojurescript-mode)))
+            clojurescript-mode
+            clojurec-mode)))
 
 ;;;; ___________________________________________________________________________
 ;;;; Chars for symbols
@@ -355,6 +356,14 @@
   (nomis/symbol-prefix-chars 'clojure-mode))
 
 (defmethod nomis/symbol-body-chars ((major-mode (eql clojurescript-mode)))
+  (nomis/symbol-body-chars 'clojure-mode))
+
+;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+(defmethod nomis/symbol-prefix-chars ((major-mode (eql clojurec-mode)))
+  (nomis/symbol-prefix-chars 'clojure-mode))
+
+(defmethod nomis/symbol-body-chars ((major-mode (eql clojurec-mode)))
   (nomis/symbol-body-chars 'clojure-mode))
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
