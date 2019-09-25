@@ -5,6 +5,15 @@
 
 (defvar logs-dir-name "logs")
 
+(defvar nomis/rgrep-local-ignored-directories '())
+
+(advice-add 'rgrep-find-ignored-directories
+            :around
+            (lambda (orig-fun &rest args)
+              (append nomis/rgrep-local-ignored-directories
+                      (apply orig-fun args)))
+            '((name . nomis/add-local-ignored-directories)))
+
 (progn
   (defvar *extra-ignored-directories*
     (list logs-dir-name
@@ -19,8 +28,9 @@
           ;; "labrepl*/public/javascripts/jquery.js"
           ;; "emacs-configuration/nomis-addons/cygwin-mount.el"
           "node_modules"
-          ".shadow-cljs"
-          "cljs-runtime"))
+          ;; Instead of adding stuff here, consider defining
+          ;; `nomis/rgrep-local-ignored-directories` in a .dir-locals file.
+          ))
   (defvar *extra-ignored-files*
     '(".ido.last"
       ".smex-items"
