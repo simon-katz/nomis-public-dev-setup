@@ -20,7 +20,8 @@
  ;; If there is more than one, they won't work right.
  '(safe-local-variable-values
    (quote
-    ((elisp-lint-indent-specs
+    ((nomis/rgrep-local-ignored-directories ".shadow-cljs" "cljs-runtime" "resources/public/js")
+     (elisp-lint-indent-specs
       (if-let* . 2)
       (when-let* . 1)
       (let* . defun)
