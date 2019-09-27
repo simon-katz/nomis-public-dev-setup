@@ -28,6 +28,7 @@
           ;; "labrepl*/public/javascripts/jquery.js"
           ;; "emacs-configuration/nomis-addons/cygwin-mount.el"
           "node_modules"
+          ".shadow-cljs"
           ;; Instead of adding stuff here, consider defining
           ;; `nomis/rgrep-local-ignored-directories` in a .dir-locals file.
           ))
