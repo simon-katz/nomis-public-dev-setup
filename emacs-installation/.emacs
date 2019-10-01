@@ -20,7 +20,8 @@
  ;; If there is more than one, they won't work right.
  '(safe-local-variable-values
    (quote
-    ((nomis/cider-cljs-offer-to-open-app-in-browser\?)
+    ((nomis/rgrep-local-ignored-directories "giggin/public/js" "increments")
+     (nomis/cider-cljs-offer-to-open-app-in-browser\?)
      (elisp-lint-indent-specs
       (if-let* . 2)
       (when-let* . 1)
