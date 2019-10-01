@@ -473,4 +473,22 @@ window."
 
 ;;;; ___________________________________________________________________________
 
+(defvar nomis/cider-cljs-offer-to-open-app-in-browser? t)
+
+(cond
+ ((member (nomis/cider-version)
+          '("CIDER 0.22.1snapshot"))
+  (advice-add
+   'cider--offer-to-open-app-in-browser
+   :around
+   (lambda (orig-fun &rest args)
+     (when nomis/cider-cljs-offer-to-open-app-in-browser?
+       (apply orig-fun args)))
+   '((name . nomis/maybe-do-not-offer-to-open-app-in-browser))))
+ (t
+  (message-box
+   "You need to fix `cider--offer-to-open-app-in-browser` for this version of Cider.")))
+
+;;;; ___________________________________________________________________________
+
 (provide 'nomis-cider-extras)
