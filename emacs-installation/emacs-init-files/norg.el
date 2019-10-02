@@ -505,6 +505,8 @@ subheading at this level in the previous parent."
 ;;;; ___________________________________________________________________________
 ;;;; ____ * Stepping TODO This uses `norg/fully-expanded?`, and so belongs later in the file
 
+(defvar -norg/collapse-last-when-stepping? nil)
+
 (defvar -norg/step-command-groups '((norg/step-forward
                                      norg/step-forward/allow-cross-parent)
                                     (norg/step-backward
@@ -543,13 +545,19 @@ subheading at this level in the previous parent."
         (if (and (not repeat-of-step-direction?) ; avoid repeated expand/contract of last heading at this level
                  (not (norg/fully-expanded?)))
             (norg/expand-fully)
-          (progn
-            (norg/collapse) ; if we can't move, we will re-expand
-            (let* ((starting-point (point)))
-              (try-to-move)
-              (if (= (point) starting-point)
-                  (tried-to-go-to-far)
-                (norg/expand-fully)))))))))
+          (let* ((starting-point (point)))
+            (try-to-move)
+            (let* ((moved? (not (= (point) starting-point))))
+              (if moved?
+                  (progn
+                    (save-excursion
+                      (goto-char starting-point)
+                      (norg/collapse))
+                    (norg/expand-fully))
+                (progn
+                  (when -norg/collapse-last-when-stepping?
+                    (norg/collapse))
+                  (tried-to-go-to-far))))))))))
 
 (defun norg/step-forward ()
   (interactive)
