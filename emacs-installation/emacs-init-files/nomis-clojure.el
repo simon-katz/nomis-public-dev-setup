@@ -6,11 +6,37 @@
 (require 'clojure-mode)
 (require 'nomis-clojure-mode-fixes)
 (require 'nomis-clojure-mode-extras)
-(require 'flycheck-joker)
 
 (define-key clojure-mode-map (kbd "RET") 'newline-and-indent)
 
 (setq clojure-use-metadata-for-privacy t)
+
+;;;; ___________________________________________________________________________
+;;;; Linting
+
+(require 'flycheck-joker)
+(require 'flycheck-clj-kondo)
+
+;;;; https://github.com/borkdude/flycheck-clj-kondo says "To set up multiple
+;;;; linters, e.g. in combination with flycheck-joker, add this after you
+;;;; required the linter packages:"
+
+(dolist (checker '(clj-kondo-clj
+                   clj-kondo-cljs
+                   clj-kondo-cljc
+                   clj-kondo-edn))
+  (setq flycheck-checkers (cons checker (delq checker flycheck-checkers))))
+
+;;;; https://github.com/borkdude/flycheck-clj-kondo says "This ensures that the
+;;;; clj-kondo checkers are the first ones in the flycheck-checkers list. This
+;;;; is needed to make the chain work. To create the chain, also add the
+;;;; following code:"
+
+(dolist (checkers '((clj-kondo-clj . clojure-joker)
+                    (clj-kondo-cljs . clojurescript-joker)
+                    (clj-kondo-cljc . clojure-joker)
+                    (clj-kondo-edn . edn-joker)))
+  (flycheck-add-next-checker (car checkers) (cons 'error (cdr checkers))))
 
 ;;;; ___________________________________________________________________________
 ;;;; Cider
