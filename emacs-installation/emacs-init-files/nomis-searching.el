@@ -5,7 +5,7 @@
 
 (defvar logs-dir-name "logs")
 
-(defvar nomis/rgrep-local-ignored-directories '())
+(defvar nomis/rgrep-local-ignored-directories '()) ; set this in .dir-locals.el
 
 (advice-add 'rgrep-find-ignored-directories
             :around
@@ -29,6 +29,8 @@
           ;; "emacs-configuration/nomis-addons/cygwin-mount.el"
           "node_modules"
           ".shadow-cljs"
+          "emacs-configuration-pre-2018-06-upgrade-packages"
+          "clojure-for-the-brave-and-true/emacs-for-clojure-book1"
           ;; Instead of adding stuff here, consider defining
           ;; `nomis/rgrep-local-ignored-directories` in a .dir-locals file.
           ))
