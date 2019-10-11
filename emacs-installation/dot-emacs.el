@@ -208,6 +208,7 @@
   (require 'nomis-multi-web-mode))
 
 (require 'nomis-javascript)
+(require 'nomis-json)
 
 (require 'nomis-magit)
 
