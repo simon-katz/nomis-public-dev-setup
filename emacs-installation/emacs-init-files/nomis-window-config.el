@@ -38,7 +38,7 @@
 
 (defun nomis/wc/search-for-file ()
   (interactive)
-  (let* ((filename (-nomis/wc/proxy-buffer-name->buffer-name (buffer-name)))
+  (let* ((filename (-nomis/wc/proxy-buffer-name->filename (buffer-name)))
          (root-directory (read-directory-name
                           (format "Search for %s\nRoot of search: "
                                   filename)
@@ -96,7 +96,7 @@
           buffer-name
           -nomis/wc/no-such-buffer-suffix))
 
-(defun -nomis/wc/proxy-buffer-name->buffer-name (proxy-buffer-name)
+(defun -nomis/wc/proxy-buffer-name->filename (proxy-buffer-name)
   (let* ((prefix -nomis/wc/no-such-buffer-prefix)
          (suffix -nomis/wc/no-such-buffer-suffix))
     (if (or (not (s-starts-with? prefix proxy-buffer-name))
@@ -108,7 +108,9 @@
            (replace-regexp-in-string (concat "^" (regexp-quote prefix))
                                      "")
            (replace-regexp-in-string (concat (regexp-quote suffix) "$")
-                                     "")))))
+                                     "")
+           file-name-nondirectory ; because `find-name-dired` needs just a filename
+           ))))
 
 (defun -nomis/wc/get-or-create-buffer-for-no-such-buffer (buffer-name)
   (let* ((proxy-buffer-name (-nomis/wc/buffer-name->proxy-buffer-name
