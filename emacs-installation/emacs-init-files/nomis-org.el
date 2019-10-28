@@ -1,6 +1,6 @@
 ;;;; Init stuff -- Org Mode
 
-(progn) ; this-stops-hs-hide-all-from-hiding-the-next-comment
+(progn) ; this stops `hs-hide-all` from hiding the next comment
 
 ;;;; ___________________________________________________________________________
 ;;;; ____ * Require things

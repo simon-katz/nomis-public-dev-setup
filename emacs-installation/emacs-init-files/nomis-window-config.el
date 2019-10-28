@@ -1,6 +1,6 @@
 ;;; nomis-window-config.el --- Frame and window configurations -*- lexical-binding: t -*-
 
-(progn) ; this-stops-hs-hide-all-from-hiding-the-next-comment
+(progn) ; this stops `hs-hide-all` from hiding the next comment
 
 ;;;; _______________ Requires __________________________________________________
 

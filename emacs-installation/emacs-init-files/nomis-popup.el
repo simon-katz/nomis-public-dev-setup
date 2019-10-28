@@ -1,6 +1,6 @@
 ;;;; nomis-popup --- A layer on top of popup  ---  -*- lexical-binding: t -*-
 
-(progn) ; this-stops-hs-hide-all-from-hiding-the-next-comment
+(progn) ; this stops `hs-hide-all` from hiding the next comment
 
 ;;;; ___________________________________________________________________________
 ;;;; ____ * Require things

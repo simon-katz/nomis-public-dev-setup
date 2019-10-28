@@ -1,6 +1,6 @@
 ;;;; norg --- A layer on top of Org mode  ---  -*- lexical-binding: t -*-
 
-(progn) ; this-stops-hs-hide-all-from-hiding-the-next-comment
+(progn) ; this stops `hs-hide-all` from hiding the next comment
 
 ;;;; ___________________________________________________________________________
 ;;;; ____ * Some rejected (at least for now) ideas
