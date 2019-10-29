@@ -64,7 +64,8 @@
                       flycheck-joker
                       treepy
                       cl-format
-                      parseedn))
+                      parseedn
+                      dumb-jump))
 
 (dolist (p my-packages)
   (when (not (package-installed-p p))
