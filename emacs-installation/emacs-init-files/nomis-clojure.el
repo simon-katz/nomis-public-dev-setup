@@ -170,6 +170,20 @@
 ;;;;   `(binding [cider.nrepl.middleware.debug/*skip-breaks* (atom nil)] ...)`
 
 ;;;; ___________________________________________________________________________
+;;;; CIDER Connections
+
+(defvar nomis/cider/cljs-dev-host nil)
+(defvar nomis/cider/cljs-dev-port nil)
+
+(defun nomis/cider-connect-cljs ()
+  (interactive)
+  (if (and nomis/cider/cljs-dev-host
+           nomis/cider/cljs-dev-port)
+      (cider-connect-cljs (list :host nomis/cider/cljs-dev-host
+                                :port nomis/cider/cljs-dev-port))
+    (cider-connect-cljs)))
+
+;;;; ___________________________________________________________________________
 ;;;; Misc
 
 (require 'nomis-clojure-indentation)
