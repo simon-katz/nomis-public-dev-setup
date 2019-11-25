@@ -63,6 +63,8 @@ which the value is expired. Setting this to nil means to never
 expire, which will cause a memory leak, but may be acceptable for
 very careful uses.")
 
+(defvar nomis/-memoize-sentinel (make-symbol "sentinel"))
+
 (defun nomis/memoize (func &optional timeout)
   "Memoize FUNC: a closure, lambda, or symbol.
 
@@ -88,9 +90,11 @@ care."
   (let ((table (make-hash-table :test 'equal))
         (timeouts (make-hash-table :test 'equal)))
     (lambda (&rest args)
-      (let ((value (gethash args table)))
+      (let ((value (gethash args table nomis/-memoize-sentinel)))
         (unwind-protect
-            (or value (puthash args (apply func args) table))
+            (if (eq value nomis/-memoize-sentinel)
+                (puthash args (apply func args) table)
+              value)
           (let ((existing-timer (gethash args timeouts))
                 (timeout-to-use (or timeout nomis/memoize-default-timeout)))
             (when existing-timer
@@ -158,12 +162,13 @@ will get garbage collected."
     (lambda (&rest args)
       (let* ((bufhash (secure-hash 'md5 (buffer-string)))
              (memokey (cons bufhash args))
-             (value (gethash memokey memoization-table)))
-        (or value
+             (value (gethash memokey memoization-table nomis/-memoize-sentinel)))
+        (if (eq value nomis/-memoize-sentinel)
             (progn
               (puthash (current-buffer) bufhash buffer-to-contents-table)
               (puthash bufhash memokey contents-to-memoization-table)
-              (puthash memokey (apply func args) memoization-table)))))))
+              (puthash memokey (apply func args) memoization-table))
+          value)))))
 
 (defmacro nomis/defmemoize-by-buffer-contents (name arglist &rest body)
   "Create a memoize'd-by-buffer-contents function. NAME, ARGLIST,
