@@ -432,22 +432,25 @@ window."
               (back-to-indentation)))
         (when pos
           (goto-char pos))))))
- ((member (nomis/cider-version)
-          '("CIDER 0.10.0"
-            "CIDER 0.12.0 (Seattle)"
-            "CIDER 0.14.0 (Berlin)"
-            "CIDER 0.15.0 (London)"
-            "CIDER 0.16.0 (Riga)"
-            "CIDER 0.17.0 (Andalucía)"
-            "CIDER 0.18.0 (Saigon)"
-            "CIDER 0.18.1snapshot"
-            "CIDER 0.19.0snapshot"
-            "CIDER 0.21.0 (New York)"
-            "CIDER 0.22.0snapshot"
-            "CIDER 0.22.0 (São Paulo)"
-            "CIDER 0.22.1snapshot"
-            "CIDER 0.23.0 (Lima)"
-            "CIDER 0.24.0snapshot"))
+ ((or (member (nomis/cider-version)
+              '("CIDER 0.10.0"
+                "CIDER 0.12.0 (Seattle)"
+                "CIDER 0.14.0 (Berlin)"
+                "CIDER 0.15.0 (London)"
+                "CIDER 0.16.0 (Riga)"
+                "CIDER 0.17.0 (Andalucía)"
+                "CIDER 0.18.0 (Saigon)"
+                "CIDER 0.18.1snapshot"
+                "CIDER 0.19.0snapshot"
+                "CIDER 0.21.0 (New York)"
+                "CIDER 0.22.0snapshot"
+                "CIDER 0.22.0 (São Paulo)"
+                "CIDER 0.22.1snapshot"
+                "CIDER 0.23.0 (Lima)"))
+      (and (equal (nomis/cider-version)
+                  "CIDER 0.24.0snapshot")
+           ;; Check whether fix is in CIDER itself.
+           (not (boundp 'cider-jump-to-pop-to-buffer-actions))))
   (defvar *nomis/cider-jump-to/reuse-selected-window?* nil)
   (advice-add 'cider-jump-to
               :around
@@ -468,6 +471,9 @@ window."
                                   '((display-buffer-same-window)))))
                   (apply orig-fun buffer other-args)))
               '((name . nomis/cider/hack-jump-to))))
+ ((boundp 'cider-jump-to-pop-to-buffer-actions)
+  ;; We have the fix in CIDER itself.
+  )
  (t
   (message-box
    "You need to fix `cider-jump-to` for this version of Cider.")))
