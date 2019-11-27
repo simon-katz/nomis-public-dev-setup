@@ -449,29 +449,34 @@ window."
             "CIDER 0.23.0 (Lima)"
             "CIDER 0.24.0snapshot"))
   (defvar *nomis/cider-jump-to/reuse-selected-window?* nil)
-  (let* ((advice-name '-nomis/cider/replace-pop-to-buffer-within-cider-jump-to))
-    (advice-add 'cider-jump-to
-                :around
-                (lambda (orig-fun &rest args)
-                  (let* ((*nomis/cider-jump-to/reuse-selected-window?* t))
-                    (apply orig-fun args)))
-                `((name . ,advice-name)))
-    (advice-add 'pop-to-buffer
-                :around
-                (lambda (orig-fun buffer &rest other-args)
-                  (if *nomis/cider-jump-to/reuse-selected-window?*
-                      (case 2
-                        ;; See https://github.com/clojure-emacs/cider/issues/2499
-                        ;; Either of these should work.
-                        (1 (switch-to-buffer buffer nil t))
-                        (2 (funcall orig-fun
-                                    buffer
-                                    '((display-buffer-same-window)))))
-                    (apply orig-fun buffer other-args)))
-                `((name . ,advice-name)))))
+  (advice-add 'cider-jump-to
+              :around
+              (lambda (orig-fun &rest args)
+                (let* ((*nomis/cider-jump-to/reuse-selected-window?* t))
+                  (apply orig-fun args)))
+              '((name . nomis/cider/hack-jump-to)))
+  (advice-add 'pop-to-buffer
+              :around
+              (lambda (orig-fun buffer &rest other-args)
+                (if *nomis/cider-jump-to/reuse-selected-window?*
+                    (case 2
+                      ;; See https://github.com/clojure-emacs/cider/issues/2499
+                      ;; Either of these should work.
+                      (1 (switch-to-buffer buffer nil t))
+                      (2 (funcall orig-fun
+                                  buffer
+                                  '((display-buffer-same-window)))))
+                  (apply orig-fun buffer other-args)))
+              '((name . nomis/cider/hack-jump-to))))
  (t
   (message-box
    "You need to fix `cider-jump-to` for this version of Cider.")))
+
+(when nil ; Code to remove advice when in dev.
+  (progn
+    (advice-remove 'pop-to-buffer 'nomis/cider/hack-jump-to)
+    (advice-remove 'cider-jump-to 'nomis/cider/hack-jump-to))
+  )
 
 ;;;; ___________________________________________________________________________
 
