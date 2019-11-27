@@ -88,6 +88,7 @@
     (require 'cider-macroexpansion)))
 
 (require 'nomis-cider-extras)
+(require 'nomis-cider-eval-clj-and-cljs)
 
 (setq nrepl-buffer-name-separator "--")
 
