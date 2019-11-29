@@ -23,7 +23,9 @@
     (dumb-jump json-mode gnu-elpa-keyring-update flycheck-clj-kondo yasnippet yaml-mode yafolding which-key undo-tree spinner smex sesman rainbow-delimiters queue projectile pos-tip paxedit parseedn org-bullets multiple-cursors markdown-mode magit key-chord js2-mode inflections ido-vertical-mode ido-completing-read+ hydra ht highlight-indentation helm fuzzy flycheck-joker fill-column-indicator exec-path-from-shell elisp-slime-nav edn discover dash-functional company clojure-mode cl-format cider-eval-sexp-fu auto-complete aggressive-indent)))
  '(safe-local-variable-values
    (quote
-    ((nomis/cider/cljs-dev-port . 3333)
+    ((nomis/cider/post-interactive-eval/cljs-function-name . "cljs.user/post-interactive-eval-hook")
+     (nomis/cider/post-interactive-eval/clj-function-name . "dev/post-interactive-eval-hook")
+     (nomis/cider/cljs-dev-port . 3333)
      (nomis/cider/cljs-dev-port . 8777)
      (nomis/cider/cljs-dev-host . "localhost")
      (nomis/rgrep-local-ignored-directories "giggin/public/js" "increments")

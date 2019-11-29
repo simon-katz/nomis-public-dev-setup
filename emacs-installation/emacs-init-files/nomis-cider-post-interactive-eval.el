@@ -26,32 +26,15 @@
 
 ;;;; ___________________________________________________________________________
 
-;;;; TODO Change this so that user specifies what function to call -- one for
-;;;;      CLJ and one for CLJS.
+(defvar nomis/cider/post-interactive-eval/clj-function-name nil
+  "The fully-qualified name (as a string) of a function to call after evaluating
+a CLJ form, for example \"dev/post-interactive-eval-hook\".")
 
-(defvar -nomis/cider/post-interactive-eval/hook-name
-  "post-interactive-eval-hook")
-
-(defvar -nomis/cider/post-interactive-eval/clj-ns-name-strings
-  '("user"
-    "dev"))
-
-(defvar -nomis/cider/post-interactive-eval/cljs-ns-name-strings
-  '("cljs.user"))
-
-(defun -nomis/cider/post-interactive-eval/forms-to-eval (repl-type)
-  (cl-loop
-   for ns-name in (ecase repl-type
-                    (clj
-                     -nomis/cider/post-interactive-eval/clj-ns-name-strings)
-                    (cljs
-                     -nomis/cider/post-interactive-eval/cljs-ns-name-strings))
-   collect (let* ((symbol-name
-                   (format "%s/%s"
-                           ns-name
-                           -nomis/cider/post-interactive-eval/hook-name)))
-             (format "(let [v (resolve '%s)] (when v (v)))"
-                     symbol-name))))
+(defvar nomis/cider/post-interactive-eval/cljs-function-name nil
+  "The fully-qualified name (as a string) of a function to call after evaluating
+a CLJS form, for example \"cljs.user/post-interactive-eval-hook\".
+This can be used, for example, to update UIs after evaluating forms (without
+the need to save files so that a file-watcher can spot changes).")
 
 ;;;; ___________________________________________________________________________
 
@@ -80,11 +63,14 @@
         (message "nomis/cider/post-interactive-eval DUP TRIED FORM: %s"
                  form))
 
-       (repl-buffer->post-forms
+       (repl-buffer->form-string
         (repl-buffer)
-        (-> repl-buffer
-            cider-repl-type
-            -nomis/cider/post-interactive-eval/forms-to-eval))
+        (let ((form-string
+               (case (cider-repl-type repl-buffer)
+                 (clj  nomis/cider/post-interactive-eval/clj-function-name)
+                 (cljs nomis/cider/post-interactive-eval/cljs-function-name))))
+          (when form-string
+            (format "(let [f (resolve '%s)] (f))" form-string))))
 
        (run-post-form
         (form repl-buffer)
@@ -101,21 +87,21 @@
        (wrap-update-ui
         (callback)
         (let ((do-post-stuff
-               (let ((tried-forms '()))
+               (let ((tried-form-strings '()))
                  (nomis/memoize
                   ;; Memoize because the callback is called multiple times for
                   ;; each REPL, but we only want to do the post-processing once
                   ;; per REPL.
                   (lambda (repl-buffer)
-                    (cl-loop for form
-                             in (repl-buffer->post-forms repl-buffer)
-                             do (if (member form tried-forms)
-                                    ;; Sometimes we get here. I've only seen
-                                    ;; that just after starting Emacs.
-                                    (dup-tried-form-message form)
-                                  (progn
-                                    (push form tried-forms)
-                                    (run-post-form form repl-buffer)))))))))
+                    (let ((form-string (repl-buffer->form-string repl-buffer)))
+                      (when form-string
+                        (if (member form-string tried-form-strings)
+                            ;; Sometimes we get here. I've only seen that just
+                            ;; after starting Emacs.
+                            (dup-tried-form-message form-string)
+                          (progn
+                            (push form-string tried-form-strings)
+                            (run-post-form form-string repl-buffer))))))))))
           (lambda (response)
             (prog1
                 (funcall callback response)
