@@ -79,45 +79,54 @@
 
 ;;;; ___________________________________________________________________________
 
+(defvar *nomis/cider/eval-clj-and-cljs/feature-on? t)
+
 (cond ; nomis/eval-clj-and-cljs
  ;; For example, send forms to both a CLJ REPL and a CLJS REPL from a
  ;; .cljc file.
- ;; Do this by:
- ;; - providing private versions of the following to return multiple sessions:
- ;;   - `cider-repls`
- ;;   - `sesman-current-session`
- ;;   - `sesman-ensure-session`
- ;; - arranging for these to be used within a call of `cider-interactive-eval`.
+
+ ;; Take care to send forms to each REPL process only once, so deal with
+ ;; removing duplicates when there are siblings.
+
+ ;; Do this by hacking `cider-repls` in some call chains to not use
+ ;; `sesman-current-session` -- instead, start by calling
+ ;; `sesman-current-sessions` and then process the return value.
+
+ ;; TODO: Consider simply changing `cider-repls` (and not just in particular
+ ;;       call chains).
+ ;;       BUT your recent changes (one REPL of each type per session) mean you
+ ;;       have moved on a long way, so maybe not. Maybe a new function to be
+ ;;       called from a few places.
+
+ ;; TODO: `cider-repl-switch-to-other` is broken. When there are sibling REPLs
+ ;;       of the same type, it can go to one of them. The doc string says switch
+ ;;       between CLJ and CLJS.
 
  ((member (cider-version)
           '("CIDER 0.23.0 (Lima)"
             "CIDER 0.24.0snapshot"))
 
-  (defun -nomis/sesman-current-session (system &optional cxt-types)
-    "Get the most relevant current session for the SYSTEM.
-CXT-TYPES is a list of context types to consider."
-    (or (sesman--linked-sessions system 'sort cxt-types)
-        (sesman--friendly-sessions system 'sort)))
-
-  (defun -nomis/sesman-ensure-session (system &optional cxt-types)
-    "Get the most relevant linked session for SYSTEM or throw if none exists.
-CXT-TYPES is a list of context types to consider."
-    (or (-nomis/sesman-current-session system cxt-types)
-        (user-error "No linked %s sessions" system)))
-
-  (defun -nomis/cider-repls (&optional type ensure)
-    "Return cider REPLs of TYPE from the current session.
-If TYPE is nil or multi, return all repls.  If TYPE is a list of types,
-return only REPLs of type contained in the list.  If ENSURE is non-nil,
-throw an error if no linked session exists."
+  (defun -nomis/cider-repls-to-evaluate-in (&optional type ensure)
+    "Return cider REPLs of type TYPE from all current sessions.
+When there are sibling REPLs of the same type, include only one
+of the REPLs. If TYPE is nil or multi, return all repls. If TYPE
+is a list of types, return only REPLs of type contained in the
+list. If ENSURE is non-nil, throw an error if no linked session
+exists."
     (let* ((type (cond
                   ((listp type)
                    (mapcar #'cider-maybe-intern type))
                   ((cider-maybe-intern type))))
-           (repls (-map #'second
-                        (if ensure
-                            (-nomis/sesman-ensure-session 'CIDER)
-                          (-nomis/sesman-current-session 'CIDER)))))
+           (sesman-sessions (sesman-current-sessions 'CIDER))
+           (one-repl-of-each-type-for-each-session
+            (mapcar (lambda (sesman-session)
+                      (let ((repls (cdr sesman-session)))
+                        (seq-uniq repls
+                                  (lambda (x y)
+                                    (eq (cider-repl-type x)
+                                        (cider-repl-type y))))))
+                    sesman-sessions))
+           (repls (apply #'append one-repl-of-each-type-for-each-session)))
       (or (seq-filter (lambda (b)
                         (cider--match-repl-type type b))
                       repls)
@@ -129,7 +138,8 @@ throw an error if no linked session exists."
   (advice-add 'cider-interactive-eval
               :around
               (lambda (orig-fun &rest args)
-                (let* ((*-nomis/cider/eval-clj-and-cljs/hack-cider-repls? t))
+                (let* ((*-nomis/cider/eval-clj-and-cljs/hack-cider-repls?
+                        *nomis/cider/eval-clj-and-cljs/feature-on?))
                   (apply orig-fun args)))
               '((name . nomis/eval-clj-and-cljs)
                 (depth . -100)))
@@ -137,17 +147,18 @@ throw an error if no linked session exists."
   (advice-add 'cider-load-buffer
               :around
               (lambda (orig-fun &rest args)
-                (let* ((*-nomis/cider/eval-clj-and-cljs/hack-cider-repls? t))
+                (let* ((*-nomis/cider/eval-clj-and-cljs/hack-cider-repls?
+                        *nomis/cider/eval-clj-and-cljs/feature-on?))
                   (apply orig-fun args)))
               '((name . nomis/eval-clj-and-cljs)
                 (depth . -100)))
 
   (advice-add 'cider-repls
               :around
-              (lambda (orig-fun type ensure)
+              (lambda (orig-fun &rest args)
                 (if *-nomis/cider/eval-clj-and-cljs/hack-cider-repls?
-                    (-nomis/cider-repls type ensure)
-                  (funcall orig-fun type ensure)))
+                    (apply #'-nomis/cider-repls-to-evaluate-in args)
+                  (apply orig-fun args)))
               '((name . nomis/eval-clj-and-cljs)))
 
   )
