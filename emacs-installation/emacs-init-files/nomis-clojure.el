@@ -14,29 +14,29 @@
 ;;;; ___________________________________________________________________________
 ;;;; Linting
 
-(require 'flycheck-joker)
+;; (require 'flycheck-joker)
 (require 'flycheck-clj-kondo)
 
 ;;;; https://github.com/borkdude/flycheck-clj-kondo says "To set up multiple
 ;;;; linters, e.g. in combination with flycheck-joker, add this after you
 ;;;; required the linter packages:"
 
-(dolist (checker '(clj-kondo-clj
-                   clj-kondo-cljs
-                   clj-kondo-cljc
-                   clj-kondo-edn))
-  (setq flycheck-checkers (cons checker (delq checker flycheck-checkers))))
+;; (dolist (checker '(clj-kondo-clj
+;;                    clj-kondo-cljs
+;;                    clj-kondo-cljc
+;;                    clj-kondo-edn))
+;;   (setq flycheck-checkers (cons checker (delq checker flycheck-checkers))))
 
 ;;;; https://github.com/borkdude/flycheck-clj-kondo says "This ensures that the
 ;;;; clj-kondo checkers are the first ones in the flycheck-checkers list. This
 ;;;; is needed to make the chain work. To create the chain, also add the
 ;;;; following code:"
 
-(dolist (checkers '((clj-kondo-clj . clojure-joker)
-                    (clj-kondo-cljs . clojurescript-joker)
-                    (clj-kondo-cljc . clojure-joker)
-                    (clj-kondo-edn . edn-joker)))
-  (flycheck-add-next-checker (car checkers) (cons 'error (cdr checkers))))
+;; (dolist (checkers '((clj-kondo-clj . clojure-joker)
+;;                     (clj-kondo-cljs . clojurescript-joker)
+;;                     (clj-kondo-cljc . clojure-joker)
+;;                     (clj-kondo-edn . edn-joker)))
+;;   (flycheck-add-next-checker (car checkers) (cons 'error (cdr checkers))))
 
 (progn ; Include checker name in flycheck messages in echo area.
   (cond
