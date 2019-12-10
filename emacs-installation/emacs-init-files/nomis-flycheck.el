@@ -28,9 +28,9 @@
                   (let* ((raw-value (funcall orig-fun err)))
                     (if *-nomis/add-checker-name-to-flycheck-message?*
                         (let* ((error-checker-info
-                                (concat "("
+                                (concat "["
                                         (symbol-name (flycheck-error-checker err))
-                                        ")")))
+                                        "]")))
                           (put-text-property 0
                                              (length error-checker-info)
                                              'face
