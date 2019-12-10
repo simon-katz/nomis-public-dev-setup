@@ -29,6 +29,7 @@
           ;; "emacs-configuration/nomis-addons/cygwin-mount.el"
           "node_modules"
           ".shadow-cljs"
+          ".emacs.d"
           "emacs-configuration-pre-2018-06-upgrade-packages"
           "clojure-for-the-brave-and-true/emacs-for-clojure-book1"
           ;; Instead of adding stuff here, consider defining
