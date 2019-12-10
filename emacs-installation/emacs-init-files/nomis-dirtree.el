@@ -120,7 +120,8 @@
     "target"
     "zzzz-nomis-dirtree-test-keep-collapsed"
     "\\.shadow-cljs"
-    "cljs-runtime"))
+    "cljs-runtime"
+    "\\.clj-kondo"))
 
 ;;;; ___________________________________________________________________________
 ;;;; Variables that need to be defined early
