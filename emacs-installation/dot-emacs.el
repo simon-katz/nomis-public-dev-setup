@@ -231,6 +231,8 @@
 
 (require 'nomis-dumb-jump)
 
+(require 'nomis-flycheck)
+
 (progn
   ;; Putting this where it belongs (in "nomis/very-general-stuff") doesn't work;
   ;; I guess something blats it.
