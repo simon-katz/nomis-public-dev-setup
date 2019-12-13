@@ -32,6 +32,8 @@
           ".emacs.d"
           "emacs-configuration-pre-2018-06-upgrade-packages"
           "clojure-for-the-brave-and-true/emacs-for-clojure-book1"
+          "cljs-runtime"
+          ".clj-kondo"
           ;; Instead of adding stuff here, consider defining
           ;; `nomis/rgrep-local-ignored-directories` in a .dir-locals file.
           ))
