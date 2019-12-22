@@ -54,6 +54,7 @@
     (require 'cider-macroexpansion)))
 
 (require 'nomis-cider-extras)
+(require 'nomis-cider-extras-2)
 (require 'nomis-cider-eval-clj-and-cljs)
 (require 'nomis-cider-post-interactive-eval)
 
