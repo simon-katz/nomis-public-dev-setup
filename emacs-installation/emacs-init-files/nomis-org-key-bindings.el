@@ -29,10 +29,10 @@
 (defconst -nomis/org/navigation-and-cycling-help
   "
 Use H with various other keys:
-    ,. is for moving forward or backward headlines (without M, at same level)
+    ,. is for moving forward or backward headlines (without C, at same level)
         <> (add S to ,. on my keyboard) to cross the parent level
-        Add C to step (ie collapse then move then expand)
-        Add M to visit headlines at any level
+        Add M to step (ie collapse then move then expand)
+        Add C to visit headlines at any level
     '\\[]-= is for expanding and collapsing
         Add M to fully expand or collapse
         Add C to '\\ for visibility cycling of spans
@@ -97,19 +97,19 @@ H-q H-= norg/show-children-from-all-roots/to-current-level")
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ;;;; ____ ** Movement + expand/collapse
 
-(org-defkey org-mode-map (kbd "C-H-,")   'norg/step-backward)
-(org-defkey org-mode-map (kbd "C-H-.")   'norg/step-forward)
-(org-defkey org-mode-map (kbd "C-H-<")   'norg/step-backward/allow-cross-parent)
-(org-defkey org-mode-map (kbd "C-H->")   'norg/step-forward/allow-cross-parent)
+(org-defkey org-mode-map (kbd "H-M-,")   'norg/step-backward)
+(org-defkey org-mode-map (kbd "H-M-.")   'norg/step-forward)
+(org-defkey org-mode-map (kbd "H-M-<")   'norg/step-backward/allow-cross-parent)
+(org-defkey org-mode-map (kbd "H-M->")   'norg/step-forward/allow-cross-parent)
 
-(org-defkey org-mode-map (kbd "H-M-,")   'norg/forward-heading/any-level)
-(org-defkey org-mode-map (kbd "H-M-.")   'norg/backward-heading/any-level)
+(org-defkey org-mode-map (kbd "C-H-,")   'norg/forward-heading/any-level)
+(org-defkey org-mode-map (kbd "C-H-.")   'norg/backward-heading/any-level)
 
 ;; (org-defkey org-mode-map (kbd "C-H-M-,") ????) ; TODO Want something that visits headlines at any level and collapses as it goes
 ;; (org-defkey org-mode-map (kbd "C-H-M-.") ????) ; TODO Want something that visits headlines at any level and collapses as it goes
 
-;; (org-defkey org-mode-map (kbd "H-M-<")   ????) ; No real meaning -- with the M we are already crossing parent levels
-;; (org-defkey org-mode-map (kbd "H-M->")   ????) ; No real meaning -- with the M we are already crossing parent levels
+;; (org-defkey org-mode-map (kbd "C-H-<")   ????) ; No real meaning -- with the M we are already crossing parent levels
+;; (org-defkey org-mode-map (kbd "C-H->")   ????) ; No real meaning -- with the M we are already crossing parent levels
 ;; (org-defkey org-mode-map (kbd "C-H-M-<") ????) ; No real meaning -- with the M we are already crossing parent levels
 ;; (org-defkey org-mode-map (kbd "C-H-M->") ????) ; No real meaning -- with the M we are already crossing parent levels
 

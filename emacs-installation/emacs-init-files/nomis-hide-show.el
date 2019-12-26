@@ -413,8 +413,8 @@ Otherwise, go to the beginning of the sexp before point and show it."
            (nomis/goto-beginning-of-sexp/or-end/backward)
            (nomis/hs/adjust/show-all)))))
 
-(define-key hs-minor-mode-map (k•• "C-H-,")   'nomis/hs/step-backward)
-(define-key hs-minor-mode-map (k•• "C-H-.")   'nomis/hs/step-forward)
+(define-key hs-minor-mode-map (k•• "H-M-,")   'nomis/hs/step-backward)
+(define-key hs-minor-mode-map (k•• "H-M-.")   'nomis/hs/step-forward)
 (define-key hs-minor-mode-map (k•• "H-q H-s") 'nomis/toggle-maintain-line-no-in-window)
 
 ;;;; Key chords only work for chars whose codes are in the range 32..126 -- see
