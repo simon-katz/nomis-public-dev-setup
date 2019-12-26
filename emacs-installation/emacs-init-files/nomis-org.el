@@ -107,6 +107,7 @@
         nil))))
 
 (defun nomis/org-show-only/cycle/impl (n)
+  (norg/show-point)
   (let* ((nomis/popup/also-do-message? t)
          (pos (-nomis/org-show-only/cycle/next-position n)))
     (if (null pos)
