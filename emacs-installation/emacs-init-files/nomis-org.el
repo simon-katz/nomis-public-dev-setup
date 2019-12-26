@@ -107,17 +107,18 @@
         nil))))
 
 (defun nomis/org-show-only/cycle/impl (n)
-  (let* ((pos (-nomis/org-show-only/cycle/next-position n)))
+  (let* ((nomis/popup/also-do-message? t)
+         (pos (-nomis/org-show-only/cycle/next-position n)))
     (if (null pos)
         (progn
           (if (< n 0)
-              (message "Already at min span")
-            (message "Already at max span"))
+              (norg/popup/error-message "Already at min span")
+            (norg/popup/error-message "Already at max span"))
           (nomis/msg/grab-user-attention/low))
       (let* ((visibility-span (nth pos
                                    -nomis/org-show-only/cycle/visibility-spans)))
-        (message "Setting visibility-span = %s"
-                 visibility-span)
+        (norg/popup/message "Setting visibility-span = %s"
+                            visibility-span)
         (-nomis/org-show-only visibility-span)))))
 
 (defun nomis/org-show-only/cycle/more ()
