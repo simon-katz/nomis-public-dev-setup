@@ -72,7 +72,7 @@
          (norg/collapse))))
   (org-show-set-visibility detail))
 
-(defvar -nomis/org-show-only/cycle/visibility-spans
+(defvar -nomis/org-show-only/visibility-spans
   ;;  See `org-show-context-detail`.
   '(minimal
     local
@@ -81,54 +81,70 @@
     tree
     canonical))
 
-(defvar -nomis/org-show-only/cycle/previous-place nil)
-(defvar -nomis/org-show-only/cycle/previous-action-index -1)
+(defun -nomis/org-show-only/max-value ()
+  (1- (length -nomis/org-show-only/visibility-spans)))
 
-(defun -nomis/org-show-only/cycle/next-position (n)
+(defvar -nomis/org-show-only/previous-place nil)
+(defvar -nomis/org-show-only/previous-action-index -1)
+
+(defun -nomis/org-show-only/set (n delta?)
+  (norg/show-point)
   ;; TODO Use the new approach.
   (let* ((current-place (list (current-buffer)
                               (point)))
-         (previous-place -nomis/org-show-only/cycle/previous-place))
-    (setq -nomis/org-show-only/cycle/previous-place
+         (previous-place -nomis/org-show-only/previous-place))
+    (setq -nomis/org-show-only/previous-place
           current-place)
-    (let* ((prev-action-index -nomis/org-show-only/cycle/previous-action-index)
-           (action-index (if (not (equal current-place previous-place))
-                             (position (if (< n 0) 'ancestors 'tree)
-                                       -nomis/org-show-only/cycle/visibility-spans)
-                           (+ n prev-action-index)))
-           (ok? (<= 0
-                    action-index
-                    (1- (length -nomis/org-show-only/cycle/visibility-spans)))))
-      (if ok?
-          (progn
-            (setq -nomis/org-show-only/cycle/previous-action-index
+    (let* ((prev-action-index -nomis/org-show-only/previous-action-index)
+           (action-index (cond
+                          ((not delta?)
+                           n)
+                          ((not (equal current-place previous-place))
+                           (position (if (< n 0) 'ancestors 'tree)
+                                     -nomis/org-show-only/visibility-spans))
+                          (t
+                           (+ n prev-action-index))))
+           (ok? (if delta?
+                    (<= 0
+                        action-index
+                        (-nomis/org-show-only/max-value))
+                  (or (not (equal current-place previous-place))
+                      (not (= n prev-action-index)))))
+           (new-pos-or-nil
+            (if ok?
+                (progn
+                  (setq -nomis/org-show-only/previous-action-index
+                        action-index)
                   action-index)
-            action-index)
-        nil))))
+              nil)))
+      (if (null new-pos-or-nil)
+          (progn
+            (if (if delta? (< n 0) (= n 0))
+                (norg/popup/error-message "Already at min span")
+              (norg/popup/error-message "Already at max span"))
+            (nomis/msg/grab-user-attention/low))
+        (let* ((visibility-span (nth new-pos-or-nil
+                                     -nomis/org-show-only/visibility-spans)))
+          (let* ((nomis/popup/also-do-message? t))
+            (norg/popup/message "Setting visibility-span = %s"
+                                visibility-span))
+          (-nomis/org-show-only visibility-span))))))
 
-(defun nomis/org-show-only/cycle/impl (n)
-  (norg/show-point)
-  (let* ((nomis/popup/also-do-message? t)
-         (pos (-nomis/org-show-only/cycle/next-position n)))
-    (if (null pos)
-        (progn
-          (if (< n 0)
-              (norg/popup/error-message "Already at min span")
-            (norg/popup/error-message "Already at max span"))
-          (nomis/msg/grab-user-attention/low))
-      (let* ((visibility-span (nth pos
-                                   -nomis/org-show-only/cycle/visibility-spans)))
-        (norg/popup/message "Setting visibility-span = %s"
-                            visibility-span)
-        (-nomis/org-show-only visibility-span)))))
-
-(defun nomis/org-show-only/cycle/more ()
+(defun nomis/org-show-only/more ()
   (interactive)
-  (nomis/org-show-only/cycle/impl 1))
+  (-nomis/org-show-only/set 1 t))
 
-(defun nomis/org-show-only/cycle/less ()
+(defun nomis/org-show-only/less ()
   (interactive)
-  (nomis/org-show-only/cycle/impl -1))
+  (-nomis/org-show-only/set -1 t))
+
+(defun nomis/org-show-only/set-min ()
+  (interactive)
+  (-nomis/org-show-only/set 0 nil))
+
+(defun nomis/org-show-only/set-max ()
+  (interactive)
+  (-nomis/org-show-only/set (-nomis/org-show-only/max-value) nil))
 
 ;;;; ___________________________________________________________________________
 ;;;; ____ * Priorities

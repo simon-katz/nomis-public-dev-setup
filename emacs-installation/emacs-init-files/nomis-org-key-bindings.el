@@ -59,12 +59,10 @@ H-q H-= norg/show-children-from-all-roots/to-current-level")
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ;;;; ____ ** "Visibility" -- the org-show-only stuff (which is badly named)
 
-;;;; I'm unsure about these, but they're the best you have for now.
-
-;; Comment these out until you have trained yourself to not accidentally
-;; use them.
-(org-defkey org-mode-map (kbd "C-H-'")   'nomis/org-show-only/cycle/less)
-(org-defkey org-mode-map (kbd "C-H-\\")  'nomis/org-show-only/cycle/more)
+(org-defkey org-mode-map (kbd "C-H-'")    'nomis/org-show-only/less)
+(org-defkey org-mode-map (kbd "C-H-\\")   'nomis/org-show-only/more)
+(org-defkey org-mode-map (kbd "C-H-M-'")  'nomis/org-show-only/set-min)
+(org-defkey org-mode-map (kbd "C-H-M-\\") 'nomis/org-show-only/set-max)
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ;;;; ____ ** Expand/collapse
