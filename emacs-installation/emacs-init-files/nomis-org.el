@@ -128,7 +128,8 @@
           (let* ((nomis/popup/also-do-message? t))
             (norg/popup/message "Setting visibility-span = %s"
                                 visibility-span))
-          (-nomis/org-show-only visibility-span))))))
+          (-nomis/org-show-only visibility-span)
+          (norg/w/show-entry))))))
 
 (defun nomis/org-show-only/more ()
   (interactive)
