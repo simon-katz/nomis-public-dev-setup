@@ -146,7 +146,8 @@ If POS is nil, use `point' instead."
                       -nomis/popup/error-suffix)))
     (-nomis/popup/message* '-nomis/popup/error-face msg)
     (when nomis/popup/also-do-message?
-      (message msg))))
+      (message msg)
+      (nomis/msg/grab-user-attention/low))))
 
 ;;;; ___________________________________________________________________________
 ;;;; * End
