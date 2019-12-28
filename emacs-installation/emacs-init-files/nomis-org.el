@@ -129,16 +129,15 @@
                         action-index)
                   action-index)
               nil)))
-      (let* ((nomis/popup/also-do-message? t))
-        (if (null new-pos-or-nil)
-            (let* ((msg (if (if delta? (< n 0) (= n 0))
-                            -nomis/org-visibility-span/min-detail
-                          -nomis/org-visibility-span/max-detail)))
-              (norg/popup/error-message "%s" msg))
-          (let* ((detail (nth new-pos-or-nil
-                              -nomis/org-visibility-span/detail-values)))
-            (-nomis/org-visibility-span/set-level/rawish detail)
-            (norg/popup/message "%s" detail)))))))
+      (if (null new-pos-or-nil)
+          (let* ((msg (if (if delta? (< n 0) (= n 0))
+                          -nomis/org-visibility-span/min-detail
+                        -nomis/org-visibility-span/max-detail)))
+            (norg/popup/error-message "%s" msg))
+        (let* ((detail (nth new-pos-or-nil
+                            -nomis/org-visibility-span/detail-values)))
+          (-nomis/org-visibility-span/set-level/rawish detail)
+          (norg/popup/message "%s" detail))))))
 
 (defun nomis/org-visibility-span/more ()
   (interactive)

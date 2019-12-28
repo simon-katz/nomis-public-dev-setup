@@ -11,7 +11,6 @@
 ;;;; ____ * Parameterisation
 
 (defvar nomis/popup/duration 1)
-(defvar nomis/popup/also-do-message? nil)
 
 ;;;; ___________________________________________________________________________
 ;;;; ____ * Private parameterisation
@@ -133,21 +132,16 @@ If POS is nil, use `point' instead."
                            (-nomis/popup/remove-existing-popups)))))))))
 
 (defun nomis/popup/message (format-string &rest args)
-  (let* ((msg (concat -nomis/popup/prefix
-                      (apply #'format format-string args)
-                      -nomis/popup/suffix)))
-    (-nomis/popup/message* '-nomis/popup/face msg)
-    (when nomis/popup/also-do-message?
-      (message msg))))
+  (-nomis/popup/message* '-nomis/popup/face
+                         (concat -nomis/popup/prefix
+                                 (apply #'format format-string args)
+                                 -nomis/popup/suffix)))
 
 (defun nomis/popup/error-message (format-string &rest args)
-  (let* ((msg (concat -nomis/popup/error-prefix
-                      (apply #'format format-string args)
-                      -nomis/popup/error-suffix)))
-    (-nomis/popup/message* '-nomis/popup/error-face msg)
-    (when nomis/popup/also-do-message?
-      (message msg)
-      (nomis/msg/grab-user-attention/low))))
+  (-nomis/popup/message* '-nomis/popup/error-face
+                         (concat -nomis/popup/error-prefix
+                                 (apply #'format format-string args)
+                                 -nomis/popup/error-suffix)))
 
 ;;;; ___________________________________________________________________________
 ;;;; * End
