@@ -37,8 +37,10 @@ Use H with various other keys:
         Add M to fully expand or collapse
         Add C to '\\ for visibility cycling of spans
 
-H-q H-] norg/show-children-from-root/to-current-level
-H-q H-= norg/show-children-from-all-roots/to-current-level")
+H-q H-]  norg/show-children-from-root/to-current-level
+H-q H-=  norg/show-children-from-all-roots/to-current-level
+
+H-?  Show this help")
 
 (defun nomis/org/pop-up-navigation-and-cycling-help ()
   (interactive)
