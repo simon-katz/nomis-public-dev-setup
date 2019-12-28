@@ -48,7 +48,7 @@ H-q H-= norg/show-children-from-all-roots/to-current-level")
     (2 (with-help-window (help-buffer)
          (princ -nomis/org/navigation-and-cycling-help)))))
 
-(org-defkey org-mode-map (kbd "C-H-M-?") 'nomis/org/pop-up-navigation-and-cycling-help)
+(org-defkey org-mode-map (kbd "H-?") 'nomis/org/pop-up-navigation-and-cycling-help)
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ;;;; ____ ** Following links
