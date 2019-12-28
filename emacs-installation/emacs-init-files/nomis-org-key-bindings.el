@@ -40,6 +40,8 @@ Use H with various other keys:
 H-q H-]  norg/show-children-from-root/to-current-level
 H-q H-=  norg/show-children-from-all-roots/to-current-level
 
+H-q H-s  nomis/toggle-maintain-line-no-in-window
+
 H-?  Show this help")
 
 (defun nomis/org/pop-up-navigation-and-cycling-help ()
