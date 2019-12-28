@@ -61,12 +61,12 @@ H-?  Show this help")
 (org-defkey org-mode-map (kbd "M-,") 'org-mark-ring-goto)
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-;;;; ____ ** "Visibility" -- the org-show-only stuff (which is badly named)
+;;;; ____ ** Visibility span
 
-(org-defkey org-mode-map (kbd "C-H-'")    'nomis/org-show-only/less)
-(org-defkey org-mode-map (kbd "C-H-\\")   'nomis/org-show-only/more)
-(org-defkey org-mode-map (kbd "C-H-M-'")  'nomis/org-show-only/set-min)
-(org-defkey org-mode-map (kbd "C-H-M-\\") 'nomis/org-show-only/set-max)
+(org-defkey org-mode-map (kbd "C-H-'")    'nomis/org-visibility-span/less)
+(org-defkey org-mode-map (kbd "C-H-\\")   'nomis/org-visibility-span/more)
+(org-defkey org-mode-map (kbd "C-H-M-'")  'nomis/org-visibility-span/set-min)
+(org-defkey org-mode-map (kbd "C-H-M-\\") 'nomis/org-visibility-span/set-max)
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ;;;; ____ ** Expand/collapse
