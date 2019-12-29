@@ -131,40 +131,40 @@
 (defun -nomis/org-visibility-span/set-level/numeric (n delta?)
   (let* ((prev-command-was-not-visibility-span?
           (not (member (nomis/org/last-command)
-                       -nomis/org-visibility-span/commands))))
-    (let* ((prev-action-index -nomis/org-visibility-span/prev-action-index)
-           (action-index (cond
-                          ((not delta?)
-                           n)
-                          (prev-command-was-not-visibility-span?
-                           (-nomis/org-visibility-span/initial-incremental-value))
-                          (t
-                           (+ n prev-action-index))))
-           (ok? (if delta?
-                    (<= 0
-                        action-index
-                        -nomis/org-visibility-span/max-value)
-                  (or prev-command-was-not-visibility-span?
-                      (not (= n prev-action-index)))))
-           (new-pos-or-nil
-            (if ok?
-                (progn
-                  (setq -nomis/org-visibility-span/prev-action-index
-                        action-index)
-                  action-index)
-              nil)))
-      (if (null new-pos-or-nil)
-          (let* ((msg (third
-                       (if (if delta? (< n 0) (= n 0))
-                           -nomis/org-visibility-span/min-detail
-                         -nomis/org-visibility-span/max-detail))))
-            (norg/popup/error-message "%s" msg))
-        (cl-multiple-value-bind (detail show? msg)
-            (nth new-pos-or-nil
-                 -nomis/org-visibility-span/detail-values)
-          (-nomis/org-visibility-span/set-level/rawish detail)
-          (if show? (norg/w/show-entry) (norg/w/hide-entry))
-          (norg/popup/message "%s" msg))))))
+                       -nomis/org-visibility-span/commands)))
+         (prev-action-index -nomis/org-visibility-span/prev-action-index)
+         (action-index (cond
+                        ((not delta?)
+                         n)
+                        (prev-command-was-not-visibility-span?
+                         (-nomis/org-visibility-span/initial-incremental-value))
+                        (t
+                         (+ n prev-action-index))))
+         (ok? (if delta?
+                  (<= 0
+                      action-index
+                      -nomis/org-visibility-span/max-value)
+                (or prev-command-was-not-visibility-span?
+                    (not (= n prev-action-index)))))
+         (new-pos-or-nil
+          (if ok?
+              (progn
+                (setq -nomis/org-visibility-span/prev-action-index
+                      action-index)
+                action-index)
+            nil)))
+    (if (null new-pos-or-nil)
+        (let* ((msg (third
+                     (if (if delta? (< n 0) (= n 0))
+                         -nomis/org-visibility-span/min-detail
+                       -nomis/org-visibility-span/max-detail))))
+          (norg/popup/error-message "%s" msg))
+      (cl-multiple-value-bind (detail show? msg)
+          (nth new-pos-or-nil
+               -nomis/org-visibility-span/detail-values)
+        (-nomis/org-visibility-span/set-level/rawish detail)
+        (if show? (norg/w/show-entry) (norg/w/hide-entry))
+        (norg/popup/message "%s" msg)))))
 
 (defun nomis/org-visibility-span/more ()
   (interactive)
