@@ -105,21 +105,23 @@
 (defun -nomis/org-visibility-span/max-value ()
   (1- (length -nomis/org-visibility-span/detail-values)))
 
-(defvar -nomis/org-visibility-span/previous-place nil)
+(defconst -nomis/org-visibility-span/commands
+  '(nomis/org-visibility-span/more
+    nomis/org-visibility-span/less
+    nomis/org-visibility-span/set-min
+    nomis/org-visibility-span/set-max))
+
 (defvar -nomis/org-visibility-span/previous-action-index -1)
 
 (defun -nomis/org-visibility-span/set-level/numeric (n delta?)
-  ;; TODO Use the new approach.
-  (let* ((current-place (list (current-buffer)
-                              (point)))
-         (previous-place -nomis/org-visibility-span/previous-place))
-    (setq -nomis/org-visibility-span/previous-place
-          current-place)
+  (let* ((prev-command-was-not-visibility-span?
+          (not (member (nomis/org/last-command)
+                       -nomis/org-visibility-span/commands))))
     (let* ((prev-action-index -nomis/org-visibility-span/previous-action-index)
            (action-index (cond
                           ((not delta?)
                            n)
-                          ((not (equal current-place previous-place))
+                          (prev-command-was-not-visibility-span?
                            (or (position (if (< n 0) '(ancestors t) '(tree t))
                                          -nomis/org-visibility-span/detail-values
                                          :test (lambda (x y)
@@ -135,7 +137,7 @@
                     (<= 0
                         action-index
                         (-nomis/org-visibility-span/max-value))
-                  (or (not (equal current-place previous-place))
+                  (or prev-command-was-not-visibility-span?
                       (not (= n prev-action-index)))))
            (new-pos-or-nil
             (if ok?
