@@ -62,6 +62,16 @@
       last-command))
 
 ;;;; ___________________________________________________________________________
+;;;; ____ * Show point and entry when jumping to grep results
+
+(advice-add 'compilation-next-error-function
+            :after
+            (lambda (&rest _)
+              (when (eql major-mode 'org-mode)
+                (norg/w/show-entry)))
+            '((name . nomis/org-show-entry-when-going-to-grep-results)))
+
+;;;; ___________________________________________________________________________
 ;;;; ____ * Hiding and showing -- cycling
 
 (defun -nomis/org-visibility-span/set-level/rawish (detail)
@@ -73,8 +83,7 @@
                     (norg/goto-root)
                     (norg/collapse))))))
     (collapse)
-    (org-show-set-visibility detail)
-    (norg/w/show-entry)))
+    (org-show-set-visibility detail)))
 
 (defconst -nomis/org-visibility-span/detail-values
   ;;  See `org-show-context-detail`.
@@ -100,7 +109,6 @@
 (defvar -nomis/org-visibility-span/previous-action-index -1)
 
 (defun -nomis/org-visibility-span/set-level/numeric (n delta?)
-  (norg/show-point)
   ;; TODO Use the new approach.
   (let* ((current-place (list (current-buffer)
                               (point)))
