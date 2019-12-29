@@ -94,6 +94,17 @@
     (tree      t   "Tree + body")
     (canonical t   "Canonical + body")))
 
+(defun -nomis/org-visibility-span/initial-incremental-value (n)
+  (or (position (if (< n 0) '(ancestors t) '(tree t))
+                -nomis/org-visibility-span/detail-values
+                :test (lambda (x y)
+                        (equal (-take 2 x)
+                               (-take 2 y))))
+      (progn
+        (message "Didn't find entry in -nomis/org-visibility-span/detail-values")
+        (nomis/msg/grab-user-attention/low)
+        1)))
+
 (defconst -nomis/org-visibility-span/min-detail
   (first -nomis/org-visibility-span/detail-values))
 
@@ -122,15 +133,8 @@
                           ((not delta?)
                            n)
                           (prev-command-was-not-visibility-span?
-                           (or (position (if (< n 0) '(ancestors t) '(tree t))
-                                         -nomis/org-visibility-span/detail-values
-                                         :test (lambda (x y)
-                                                 (equal (-take 2 x)
-                                                        (-take 2 y))))
-                               (progn
-                                 (message "Didn't find entry in -nomis/org-visibility-span/detail-values")
-                                 (nomis/msg/grab-user-attention/low)
-                                 1)))
+                           (-nomis/org-visibility-span/initial-incremental-value
+                            n))
                           (t
                            (+ n prev-action-index))))
            (ok? (if delta?
