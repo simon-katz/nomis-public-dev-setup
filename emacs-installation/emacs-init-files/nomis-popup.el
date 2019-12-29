@@ -61,6 +61,8 @@ If POS is nil, use `point' instead."
       (cl-loop do (forward-char)
                while (and (-nomis/popup/point-invisible?)
                           (< (point) (point-max)))))
+    ;; Go to beginning of line.
+    (beginning-of-line)
     ;; We'll pop up on the previous line if that's on-screen and visible,
     ;; otherwise on the current line.
     ;; We use `previous-line` and `next-line` below. Doc strings say they
