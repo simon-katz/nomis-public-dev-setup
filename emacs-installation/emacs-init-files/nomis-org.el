@@ -94,8 +94,8 @@
     (tree      t   "Tree + body")
     (canonical t   "Canonical + body")))
 
-(defun -nomis/org-visibility-span/initial-incremental-value (n)
-  (or (position (if (< n 0) '(ancestors t) '(tree t))
+(defun -nomis/org-visibility-span/initial-incremental-value ()
+  (or (position '(ancestors t)
                 -nomis/org-visibility-span/detail-values
                 :test (lambda (x y)
                         (equal (-take 2 x)
@@ -133,8 +133,7 @@
                           ((not delta?)
                            n)
                           (prev-command-was-not-visibility-span?
-                           (-nomis/org-visibility-span/initial-incremental-value
-                            n))
+                           (-nomis/org-visibility-span/initial-incremental-value))
                           (t
                            (+ n prev-action-index))))
            (ok? (if delta?
