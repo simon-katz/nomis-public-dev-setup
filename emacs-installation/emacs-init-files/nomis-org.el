@@ -72,7 +72,7 @@
             '((name . nomis/org-show-entry-when-going-to-grep-results)))
 
 ;;;; ___________________________________________________________________________
-;;;; ____ * Hiding and showing -- cycling
+;;;; ____ * Visibility span
 
 (defun -nomis/org-visibility-span/set-level/rawish (detail)
   (cl-flet ((collapse
@@ -94,6 +94,17 @@
     (tree      t   "Tree + body")
     (canonical t   "Canonical + body")))
 
+(defconst -nomis/org-visibility-span/min-detail
+  (first -nomis/org-visibility-span/detail-values))
+
+(defconst -nomis/org-visibility-span/max-detail
+  (-> -nomis/org-visibility-span/detail-values
+      last
+      first))
+
+(defconst -nomis/org-visibility-span/max-value
+  (1- (length -nomis/org-visibility-span/detail-values)))
+
 (defun -nomis/org-visibility-span/initial-incremental-value ()
   (or (position '(ancestors t)
                 -nomis/org-visibility-span/detail-values
@@ -104,17 +115,6 @@
         (message "Didn't find entry in -nomis/org-visibility-span/detail-values")
         (nomis/msg/grab-user-attention/low)
         1)))
-
-(defconst -nomis/org-visibility-span/min-detail
-  (first -nomis/org-visibility-span/detail-values))
-
-(defconst -nomis/org-visibility-span/max-detail
-  (-> -nomis/org-visibility-span/detail-values
-      last
-      first))
-
-(defun -nomis/org-visibility-span/max-value ()
-  (1- (length -nomis/org-visibility-span/detail-values)))
 
 (defconst -nomis/org-visibility-span/commands
   '(nomis/org-visibility-span/more
@@ -139,7 +139,7 @@
            (ok? (if delta?
                     (<= 0
                         action-index
-                        (-nomis/org-visibility-span/max-value))
+                        -nomis/org-visibility-span/max-value)
                   (or prev-command-was-not-visibility-span?
                       (not (= n prev-action-index)))))
            (new-pos-or-nil
@@ -176,7 +176,7 @@
 
 (defun nomis/org-visibility-span/set-max ()
   (interactive)
-  (let* ((v (-nomis/org-visibility-span/max-value)))
+  (let* ((v -nomis/org-visibility-span/max-value))
     (-nomis/org-visibility-span/set-level/numeric v nil)))
 
 ;;;; ___________________________________________________________________________
