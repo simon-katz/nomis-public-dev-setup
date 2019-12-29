@@ -87,12 +87,12 @@
 
 (defconst -nomis/org-visibility-span/detail-values
   ;;  See `org-show-context-detail`.
-  '(minimal
-    local
-    ancestors
-    lineage
-    tree
-    canonical))
+  '((minimal   t   "Minimal + body")
+    (local     nil "Local (includes body)")
+    (ancestors t   "Ancestors + body")
+    (lineage   t   "Lineage + body")
+    (tree      t   "Tree + body")
+    (canonical t   "Canonical + body")))
 
 (defconst -nomis/org-visibility-span/min-detail
   (first -nomis/org-visibility-span/detail-values))
@@ -120,8 +120,15 @@
                           ((not delta?)
                            n)
                           ((not (equal current-place previous-place))
-                           (position (if (< n 0) 'ancestors 'tree)
-                                     -nomis/org-visibility-span/detail-values))
+                           (or (position (if (< n 0) '(ancestors t) '(tree t))
+                                         -nomis/org-visibility-span/detail-values
+                                         :test (lambda (x y)
+                                                 (equal (-take 2 x)
+                                                        (-take 2 y))))
+                               (progn
+                                 (message "Didn't find entry in -nomis/org-visibility-span/detail-values")
+                                 (nomis/msg/grab-user-attention/low)
+                                 1)))
                           (t
                            (+ n prev-action-index))))
            (ok? (if delta?
@@ -138,14 +145,17 @@
                   action-index)
               nil)))
       (if (null new-pos-or-nil)
-          (let* ((msg (if (if delta? (< n 0) (= n 0))
-                          -nomis/org-visibility-span/min-detail
-                        -nomis/org-visibility-span/max-detail)))
+          (let* ((msg (third
+                       (if (if delta? (< n 0) (= n 0))
+                           -nomis/org-visibility-span/min-detail
+                         -nomis/org-visibility-span/max-detail))))
             (norg/popup/error-message "%s" msg))
-        (let* ((detail (nth new-pos-or-nil
-                            -nomis/org-visibility-span/detail-values)))
+        (cl-multiple-value-bind (detail show? msg)
+            (nth new-pos-or-nil
+                 -nomis/org-visibility-span/detail-values)
           (-nomis/org-visibility-span/set-level/rawish detail)
-          (norg/popup/message "%s" detail))))))
+          (when show? (norg/w/show-entry))
+          (norg/popup/message "%s" msg))))))
 
 (defun nomis/org-visibility-span/more ()
   (interactive)
