@@ -87,11 +87,17 @@
 
 (defconst -nomis/org-visibility-span/detail-values
   ;;  See `org-show-context-detail`.
-  '((minimal   t   "Minimal + body")
-    (local     nil "Local (includes body)")
-    (ancestors t   "Ancestors + body")
-    (lineage   t   "Lineage + body")
-    (tree      t   "Tree + body")
+  '((minimal   nil "Minimal")
+    ;; (minimal   t   "Minimal + body")
+    ;; (local     nil "Local - body")
+    ;; (local     t   "Local (includes body)")
+    (ancestors nil "Ancestors")
+    ;; (ancestors t   "Ancestors + body")
+    (lineage   nil "Lineage")
+    ;; (lineage   t   "Lineage + body")
+    (tree      nil "Tree")
+    ;; (tree      t   "Tree + body")
+    (canonical nil "Canonical")
     (canonical t   "Canonical + body")))
 
 (defconst -nomis/org-visibility-span/min-detail
@@ -106,11 +112,9 @@
   (1- (length -nomis/org-visibility-span/detail-values)))
 
 (defun -nomis/org-visibility-span/initial-incremental-value ()
-  (or (position '(ancestors t)
+  (or (position 'ancestors
                 -nomis/org-visibility-span/detail-values
-                :test (lambda (x y)
-                        (equal (-take 2 x)
-                               (-take 2 y))))
+                :key #'first)
       (progn
         (message "Didn't find entry in -nomis/org-visibility-span/detail-values")
         (nomis/msg/grab-user-attention/low)
@@ -122,13 +126,13 @@
     nomis/org-visibility-span/set-min
     nomis/org-visibility-span/set-max))
 
-(defvar -nomis/org-visibility-span/previous-action-index -1)
+(defvar -nomis/org-visibility-span/prev-action-index -1)
 
 (defun -nomis/org-visibility-span/set-level/numeric (n delta?)
   (let* ((prev-command-was-not-visibility-span?
           (not (member (nomis/org/last-command)
                        -nomis/org-visibility-span/commands))))
-    (let* ((prev-action-index -nomis/org-visibility-span/previous-action-index)
+    (let* ((prev-action-index -nomis/org-visibility-span/prev-action-index)
            (action-index (cond
                           ((not delta?)
                            n)
@@ -145,7 +149,7 @@
            (new-pos-or-nil
             (if ok?
                 (progn
-                  (setq -nomis/org-visibility-span/previous-action-index
+                  (setq -nomis/org-visibility-span/prev-action-index
                         action-index)
                   action-index)
               nil)))
@@ -159,7 +163,7 @@
             (nth new-pos-or-nil
                  -nomis/org-visibility-span/detail-values)
           (-nomis/org-visibility-span/set-level/rawish detail)
-          (when show? (norg/w/show-entry))
+          (if show? (norg/w/show-entry) (norg/w/hide-entry))
           (norg/popup/message "%s" msg))))))
 
 (defun nomis/org-visibility-span/more ()

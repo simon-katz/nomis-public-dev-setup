@@ -177,6 +177,7 @@ Return the nesting depth of the headline in the outline."
 (defalias 'norg/w/previous-heading 'outline-previous-heading)
 
 (defalias 'norg/w/show-entry 'outline-show-entry)
+(defalias 'norg/w/hide-entry 'outline-hide-entry)
 (defalias 'norg/w/show-children 'outline-show-children) ; Not `org-show-children`, because that shows first level when n is 0
 (defalias 'norg/w/cycle 'org-cycle)
 (defalias 'norg/w/overview 'org-overview)
