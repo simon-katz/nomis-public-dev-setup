@@ -579,12 +579,21 @@ subheading at this level in the previous parent."
 ;;;; ___________________________________________________________________________
 ;;;; ____ * Info about trees
 
+(defun norg/deepest-level-below ()
+  "The deepest level that exists below the current headline.
+When in a body, \"current headline\" means the current body's parent headline.
+Example: If we are at level 5 and there are 2 further levels below, the result
+is 7."
+  (norg/reduce-entries-from-point 0
+                                  #'norg/level-incl-body/must-be-at-boh
+                                  #'max))
+
 (defun norg/n-levels-below ()
   "The number of levels that exist below the current headline.
-When in a body, \"current headline\" means the current body's parent headline."
-  (- (norg/reduce-entries-from-point 0
-                                     #'norg/level-incl-body/must-be-at-boh
-                                     #'max)
+When in a body, \"current headline\" means the current body's parent headline.
+Example: If we are at level 5 and there are 2 further levels below, the result
+is 2."
+  (- (norg/deepest-level-below)
      (norg/current-level)))
 
 (defun norg/smallest-invisible-level-below-or-infinity ()
@@ -733,7 +742,7 @@ When in a body, \"current headline\" means the current body's parent headline."
   (->> (norg/map-roots #'norg/level-for-incremental-contract)
        (apply #'max)))
 
-(defun norg/smallest-invisible-level-below/or-infinity/buffer ()
+(defun norg/smallest-invisible-level-below-or-infinity/buffer ()
   (->> (norg/map-roots #'norg/smallest-invisible-level-below-or-infinity)
        (apply #'min)))
 
@@ -742,9 +751,18 @@ When in a body, \"current headline\" means the current body's parent headline."
 
 ;;;; ____ ** -norg/set-level-etc
 
-(defun -norg/out-of-range (v maximum)
-  (or (< v 0)
-      (> v maximum)))
+(defun -norg/out-of-range (v maximum setting-kind current-value)
+  (ecase setting-kind
+    (:no-check
+     )
+    (:less
+     (< v 0))
+    (:more
+     (> v maximum))
+    (:setting-0
+     (= current-value 0))
+    (:setting-max
+     (= current-value -norg/plus-infinity))))
 
 (defun -norg/bring-within-range (v maximum)
   (min (max 0 v)
@@ -753,14 +771,16 @@ When in a body, \"current headline\" means the current body's parent headline."
 (defun -norg/set-level-etc (new-value-action-fun
                             new-level/maybe-out-of-range
                             maximum
-                            message-format-string)
+                            message-format-string
+                            setting-kind
+                            current-value)
   (let* ((v (-> (if (eql new-level/maybe-out-of-range
                          :max)
                     ;; The special value of `:max` means that we don't
                     ;; have to compute the value twice.
                     maximum
                   new-level/maybe-out-of-range)))
-         (out-of-range? (-norg/out-of-range v maximum))
+         (out-of-range? (-norg/out-of-range v maximum setting-kind current-value))
          (new-level (-norg/bring-within-range v maximum)))
     (prog1
         (funcall new-value-action-fun new-level)
@@ -771,9 +791,11 @@ When in a body, \"current headline\" means the current body's parent headline."
                new-level
                maximum
                (if out-of-range?
-                   (if (< new-level/maybe-out-of-range 0)
-                       " —- already fully collapsed"
-                     " —- already fully expanded")
+                   (ecase setting-kind
+                     ((:less :setting-0)
+                      " —- already fully collapsed")
+                     ((:more :setting-max)
+                      " —- already fully expanded"))
                  "")))))
 
 ;;;; ____ ** norg/show-children-from-point/xxxx support
@@ -796,11 +818,15 @@ that is already being displayed."
       (norg/collapse))
     (norg/expand n)))
 
-(defun -norg/show-children-from-point/set-level-etc (level)
+(defun -norg/show-children-from-point/set-level-etc (level
+                                                     setting-kind
+                                                     current-value)
   (-norg/set-level-etc #'norg/show-children-from-point*
                        level
                        (norg/n-levels-below)
-                       "[%s / %s]"))
+                       "[%s / %s]"
+                       setting-kind
+                       current-value))
 
 ;;;; ____ ** norg/show-children-from-point/xxxx
 
@@ -809,36 +835,38 @@ that is already being displayed."
   "Show N levels from the current headline, and collapse anything that's
 at a higher level.
 When in a body, \"current headline\" means the current body's parent headline."
-  (-> n
-      -norg/show-children-from-point/set-level-etc))
+  (let* ((v n))
+    (-norg/show-children-from-point/set-level-etc v :no-check :dummy)))
 
 (defun norg/show-children-from-point/set-0 ()
   (interactive)
   "Fully collapse the current headline.
 When in a body, \"current headline\" means the current body's parent headline."
-  (-> 0
-      -norg/show-children-from-point/set-level-etc))
+  (let* ((current-value (1+ (norg/level-for-incremental-contract)))
+         (v 0))
+    (-norg/show-children-from-point/set-level-etc v :setting-0 current-value)))
 
 (defun norg/show-children-from-point/fully-expand ()
   (interactive)
   "Fully expand the current headline.
 When in a body, \"current headline\" means the current body's parent headline."
-  (-> :max
-      -norg/show-children-from-point/set-level-etc))
+  (let* ((current-value (norg/smallest-invisible-level-below-or-infinity))
+         (v :max))
+    (-norg/show-children-from-point/set-level-etc v :setting-max current-value)))
 
 (defun norg/show-children-from-point/incremental/less ()
   (interactive)
   "Incrementally collapse the current headline.
 When in a body, \"current headline\" means the current body's parent headline."
-  (-> (norg/level-for-incremental-contract)
-      -norg/show-children-from-point/set-level-etc))
+  (let* ((v (norg/level-for-incremental-contract)))
+    (-norg/show-children-from-point/set-level-etc v :less :dummy)))
 
 (defun norg/show-children-from-point/incremental/more ()
   (interactive)
   "Incrementally expand the current headline.
 When in a body, \"current headline\" means the current body's parent headline."
-  (-> (norg/smallest-invisible-level-below-or-infinity)
-      -norg/show-children-from-point/set-level-etc))
+  (let* ((v (norg/smallest-invisible-level-below-or-infinity)))
+    (-norg/show-children-from-point/set-level-etc v :more :dummy)))
 
 ;;;; ____ ** norg/show-children-from-root/xxxx support
 
@@ -848,43 +876,49 @@ the parameter."
   (norg/save-excursion-to-root
     (norg/show-children-from-point* n)))
 
-(defun -norg/show-children-from-root/set-level-etc (level)
+(defun -norg/show-children-from-root/set-level-etc (level
+                                                    setting-kind
+                                                    current-value)
   (-norg/set-level-etc #'norg/show-children-from-root*
                        level
                        (norg/n-levels-below/root)
-                       "[%s of %s] from root"))
+                       "[%s of %s] from root"
+                       setting-kind
+                       current-value))
 
 ;;;; ____ ** norg/show-children-from-root/xxxx
 
 (defun norg/show-children-from-root (n)
   (interactive "^p")
-  (-> n
-      -norg/show-children-from-root/set-level-etc))
+  (let* ((v n))
+    (-norg/show-children-from-root/set-level-etc v :no-check :dummy)))
 
 (defun norg/show-children-from-root/set-0 ()
   (interactive)
-  (-> 0
-      -norg/show-children-from-root/set-level-etc))
+  (let* ((current-value (1+ (norg/level-for-incremental-contract/root)))
+         (v 0))
+    (-norg/show-children-from-root/set-level-etc v :setting-0 current-value)))
 
 (defun norg/show-children-from-root/fully-expand ()
   (interactive)
-  (-> :max
-      -norg/show-children-from-root/set-level-etc))
+  (let* ((current-value (norg/smallest-invisible-level-below-or-infinity/root))
+         (v :max))
+    (-norg/show-children-from-root/set-level-etc v :setting-max current-value)))
 
 (defun norg/show-children-from-root/incremental/less ()
   (interactive)
-  (-> (norg/level-for-incremental-contract/root)
-      -norg/show-children-from-root/set-level-etc))
+  (let* ((v (norg/level-for-incremental-contract/root)))
+    (-norg/show-children-from-root/set-level-etc v :less :dummy)))
 
 (defun norg/show-children-from-root/incremental/more ()
   (interactive)
-  (-> (norg/smallest-invisible-level-below-or-infinity/root)
-      -norg/show-children-from-root/set-level-etc))
+  (let* ((v (norg/smallest-invisible-level-below-or-infinity/root)))
+    (-norg/show-children-from-root/set-level-etc v :more :dummy)))
 
 (defun norg/show-children-from-root/to-current-level ()
   (interactive)
-  (-> (1- (norg/current-level t))
-      -norg/show-children-from-root/set-level-etc))
+  (let* ((v (1- (norg/current-level t))))
+    (-norg/show-children-from-root/set-level-etc v :no-check :dummy)))
 
 ;;;; ____ ** norg/show-children-from-all-roots/xxxx support
 
@@ -893,43 +927,49 @@ the parameter."
 the parameter."
   (norg/mapc-roots (lambda () (norg/show-children-from-point* n))))
 
-(defun -norg/show-children-from-all-roots/set-level-etc (level)
+(defun -norg/show-children-from-all-roots/set-level-etc (level
+                                                         setting-kind
+                                                         current-value)
   (-norg/set-level-etc #'norg/show-children-from-all-roots*
                        level
                        (norg/n-levels-below/buffer)
-                       "[%s of %s] from all roots"))
+                       "[%s of %s] from all roots"
+                       setting-kind
+                       current-value))
 
 ;;;; ____ ** norg/show-children-from-all-roots/xxxx
 
 (defun norg/show-children-from-all-roots (n)
   (interactive "^p")
-  (-> n
-      -norg/show-children-from-all-roots/set-level-etc))
+  (let* ((v n))
+    (-norg/show-children-from-all-roots/set-level-etc v :no-check :dummy)))
 
 (defun norg/show-children-from-all-roots/set-0 ()
   (interactive)
-  (-> 0
-      -norg/show-children-from-all-roots/set-level-etc))
+  (let* ((current-value (1+ (norg/level-for-incremental-contract/buffer)))
+         (v 0))
+    (-norg/show-children-from-all-roots/set-level-etc v :setting-0 current-value)))
 
 (defun norg/show-children-from-all-roots/fully-expand ()
   (interactive)
-  (-> :max
-      -norg/show-children-from-all-roots/set-level-etc))
+  (let* ((current-value (norg/smallest-invisible-level-below-or-infinity/buffer))
+         (v :max))
+    (-norg/show-children-from-all-roots/set-level-etc v :setting-max current-value)))
 
 (defun norg/show-children-from-all-roots/incremental/less ()
   (interactive)
-  (->> (norg/level-for-incremental-contract/buffer)
-       -norg/show-children-from-all-roots/set-level-etc))
+  (let* ((v (norg/level-for-incremental-contract/buffer)))
+    (-norg/show-children-from-all-roots/set-level-etc v :less :dummy)))
 
 (defun norg/show-children-from-all-roots/incremental/more ()
   (interactive)
-  (->> (norg/smallest-invisible-level-below/or-infinity/buffer)
-       -norg/show-children-from-all-roots/set-level-etc))
+  (let* ((v (norg/smallest-invisible-level-below-or-infinity/buffer)))
+    (-norg/show-children-from-all-roots/set-level-etc v :more :dummy)))
 
 (defun norg/show-children-from-all-roots/to-current-level ()
   (interactive)
-  (-> (1- (norg/current-level t))
-      -norg/show-children-from-all-roots/set-level-etc))
+  (let* ((v (1- (norg/current-level t))))
+    (-norg/show-children-from-all-roots/set-level-etc v :no-check :dummy)))
 
 ;;;; ___________________________________________________________________________
 ;;;; ____ * End
