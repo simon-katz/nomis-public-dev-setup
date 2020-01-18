@@ -23,6 +23,8 @@
                            "grey85")
                           (:sheringham
                            "grey85")
+                          (:simon-katzs-wefarm-macbook-pro
+                           "grey85")
                           (t ; TODO Set things up for YV machine -- and make "grey85" the default
                            "grey92")))
   ;; (set-my-frame-options "wheat1")

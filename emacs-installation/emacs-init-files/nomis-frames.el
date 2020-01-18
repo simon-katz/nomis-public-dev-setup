@@ -105,6 +105,8 @@
     (:sheringham
      ;; 900 pixels - menu bar
      60)
+    (:simon-katzs-wefarm-macbook-pro
+     60)
     (:probably-windows-at-work-place
      ;; probably at the Windows work place
      61)
