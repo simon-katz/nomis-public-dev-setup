@@ -111,7 +111,7 @@
     (:termux-on-android
      nil)
     (t
-     66)))
+     40)))
 
 (defconst nomis/frame-prefs (append
                              (if (and i-am-nomis/p
