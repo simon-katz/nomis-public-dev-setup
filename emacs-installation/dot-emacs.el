@@ -81,8 +81,10 @@
                        "sheringham.local"
                        "sheringham.home"))
          :sheringham)
-        ((string-equal (system-name) "Simons-MBP.home" ; My Wefarm Mac
-                       )
+        ((member (system-name)
+                 ;; My Wefarm Mac
+                 '("Simons-MBP.home"
+                   "Simons-MacBook-Pro.local"))
          :simon-katzs-wefarm-macbook-pro)
         ((equal system-type 'windows-nt)
          :probably-windows-at-work-place)
