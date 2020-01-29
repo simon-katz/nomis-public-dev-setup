@@ -18,15 +18,7 @@
   ;; (set-my-frame-options "light cyan")
   ;; (set-my-frame-options "gray85")
   ;; (set-my-frame-options "grey90")
-  (set-my-frame-options (cl-case nomis/system-name
-                          (:perryman
-                           "grey85")
-                          (:sheringham
-                           "grey85")
-                          (:simon-katzs-wefarm-macbook-pro
-                           "grey85")
-                          (t ; TODO Set things up for YV machine -- and make "grey85" the default
-                           "grey92")))
+  ;; (set-my-frame-options "BlanchedAlmond")
   ;; (set-my-frame-options "wheat1")
   ;; (set-my-frame-options "honeydew")
   ;; (set-my-frame-options "mint cream")
@@ -38,7 +30,7 @@
   ;; (set-my-frame-options "MistyRose1")
   ;; (set-my-frame-options "lightyellow1")
   ;; (set-my-frame-options "cornsilk2")
-  )
+  (set-my-frame-options "BlanchedAlmond"))
 
 (defun nomis/set-default-frame-background ()
   (interactive)
