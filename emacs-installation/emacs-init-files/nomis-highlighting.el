@@ -1,12 +1,18 @@
 ;;;; Init stuff -- Misc highlighting.
 
 ;;;; ___________________________________________________________________________
+
+(require 'nomis-frame-style)
+
+;;;; ___________________________________________________________________________
 ;;;; Buffers
 
-(defvar *nomis/unselected-buffer-background*
-  (case 2
-    (1 "grey91")
-    (2 "grey88")))
+(defun -nomis/unselected-buffer-background ()
+  (if *nomis/using-alternative-frame-background?*
+      "NavajoWhite"
+   (case 2
+     (1 "grey91")
+     (2 "grey88"))))
 
 (defun nomis/grey-out-unselected-buffers ()
   ;; Copied from
@@ -16,7 +22,7 @@
                   (unless (eq w (selected-window))
                     (with-current-buffer (window-buffer w)
                       (buffer-face-set
-                       `(:background ,*nomis/unselected-buffer-background*)))))
+                       `(:background ,(-nomis/unselected-buffer-background))))))
                 t
                 t)
   (buffer-face-set 'default))
