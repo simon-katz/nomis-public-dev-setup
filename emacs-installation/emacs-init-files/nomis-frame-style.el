@@ -1,5 +1,9 @@
 ;;;; Init stuff -- Frame style.
 
+;;;; ___________________________________________________________________________
+;;;; ---- nomis/set-alternative-frame-background ----
+;;;; ---- nomis/set-default-frame-background ----
+
 (defun set-my-frame-options (my-bgcolor)
   "Set frame color of all current and future frames.
    Useful to distinguish between two sessions."
@@ -43,6 +47,34 @@
   (set-my-frame-options "#f5f5f5")
   (when (functionp 'nomis/grey-out-unselected-buffers)
     (nomis/grey-out-unselected-buffers)))
+
+;;;; ___________________________________________________________________________
+;;;; ---- Use a different background for unselected buffers ----
+
+;;;; I would like to do this for unselected windows (rather than buffers), but
+;;;; I don't think there's a way to do that.
+
+(defun -nomis/unselected-buffer-background ()
+  (if *nomis/using-alternative-frame-background?*
+      "NavajoWhite"
+   (case 2
+     (1 "grey91")
+     (2 "grey88"))))
+
+(defun nomis/grey-out-unselected-buffers ()
+  ;; Copied from
+  ;; https://stackoverflow.com/questions/33195122/highlight-current-active-window
+  "Add a grey background to all buffers other than the current buffer."
+  (walk-windows (lambda (w)
+                  (unless (eq w (selected-window))
+                    (with-current-buffer (window-buffer w)
+                      (buffer-face-set
+                       `(:background ,(-nomis/unselected-buffer-background))))))
+                t
+                t)
+  (buffer-face-set 'default))
+
+(add-hook 'buffer-list-update-hook 'nomis/grey-out-unselected-buffers)
 
 ;;;; ___________________________________________________________________________
 
