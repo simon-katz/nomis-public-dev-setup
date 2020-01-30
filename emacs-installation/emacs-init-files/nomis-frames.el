@@ -199,6 +199,10 @@
     (interactive)
     (nomis/set-frame-height* 29))
 
+  (defun nomis/h60 ()
+    (interactive)
+    (nomis/set-frame-height* 60))
+
   (defun nomis/h62 ()
     (interactive)
     (nomis/set-frame-height* 62)))
