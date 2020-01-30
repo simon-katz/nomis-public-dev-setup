@@ -76,8 +76,8 @@
 ;;;; Emacs menus and even, in some cases (Lion and 24.2 IIRC), cycling frames.
 
 (defun other-frame-backwards ()
-    (interactive)
-    (other-frame -1))
+  (interactive)
+  (other-frame -1))
 
 (define-key global-map (kbd "M-`") 'other-frame)
 (define-key global-map (kbd "M-~") 'other-frame-backwards)
@@ -143,11 +143,11 @@
     (eql (string-match-p "^[1-9][0-9]\\{0,2\\}$"
                          string)
          0))
-  
+
   (assert (equal (mapcar 'reasonable-string-for-frame-width-or-height-p
                          '("0" "1" "12" "123" "1234" "xyz12"))
                  '(nil t t t nil nil)))
-  
+
   (defun read-reasonable-frame-width-or-height (kind current-value)
     (let* ((string (read-from-minibuffer
                     (format "Enter new frame %s (currently %s): "
@@ -156,15 +156,15 @@
       (if (reasonable-string-for-frame-width-or-height-p string)
           (string-to-number string)
         (error "Silly %s: %s" kind string))))
-    
+
   (defun nomis/set-frame-width* (width)
     (set-frame-width (selected-frame) width))
-  
+
   (defun nomis/set-frame-width ()
     (interactive "")
     (nomis/set-frame-width*
      (read-reasonable-frame-width-or-height "width" (frame-width))))
-   
+
   (defun nomis/w-single ()
     (interactive)
     (nomis/set-frame-width* nomis/single-window-frame-width))
@@ -183,12 +183,12 @@
 
   (defun nomis/set-frame-height* (height)
     (set-frame-height (selected-frame) height))
-  
+
   (defun nomis/set-frame-height ()
     (interactive "")
     (nomis/set-frame-height*
      (read-reasonable-frame-width-or-height "height" (frame-height))))
-  
+
   (defun nomis/maximize-frame-vertically-assuming-toolbar-of-size-arg (arg)
     (interactive "P")
     (maximize-frame-vertically)
