@@ -195,13 +195,13 @@
     (redisplay)
     (nomis/set-frame-height* (- (frame-height) (or arg 2))))
 
-  (defun nomis/h62 ()
-    (interactive)
-    (nomis/set-frame-height* 62))
-
   (defun nomis/h29 ()
     (interactive)
-    (nomis/set-frame-height* 29)))
+    (nomis/set-frame-height* 29))
+
+  (defun nomis/h62 ()
+    (interactive)
+    (nomis/set-frame-height* 62)))
 
 ;;;; ___________________________________________________________________________
 ;;;; Fix for broken `move-frame-to-screen-bottom`
