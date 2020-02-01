@@ -378,8 +378,8 @@ With prefix argument select `nomis/dirtree/buffer'"
 (defun nomis/dirtree/fix-grey-out-unselected-buffers ()
   ;; A hack, because my `buffer-list-update-hook` hook appears not to
   ;; be happening sometimes.
-  (when (functionp 'nomis/grey-out-unselected-buffers)
-    (nomis/grey-out-unselected-buffers)))
+  (when (functionp 'nomis/buffer-backgrounds/grey-out-unselected)
+    (nomis/buffer-backgrounds/grey-out-unselected)))
 
 ;;;; ___________________________________________________________________________
 ;;;; Misc utilities
