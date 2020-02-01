@@ -1,5 +1,35 @@
 ;;;; Init stuff -- Frame style.
 
+;;;; TODO Don't repeatedly append to `default-frame-alist`.
+;;;; TODO Support multiple pairs of buffer colours.
+
+;;;; ___________________________________________________________________________
+;;;; ---- Frame and buffer colours ----
+
+;;;; (set-my-frame-options "light cyan")
+;;;; (set-my-frame-options "gray85")
+;;;; (set-my-frame-options "grey90")
+;;;; (set-my-frame-options "BlanchedAlmond")
+;;;; (set-my-frame-options "wheat1")
+;;;; (set-my-frame-options "honeydew")
+;;;; (set-my-frame-options "mint cream")
+;;;; (set-my-frame-options "white smoke")
+;;;; (set-my-frame-options "light blue")
+;;;; (set-my-frame-options "powder blue")
+;;;; (set-my-frame-options "pale turquoise")
+;;;; (set-my-frame-options "LemonChiffon1")
+;;;; (set-my-frame-options "MistyRose1")
+;;;; (set-my-frame-options "lightyellow1")
+;;;; (set-my-frame-options "cornsilk2")
+
+(defconst nomis/buffer-background/default/selected "#f5f5f5")
+(defconst nomis/buffer-background/default/unselected "grey88")
+
+(defconst nomis/buffer-background/alternative/selected "BlanchedAlmond")
+(defconst nomis/buffer-background/alternative/unselected "NavajoWhite")
+
+(defvar *nomis/using-alternative-frame-background?* nil)
+
 ;;;; ___________________________________________________________________________
 ;;;; ---- nomis/set-alternative-frame-background ----
 ;;;; ---- nomis/set-default-frame-background ----
@@ -17,34 +47,17 @@
           (frame-list))
     (select-frame current-frame t)))
 
-(defvar *nomis/using-alternative-frame-background?* nil)
-
 (defun nomis/set-alternative-frame-background ()
   (interactive)
-  ;; (set-my-frame-options "light cyan")
-  ;; (set-my-frame-options "gray85")
-  ;; (set-my-frame-options "grey90")
-  ;; (set-my-frame-options "BlanchedAlmond")
-  ;; (set-my-frame-options "wheat1")
-  ;; (set-my-frame-options "honeydew")
-  ;; (set-my-frame-options "mint cream")
-  ;; (set-my-frame-options "white smoke")
-  ;; (set-my-frame-options "light blue")
-  ;; (set-my-frame-options "powder blue")
-  ;; (set-my-frame-options "pale turquoise")
-  ;; (set-my-frame-options "LemonChiffon1")
-  ;; (set-my-frame-options "MistyRose1")
-  ;; (set-my-frame-options "lightyellow1")
-  ;; (set-my-frame-options "cornsilk2")
   (setq *nomis/using-alternative-frame-background?* t)
-  (set-my-frame-options "BlanchedAlmond")
+  (set-my-frame-options nomis/buffer-background/alternative/selected)
   (when (functionp 'nomis/grey-out-unselected-buffers)
     (nomis/grey-out-unselected-buffers)))
 
 (defun nomis/set-default-frame-background ()
   (interactive)
   (setq *nomis/using-alternative-frame-background?* nil)
-  (set-my-frame-options "#f5f5f5")
+  (set-my-frame-options nomis/buffer-background/default/selected)
   (when (functionp 'nomis/grey-out-unselected-buffers)
     (nomis/grey-out-unselected-buffers)))
 
@@ -56,10 +69,8 @@
 
 (defun -nomis/unselected-buffer-background ()
   (if *nomis/using-alternative-frame-background?*
-      "NavajoWhite"
-   (case 2
-     (1 "grey91")
-     (2 "grey88"))))
+      nomis/buffer-background/alternative/unselected
+   nomis/buffer-background/default/unselected))
 
 (defun nomis/grey-out-unselected-buffers ()
   ;; Copied from
