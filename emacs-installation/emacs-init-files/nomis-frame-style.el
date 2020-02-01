@@ -1,10 +1,9 @@
 ;;;; Init stuff -- Frame style.
 
 ;;;; TODO Don't repeatedly append to `default-frame-alist`.
-;;;; TODO Support multiple pairs of buffer colours.
 
 ;;;; ___________________________________________________________________________
-;;;; ---- Frame and buffer colours ----
+;;;; ---- Buffer colours ----
 
 ;;;; (set-my-frame-options "light cyan")
 ;;;; (set-my-frame-options "gray85")
@@ -22,17 +21,29 @@
 ;;;; (set-my-frame-options "lightyellow1")
 ;;;; (set-my-frame-options "cornsilk2")
 
-(defconst nomis/buffer-background/default/selected "#f5f5f5")
-(defconst nomis/buffer-background/default/unselected "grey88")
+(defconst -nomis/buffer-backgrounds/colour-pairs
+  '(("#f5f5f5"        "grey88")
+    ("BlanchedAlmond" "NavajoWhite")
+    ("MistyRose"      "MistyRose2"))
+  "A list of 2-tuples. At any given time, one of the 2-tuples is used for
+the current set of buffer colours. The first element of each 2-tuple is the
+colour for selected buffers and the second element is the colour for
+unselected buffers.")
 
-(defconst nomis/buffer-background/alternative/selected "BlanchedAlmond")
-(defconst nomis/buffer-background/alternative/unselected "NavajoWhite")
+(defvar -nomis/buffer-backgrounds/current-index 0)
 
-(defvar *nomis/using-alternative-frame-background?* nil)
+(defun -nomis/buffer-backgrounds/next-index ()
+  (mod (1+ -nomis/buffer-backgrounds/current-index)
+       (length -nomis/buffer-backgrounds/colour-pairs)))
+
+(defun -nomis/buffer-backgrounds/current-pair ()
+  (nth -nomis/buffer-backgrounds/current-index
+       -nomis/buffer-backgrounds/colour-pairs))
 
 ;;;; ___________________________________________________________________________
-;;;; ---- nomis/set-alternative-frame-background ----
-;;;; ---- nomis/set-default-frame-background ----
+;;;; ---- nomis/buffer-backgrounds/cycle ----
+;;;; ---- nomis/buffer-backgrounds/set-alternative ----
+;;;; ---- nomis/buffer-backgrounds/set-default ----
 
 (defun set-my-frame-options (my-bgcolor)
   "Set frame color of all current and future frames.
@@ -47,19 +58,22 @@
           (frame-list))
     (select-frame current-frame t)))
 
-(defun nomis/set-alternative-frame-background ()
-  (interactive)
-  (setq *nomis/using-alternative-frame-background?* t)
-  (set-my-frame-options nomis/buffer-background/alternative/selected)
-  (when (functionp 'nomis/grey-out-unselected-buffers)
-    (nomis/grey-out-unselected-buffers)))
+(defun -nomis/buffer-backgrounds/set (n)
+  (setq -nomis/buffer-backgrounds/current-index n)
+  (set-my-frame-options (first (-nomis/buffer-backgrounds/current-pair)))
+  (nomis/grey-out-unselected-buffers))
 
-(defun nomis/set-default-frame-background ()
+(defun nomis/buffer-backgrounds/cycle ()
   (interactive)
-  (setq *nomis/using-alternative-frame-background?* nil)
-  (set-my-frame-options nomis/buffer-background/default/selected)
-  (when (functionp 'nomis/grey-out-unselected-buffers)
-    (nomis/grey-out-unselected-buffers)))
+  (-nomis/buffer-backgrounds/set (-nomis/buffer-backgrounds/next-index)))
+
+(defun nomis/buffer-backgrounds/set-alternative ()
+  (interactive)
+  (-nomis/buffer-backgrounds/set 1))
+
+(defun nomis/buffer-backgrounds/set-default ()
+  (interactive)
+  (-nomis/buffer-backgrounds/set 0))
 
 ;;;; ___________________________________________________________________________
 ;;;; ---- Use a different background for unselected buffers ----
@@ -68,9 +82,7 @@
 ;;;; I don't think there's a way to do that.
 
 (defun -nomis/unselected-buffer-background ()
-  (if *nomis/using-alternative-frame-background?*
-      nomis/buffer-background/alternative/unselected
-   nomis/buffer-background/default/unselected))
+  (second (-nomis/buffer-backgrounds/current-pair)))
 
 (defun nomis/grey-out-unselected-buffers ()
   ;; Copied from
