@@ -1,5 +1,7 @@
 ;;;; Init stuff -- Paredit.
 
+(require 's)
+
 (eval-after-load 'paredit
 
   ;; See:
@@ -8,23 +10,23 @@
 
   '(progn
 
-     ;; Stop C-M-f and C-M-b jumping up a level when they should
-     ;; (IMHO) beep, by using forward-sexp and backward-sexp rather
-     ;; than the (IMHO) broken paredit versions.
-     (define-key paredit-mode-map (kbd "C-M-f") 'forward-sexp)
-     (define-key paredit-mode-map (kbd "C-M-b") 'backward-sexp)
+     ;; When just before a close-parenthesis, `paredit-forward` (C-M-f) jumps up
+     ;; a level. When just after a an open-parenthesis, `paredit-backward`
+     ;; (C-M-b) behaves similarly. I don't like that. IMO they should beep
+     ;; instead. Fortunately `forward-sexp` and `backward-sexp` do The Right
+     ;; Thing, so give them key bindings.
+     (define-key paredit-mode-map (kbd "C-M-]") 'forward-sexp)
+     (define-key paredit-mode-map (kbd "C-M-[") 'backward-sexp)
 
-     ;; Easier-to-use key bindings for forward-sexp and backward-sexp.
-     (define-key paredit-mode-map (kbd "M-]") 'forward-sexp)
-     (define-key paredit-mode-map (kbd "M-[") 'backward-sexp)
-     (define-key paredit-mode-map (kbd "M-S-<right>") 'forward-sexp)
-     (define-key paredit-mode-map (kbd "M-S-<left>") 'backward-sexp)
-
-     ;; On Mac, I can't use C-M-d because it's highjacked at a low level
-     ;; by the system for dictionary lookup.
-     ;; Use M-d instead.  (The default is paredit-foward-kill-word, which
-     ;; I can do without.)
-     (when (equal system-type 'darwin)
+     ;; On Mac before 10.15.1 Catalina (I think), we can't use C-M-d because
+     ;; it's highjacked at a low level by the system for dictionary lookup. So
+     ;; use M-d instead. (The default is paredit-foward-kill-word, which we can
+     ;; do without.)
+     (when (and (equal system-type 'darwin)
+                (ignore-errors (version< (-> "sw_vers -productVersion"
+                                             shell-command-to-string
+                                             s-trim)
+                                         "10.15.1")))
        (define-key paredit-mode-map (kbd "M-d")
          'paredit-forward-down))
 
