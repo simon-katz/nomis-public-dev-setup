@@ -34,6 +34,7 @@
           "clojure-for-the-brave-and-true/emacs-for-clojure-book1"
           "cljs-runtime"
           ".clj-kondo"
+          "log"
           ;; Instead of adding stuff here, consider defining
           ;; `nomis/rgrep-local-ignored-directories` in a .dir-locals file.
           ))
