@@ -34,9 +34,11 @@
         org-shifttab
         org-yank
         paredit-backslash
+        paredit-backward
         paredit-backward-up
         paredit-close-round
         paredit-doublequote
+        paredit-forward
         paredit-forward-barf-sexp
         paredit-forward-delete
         paredit-forward-down
