@@ -10,6 +10,15 @@
 
   '(progn
 
+     ;; Temporary: Turn off the keybindings for `paredit-forward` and
+     ;; `paredit-backward` while you are training yourself not to use them.
+     (require 'nomis-popup nil t)
+     (defun nomis/do-not-do-paredit-forward-or-paredit-backward (arg)
+       (interactive "p")
+       (nomis/popup/error-message "No! You are training yourself not to use `paredit-forward` and `paredit-backward`! Use C-M-] and C-M-[ instead."))
+     (define-key paredit-mode-map (kbd "C-M-f") 'nomis/do-not-do-paredit-forward-or-paredit-backward)
+     (define-key paredit-mode-map (kbd "C-M-b") 'nomis/do-not-do-paredit-forward-or-paredit-backward)
+
      ;; When just before a close-parenthesis, `paredit-forward` (C-M-f) jumps up
      ;; a level. When just after a an open-parenthesis, `paredit-backward`
      ;; (C-M-b) behaves similarly. I don't like that. IMO they should beep
