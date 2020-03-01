@@ -8,7 +8,7 @@
   ;; - http://www.emacswiki.org/emacs/PareditCheatsheet
   ;; - http://mumble.net/~campbell/emacs/paredit.html
 
-  '(progn
+  '(let* ((disable-cmf-cmb? nil))
 
      ;; Temporary: Turn off the keybindings for `paredit-forward` and
      ;; `paredit-backward` while you are training yourself not to use them.
@@ -16,11 +16,19 @@
      (defun nomis/do-not-do-paredit-forward-or-paredit-backward (arg)
        (interactive "p")
        (nomis/popup/error-message "No! You are training yourself not to use `paredit-forward` and `paredit-backward`! Use C-M-] and C-M-[ instead."))
-     (define-key paredit-mode-map (kbd "C-M-f") 'nomis/do-not-do-paredit-forward-or-paredit-backward)
-     (define-key paredit-mode-map (kbd "C-M-b") 'nomis/do-not-do-paredit-forward-or-paredit-backward)
+     (define-key paredit-mode-map
+       (kbd "C-M-f")
+       (if disable-cmf-cmb?
+           'nomis/do-not-do-paredit-forward-or-paredit-backward
+         'forward-sexp))
+     (define-key paredit-mode-map
+       (kbd "C-M-b")
+       (if disable-cmf-cmb?
+           'nomis/do-not-do-paredit-forward-or-paredit-backward
+         'backward-sexp))
 
      ;; When just before a close-parenthesis, `paredit-forward` (C-M-f) jumps up
-     ;; a level. When just after a an open-parenthesis, `paredit-backward`
+     ;; a level. When just after an open-parenthesis, `paredit-backward`
      ;; (C-M-b) behaves similarly. I don't like that. IMO they should beep
      ;; instead. Fortunately `forward-sexp` and `backward-sexp` do The Right
      ;; Thing, so give them key bindings.
