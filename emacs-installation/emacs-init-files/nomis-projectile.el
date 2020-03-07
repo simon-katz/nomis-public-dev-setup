@@ -1,4 +1,4 @@
-;;;; Init stuff -- projectile
+;;;; Init stuff -- projectile -*- lexical-binding: t -*-
 
 (projectile-global-mode)
 
@@ -57,6 +57,56 @@
                     'lein-test
                   res)))
             '((name . nomis/hack-projectile-midje-projects)))
+
+;;;; ___________________________________________________________________________
+
+(defvar nomis/toggle-between-impl-and-test/approach :normal)
+
+(defvar nomis/toggle-between-impl-and-test/project-name-as-dir nil)
+
+(advice-add
+ 'projectile-toggle-between-implementation-and-test
+ :around
+ (lambda (orig-fun &rest args)
+   (ecase nomis/toggle-between-impl-and-test/approach
+     (:normal
+      (apply orig-fun args))
+     (:wefarm-001
+      (let* ((project-name-as-dir
+              nomis/toggle-between-impl-and-test/project-name-as-dir)
+             (src-path-section (s-concat "/" project-name-as-dir "/"))
+             (test-path-section (s-concat "/" project-name-as-dir "/test/"))
+             (file-name (buffer-file-name))
+             (src-file? (cl-search "/src/" file-name))
+             (other-file (if src-file?
+                             (destructuring-bind (prefix suffix)
+                                 (s-split-up-to "/src/"
+                                                file-name
+                                                1)
+                               (s-concat prefix
+                                         "/test/"
+                                         (->> suffix
+                                              (s-replace src-path-section
+                                                         test-path-section))))
+                           (destructuring-bind (prefix suffix)
+                               (s-split-up-to "/test/"
+                                              file-name
+                                              1)
+                             (s-concat prefix
+                                       "/src/"
+                                       (->> suffix
+                                            (s-replace test-path-section
+                                                       src-path-section)))))))
+        (message
+         "nomis projectile-toggle-between-implementation-and-test other-file = %s"
+         other-file)
+        (if (or projectile-create-missing-test-files
+                (file-exists-p other-file))
+            (find-file other-file)
+          (progn
+            (message "No such file: %s" other-file)
+            (nomis/msg/beep)))))))
+ '((name . nomis/hack-for-non-standard-test-file-naming)))
 
 ;;;; ___________________________________________________________________________
 
