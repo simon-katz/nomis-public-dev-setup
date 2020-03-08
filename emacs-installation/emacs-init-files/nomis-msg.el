@@ -132,24 +132,24 @@
 
 ;;;; ___________________________________________________________________________
 
-(defvar nomis/msg/-nail-warning/check-frequency-secs 10)
-(defvar nomis/msg/-nail-warning/n-idle-secs-for-warning 60)
-(defvar nomis/msg/-nail-warning/min-secs-between-warnings 60)
+;; (defvar nomis/msg/-nail-warning/check-frequency-secs 10)
+;; (defvar nomis/msg/-nail-warning/n-idle-secs-for-warning 60)
+;; (defvar nomis/msg/-nail-warning/min-secs-between-warnings 60)
 
-(nomis/def-timer-with-relative-repeats
-    nomis/msg/nail-warnings-timer
-    0
-  (let ((idle-time (current-idle-time)))
-    ;; (message "idle-time = %s" idle-time)
-    (if (and idle-time
-             (>= (second idle-time)
-                 nomis/msg/-nail-warning/n-idle-secs-for-warning))
-        (progn
-          (nomis/msg/grab-user-attention/low)
-          (unless (active-minibuffer-window)
-            (message "Don't pick or bite your nails!"))
-          `(:repeat ,nomis/msg/-nail-warning/min-secs-between-warnings))
-      `(:repeat ,nomis/msg/-nail-warning/check-frequency-secs))))
+;; (nomis/def-timer-with-relative-repeats
+;;     nomis/msg/nail-warnings-timer
+;;     0
+;;   (let ((idle-time (current-idle-time)))
+;;     ;; (message "idle-time = %s" idle-time)
+;;     (if (and idle-time
+;;              (>= (second idle-time)
+;;                  nomis/msg/-nail-warning/n-idle-secs-for-warning))
+;;         (progn
+;;           (nomis/msg/grab-user-attention/low)
+;;           (unless (active-minibuffer-window)
+;;             (message "Don't pick or bite your nails!"))
+;;           `(:repeat ,nomis/msg/-nail-warning/min-secs-between-warnings))
+;;       `(:repeat ,nomis/msg/-nail-warning/check-frequency-secs))))
 
 ;;;; ___________________________________________________________________________
 
