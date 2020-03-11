@@ -35,17 +35,10 @@
         'nomis/wwo/beyond-margin-face
         2
         ;; Copied from `whitespace-color-on`, with changes
-        (let ((line-column (if (eq nomis/system-name
-                                   :simon-katzs-wefarm-macbook-pro)
-                               ;; TODO Only want to do this when in the `wefarm`
-                               ;;      directory -- so
-                               ;;      `nomis/wwo/beyond-margin-wwo-spec` and
-                               ;;      other things will have to be functions.
-                               100
-                             (or (ignore-errors nomis/right-margin-column)
-                                 (ignore-errors whitespace-line-column)
-                                 (ignore-errors fill-column)
-                                 80))))
+        (let ((line-column (or (ignore-errors nomis/right-margin-column)
+                               (ignore-errors whitespace-line-column)
+                               (ignore-errors fill-column)
+                               80)))
           (format
            "^\\([^\t\n]\\{%s\\}\\|[^\t\n]\\{0,%s\\}\t\\)\\{%d\\}%s\\(.+\\)$"
            tab-width
