@@ -36,7 +36,7 @@
 ;;;; ___________________________________________________________________________
 ;;;; ____ * General
 
-(setq org-directory "~/org")
+(setq org-directory (file-truename "~/org"))
 
 (setq org-log-done nil)
 
