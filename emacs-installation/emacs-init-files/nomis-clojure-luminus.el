@@ -2,12 +2,20 @@
 
 ;;;; ___________________________________________________________________________
 
-(defvar nomis/project-name-as-dir-for-annnoying-luminus nil)
+(require 's)
 
-(defun nomis/project-type ()
-  (if nomis/project-name-as-dir-for-annnoying-luminus
-      :annnoying-luminus
-    :normal))
+;;;; ___________________________________________________________________________
+
+(defun nomis/clojure-luminus/vc-root-dir () ; Copy of `nomis/dirtree/vc-root-dir`
+  (let* ((filename (ignore-errors (or (vc-root-dir)
+                                      (magit-toplevel)))))
+    (when filename
+      (expand-file-name filename))))
+
+(defun nomis/this-is-a-luminus-project? ()
+  (when-let ((root-dir (nomis/clojure-luminus/vc-root-dir)))
+    (file-exists-p (s-concat root-dir
+                             ".nomis--this-is-a-luminus-project"))))
 
 (defun nomis/cider-test-infer-test-ns/for-annoying-luminus (ns-name)
   (let* ((path (s-split "\\." ns-name))
@@ -17,53 +25,49 @@
     (s-join "." test-path)))
 
 (defun nomis/cider-test-default-test-ns (ns-name)
-  (let* ((f (ecase (nomis/project-type)
-              (:normal
-               #'cider-test-default-test-ns-fn)
-              (:annnoying-luminus
-               #'nomis/cider-test-infer-test-ns/for-annoying-luminus))))
+  (let* ((f (if (nomis/this-is-a-luminus-project?)
+                #'nomis/cider-test-infer-test-ns/for-annoying-luminus
+              #'cider-test-default-test-ns-fn)))
     (funcall f ns-name)))
 
 (setq cider-test-infer-test-ns
       'nomis/cider-test-default-test-ns)
 
-(advice-add
- 'projectile-toggle-between-implementation-and-test
- :around
- (lambda (orig-fun &rest args)
-   (ecase (nomis/project-type)
-     (:normal
-      (apply orig-fun args))
-     (:annnoying-luminus
-      (let* ((project-name-as-dir
-              nomis/project-name-as-dir-for-annnoying-luminus)
-             (src-path-section  (s-concat "/" project-name-as-dir "/"))
-             (test-path-section (s-concat "/" project-name-as-dir "/test/"))
-             (file-name (buffer-file-name))
-             (src-file? (cl-search "/src/" file-name))
-             (other-file (cond
-                          (src-file?
-                           (destructuring-bind (prefix suffix)
-                               (s-split-up-to "/src/"
-                                              file-name
-                                              1)
-                             (s-concat prefix
-                                       "/test/"
-                                       (->> suffix
-                                            (s-replace src-path-section
-                                                       test-path-section)))))
-                          ((s-contains? "/test/" file-name)
-                           (destructuring-bind (prefix suffix)
-                               (s-split-up-to "/test/"
-                                              file-name
-                                              1)
-                             (s-concat prefix
-                                       "/src/"
-                                       (->> suffix
-                                            (s-replace test-path-section
-                                                       src-path-section)))))
-                          (t
-                           nil))))
+(defun nomis/luminus/toggle-between-implementation-and-test ()
+  (let* ((file-name (buffer-file-name))
+         (root-dir (let* ((root-dir-v1 (nomis/clojure-luminus/vc-root-dir))
+                          (root-dir-v2 (file-truename root-dir-v1)))
+                     (cond ((s-starts-with? root-dir-v1 file-name)
+                            root-dir-v1)
+                           ((s-starts-with? root-dir-v2 file-name)
+                            root-dir-v2)
+                           (t
+                            (error "Could not find project root dir for %s"
+                                   file-name)))))
+         (file-name-rel-to-root (s-replace root-dir "" file-name))
+         (src-file?  (s-starts-with? "src/"  file-name-rel-to-root))
+         (test-file? (s-starts-with? "test/" file-name-rel-to-root)))
+    (if (not (or src-file? test-file?))
+        (error "This file does not appear to be a src file or a test file")
+      (let* ((file-name-starting-at-project-name
+              (s-replace (if src-file? "src/clj/" "test/clj/")
+                         ""
+                         file-name-rel-to-root))
+             (project-name-as-dir
+              (first (s-split-up-to "/"
+                                    file-name-starting-at-project-name
+                                    1)))
+             (src-path-prefix  (s-concat root-dir
+                                         "src/clj/"
+                                         project-name-as-dir
+                                         "/"))
+             (test-path-prefix (s-concat root-dir
+                                         "test/clj/"
+                                         project-name-as-dir
+                                         "/test/"))
+             (other-file (s-replace (if src-file? src-path-prefix test-path-prefix)
+                                    (if src-file? test-path-prefix src-path-prefix)
+                                    file-name)))
         (message
          "nomis projectile-toggle-between-implementation-and-test other-file = %s"
          other-file)
@@ -74,6 +78,14 @@
           (progn
             (message "No such file: %s" other-file)
             (nomis/msg/beep)))))))
+
+(advice-add
+ 'projectile-toggle-between-implementation-and-test
+ :around
+ (lambda (orig-fun &rest args)
+   (if (nomis/this-is-a-luminus-project?)
+       (nomis/luminus/toggle-between-implementation-and-test)
+     (apply orig-fun args)))
  '((name . nomis/hack-for-non-standard-test-file-naming)))
 
 ;;;; ___________________________________________________________________________
