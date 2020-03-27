@@ -15,7 +15,7 @@
 (defun nomis/this-is-a-luminus-project? ()
   (when-let ((root-dir (nomis/clojure-luminus/vc-root-dir)))
     (file-exists-p (s-concat root-dir
-                             ".nomis--this-is-a-luminus-project"))))
+                             ".nomis--luminus-test-file-naming-conventions"))))
 
 (defun nomis/cider-test-infer-test-ns/for-annoying-luminus (ns-name)
   (let* ((path (s-split "\\." ns-name))
