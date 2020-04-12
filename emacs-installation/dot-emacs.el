@@ -206,6 +206,7 @@
 (require 'nomis-keyboard-macros)
 (require 'nomis-searching)
 (require 'nomis-searching-filters)
+(require 'nomis-loccur)
 (require 'nomis-ibuffer)
 (require 'nomis-ace-jump-mode)
 
