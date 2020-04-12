@@ -68,7 +68,8 @@
                       dumb-jump
                       dash-functional
                       org-bullets
-                      flycheck-clj-kondo))
+                      flycheck-clj-kondo
+                      auto-dim-other-buffers))
 
 (dolist (p my-packages)
   (when (not (package-installed-p p))

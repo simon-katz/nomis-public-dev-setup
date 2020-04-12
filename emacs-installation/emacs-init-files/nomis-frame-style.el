@@ -65,10 +65,11 @@ unselected buffers.")
     (select-frame current-frame t)))
 
 (defun -nomis/buffer-backgrounds/set (n)
+  (nomis/buffer-backgrounds/remove-all-dimming)
   (setq -nomis/buffer-backgrounds/current-index n)
   (-> (-nomis/buffer-backgrounds/current/selected-background)
       -nomis/buffer-backgrounds/set-frame-options)
-  (nomis/buffer-backgrounds/grey-out-unselected))
+  (nomis/buffer-backgrounds/refresh))
 
 (defun nomis/buffer-backgrounds/cycle ()
   (interactive)
@@ -88,22 +89,34 @@ unselected buffers.")
 ;;;; I would like to do this for unselected windows (rather than buffers), but
 ;;;; I don't think there's a way to do that.
 
-(defun nomis/buffer-backgrounds/grey-out-unselected ()
-  ;; Copied from
-  ;; https://stackoverflow.com/questions/33195122/highlight-current-active-window
-  "Add a grey background to all buffers other than the current buffer."
-  (walk-windows
-   (lambda (w)
-     (unless (eq w (selected-window))
-       (with-current-buffer (window-buffer w)
-         (buffer-face-set
-          `(:background
-            ,(-nomis/buffer-backgrounds/current/unselected-background))))))
-   t
-   t)
-  (buffer-face-set 'default))
+(defun nomis/turn-on-auto-dim-other-buffers-mode ()
+  (when (fboundp 'auto-dim-other-buffers-mode)
+    (auto-dim-other-buffers-mode t)))
 
-(add-hook 'buffer-list-update-hook 'nomis/buffer-backgrounds/grey-out-unselected)
+(add-hook 'after-init-hook
+          'nomis/turn-on-auto-dim-other-buffers-mode)
+
+(defun nomis/buffer-backgrounds/remove-all-dimming ()
+  (adob--dim-all-buffers nil))
+
+(defun nomis/buffer-backgrounds/refresh ()
+  (adob--dim-all-buffers nil) ; remove all face remappings
+  (adob--dim-all-buffers t)   ; add face remappings to all buffers
+  (adob--undim-buffer)        ; remove face remapping from current buffer
+  )
+
+(advice-add 'adob--dim-buffer
+            :around
+            (lambda (orig-fun &rest args)
+              (when (not adob--face-mode-remapping)
+                (let* ((face-spec
+                        `((:background
+                           ,(-nomis/buffer-backgrounds/current/unselected-background)))))
+                  (setq adob--face-mode-remapping
+                        (face-remap-add-relative 'default
+                                                 face-spec)))
+                (force-window-update (current-buffer))))
+            '((name . nomis/replace-adob--dim-buffer)))
 
 ;;;; ___________________________________________________________________________
 

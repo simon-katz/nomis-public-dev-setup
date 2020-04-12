@@ -377,9 +377,11 @@ With prefix argument select `nomis/dirtree/buffer'"
 
 (defun nomis/dirtree/fix-grey-out-unselected-buffers ()
   ;; A hack, because my `buffer-list-update-hook` hook appears not to
-  ;; be happening sometimes.
-  (when (functionp 'nomis/buffer-backgrounds/grey-out-unselected)
-    (nomis/buffer-backgrounds/grey-out-unselected)))
+  ;; be happening sometimes (or now `auto-dim-other-buffers`'s version of
+  ;; that hook).
+  (when (fboundp 'nomis/buffer-backgrounds/refresh)
+    ;; Seems we need to run this after the current command completes.
+    (run-with-timer 0 nil 'nomis/buffer-backgrounds/refresh)))
 
 ;;;; ___________________________________________________________________________
 ;;;; Misc utilities
