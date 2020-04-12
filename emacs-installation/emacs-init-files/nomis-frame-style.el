@@ -22,8 +22,8 @@
 ;;;; (-nomis/buffer-backgrounds/set-frame-options "cornsilk2")
 
 (defconst -nomis/buffer-backgrounds/colour-pairs
-  '(("#f5f5f5"        "grey88")
-    ("BlanchedAlmond" "NavajoWhite")
+  '(("#f5f5f5"        "grey86")
+    ("BlanchedAlmond" "NavajoWhite1")
     ("MistyRose"      "MistyRose2"))
   "A list of 2-tuples. At any given time, one of the 2-tuples is used for
 the current set of buffer colours. The first element of each 2-tuple is the
