@@ -67,7 +67,8 @@
                       parseedn
                       dumb-jump
                       dash-functional
-                      org-bullets))
+                      org-bullets
+                      flycheck-clj-kondo))
 
 (dolist (p my-packages)
   (when (not (package-installed-p p))
