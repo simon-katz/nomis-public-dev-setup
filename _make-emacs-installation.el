@@ -65,7 +65,8 @@
                       treepy
                       cl-format
                       parseedn
-                      dumb-jump))
+                      dumb-jump
+                      dash-functional))
 
 (dolist (p my-packages)
   (when (not (package-installed-p p))
