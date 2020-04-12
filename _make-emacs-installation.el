@@ -66,7 +66,8 @@
                       cl-format
                       parseedn
                       dumb-jump
-                      dash-functional))
+                      dash-functional
+                      org-bullets))
 
 (dolist (p my-packages)
   (when (not (package-installed-p p))
