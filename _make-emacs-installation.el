@@ -69,7 +69,8 @@
                       dash-functional
                       org-bullets
                       flycheck-clj-kondo
-                      auto-dim-other-buffers))
+                      auto-dim-other-buffers
+                      loccur))
 
 (dolist (p my-packages)
   (when (not (package-installed-p p))
