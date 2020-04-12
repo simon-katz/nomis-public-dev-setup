@@ -24,7 +24,9 @@
 (define-key company-active-map (kbd "<escape>") 'company-abort)
 
 ;;;; ___________________________________________________________________________
-;;;; Avoid annoyance of completing when nothing to complete.
+;;;; Avoid annoyance of popping up a completion menu when there's nothing to
+;;;; complete (eg when hitting tab on an open-parenthesis to indent, and when
+;;;; indentation is ok).
 
 (cond
  ((member (company-version)
@@ -33,6 +35,17 @@
               :around
               (lambda (orig-fun &rest args)
                 (if (equal args '(""))
+                    (progn
+                      (nomis/msg/beep)
+                      (error "Not doing completion when there's nothing to complete"))
+                  (apply orig-fun args)))
+              `((name . if-no-prefix-do-nothing))))
+ ((member (company-version)
+          '("0.9.12"))
+  (advice-add 'company-calculate-candidates
+              :around
+              (lambda (orig-fun &rest args)
+                (if (equal (first args) "")
                     (progn
                       (nomis/msg/beep)
                       (error "Not doing completion when there's nothing to complete"))
