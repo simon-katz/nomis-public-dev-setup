@@ -126,7 +126,17 @@
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ;;;; Company mode for Cider
 
-(setq cider-repl-tab-command 'company-indent-or-complete-common)
+(setq cider-repl-tab-command
+      (lambda ()
+        (let ((args (cond
+                     ((version<= (company-version) "0.9.6")
+                      '())
+                     ((version<= "0.9.12" (company-version))
+                      '(nil))
+                     (t
+                      (error
+                       "You need to fix your `cider-repl-tab-command` tailoring.")))))
+          (apply #'company-indent-or-complete-common args))))
 
 (add-hook 'cider-repl-mode-hook #'cider-company-enable-fuzzy-completion)
 (add-hook 'cider-mode-hook #'cider-company-enable-fuzzy-completion)
