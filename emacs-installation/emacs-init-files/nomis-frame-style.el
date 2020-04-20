@@ -105,6 +105,15 @@ unselected buffers.")
   (adob--undim-buffer)        ; remove face remapping from current buffer
   )
 
+(cl-loop
+ for f in '(previous-buffer
+            next-buffer)
+ do (advice-add f
+                :after
+                (lambda (&rest _)
+                  (nomis/buffer-backgrounds/refresh))
+                '((name . nomis/dim-buffer))))
+
 (advice-add 'adob--dim-buffer
             :around
             (lambda (orig-fun &rest args)
