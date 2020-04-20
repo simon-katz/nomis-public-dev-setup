@@ -108,6 +108,8 @@ unselected buffers.")
 (advice-add 'adob--dim-buffer
             :around
             (lambda (orig-fun &rest args)
+              ;; This is a copy-and-paste of `adob--dim-buffer`, with a change
+              ;; to use the face we want.
               (when (not adob--face-mode-remapping)
                 (let* ((face-spec
                         `((:background
