@@ -793,6 +793,7 @@ When in a body, \"current headline\" means the current body's parent headline."
     (let* ((allow-cycle-to-zero? *-norg/allow-cycle-to-zero?*))
       (-norg/cancel-cycle-to-zero-timer)
       (if (not (and *-norg/cycle-to-zero-when-expanding-beyond-max?*
+                    (not (= maximum 0))
                     (= v -norg/plus-infinity)
                     (eq this-command (norg/last-command))))
           (normal-behaviour)
