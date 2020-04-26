@@ -764,9 +764,43 @@ When in a body, \"current headline\" means the current body's parent headline."
     (:setting-max
      (= current-value -norg/plus-infinity))))
 
+(defvar *-norg/cycle-to-zero-when-expanding-beyond-max?* nil)
+(defvar *-norg/allow-cycle-to-zero?* nil)
+(defvar *-norg/allow-cycle-to-zero-timer* nil)
+
+(defun -norg/cancel-cycle-to-zero-timer ()
+  (when *-norg/allow-cycle-to-zero-timer*
+    (cancel-timer *-norg/allow-cycle-to-zero-timer*)
+    (setq *-norg/allow-cycle-to-zero-timer* nil)
+    (setq *-norg/allow-cycle-to-zero?* nil)))
+
+(defun -norg/allow-cycle-to-zero-for-a-while ()
+  (setq *-norg/allow-cycle-to-zero?* t)
+  (let ((secs (if (boundp 'nomis/popup/duration)
+                  nomis/popup/duration
+                1)))
+    (setq *-norg/allow-cycle-to-zero-timer*
+          (run-at-time secs
+                       nil
+                       '-norg/cancel-cycle-to-zero-timer))))
+
 (defun -norg/bring-within-range (v maximum)
-  (min (max 0 v)
-       maximum))
+  (cl-flet ((normal-behaviour () (list (min (max 0 v)
+                                            maximum)
+                                       nil))
+            (cycled-behaviour () (list 0
+                                       t)))
+    (let* ((allow-cycle-to-zero? *-norg/allow-cycle-to-zero?*))
+      (-norg/cancel-cycle-to-zero-timer)
+      (if (not (and *-norg/cycle-to-zero-when-expanding-beyond-max?*
+                    (= v -norg/plus-infinity)
+                    (eq this-command (norg/last-command))))
+          (normal-behaviour)
+        (if allow-cycle-to-zero?
+            (cycled-behaviour)
+          (progn
+            (-norg/allow-cycle-to-zero-for-a-while)
+            (normal-behaviour)))))))
 
 (defun -norg/set-level-etc (new-value-action-fun
                             new-level/maybe-out-of-range
@@ -774,29 +808,34 @@ When in a body, \"current headline\" means the current body's parent headline."
                             message-format-string
                             setting-kind
                             current-value)
-  (let* ((v (-> (if (eql new-level/maybe-out-of-range
-                         :max)
-                    ;; The special value of `:max` means that we don't
-                    ;; have to compute the value twice.
-                    maximum
-                  new-level/maybe-out-of-range)))
-         (out-of-range? (-norg/out-of-range v maximum setting-kind current-value))
-         (new-level (-norg/bring-within-range v maximum)))
-    (prog1
-        (funcall new-value-action-fun new-level)
-      (funcall (if out-of-range?
-                   #'norg/popup/error-message
-                 #'norg/popup/message)
-               (concat message-format-string "%s")
-               new-level
-               maximum
-               (if out-of-range?
-                   (ecase setting-kind
-                     ((:less :setting-0)
-                      " —- already fully collapsed")
-                     ((:more :setting-max)
-                      " —- already fully expanded"))
-                 "")))))
+  (let* ((v (if (eql new-level/maybe-out-of-range
+                     :max)
+                ;; The special value of `:max` means that we don't
+                ;; have to compute the value twice.
+                maximum
+              new-level/maybe-out-of-range)))
+    (cl-multiple-value-bind (new-level do-cycling?)
+        (-norg/bring-within-range v maximum)
+      (let* ((out-of-range? (and (not do-cycling?)
+                                 (-norg/out-of-range v
+                                                     maximum
+                                                     setting-kind
+                                                     current-value))))
+        (prog1
+            (funcall new-value-action-fun new-level)
+          (funcall (if out-of-range?
+                       #'norg/popup/error-message
+                     #'norg/popup/message)
+                   (concat message-format-string "%s")
+                   new-level
+                   maximum
+                   (if out-of-range?
+                       (ecase setting-kind
+                         ((:less :setting-0)
+                          " —- already fully collapsed")
+                         ((:more :setting-max)
+                          " —- already fully expanded"))
+                     "")))))))
 
 ;;;; ____ ** norg/show-children-from-point/xxxx support
 
@@ -919,6 +958,13 @@ the parameter."
   (interactive)
   (let* ((v (1- (norg/current-level t))))
     (-norg/show-children-from-root/set-level-etc v :no-check :dummy)))
+
+(defun norg/tab (&optional arg)
+  (interactive "P")
+  (if (null arg)
+      (let* ((*-norg/cycle-to-zero-when-expanding-beyond-max?* t))
+        (norg/show-children-from-point/incremental/more))
+    (org-cycle arg)))
 
 ;;;; ____ ** norg/show-children-from-all-roots/xxxx support
 
