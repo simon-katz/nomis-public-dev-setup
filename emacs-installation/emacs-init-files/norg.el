@@ -974,10 +974,15 @@ the parameter."
 
 (defun norg/tab (&optional arg)
   (interactive "P")
-  (if (null arg)
-      (let* ((*-norg/cycle-to-zero-when-expanding-beyond-max?* t))
-        (norg/show-children-from-point/incremental/more))
-    (org-cycle arg)))
+  (cond ((null arg)
+         (let* ((*-norg/cycle-to-zero-when-expanding-beyond-max?* t))
+           (norg/show-children-from-point/incremental/more)))
+        ((equal arg '(4))   (org-cycle nil))
+        ((equal arg '(16))  (org-cycle '(4)))
+        ((equal arg '(64))  (org-cycle '(16)))
+        ((equal arg '(256)) (org-cycle '(64)))
+        (t
+         (norg/show-children-from-point arg))))
 
 ;;;; ____ ** norg/show-children-from-all-roots/xxxx support
 
