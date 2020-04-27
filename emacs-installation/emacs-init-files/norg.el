@@ -767,16 +767,12 @@ When in a body, \"current headline\" means the current body's parent headline."
 (defvar *-norg/cycle-to-zero-when-expanding-beyond-max?* nil)
 (defvar *-norg/allow-cycle-to-zero?* nil)
 (defvar *-norg/allow-cycle-to-zero-timer* nil)
-(defvar *-norg/allow-cycle-to-zero/buffer-and-point* nil)
 
 (defun -norg/cancel-cycle-to-zero-timer ()
   (when *-norg/allow-cycle-to-zero-timer*
     (cancel-timer *-norg/allow-cycle-to-zero-timer*)
     (setq *-norg/allow-cycle-to-zero-timer* nil)
     (setq *-norg/allow-cycle-to-zero?* nil)))
-
-(defun -norg/buffer-and-point ()
-  (list (current-buffer) (point)))
 
 (defun -norg/allow-cycle-to-zero-for-a-while ()
   (setq *-norg/allow-cycle-to-zero?* t)
@@ -794,26 +790,22 @@ When in a body, \"current headline\" means the current body's parent headline."
                                        nil))
             (cycled-behaviour () (list 0
                                        t)))
-    (let* ((old-buffer-and-point *-norg/allow-cycle-to-zero/buffer-and-point*))
-      (setq *-norg/allow-cycle-to-zero/buffer-and-point* (-norg/buffer-and-point))
-      (let* ((allow-cycle-to-zero? *-norg/allow-cycle-to-zero?*))
-        (-norg/cancel-cycle-to-zero-timer)
-        (if (or (not *-norg/cycle-to-zero-when-expanding-beyond-max?*)
-                (= maximum 0)
-                (not (= v -norg/plus-infinity)))
-            (normal-behaviour)
-          (if (not allow-cycle-to-zero?)
-              (progn
-                (-norg/allow-cycle-to-zero-for-a-while)
-                (normal-behaviour))
-            ;; Don't cycle if we moved to another position that also
-            ;; happens to be fully-expanded.
-            ;; Don't cycle if we moved away and came back.
-            (if (or (not (equal old-buffer-and-point
-                                (-norg/buffer-and-point)))
-                    (not (eq this-command (norg/last-command))))
-                (normal-behaviour)
-              (cycled-behaviour))))))))
+    (let* ((allow-cycle-to-zero? *-norg/allow-cycle-to-zero?*))
+      (-norg/cancel-cycle-to-zero-timer)
+      (if (or (not *-norg/cycle-to-zero-when-expanding-beyond-max?*)
+              (= maximum 0)
+              (not (= v -norg/plus-infinity)))
+          (normal-behaviour)
+        (if (not allow-cycle-to-zero?)
+            (progn
+              (-norg/allow-cycle-to-zero-for-a-while)
+              (normal-behaviour))
+          ;; Don't cycle if we moved to another position that also
+          ;; happens to be fully-expanded.
+          ;; Don't cycle if we moved away and came back.
+          (if (not (eq this-command (norg/last-command)))
+              (normal-behaviour)
+            (cycled-behaviour)))))))
 
 (defun -norg/set-level-etc (new-value-action-fun
                             new-level/maybe-out-of-range
