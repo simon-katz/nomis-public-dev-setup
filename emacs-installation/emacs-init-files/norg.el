@@ -964,7 +964,7 @@ the parameter."
   (let* ((v (1- (norg/current-level t))))
     (-norg/show-children-from-root/set-level-etc v :no-check :dummy)))
 
-(defun norg/tab (&optional arg)
+(defun norg/cycle (&optional arg)
   (interactive "P")
   ;; TODO Also do shift tab in the same way.
   (cond ((not (norg/w/at-heading-p))
