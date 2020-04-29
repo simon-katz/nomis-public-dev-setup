@@ -966,11 +966,10 @@ the parameter."
 
 (defun norg/tab (&optional arg)
   (interactive "P")
-  ;; TODO Check whether we are on a headline. If not, call `org-cycle`.
-  ;;      (Read `org-cycle` documentation -- it mentions /beginning/ of a
-  ;;      headline.)
   ;; TODO Also do shift tab in the same way.
-  (cond ((null arg)
+  (cond ((not (norg/w/at-heading-p))
+         (org-cycle arg))
+        ((null arg)
          (let* ((*-norg/cycle-to-zero-when-expanding-beyond-max?* t))
            (norg/show-children-from-point/incremental/more)))
         ((equal arg '(4))   (org-cycle nil))
