@@ -51,6 +51,8 @@
                'find-file
                org-link-frame-setup)))
 
+(setq org-indirect-buffer-display 'new-frame)
+
 ;;;; ___________________________________________________________________________
 ;;;; ____ * Misc API-ish things -- perhaps candidates for `norg`
 
