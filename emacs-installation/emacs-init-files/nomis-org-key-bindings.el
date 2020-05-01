@@ -88,9 +88,6 @@ H-?  Show this help")
 (org-defkey org-mode-map (kbd "H-q H-]") 'norg/show-children-from-root/to-current-level)
 (org-defkey org-mode-map (kbd "H-q H-=") 'norg/show-children-from-all-roots/to-current-level)
 
-(org-defkey org-mode-map "\C-i"          'norg/cycle) ; Key copied from org.el.
-(org-defkey org-mode-map [(tab)]         'norg/cycle) ; Key copied from org.el.
-
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ;;;; ____ ** Movement
 

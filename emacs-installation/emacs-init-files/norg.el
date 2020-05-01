@@ -964,20 +964,21 @@ the parameter."
   (let* ((v (1- (norg/current-level t))))
     (-norg/show-children-from-root/set-level-etc v :no-check :dummy)))
 
-(defun norg/cycle (&optional arg)
-  (interactive "P")
-  ;; TODO Also do shift tab in the same way.
-  (cond ((not (norg/w/at-heading-p))
-         (org-cycle arg))
-        ((null arg)
-         (let* ((*-norg/cycle-to-zero-when-expanding-beyond-max?* t))
-           (norg/show-children-from-point/incremental/more)))
-        ((equal arg '(4))   (org-cycle nil))
-        ((equal arg '(16))  (org-cycle '(4)))
-        ((equal arg '(64))  (org-cycle '(16)))
-        ((equal arg '(256)) (org-cycle '(64)))
-        (t
-         (norg/show-children-from-point arg))))
+(advice-add 'org-cycle ; TODO Also do shift tab in the same way.
+            :around
+            (lambda (orig-fun arg)
+              (cond ((not (norg/w/at-heading-p))
+                     (funcall orig-fun arg))
+                    ((null arg)
+                     (let* ((*-norg/cycle-to-zero-when-expanding-beyond-max?* t))
+                       (norg/show-children-from-point/incremental/more)))
+                    ((equal arg '(4))   (funcall orig-fun nil))
+                    ((equal arg '(16))  (funcall orig-fun '(4)))
+                    ((equal arg '(64))  (funcall orig-fun '(16)))
+                    ((equal arg '(256)) (funcall orig-fun '(64)))
+                    (t
+                     (norg/show-children-from-point arg))))
+            '((name . norg/cycle-wrap)))
 
 ;;;; ____ ** norg/show-children-from-all-roots/xxxx support
 
