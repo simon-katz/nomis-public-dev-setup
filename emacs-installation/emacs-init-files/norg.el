@@ -764,22 +764,22 @@ When in a body, \"current headline\" means the current body's parent headline."
     (:setting-max
      (= current-value -norg/plus-infinity))))
 
-(defvar *-norg/cycle-to-zero-when-expanding-beyond-max?* nil)
-(defvar *-norg/allow-cycle-to-zero?* nil)
-(defvar *-norg/allow-cycle-to-zero-timer* nil)
+(defvar *-norg/allow-cycle-wrap?* nil)
+(defvar *-norg/allow-cycle-wrap-now?* nil)
+(defvar *-norg/allow-cycle-wrap-timer* nil)
 
 (defun -norg/cancel-cycle-to-zero-timer ()
-  (when *-norg/allow-cycle-to-zero-timer*
-    (cancel-timer *-norg/allow-cycle-to-zero-timer*)
-    (setq *-norg/allow-cycle-to-zero-timer* nil)
-    (setq *-norg/allow-cycle-to-zero?* nil)))
+  (when *-norg/allow-cycle-wrap-timer*
+    (cancel-timer *-norg/allow-cycle-wrap-timer*)
+    (setq *-norg/allow-cycle-wrap-timer* nil)
+    (setq *-norg/allow-cycle-wrap-now?* nil)))
 
 (defun -norg/allow-cycle-to-zero-for-a-while ()
-  (setq *-norg/allow-cycle-to-zero?* t)
+  (setq *-norg/allow-cycle-wrap-now?* t)
   (let ((secs (if (boundp 'nomis/popup/duration)
                   nomis/popup/duration
                 1)))
-    (setq *-norg/allow-cycle-to-zero-timer*
+    (setq *-norg/allow-cycle-wrap-timer*
           (run-at-time secs
                        nil
                        '-norg/cancel-cycle-to-zero-timer))))
@@ -790,9 +790,9 @@ When in a body, \"current headline\" means the current body's parent headline."
                                        nil))
             (cycled-behaviour () (list 0
                                        t)))
-    (let* ((allow-cycle-to-zero? *-norg/allow-cycle-to-zero?*))
+    (let* ((allow-cycle-to-zero? *-norg/allow-cycle-wrap-now?*))
       (-norg/cancel-cycle-to-zero-timer)
-      (if (or (not *-norg/cycle-to-zero-when-expanding-beyond-max?*)
+      (if (or (not *-norg/allow-cycle-wrap?*)
               (= maximum 0)
               (not (= v -norg/plus-infinity)))
           (normal-behaviour)
@@ -970,7 +970,7 @@ the parameter."
               (cond ((not (norg/w/at-heading-p))
                      (funcall orig-fun arg))
                     ((null arg)
-                     (let* ((*-norg/cycle-to-zero-when-expanding-beyond-max?* t))
+                     (let* ((*-norg/allow-cycle-wrap?* t))
                        (norg/show-children-from-point/incremental/more)))
                     ((equal arg '(4))   (funcall orig-fun nil))
                     ((equal arg '(16))  (funcall orig-fun '(4)))
