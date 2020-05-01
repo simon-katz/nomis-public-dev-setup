@@ -788,13 +788,14 @@ When in a body, \"current headline\" means the current body's parent headline."
   (cl-flet ((normal-behaviour () (list (min (max 0 v)
                                             maximum)
                                        nil))
-            (cycled-behaviour () (list 0
+            (cycled-behaviour () (list (if (= v -1) maximum 0)
                                        t)))
     (let* ((allow-cycle-to-zero? *-norg/allow-cycle-wrap-now?*))
       (-norg/cancel-cycle-to-zero-timer)
       (if (or (not *-norg/allow-cycle-wrap?*)
               (= maximum 0)
-              (not (= v -norg/plus-infinity)))
+              (not (or (= v -1)
+                       (= v -norg/plus-infinity))))
           (normal-behaviour)
         (if (not allow-cycle-to-zero?)
             (progn
@@ -964,7 +965,7 @@ the parameter."
   (let* ((v (1- (norg/current-level t))))
     (-norg/show-children-from-root/set-level-etc v :no-check :dummy)))
 
-(advice-add 'org-cycle ; TODO Also do shift tab in the same way.
+(advice-add 'org-cycle
             :around
             (lambda (orig-fun arg)
               (cond ((not (norg/w/at-heading-p))
@@ -976,6 +977,18 @@ the parameter."
                     ((equal arg '(16))  (funcall orig-fun '(4)))
                     ((equal arg '(64))  (funcall orig-fun '(16)))
                     ((equal arg '(256)) (funcall orig-fun '(64)))
+                    (t
+                     (norg/show-children-from-point arg))))
+            '((name . norg/cycle-wrap)))
+
+(advice-add 'org-shifttab
+            :around
+            (lambda (orig-fun arg)
+              (cond ((not (norg/w/at-heading-p))
+                     (funcall orig-fun arg))
+                    ((null arg)
+                     (let* ((*-norg/allow-cycle-wrap?* t))
+                       (norg/show-children-from-point/incremental/less)))
                     (t
                      (norg/show-children-from-point arg))))
             '((name . norg/cycle-wrap)))
