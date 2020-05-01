@@ -88,6 +88,15 @@ H-?  Show this help")
 (org-defkey org-mode-map (kbd "H-q H-]") 'norg/show-children-from-root/to-current-level)
 (org-defkey org-mode-map (kbd "H-q H-=") 'norg/show-children-from-all-roots/to-current-level)
 
+;;; The following keys are copied from org.el.
+;; TAB key with modifiers
+(org-defkey org-mode-map "\C-i"          'norg/cycle)
+(org-defkey org-mode-map [(tab)]         'norg/cycle)
+;; The following line is necessary under Suse GNU/Linux
+(org-defkey org-mode-map [S-iso-lefttab] 'norg/shifttab)
+(org-defkey org-mode-map [(shift tab)]   'norg/shifttab)
+(define-key org-mode-map [backtab]       'norg/shifttab)
+
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ;;;; ____ ** Movement
 

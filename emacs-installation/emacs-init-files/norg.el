@@ -965,33 +965,29 @@ the parameter."
   (let* ((v (1- (norg/current-level t))))
     (-norg/show-children-from-root/set-level-etc v :no-check :dummy)))
 
-(advice-add 'org-cycle
-            :around
-            (lambda (orig-fun arg)
-              (cond ((not (norg/w/at-heading-p))
-                     (funcall orig-fun arg))
-                    ((null arg)
-                     (let* ((*-norg/allow-cycle-wrap?* t))
-                       (norg/show-children-from-point/incremental/more)))
-                    ((equal arg '(4))   (funcall orig-fun nil))
-                    ((equal arg '(16))  (funcall orig-fun '(4)))
-                    ((equal arg '(64))  (funcall orig-fun '(16)))
-                    ((equal arg '(256)) (funcall orig-fun '(64)))
-                    (t
-                     (norg/show-children-from-point arg))))
-            '((name . norg/cycle-wrap)))
+(defun norg/cycle (&optional arg)
+  (interactive "P")
+  (cond ((not (norg/w/at-heading-p))
+         (org-cycle arg))
+        ((null arg)
+         (let* ((*-norg/allow-cycle-wrap?* t))
+           (norg/show-children-from-point/incremental/more)))
+        ((equal arg '(4))   (org-cycle nil))
+        ((equal arg '(16))  (org-cycle '(4)))
+        ((equal arg '(64))  (org-cycle '(16)))
+        ((equal arg '(256)) (org-cycle '(64)))
+        (t
+         (norg/show-children-from-point arg))))
 
-(advice-add 'org-shifttab
-            :around
-            (lambda (orig-fun arg)
-              (cond ((not (norg/w/at-heading-p))
-                     (funcall orig-fun arg))
-                    ((null arg)
-                     (let* ((*-norg/allow-cycle-wrap?* t))
-                       (norg/show-children-from-point/incremental/less)))
-                    (t
-                     (norg/show-children-from-point arg))))
-            '((name . norg/cycle-wrap)))
+(defun norg/shifttab (&optional arg)
+  (interactive "P")
+  (cond ((not (norg/w/at-heading-p))
+         (org-shifttab arg))
+        ((null arg)
+         (let* ((*-norg/allow-cycle-wrap?* t))
+           (norg/show-children-from-point/incremental/less)))
+        (t
+         (norg/show-children-from-point arg))))
 
 ;;;; ____ ** norg/show-children-from-all-roots/xxxx support
 
