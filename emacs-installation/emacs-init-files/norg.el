@@ -764,7 +764,6 @@ When in a body, \"current headline\" means the current body's parent headline."
     (:setting-max
      (= current-value -norg/plus-infinity))))
 
-(defvar *-norg/allow-cycle-wrap?* nil)
 (defvar *-norg/allow-cycle-wrap-now?* nil)
 (defvar *-norg/allow-cycle-wrap-timer* nil)
 
@@ -792,8 +791,7 @@ When in a body, \"current headline\" means the current body's parent headline."
                                        t)))
     (let* ((allow-cycle-wrap-now? *-norg/allow-cycle-wrap-now?*))
       (-norg/cancel-cycle-to-zero-timer)
-      (if (or (not *-norg/allow-cycle-wrap?*)
-              (= maximum 0)
+      (if (or (= maximum 0)
               (not (or (= v -1)
                        (= v -norg/plus-infinity))))
           (normal-behaviour)
@@ -970,8 +968,7 @@ the parameter."
   (cond ((not (norg/w/at-heading-p))
          (org-cycle arg))
         ((null arg)
-         (let* ((*-norg/allow-cycle-wrap?* t))
-           (norg/show-children-from-point/incremental/more)))
+         (norg/show-children-from-point/incremental/more))
         ((equal arg '(4))   (org-cycle nil))
         ((equal arg '(16))  (org-cycle '(4)))
         ((equal arg '(64))  (org-cycle '(16)))
@@ -984,8 +981,7 @@ the parameter."
   (cond ((not (norg/w/at-heading-p))
          (org-shifttab arg))
         ((null arg)
-         (let* ((*-norg/allow-cycle-wrap?* t))
-           (norg/show-children-from-point/incremental/less)))
+         (norg/show-children-from-point/incremental/less))
         (t
          (norg/show-children-from-point arg))))
 
