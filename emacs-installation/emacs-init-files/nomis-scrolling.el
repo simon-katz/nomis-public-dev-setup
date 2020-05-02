@@ -10,13 +10,13 @@
 
 ;;;; ___________________________________________________________________________
 
-(defvar nomis/maintain-line-no-in-window? nil)
+(defvar *nomis/maintain-line-no-in-window?* nil)
 
 (defun nomis/toggle-maintain-line-no-in-window ()
   (interactive)
-  (message "nomis/maintain-line-no-in-window? = %s"
-           (setq nomis/maintain-line-no-in-window?
-                 (not nomis/maintain-line-no-in-window?))))
+  (message "*nomis/maintain-line-no-in-window?* = %s"
+           (setq *nomis/maintain-line-no-in-window?*
+                 (not *nomis/maintain-line-no-in-window?*))))
 
 (defun nomis/line-no-in-window ()
   (if (= (point) (window-start))
@@ -26,7 +26,7 @@
 
 (defun -nomis/with-maybe-maintain-line-no-in-window* (fun)
   (cl-flet* ((do-it () (funcall fun)))
-    (if (not nomis/maintain-line-no-in-window?)
+    (if (not *nomis/maintain-line-no-in-window?*)
         (do-it)
       (let* ((old-line-no (nomis/line-no-in-window)))
         (prog1 (do-it)
