@@ -969,12 +969,14 @@ the parameter."
          (org-cycle arg))
         ((null arg)
          (norg/show-children-from-point/incremental/more))
+        ((integerp arg)
+         (norg/show-children-from-point arg))
         ((equal arg '(4))   (org-cycle nil))
         ((equal arg '(16))  (org-cycle '(4)))
         ((equal arg '(64))  (org-cycle '(16)))
         ((equal arg '(256)) (org-cycle '(64)))
         (t
-         (norg/show-children-from-point arg))))
+         (error "Bad arg"))))
 
 (defun norg/shifttab (&optional arg)
   (interactive "P")
@@ -982,8 +984,10 @@ the parameter."
          (org-shifttab arg))
         ((null arg)
          (norg/show-children-from-point/incremental/less))
+        ((integerp arg)
+         (norg/show-children-from-point arg))
         (t
-         (norg/show-children-from-point arg))))
+         (error "Bad arg"))))
 
 ;;;; ____ ** norg/show-children-from-all-roots/xxxx support
 
