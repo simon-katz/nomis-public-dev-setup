@@ -209,26 +209,34 @@ Return the nesting depth of the headline in the outline."
 (defun norg/point-is-visible? ()
   (not (norg/w/invisible-p)))
 
-(defun -norg/has-body?/must-be-at-boh/leaving-cursor-in-body ()
+(defun -norg/has-body?/must-be-at-boh/leaving-cursor-at-end-of-heading ()
   (let* ((_ (norg/w/end-of-heading))
          (end-of-heading-position (point))
          (_ (norg/w/next-preface))
          (end-of-preface-position (point))
          (has-body? (not (= end-of-heading-position
                             end-of-preface-position))))
-    has-body?))
+    (prog1
+        has-body?
+      ;; Go to end of heading rather than end of preface.
+      ;; Without this, if we have a link at the end of the body (and if links
+      ;; are being displayed in the usual way so that the actual link text is
+      ;; invisible), we don't know whether the body is being displayed.
+      ;; This newline char being visible or not tells us what we want to know.
+      (goto-char end-of-heading-position))))
 
 (defun -norg/has-body?/must-be-at-boh ()
   (save-excursion
-    (-norg/has-body?/must-be-at-boh/leaving-cursor-in-body)))
+    (-norg/has-body?/must-be-at-boh/leaving-cursor-at-end-of-heading)))
 
 (defun -norg/body-info ()
   (save-excursion
     (norg/w/back-to-heading t)
-    (let* ((has-body? (-norg/has-body?/must-be-at-boh/leaving-cursor-in-body))
+    (let* ((has-body?
+            (-norg/has-body?/must-be-at-boh/leaving-cursor-at-end-of-heading))
            (has-visible-body? (and has-body?
                                    (not
-                                    (norg/w/invisible-p (1- (point))))))
+                                    (norg/w/invisible-p (point)))))
            (has-invisible-body? (and has-body?
                                      (not has-visible-body?))))
       (list has-body?
