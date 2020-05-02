@@ -27,7 +27,9 @@
 ;;;; ____ ** The design of some of these key chords
 
 (defconst -nomis/org/navigation-and-cycling-help
-  "
+  "Nomis Org Navigation and Cycling Help
+=====================================
+
 Use H with various other keys:
     ,. is for moving forward or backward headlines (without C, at same level)
         <> (add S to ,. on my keyboard) to cross the parent level
