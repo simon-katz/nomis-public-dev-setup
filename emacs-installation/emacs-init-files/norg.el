@@ -832,35 +832,36 @@ When in a body, \"current headline\" means the current body's parent headline."
                             message-format-string
                             setting-kind
                             current-value)
-  (let* ((v (if (eql new-level/maybe-out-of-range
-                     :max)
-                ;; The special value of `:max` means that we don't
-                ;; have to compute the value twice.
-                maximum
-              new-level/maybe-out-of-range)))
-    (cl-multiple-value-bind (new-level do-cycling?)
-        (-norg/bring-within-range v maximum)
-      (let* ((out-of-range? (and (not do-cycling?)
-                                 (-norg/out-of-range v
-                                                     maximum
-                                                     setting-kind
-                                                     current-value))))
-        (prog1
-            (-norg/with-force-maintain-line-no-in-window
-             (funcall new-value-action-fun new-level))
-          (funcall (if out-of-range?
-                       #'norg/popup/error-message
-                     #'norg/popup/message)
-                   (concat message-format-string "%s")
-                   new-level
-                   maximum
-                   (if out-of-range?
-                       (ecase setting-kind
-                         ((:less :setting-0)
-                          " —- already fully collapsed")
-                         ((:more :setting-max)
-                          " —- already fully expanded"))
-                     "")))))))
+  (save-excursion ; sometimes position is lost when at an invisible pount-- a hacky fix
+    (let* ((v (if (eql new-level/maybe-out-of-range
+                       :max)
+                  ;; The special value of `:max` means that we don't
+                  ;; have to compute the value twice.
+                  maximum
+                new-level/maybe-out-of-range)))
+      (cl-multiple-value-bind (new-level do-cycling?)
+          (-norg/bring-within-range v maximum)
+        (let* ((out-of-range? (and (not do-cycling?)
+                                   (-norg/out-of-range v
+                                                       maximum
+                                                       setting-kind
+                                                       current-value))))
+          (prog1
+              (-norg/with-force-maintain-line-no-in-window
+                (funcall new-value-action-fun new-level))
+            (funcall (if out-of-range?
+                         #'norg/popup/error-message
+                       #'norg/popup/message)
+                     (concat message-format-string "%s")
+                     new-level
+                     maximum
+                     (if out-of-range?
+                         (ecase setting-kind
+                           ((:less :setting-0)
+                            " —- already fully collapsed")
+                           ((:more :setting-max)
+                            " —- already fully expanded"))
+                       ""))))))))
 
 ;;;; ____ ** norg/show-children-from-point/xxxx support
 
