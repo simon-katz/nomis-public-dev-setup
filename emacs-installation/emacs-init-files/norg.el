@@ -909,17 +909,17 @@ When in a body, \"current headline\" means the current body's parent headline."
     (-norg/show-children-from-point/set-level-etc v :setting-max current-value)))
 
 (defun norg/show-children-from-point/incremental/less (&optional arg)
-  (interactive "P")
   "Incrementally collapse the current headline by `arg` levels, default 1.
 When in a body, \"current headline\" means the current body's parent headline."
+  (interactive "P")
   (let* ((v (-> (norg/level-for-incremental-contract)
                 (-norg/unmodified-value-and-arg->level arg :less))))
     (-norg/show-children-from-point/set-level-etc v :less :dummy)))
 
 (defun norg/show-children-from-point/incremental/more (&optional arg)
-  (interactive "P")
   "Incrementally expand the current headline by `arg` levels, default 1.
 When in a body, \"current headline\" means the current body's parent headline."
+  (interactive "P")
   (let* ((v (-> (norg/smallest-invisible-level-below-or-infinity)
                 (-norg/unmodified-value-and-arg->level arg :more))))
     (-norg/show-children-from-point/set-level-etc v :more :dummy)))
@@ -962,12 +962,14 @@ the parameter."
     (-norg/show-children-from-root/set-level-etc v :setting-max current-value)))
 
 (defun norg/show-children-from-root/incremental/less (&optional arg)
+  "Incrementally collapse the current root by `arg` levels, default 1."
   (interactive "P")
   (let* ((v (-> (norg/level-for-incremental-contract/root)
                 (-norg/unmodified-value-and-arg->level arg :less))))
     (-norg/show-children-from-root/set-level-etc v :less :dummy)))
 
 (defun norg/show-children-from-root/incremental/more (&optional arg)
+  "Incrementally expand the current root by `arg` levels, default 1."
   (interactive "P")
   (let* ((v (-> (norg/smallest-invisible-level-below-or-infinity/root)
                 (-norg/unmodified-value-and-arg->level arg :more))))
@@ -1015,12 +1017,14 @@ the parameter."
     (-norg/show-children-from-all-roots/set-level-etc v :setting-max current-value)))
 
 (defun norg/show-children-from-all-roots/incremental/less (&optional arg)
+  "Incrementally collapse all roots by `arg` levels, default 1."
   (interactive "P")
   (let* ((v (-> (norg/level-for-incremental-contract/buffer)
                 (-norg/unmodified-value-and-arg->level arg :less))))
     (-norg/show-children-from-all-roots/set-level-etc v :less :dummy)))
 
 (defun norg/show-children-from-all-roots/incremental/more (&optional arg)
+  "Incrementally expand the all roots by `arg` levels, default 1."
   (interactive "P")
   (let* ((v (-> (norg/smallest-invisible-level-below-or-infinity/buffer)
                 (-norg/unmodified-value-and-arg->level arg :more))))
