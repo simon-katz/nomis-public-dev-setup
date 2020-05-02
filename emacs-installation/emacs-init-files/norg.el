@@ -124,11 +124,11 @@ message and in case adding org level messes things up.")
                        (eq major-mode 'org-mode)
                        *-norg/in-what-cursor-position?*)
                   (let* ((format-string
-                          (concat (first args) " org-level=%s"))
+                          (concat "org-level=%s  " (first args)))
                          (format-args
                           (append
-                           (rest args)
-                           (list (norg/current-level-or-error-string t))))
+                           (list (norg/current-level-or-error-string t))
+                           (rest args)))
                          (s (apply #'format format-string format-args)))
                     (funcall orig-fun "%s" s)
                     (norg/popup/message "%s" s))
