@@ -132,16 +132,25 @@ message and in case adding org level messes things up.")
 
 ;;;; ____ ** nomis-scrolling
 
-(defun -norg/with-maybe-maintain-line-no-in-window* (fun)
+(defun -norg/with-maybe-maintain-line-no-in-window* (fun force?)
   (cl-flet ((do-it () (funcall fun)))
     (if (not (featurep 'nomis-scrolling))
         (do-it)
-      (nomis/with-maybe-maintain-line-no-in-window
-        (do-it)))))
+      (let* ((*nomis/maintain-line-no-in-window?*
+              (or force?
+                  *nomis/maintain-line-no-in-window?*)))
+        (nomis/with-maybe-maintain-line-no-in-window
+          (do-it))))))
 
 (cl-defmacro -norg/with-maybe-maintain-line-no-in-window (&body body)
   (declare (indent 0))
-  `(-norg/with-maybe-maintain-line-no-in-window* (lambda () ,@body)))
+  `(-norg/with-maybe-maintain-line-no-in-window* (lambda () ,@body)
+                                                 nil))
+
+(cl-defmacro -norg/with-force-maintain-line-no-in-window (&body body)
+  (declare (indent 0))
+  `(-norg/with-maybe-maintain-line-no-in-window* (lambda () ,@body)
+                                                 t))
 
 ;;;; ___________________________________________________________________________
 ;;;; ____ * Infinity
@@ -837,7 +846,8 @@ When in a body, \"current headline\" means the current body's parent headline."
                                                      setting-kind
                                                      current-value))))
         (prog1
-            (funcall new-value-action-fun new-level)
+            (-norg/with-force-maintain-line-no-in-window
+             (funcall new-value-action-fun new-level))
           (funcall (if out-of-range?
                        #'norg/popup/error-message
                      #'norg/popup/message)
