@@ -963,32 +963,6 @@ the parameter."
   (let* ((v (1- (norg/current-level t))))
     (-norg/show-children-from-root/set-level-etc v :no-check :dummy)))
 
-(defun norg/cycle (&optional arg)
-  (interactive "P")
-  (cond ((not (norg/w/at-heading-p))
-         (org-cycle arg))
-        ((null arg)
-         (norg/show-children-from-point/incremental/more))
-        ((integerp arg)
-         (norg/show-children-from-point arg))
-        ((equal arg '(4))   (org-cycle nil))
-        ((equal arg '(16))  (org-cycle '(4)))
-        ((equal arg '(64))  (org-cycle '(16)))
-        ((equal arg '(256)) (org-cycle '(64)))
-        (t
-         (error "Bad arg"))))
-
-(defun norg/shifttab (&optional arg)
-  (interactive "P")
-  (cond ((not (norg/w/at-heading-p))
-         (org-shifttab arg))
-        ((null arg)
-         (norg/show-children-from-point/incremental/less))
-        ((integerp arg)
-         (norg/show-children-from-point arg))
-        (t
-         (error "Bad arg"))))
-
 ;;;; ____ ** norg/show-children-from-all-roots/xxxx support
 
 (defun norg/show-children-from-all-roots* (n)
@@ -1039,6 +1013,35 @@ the parameter."
   (interactive)
   (let* ((v (1- (norg/current-level t))))
     (-norg/show-children-from-all-roots/set-level-etc v :no-check :dummy)))
+
+;;;; ___________________________________________________________________________
+;;;; ____ * Replacements for `org-cycle` and `org-shifttab`
+
+(defun norg/cycle (&optional arg)
+  (interactive "P")
+  (cond ((not (norg/w/at-heading-p))
+         (org-cycle arg))
+        ((null arg)
+         (norg/show-children-from-point/incremental/more))
+        ((integerp arg)
+         (norg/show-children-from-point arg))
+        ((equal arg '(4))   (org-cycle nil))
+        ((equal arg '(16))  (org-cycle '(4)))
+        ((equal arg '(64))  (org-cycle '(16)))
+        ((equal arg '(256)) (org-cycle '(64)))
+        (t
+         (error "Bad arg"))))
+
+(defun norg/shifttab (&optional arg)
+  (interactive "P")
+  (cond ((not (norg/w/at-heading-p))
+         (org-shifttab arg))
+        ((null arg)
+         (norg/show-children-from-point/incremental/less))
+        ((integerp arg)
+         (norg/show-children-from-point arg))
+        (t
+         (error "Bad arg"))))
 
 ;;;; ___________________________________________________________________________
 ;;;; ____ * End
