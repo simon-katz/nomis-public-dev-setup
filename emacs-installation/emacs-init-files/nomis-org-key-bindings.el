@@ -31,10 +31,11 @@
 =====================================
 
 Use H with various other keys:
-    ,. is for moving forward or backward headlines (without C, at same level)
+    ,. is for moving forward or backward headlines
         <> (add S to ,. on my keyboard) to cross the parent level
         Add M to step (ie collapse then move then expand)
         Add C to visit headlines at any level
+        Add C-M to visit headlines at any level collapsing to current tree
     '\\[]-= is for expanding and collapsing
         Add M to fully expand or collapse
         Add C to '\\ for visibility cycling of spans
@@ -117,6 +118,9 @@ H-?  Show this help")
 
 (org-defkey org-mode-map (kbd "C-H-,")   'norg/forward-heading/any-level)
 (org-defkey org-mode-map (kbd "C-H-.")   'norg/backward-heading/any-level)
+
+(org-defkey org-mode-map (kbd "C-H-M-,") 'norg/forward-heading/any-level/tree+body)
+(org-defkey org-mode-map (kbd "C-H-M-.") 'norg/backward-heading/any-level/tree+body)
 
 ;; (org-defkey org-mode-map (kbd "C-H-M-,") ????) ; TODO Want something that visits headlines at any level and collapses as it goes
 ;; (org-defkey org-mode-map (kbd "C-H-M-.") ????) ; TODO Want something that visits headlines at any level and collapses as it goes

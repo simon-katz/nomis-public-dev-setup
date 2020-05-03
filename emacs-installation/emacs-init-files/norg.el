@@ -525,6 +525,16 @@ subheading at this level in the previous parent."
     (norg/w/next-heading)
     (norg/show-point)))
 
+(defun norg/forward-heading/any-level/tree+body ()
+  (interactive)
+  (norg/forward-heading/any-level)
+  (nomis/org-visibility-span/set-tree+body))
+
+(defun norg/backward-heading/any-level/tree+body ()
+  (interactive)
+  (norg/backward-heading/any-level)
+  (nomis/org-visibility-span/set-tree+body))
+
 ;;;; ___________________________________________________________________________
 ;;;; ____ * Stepping TODO This uses `norg/fully-expanded?`, and so belongs later in the file
 

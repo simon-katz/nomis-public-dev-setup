@@ -130,7 +130,8 @@
 
 (defvar -nomis/org-visibility-span/prev-action-index -1)
 
-(defun -nomis/org-visibility-span/set-level/numeric (n delta?)
+(defun -nomis/org-visibility-span/set-level/numeric (n delta?
+                                                       &optional no-message?)
   (let* ((prev-command-was-not-visibility-span?
           (not (member (nomis/org/last-command)
                        -nomis/org-visibility-span/commands)))
@@ -166,7 +167,8 @@
                -nomis/org-visibility-span/detail-values)
         (-nomis/org-visibility-span/set-level/rawish detail)
         (if show? (norg/w/show-entry) (norg/w/hide-entry))
-        (norg/popup/message "%s" msg)))))
+        (unless no-message?
+          (norg/popup/message "%s" msg))))))
 
 (defun nomis/org-visibility-span/more ()
   (interactive)
@@ -184,6 +186,15 @@
   (interactive)
   (let* ((v -nomis/org-visibility-span/max-value))
     (-nomis/org-visibility-span/set-level/numeric v nil)))
+
+(defun nomis/org-visibility-span/set-tree+body ()
+  (interactive)
+  (let* ((v (position '(tree nil "Tree")
+                      -nomis/org-visibility-span/detail-values
+                      :test #'equal)))
+    (assert (not (null v)))
+    (-nomis/org-visibility-span/set-level/numeric v nil t))
+  (norg/w/show-entry))
 
 ;;;; ___________________________________________________________________________
 ;;;; ____ * Priorities
