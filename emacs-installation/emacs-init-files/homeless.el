@@ -75,7 +75,9 @@
 (defun nomis/clojure-files-in-repo ()
   (let* ((root-dir (nomis/dirtree/vc-root-dir))
          (filenames (directory-files-recursively root-dir
-                                                 "\.clj[sxc]?$")))
+                                                 (nomis/rx/or
+                                                  "\.clj[sxc]?$"
+                                                  "\.edn$"))))
     filenames))
 
 (defun nomis/indent-all-clj-files-in-project (force-when-dirty?)
