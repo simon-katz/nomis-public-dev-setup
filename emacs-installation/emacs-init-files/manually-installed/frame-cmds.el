@@ -1250,13 +1250,13 @@ Interactively, use a prefix arg (`\\[universal-argument]') to be prompted for FR
   (maximize-frame 'horizontal frame))
 
 ;;;###autoload
-(defun maximize-frame-vertically (&optional frame)
+(defun maximize-frame-vertically (&optional frame do-not-show-p)
   "Maximize selected frame vertically."
   (interactive (list (selected-frame)))
-  (maximize-frame 'vertical frame))
+  (maximize-frame 'vertical frame do-not-show-p))
 
 ;;;###autoload
-(defun maximize-frame (&optional direction frame)
+(defun maximize-frame (&optional direction frame do-not-show-p)
   "Maximize selected frame horizontally, vertically, or both.
 With no prefix arg, maximize both directions.
 With a non-negative prefix arg, maximize vertically.
@@ -1326,7 +1326,7 @@ In Lisp code:
                (/= (frame-geom-value-numeric 'height orig-height)
                    (frame-geom-value-numeric 'height new-height))
                (cons 'restore-height orig-height)))))
-    (show-frame frame)
+    (unless do-not-show-p (show-frame frame))
     (incf fr-origin (if (eq direction 'horizontal) fr-pixel-width fr-pixel-height))))
 
 ;;;###autoload
