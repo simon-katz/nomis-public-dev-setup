@@ -553,6 +553,73 @@
 ;;                        )))))
 
 ;;;; ___________________________________________________________________________
+;;;; * nomis/org-search-heading-text
+
+(defun -nomis/org-grab-heading-text ()
+  (save-excursion
+    ;; Jump to first word of heading
+    (norg/w/back-to-heading)
+    (forward-word)
+    (backward-word)
+    ;; Grab text of heading
+    (let* ((beg (point))
+           (end (progn
+                  (org-end-of-line)
+                  (point))))
+      (if (not (< beg end))
+          (error "No heading here")
+        (let* ((text (buffer-substring beg end)))
+          (set-text-properties 0 (length text) nil text)
+          text)))))
+
+(defvar -nomis/org-search-heading-text/text nil)
+
+(defun -nomis/org-search-heading-text/search (again?)
+  (assert (not (null -nomis/org-search-heading-text/text)))
+  (cl-flet ((search-for-text
+             ()
+             (search-backward (case 1
+                                (1
+                                 ;; Simply look for the text.
+                                 -nomis/org-search-heading-text/text)
+                                (2
+                                 ;; Just find refs. But is awkward -- you need
+                                 ;; to press M-. to go back. I wanted H-. but
+                                 ;; I'm already using that for something else.
+                                 (s-concat "[[*"
+                                           -nomis/org-search-heading-text/text
+                                           "]")))
+                              nil
+                              t)))
+    (when again?
+      (norg/w/back-to-heading))
+    (or (search-for-text)
+        (progn
+          (end-of-buffer)
+          (search-for-text))))
+  (norg/show-point))
+
+(defun nomis/org-search-heading-text ()
+  (interactive)
+  (setq -nomis/org-search-heading-text/text (-nomis/org-grab-heading-text))
+  (unless (and org-mark-ring
+               (ignore-errors ; without this, we can get "Marker does not point anywhere" errors
+                 (= (first org-mark-ring)
+                    (point))))
+    ;; Note: Ive tried customising `org-mark-ring-length` using
+    ;; `customize-variable`, but I can't get it to work. There's a comment in
+    ;; `org-mark-ring-length` saying "Changing this requires a restart of Emacs
+    ;; to work correctly", but even restarting doesn't work.
+    (org-mark-ring-push))
+  (-nomis/org-search-heading-text/search nil))
+
+(defun nomis/org-search-heading-text-again ()
+  (interactive)
+  (if (null -nomis/org-search-heading-text/text)
+      (error "nomis/org-search-heading-text hasn't been called yet")
+    (-nomis/org-search-heading-text/search t)))
+
+;;;; ___________________________________________________________________________
 ;;;; * Key bindings
 
 (require 'nomis-org-key-bindings)
