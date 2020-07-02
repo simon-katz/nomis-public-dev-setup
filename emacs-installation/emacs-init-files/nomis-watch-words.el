@@ -7,6 +7,12 @@
     "---\\▶"
     "--.*--\\▶"))
 
+(defvar nomis/ww/regexps/operators
+  ;; Use \\ in the strings below so you don't get the highlighting here.
+  '("--O\\R--"
+    "--A\\ND--"
+    "--N\\OT--"))
+
 (defvar nomis/ww/regexps/high-priority
   ;; Use \\ in the strings below so you don't get the highlighting here.
   '("F\\IXME"
@@ -33,13 +39,16 @@
                   nomis/ww/regexps/high-priority)))
 
 (defface nomis/ww/face/no-priority
-  `((t (:foreground ,(case 2
-                       (1 "gray27")
-                       (2 "DodgerBlue3"))
+  `((t (:foreground "DodgerBlue3"
                     :bold t
-                    :italic t
-                    )))
+                    :italic t)))
   "Face for low priority watch regexps.")
+
+(defface nomis/ww/face/operator
+  `((t (:foreground "gray10"
+                    :bold t
+                    :italic t)))
+  "Face for operator watch regexps.")
 
 (defface nomis/ww/face/low-priority
   '((t (:foreground "White"
@@ -80,6 +89,7 @@
 (defun nomis/ww/add-watches ()
   (cl-loop for (regexps face)
            in `((,nomis/ww/regexps/finger-pointers nomis/ww/face/no-priority)
+                (,nomis/ww/regexps/operators       nomis/ww/face/operator)
                 (,nomis/ww/regexps/low-priority    nomis/ww/face/low-priority )
                 (,nomis/ww/regexps/high-priority   ,font-lock-warning-face))
            do (nomis/ww/add-font-lock (nomis/ww/combine-regexps regexps)
@@ -145,6 +155,13 @@
 ;;;; - aaa----▶aaa
 ;;;; - aaa[--x-y-z--▶]aaa
 ;;;; - aaa--x-y-z--▶aaa
+
+;;;; - aaa[--OR--]aaa
+;;;; - aaa--OR--aaa
+;;;; - aaa[--AND--]aaa
+;;;; - aaa--AND--aaa
+;;;; - aaa[--NOT--]aaa
+;;;; - aaa--NOT--aaa
 
 ;;;; ___________________________________________________________________________
 
