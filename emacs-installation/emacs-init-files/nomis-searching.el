@@ -13,54 +13,53 @@
 
 (defvar nomis/local-grep-find-ignored-files '()) ; set this in .dir-locals.el
 
-(progn
-  (defvar *extra-ignored-directories* ; TODO Add this using advice.
-    (list logs-dir-name
-          ;; ".emacs.d"
-          ".emacs-backups"
-          ".worksheet"
-          "out"
-          "target"
-          ".repl"
-          "bundle"
-          ".idea"
-          ;; "labrepl*/public/javascripts/jquery.js"
-          ;; "emacs-configuration/nomis-addons/cygwin-mount.el"
-          "node_modules"
-          ".shadow-cljs"
-          ".emacs.d"
-          "emacs-configuration-pre-2018-06-upgrade-packages"
-          "clojure-for-the-brave-and-true/emacs-for-clojure-book1"
-          "cljs-runtime"
-          ".clj-kondo"
-          "log"
-          ;; Instead of adding stuff here, consider defining
-          ;; `nomis/local-grep-find-ignored-directories` in a .dir-locals file.
-          ))
-  (defvar *extra-ignored-files* ; TODO Add this using advice.
-    '(".ido.last"
-      ".smex-items"
-      ;; ".jar"
-      ;; ".exe"
-      ".cider-repl-history"
-      ".lein-repl-history"
-      "*.iml"
-      "*.zip"
-      "figwheel_server.log"
-      "archive-contents"))
-  (eval-after-load "grep"
-    '(progn
-       (mapc (lambda (x) (add-to-list 'grep-find-ignored-files x))
-             *extra-ignored-files*)
-       (mapc (lambda (x) (add-to-list 'grep-find-ignored-directories x))
-             *extra-ignored-directories*))))
+(defvar nomis/global-grep-find-ignored-directories
+  (list logs-dir-name
+        ;; ".emacs.d"
+        ".emacs-backups"
+        ".worksheet"
+        "out"
+        "target"
+        ".repl"
+        "bundle"
+        ".idea"
+        ;; "labrepl*/public/javascripts/jquery.js"
+        ;; "emacs-configuration/nomis-addons/cygwin-mount.el"
+        "node_modules"
+        ".shadow-cljs"
+        ".emacs.d"
+        "emacs-configuration-pre-2018-06-upgrade-packages"
+        "clojure-for-the-brave-and-true/emacs-for-clojure-book1"
+        "cljs-runtime"
+        ".clj-kondo"
+        "log"
+        ;; Instead of adding stuff here, consider defining
+        ;; `nomis/local-grep-find-ignored-directories` in a .dir-locals file.
+        ))
+
+(defvar nomis/global-grep-find-ignored-files
+  '(".ido.last"
+    ".smex-items"
+    ;; ".jar"
+    ;; ".exe"
+    ".cider-repl-history"
+    ".lein-repl-history"
+    "*.iml"
+    "*.zip"
+    "figwheel_server.log"
+    "archive-contents"
+    ;; Instead of adding stuff here, consider defining
+    ;; `nomis/local-grep-find-ignored-files` in a .dir-locals file.
+    ))
 
 (defun with-augmented-grep-find-ignored-things* (f)
   (let* ((grep-find-ignored-directories
           (-concat nomis/local-grep-find-ignored-directories
+                   nomis/global-grep-find-ignored-directories
                    grep-find-ignored-directories))
          (grep-find-ignored-files
           (-concat nomis/local-grep-find-ignored-files
+                   nomis/global-grep-find-ignored-files
                    grep-find-ignored-files)))
     (funcall f)))
 
@@ -71,12 +70,12 @@
 (defun nomis/toggle-include-emacs.d-in-searches ()
   (interactive)
   (let ((dir-name ".emacs.d"))
-    (setq grep-find-ignored-directories
-          (if (member dir-name grep-find-ignored-directories)
-              (remove dir-name grep-find-ignored-directories)
-            (cons dir-name grep-find-ignored-directories)))
+    (setq nomis/global-grep-find-ignored-directories
+          (if (member dir-name nomis/global-grep-find-ignored-directories)
+              (remove dir-name nomis/global-grep-find-ignored-directories)
+            (cons dir-name nomis/global-grep-find-ignored-directories)))
     (message "%s %s -- NOTE: THIS WILL APPLY ONLY TO NEW GREP BUFFERS"
-             (if (member dir-name grep-find-ignored-directories)
+             (if (member dir-name nomis/global-grep-find-ignored-directories)
                  "Excluding"
                "Including")
              dir-name)))
@@ -141,14 +140,14 @@
             (lambda (orig-fun &rest args)
               (with-augmented-grep-find-ignored-things ()
                 (apply orig-fun args)))
-            '((name . nomis/augment-grep-find-ignored-directories)))
+            '((name . nomis/augment-grep-find-ignored-things)))
 
 (advice-add 'projectile-rgrep-default-command
             :around
             (lambda (orig-fun &rest args)
               (with-augmented-grep-find-ignored-things ()
                 (apply orig-fun args)))
-            '((name . nomis/augment-grep-find-ignored-directories)))
+            '((name . nomis/augment-grep-find-ignored-things)))
 
 (defun nomis/rgrep-all-unignored-files (regexp &optional files dir confirm)
   "A variation of `rgrep` that:
@@ -159,15 +158,15 @@
 
 (defun nomis/grep-logs-dirs-include ()
   (interactive)
-  (setq grep-find-ignored-directories
+  (setq nomis/global-grep-find-ignored-directories
         (remove logs-dir-name
-                grep-find-ignored-directories)))
+                nomis/global-grep-find-ignored-directories)))
 
 (defun nomis/grep-logs-dirs-exclude ()
   (interactive)
-  (setq grep-find-ignored-directories
+  (setq nomis/global-grep-find-ignored-directories
         (cons logs-dir-name
-              grep-find-ignored-directories)))
+              nomis/global-grep-find-ignored-directories)))
 
 ;; (define-key global-map (kbd "H-q g a") 'nomis/rgrep)
 ;; (define-key global-map (kbd "H-q g g") 'nomis/rgrep-all-unignored-files)
