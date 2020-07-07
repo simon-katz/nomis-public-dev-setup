@@ -1,21 +1,18 @@
 ;;;; Init stuff -- Searching.
 
 ;;;; ___________________________________________________________________________
+
+(require 'dash)
+
+;;;; ___________________________________________________________________________
 ;;;; ---- Stuff for rgrep and lgrep ----
 
 (defvar logs-dir-name "logs")
 
-(defvar nomis/rgrep-local-ignored-directories '()) ; set this in .dir-locals.el
-
-(advice-add 'rgrep-find-ignored-directories
-            :around
-            (lambda (orig-fun &rest args)
-              (append nomis/rgrep-local-ignored-directories
-                      (apply orig-fun args)))
-            '((name . nomis/add-local-ignored-directories)))
+(defvar nomis/rgrep-local-ignored-directories '()) ; set this in .dir-locals.el ; TODO Rename -> `nomis/local-grep-find-ignored-directories`
 
 (progn
-  (defvar *extra-ignored-directories*
+  (defvar *extra-ignored-directories* ; TODO Add this using advice.
     (list logs-dir-name
           ;; ".emacs.d"
           ".emacs-backups"
@@ -38,7 +35,7 @@
           ;; Instead of adding stuff here, consider defining
           ;; `nomis/rgrep-local-ignored-directories` in a .dir-locals file.
           ))
-  (defvar *extra-ignored-files*
+  (defvar *extra-ignored-files* ; TODO Add this using advice.
     '(".ido.last"
       ".smex-items"
       ;; ".jar"
@@ -48,13 +45,25 @@
       "*.iml"
       "*.zip"
       "figwheel_server.log"
-      "archive-contents"))
+      "archive-contents"
+      "package-lock.json" ; TODO Add this using a dir locals thing (similar to `nomis/local-grep-find-ignored-directories`).
+      ))
   (eval-after-load "grep"
     '(progn
        (mapc (lambda (x) (add-to-list 'grep-find-ignored-files x))
              *extra-ignored-files*)
        (mapc (lambda (x) (add-to-list 'grep-find-ignored-directories x))
              *extra-ignored-directories*))))
+
+(defun with-augmented-grep-find-ignored-directories* (f)
+  (let* ((grep-find-ignored-directories
+          (-concat nomis/rgrep-local-ignored-directories
+                   grep-find-ignored-directories)))
+    (funcall f)))
+
+(defmacro with-augmented-grep-find-ignored-directories (options &rest body)
+  (declare (indent 1))
+  `(with-augmented-grep-find-ignored-directories* (lambda () ,@body)))
 
 (defun nomis/toggle-include-emacs.d-in-searches ()
   (interactive)
@@ -123,6 +132,20 @@
 - uses `ido-read-directory-name` for nicer directory navigation."
   (interactive (-nomis/rgrep-interactive-stuff nil))
   (rgrep regexp files dir confirm))
+
+(advice-add 'rgrep-default-command
+            :around
+            (lambda (orig-fun &rest args)
+              (with-augmented-grep-find-ignored-directories ()
+                (apply orig-fun args)))
+            '((name . nomis/augment-grep-find-ignored-directories)))
+
+(advice-add 'projectile-rgrep-default-command
+            :around
+            (lambda (orig-fun &rest args)
+              (with-augmented-grep-find-ignored-directories ()
+                (apply orig-fun args)))
+            '((name . nomis/augment-grep-find-ignored-directories)))
 
 (defun nomis/rgrep-all-unignored-files (regexp &optional files dir confirm)
   "A variation of `rgrep` that:
