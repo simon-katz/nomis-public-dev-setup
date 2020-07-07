@@ -7,34 +7,35 @@
 ;;;; ___________________________________________________________________________
 ;;;; ---- Stuff for rgrep and lgrep ----
 
-(defvar logs-dir-name "logs")
+(defvar log-dir-names '("log"
+                        "logs"))
 
 (defvar nomis/local-grep-find-ignored-directories '()) ; set this in .dir-locals.el
 
 (defvar nomis/local-grep-find-ignored-files '()) ; set this in .dir-locals.el
 
 (defvar nomis/global-grep-find-ignored-directories
-  (list logs-dir-name
-        ".emacs-backups"
-        ".worksheet"
-        "out"
-        "target"
-        ".repl"
-        "bundle"
-        ".idea"
-        ;; "labrepl*/public/javascripts/jquery.js"
-        ;; "emacs-configuration/nomis-addons/cygwin-mount.el"
-        "node_modules"
-        ".shadow-cljs"
-        ".emacs.d"
-        "emacs-configuration-pre-2018-06-upgrade-packages"
-        "clojure-for-the-brave-and-true/emacs-for-clojure-book1"
-        "cljs-runtime"
-        ".clj-kondo"
-        "log"
-        ;; Instead of adding stuff here, consider defining
-        ;; `nomis/local-grep-find-ignored-directories` in a .dir-locals file.
-        ))
+  (append log-dir-names
+          '(".emacs-backups"
+            ".worksheet"
+            "out"
+            "target"
+            ".repl"
+            "bundle"
+            ".idea"
+            ;; "labrepl*/public/javascripts/jquery.js"
+            ;; "emacs-configuration/nomis-addons/cygwin-mount.el"
+            "node_modules"
+            ".shadow-cljs"
+            ".emacs.d"
+            "emacs-configuration-pre-2018-06-upgrade-packages"
+            "clojure-for-the-brave-and-true/emacs-for-clojure-book1"
+            "cljs-runtime"
+            ".clj-kondo"
+            "log"
+            ;; Instead of adding stuff here, consider defining
+            ;; `nomis/local-grep-find-ignored-directories` in a .dir-locals file.
+            )))
 
 (defvar nomis/global-grep-find-ignored-files
   '(".ido.last"
@@ -89,17 +90,9 @@
   (interactive)
   (-nomis/toggle-grep-find-ignored-dirs '(".emacs.d")))
 
-(defun nomis/grep-logs-dirs-include ()
+(defun nomis/toggle-grep-find-log-files ()
   (interactive)
-  (setq nomis/global-grep-find-ignored-directories
-        (remove logs-dir-name
-                nomis/global-grep-find-ignored-directories)))
-
-(defun nomis/grep-logs-dirs-exclude ()
-  (interactive)
-  (setq nomis/global-grep-find-ignored-directories
-        (cons logs-dir-name
-              nomis/global-grep-find-ignored-directories)))
+  (-nomis/toggle-grep-find-ignored-dirs log-dir-names))
 
 ;;;; ___________________________________________________________________________
 
