@@ -11,6 +11,8 @@
 
 (defvar nomis/local-grep-find-ignored-directories '()) ; set this in .dir-locals.el
 
+(defvar nomis/local-grep-find-ignored-files '()) ; set this in .dir-locals.el
+
 (progn
   (defvar *extra-ignored-directories* ; TODO Add this using advice.
     (list logs-dir-name
@@ -45,9 +47,7 @@
       "*.iml"
       "*.zip"
       "figwheel_server.log"
-      "archive-contents"
-      "package-lock.json" ; TODO Add this using a dir locals thing (similar to `nomis/local-grep-find-ignored-directories`).
-      ))
+      "archive-contents"))
   (eval-after-load "grep"
     '(progn
        (mapc (lambda (x) (add-to-list 'grep-find-ignored-files x))
@@ -55,15 +55,18 @@
        (mapc (lambda (x) (add-to-list 'grep-find-ignored-directories x))
              *extra-ignored-directories*))))
 
-(defun with-augmented-grep-find-ignored-directories* (f)
+(defun with-augmented-grep-find-ignored-things* (f)
   (let* ((grep-find-ignored-directories
           (-concat nomis/local-grep-find-ignored-directories
-                   grep-find-ignored-directories)))
+                   grep-find-ignored-directories))
+         (grep-find-ignored-files
+          (-concat nomis/local-grep-find-ignored-files
+                   grep-find-ignored-files)))
     (funcall f)))
 
-(defmacro with-augmented-grep-find-ignored-directories (options &rest body)
+(defmacro with-augmented-grep-find-ignored-things (options &rest body)
   (declare (indent 1))
-  `(with-augmented-grep-find-ignored-directories* (lambda () ,@body)))
+  `(with-augmented-grep-find-ignored-things* (lambda () ,@body)))
 
 (defun nomis/toggle-include-emacs.d-in-searches ()
   (interactive)
@@ -136,14 +139,14 @@
 (advice-add 'rgrep-default-command
             :around
             (lambda (orig-fun &rest args)
-              (with-augmented-grep-find-ignored-directories ()
+              (with-augmented-grep-find-ignored-things ()
                 (apply orig-fun args)))
             '((name . nomis/augment-grep-find-ignored-directories)))
 
 (advice-add 'projectile-rgrep-default-command
             :around
             (lambda (orig-fun &rest args)
-              (with-augmented-grep-find-ignored-directories ()
+              (with-augmented-grep-find-ignored-things ()
                 (apply orig-fun args)))
             '((name . nomis/augment-grep-find-ignored-directories)))
 
