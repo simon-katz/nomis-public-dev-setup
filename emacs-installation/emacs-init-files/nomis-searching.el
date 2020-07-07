@@ -85,7 +85,7 @@
                "Including")
              dir-names)))
 
-(defun nomis/toggle-include-emacs.d-in-searches ()
+(defun nomis/toggle-grep-find-emacs.d ()
   (interactive)
   (-nomis/toggle-grep-find-ignored-dirs '(".emacs.d")))
 
