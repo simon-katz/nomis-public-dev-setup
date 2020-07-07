@@ -66,6 +66,8 @@
   (declare (indent 1))
   `(with-augmented-grep-find-ignored-things* (lambda () ,@body)))
 
+;;;; ___________________________________________________________________________
+
 (defun nomis/toggle-include-emacs.d-in-searches ()
   (interactive)
   (let ((dir-name ".emacs.d"))
@@ -78,6 +80,18 @@
                  "Excluding"
                "Including")
              dir-name)))
+
+(defun nomis/grep-logs-dirs-include ()
+  (interactive)
+  (setq nomis/global-grep-find-ignored-directories
+        (remove logs-dir-name
+                nomis/global-grep-find-ignored-directories)))
+
+(defun nomis/grep-logs-dirs-exclude ()
+  (interactive)
+  (setq nomis/global-grep-find-ignored-directories
+        (cons logs-dir-name
+              nomis/global-grep-find-ignored-directories)))
 
 ;;;; ___________________________________________________________________________
 
@@ -154,18 +168,6 @@
 - searches all (unignored) files."
   (interactive (-nomis/rgrep-interactive-stuff t))
   (rgrep regexp files dir confirm))
-
-(defun nomis/grep-logs-dirs-include ()
-  (interactive)
-  (setq nomis/global-grep-find-ignored-directories
-        (remove logs-dir-name
-                nomis/global-grep-find-ignored-directories)))
-
-(defun nomis/grep-logs-dirs-exclude ()
-  (interactive)
-  (setq nomis/global-grep-find-ignored-directories
-        (cons logs-dir-name
-              nomis/global-grep-find-ignored-directories)))
 
 ;; (define-key global-map (kbd "H-q g a") 'nomis/rgrep)
 ;; (define-key global-map (kbd "H-q g g") 'nomis/rgrep-all-unignored-files)
