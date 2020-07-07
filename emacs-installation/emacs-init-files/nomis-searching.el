@@ -15,7 +15,6 @@
 
 (defvar nomis/global-grep-find-ignored-directories
   (list logs-dir-name
-        ;; ".emacs.d"
         ".emacs-backups"
         ".worksheet"
         "out"
