@@ -9,7 +9,7 @@
 
 (defvar logs-dir-name "logs")
 
-(defvar nomis/rgrep-local-ignored-directories '()) ; set this in .dir-locals.el ; TODO Rename -> `nomis/local-grep-find-ignored-directories`
+(defvar nomis/local-grep-find-ignored-directories '()) ; set this in .dir-locals.el
 
 (progn
   (defvar *extra-ignored-directories* ; TODO Add this using advice.
@@ -33,7 +33,7 @@
           ".clj-kondo"
           "log"
           ;; Instead of adding stuff here, consider defining
-          ;; `nomis/rgrep-local-ignored-directories` in a .dir-locals file.
+          ;; `nomis/local-grep-find-ignored-directories` in a .dir-locals file.
           ))
   (defvar *extra-ignored-files* ; TODO Add this using advice.
     '(".ido.last"
@@ -57,7 +57,7 @@
 
 (defun with-augmented-grep-find-ignored-directories* (f)
   (let* ((grep-find-ignored-directories
-          (-concat nomis/rgrep-local-ignored-directories
+          (-concat nomis/local-grep-find-ignored-directories
                    grep-find-ignored-directories)))
     (funcall f)))
 
