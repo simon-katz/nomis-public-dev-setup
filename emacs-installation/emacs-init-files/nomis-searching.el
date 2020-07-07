@@ -2,7 +2,7 @@
 
 ;;;; ___________________________________________________________________________
 
-(require 'dash)
+(require 'cl)
 
 ;;;; ___________________________________________________________________________
 ;;;; ---- Stuff for rgrep and lgrep ----
@@ -53,13 +53,13 @@
 
 (defun with-augmented-grep-find-ignored-things* (f)
   (let* ((grep-find-ignored-directories
-          (-concat nomis/local-grep-find-ignored-directories
-                   nomis/global-grep-find-ignored-directories
-                   grep-find-ignored-directories))
+          (append nomis/local-grep-find-ignored-directories
+                  nomis/global-grep-find-ignored-directories
+                  grep-find-ignored-directories))
          (grep-find-ignored-files
-          (-concat nomis/local-grep-find-ignored-files
-                   nomis/global-grep-find-ignored-files
-                   grep-find-ignored-files)))
+          (append nomis/local-grep-find-ignored-files
+                  nomis/global-grep-find-ignored-files
+                  grep-find-ignored-files)))
     (funcall f)))
 
 (defmacro with-augmented-grep-find-ignored-things (options &rest body)
@@ -68,18 +68,26 @@
 
 ;;;; ___________________________________________________________________________
 
-(defun nomis/toggle-include-emacs.d-in-searches ()
+(defun -nomis/toggle-grep-find-ignored-dirs (dir-names)
   (interactive)
-  (let ((dir-name ".emacs.d"))
+  (cl-flet ((member? () (member (first dir-names)
+                                nomis/global-grep-find-ignored-directories)))
     (setq nomis/global-grep-find-ignored-directories
-          (if (member dir-name nomis/global-grep-find-ignored-directories)
-              (remove dir-name nomis/global-grep-find-ignored-directories)
-            (cons dir-name nomis/global-grep-find-ignored-directories)))
-    (message "%s %s -- NOTE: THIS WILL APPLY ONLY TO NEW GREP BUFFERS"
-             (if (member dir-name nomis/global-grep-find-ignored-directories)
+          (if (member?)
+              (cl-set-difference nomis/global-grep-find-ignored-directories
+                                 dir-names
+                                 :test #'equal)
+            (append dir-names
+                    nomis/global-grep-find-ignored-directories)))
+    (message "%s %S -- NOTE: THIS WILL APPLY ONLY TO NEW GREP BUFFERS"
+             (if (member?)
                  "Excluding"
                "Including")
-             dir-name)))
+             dir-names)))
+
+(defun nomis/toggle-include-emacs.d-in-searches ()
+  (interactive)
+  (-nomis/toggle-grep-find-ignored-dirs '(".emacs.d")))
 
 (defun nomis/grep-logs-dirs-include ()
   (interactive)
