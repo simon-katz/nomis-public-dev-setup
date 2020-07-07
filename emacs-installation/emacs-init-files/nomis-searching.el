@@ -67,6 +67,20 @@
   (declare (indent 1))
   `(with-augmented-grep-find-ignored-things* (lambda () ,@body)))
 
+(advice-add 'rgrep-default-command
+            :around
+            (lambda (orig-fun &rest args)
+              (with-augmented-grep-find-ignored-things ()
+                (apply orig-fun args)))
+            '((name . nomis/augment-grep-find-ignored-things)))
+
+(advice-add 'projectile-rgrep-default-command
+            :around
+            (lambda (orig-fun &rest args)
+              (with-augmented-grep-find-ignored-things ()
+                (apply orig-fun args)))
+            '((name . nomis/augment-grep-find-ignored-things)))
+
 ;;;; ___________________________________________________________________________
 
 (defun -nomis/toggle-grep-find-ignored-dirs (dir-names)
@@ -148,20 +162,6 @@
 - uses `ido-read-directory-name` for nicer directory navigation."
   (interactive (-nomis/rgrep-interactive-stuff nil))
   (rgrep regexp files dir confirm))
-
-(advice-add 'rgrep-default-command
-            :around
-            (lambda (orig-fun &rest args)
-              (with-augmented-grep-find-ignored-things ()
-                (apply orig-fun args)))
-            '((name . nomis/augment-grep-find-ignored-things)))
-
-(advice-add 'projectile-rgrep-default-command
-            :around
-            (lambda (orig-fun &rest args)
-              (with-augmented-grep-find-ignored-things ()
-                (apply orig-fun args)))
-            '((name . nomis/augment-grep-find-ignored-things)))
 
 (defun nomis/rgrep-all-unignored-files (regexp &optional files dir confirm)
   "A variation of `rgrep` that:
