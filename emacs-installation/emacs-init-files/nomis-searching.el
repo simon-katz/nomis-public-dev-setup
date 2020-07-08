@@ -84,7 +84,6 @@
 ;;;; ___________________________________________________________________________
 
 (defun -nomis/toggle-grep-find-ignored-dirs (dir-names)
-  (interactive)
   (cl-flet ((member? () (member (first dir-names)
                                 nomis/global-grep-find-ignored-directories)))
     (setq nomis/global-grep-find-ignored-directories
