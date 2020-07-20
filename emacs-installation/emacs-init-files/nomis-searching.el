@@ -10,10 +10,6 @@
 (defvar log-dir-names '("log"
                         "logs"))
 
-(defvar nomis/local-grep-find-ignored-directories '()) ; set this in .dir-locals.el
-
-(defvar nomis/local-grep-find-ignored-files '()) ; set this in .dir-locals.el
-
 (defvar nomis/global-grep-find-ignored-directories
   (append log-dir-names
           '(".emacs-backups"
@@ -52,15 +48,53 @@
     ;; `nomis/local-grep-find-ignored-files` in a .dir-locals file.
     ))
 
+(defvar nomis/local-grep-find-ignored-directories '()) ; set this in .dir-locals.el
+
+(defvar nomis/local-grep-find-ignored-files '()) ; set this in .dir-locals.el
+
+;;;; We don't want to set directory-local variables, because the behaviour isn't
+;;;; easy to understand. So instead have global xxxx/not-ignored variables.
+
+(defvar nomis/grep-find-ignored-directories/not-ignored '())
+(defvar nomis/global-grep-find-ignored-directories/not-ignored '())
+(defvar nomis/local-grep-find-ignored-directories/not-ignored '())
+
+(defvar -nomis/all-grep-find-ignored-directories-vars
+  '(grep-find-ignored-directories
+    nomis/global-grep-find-ignored-directories
+    nomis/local-grep-find-ignored-directories))
+
+(defvar -nomis/all-grep-find-ignored-directories-vars/not-ignored
+  '(nomis/grep-find-ignored-directories/not-ignored
+    nomis/global-grep-find-ignored-directories/not-ignored
+    nomis/local-grep-find-ignored-directories/not-ignored))
+
+(defun -nomis/all-grep-find-ignored-directories-vars/for-debugging ()
+  (list (list nomis/grep-find-ignored-directories/not-ignored
+              nomis/global-grep-find-ignored-directories/not-ignored
+              nomis/local-grep-find-ignored-directories/not-ignored)
+        (list grep-find-ignored-directories
+              nomis/global-grep-find-ignored-directories
+              nomis/local-grep-find-ignored-directories)))
+
+(defun nomis/all-grep-find-ignored-directories ()
+  (let ((ignored
+         (-mapcat #'symbol-value
+                  -nomis/all-grep-find-ignored-directories-vars))
+        (not-ignored
+         (-mapcat #'symbol-value
+                  -nomis/all-grep-find-ignored-directories-vars/not-ignored)))
+    (cl-set-difference ignored not-ignored :test #'equal)))
+
+(defun nomis/all-grep-find-ignored-files ()
+  ;; TODO ; Copy the approach that you've used for directories.
+  (append nomis/local-grep-find-ignored-files
+          nomis/global-grep-find-ignored-files
+          grep-find-ignored-files))
+
 (defun with-augmented-grep-find-ignored-things* (f)
-  (let* ((grep-find-ignored-directories
-          (append nomis/local-grep-find-ignored-directories
-                  nomis/global-grep-find-ignored-directories
-                  grep-find-ignored-directories))
-         (grep-find-ignored-files
-          (append nomis/local-grep-find-ignored-files
-                  nomis/global-grep-find-ignored-files
-                  grep-find-ignored-files)))
+  (let* ((grep-find-ignored-directories (nomis/all-grep-find-ignored-directories))
+         (grep-find-ignored-files       (nomis/all-grep-find-ignored-files)))
     (funcall f)))
 
 (defmacro with-augmented-grep-find-ignored-things (options &rest body)
@@ -84,17 +118,17 @@
 ;;;; ___________________________________________________________________________
 
 (defun -nomis/toggle-grep-find-ignored-dirs (dir-names)
-  (cl-flet ((member? () (member (first dir-names)
-                                nomis/global-grep-find-ignored-directories)))
-    (setq nomis/global-grep-find-ignored-directories
-          (if (member?)
-              (cl-set-difference nomis/global-grep-find-ignored-directories
-                                 dir-names
-                                 :test #'equal)
-            (append dir-names
-                    nomis/global-grep-find-ignored-directories)))
+  (cl-flet ((currently-ignored?
+             ()
+             (member (first dir-names)
+                     (nomis/all-grep-find-ignored-directories))))
+    (if (currently-ignored?)
+        (dolist (v -nomis/all-grep-find-ignored-directories-vars/not-ignored)
+          (set v (append dir-names (symbol-value v))))
+      (dolist (v -nomis/all-grep-find-ignored-directories-vars/not-ignored)
+        (set v (cl-set-difference (symbol-value v) dir-names :test #'equal))))
     (message "%s %S -- NOTE: THIS WILL APPLY ONLY TO NEW GREP BUFFERS"
-             (if (member?)
+             (if (currently-ignored?)
                  "Excluding"
                "Including")
              dir-names)))
@@ -106,6 +140,17 @@
 (defun nomis/toggle-grep-find-log-files ()
   (interactive)
   (-nomis/toggle-grep-find-ignored-dirs log-dir-names))
+
+(defvar -nomis/toggle-grep-find-files-last-dir-name "")
+
+(defun nomis/toggle-grep-find-files (dir-names)
+  (interactive (list (list
+                      (read-string "Dir name: "
+                                   -nomis/toggle-grep-find-files-last-dir-name
+                                   'nomis/toggle-grep-find-files-history))))
+  (setq -nomis/toggle-grep-find-files-last-dir-name
+        (first dir-names))
+  (-nomis/toggle-grep-find-ignored-dirs dir-names))
 
 ;;;; ___________________________________________________________________________
 
