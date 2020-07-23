@@ -5,7 +5,7 @@
 (require 'cl)
 
 ;;;; ___________________________________________________________________________
-;;;; ---- Stuff for rgrep and lgrep ----
+;;;; ---- Stuff for grep ----
 
 (defvar log-dir-names '("log"
                         "logs"))
@@ -58,23 +58,29 @@
 (defvar nomis/global-grep-find-ignored-directories/ignore-overridden '())
 (defvar nomis/local-grep-find-ignored-directories/ignore-overridden '())
 
+(defvar nomis/grep-find-ignored-files/ignore-overridden '())
+(defvar nomis/global-grep-find-ignored-files/ignore-overridden '())
+(defvar nomis/local-grep-find-ignored-files/ignore-overridden '())
+
 (defvar -nomis/all-grep-find-ignored-directories-vars/ignored
   '(grep-find-ignored-directories
     nomis/global-grep-find-ignored-directories
     nomis/local-grep-find-ignored-directories))
+
+(defvar -nomis/all-grep-find-ignored-files-vars/ignored
+  '(grep-find-ignored-files
+    nomis/global-grep-find-ignored-files
+    nomis/local-grep-find-ignored-files))
 
 (defvar -nomis/all-grep-find-ignored-directories-vars/ignore-overridden
   '(nomis/grep-find-ignored-directories/ignore-overridden
     nomis/global-grep-find-ignored-directories/ignore-overridden
     nomis/local-grep-find-ignored-directories/ignore-overridden))
 
-(defun -nomis/all-grep-find-ignored-directories-vars/ignored/for-debugging ()
-  (list (list nomis/grep-find-ignored-directories/ignore-overridden
-              nomis/global-grep-find-ignored-directories/ignore-overridden
-              nomis/local-grep-find-ignored-directories/ignore-overridden)
-        (list grep-find-ignored-directories
-              nomis/global-grep-find-ignored-directories
-              nomis/local-grep-find-ignored-directories)))
+(defvar -nomis/all-grep-find-ignored-files-vars/ignore-overridden
+  '(nomis/grep-find-ignored-files/ignore-overridden
+    nomis/global-grep-find-ignored-files/ignore-overridden
+    nomis/local-grep-find-ignored-files/ignore-overridden))
 
 (defun -nomis/all-grep-find-ignored-directories/ignored ()
   (-mapcat #'symbol-value
@@ -84,6 +90,14 @@
   (-mapcat #'symbol-value
            -nomis/all-grep-find-ignored-directories-vars/ignore-overridden))
 
+(defun -nomis/all-grep-find-ignored-files/ignored ()
+  (-mapcat #'symbol-value
+           -nomis/all-grep-find-ignored-files-vars/ignored))
+
+(defun -nomis/all-grep-find-ignored-files/ignore-overridden ()
+  (-mapcat #'symbol-value
+           -nomis/all-grep-find-ignored-files-vars/ignore-overridden))
+
 (defun nomis/all-grep-find-ignored-directories ()
   (let ((ignored
          (-nomis/all-grep-find-ignored-directories/ignored))
@@ -92,10 +106,11 @@
     (cl-set-difference ignored ignore-overridden :test #'equal)))
 
 (defun nomis/all-grep-find-ignored-files ()
-  ;; TODO ; Copy the approach that you've used for directories.
-  (append nomis/local-grep-find-ignored-files
-          nomis/global-grep-find-ignored-files
-          grep-find-ignored-files))
+  (let ((ignored
+         (-nomis/all-grep-find-ignored-files/ignored))
+        (ignore-overridden
+         (-nomis/all-grep-find-ignored-files/ignore-overridden)))
+    (cl-set-difference ignored ignore-overridden :test #'equal)))
 
 (defun with-augmented-grep-find-ignored-things* (f)
   (let* ((grep-find-ignored-directories (nomis/all-grep-find-ignored-directories))
@@ -122,38 +137,56 @@
 
 ;;;; ___________________________________________________________________________
 
+(defun -nomis/toggle-grep-find-ignored-things (dirs? names)
+  (let ((dirs-or-files (if dirs? "dirs" "files")))
+    (cl-flet* ((currently-ignored?
+                ()
+                (member (first names)
+                        (if dirs?
+                            (nomis/all-grep-find-ignored-directories)
+                          (nomis/all-grep-find-ignored-files))))
+               (change-state
+                (ignore?)
+                (cl-loop
+                 for v1 in (if dirs?
+                               -nomis/all-grep-find-ignored-directories-vars/ignore-overridden
+                             -nomis/all-grep-find-ignored-files-vars/ignore-overridden)
+                 as  v2 in (if dirs?
+                               -nomis/all-grep-find-ignored-directories-vars/ignored
+                             -nomis/all-grep-find-ignored-files-vars/ignored)
+                 do (cl-loop for name in names
+                             when (member name (symbol-value v2))
+                             do   (set v1
+                                       (let ((v (symbol-value v1)))
+                                         (if ignore?
+                                             (remove name v)
+                                           (cons name v))))))
+                (message "%s %S -- NOTE: THIS WILL APPLY ONLY TO NEW GREP BUFFERS"
+                         (if ignore?
+                             (format "Ignoring the following %s:"
+                                     dirs-or-files)
+                           (format "Not ignoring the following %s:"
+                                   dirs-or-files))
+                         names)))
+      (if (currently-ignored?)
+          (change-state nil)
+        (progn
+          (cl-loop
+           for name in names
+           unless (member name
+                          (if dirs?
+                           (-nomis/all-grep-find-ignored-directories/ignored)
+                           (-nomis/all-grep-find-ignored-files/ignored)))
+           do (error "%s '%s' is not ignored, so cannot override the ignore"
+                     (if dirs? "Directory" "File")
+                     name))
+          (change-state t))))))
+
 (defun -nomis/toggle-grep-find-ignored-dirs (dir-names)
-  (cl-flet* ((currently-ignored?
-              ()
-              (member (first dir-names)
-                      (nomis/all-grep-find-ignored-directories)))
-             (change-state
-              (ignore?)
-              (cl-loop
-               for v1 in -nomis/all-grep-find-ignored-directories-vars/ignore-overridden
-               as  v2 in -nomis/all-grep-find-ignored-directories-vars/ignored
-               do (cl-loop for d in dir-names
-                           when (member d (symbol-value v2))
-                           do   (set v1
-                                     (let ((v (symbol-value v1)))
-                                       (if ignore?
-                                           (remove d v)
-                                         (cons d v))))))
-              (message "%s %S -- NOTE: THIS WILL APPLY ONLY TO NEW GREP BUFFERS"
-                       (if ignore?
-                           "Ignoring the following dirs:"
-                         "Not ignoring the following dirs:")
-                       dir-names)))
-    (if (currently-ignored?)
-        (change-state nil)
-      (progn
-        (cl-loop
-         for d in dir-names
-         unless (member d
-                        (-nomis/all-grep-find-ignored-directories/ignored))
-         do (error "Directory '%s' is not ignored, so cannot override the ignore"
-                   d))
-        (change-state t)))))
+  (-nomis/toggle-grep-find-ignored-things t dir-names))
+
+(defun -nomis/toggle-grep-find-ignored-files (file-names)
+  (-nomis/toggle-grep-find-ignored-things nil file-names))
 
 (defun nomis/toggle-grep-find-emacs.d ()
   (interactive)
@@ -164,15 +197,44 @@
   (-nomis/toggle-grep-find-ignored-dirs log-dir-names))
 
 (defvar -nomis/toggle-grep-find-files-last-dir-name "")
+(defvar -nomis/toggle-grep-find-files-last-file-name "")
 
 (defun nomis/toggle-grep-ignored-dirs (dir-names)
   (interactive (list (list
                       (read-string "Dir name: "
                                    -nomis/toggle-grep-find-files-last-dir-name
-                                   'nomis/toggle-grep-find-files-history))))
+                                   'nomis/toggle-grep-find-files-dir-history))))
   (setq -nomis/toggle-grep-find-files-last-dir-name
         (first dir-names))
   (-nomis/toggle-grep-find-ignored-dirs dir-names))
+
+(defun nomis/toggle-grep-ignored-files (file-names)
+  (interactive (list (list
+                      (read-string "File name: "
+                                   -nomis/toggle-grep-find-files-last-file-name
+                                   'nomis/toggle-grep-find-files-file-history))))
+  (setq -nomis/toggle-grep-find-files-last-file-name
+        (first file-names))
+  (-nomis/toggle-grep-find-ignored-files file-names))
+
+;;;; ___________________________________________________________________________
+;;;; ---- Stuff for grep -- debugging ----
+
+(defun -nomis/all-grep-find-ignored-directories-vars/ignored/for-debugging ()
+  (list (list nomis/grep-find-ignored-directories/ignore-overridden
+              nomis/global-grep-find-ignored-directories/ignore-overridden
+              nomis/local-grep-find-ignored-directories/ignore-overridden)
+        (list grep-find-ignored-directories
+              nomis/global-grep-find-ignored-directories
+              nomis/local-grep-find-ignored-directories)))
+
+(defun -nomis/all-grep-find-ignored-files-vars/ignored/for-debugging ()
+  (list (list nomis/grep-find-ignored-files/ignore-overridden
+              nomis/global-grep-find-ignored-files/ignore-overridden
+              nomis/local-grep-find-ignored-files/ignore-overridden)
+        (list grep-find-ignored-files
+              nomis/global-grep-find-ignored-files
+              nomis/local-grep-find-ignored-files)))
 
 ;;;; ___________________________________________________________________________
 
