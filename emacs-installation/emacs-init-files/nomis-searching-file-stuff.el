@@ -58,14 +58,13 @@
 
 (defvar -nomis/grep/toggle-files/last-name "")
 
-(defun nomis/toggle-grep-ignored-files (file-names)
-  (interactive (list (list
-                      (read-string "File name: "
-                                   -nomis/grep/toggle-files/last-name
-                                   'nomis/grep/toggle-files/history))))
+(defun nomis/toggle-grep-ignored-files (file-name)
+  (interactive (list (read-string "File name: "
+                                  -nomis/grep/toggle-files/last-name
+                                  'nomis/grep/toggle-files/history)))
   (setq -nomis/grep/toggle-files/last-name
-        (first file-names))
-  (-nomis/grep/toggle-ignored-files file-names))
+        file-name)
+  (-nomis/grep/toggle-ignored-files (list file-name)))
 
 ;;;; ___________________________________________________________________________
 ;;;; ---- Stuff for grep -- debugging ----

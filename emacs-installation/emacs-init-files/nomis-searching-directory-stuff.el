@@ -77,14 +77,13 @@
 
 (defvar -nomis/grep/toggle-dirs/last-name "")
 
-(defun nomis/toggle-grep-ignored-dirs (dir-names)
-  (interactive (list (list
-                      (read-string "Dir name: "
-                                   -nomis/grep/toggle-dirs/last-name
-                                   'nomis/grep/toggle-dirs/history))))
+(defun nomis/toggle-grep-ignored-dirs (dir-name)
+  (interactive (list (read-string "Dir name: "
+                                  -nomis/grep/toggle-dirs/last-name
+                                  'nomis/grep/toggle-dirs/history)))
   (setq -nomis/grep/toggle-dirs/last-name
-        (first dir-names))
-  (-nomis/grep/toggle-ignored-dirs dir-names))
+        dir-name)
+  (-nomis/grep/toggle-ignored-dirs (list dir-name)))
 
 ;;;; ___________________________________________________________________________
 ;;;; ---- Stuff for grep -- debugging ----
