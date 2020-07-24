@@ -2,6 +2,8 @@
 
 ;;;; ___________________________________________________________________________
 
+(require 'dash)
+
 (defvar nomis/grep/global-ignored-files
   '(".ido.last"
     ".smex-items"
@@ -27,9 +29,9 @@
 (defvar nomis/grep/ignore-overridden/local/files '())
 
 (defvar -nomis/grep/ignored/all/files-vars
-  '(grep-find-ignored-files
+  '(nomis/grep/local-ignored-files
     nomis/grep/global-ignored-files
-    nomis/grep/local-ignored-files))
+    grep-find-ignored-files))
 
 (defvar -nomis/grep/ignore-overridden/all/files-vars
   '(nomis/grep/ignore-overridden/builtin/files
@@ -56,14 +58,36 @@
 
 ;;;; ___________________________________________________________________________
 
-(defvar -nomis/grep/toggle-files/last-name "")
+(defvar -nomis/grep/toggle/last-names/files '())
+
+(defun -nomis/grep/annotate-name/files (name)
+  (-nomis/grep/annotate-name name
+                             (-nomis/grep/ignore-overridden/all/files)))
 
 (defun nomis/toggle-grep-ignored-files (file-name)
-  (interactive (list (read-string "File name: "
-                                  -nomis/grep/toggle-files/last-name
-                                  'nomis/grep/toggle-files/history)))
-  (setq -nomis/grep/toggle-files/last-name
-        file-name)
+  (interactive (let* ((options
+                       (append -nomis/grep/toggle/last-names/files
+                               (cl-set-difference
+                                (-nomis/grep/ignored/all/files)
+                                -nomis/grep/toggle/last-names/files
+                                :test #'equal)))
+                      (annotated-options
+                       (-map #'-nomis/grep/annotate-name/files
+                             options))
+                      (annotated-s (ido-completing-read
+                                    "File name: "
+                                    annotated-options
+                                    nil
+                                    t
+                                    nil
+                                    'nomis/grep/toggle-files/history))
+                      (s (-nomis/grep/de-annotate-name annotated-s)))
+                 (set-text-properties 0 (length s) nil s)
+                 (list s)))
+  (setq -nomis/grep/toggle/last-names/files
+        (-take 50 (cons file-name
+                        (remove file-name
+                                -nomis/grep/toggle/last-names/files))))
   (-nomis/grep/toggle-ignored-files (list file-name)))
 
 ;;;; ___________________________________________________________________________
