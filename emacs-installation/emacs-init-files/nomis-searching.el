@@ -10,8 +10,8 @@
 ;;;; ---- Stuff for grep ----
 
 (defun with-augmented-grep-find-ignored-things* (f)
-  (let* ((grep-find-ignored-directories (nomis/all-grep-find-ignored-directories))
-         (grep-find-ignored-files       (nomis/all-grep-find-ignored-files)))
+  (let* ((grep-find-ignored-directories (nomis/grep/ignored-directories))
+         (grep-find-ignored-files       (nomis/grep/ignored-files)))
     (funcall f)))
 
 (defmacro with-augmented-grep-find-ignored-things (options &rest body)
@@ -34,23 +34,23 @@
 
 ;;;; ___________________________________________________________________________
 
-(defun -nomis/toggle-grep-find-ignored-things (dirs? names)
+(defun -nomis/grep/toggle-ignored-things (dirs? names)
   (let ((dirs-or-files (if dirs? "dirs" "files")))
     (cl-flet* ((currently-ignored?
                 ()
                 (member (first names)
                         (if dirs?
-                            (nomis/all-grep-find-ignored-directories)
-                          (nomis/all-grep-find-ignored-files))))
+                            (nomis/grep/ignored-directories)
+                          (nomis/grep/ignored-files))))
                (change-state
                 (ignore?)
                 (cl-loop
                  for v1 in (if dirs?
-                               -nomis/all-grep-find-ignored-directories-vars/ignore-overridden
-                             -nomis/all-grep-find-ignored-files-vars/ignore-overridden)
+                               -nomis/grep/ignore-overridden/all/directories-vars
+                             -nomis/grep/ignore-overridden/all/files-vars)
                  as  v2 in (if dirs?
-                               -nomis/all-grep-find-ignored-directories-vars/ignored
-                             -nomis/all-grep-find-ignored-files-vars/ignored)
+                               -nomis/grep/ignored/all/directories-vars
+                             -nomis/grep/ignored/all/files-vars)
                  do (cl-loop for name in names
                              when (member name (symbol-value v2))
                              do   (set v1
@@ -72,8 +72,8 @@
            for name in names
            unless (member name
                           (if dirs?
-                           (-nomis/all-grep-find-ignored-directories/ignored)
-                           (-nomis/all-grep-find-ignored-files/ignored)))
+                              (-nomis/grep/ignored/all/directories)
+                            (-nomis/grep/ignored/all/files)))
            do (error "%s '%s' is not ignored, so cannot override the ignore"
                      (if dirs? "Directory" "File")
                      name))

@@ -23,8 +23,8 @@
     (blacken elpy flycheck-kotlin kotlin-mode terraform-mode flycheck dumb-jump json-mode gnu-elpa-keyring-update flycheck-clj-kondo yasnippet yaml-mode yafolding which-key undo-tree spinner smex sesman rainbow-delimiters queue projectile pos-tip paxedit parseedn org-bullets multiple-cursors markdown-mode magit key-chord js2-mode inflections ido-vertical-mode ido-completing-read+ hydra ht highlight-indentation helm fuzzy flycheck-joker fill-column-indicator exec-path-from-shell elisp-slime-nav edn discover dash-functional company clojure-mode cl-format cider-eval-sexp-fu auto-complete aggressive-indent)))
  '(safe-local-variable-values
    (quote
-    ((nomis/local-grep-find-ignored-files "package-lock.json")
-     (nomis/local-grep-find-ignored-directories "resources/public/assets")
+    ((nomis/grep/local-ignored-files "package-lock.json")
+     (nomis/grep/local-ignored-directories "resources/public/assets")
      (cider-ns-refresh-after-fn . "integrant.repl/resume")
      (cider-ns-refresh-before-fn . "integrant.repl/suspend")
      (cider-font-lock-max-length . 1000)
@@ -34,7 +34,7 @@
      (nomis/cider/cljs-dev-port . 3333)
      (nomis/cider/cljs-dev-port . 8777)
      (nomis/cider/cljs-dev-host . "localhost")
-     (nomis/local-grep-find-ignored-directories "giggin/public/js" "increments")
+     (nomis/grep/local-ignored-directories "giggin/public/js" "increments")
      (nomis/cider-cljs-offer-to-open-app-in-browser\?)
      (elisp-lint-indent-specs
       (if-let* . 2)
