@@ -3,21 +3,25 @@
 ;;;; ___________________________________________________________________________
 
 (require 'dash)
+(require 'cl)
 
-(defvar nomis/grep/global-ignored-files
-  '(".ido.last"
-    ".smex-items"
-    ;; ".jar"
-    ;; ".exe"
-    ".cider-repl-history"
-    ".lein-repl-history"
-    "*.iml"
-    "*.zip"
-    "figwheel_server.log"
-    "archive-contents"
-    ;; Instead of adding stuff here, consider defining
-    ;; `nomis/grep/local-ignored-files` in a .dir-locals file.
-    ))
+(eval-after-load 'grep
+  '(setq grep-find-ignored-files ; Note that this is idempotent.
+         (let ((v (append '(".ido.last"
+                            ".smex-items"
+                            ;; ".jar"
+                            ;; ".exe"
+                            ".cider-repl-history"
+                            ".lein-repl-history"
+                            "*.iml"
+                            "*.zip"
+                            "figwheel_server.log"
+                            "archive-contents"
+                            ;; Instead of adding stuff here, consider defining
+                            ;; `nomis/grep/local-ignored-files` in a .dir-locals file.
+                            )
+                          grep-find-ignored-files)))
+           (cl-remove-duplicates v :from-end t))))
 
 (defvar nomis/grep/local-ignored-files '()) ; set this in .dir-locals.el
 
@@ -25,17 +29,14 @@
 ;;;; easy to understand. So instead have global xxxx/ignore-overridden variables.
 
 (defvar nomis/grep/ignore-overridden/builtin/files '())
-(defvar nomis/grep/ignore-overridden/global/files '())
 (defvar nomis/grep/ignore-overridden/local/files '())
 
 (defvar -nomis/grep/ignored/all/files-vars
   '(nomis/grep/local-ignored-files
-    nomis/grep/global-ignored-files
     grep-find-ignored-files))
 
 (defvar -nomis/grep/ignore-overridden/all/files-vars
   '(nomis/grep/ignore-overridden/builtin/files
-    nomis/grep/ignore-overridden/global/files
     nomis/grep/ignore-overridden/local/files))
 
 (defun -nomis/grep/ignored/all/files ()
@@ -95,10 +96,8 @@
 
 (defun -nomis/all-grep-find-ignored/ignored/for-debugging/files-vars ()
   (list (list nomis/grep/ignore-overridden/builtin/files
-              nomis/grep/ignore-overridden/global/files
               nomis/grep/ignore-overridden/local/files)
         (list grep-find-ignored-files
-              nomis/grep/global-ignored-files
               nomis/grep/local-ignored-files)))
 
 ;;;; ___________________________________________________________________________

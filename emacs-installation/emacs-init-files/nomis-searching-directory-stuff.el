@@ -3,32 +3,36 @@
 ;;;; ___________________________________________________________________________
 
 (require 'dash)
+(require 'cl)
 
 (defvar log-dir-names '("log"
                         "logs"))
 
-(defvar nomis/grep/global-ignored-directories
-  (append log-dir-names
-          '(".emacs-backups"
-            ".worksheet"
-            "out"
-            "target"
-            ".repl"
-            "bundle"
-            ".idea"
-            ;; "labrepl*/public/javascripts/jquery.js"
-            ;; "emacs-configuration/nomis-addons/cygwin-mount.el"
-            "node_modules"
-            ".shadow-cljs"
-            ".emacs.d"
-            "emacs-configuration-pre-2018-06-upgrade-packages"
-            "clojure-for-the-brave-and-true/emacs-for-clojure-book1"
-            "cljs-runtime"
-            ".clj-kondo"
-            "log"
-            ;; Instead of adding stuff here, consider defining
-            ;; `nomis/grep/local-ignored-directories` in a .dir-locals file.
-            )))
+(eval-after-load 'grep
+  '(setq grep-find-ignored-directories ; Note that this is idempotent.
+         (let ((v (append log-dir-names
+                          '(".emacs-backups"
+                            ".worksheet"
+                            "out"
+                            "target"
+                            ".repl"
+                            "bundle"
+                            ".idea"
+                            ;; "labrepl*/public/javascripts/jquery.js"
+                            ;; "emacs-configuration/nomis-addons/cygwin-mount.el"
+                            "node_modules"
+                            ".shadow-cljs"
+                            ".emacs.d"
+                            "emacs-configuration-pre-2018-06-upgrade-packages"
+                            "clojure-for-the-brave-and-true/emacs-for-clojure-book1"
+                            "cljs-runtime"
+                            ".clj-kondo"
+                            "log"
+                            ;; Instead of adding stuff here, consider defining
+                            ;; `nomis/grep/local-ignored-directories` in a .dir-locals file.
+                            )
+                          grep-find-ignored-directories)))
+           (cl-remove-duplicates v :from-end t))))
 
 (defvar nomis/grep/local-ignored-directories '()) ; set this in .dir-locals.el
 
@@ -36,17 +40,14 @@
 ;;;; easy to understand. So instead have global xxxx/ignore-overridden variables.
 
 (defvar nomis/grep/ignore-overridden/builtin/directories '())
-(defvar nomis/grep/ignore-overridden/global/directories '())
 (defvar nomis/grep/ignore-overridden/local/directories '())
 
 (defvar -nomis/grep/ignored/all/directories-vars
   '(nomis/grep/local-ignored-directories
-    nomis/grep/global-ignored-directories
     grep-find-ignored-directories))
 
 (defvar -nomis/grep/ignore-overridden/all/directories-vars
   '(nomis/grep/ignore-overridden/builtin/directories
-    nomis/grep/ignore-overridden/global/directories
     nomis/grep/ignore-overridden/local/directories))
 
 (defun -nomis/grep/ignored/all/directories ()
@@ -114,10 +115,8 @@
 
 (defun -nomis/all-grep-find-ignored/ignored/for-debugging/directories-vars ()
   (list (list nomis/grep/ignore-overridden/builtin/directories
-              nomis/grep/ignore-overridden/global/directories
               nomis/grep/ignore-overridden/local/directories)
         (list grep-find-ignored-directories
-              nomis/grep/global-ignored-directories
               nomis/grep/local-ignored-directories)))
 
 ;;;; ___________________________________________________________________________
