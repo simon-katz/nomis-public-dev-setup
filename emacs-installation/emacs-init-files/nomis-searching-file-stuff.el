@@ -61,28 +61,54 @@
 
 (defvar -nomis/grep/toggle/last-names/files '())
 
-(defun -nomis/grep/annotate-name/files (name)
-  (-nomis/grep/annotate-name name
-                             (-nomis/grep/ignore-overridden/all/files)))
-
-(defun nomis/toggle-grep-ignored-files (file-name)
+(defun nomis/remove-grep-ignored-file (file-name)
   (interactive (let* ((options
-                       (append -nomis/grep/toggle/last-names/files
+                       (append (cl-set-difference
+                                -nomis/grep/toggle/last-names/files
+                                (-nomis/grep/ignore-overridden/all/files)
+                                :test #'equal)
                                (cl-set-difference
-                                (-nomis/grep/ignored/all/files)
+                                (nomis/grep/ignored-files)
                                 -nomis/grep/toggle/last-names/files
                                 :test #'equal)))
-                      (annotated-options
-                       (-map #'-nomis/grep/annotate-name/files
-                             options))
-                      (annotated-s (ido-completing-read
-                                    "File name: "
-                                    annotated-options
-                                    nil
-                                    t
-                                    nil
-                                    'nomis/grep/toggle-files/history))
-                      (s (-nomis/grep/de-annotate-name annotated-s)))
+                      (_
+                       (when (null options)
+                         (error "Nothing to remove")))
+                      (s (ido-completing-read
+                          "File name to remove from ignored: "
+                          options ; annotated-options
+                          nil
+                          t
+                          nil
+                          'nomis/grep/toggle-files/history)))
+                 (set-text-properties 0 (length s) nil s)
+                 (list s)))
+  (setq -nomis/grep/toggle/last-names/files
+        (-take 50 (cons file-name
+                        (remove file-name
+                                -nomis/grep/toggle/last-names/files))))
+  (-nomis/grep/toggle-ignored-files (list file-name)))
+
+(defun nomis/re-add-grep-ignored-file (file-name)
+  (interactive (let* ((options
+                       (append (cl-set-difference
+                                -nomis/grep/toggle/last-names/files
+                                (nomis/grep/ignored-files)
+                                :test #'equal)
+                               (cl-set-difference
+                                (-nomis/grep/ignore-overridden/all/files)
+                                -nomis/grep/toggle/last-names/files
+                                :test #'equal)))
+                      (_
+                       (when (null options)
+                         (error "Nothing to re-add")))
+                      (s (ido-completing-read
+                          "File name to re-add to ignored: "
+                          options ; annotated-options
+                          nil
+                          t
+                          nil
+                          'nomis/grep/toggle-files/history)))
                  (set-text-properties 0 (length s) nil s)
                  (list s)))
   (setq -nomis/grep/toggle/last-names/files

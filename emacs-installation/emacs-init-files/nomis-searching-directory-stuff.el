@@ -80,28 +80,54 @@
 
 (defvar -nomis/grep/toggle/last-names/dirs '())
 
-(defun -nomis/grep/annotate-name/directories (name)
-  (-nomis/grep/annotate-name name
-                             (-nomis/grep/ignore-overridden/all/directories)))
-
-(defun nomis/toggle-grep-ignored-dirs (dir-name)
+(defun nomis/remove-grep-ignored-dir (dir-name)
   (interactive (let* ((options
-                       (append -nomis/grep/toggle/last-names/dirs
+                       (append (cl-set-difference
+                                -nomis/grep/toggle/last-names/dirs
+                                (-nomis/grep/ignore-overridden/all/directories)
+                                :test #'equal)
                                (cl-set-difference
-                                (-nomis/grep/ignored/all/directories)
+                                (nomis/grep/ignored-directories)
                                 -nomis/grep/toggle/last-names/dirs
                                 :test #'equal)))
-                      (annotated-options
-                       (-map #'-nomis/grep/annotate-name/directories
-                             options))
-                      (annotated-s (ido-completing-read
-                                    "Dir name: "
-                                    annotated-options
-                                    nil
-                                    t
-                                    nil
-                                    'nomis/grep/toggle-dirs/history))
-                      (s (-nomis/grep/de-annotate-name annotated-s)))
+                      (_
+                       (when (null options)
+                         (error "Nothing to remove")))
+                      (s (ido-completing-read
+                          "Dir name to remove from ignored: "
+                          options ; annotated-options
+                          nil
+                          t
+                          nil
+                          'nomis/grep/toggle-dirs/history)))
+                 (set-text-properties 0 (length s) nil s)
+                 (list s)))
+  (setq -nomis/grep/toggle/last-names/dirs
+        (-take 50 (cons dir-name
+                        (remove dir-name
+                                -nomis/grep/toggle/last-names/dirs))))
+  (-nomis/grep/toggle-ignored-dirs (list dir-name)))
+
+(defun nomis/re-add-grep-ignored-dir (dir-name)
+  (interactive (let* ((options
+                       (append (cl-set-difference
+                                -nomis/grep/toggle/last-names/dirs
+                                (nomis/grep/ignored-directories)
+                                :test #'equal)
+                               (cl-set-difference
+                                (-nomis/grep/ignore-overridden/all/directories)
+                                -nomis/grep/toggle/last-names/dirs
+                                :test #'equal)))
+                      (_
+                       (when (null options)
+                         (error "Nothing to re-add")))
+                      (s (ido-completing-read
+                          "Dir name to re-add to ignored: "
+                          options ; annotated-options
+                          nil
+                          t
+                          nil
+                          'nomis/grep/toggle-dirs/history)))
                  (set-text-properties 0 (length s) nil s)
                  (list s)))
   (setq -nomis/grep/toggle/last-names/dirs

@@ -34,26 +34,7 @@
 
 ;;;; ___________________________________________________________________________
 
-(defvar -nomis/grep/add-to-ignored-string      "Add to ignored:      ")
-(defvar -nomis/grep/remove-from-ignored-string "Remove from ignored: ")
-
-(defun -nomis/grep/add-remove-string-length ()
-  (let ((x (length -nomis/grep/add-to-ignored-string))
-        (y (length -nomis/grep/remove-from-ignored-string)))
-    (assert (= x y))
-    x))
-
-(defun -nomis/grep/annotate-name (name ignore-overridden/values)
-  (s-concat (if (member name ignore-overridden/values)
-                -nomis/grep/add-to-ignored-string
-              -nomis/grep/remove-from-ignored-string)
-            name))
-
-(defun -nomis/grep/de-annotate-name (annotated-name)
-  (substring annotated-name
-             (-nomis/grep/add-remove-string-length)))
-
-(defun -nomis/grep/toggle-ignored-things (dirs? names)
+(defun -nomis/grep/toggle-ignored-things (dirs? names) ; TODO This is over-complicated for what you now need.
   (let ((dirs-or-files (if dirs? "dirs" "files")))
     (cl-flet* ((currently-ignored?
                 ()
