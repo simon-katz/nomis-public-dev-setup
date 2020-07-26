@@ -37,11 +37,11 @@
 
 (defun nomis/grep/remove-ignored-directory (name)
   (interactive (-nomis/grep/remove-ignored/args :directories))
-  (-nomis/grep/toggle-ignored/impl :directories name))
+  (-nomis/grep/toggle-ignored :directories name))
 
 (defun nomis/grep/re-add-ignored-directory (name)
   (interactive (-nomis/grep/re-add-ignored/args :directories))
-  (-nomis/grep/toggle-ignored/impl :directories name))
+  (-nomis/grep/toggle-ignored :directories name))
 
 ;;;; ___________________________________________________________________________
 ;;;; ---- Stuff for grep -- debugging ----

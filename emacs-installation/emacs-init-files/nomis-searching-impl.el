@@ -135,7 +135,7 @@
     (set-text-properties 0 (length s) nil s)
     (list s)))
 
-(defun -nomis/grep/toggle-ignored/impl (kind name)
+(defun -nomis/grep/toggle-ignored (kind name)
   (let* ((new-recent-names (->> (-nomis/grep/recent-names kind)
                                 (remove name)
                                 (cons name)

@@ -29,11 +29,11 @@
 
 (defun nomis/grep/remove-ignored-file (name)
   (interactive (-nomis/grep/remove-ignored/args :files))
-  (-nomis/grep/toggle-ignored/impl :files name))
+  (-nomis/grep/toggle-ignored :files name))
 
 (defun nomis/grep/re-add-ignored-file (name)
   (interactive (-nomis/grep/re-add-ignored/args :files))
-  (-nomis/grep/toggle-ignored/impl :files name))
+  (-nomis/grep/toggle-ignored :files name))
 
 ;;;; ___________________________________________________________________________
 ;;;; ---- Stuff for grep -- debugging ----
