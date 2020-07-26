@@ -2,82 +2,8 @@
 
 ;;;; ___________________________________________________________________________
 
-(require 'cl)
-(require 'nomis-searching-file-stuff)
 (require 'nomis-searching-directory-stuff)
-
-;;;; ___________________________________________________________________________
-;;;; ---- Stuff for grep ----
-
-(defun with-augmented-grep-find-ignored-things* (f)
-  (let* ((grep-find-ignored-directories (nomis/grep/ignored-directories))
-         (grep-find-ignored-files       (nomis/grep/ignored-files)))
-    (funcall f)))
-
-(defmacro with-augmented-grep-find-ignored-things (options &rest body)
-  (declare (indent 1))
-  `(with-augmented-grep-find-ignored-things* (lambda () ,@body)))
-
-(advice-add 'rgrep-default-command
-            :around
-            (lambda (orig-fun &rest args)
-              (with-augmented-grep-find-ignored-things ()
-                (apply orig-fun args)))
-            '((name . nomis/augment-grep-find-ignored-things)))
-
-(advice-add 'projectile-rgrep-default-command
-            :around
-            (lambda (orig-fun &rest args)
-              (with-augmented-grep-find-ignored-things ()
-                (apply orig-fun args)))
-            '((name . nomis/augment-grep-find-ignored-things)))
-
-;;;; ___________________________________________________________________________
-
-(defun -nomis/grep/toggle-ignored-things (dirs? names) ; TODO This is over-complicated for what you now need.
-  (let ((dirs-or-files (if dirs? "dirs" "files")))
-    (cl-flet* ((currently-ignored?
-                ()
-                (member (first names)
-                        (if dirs?
-                            (nomis/grep/ignored-directories)
-                          (nomis/grep/ignored-files))))
-               (change-state
-                (ignore?)
-                (cl-loop
-                 for v1 in (if dirs?
-                               -nomis/grep/ignore-overridden/all/directories-vars
-                             -nomis/grep/ignore-overridden/all/files-vars)
-                 as  v2 in (if dirs?
-                               -nomis/grep/ignored/all/directories-vars
-                             -nomis/grep/ignored/all/files-vars)
-                 do (cl-loop for name in names
-                             when (member name (symbol-value v2))
-                             do   (set v1
-                                       (let ((v (symbol-value v1)))
-                                         (if ignore?
-                                             (remove name v)
-                                           (cons name v))))))
-                (message "%s %S -- NOTE: THIS WILL APPLY ONLY TO NEW GREP BUFFERS"
-                         (if ignore?
-                             (format "Ignoring the following %s:"
-                                     dirs-or-files)
-                           (format "Not ignoring the following %s:"
-                                   dirs-or-files))
-                         names)))
-      (if (currently-ignored?)
-          (change-state nil)
-        (progn
-          (cl-loop
-           for name in names
-           unless (member name
-                          (if dirs?
-                              (-nomis/grep/ignored/all/directories)
-                            (-nomis/grep/ignored/all/files)))
-           do (error "%s '%s' is not ignored, so cannot override the ignore"
-                     (if dirs? "Directory" "File")
-                     name))
-          (change-state t))))))
+(require 'nomis-searching-file-stuff)
 
 ;;;; ___________________________________________________________________________
 
