@@ -7,13 +7,9 @@
 ;;;; ___________________________________________________________________________
 ;;;; ---- Tailoring of built-in grep ignored things ----
 
-(defvar -nomis/grep/log-directory-names '("log"
-                                          "logs"))
-
 (eval-after-load 'grep
   '(setq grep-find-ignored-directories ; Note that this is idempotent.
-         (let ((v (append -nomis/grep/log-directory-names
-                          '(".emacs-backups"
+         (let ((v (append '(".emacs-backups"
                             ".worksheet"
                             "out"
                             "target"
@@ -30,6 +26,7 @@
                             "cljs-runtime"
                             ".clj-kondo"
                             "log"
+                            "logs"
                             ;; Instead of adding stuff here, consider defining
                             ;; `nomis/grep/local-ignored-directories` in a .dir-locals file.
                             )
@@ -37,15 +34,6 @@
            (cl-remove-duplicates v :from-end t :test #'equal))))
 
 ;;;; ___________________________________________________________________________
-
-(defun nomis/grep/toggle-include-emacs.d ()
-  (interactive)
-  (-nomis/grep/toggle-ignored-things :directories '(".emacs.d")))
-
-(defun nomis/grep/toggle-include-log-and-logs-directories ()
-  (interactive)
-  (-nomis/grep/toggle-ignored-things :directories
-                                     -nomis/grep/log-directory-names))
 
 (defun nomis/grep/remove-ignored-directory (name)
   (interactive (-nomis/grep/remove-ignored/args :directories))
