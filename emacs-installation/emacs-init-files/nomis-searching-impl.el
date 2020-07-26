@@ -135,50 +135,35 @@
     (set-text-properties 0 (length s) nil s)
     (list s)))
 
-(defun -nomis/grep/toggle-ignored-things (kind names) ; TODO This is over-complicated for what you now need.
-  (cl-flet* ((currently-ignored?
-              ()
-              (member (first names)
-                      (nomis/grep/ignored-things kind)))
-             (change-state
+(defun -nomis/grep/toggle-ignored/impl (kind name)
+  (let* ((new-recent-names (->> (-nomis/grep/recent-names kind)
+                                (remove name)
+                                (cons name)
+                                (-take 50))))
+    (-nomis/grep/set-recent-names kind new-recent-names))
+  (cl-flet* ((change-state
               (ignore?)
               (cl-loop
                for v1 in (-nomis/grep/ignore-overridden/all/vars kind)
                as  v2 in (-nomis/grep/ignored/all/vars kind)
-               do (cl-loop for name in names
-                           when (member name (symbol-value v2))
-                           do   (set v1
-                                     (let ((v (symbol-value v1)))
-                                       (if ignore?
-                                           (remove name v)
-                                         (cons name v))))))
-              (message "%s %S -- NOTE: THIS WILL APPLY ONLY TO NEW GREP BUFFERS"
-                       (let* ((directories-or-files-string
-                               (-nomis/grep/directories-or-files-string kind)))
-                         (if ignore?
-                             (format "Ignoring the following %s:"
-                                     directories-or-files-string)
-                           (format "Not ignoring the following %s:"
-                                   directories-or-files-string)))
-                       names)))
-    (if (currently-ignored?)
+               when (member name (symbol-value v2))
+               do   (set v1
+                         (let ((v (symbol-value v1)))
+                           (if ignore?
+                               (remove name v)
+                             (cons name v)))))
+              (message "%s the following %s: %S -- NOTE: THIS WILL APPLY ONLY TO NEW GREP BUFFERS"
+                       (if ignore? "Ignoring" "Not ignoring")
+                       (-nomis/grep/directory-or-file-string kind)
+                       name)))
+    (if (member name (nomis/grep/ignored-things kind))
         (change-state nil)
       (progn
-        (cl-loop
-         for name in names
-         unless (member name
-                        (-nomis/grep/ignored/all kind))
-         do (error "%s '%s' is not ignored, so cannot override the ignore"
-                   (s-capitalize (-nomis/grep/directory-or-file-string kind))
-                   name))
+        (unless (member name (-nomis/grep/ignored/all kind))
+          (error "%s '%s' is not ignored, so cannot override the ignore"
+                 (s-capitalize (-nomis/grep/directory-or-file-string kind))
+                 name))
         (change-state t)))))
-
-(defun -nomis/grep/toggle-ignored/impl (kind name)
-  (-nomis/grep/set-recent-names kind
-                                (-take 50 (cons name
-                                                (remove name
-                                                        (-nomis/grep/recent-names kind)))))
-  (-nomis/grep/toggle-ignored-things kind (list name)))
 
 ;;;; ___________________________________________________________________________
 ;;;; Hack grep commands with advice
