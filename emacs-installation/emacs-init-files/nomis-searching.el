@@ -60,7 +60,7 @@
   (interactive (-nomis/rgrep-interactive-stuff nil))
   (rgrep regexp files dir confirm))
 
-(defun nomis/rgrep-all-unignored-files (regexp &optional files dir confirm)
+(defun nomis/rgrep-all-unignored-files/TODO-CHECK-WHETHER-BROKEN (regexp &optional files dir confirm)
   "A variation of `rgrep` that:
 - uses `ido-read-directory-name` for nicer directory navigation
 - searches all (unignored) files."
