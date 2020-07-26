@@ -39,8 +39,8 @@
 ;;;; ---- Stuff for grep -- debugging ----
 
 (defun -nomis/all-grep-find-ignored/ignored/for-debugging/files-vars ()
-  (list (list -nomis/grep/ignore-overridden/builtin/files
-              -nomis/grep/ignore-overridden/local/files)
+  (list (list -nomis/grep/files/with-overridden-ignore/builtin
+              -nomis/grep/files/with-overridden-ignore/local)
         (list grep-find-ignored-files
               nomis/grep/local-ignored-files)))
 

@@ -14,10 +14,10 @@
 ;;;; We don't want to set directory-local variables, because the behaviour isn't
 ;;;; easy to understand. So instead have global xxxx/ignore-overridden variables.
 
-(defvar -nomis/grep/ignore-overridden/builtin/directories '())
-(defvar -nomis/grep/ignore-overridden/local/directories '())
-(defvar -nomis/grep/ignore-overridden/builtin/files '())
-(defvar -nomis/grep/ignore-overridden/local/files '())
+(defvar -nomis/grep/directories/with-overridden-ignore/builtin '())
+(defvar -nomis/grep/directories/with-overridden-ignore/local '())
+(defvar -nomis/grep/files/with-overridden-ignore/builtin '())
+(defvar -nomis/grep/files/with-overridden-ignore/local '())
 
 (defvar -nomis/grep/recent-names/directories '())
 (defvar -nomis/grep/recent-names/files '())
@@ -45,12 +45,12 @@
     (:files       '(nomis/grep/local-ignored-files
                     grep-find-ignored-files))))
 
-(defun -nomis/grep/ignore-overridden/all/vars (kind)
+(defun -nomis/grep/all/vars/with-overridden-ignore (kind)
   (case kind
-    (:directories '(-nomis/grep/ignore-overridden/builtin/directories
-                    -nomis/grep/ignore-overridden/local/directories))
-    (:files       '(-nomis/grep/ignore-overridden/builtin/files
-                    -nomis/grep/ignore-overridden/local/files))))
+    (:directories '(-nomis/grep/directories/with-overridden-ignore/builtin
+                    -nomis/grep/directories/with-overridden-ignore/local))
+    (:files       '(-nomis/grep/files/with-overridden-ignore/builtin
+                    -nomis/grep/files/with-overridden-ignore/local))))
 
 (defun -nomis/grep/recent-names (kind)
   (case kind
@@ -74,13 +74,13 @@
   (-mapcat #'symbol-value
            (-nomis/grep/ignored/all/vars kind)))
 
-(defun -nomis/grep/ignore-overridden/all (kind)
+(defun -nomis/grep/all/with-overridden-ignore (kind)
   (-mapcat #'symbol-value
-           (-nomis/grep/ignore-overridden/all/vars kind)))
+           (-nomis/grep/all/vars/with-overridden-ignore kind)))
 
 (defun nomis/grep/ignored-things (kind)
   (let ((ignored           (-nomis/grep/ignored/all kind))
-        (ignore-overridden (-nomis/grep/ignore-overridden/all kind)))
+        (ignore-overridden (-nomis/grep/all/with-overridden-ignore kind)))
     (cl-set-difference ignored
                        ignore-overridden
                        :test #'equal)))
@@ -89,7 +89,7 @@
   (let* ((options
           (append (cl-set-difference
                    (-nomis/grep/recent-names kind)
-                   (-nomis/grep/ignore-overridden/all kind)
+                   (-nomis/grep/all/with-overridden-ignore kind)
                    :test #'equal)
                   (cl-set-difference
                    (nomis/grep/ignored-things kind)
@@ -117,7 +117,7 @@
                    (nomis/grep/ignored-things kind)
                    :test #'equal)
                   (cl-set-difference
-                   (-nomis/grep/ignore-overridden/all kind)
+                   (-nomis/grep/all/with-overridden-ignore kind)
                    (-nomis/grep/recent-names kind)
                    :test #'equal)))
          (_
@@ -144,7 +144,7 @@
   (cl-flet* ((change-state
               (ignore?)
               (cl-loop
-               for v1 in (-nomis/grep/ignore-overridden/all/vars kind)
+               for v1 in (-nomis/grep/all/vars/with-overridden-ignore kind)
                as  v2 in (-nomis/grep/ignored/all/vars kind)
                when (member name (symbol-value v2))
                do   (set v1

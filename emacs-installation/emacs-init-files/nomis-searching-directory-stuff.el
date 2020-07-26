@@ -47,8 +47,8 @@
 ;;;; ---- Stuff for grep -- debugging ----
 
 (defun -nomis/all-grep-find-ignored/ignored/for-debugging/directories-vars ()
-  (list (list -nomis/grep/ignore-overridden/builtin/directories
-              -nomis/grep/ignore-overridden/local/directories)
+  (list (list -nomis/grep/directories/with-overridden-ignore/builtin
+              -nomis/grep/directories/with-overridden-ignore/local)
         (list grep-find-ignored-directories
               nomis/grep/local-ignored-directories)))
 
