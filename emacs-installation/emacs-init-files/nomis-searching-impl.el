@@ -102,7 +102,7 @@
          (s (ido-completing-read
              (format "%s name to remove from ignored: "
                      (s-capitalize (-nomis/grep/directory-or-file-string kind)))
-             options ; annotated-options
+             options
              nil
              t
              nil
@@ -127,7 +127,7 @@
          (s (ido-completing-read
              (format "%s name to re-add to ignored: "
                      (s-capitalize (-nomis/grep/directory-or-file-string kind)))
-             options ; annotated-options
+             options
              nil
              t
              nil
