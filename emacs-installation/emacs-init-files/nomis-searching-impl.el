@@ -6,6 +6,12 @@
 (require 'cl)
 
 ;;;; ___________________________________________________________________________
+;;;; ---- utils ----
+
+(defun -nomis/grep/set-diff (x y)
+  (cl-set-difference x y :test #'equal))
+
+;;;; ___________________________________________________________________________
 ;;;; ---- grep vars ----
 
 (defvar nomis/grep/local-ignored-directories '()) ; set this in .dir-locals.el
@@ -81,20 +87,16 @@
 (defun nomis/grep/ignored-things (kind)
   (let ((ignored           (-nomis/grep/ignored/all kind))
         (ignore-overridden (-nomis/grep/all/with-overridden-ignore kind)))
-    (cl-set-difference ignored
-                       ignore-overridden
-                       :test #'equal)))
+    (-nomis/grep/set-diff ignored
+                          ignore-overridden)))
 
 (defun -nomis/grep/remove-ignored/args (kind)
   (let* ((options
-          (append (cl-set-difference
-                   (-nomis/grep/recent-names kind)
-                   (-nomis/grep/all/with-overridden-ignore kind)
-                   :test #'equal)
-                  (cl-set-difference
-                   (nomis/grep/ignored-things kind)
-                   (-nomis/grep/recent-names kind)
-                   :test #'equal)))
+          (append
+           (-nomis/grep/set-diff (-nomis/grep/recent-names kind)
+                                 (-nomis/grep/all/with-overridden-ignore kind))
+           (-nomis/grep/set-diff (nomis/grep/ignored-things kind)
+                                 (-nomis/grep/recent-names kind))))
          (_
           (when (null options)
             (error (format "No %s to remove"
@@ -112,14 +114,11 @@
 
 (defun -nomis/grep/re-add-ignored/args (kind)
   (let* ((options
-          (append (cl-set-difference
-                   (-nomis/grep/recent-names kind)
-                   (nomis/grep/ignored-things kind)
-                   :test #'equal)
-                  (cl-set-difference
-                   (-nomis/grep/all/with-overridden-ignore kind)
-                   (-nomis/grep/recent-names kind)
-                   :test #'equal)))
+          (append
+           (-nomis/grep/set-diff (-nomis/grep/recent-names kind)
+                                 (nomis/grep/ignored-things kind))
+           (-nomis/grep/set-diff (-nomis/grep/all/with-overridden-ignore kind)
+                                 (-nomis/grep/recent-names kind))))
          (_
           (when (null options)
             (error (format "No %s to re-add"
