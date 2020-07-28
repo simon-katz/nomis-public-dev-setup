@@ -3,6 +3,8 @@
 ;;;; ___________________________________________________________________________
 ;;;; clojure-mode
 
+(require 'dash)
+(require 's)
 (require 'clojure-mode)
 (require 'nomis-clojure-mode-fixes)
 (require 'nomis-clojure-mode-extras)
@@ -154,13 +156,41 @@
 (defvar nomis/cider/cljs-dev-host nil)
 (defvar nomis/cider/cljs-dev-port nil)
 
-(defun nomis/cider-connect-cljs ()
-  (interactive)
-  (if (and nomis/cider/cljs-dev-host
-           nomis/cider/cljs-dev-port)
-      (cider-connect-cljs (list :host nomis/cider/cljs-dev-host
-                                :port nomis/cider/cljs-dev-port))
-    (cider-connect-cljs)))
+(defun -nomis/cider-connect-cljs/message ()
+  (let* ((msgs (list (when nomis/cider/cljs-dev-host
+                       (format "use nomis/cider/cljs-dev-host (%s)"
+                               nomis/cider/cljs-dev-host))
+                     (when nomis/cider/cljs-dev-port
+                       (format "use nomis/cider/cljs-dev-port (%s)"
+                               nomis/cider/cljs-dev-port))))
+         (msg (->> msgs
+                   (remove nil)
+                   (s-join " and "))))
+    (if (string-empty-p msg)
+        nil
+      (format "%s?" (s-capitalize msg)))))
+
+(defun -nomis/cider-connect-cljs/hack-params (orig-params)
+  (cl-flet* ((maybe-add-param (params key value)
+                              (if (or (null value)
+                                      (plist-get params key))
+                                  params
+                                (plist-put params key value))))
+    (-> (-clone orig-params)
+        (maybe-add-param :host nomis/cider/cljs-dev-host)
+        (maybe-add-param :port nomis/cider/cljs-dev-port))))
+
+(advice-add
+ 'cider-connect-cljs
+ :around
+ (lambda (orig-fun orig-params)
+   (cl-flet* ((do-it (params) (funcall orig-fun params)))
+     (let* ((msg (-nomis/cider-connect-cljs/message))
+            (params (if (not (and msg (y-or-n-p msg)))
+                        orig-params
+                      (-nomis/cider-connect-cljs/hack-params orig-params))))
+       (do-it params))))
+ '((name . nomis/cider-connect-cljs/hack-args)))
 
 ;;;; ___________________________________________________________________________
 ;;;; Misc
