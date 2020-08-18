@@ -24,7 +24,7 @@
                             "emacs-configuration-pre-2018-06-upgrade-packages"
                             "clojure-for-the-brave-and-true/emacs-for-clojure-book1"
                             "cljs-runtime"
-                            ".clj-kondo"
+                            ".cache"
                             "log"
                             "logs"
                             ;; Instead of adding stuff here, consider defining
