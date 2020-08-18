@@ -492,7 +492,8 @@ window."
  ((member (nomis/cider-version)
           '("CIDER 0.22.1snapshot"
             "CIDER 0.23.0 (Lima)"
-            "CIDER 0.24.0snapshot"))
+            "CIDER 0.24.0snapshot"
+            "CIDER 0.26.1 (Nesebar)"))
   (advice-add
    'cider--offer-to-open-app-in-browser
    :around

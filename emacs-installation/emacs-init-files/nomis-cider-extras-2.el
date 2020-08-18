@@ -39,6 +39,9 @@
         (lambda (buffer warning)
           (cider-repl-emit-stderr buffer warning)))))
    '((name . nomis/cider-avoid-multiple-result-prefixes))))
+ ((version<= "0.26.1" (pkg-info-version-info 'cider))
+  ;; I think this is now fixed.
+  )
  (t
   (message-box
    "You need to fix `nomis/cider-avoid-multiple-result-prefixes` for this version of Cider.")))
