@@ -66,12 +66,22 @@ the need to save files so that a file-watcher can spot changes).")
 
        (repl-buffer->form-string
         (repl-buffer)
-        (let ((form-string
-               (case (cider-repl-type repl-buffer)
-                 (clj  nomis/cider/post-interactive-eval/clj-function-name)
-                 (cljs nomis/cider/post-interactive-eval/cljs-function-name))))
+        (let* ((form-symbol
+                (case (cider-repl-type repl-buffer)
+                  (clj  'nomis/cider/post-interactive-eval/clj-function-name)
+                  (cljs 'nomis/cider/post-interactive-eval/cljs-function-name)))
+               (form-string (eval form-symbol)))
           (when form-string
-            (format "(let [f (resolve '%s)] (f))" form-string))))
+            (format "(try (let [f (resolve '%s)] (f))
+                               (catch #?(:clj Exception :cljs js/Error)
+                                   e
+                                   (let [message (str \"Have you set up `%s` and the function it refers to (`%s`) properly?  -- Error when evaluating `\" '%s \"` for `nomis/cider/post-interactive-eval`: \" e)]
+                                     (throw #?(:clj (Error. message)
+                                               :cljs (js/Error. message))))))"
+                    form-string
+                    form-symbol
+                    form-string
+                    form-string))))
 
        (run-post-form
         (form repl-buffer)
