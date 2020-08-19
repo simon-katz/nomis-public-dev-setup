@@ -180,16 +180,26 @@
         (maybe-add-param :host nomis/cider/cljs-dev-host)
         (maybe-add-param :port nomis/cider/cljs-dev-port))))
 
+(defun -nomis/cider-connect-cljs/advice (orig-fun orig-params)
+  (cl-flet* ((do-it (params) (funcall orig-fun params)))
+    (let* ((msg (-nomis/cider-connect-cljs/message))
+           (params (if (not (and msg (y-or-n-p msg)))
+                       orig-params
+                     (-nomis/cider-connect-cljs/hack-params orig-params))))
+      (do-it params))))
+
 (advice-add
  'cider-connect-cljs
  :around
  (lambda (orig-fun orig-params)
-   (cl-flet* ((do-it (params) (funcall orig-fun params)))
-     (let* ((msg (-nomis/cider-connect-cljs/message))
-            (params (if (not (and msg (y-or-n-p msg)))
-                        orig-params
-                      (-nomis/cider-connect-cljs/hack-params orig-params))))
-       (do-it params))))
+   (-nomis/cider-connect-cljs/advice orig-fun orig-params))
+ '((name . nomis/cider-connect-cljs/hack-args)))
+
+(advice-add
+ 'cider-connect-clj&cljs
+ :around
+ (lambda (orig-fun orig-params)
+   (-nomis/cider-connect-cljs/advice orig-fun orig-params))
  '((name . nomis/cider-connect-cljs/hack-args)))
 
 ;;;; ___________________________________________________________________________
