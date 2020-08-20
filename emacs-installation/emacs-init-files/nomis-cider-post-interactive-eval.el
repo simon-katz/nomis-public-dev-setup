@@ -56,8 +56,11 @@ the need to save files so that a file-watcher can spot changes).")
        (running-message
         (form repl-buffer)
         (let ((inhibit-message t))
-          (message "nomis/cider/post-interactive-eval Running %S in buffer %S"
-                   form (buffer-name repl-buffer))))
+          (case :do-not-do-this
+            (1 (message "nomis/cider/post-interactive-eval Running %S in buffer %S"
+                        form (buffer-name repl-buffer)))
+            (2 (message "Doing %s post-interactive-eval work"
+                        (cider-repl-type repl-buffer))))))
 
        (dup-tried-form-message
         (form)
