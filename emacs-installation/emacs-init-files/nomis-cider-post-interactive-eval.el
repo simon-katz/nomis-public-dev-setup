@@ -70,18 +70,18 @@ the need to save files so that a file-watcher can spot changes).")
                 (case (cider-repl-type repl-buffer)
                   (clj  'nomis/cider/post-interactive-eval/clj-function-name)
                   (cljs 'nomis/cider/post-interactive-eval/cljs-function-name)))
-               (form-string (eval form-symbol)))
-          (when form-string
+               (form-symbol-value (eval form-symbol)))
+          (when form-symbol-value
             (format "(try (let [f (resolve '%s)] (f))
                                (catch #?(:clj Exception :cljs js/Error)
                                    e
                                    (let [message (str \"Have you set up `%s` and the function it refers to (`%s`) properly?  -- Error when evaluating `\" '%s \"` for `nomis/cider/post-interactive-eval`: \" e)]
                                      (throw #?(:clj (Error. message)
                                                :cljs (js/Error. message))))))"
-                    form-string
+                    form-symbol-value
                     form-symbol
-                    form-string
-                    form-string))))
+                    form-symbol-value
+                    form-symbol-value))))
 
        (run-post-form
         (form repl-buffer)
