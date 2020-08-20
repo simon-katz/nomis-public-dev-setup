@@ -48,8 +48,6 @@
     (auto-fill-mode -1))
   (add-hook 'find-file-hooks 'nomis/turn-off-auto-fill-mode))
 
-(defalias 'yes-or-no-p 'y-or-n-p)
-
 (put 'erase-buffer 'disabled nil)
 
 ;; Try not using defparameter, because:

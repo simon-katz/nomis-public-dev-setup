@@ -9,13 +9,6 @@
 
 ;;;; ___________________________________________________________________________
 
-(defun nomis/y-or-n-p-with-quit->nil (prompt)
-  (condition-case nil
-      (y-or-n-p prompt)
-    (quit nil)))
-
-;;;; ___________________________________________________________________________
-
 (cl-defmacro nomis/with-temporary-invisible-changes (() &rest forms)
   ;; Copied from https://www.emacswiki.org/emacs/UndoCommands, and changed.
   "Executes FORMS with a temporary buffer-undo-list, undoing on return.
