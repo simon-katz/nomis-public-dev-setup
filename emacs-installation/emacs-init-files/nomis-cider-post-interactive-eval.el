@@ -147,11 +147,13 @@ the need to save files so that a file-watcher can spot changes).")
        (cl-flet ((do-it
                   (hacked-callback)
                   (funcall orig-fun buffer hacked-callback)))
-         (do-it (-> (or callback
-                        ;; The following is copied from
-                        ;; `cider-request:load-file`.
-                        (cider-load-file-handler (current-buffer)))
-                    wrap-update-ui))))
+         (do-it (if (not *-nomis/cider/post-interactive-eval/do-advice?*)
+                    callback
+                  (-> (or callback
+                          ;; The following is copied from
+                          ;; `cider-request:load-file`.
+                          (cider-load-file-handler (current-buffer)))
+                      wrap-update-ui)))))
      '((name . nomis/cider/post-interactive-eval)))))
 
  (t
