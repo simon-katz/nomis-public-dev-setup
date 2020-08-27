@@ -38,13 +38,13 @@ the need to save files so that a file-watcher can spot changes).")
 
 ;;;; ___________________________________________________________________________
 
+(defvar *-nomis/cider/post-interactive-eval/do-advice?* t)
+
 (cond ; nomis/cider/post-interactive-eval
  ((member (cider-version)
           '("CIDER 0.23.0 (Lima)"
             "CIDER 0.24.0snapshot"
             "CIDER 0.26.1 (Nesebar)"))
-
-  (defvar *-nomis/cider/post-interactive-eval/do-advice?* t)
 
   (cl-flet*
       ((check-current-buffer
