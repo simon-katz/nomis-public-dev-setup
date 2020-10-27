@@ -81,7 +81,7 @@
    character less as is the convention for Clojure doc strings
    (which is stupid)."
   (interactive "*P")
-  (if (y-or-n-p "Use `fill-paragraph` instead?")
+  (if nil ; (y-or-n-p "Use `fill-paragraph` instead?")
       (fill-paragraph)
     (let* ((string (nomis/grab-text
                     :top-level-p nil
