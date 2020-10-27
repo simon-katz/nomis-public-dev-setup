@@ -1,4 +1,4 @@
-;;;; Init stuff -- nomis-run-clojure
+;;;; Init stuff -- nomis-run-clojure --  -*- lexical-binding: t -*-
 
 ;;## ;;;; ****
 ;;## ;;;; + Ring bell when you get a Clojure error.
@@ -14,17 +14,21 @@
              nomis/newline-string
              value))
 
-(defun nomis/run-clojure-and-insert-result (clojure-form-as-string)
+(defun nomis/run-clojure-and-insert-result (clojure-form-as-string
+                                            &optional after-fun)
   (cider-interactive-eval clojure-form-as-string
                           (nrepl-make-response-handler
                            (current-buffer)
                            (lambda (buffer value)
-                             (let ((value (transform-string-value value)))
-                               (with-current-buffer buffer
-                                 (insert
-                                  (if (derived-mode-p 'cider-clojure-interaction-mode)
-                                      (format "\n%s\n" value)
-                                    value)))))
+                             (prog1
+                                 (let ((value (transform-string-value value)))
+                                   (with-current-buffer buffer
+                                     (insert
+                                      (if (derived-mode-p 'cider-clojure-interaction-mode)
+                                          (format "\n%s\n" value)
+                                        value))))
+                               (when after-fun
+                                 (funcall after-fun))))
                            (lambda (_buffer out)
                              (cider-emit-interactive-eval-output out))
                            (lambda (_buffer err)
