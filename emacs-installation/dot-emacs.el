@@ -173,6 +173,8 @@
 (require 'nomis-line-numbering)
 (require 'nomis-saveplace)
 
+(require 'nomis-string-edit)
+
 (require 'nomis-buffers-windows-frames)
 
 (require 'nomis-window-config)
