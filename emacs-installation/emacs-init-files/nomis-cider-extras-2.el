@@ -87,28 +87,30 @@
       (while (not (or (= (point) 1)
                       (looking-at-p "\"")))
         (backward-char))
-      (let* ((string (nomis/grab-text
-                      :top-level-p nil
-                      :delete-p t))
-           ;; TODO: Need a:
-           ;;       `(require '[com.nomistech.emacs-hacks-in-clojure])`.
-             (clojure-form-as-string
-              (format "(com.nomistech.emacs-hacks-in-clojure/rearrange-string-into-lines '%s %s %s)"
-                      string
-                      (+ (current-column)
-                         (if prefix 0 1))
-                      72)))
-        (nomis/run-clojure-and-insert-result clojure-form-as-string
-                                             (lambda ()
-                                               ;; TODO: How do you add to the
-                                               ;;       Emacs event list?
-                                               ;;       I think we've done that
-                                               ;;       before.
-                                               (run-at-time
-                                                0.1
-                                                nil
-                                                (lambda ()
-                                                  (goto-char pos)))))))))
+      (if (not (looking-at-p "\""))
+          (error "Not in a string")
+          (let* ((string (nomis/grab-text
+                          :top-level-p nil
+                          :delete-p t))
+                 ;; TODO: Need a:
+                 ;;       `(require '[com.nomistech.emacs-hacks-in-clojure])`.
+                 (clojure-form-as-string
+                  (format "(com.nomistech.emacs-hacks-in-clojure/rearrange-string-into-lines '%s %s %s)"
+                          string
+                          (+ (current-column)
+                             (if prefix 0 1))
+                          72)))
+            (nomis/run-clojure-and-insert-result clojure-form-as-string
+                                                 (lambda ()
+                                                   ;; TODO: How do you add to the
+                                                   ;;       Emacs event list?
+                                                   ;;       I think we've done that
+                                                   ;;       before.
+                                                   (run-at-time
+                                                    0.1
+                                                    nil
+                                                    (lambda ()
+                                                      (goto-char pos))))))))))
 
 (define-key cider-mode-map (kbd "C-c C-g")
   'nomis/cider-rearrange-string-into-lines)
