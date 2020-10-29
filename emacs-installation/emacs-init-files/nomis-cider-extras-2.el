@@ -50,61 +50,6 @@
 
 (pushnew "deftest-msg" cider-test-defining-forms) ; a Wefarm Nabu thing
 
-;;## ;;;; ___________________________________________________________________________
-;;## ;;;; ---- nomis/cider-rearrange-string-into-lines ----
-;;##
-;;## ;;;; ****
-;;## ;;;; + Ensure `nomis/grab-text' has no free variables.
-;;## ;;;;
-;;## ;;;; + Put all your code-manipulation Clojure functions in single file in
-;;## ;;;;   a new project.
-;;## ;;;;   And have proper tests of the code-manipulation code.
-;;## ;;;;
-
-;;## (defun get-string-from-file (filePath)
-;;##   "Return FILEPATH's file content."
-;;##   ;; http://xahlee.blogspot.co.uk/2010/09/elisp-read-file-content-in-one-shot.html
-;;##   ;; which says:
-;;##   ;;   thanks to “Pascal J Bourguignon”
-;;##   ;;   and "TheFlyingDutchman <zzbba...@aol.com>". 2010-09-02
-;;##   ;;
-;;##   ;; I changed insert-file-contents to insert-file-contents-literally
-;;##   (with-temp-buffer
-;;##     (insert-file-contents-literally filePath)
-;;##     (buffer-string)))
-
-(defun nomis/cider-rearrange-string-into-lines (prefix)
-  "Rearrange string into lines.
-   Without a prefix argument, indent second and subsequent lines so
-   that they line up sensibly with the first line.
-   With a prefix argument, indent second and subsequent lines one
-   character less as is the convention for Clojure doc strings
-   (which is stupid)."
-  (interactive "*P")
-  (if nil ; (y-or-n-p "Use `fill-paragraph` instead?")
-      (fill-paragraph)
-    (let* ((pos (point)))
-      (while (not (or (= (point) 1)
-                      (looking-at-p "\"")))
-        (backward-char))
-      (if (not (looking-at-p "\""))
-          (error "Not in a string")
-        (let* ((string (nomis/grab-text
-                        :top-level-p nil
-                        :delete-p t))
-               ;; TODO: Don't delete until after checking that new text differs
-               ;;       from old text. Also do the return-to-approx-position
-               ;;       thing -- see `nomis/indent-string`.
-               (new-string (nomis/rearrange-string-into-lines
-                            string
-                            (+ (current-column)
-                               (if prefix 0 1))
-                            72)))
-          (insert new-string))))))
-
-(define-key cider-mode-map (kbd "C-c C-g")
-  'nomis/cider-rearrange-string-into-lines)
-
 ;;;; ___________________________________________________________________________
 
 (provide 'nomis-cider-extras-2)
