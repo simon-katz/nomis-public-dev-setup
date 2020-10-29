@@ -5,6 +5,7 @@
 (require 'cl)
 
 ;;;; ___________________________________________________________________________
+;;;; ---- nomis/indent-string ----
 
 (defun -nomis/indent-string* (s indent)
   (let* ((prefix-string (make-string indent ?\s))
@@ -68,6 +69,109 @@ string."
             (insert out-string)
             (goto-line start-line)
             (move-to-column new-col)))))))
+
+;;;; ___________________________________________________________________________
+;;;; ---- nomis/chop-seq ----
+;;;; ---- nomis/rearrange-string-into-lines ----
+
+;;;; Translation of Clojure code in `com.nomistech.emacs-hacks-in-clojure`.
+
+(defun -nomis/add-char (sofar c separator max-line-length)
+  (let ((lines-sofar           (gethash :lines-sofar sofar))
+        (line-sofar            (gethash :line-sofar sofar))
+        (word-sofar            (gethash :word-sofar sofar))
+        (line-sofar-choppable? (gethash :line-sofar-choppable? sofar)))
+    ;; We use the terms "lines", "line" and "word", but we are dealing with
+    ;; lists. These are misnomers, but easy to understand. Imagine we are
+    ;; dealing with strings and characters.
+    (if (eql separator c)
+        (cond
+         ;; Special case: if c is a leading separator, add it to `word-sofar`.
+         ((and (zerop (length lines-sofar))
+               (null line-sofar)
+               (--every? (eql it separator) word-sofar))
+          (puthash :word-sofar (cons c word-sofar) sofar)
+          sofar)
+         ;; If we have a word of length `max-line-length` or more, add it to
+         ;; `lines-sofar`. (It will be at the beginning of a line, because we
+         ;; will have started a new line when we previously reached
+         ;; `max-line-length`.)
+         ((>= (length word-sofar)
+              max-line-length)
+          (assert (null line-sofar))
+          (puthash :lines-sofar (cons word-sofar lines-sofar) sofar)
+          (puthash :line-sofar '() sofar)
+          (puthash :word-sofar '() sofar)
+          (puthash :line-sofar-choppable? nil sofar)
+          sofar)
+         ;; Add word to `line-sofar`.
+         (t
+          (let ((line-sofar-new (-concat word-sofar
+                                         (when line-sofar (list separator))
+                                         line-sofar)))
+            (puthash :line-sofar line-sofar-new sofar)
+            (puthash :word-sofar '() sofar)
+            (puthash :line-sofar-choppable? t sofar)
+            sofar)))
+      (if (or (not line-sofar-choppable?)
+              (< (+ 1 (length line-sofar) (length word-sofar))
+                 max-line-length))
+          ;; `line-sofar` is not choppable or we can add to `word-sofar` without
+          ;; exceeding `max-line-length`, so add c to `word-sofar`.
+          (progn
+            (puthash :word-sofar (cons c word-sofar) sofar)
+            sofar)
+        ;; We need a new line.
+        (progn
+          (puthash :lines-sofar (cons line-sofar lines-sofar) sofar)
+          (puthash :line-sofar '() sofar)
+          (puthash :word-sofar (cons c word-sofar) sofar)
+          (puthash :line-sofar-choppable? nil sofar)
+          sofar)))))
+
+(defun nomis/chop-seq (separator s max-piece-length)
+  (let* ((reduce-result (reduce (lambda (sofar c)
+                                  (-nomis/add-char sofar
+                                                   c
+                                                   separator
+                                                   max-piece-length))
+                                s
+                                :initial-value
+                                (make-hash-table ;; :lines-sofar '()
+                                 ;; :line-sofar  '()
+                                 ;; :word-sofar  '()
+                                 ;; :line-sofar-choppable? nil
+                                 )))
+         (lines-sofar (gethash :lines-sofar reduce-result))
+         (line-sofar  (gethash :line-sofar reduce-result))
+         (word-sofar  (gethash :word-sofar reduce-result)))
+    (reverse
+     (-map #'reverse
+           (cons (if (null line-sofar)
+                     word-sofar
+                   (-concat word-sofar (cons separator line-sofar)))
+                 lines-sofar)))))
+
+(defun nomis/rearrange-string-into-lines (string left-margin right-margin)
+  (let* ((single-line              (replace-regexp-in-string "[\n ]+"
+                                                             " "
+                                                             string
+                                                             t
+                                                             t))
+         (max-line-length          (- right-margin left-margin))
+         (chopped-seq              (nomis/chop-seq ?\s
+                                                   single-line
+                                                   max-line-length))
+         (n-chopped-seqs           (length chopped-seq))
+         (newline-and-left-padding (-concat (list ?\n)
+                                            (-repeat left-margin ?\s)))
+         (result-as-seqs           (-interleave
+                                    chopped-seq
+                                    (-concat (-repeat (1- n-chopped-seqs)
+                                                      newline-and-left-padding)
+                                             '(())))))
+    (apply #'string
+           (apply #'-concat result-as-seqs))))
 
 ;;;; ___________________________________________________________________________
 
