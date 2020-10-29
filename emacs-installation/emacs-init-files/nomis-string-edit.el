@@ -70,11 +70,16 @@ string."
             (goto-line start-line)
             (move-to-column new-col)))))))
 
+(define-key global-map (kbd "C-c C-g")
+  'nomis/indent-string)
+
 ;;;; ___________________________________________________________________________
 ;;;; ---- nomis/chop-seq ----
 ;;;; ---- nomis/rearrange-string-into-lines ----
+;;;; ---- nomis/rearrange-string ----
 
-;;;; Translation of Clojure code in `com.nomistech.emacs-hacks-in-clojure`.
+;;;; Some of this is a translation of Clojure code in
+;;;; `com.nomistech.emacs-hacks-in-clojure`.
 
 (defun -nomis/add-char (sofar c separator max-line-length)
   (let ((lines-sofar           (gethash :lines-sofar sofar))
@@ -173,9 +178,6 @@ string."
     (apply #'string
            (apply #'-concat result-as-seqs))))
 
-;;## ;;;; ___________________________________________________________________________
-;;## ;;;; ---- nomis/rearrange-string ----
-;;##
 ;;## ;;;; ****
 ;;## ;;;; + Ensure `nomis/grab-text' has no free variables.
 ;;## ;;;;
@@ -225,7 +227,7 @@ string."
                             72)))
           (insert new-string))))))
 
-(define-key global-map (kbd "C-c C-g")
+(define-key global-map (kbd "C-S-c C-S-g")
   'nomis/rearrange-string)
 
 ;;;; ___________________________________________________________________________
