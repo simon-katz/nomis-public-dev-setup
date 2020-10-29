@@ -3,6 +3,7 @@
 (require 'dash)
 (require 's)
 (require 'cl)
+(require 'nomis-msg)
 
 ;;;; ___________________________________________________________________________
 ;;;; ---- nomis/indent-string ----
@@ -27,16 +28,16 @@ the opening quote. Also remove whitespace at the end of lines.
 With a prefix argument, align under the quote at the start of the
 string."
   (interactive "*P")
-  (atomic-change-group
-    (let* ((start-line (line-number-at-pos))
-           (start-col (current-column))
-           (n-spaces-at-start-of-start-line (save-excursion
-                                              (beginning-of-line)
-                                              (let* ((cnt 0))
-                                                (while (looking-at-p " ")
-                                                  (incf cnt)
-                                                  (forward-char))
-                                                cnt))))
+  (let* ((start-line (line-number-at-pos))
+         (start-col (current-column))
+         (n-spaces-at-start-of-start-line (save-excursion
+                                            (beginning-of-line)
+                                            (let* ((cnt 0))
+                                              (while (looking-at-p " ")
+                                                (incf cnt)
+                                                (forward-char))
+                                              cnt))))
+    (atomic-change-group
       (cl-multiple-value-bind (string-start-point
                                string-start-col
                                string-start-line
@@ -57,18 +58,22 @@ string."
                           (+ start-col
                              indent
                              (- n-spaces-at-start-of-start-line))))
-               (out-string (-nomis/indent-string* in-string indent)))
-          (unless (equal in-string out-string)
-            ;; Insert and delete a char at start point so that undo will take the
-            ;; cursor there.
-            (insert "x")
-            (delete-char -1)
-            (goto-char string-start-point)
-            (delete-region (point)
-                           (save-excursion (forward-sexp 1) (point)))
-            (insert out-string)
-            (goto-line start-line)
-            (move-to-column new-col)))))))
+               (new-string (-nomis/indent-string* in-string indent)))
+          (if (equal in-string new-string)
+              (progn
+                (message "No changes")
+                (beep))
+            (progn
+              ;; Insert and delete a char at start point so that undo will take
+              ;; the cursor there.
+              (insert "x")
+              (delete-char -1)
+              (goto-char string-start-point)
+              (delete-region (point)
+                             (save-excursion (forward-sexp 1) (point)))
+              (insert new-string)
+              (goto-line start-line)
+              (move-to-column new-col))))))))
 
 (define-key global-map (kbd "C-c C-g")
   'nomis/indent-string)
@@ -199,33 +204,48 @@ string."
 ;;##     (buffer-string)))
 
 (defun nomis/rearrange-string (prefix)
-  "Rearrange string into lines.
-   Without a prefix argument, indent second and subsequent lines so
-   that they line up sensibly with the first line.
-   With a prefix argument, indent second and subsequent lines one
-   character less as is the convention for Clojure doc strings
-   (which is stupid)."
+  "Rearrange string into lines. Without a prefix argument, indent
+second and subsequent lines so that they line up sensibly with
+the first line. With a prefix argument, indent second and
+subsequent lines one character less as is the convention for
+Clojure doc strings (which is stupid)."
   (interactive "*P")
   (if nil ; (y-or-n-p "Use `fill-paragraph` instead?")
       (fill-paragraph)
-    (let* ((pos (point)))
-      (while (not (or (= (point) 1)
-                      (looking-at-p "\"")))
-        (backward-char))
-      (if (not (looking-at-p "\""))
-          (error "Not in a string")
-        (let* ((string (nomis/grab-text
-                        :top-level-p nil
-                        :delete-p t))
-               ;; TODO: Don't delete until after checking that new text differs
-               ;;       from old text. Also do the return-to-approx-position
-               ;;       thing -- see `nomis/indent-string`.
-               (new-string (nomis/rearrange-string-into-lines
-                            string
-                            (+ (current-column)
+    (atomic-change-group
+      (cl-multiple-value-bind (string-start-point
+                               string-start-col
+                               string-start-line
+                               in-string)
+          (save-excursion
+            (while (not (or (= (point) 1)
+                            (looking-at-p "\"")))
+              (backward-char))
+            (when (not (looking-at-p "\""))
+              (error "Not in a string"))
+            (list (point)
+                  (current-column)
+                  (line-number-at-pos)
+                  (nomis/grab-text)))
+        (let* ((new-string (nomis/rearrange-string-into-lines
+                            in-string
+                            (+ string-start-col
                                (if prefix 0 1))
                             72)))
-          (insert new-string))))))
+          (if (equal in-string new-string)
+              (progn
+                (message "No changes")
+                (beep))
+            (progn
+              ;; Insert and delete a char at start point so that undo will take
+              ;; the cursor there.
+              (insert "x")
+              (delete-char -1)
+              (goto-char string-start-point)
+              (delete-region (point)
+                             (save-excursion (forward-sexp 1) (point)))
+              (insert new-string)
+              (goto-char string-start-point))))))))
 
 (define-key global-map (kbd "C-S-c C-S-g")
   'nomis/rearrange-string)
