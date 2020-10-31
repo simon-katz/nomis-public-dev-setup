@@ -50,6 +50,7 @@
         paredit-open-square
         paredit-raise-sexp
         paredit-semicolon
+        paredit-splice-sexp-killing-backward
         sh-assignment
         transpose-sexps
         wdired-finish-edit
