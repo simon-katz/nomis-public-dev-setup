@@ -45,7 +45,7 @@
   `((t (:foreground "DodgerBlue3"
                     :bold t
                     :italic t)))
-  "Face for low priority watch regexps.")
+  "Face for no-priority watch regexps.")
 
 (defface nomis/ww/face/standout
   `((t (:foreground ,(case 3
@@ -56,7 +56,7 @@
                        (5 "DodgerBlue4"))
                     :bold t
                     :underline t)))
-  "Face for low priority watch regexps.")
+  "Face for standout watch regexps.")
 
 (defface nomis/ww/face/operator
   `((t (:foreground "gray10"
@@ -69,7 +69,7 @@
                     :background "Pink4"
                     :bold t
                     :italic t)))
-  "Face for low priority watch regexps.")
+  "Face for low-priority watch regexps.")
 
 (defun nomis/ww/check-start-of-symbol? (regexp)
   (not (or (s-starts-with? "-" regexp)
