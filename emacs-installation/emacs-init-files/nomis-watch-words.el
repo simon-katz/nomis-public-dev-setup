@@ -7,6 +7,9 @@
     "---\\▶"
     "--.*--\\▶"))
 
+(defvar nomis/ww/regexps/standout
+  '("<[[:graph:]]*?>"))
+
 (defvar nomis/ww/regexps/operators
   ;; Use \\ in the strings below so you don't get the highlighting here.
   '("--O\\R--"
@@ -42,6 +45,17 @@
   `((t (:foreground "DodgerBlue3"
                     :bold t
                     :italic t)))
+  "Face for low priority watch regexps.")
+
+(defface nomis/ww/face/standout
+  `((t (:foreground ,(case 3
+                       (1 "DarkBlue")
+                       (2 "RoyalBlue3")
+                       (3 "purple4")
+                       (4 "SlateBlue4")
+                       (5 "DodgerBlue4"))
+                    :bold t
+                    :underline t)))
   "Face for low priority watch regexps.")
 
 (defface nomis/ww/face/operator
@@ -93,6 +107,7 @@
 (defun nomis/ww/add-watches ()
   (cl-loop for (regexps face)
            in `((,nomis/ww/regexps/finger-pointers nomis/ww/face/no-priority)
+                (,nomis/ww/regexps/standout        nomis/ww/face/standout)
                 (,nomis/ww/regexps/operators       nomis/ww/face/operator)
                 (,nomis/ww/regexps/low-priority    nomis/ww/face/low-priority )
                 (,nomis/ww/regexps/high-priority   ,font-lock-warning-face))
@@ -164,6 +179,11 @@
 ;;;; - aaa----▶aaa
 ;;;; - aaa[--x-y-z--▶]aaa
 ;;;; - aaa--x-y-z--▶aaa
+
+;;;; - <abc>
+;;;; - <abc>s
+;;;; - <abc>s and <def>
+;;;; - (and (< a b) (> d e)) ; Not caught by <...>.
 
 ;;;; - aaa[--OR--]aaa
 ;;;; - aaa--OR--aaa
