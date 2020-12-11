@@ -57,7 +57,7 @@
                     :italic t)))
   "Face for low priority watch regexps.")
 
-(defun nomis/ww/ok-to-check-start-of-word? (regexp)
+(defun nomis/ww/check-start-of-symbol? (regexp)
   (not (or (s-starts-with? "-" regexp)
            (s-starts-with? "\\[" regexp)
            ;; This is incomplete!
@@ -65,14 +65,14 @@
 
 (defun nomis/ww/combine-regexps (regexps)
   (cl-flet*
-      ((add-start-of-word (regexp)
-                          (concat (when (nomis/ww/ok-to-check-start-of-word?
-                                         regexp)
-                                    "\\<")
-                                  regexp))
+      ((add-start-of-symbol (regexp)
+                            (concat (when (nomis/ww/check-start-of-symbol?
+                                           regexp)
+                                      "\\_<")
+                                    regexp))
        (hack-regexp (regexp)
                     (-> regexp
-                        add-start-of-word))
+                        add-start-of-symbol))
        (hack-regexps (regexps)
                      (->> regexps
                           (-map #'hack-regexp)
