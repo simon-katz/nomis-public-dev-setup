@@ -102,6 +102,11 @@
 (add-hook 'text-mode-hook 'nomis/ww/add-watches)
 (add-hook 'prog-mode-hook 'nomis/ww/add-watches)
 
+(when nil ; for dev
+  (progn
+    (remove-hook 'text-mode-hook 'nomis/ww/add-watches)
+    (remove-hook 'prog-mode-hook 'nomis/ww/add-watches)))
+
 ;;;; ___________________________________________________________________________
 ;;;; Stuff for testing the above:
 
