@@ -513,17 +513,27 @@ subheading at this level in the previous parent."
 
 ;;;; ____ ** Forward and backward at any level
 
+(defvar -norg/heading-any-level-show-entry?
+  t
+  "Truthy if `norg/forward-heading/any-level` should show bodies (and so match
+`norg/forward-heading/any-level/tree+body)`.
+Same for the `backward` commands.")
+
 (defun norg/forward-heading/any-level ()
   (interactive)
   (-norg/with-maybe-maintain-line-no-in-window
     (norg/w/previous-heading)
-    (norg/show-point)))
+    (if -norg/heading-any-level-show-entry?
+        (norg/w/show-entry)
+      (norg/show-point))))
 
 (defun norg/backward-heading/any-level ()
   (interactive)
   (-norg/with-maybe-maintain-line-no-in-window
     (norg/w/next-heading)
-    (norg/show-point)))
+    (if -norg/heading-any-level-show-entry?
+        (norg/w/show-entry)
+      (norg/show-point))))
 
 (defun norg/forward-heading/any-level/tree+body ()
   (interactive)
