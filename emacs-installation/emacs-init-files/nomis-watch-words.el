@@ -48,12 +48,19 @@
   "Face for no-priority watch regexps.")
 
 (defface nomis/ww/face/standout
-  `((t (:foreground ,(case 3
+  `((t (:foreground ,(case 6
                        (1 "DarkBlue")
                        (2 "RoyalBlue3")
                        (3 "purple4")
                        (4 "SlateBlue4")
-                       (5 "DodgerBlue4"))
+                       (5 "DodgerBlue4")
+                       (6 "DarkCyan")
+                       (7 "SeaGreen")
+                       (8 "DarkOliveGreen")
+                       (9 "DarkGreen")
+                       (10 "DarkSlateGrey")
+                       (11 "Navy")
+                       (12 "MidnightBlue"))
                     :bold t
                     :underline t)))
   "Face for standout watch regexps.")
