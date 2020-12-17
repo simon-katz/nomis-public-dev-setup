@@ -48,7 +48,7 @@
   "Face for no-priority watch regexps.")
 
 (defface nomis/ww/face/standout
-  `((t (:foreground ,(case 6
+  `((t (:foreground ,(case 9
                        (1 "DarkBlue")
                        (2 "RoyalBlue3")
                        (3 "purple4")
