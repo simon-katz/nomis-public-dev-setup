@@ -62,7 +62,8 @@
                        (11 "Navy")
                        (12 "MidnightBlue"))
                     :bold t
-                    :underline t)))
+                    ;; :underline t
+                    )))
   "Face for standout watch regexps.")
 
 (defface nomis/ww/face/operator
