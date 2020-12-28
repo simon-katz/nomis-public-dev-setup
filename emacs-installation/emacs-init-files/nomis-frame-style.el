@@ -22,7 +22,10 @@
 ;;;; (-nomis/buffer-backgrounds/set-frame-options "cornsilk2")
 
 (defconst -nomis/buffer-backgrounds/colour-pairs
-  '(("#f5f5f5"        "grey86")
+  '(;; Changed from "grey86" to "grey84" because unselected buffers were showing
+    ;; black text background after macOS kindly installed a security update.
+    ;; (Weird -- that's text background, not buffer background.)
+    ("#f5f5f5"        "grey84")
     ("BlanchedAlmond" "NavajoWhite1")
     ("MistyRose"      "MistyRose2"))
   "A list of 2-tuples. At any given time, one of the 2-tuples is used for
