@@ -217,6 +217,7 @@
 (unless (equal system-type 'windows-nt)
   (require 'nomis-multi-web-mode))
 
+(require 'nomis-java)
 (require 'nomis-javascript)
 (require 'nomis-json)
 
