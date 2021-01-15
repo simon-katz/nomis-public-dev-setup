@@ -269,6 +269,16 @@
 (setq eval-sexp-fu-flash-error-duration 0.5)
 
 ;;;; ___________________________________________________________________________
+;;;; nomis/cider-clear-compilation-highlights/forced
+
+(defun nomis/cider-clear-compilation-highlights/forced ()
+  (interactive)
+  (cider-clear-compilation-highlights t))
+
+(define-key clojure-mode-map (kbd "C-M-z")
+  'nomis/cider-clear-compilation-highlights/forced)
+
+;;;; ___________________________________________________________________________
 ;;;; Windows nrepl timeout
 
 (when (equal system-type 'windows-nt)
