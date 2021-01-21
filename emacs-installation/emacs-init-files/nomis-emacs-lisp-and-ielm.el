@@ -6,6 +6,7 @@
   `(rainbow-delimiters-mode
     paredit-mode
     paxedit-mode ; some commands (at least) don't work in ielm mode
+    ;; See https://github.com/clojure-emacs/clojure-mode/issues/516#issuecomment-569336063
     ,(lambda () (set (make-local-variable 'comment-column) 0))
     turn-on-elisp-slime-nav-mode
     turn-on-eldoc-mode

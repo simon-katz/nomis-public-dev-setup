@@ -235,6 +235,7 @@
 ;;;; Hooks
 
 (defun nomis/set-comment-column-to-zero ()
+  ;; See https://github.com/clojure-emacs/clojure-mode/issues/516#issuecomment-569336063
   (set (make-local-variable 'comment-column)
        0))
 
