@@ -463,11 +463,12 @@ With prefix argument select `nomis/dirtree/buffer'"
 
 (defun nomis/dirtree/clear-history ()
   (interactive)
-  (setq *nomis/dirtree/filenames/history-list* '())
-  (setq *nomis/dirtree/filenames/future-list* '())
-  (setq *nomis/dirtree/filenames/current* (nomis/dirtree/selected-file))
-  (message "Cleared history.")
-  (nomis/msg/grab-user-attention/low))
+  (when (yes-or-no-p "Clear history?")
+    (setq *nomis/dirtree/filenames/history-list* '())
+    (setq *nomis/dirtree/filenames/future-list* '())
+    (setq *nomis/dirtree/filenames/current* (nomis/dirtree/selected-file))
+    (message "Cleared history.")
+    (nomis/msg/grab-user-attention/low)))
 
 (cl-defun nomis/dirtree/note-selection (&key force?)
   (when (nomis/dirtree/selected-widget/with-extras)
