@@ -548,21 +548,32 @@ Same for the `backward` commands.")
 ;;;; ___________________________________________________________________________
 ;;;; ____ * Stepping TODO This uses `norg/fully-expanded?`, and so belongs later in the file
 
-(defvar -norg/collapse-last-when-stepping? nil)
+(defvar -norg/most-recent-step-time -9999)
 
-(defvar -norg/step-command-groups '((norg/step-forward
-                                     norg/step-forward/allow-cross-parent)
-                                    (norg/step-backward
-                                     norg/step-backward/allow-cross-parent)))
+(defvar norg/quick-repeat-delay
+  (if (boundp 'nomis/popup/duration)
+      nomis/popup/duration
+    1))
 
-(defun -norg/repeat-of-step-direction? ()
-  (cl-flet ((position-in-command-groups
-             (command)
-             (-find (lambda (group) (member command group))
-                    -norg/step-command-groups)))
-    (let* ((p1 (position-in-command-groups this-command))
-           (p2 (position-in-command-groups (norg/last-command))))
-      (and p1 p2 (eq p1 p2)))))
+(defun -norg/small-time-gap-since-prev-step-command? ()
+  (< (float-time)
+     (+ -norg/most-recent-step-time
+        norg/quick-repeat-delay)))
+
+(defvar -norg/step-then-step-cross-parent-command-pairs
+  '((norg/step-forward
+     norg/step-forward/allow-cross-parent)
+    (norg/step-backward
+     norg/step-backward/allow-cross-parent)))
+
+(defun -norg/step-then-step-cross-parent? ()
+  (let ((cmds (list (norg/last-command)
+                    this-command)))
+    (member cmds -norg/step-then-step-cross-parent-command-pairs)))
+
+(defun -norg/step-then-step-cross-parent-with-small-time-gap? ()
+  (and (-norg/small-time-gap-since-prev-step-command?)
+       (-norg/step-then-step-cross-parent?)))
 
 (defun -norg/step/impl (n allow-cross-parent?)
   (-norg/with-maybe-maintain-line-no-in-window
@@ -574,7 +585,7 @@ Same for the `backward` commands.")
                       (1 :forward)
                       (-1 :backward)))
                  (norg/w/forward-heading-same-level n t)))
-              (tried-to-go-to-far
+              (tried-to-go-too-far
                ()
                (let* ((msg (concat (if (< n 0)
                                        "No previous heading at this level"
@@ -584,23 +595,28 @@ Same for the `backward` commands.")
                                      ""))))
                  (norg/popup/error-message msg))))
       (norg/w/back-to-heading t)
-      (let* ((repeat-of-step-direction? (-norg/repeat-of-step-direction?)))
-        (if (and (not repeat-of-step-direction?) ; avoid repeated expand/contract of last heading at this level
-                 (not (norg/fully-expanded?)))
-            (norg/expand-fully)
-          (let* ((starting-point (point)))
-            (try-to-move)
-            (let* ((moved? (not (= (point) starting-point))))
-              (if moved?
-                  (progn
-                    (save-excursion
-                      (goto-char starting-point)
-                      (norg/collapse))
-                    (norg/expand-fully))
+      (if (not (or (norg/fully-expanded?)
+                   ;; If we very recently did a `norg/step-xxxx` which tried to
+                   ;; go too far and which so collapsed the current heading, and
+                   ;; if now we're doing a `norg/step-xxxx/allow-cross-parent`,
+                   ;; we're happy to do a step across the parent.
+                   (-norg/step-then-step-cross-parent-with-small-time-gap?)))
+          (norg/expand-fully)
+        (let* ((starting-point (point)))
+          (try-to-move)
+          (let* ((moved? (not (= (point) starting-point))))
+            (if moved?
                 (progn
-                  (when -norg/collapse-last-when-stepping?
+                  (save-excursion
+                    (goto-char starting-point)
                     (norg/collapse))
-                  (tried-to-go-to-far))))))))))
+                  (norg/expand-fully))
+              (if (not (norg/fully-expanded?))
+                  (norg/expand-fully)
+                (progn
+                  (norg/collapse)
+                  (tried-to-go-too-far)))))))))
+  (setq -norg/most-recent-step-time (float-time)))
 
 (defun norg/step-forward ()
   (interactive)
