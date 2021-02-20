@@ -82,15 +82,15 @@
   ;; consistent.
   (kbd k))
 
-(define-key hs-minor-mode-map (k•• "H-M--")        'nomis/hs/hide-all)
-(define-key hs-minor-mode-map (k•• "H-M-'")        'nomis/hs/adjust/set-0)
-(define-key hs-minor-mode-map (k•• "H-'")          'nomis/hs/adjust/less)
+(define-key hs-minor-mode-map (k•• "H-M--")    'nomis/hs/hide-all)
+(define-key hs-minor-mode-map (k•• "H-M-'")    'nomis/hs/adjust/set-min)
+(define-key hs-minor-mode-map (k•• "H-'")      'nomis/hs/adjust/less)
 (define-key hs-minor-mode-map (kbd "H-q H-l")  'nomis/hs/adjust/set-level)
-(define-key hs-minor-mode-map (k•• "H-\\")         'nomis/hs/adjust/more)
-(define-key hs-minor-mode-map (k•• "H-M-\\")       'nomis/hs/adjust/show-all)
-(define-key hs-minor-mode-map (k•• "H-M-[")        'nomis/hs/adjust/set-0-for-top-level)
-(define-key hs-minor-mode-map (k•• "H-M-]")        'nomis/hs/adjust/show-all-for-top-level)
-(define-key hs-minor-mode-map (k•• "H-M-=")        'nomis/hs/show-all)
+(define-key hs-minor-mode-map (k•• "H-\\")     'nomis/hs/adjust/more)
+(define-key hs-minor-mode-map (k•• "H-M-\\")   'nomis/hs/adjust/show-all)
+(define-key hs-minor-mode-map (k•• "H-M-[")    'nomis/hs/adjust/set-min-for-top-level)
+(define-key hs-minor-mode-map (k•• "H-M-]")    'nomis/hs/adjust/show-all-for-top-level)
+(define-key hs-minor-mode-map (k•• "H-M-=")    'nomis/hs/show-all)
 (define-key hs-minor-mode-map (kbd "H-q H-/")  'nomis/hs/toggle-hiding) ; not really needed
 (define-key hs-minor-mode-map (kbd "H-q H-0")  'nomis/hs/adjust/set-level/0)
 (define-key hs-minor-mode-map (kbd "H-q H-1")  'nomis/hs/adjust/set-level/1)
@@ -104,7 +104,7 @@
 (define-key hs-minor-mode-map (kbd "H-q H-9")  'nomis/hs/adjust/set-level/9)
 
 ;; (key-chord-define hs-minor-mode-map "q-"  'nomis/hs/hide-all)
-;; (key-chord-define hs-minor-mode-map "q["  'nomis/hs/adjust/set-0)
+;; (key-chord-define hs-minor-mode-map "q["  'nomis/hs/adjust/set-min)
 ;; (key-chord-define hs-minor-mode-map "q'"  'nomis/hs/adjust/less)
 ;; (key-chord-define hs-minor-mode-map "ql"  'nomis/hs/adjust/set-level)
 ;; (key-chord-define hs-minor-mode-map "q\\" 'nomis/hs/adjust/more)
@@ -236,18 +236,18 @@
   (nomis/hs/with-only-if-looking-at-bracketed-sexp-start
     (nomis/hs/adjust/inc-level n)))
 
-(defun nomis/hs/adjust/set-0 ()
+(defun nomis/hs/adjust/set-min ()
   (interactive)
   (nomis/hs/adjust/set-level 0))
 
-(defun nomis/hs/adjust/set-0/and-exit ()
+(defun nomis/hs/adjust/set-min/and-exit ()
   ;; This exists to overcome a bug in Hydra when you have both
   ;;     :exit t
   ;; and
   ;;     :exit nil
   ;; for the same function.
   (interactive)
-  (nomis/hs/adjust/set-0))
+  (nomis/hs/adjust/set-min))
 
 (defun nomis/hs/adjust/show-all ()
   (interactive)
@@ -263,11 +263,11 @@
     (nomis/beginning-of-top-level-form)
     (nomis/hs/adjust/show-all)))
 
-(defun nomis/hs/adjust/set-0-for-top-level ()
+(defun nomis/hs/adjust/set-min-for-top-level ()
   (interactive)
   (save-excursion
     (nomis/beginning-of-top-level-form)
-    (nomis/hs/adjust/set-0)))
+    (nomis/hs/adjust/set-min)))
 
 (defun nomis/hs/adjust/show-all/and-exit ()
   ;; This exists to overcome a bug in Hydra when you have both
@@ -289,7 +289,7 @@
   :cancel-form (nomis/hs/adjust/set-level nomis/hs/adjust/saved-level)
   :hydra-heads
   (("-"  nomis/hs/hide-all         "Hide All")
-   ("["  nomis/hs/adjust/set-0     "Hide this form")
+   ("["  nomis/hs/adjust/set-min   "Hide this form")
    ("'"  nomis/hs/adjust/less      "Less")
    ("\\" nomis/hs/adjust/more      "More")
    ("]"  nomis/hs/adjust/show-all  "Show this form")
@@ -344,7 +344,7 @@ Otherwise, go to the beginning of the sexp after point and show it."
                 (if (nomis/hs/looking-at-beginning-of-hidden-sexp?)
                     (nomis/hs/adjust/show-all)
                   (progn
-                    (nomis/hs/adjust/set-0)
+                    (nomis/hs/adjust/set-min)
                     (forward-sexp)
                     (nomis/goto-beginning-of-sexp/or-end/forward)
                     (nomis/hs/adjust/show-all))))
@@ -362,7 +362,7 @@ Otherwise, go to the beginning of the sexp after point and show it."
                    (t
                     (save-excursion
                       (backward-sexp)
-                      (nomis/hs/adjust/set-0)
+                      (nomis/hs/adjust/set-min)
                       (unless (nomis/hs/looking-at-beginning-of-hidden-sexp?)
                         ;; Hiding had no effect.
                         (error--cannot-move)))))
@@ -373,7 +373,7 @@ Otherwise, go to the beginning of the sexp after point and show it."
                (save-excursion
                  (when (nomis/can-backward-sexp?)
                    (backward-sexp)
-                   (nomis/hs/adjust/set-0)))
+                   (nomis/hs/adjust/set-min)))
                (nomis/hs/adjust/show-all)))))))))
 
 (defun nomis/hs/step-backward ()
@@ -401,12 +401,12 @@ Otherwise, go to the beginning of the sexp before point and show it."
              (if (nomis/hs/looking-at-beginning-of-hidden-sexp?)
                  (error--cannot-move)
                (progn
-                 (nomis/hs/adjust/set-0)
+                 (nomis/hs/adjust/set-min)
                  (unless (nomis/hs/looking-at-beginning-of-hidden-sexp?)
                    ;; Hiding had no effect.
                    (error--cannot-move))))))
           ((nomis/looking-at-beginning-of-sexp/kinda?)
-           (nomis/hs/adjust/set-0)
+           (nomis/hs/adjust/set-min)
            (backward-sexp)
            (nomis/hs/adjust/show-all))
           (t

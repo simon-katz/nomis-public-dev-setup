@@ -80,11 +80,11 @@ H-?  Show this help")
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ;;;; ____ ** Expand/collapse
 
-(org-defkey org-mode-map (kbd "H-M-'")   'norg/show-children-from-point/set-0)
+(org-defkey org-mode-map (kbd "H-M-'")   'norg/show-children-from-point/set-min)
 (org-defkey org-mode-map (kbd "H-M-\\")  'norg/show-children-from-point/fully-expand)
-(org-defkey org-mode-map (kbd "H-M-[")   'norg/show-children-from-root/set-0)
+(org-defkey org-mode-map (kbd "H-M-[")   'norg/show-children-from-root/set-min)
 (org-defkey org-mode-map (kbd "H-M-]")   'norg/show-children-from-root/fully-expand)
-(org-defkey org-mode-map (kbd "H-M--")   'norg/show-children-from-all-roots/set-0)
+(org-defkey org-mode-map (kbd "H-M--")   'norg/show-children-from-all-roots/set-min)
 (org-defkey org-mode-map (kbd "H-M-=")   'norg/show-children-from-all-roots/fully-expand)
 
 (org-defkey org-mode-map (kbd "H-'")     'norg/show-children-from-point/incremental/less)

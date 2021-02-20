@@ -828,7 +828,7 @@ When in a body, \"current headline\" means the current body's parent headline."
      (< v 0))
     (:more
      (> v maximum))
-    (:setting-0
+    (:setting-min
      (= current-value 0))
     (:setting-max
      (= current-value -norg/plus-infinity))))
@@ -906,7 +906,7 @@ When in a body, \"current headline\" means the current body's parent headline."
                      maximum
                      (if out-of-range?
                          (ecase setting-kind
-                           ((:less :setting-0)
+                           ((:less :setting-min)
                             " —- already fully collapsed")
                            ((:more :setting-max)
                             " —- already fully expanded"))
@@ -952,13 +952,13 @@ When in a body, \"current headline\" means the current body's parent headline."
   (let* ((v n))
     (-norg/show-children-from-point/set-level-etc v :no-check :dummy)))
 
-(defun norg/show-children-from-point/set-0 ()
+(defun norg/show-children-from-point/set-min ()
   (interactive)
   "Fully collapse the current headline.
 When in a body, \"current headline\" means the current body's parent headline."
   (let* ((current-value (1+ (norg/level-for-incremental-contract)))
          (v 0))
-    (-norg/show-children-from-point/set-level-etc v :setting-0 current-value)))
+    (-norg/show-children-from-point/set-level-etc v :setting-min current-value)))
 
 (defun norg/show-children-from-point/fully-expand ()
   (interactive)
@@ -1009,11 +1009,11 @@ the parameter."
   (let* ((v n))
     (-norg/show-children-from-root/set-level-etc v :no-check :dummy)))
 
-(defun norg/show-children-from-root/set-0 ()
+(defun norg/show-children-from-root/set-min ()
   (interactive)
   (let* ((current-value (1+ (norg/level-for-incremental-contract/root)))
          (v 0))
-    (-norg/show-children-from-root/set-level-etc v :setting-0 current-value)))
+    (-norg/show-children-from-root/set-level-etc v :setting-min current-value)))
 
 (defun norg/show-children-from-root/fully-expand ()
   (interactive)
@@ -1064,11 +1064,11 @@ the parameter."
   (let* ((v n))
     (-norg/show-children-from-all-roots/set-level-etc v :no-check :dummy)))
 
-(defun norg/show-children-from-all-roots/set-0 ()
+(defun norg/show-children-from-all-roots/set-min ()
   (interactive)
   (let* ((current-value (1+ (norg/level-for-incremental-contract/buffer)))
          (v 0))
-    (-norg/show-children-from-all-roots/set-level-etc v :setting-0 current-value)))
+    (-norg/show-children-from-all-roots/set-level-etc v :setting-min current-value)))
 
 (defun norg/show-children-from-all-roots/fully-expand ()
   (interactive)
