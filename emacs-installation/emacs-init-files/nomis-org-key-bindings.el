@@ -31,20 +31,29 @@
 =====================================
 
 Use H with various other keys:
-    ,. is for moving forward or backward headlines
-        <> (add S to ,. on my keyboard) to cross the parent level
+
+    Move forward or backward headlines
+        , .
+        < > (add S to , . on my keyboard) to cross the parent level
         Add M to step (ie collapse then move then expand)
         Add C to visit headlines at any level
         Add C-M to visit headlines at any level collapsing to current tree
-    '\\ is for expanding and collapsing from current point
+
+    Expand and collapse from current point
+        ' \\
         Add M to fully expand or collapse
         Add C for visibility cycling of spans
-    [] is for expanding and collapsing from parent of current point
+
+    Expand and collapse from root of current point
+        \" | (that's S-' and S-\ on my keyboard.)
         Add M to fully expand or collapse
-    \"| is for expanding and collapsing from root of current point
-        (That's S-' and S-\ on my keyboard.)
+
+    Expand and collapse from parent of current point
+        [ ]
         Add M to fully expand or collapse
-    -= is for expanding and collapsing all roots
+
+    Expands and collapses all roots
+        - =
         Add M to fully expand or collapse
 
 H-q H-]  norg/show-children-from-root/to-current-level
