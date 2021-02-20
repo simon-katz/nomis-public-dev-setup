@@ -36,9 +36,16 @@ Use H with various other keys:
         Add M to step (ie collapse then move then expand)
         Add C to visit headlines at any level
         Add C-M to visit headlines at any level collapsing to current tree
-    '\\[]-= is for expanding and collapsing
+    '\\ is for expanding and collapsing from current point
         Add M to fully expand or collapse
-        Add C to '\\ for visibility cycling of spans
+        Add C for visibility cycling of spans
+    [] is for expanding and collapsing from parent of current point
+        Add M to fully expand or collapse
+    \"| is for expanding and collapsing from root of current point
+        (That's S-' and S-\ on my keyboard.)
+        Add M to fully expand or collapse
+    -= is for expanding and collapsing all roots
+        Add M to fully expand or collapse
 
 H-q H-]  norg/show-children-from-root/to-current-level
 H-q H-=  norg/show-children-from-all-roots/to-current-level
@@ -82,15 +89,19 @@ H-?  Show this help")
 
 (org-defkey org-mode-map (kbd "H-M-'")   'norg/show-children-from-point/set-min)
 (org-defkey org-mode-map (kbd "H-M-\\")  'norg/show-children-from-point/fully-expand)
-(org-defkey org-mode-map (kbd "H-M-[")   'norg/show-children-from-root/set-min)
-(org-defkey org-mode-map (kbd "H-M-]")   'norg/show-children-from-root/fully-expand)
+(org-defkey org-mode-map (kbd "H-M-[")   'norg/show-children-from-parent/set-min)
+(org-defkey org-mode-map (kbd "H-M-]")   'norg/show-children-from-parent/fully-expand)
+(org-defkey org-mode-map (kbd "H-M-\"")  'norg/show-children-from-root/set-min)
+(org-defkey org-mode-map (kbd "H-M-|")   'norg/show-children-from-root/fully-expand)
 (org-defkey org-mode-map (kbd "H-M--")   'norg/show-children-from-all-roots/set-min)
 (org-defkey org-mode-map (kbd "H-M-=")   'norg/show-children-from-all-roots/fully-expand)
 
 (org-defkey org-mode-map (kbd "H-'")     'norg/show-children-from-point/incremental/less)
 (org-defkey org-mode-map (kbd "H-\\")    'norg/show-children-from-point/incremental/more)
-(org-defkey org-mode-map (kbd "H-[")     'norg/show-children-from-root/incremental/less)
-(org-defkey org-mode-map (kbd "H-]")     'norg/show-children-from-root/incremental/more)
+(org-defkey org-mode-map (kbd "H-[")     'norg/show-children-from-parent/incremental/less)
+(org-defkey org-mode-map (kbd "H-]")     'norg/show-children-from-parent/incremental/more)
+(org-defkey org-mode-map (kbd "H-\"")    'norg/show-children-from-root/incremental/less)
+(org-defkey org-mode-map (kbd "H-|")     'norg/show-children-from-root/incremental/more)
 (org-defkey org-mode-map (kbd "H--")     'norg/show-children-from-all-roots/incremental/less)
 (org-defkey org-mode-map (kbd "H-=")     'norg/show-children-from-all-roots/incremental/more)
 

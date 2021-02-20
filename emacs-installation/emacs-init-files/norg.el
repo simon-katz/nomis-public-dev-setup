@@ -300,6 +300,12 @@ value."
      (let ((norg/w/catch-invisible-edits 'show))
        (norg/w/check-before-invisible-edit 'insert)))))
 
+(cl-defmacro norg/save-excursion-to-parent (&body body)
+  (declare (indent 0))
+  `(save-excursion
+     (norg/w/up-heading 1)
+     ,@body))
+
 ;;;; Support for do-ing and mapping
 
 (defun -norg/mapc-headlines-satisfying (pred-of-no-args fun)
@@ -821,17 +827,18 @@ When in a body, \"current headline\" means the current body's parent headline."
 ;;;; ____ ** -norg/set-level-etc
 
 (defun -norg/out-of-range (v maximum setting-kind current-value)
-  (ecase setting-kind
-    (:no-check
-     )
-    (:less
-     (< v 0))
-    (:more
-     (> v maximum))
-    (:setting-min
-     (= current-value 0))
-    (:setting-max
-     (= current-value -norg/plus-infinity))))
+  (let* ((min-allowed-value (if *expanding-parent?* 1 0)))
+    (ecase setting-kind
+      (:no-check
+       )
+      (:less
+       (< v min-allowed-value))
+      (:more
+       (> v maximum))
+      (:setting-min
+       (= current-value min-allowed-value))
+      (:setting-max
+       (= current-value -norg/plus-infinity)))))
 
 (defvar *-norg/allow-cycle-wrap-now?* nil)
 (defvar *-norg/allow-cycle-wrap-timer* nil)
@@ -853,27 +860,30 @@ When in a body, \"current headline\" means the current body's parent headline."
                        '-norg/cancel-cycle-to-zero-timer))))
 
 (defun -norg/bring-within-range (v maximum)
-  (cl-flet ((normal-behaviour () (list (min (max 0 v)
-                                            maximum)
-                                       nil))
-            (cycled-behaviour () (list (if (= v -1) maximum 0)
-                                       t)))
-    (let* ((allow-cycle-wrap-now? *-norg/allow-cycle-wrap-now?*))
-      (-norg/cancel-cycle-to-zero-timer)
-      (if (or (= maximum 0)
-              (not (or (= v -1)
-                       (= v -norg/plus-infinity))))
-          (normal-behaviour)
-        (if (not allow-cycle-wrap-now?)
-            (progn
-              (-norg/allow-cycle-to-zero-for-a-while)
-              (normal-behaviour))
-          ;; Don't cycle if we moved to another position that also
-          ;; happens to be fully-expanded.
-          ;; Don't cycle if we moved away and came back.
-          (if (not (eq this-command (norg/last-command)))
-              (normal-behaviour)
-            (cycled-behaviour)))))))
+  (let* ((min-allowed-value (if *expanding-parent?* 1 0)))
+    (cl-flet ((normal-behaviour () (list (min (max min-allowed-value v)
+                                              maximum)
+                                         nil))
+              (cycled-behaviour () (list (if (= v (1- min-allowed-value))
+                                             maximum
+                                           min-allowed-value)
+                                         t)))
+      (let* ((allow-cycle-wrap-now? *-norg/allow-cycle-wrap-now?*))
+        (-norg/cancel-cycle-to-zero-timer)
+        (if (or (= maximum 0)
+                (not (or (= v (1- min-allowed-value))
+                         (= v -norg/plus-infinity))))
+            (normal-behaviour)
+          (if (not allow-cycle-wrap-now?)
+              (progn
+                (-norg/allow-cycle-to-zero-for-a-while)
+                (normal-behaviour))
+            ;; Don't cycle if we moved to another position that also
+            ;; happens to be fully-expanded.
+            ;; Don't cycle if we moved away and came back.
+            (if (not (eq this-command (norg/last-command)))
+                (normal-behaviour)
+              (cycled-behaviour))))))))
 
 (defun -norg/set-level-etc (new-value-action-fun
                             new-level/maybe-out-of-range
@@ -938,7 +948,9 @@ that is already being displayed."
   (-norg/set-level-etc #'norg/show-children-from-point*
                        level
                        (norg/n-levels-below)
-                       "[%s / %s]"
+                       (if *expanding-parent?*
+                           "[%s / %s] from parent"
+                         "[%s / %s]")
                        setting-kind
                        current-value))
 
@@ -957,7 +969,7 @@ When in a body, \"current headline\" means the current body's parent headline."
   "Fully collapse the current headline.
 When in a body, \"current headline\" means the current body's parent headline."
   (let* ((current-value (1+ (norg/level-for-incremental-contract)))
-         (v 0))
+         (v (if *expanding-parent?* 1 0)))
     (-norg/show-children-from-point/set-level-etc v :setting-min current-value)))
 
 (defun norg/show-children-from-point/fully-expand ()
@@ -983,6 +995,57 @@ When in a body, \"current headline\" means the current body's parent headline."
   (let* ((v (-> (norg/smallest-invisible-level-below-or-infinity)
                 (-norg/unmodified-value-and-arg->level arg :more))))
     (-norg/show-children-from-point/set-level-etc v :more :dummy)))
+
+;;;; ____ ** norg/show-children-from-parent/xxxx support
+
+(defvar *expanding-parent?* nil)
+
+(defun norg/save-excursion-to-parent-and-then-show-point* (f)
+  (prog1
+      (let* ((*expanding-parent?* t))
+        (norg/save-excursion-to-parent (funcall f)))
+    (norg/show-point)))
+
+(cl-defmacro norg/save-excursion-to-parent-and-then-show-point (&body body)
+  (declare (indent 0))
+  `(norg/save-excursion-to-parent-and-then-show-point* (lambda () ,@body)))
+
+;;;; ____ ** norg/show-children-from-parent/xxxx
+
+(defun norg/show-children-from-parent (n)
+  "Like `norg/show-children-from-point`, but from the current entry's parent."
+  (interactive "^p")
+  (norg/save-excursion-to-parent-and-then-show-point
+    (norg/show-children-from-point n)))
+
+(defun norg/show-children-from-parent/set-min ()
+  "Like `norg/show-children-from-point/set-min`, but from the
+current entry's parent and showing one level."
+  (interactive)
+  (norg/save-excursion-to-parent-and-then-show-point
+    (norg/show-children-from-point/set-min)))
+
+(defun norg/show-children-from-parent/fully-expand ()
+  "Like `norg/show-children-from-point/fully-expand`, but from
+the current entry's parent."
+  (interactive)
+  (norg/save-excursion-to-parent-and-then-show-point
+    (norg/show-children-from-point/fully-expand)))
+
+(defun norg/show-children-from-parent/incremental/less (&optional arg)
+  "Like `norg/show-children-from-point/incremental/less`, but
+from the current entry's parent and with the parent always
+expanded at least one level."
+  (interactive "P")
+  (norg/save-excursion-to-parent-and-then-show-point
+    (norg/show-children-from-point/incremental/less arg)))
+
+(defun norg/show-children-from-parent/incremental/more (&optional arg)
+  "Like `norg/show-children-from-point/incremental/more`, but
+from the current entry's parent."
+  (interactive "P")
+  (norg/save-excursion-to-parent-and-then-show-point
+    (norg/show-children-from-point/incremental/more arg)))
 
 ;;;; ____ ** norg/show-children-from-root/xxxx support
 
