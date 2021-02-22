@@ -265,7 +265,17 @@ Control of evaluation:
               (the-text
                ()
                (case action
-                 ((:send-top-level-form) (grab-text t))
+                 ((:send-top-level-form)
+                  (case :new-experimental
+                    (:old
+                     (grab-text t))
+                    (:new-experimental
+                     ;; Use the CIDER experimental functionality that takes into
+                     ;; account the value of
+                     ;; `clojure-toplevel-inside-comment-form`.
+                     (cl-destructuring-bind (start end)
+                         (cider-defun-at-point 'bounds)
+                       (buffer-substring-no-properties start end)))))
                  ((:send-selection-or-form-around-point) (grab-text nil))
                  ((:send-return) nil)
                  (t (error "Bad action"))))
