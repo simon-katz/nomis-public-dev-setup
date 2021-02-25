@@ -245,6 +245,7 @@
 (require 'nomis-flycheck)
 
 (require 'nomis-log4j)
+(require 'nomis-auto-revert)
 
 (progn
   ;; Putting this where it belongs (in "nomis/very-general-stuff") doesn't work;
