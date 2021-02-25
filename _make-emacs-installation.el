@@ -70,7 +70,8 @@
                       org-bullets
                       flycheck-clj-kondo
                       auto-dim-other-buffers
-                      loccur))
+                      loccur
+                      log4j-mode))
 
 (dolist (p my-packages)
   (when (not (package-installed-p p))
