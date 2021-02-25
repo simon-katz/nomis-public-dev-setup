@@ -244,6 +244,8 @@
 
 (require 'nomis-flycheck)
 
+(require 'nomis-auto-revert)
+
 (progn
   ;; Putting this where it belongs (in "nomis/very-general-stuff") doesn't work;
   ;; I guess something blats it.
