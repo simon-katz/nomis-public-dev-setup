@@ -20,7 +20,7 @@
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (keycast flycheck-kotlin kotlin-mode terraform-mode flycheck dumb-jump json-mode gnu-elpa-keyring-update flycheck-clj-kondo yasnippet yaml-mode yafolding which-key undo-tree spinner smex sesman rainbow-delimiters queue projectile pos-tip paxedit parseedn org-bullets multiple-cursors markdown-mode magit key-chord js2-mode inflections ido-vertical-mode ido-completing-read+ hydra ht highlight-indentation helm fuzzy flycheck-joker fill-column-indicator exec-path-from-shell elisp-slime-nav edn discover dash-functional company clojure-mode cl-format cider-eval-sexp-fu auto-complete aggressive-indent)))
+    (logview keycast flycheck-kotlin kotlin-mode terraform-mode flycheck dumb-jump json-mode gnu-elpa-keyring-update flycheck-clj-kondo yasnippet yaml-mode yafolding which-key undo-tree spinner smex sesman rainbow-delimiters queue projectile pos-tip paxedit parseedn org-bullets multiple-cursors markdown-mode magit key-chord js2-mode inflections ido-vertical-mode ido-completing-read+ hydra ht highlight-indentation helm fuzzy flycheck-joker fill-column-indicator exec-path-from-shell elisp-slime-nav edn discover dash-functional company clojure-mode cl-format cider-eval-sexp-fu auto-complete aggressive-indent)))
  '(safe-local-variable-values
    (quote
     ((nomis/grep/local-ignored-directories "resources/public/assets" "resources/dev-and-build/icons/bootstrap-icons-1.1.0")
