@@ -244,6 +244,8 @@
 
 (require 'nomis-flycheck)
 
+(require 'nomis-logview)
+
 (require 'nomis-auto-revert)
 
 (progn
