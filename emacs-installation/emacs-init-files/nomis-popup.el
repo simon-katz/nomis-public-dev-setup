@@ -97,25 +97,25 @@ If POS is nil, use `point' instead."
            (popup-pos (-nomis/popup/popup-position))
            (msg-part-1-len (min len
                                 (n-chars-we-can-replace-at-pos popup-pos)))
-           (ov1-start-pos popup-pos)
-           (ov2-start-pos (+ popup-pos msg-part-1-len)))
-      (let* ((msg-part-1 (substring msg 0 msg-part-1-len))
+           (msg-part-1 (substring msg 0 msg-part-1-len))
+           (msg-part-2 (substring msg msg-part-1-len)))
+      (unless (equal msg-part-2 "")
+        (put-text-property 0
+                           (length msg-part-2)
+                           'face
+                           face
+                           msg-part-2))
+      (let* ((ov1-start-pos popup-pos)
+             (ov2-start-pos (+ popup-pos msg-part-1-len))
              (ov1 (-make-nomis-popup-overlay face
                                              ov1-start-pos
                                              ov2-start-pos
-                                             'display  msg-part-1))))
-      (let* ((msg-part-2 (substring msg msg-part-1-len)))
-        (unless (equal msg-part-2 "")
-          (put-text-property 0
-                             (length msg-part-2)
-                             'face
-                             face
-                             msg-part-2)
-          (let* ((ov2 (-make-nomis-popup-overlay face
-                                                 ov2-start-pos
-                                                 ov2-start-pos
-                                                 'before-string msg-part-2))))))
-      (let* ((buffer (current-buffer)))
+                                             'display  msg-part-1))
+             (ov2 (-make-nomis-popup-overlay face
+                                             ov2-start-pos
+                                             ov2-start-pos
+                                             'before-string msg-part-2))
+             (buffer (current-buffer)))
         (run-at-time nomis/popup/duration
                      nil
                      (lambda ()
