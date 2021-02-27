@@ -83,7 +83,7 @@ If POS is nil, use `point' instead."
 
 (add-hook 'pre-command-hook '-nomis/popup/remove-non-sticky-popups)
 
-;;;; Useful in dev:
+;;;; Useful in dev (run with the relevant buffer current):
 ;;;;   (remove-overlays nil nil 'category 'nomis-popup/sticky)
 
 (defun -nomis/popup/message* (sticky? popup-pos face msg)
@@ -111,26 +111,28 @@ If POS is nil, use `point' instead."
                            msg-part-2))
       (let* ((ov1-start-pos popup-pos)
              (ov2-start-pos (+ popup-pos msg-part-1-len))
+             (ov1-id (gensym))
+             (ov2-id (gensym))
              (ov1 (-make-nomis-popup-overlay sticky?
                                              face
                                              ov1-start-pos
                                              ov2-start-pos
-                                             'display  msg-part-1))
+                                             'display  msg-part-1
+                                             'nomis/id ov1-id))
              (ov2 (-make-nomis-popup-overlay sticky?
                                              face
                                              ov2-start-pos
                                              ov2-start-pos
-                                             'before-string msg-part-2))
+                                             'before-string msg-part-2
+                                             'nomis/id      ov2-id))
              (buffer (current-buffer)))
         (run-at-time nomis/popup/duration
                      nil
                      (lambda ()
                        (when (buffer-live-p buffer)
                          (with-current-buffer buffer
-                           ;; TODO: Doc says these will still exist. Eek, a leak!
-                           ;;       See https://www.gnu.org/software/emacs/manual/html_node/elisp/Managing-Overlays.html#Managing-Overlays
-                           (delete-overlay ov1)
-                           (delete-overlay ov2)))))))))
+                           (remove-overlays nil nil 'nomis/id ov1-id)
+                           (remove-overlays nil nil 'nomis/id ov2-id)))))))))
 
 (defun nomis/popup/message (format-string &rest args)
   (-nomis/popup/message* nil
