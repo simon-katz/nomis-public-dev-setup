@@ -35,12 +35,8 @@
 ;;;; ___________________________________________________________________________
 ;;;; ____ * nomis/popup/message
 
-(defun -make-nomis-popup-overlay (sticky? face start-pos end-pos &rest props)
+(defun -make-nomis-popup-overlay (start-pos end-pos &rest props)
   (let* ((ov (make-overlay start-pos end-pos)))
-    (overlay-put ov 'category (if sticky?
-                                  'nomis-popup/sticky
-                                'nomis-popup/non-sticky))
-    (overlay-put ov 'face     face)
     (while props (overlay-put ov (pop props) (pop props)))
     ov))
 
@@ -79,12 +75,12 @@ If POS is nil, use `point' instead."
     (point)))
 
 (defun -nomis/popup/remove-non-sticky-popups ()
-  (remove-overlays nil nil 'category 'nomis-popup/non-sticky))
+  (remove-overlays nil nil :nomis/stickiness :nomis/non-sticky))
 
 (add-hook 'pre-command-hook '-nomis/popup/remove-non-sticky-popups)
 
 ;;;; Useful in dev (run with the relevant buffer current):
-;;;;   (remove-overlays nil nil 'category 'nomis-popup/sticky)
+;;;;   (remove-overlays nil nil :nomis/stickiness :nomis/sticky)
 
 (defun -nomis/popup/message* (sticky? popup-pos face msg)
   (cl-flet ((n-chars-we-can-replace-at-pos
@@ -113,26 +109,27 @@ If POS is nil, use `point' instead."
              (ov2-start-pos (+ popup-pos msg-part-1-len))
              (ov1-id (gensym))
              (ov2-id (gensym))
-             (ov1 (-make-nomis-popup-overlay sticky?
-                                             face
-                                             ov1-start-pos
+             (stickiness (if sticky? :nomis/sticky :nomis/non-sticky))
+             (ov1 (-make-nomis-popup-overlay ov1-start-pos
                                              ov2-start-pos
-                                             'display  msg-part-1
-                                             'nomis/id ov1-id))
-             (ov2 (-make-nomis-popup-overlay sticky?
-                                             face
+                                             'display          msg-part-1
+                                             'face             face
+                                             :nomis/id         ov1-id
+                                             :nomis/stickiness stickiness))
+             (ov2 (-make-nomis-popup-overlay ov2-start-pos
                                              ov2-start-pos
-                                             ov2-start-pos
-                                             'before-string msg-part-2
-                                             'nomis/id      ov2-id))
+                                             'before-string    msg-part-2
+                                             'face             face
+                                             :nomis/id         ov2-id
+                                             :nomis/stickiness stickiness))
              (buffer (current-buffer)))
         (run-at-time nomis/popup/duration
                      nil
                      (lambda ()
                        (when (buffer-live-p buffer)
                          (with-current-buffer buffer
-                           (remove-overlays nil nil 'nomis/id ov1-id)
-                           (remove-overlays nil nil 'nomis/id ov2-id)))))))))
+                           (remove-overlays nil nil :nomis/id ov1-id)
+                           (remove-overlays nil nil :nomis/id ov2-id)))))))))
 
 (defun nomis/popup/message (format-string &rest args)
   (-nomis/popup/message* nil
