@@ -35,9 +35,11 @@
 ;;;; ___________________________________________________________________________
 ;;;; ____ * nomis/popup/message
 
-(defun -make-nomis-popup-overlay (face start-pos end-pos &rest props)
+(defun -make-nomis-popup-overlay (sticky? face start-pos end-pos &rest props)
   (let* ((ov (make-overlay start-pos end-pos)))
-    (overlay-put ov 'category 'nomis-popup)
+    (overlay-put ov 'category (if sticky?
+                                  'nomis-popup/sticky
+                                'nomis-popup/non-sticky))
     (overlay-put ov 'face     face)
     (while props (overlay-put ov (pop props) (pop props)))
     ov))
@@ -48,7 +50,7 @@
 If POS is nil, use `point' instead."
   (get-char-property (or pos (point)) 'invisible))
 
-(defun -nomis/popup/popup-position ()
+(defun -nomis/popup/a-good-popup-position ()
   (save-excursion
     ;; If point is invisible, go back to a visible point.
     (cl-loop while (and (-nomis/popup/point-invisible?)
@@ -76,12 +78,15 @@ If POS is nil, use `point' instead."
     ;; We're done. Where are we?
     (point)))
 
-(defun -nomis/popup/remove-existing-popups ()
-  (remove-overlays nil nil 'category 'nomis-popup))
+(defun -nomis/popup/remove-non-sticky-popups ()
+  (remove-overlays nil nil 'category 'nomis-popup/non-sticky))
 
-(add-hook 'pre-command-hook '-nomis/popup/remove-existing-popups)
+(add-hook 'pre-command-hook '-nomis/popup/remove-non-sticky-popups)
 
-(defun -nomis/popup/message* (face msg)
+;;;; Useful in dev:
+;;;;   (remove-overlays nil nil 'category 'nomis-popup/sticky)
+
+(defun -nomis/popup/message* (sticky? popup-pos face msg)
   (cl-flet ((n-chars-we-can-replace-at-pos
              (pos)
              (let* ((n-chars-before-eol
@@ -92,9 +97,8 @@ If POS is nil, use `point' instead."
                          when (-nomis/popup/point-invisible? (+ pos i))
                          return (1- i))
                    n-chars-before-eol))))
-    (-nomis/popup/remove-existing-popups)
+    (-nomis/popup/remove-non-sticky-popups)
     (let* ((len (length msg))
-           (popup-pos (-nomis/popup/popup-position))
            (msg-part-1-len (min len
                                 (n-chars-we-can-replace-at-pos popup-pos)))
            (msg-part-1 (substring msg 0 msg-part-1-len))
@@ -107,11 +111,13 @@ If POS is nil, use `point' instead."
                            msg-part-2))
       (let* ((ov1-start-pos popup-pos)
              (ov2-start-pos (+ popup-pos msg-part-1-len))
-             (ov1 (-make-nomis-popup-overlay face
+             (ov1 (-make-nomis-popup-overlay sticky?
+                                             face
                                              ov1-start-pos
                                              ov2-start-pos
                                              'display  msg-part-1))
-             (ov2 (-make-nomis-popup-overlay face
+             (ov2 (-make-nomis-popup-overlay sticky?
+                                             face
                                              ov2-start-pos
                                              ov2-start-pos
                                              'before-string msg-part-2))
@@ -121,16 +127,39 @@ If POS is nil, use `point' instead."
                      (lambda ()
                        (when (buffer-live-p buffer)
                          (with-current-buffer buffer
-                           (-nomis/popup/remove-existing-popups)))))))))
+                           ;; TODO: Doc says these will still exist. Eek, a leak!
+                           ;;       See https://www.gnu.org/software/emacs/manual/html_node/elisp/Managing-Overlays.html#Managing-Overlays
+                           (delete-overlay ov1)
+                           (delete-overlay ov2)))))))))
 
 (defun nomis/popup/message (format-string &rest args)
-  (-nomis/popup/message* '-nomis/popup/face
+  (-nomis/popup/message* nil
+                         (-nomis/popup/a-good-popup-position)
+                         '-nomis/popup/face
                          (concat -nomis/popup/prefix
                                  (apply #'format format-string args)
                                  -nomis/popup/suffix)))
 
 (defun nomis/popup/error-message (format-string &rest args)
-  (-nomis/popup/message* '-nomis/popup/error-face
+  (-nomis/popup/message* nil
+                         (-nomis/popup/a-good-popup-position)
+                         '-nomis/popup/error-face
+                         (concat -nomis/popup/error-prefix
+                                 (apply #'format format-string args)
+                                 -nomis/popup/error-suffix)))
+
+(defun nomis/popup/message-v2 (sticky? position format-string &rest args)
+  (-nomis/popup/message* sticky?
+                         position
+                         '-nomis/popup/face
+                         (concat -nomis/popup/prefix
+                                 (apply #'format format-string args)
+                                 -nomis/popup/suffix)))
+
+(defun nomis/popup/error-message-v2 (sticky? position format-string &rest args)
+  (-nomis/popup/message* sticky?
+                         position
+                         '-nomis/popup/error-face
                          (concat -nomis/popup/error-prefix
                                  (apply #'format format-string args)
                                  -nomis/popup/error-suffix)))
