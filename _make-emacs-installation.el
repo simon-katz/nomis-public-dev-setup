@@ -71,7 +71,8 @@
                       flycheck-clj-kondo
                       auto-dim-other-buffers
                       loccur
-                      logview))
+                      logview
+                      vterm))
 
 (dolist (p my-packages)
   (when (not (package-installed-p p))

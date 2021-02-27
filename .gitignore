@@ -14,3 +14,5 @@ emacs-installation/.emacs.d/projectile.cache
 emacs-installation/.emacs.d/server/
 emacs-installation/.gnupg/
 emacs-installation/.emacs.d/logview-cache.extmap
+emacs-installation/.emacs.d/elpa/vterm-20210217.737/build/
+emacs-installation/.emacs.d/elpa/vterm-20210217.737/vterm-module.so
