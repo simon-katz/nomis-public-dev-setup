@@ -35,8 +35,6 @@
 ;;;; ___________________________________________________________________________
 ;;;; ____ * nomis/popup/message
 
-(defvar -nomis/popup/most-recent-popup-time nil)
-
 (defun -make-nomis-popup-overlay (face start-pos end-pos &rest props)
   (let* ((ov (make-overlay start-pos end-pos)))
     (overlay-put ov 'category 'nomis-popup)
@@ -78,17 +76,10 @@ If POS is nil, use `point' instead."
     ;; We're done. Where are we?
     (point)))
 
-(defun -nomis/popup/remove-existing-popups (&optional force?)
-  (when (or force?
-            (>= (float-time)
-                (+ -nomis/popup/most-recent-popup-time
-                   nomis/popup/duration)))
-    (remove-overlays nil nil 'category 'nomis-popup)))
+(defun -nomis/popup/remove-existing-popups ()
+  (remove-overlays nil nil 'category 'nomis-popup))
 
-(defun -nomis/popup/remove-existing-popups/force ()
-  (-nomis/popup/remove-existing-popups t))
-
-(add-hook 'pre-command-hook '-nomis/popup/remove-existing-popups/force)
+(add-hook 'pre-command-hook '-nomis/popup/remove-existing-popups)
 
 (defun -nomis/popup/message* (face msg)
   (cl-flet ((n-chars-we-can-replace-at-pos
@@ -101,7 +92,7 @@ If POS is nil, use `point' instead."
                          when (-nomis/popup/point-invisible? (+ pos i))
                          return (1- i))
                    n-chars-before-eol))))
-    (-nomis/popup/remove-existing-popups/force)
+    (-nomis/popup/remove-existing-popups)
     (let* ((len (length msg))
            (popup-pos (-nomis/popup/popup-position))
            (msg-part-1-len (min len
@@ -124,7 +115,6 @@ If POS is nil, use `point' instead."
                                                  ov2-start-pos
                                                  ov2-start-pos
                                                  'before-string msg-part-2))))))
-      (setq -nomis/popup/most-recent-popup-time (float-time))
       (let* ((buffer (current-buffer)))
         (run-at-time nomis/popup/duration
                      nil
