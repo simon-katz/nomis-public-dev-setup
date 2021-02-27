@@ -6,6 +6,8 @@
 
 (setq logview-auto-revert-mode 'auto-revert-tail-mode)
 
+(setq logview-show-ellipses nil)
+
 ;;;; ___________________________________________________________________________
 
 (provide 'nomis-logview)
