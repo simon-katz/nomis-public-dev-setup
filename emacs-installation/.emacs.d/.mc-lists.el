@@ -4,6 +4,8 @@
 (setq mc/cmds-to-run-for-all
       '(
         backward-sexp
+        c-electric-paren
+        c-electric-semi&comma
         cljr-raise-sexp
         cljr-slash
         cljr-splice-sexp-killing-backward
