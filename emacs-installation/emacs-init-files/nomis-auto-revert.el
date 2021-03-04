@@ -74,33 +74,32 @@
                              current-tail-chars)))
         old-eob))))
 
-(defun -nomis/auto-revert/maybe-popup-new-content-message ()
-  ;; If buffer has changed since previous call, pop up a temporary message.
-  (when-let (old-eob (-nomis/auto-revert/old-eob-if-buffer-changed))
-    (let* ((begin-pos (save-excursion (goto-char old-eob)
-                                      (forward-line -1)
-                                      (point)))
-           (begin-message nomis/auto-revert/new-content-text/begin)
-           (end-pos (point-max))
-           (end-message   nomis/auto-revert/new-content-text/end))
-      (nomis/popup/message-v2 t begin-pos begin-message)
-      (nomis/popup/message-v2 t end-pos   end-message))))
+(defun -nomis/auto-revert/extras-for-buffer ()
+  ;; If at eob and buffer has changed since previous call:
+  ;; - Bottomise (ie scroll so that eob is at bottom of window).
+  ;; - Temporarily highlight the changes.
+  (when (= (point) (point-max))
+    (when-let (old-eob (-nomis/auto-revert/old-eob-if-buffer-changed))
+      (recenter-top-bottom -1)
+      (let* ((begin-pos (save-excursion (goto-char old-eob)
+                                        (forward-line -1)
+                                        (point)))
+             (begin-message nomis/auto-revert/new-content-text/begin)
+             (end-pos (point-max))
+             (end-message   nomis/auto-revert/new-content-text/end))
+        (nomis/popup/message-v2 t begin-pos begin-message)
+        (nomis/popup/message-v2 t end-pos   end-message)))))
 
-(defun -nomis/auto-revert/bottomise (&rest _)
-  ;; For all windows showing current buffer:
-  ;; - If at eob show eob at bottom of window.
-  ;; - If buffer has changed pop up a temporary message.
+(defun -nomis/auto-revert-extras (&rest _)
   (dolist (w (get-buffer-window-list nil nil t))
     (with-selected-window w
-      (when (= (point) (point-max))
-        (recenter-top-bottom -1)
-        (-nomis/auto-revert/maybe-popup-new-content-message)))))
+      (-nomis/auto-revert/extras-for-buffer))))
 
 (let* ((advice-name '-nomis/auto-revert/eob-stuff))
   (advice-add
    'auto-revert-handler
    :after
-   '-nomis/auto-revert/bottomise
+   '-nomis/auto-revert-extras
    `((name . ,advice-name))))
 
 (when nil ; Code to remove advice when in dev.
