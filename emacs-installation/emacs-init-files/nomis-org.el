@@ -44,8 +44,7 @@
 
 (setq org-startup-indented t)
 
-(progn
-  ;; Use current window when clicking links.
+(progn ; Use current window when clicking links.
   (setq org-link-frame-setup
         (acons 'file
                'find-file
