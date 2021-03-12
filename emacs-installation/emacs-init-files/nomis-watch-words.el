@@ -8,7 +8,7 @@
     "--.*?--\\▶"))
 
 (defvar nomis/ww/regexps/standout
-  '("<[[:graph:]]*?>"))
+  '("•[[:graph:]]*?•"))
 
 (defvar nomis/ww/regexps/operators
   ;; Use \\ in the strings below so you don't get the highlighting here.
@@ -189,10 +189,10 @@
 ;;;; - aaa--x-y-z--▶aaa
 ;;;; - aaa[-▶]aaa aaa[-▶]aaa
 
-;;;; - <abc>
-;;;; - <abc>s
-;;;; - <abc>s and <def>
-;;;; - (and (< a b) (> d e)) ; Not caught by <...>.
+;;;; - •abc•
+;;;; - •abc•s
+;;;; - •abc•s and •def•
+;;;; - (and (• a b) (• d e)) ; Not caught by •...•.
 
 ;;;; - aaa[--OR--]aaa
 ;;;; - aaa--OR--aaa
