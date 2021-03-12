@@ -5,7 +5,7 @@
   '("-\\▶"
     "--\\▶"
     "---\\▶"
-    "--.*--\\▶"))
+    "--.*?--\\▶"))
 
 (defvar nomis/ww/regexps/standout
   '("<[[:graph:]]*?>"))
@@ -187,6 +187,7 @@
 ;;;; - aaa----▶aaa
 ;;;; - aaa[--x-y-z--▶]aaa
 ;;;; - aaa--x-y-z--▶aaa
+;;;; - aaa[-▶]aaa aaa[-▶]aaa
 
 ;;;; - <abc>
 ;;;; - <abc>s
