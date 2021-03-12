@@ -327,41 +327,52 @@
 (setq org-src-fontify-natively t)
 
 ;;;; ___________________________________________________________________________
-;;;; ____ * orgstruct
-
-;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-;;;; ____ orgstruct-mode general
-
-;;;; To use, enable orgstruct-mode or orgstruct++-mode
-
-(setq orgstruct-heading-prefix-regexp ";+ *\\(?:_+ \\)?")
-
-(add-hook 'prog-mode-hook 'orgstruct-mode)
-
-;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-;;;; ____ orgstruct-mode display
-
-(defvar nomis/orgstruct-display-table nil
-  ;; Approach copied from `org-display-table` stuff.
-  "The display table for orgstruct-mode when `org-ellipsis' is non-nil.")
-
-(defun nomis/orgstruct-set-up-display-table ()
-  (if (not (member org-version
-                   '("9.1.9")))
-      (progn
-        (nomis/msg/grab-user-attention/low)
-        (message "•••• You need to check `nomis/orgstruct-set-up-display-table` for this version of Org mode."))
-    (when (and (stringp org-ellipsis) (not (equal "" org-ellipsis)))
-      (unless nomis/orgstruct-display-table
-        (setq nomis/orgstruct-display-table (make-display-table)))
-      (set-display-table-slot
-       nomis/orgstruct-display-table 4
-       (vconcat (mapcar (lambda (c) (make-glyph-code c 'org-ellipsis))
-                        org-ellipsis)))
-      (setq buffer-display-table nomis/orgstruct-display-table))))
-
-(add-hook 'orgstruct-mode-hook 'nomis/orgstruct-set-up-display-table)
-
+;;;; ***************************************************************************
+;;;; After upgrading to Org Mode 9.4.4, the following orgstruct stuff gives an
+;;;; error when I start Emacs:
+;;;;
+;;;; run-hooks: Autoloading file
+;;;; [...]/emacs-configuration/emacs-installation/.emacs.d/elpa/org-9.4.4/org.elc
+;;;; failed to define function orgstruct-mode
+;;;;
+;;;; ***************************************************************************
+;;;; ___________________________________________________________________________
+;;
+;; ;;;; ___________________________________________________________________________
+;; ;;;; ____ * orgstruct
+;;
+;; ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+;; ;;;; ____ orgstruct-mode general
+;;
+;; ;;;; To use, enable orgstruct-mode or orgstruct++-mode
+;;
+;; (setq orgstruct-heading-prefix-regexp ";+ *\\(?:_+ \\)?")
+;;
+;; (add-hook 'prog-mode-hook 'orgstruct-mode)
+;;
+;; ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+;; ;;;; ____ orgstruct-mode display
+;;
+;; (defvar nomis/orgstruct-display-table nil
+;;   ;; Approach copied from `org-display-table` stuff.
+;;   "The display table for orgstruct-mode when `org-ellipsis' is non-nil.")
+;;
+;; (defun nomis/orgstruct-set-up-display-table ()
+;;   (if (not (member org-version
+;;                    '("9.1.9")))
+;;       (progn
+;;         (nomis/msg/grab-user-attention/low)
+;;         (message "•••• You need to check `nomis/orgstruct-set-up-display-table` for this version of Org mode."))
+;;     (when (and (stringp org-ellipsis) (not (equal "" org-ellipsis)))
+;;       (unless nomis/orgstruct-display-table
+;;         (setq nomis/orgstruct-display-table (make-display-table)))
+;;       (set-display-table-slot
+;;        nomis/orgstruct-display-table 4
+;;        (vconcat (mapcar (lambda (c) (make-glyph-code c 'org-ellipsis))
+;;                         org-ellipsis)))
+;;       (setq buffer-display-table nomis/orgstruct-display-table))))
+;;
+;; (add-hook 'orgstruct-mode-hook 'nomis/orgstruct-set-up-display-table)
 
 ;;;; ___________________________________________________________________________
 ;;;; ____ * Display -- misc
