@@ -106,7 +106,7 @@
 
 (defun nomis/ww/add-font-lock (regexp face)
   (font-lock-add-keywords nil
-                          `((,regexp 0 ',face t))
+                          `((,regexp 0 ',face prepend))
                           ;; Adding this `add-at-end` arg means we don't blat
                           ;; header styling in org mode, so I guess it's the
                           ;; right thing to be doing in general.
