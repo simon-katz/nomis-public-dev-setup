@@ -1,22 +1,22 @@
 ;;;; Init stuff --- Watch words ---  -*- lexical-binding: t -*-
 
-(defvar nomis/ww/regexps/finger-pointers
+(defconst nomis/ww/regexps/finger-pointers
   ;; Use \\ in the strings below so you don't get the highlighting here.
   '("-\\▶"
     "--\\▶"
     "---\\▶"
     "--.*?--\\▶"))
 
-(defvar nomis/ww/regexps/standout
+(defconst nomis/ww/regexps/standout
   '("•[[:graph:]]*?•"))
 
-(defvar nomis/ww/regexps/operators
+(defconst nomis/ww/regexps/operators
   ;; Use \\ in the strings below so you don't get the highlighting here.
   '("--O\\R--"
     "--A\\ND--"
     "--N\\OT--"))
 
-(defvar nomis/ww/regexps/high-priority
+(defconst nomis/ww/regexps/high-priority
   ;; Use \\ in the strings below so you don't get the highlighting here.
   '("F\\IXME"
     "F\\IX"
@@ -31,9 +31,9 @@
     "Q\\UESTION/ACTION"
     "L\\EARNING-NOW"))
 
-(defvar nomis/ww/low-priority-regexp-prefix "x")
+(defconst nomis/ww/low-priority-regexp-prefix "x")
 
-(defvar nomis/ww/regexps/low-priority
+(defconst nomis/ww/regexps/low-priority
   ;; Use \\ in the strings below so you don't get the highlighting here.
   (append '()
           (mapcar #'(lambda (string)
