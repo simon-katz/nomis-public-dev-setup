@@ -128,6 +128,8 @@
 
 ;;;; ---- General stuff ----
 
+(require 'nomis-datetime)
+
 (require 'nomis-y-or-n-p)
 
 (require 'nomis-ido-and-smex)
