@@ -99,7 +99,7 @@
 ;;;; package.
 
 (require 'nomis-popup nil t)
-(require 'nomis-scrolling nil t)
+(require 'nomis-scrolling)
 
 ;;;; ___________________________________________________________________________
 ;;;; ____ * Tailor other functionality
