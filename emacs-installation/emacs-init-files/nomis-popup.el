@@ -116,18 +116,18 @@ If POS is nil, use `point' instead."
              (ov1-id (gensym))
              (ov2-id (gensym))
              (stickiness (if sticky? :nomis/sticky :nomis/non-sticky))
-             (ov1 (-make-nomis-popup-overlay ov1-start-pos
-                                             ov2-start-pos
-                                             'display          msg-part-1
-                                             'face             face
-                                             :nomis/id         ov1-id
-                                             :nomis/stickiness stickiness))
-             (ov2 (-make-nomis-popup-overlay ov2-start-pos
-                                             ov2-start-pos
-                                             'before-string    msg-part-2
-                                             'face             face
-                                             :nomis/id         ov2-id
-                                             :nomis/stickiness stickiness))
+             (_ov1 (-make-nomis-popup-overlay ov1-start-pos
+                                              ov2-start-pos
+                                              'display          msg-part-1
+                                              'face             face
+                                              :nomis/id         ov1-id
+                                              :nomis/stickiness stickiness))
+             (_ov2 (-make-nomis-popup-overlay ov2-start-pos
+                                              ov2-start-pos
+                                              'before-string    msg-part-2
+                                              'face             face
+                                              :nomis/id         ov2-id
+                                              :nomis/stickiness stickiness))
              (buffer (current-buffer)))
         (run-at-time nomis/popup/duration
                      nil
