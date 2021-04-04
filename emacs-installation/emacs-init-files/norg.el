@@ -1,64 +1,97 @@
-;;;; norg --- A layer on top of Org mode  ---  -*- lexical-binding: t -*-
+;;; norg.el --- A layer on top of Org mode -*- lexical-binding: t -*-
+
+;; Copyright (C) 2019-2021 Simon Katz.
+
+;; Author: Simon Katz
+;; Version: 0.0.1-SNAPSHOT
+;; TODO: Add a contact details (or, probably, a GitHub URL).
+;; TODO: Add Keywords
+;; TODO: Add Package-Requires
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+;; TODO: When we make a repo for this, include the GNU General Public License
+;;       mentioned above.
+
+;;; Commentary:
+
+;; A layer on top of org mode providing additional functionality for
+;; navigating and for expanding & collapsing.
+
+;; TODO: Write webby documentation and add a URL here.
+
+;;; Code:
 
 (progn) ; this stops `hs-hide-all` from hiding the next comment
 
 ;;;; ___________________________________________________________________________
 ;;;; ____ * Some rejected (at least for now) ideas
 
-;;;; XXXX (Too hard! Park this for now.)
-;;;;      Sometimes things take a long time and a busy pointer would be useful.
-;;;;      Why don't you have one?
-;;;;      Emacs is supposed to do this for you.
-;;;;      Some investigation:
-;;;;      - Tested with -Q option:
-;;;;          /Applications/Emacs-26-1-2.app/Contents/MacOS/Emacs -Q
-;;;;      - Same behaviour on two Macs.
-;;;;      - There seem to be several problems:
-;;;;        - On OS X, the pointer disappears when typing. You have to move
-;;;;          the mouse to get it back. So even if you fixed this problem,
-;;;;          you wouldn't have a busy cursor when busy unless you moved the
-;;;;          pointer.
-;;;;        - Busy pointer is an I-beam, not an hourglass.
-;;;;        - Busy pointer doesn't appear as soon as it should.
-;;;;        - Busy pointer sometimes sticks until you move the mouse.
-;;;;      - Google not helping -- can't find any mention of this.
+;; XXXX (Too hard! Park this for now.)
+;;      Sometimes things take a long time and a busy pointer would be useful.
+;;      Why don't you have one?
+;;      Emacs is supposed to do this for you.
+;;      Some investigation:
+;;      - Tested with -Q option:
+;;          /Applications/Emacs-26-1-2.app/Contents/MacOS/Emacs -Q
+;;      - Same behaviour on two Macs.
+;;      - There seem to be several problems:
+;;        - On OS X, the pointer disappears when typing. You have to move
+;;          the mouse to get it back. So even if you fixed this problem,
+;;          you wouldn't have a busy cursor when busy unless you moved the
+;;          pointer.
+;;        - Busy pointer is an I-beam, not an hourglass.
+;;        - Busy pointer doesn't appear as soon as it should.
+;;        - Busy pointer sometimes sticks until you move the mouse.
+;;      - Google not helping -- can't find any mention of this.
 
-;;;; XXXX Idea of treating level -1 as show only parents, and not siblings.
-;;;;      But first:
-;;;;      - The visibility-span stuff is global, but you have things that work
-;;;;        from point and from root. So you might have to roll your own to o
-;;;;        this.
-;;;;      - Can you detect a parents-not-siblings state? (Remember: you are
-;;;;        no longer storing state for positions. (But you could in this
-;;;;        special case, I guess. But that's getting complicated. It was nice
-;;;;        to get rid of the state.))
-;;;;      - Consider whether there's anything else you might want to do with
-;;;;        visibility.
-;;;;      - Sort out visibiity issues that are mentioned above:
-;;;;        - Bodies not being expanded.
-;;;;        - (Anything else?)
+;; XXXX Idea of treating level -1 as show only parents, and not siblings.
+;;      But first:
+;;      - The visibility-span stuff is global, but you have things that work
+;;        from point and from root. So you might have to roll your own to o
+;;        this.
+;;      - Can you detect a parents-not-siblings state? (Remember: you are
+;;        no longer storing state for positions. (But you could in this
+;;        special case, I guess. But that's getting complicated. It was nice
+;;        to get rid of the state.))
+;;      - Consider whether there's anything else you might want to do with
+;;        visibility.
+;;      - Sort out visibiity issues that are mentioned above:
+;;        - Bodies not being expanded.
+;;        - (Anything else?)
 
-;;;; XXXX Bug: When a M-x is used to invoke a command (even something not
-;;;;      org-related (such as `version` or `what-cursor-position)`, if the
-;;;;      point is hidden it gets changed to be a visible point.
-;;;;      To reproduce:
-;;;;      - M-x what-cursor-position
-;;;;      - Do something that hides point.
-;;;;      - M-x what-cursor-position
-;;;;        - Observe that point has not changed.
-;;;;      - M-x what-cursor-position
-;;;;        - Observe that point has changed.
-;;;;      So, it seems that after running a M-x command, point gets changed.
+;; XXXX Bug: When a M-x is used to invoke a command (even something not
+;;      org-related (such as `version` or `what-cursor-position)`, if the
+;;      point is hidden it gets changed to be a visible point.
+;;      To reproduce:
+;;      - M-x what-cursor-position
+;;      - Do something that hides point.
+;;      - M-x what-cursor-position
+;;        - Observe that point has not changed.
+;;      - M-x what-cursor-position
+;;        - Observe that point has changed.
+;;      So, it seems that after running a M-x command, point gets changed.
 
-;;;; XXXX When getting to 0 or max, first flash then cycle.
-;;;;      REJECTED
-;;;;      This would give a modal UI. An invisibly-modal UI.
+;; XXXX When getting to 0 or max, first flash then cycle.
+;;      REJECTED
+;;      This would give a modal UI. An invisibly-modal UI.
 
 ;;;; ___________________________________________________________________________
 ;;;; ____ * Require things
 
 (require 'org)
-(require 'cl)
+(require 'cl-lib)
 (require 'dash)
 (require 'dash-functional)
 
@@ -1191,3 +1224,4 @@ the parameter."
 ;;;; ____ * End
 
 (provide 'norg)
+;;; norg.el ends here
