@@ -177,7 +177,7 @@ message and in case adding org level messes things up.")
       (let* ((nomis/scrolling/maintain-line-no-in-window?
               (or force?
                   nomis/scrolling/maintain-line-no-in-window?)))
-        (nomis/with-maybe-maintain-line-no-in-window
+        (nomis/scrolling/with-maybe-maintain-line-no-in-window
           (do-it))))))
 
 (cl-defmacro norg/-with-maybe-maintain-line-no-in-window (&body body)

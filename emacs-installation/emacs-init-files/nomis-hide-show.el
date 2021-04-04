@@ -332,7 +332,7 @@ Otherwise, if point is at the beginning of an sexp, do the following:
 
 Otherwise, go to the beginning of the sexp after point and show it."
   (interactive)
-  (nomis/with-maybe-maintain-line-no-in-window
+  (nomis/scrolling/with-maybe-maintain-line-no-in-window
     (cl-flet ((error--cannot-move
                ()
                (error "Can't move forward")))
@@ -393,7 +393,7 @@ Otherwise, if point is at the beginning of an sexp, do the following:
 
 Otherwise, go to the beginning of the sexp before point and show it."
   (interactive)
-  (nomis/with-maybe-maintain-line-no-in-window
+  (nomis/scrolling/with-maybe-maintain-line-no-in-window
     (cond ((not (nomis/can-backward-sexp?))
            (cl-flet ((error--cannot-move
                       ()

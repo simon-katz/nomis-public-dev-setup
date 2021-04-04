@@ -73,7 +73,7 @@
             (scroll-up-line (- (nomis/scrolling/-line-no-in-window)
                                old-line-no))))))))
 
-(cl-defmacro nomis/with-maybe-maintain-line-no-in-window (&body body)
+(cl-defmacro nomis/scrolling/with-maybe-maintain-line-no-in-window (&body body)
   (declare (indent 0))
   `(nomis/scrolling/-with-maybe-maintain-line-no-in-window* (lambda () ,@body)))
 
