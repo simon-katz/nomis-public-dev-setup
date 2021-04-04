@@ -3,6 +3,11 @@
 (progn) ; this stops `hs-hide-all` from hiding the next comment
 
 ;;;; ___________________________________________________________________________
+;;;; ____ * Require things
+
+(require 'cl-lib)
+
+;;;; ___________________________________________________________________________
 ;;;; ____ * Parameterisation
 
 (defvar nomis/popup/duration 1)
@@ -90,9 +95,9 @@ If POS is nil, use `point' instead."
                      (save-excursion
                        (- (- (progn (goto-char pos) (point))
                              (progn (end-of-line) (point)))))))
-               (or (loop for i from 0 to n-chars-before-eol
-                         when (-nomis/popup/point-invisible? (+ pos i))
-                         return (1- i))
+               (or (cl-loop for i from 0 to n-chars-before-eol
+                            when (-nomis/popup/point-invisible? (+ pos i))
+                            return (1- i))
                    n-chars-before-eol))))
     (-nomis/popup/remove-non-sticky-popups)
     (let* ((len (length msg))
