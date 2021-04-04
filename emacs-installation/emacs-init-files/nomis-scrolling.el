@@ -18,7 +18,7 @@
            (setq *nomis/maintain-line-no-in-window?*
                  (not *nomis/maintain-line-no-in-window?*))))
 
-(defun nomis/line-no-in-window ()
+(defun nomis/scrolling/-line-no-in-window ()
   (if (= (point) (window-start))
       ;; Bug in `count-screen-lines`? It's returning 0.
       1
@@ -28,7 +28,7 @@
   (cl-flet* ((do-it () (funcall fun)))
     (if (not *nomis/maintain-line-no-in-window?*)
         (do-it)
-      (let* ((old-line-no (nomis/line-no-in-window)))
+      (let* ((old-line-no (nomis/scrolling/-line-no-in-window)))
         (prog1 (do-it)
           ;; Ensure cursor is on screen, so that scrolling doesn't make
           ;; any unwanted adjustments.
@@ -38,7 +38,7 @@
           (ignore-errors
             ;; `ignore-errors` because if we're near the top of the buffer
             ;; we may not be able to do this.
-            (scroll-up-line (- (nomis/line-no-in-window)
+            (scroll-up-line (- (nomis/scrolling/-line-no-in-window)
                                old-line-no))))))))
 
 (cl-defmacro nomis/with-maybe-maintain-line-no-in-window (&body body)
