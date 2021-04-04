@@ -3,11 +3,6 @@
 (progn) ; this stops `hs-hide-all` from hiding the next comment
 
 ;;;; ___________________________________________________________________________
-;;;; ____ * Require things
-
-(require 'nomis-scrolling)
-
-;;;; ___________________________________________________________________________
 ;;;; ____ * Parameterisation
 
 (defvar nomis/popup/duration 1)
@@ -34,6 +29,12 @@
 
 ;;;; ___________________________________________________________________________
 ;;;; ____ * nomis/popup/message
+
+(defun nomis/popup/-line-no-in-window ()
+  (if (= (point) (window-start))
+      ;; Bug in `count-screen-lines`? It's returning 0.
+      1
+    (count-screen-lines (window-start) (point) t)))
 
 (defun -make-nomis-popup-overlay (start-pos end-pos &rest props)
   (let* ((ov (make-overlay start-pos end-pos)))
@@ -65,7 +66,7 @@ If POS is nil, use `point' instead."
     ;; not for programmatic use, but the things it suggests to use instead
     ;; don't do what we want -- we want screen lines (we want to jump over
     ;; invisible lines).
-    (unless (= (nomis/line-no-in-window) 1)
+    (unless (= (nomis/popup/-line-no-in-window) 1)
       (previous-line)
       ;; Sometimes org mode gets into a state where there's a strange invisible
       ;; line at the top of the window, so check for that.
