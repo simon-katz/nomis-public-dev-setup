@@ -56,7 +56,7 @@
       1
     (count-screen-lines (window-start) (point) t)))
 
-(defun -nomis/with-maybe-maintain-line-no-in-window* (fun)
+(defun nomis/scrolling/-with-maybe-maintain-line-no-in-window* (fun)
   (cl-flet* ((do-it () (funcall fun)))
     (if (not nomis/scrolling/maintain-line-no-in-window?)
         (do-it)
@@ -75,7 +75,7 @@
 
 (cl-defmacro nomis/with-maybe-maintain-line-no-in-window (&body body)
   (declare (indent 0))
-  `(-nomis/with-maybe-maintain-line-no-in-window* (lambda () ,@body)))
+  `(nomis/scrolling/-with-maybe-maintain-line-no-in-window* (lambda () ,@body)))
 
 ;;;; ___________________________________________________________________________
 
