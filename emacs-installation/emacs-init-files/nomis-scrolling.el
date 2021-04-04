@@ -44,7 +44,7 @@
 
 (defvar nomis/scrolling/maintain-line-no-in-window? nil)
 
-(defun nomis/toggle-maintain-line-no-in-window ()
+(defun nomis/scrolling/toggle-maintain-line-no-in-window ()
   (interactive)
   (message "nomis/scrolling/maintain-line-no-in-window? = %s"
            (setq nomis/scrolling/maintain-line-no-in-window?

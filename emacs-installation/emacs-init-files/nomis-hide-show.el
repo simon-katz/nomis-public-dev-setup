@@ -415,7 +415,7 @@ Otherwise, go to the beginning of the sexp before point and show it."
 
 (define-key hs-minor-mode-map (k•• "H-M-,")   'nomis/hs/step-backward)
 (define-key hs-minor-mode-map (k•• "H-M-.")   'nomis/hs/step-forward)
-(define-key hs-minor-mode-map (k•• "H-q H-s") 'nomis/toggle-maintain-line-no-in-window)
+(define-key hs-minor-mode-map (k•• "H-q H-s") 'nomis/scrolling/toggle-maintain-line-no-in-window)
 
 ;;;; Key chords only work for chars whose codes are in the range 32..126 -- see
 ;;;; limitations in `key-chord`. So you can't use the cursor keys. Annoying!

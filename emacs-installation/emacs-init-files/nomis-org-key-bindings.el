@@ -59,7 +59,7 @@ Use H with various other keys:
 H-q H-]  norg/show-children-from-root/to-current-level
 H-q H-=  norg/show-children-from-all-roots/to-current-level
 
-H-q H-s  nomis/toggle-maintain-line-no-in-window
+H-q H-s  nomis/scrolling/toggle-maintain-line-no-in-window
 
 H-?  Show this help")
 
@@ -161,7 +161,7 @@ H-?  Show this help")
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ;;;; ____ ** Maintain cursor position
 
-(org-defkey org-mode-map (kbd "H-q H-s") 'nomis/toggle-maintain-line-no-in-window)
+(org-defkey org-mode-map (kbd "H-q H-s") 'nomis/scrolling/toggle-maintain-line-no-in-window)
 
 ;;;; ___________________________________________________________________________
 ;;;; ____ * Agenda
