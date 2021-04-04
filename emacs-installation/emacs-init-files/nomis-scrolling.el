@@ -34,10 +34,10 @@
 
 ;;;; ___________________________________________________________________________
 
-(defvar nomis/scrolling/debug? nil)
+(defvar nomis/scrolling/-debug? nil)
 
-(defun nomis/scrolling/debug (format-string &rest format-args)
-  (when nomis/scrolling/debug?
+(defun nomis/scrolling/-debug (format-string &rest format-args)
+  (when nomis/scrolling/-debug?
     (apply #'message format-string format-args)))
 
 ;;;; ___________________________________________________________________________
