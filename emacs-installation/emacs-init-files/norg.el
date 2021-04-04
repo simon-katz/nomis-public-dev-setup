@@ -174,9 +174,9 @@ message and in case adding org level messes things up.")
   (cl-flet ((do-it () (funcall fun)))
     (if (not (featurep 'nomis-scrolling))
         (do-it)
-      (let* ((*nomis/maintain-line-no-in-window?*
+      (let* ((nomis/scrolling/maintain-line-no-in-window?
               (or force?
-                  *nomis/maintain-line-no-in-window?*)))
+                  nomis/scrolling/maintain-line-no-in-window?)))
         (nomis/with-maybe-maintain-line-no-in-window
           (do-it))))))
 
