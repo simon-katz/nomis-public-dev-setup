@@ -98,33 +98,11 @@
 ;;;; Things that you might want to make into packages if you make norg into a
 ;;;; package.
 
-(require 'nomis-popup nil t)
+(require 'nomis-popup)
 (require 'nomis-scrolling)
 
 ;;;; ___________________________________________________________________________
 ;;;; ____ * Tailor other functionality
-
-;;;; ____ ** norg/popup/message
-
-(defvar norg/use-nomis-popup-when-available? t)
-
-(defun norg/popup/message (format-string &rest args)
-  (let* ((fun (if (and norg/use-nomis-popup-when-available?
-                       (featurep 'nomis-popup))
-                  #'nomis/popup/message
-                #'message)))
-    (apply fun
-           format-string
-           args)))
-
-(defun norg/popup/error-message (format-string &rest args)
-  (let* ((fun (if (and norg/use-nomis-popup-when-available?
-                       (featurep 'nomis-popup))
-                  #'nomis/popup/error-message
-                #'message)))
-    (apply fun
-           format-string
-           args)))
 
 ;;;; ____ ** last-command
 
@@ -164,7 +142,7 @@ message and in case adding org level messes things up.")
                            (rest args)))
                          (s (apply #'format format-string format-args)))
                     (funcall orig-fun "%s" s)
-                    (norg/popup/message "%s" s))
+                    (nomis/popup/message "%s" s))
                 (apply orig-fun args)))
             '((name . norg/add-level-info)))
 
@@ -448,7 +426,7 @@ When in a body, \"current headline\" means the current body's parent headline."
       (funcall move-fun 1 t)
       (norg/show-point)
       (when (= (point) starting-point)
-        (norg/popup/error-message "%s" error-message)))))
+        (nomis/popup/error-message "%s" error-message)))))
 
 (defun norg/forward-heading-same-level ()
   "Move forward one subheading at same level as this one.
@@ -508,7 +486,7 @@ Like `org-backward-heading-same-level` but:
                              "No previous heading at this level, even across parents"
                              ;; but maybe there is -- I've seen a bug here
                              ))))
-                (norg/popup/error-message "%s" msg)))))))))
+                (nomis/popup/error-message "%s" msg)))))))))
 
 (defun norg/forward-heading-same-level/allow-cross-parent ()
   "Move forward one subheading at same level as this one.
@@ -610,7 +588,7 @@ Same for the `backward` commands.")
                                    (if allow-cross-parent?
                                        ", even across parents"
                                      ""))))
-                 (norg/popup/error-message msg))))
+                 (nomis/popup/error-message msg))))
       (norg/w/back-to-heading t)
       (if (not (or (norg/fully-expanded?)
                    ;; If we very recently did a `norg/step-xxxx` which tried to
@@ -920,8 +898,8 @@ When in a body, \"current headline\" means the current body's parent headline."
               (nomis/scrolling/with-force-maintain-line-no-in-window ; Is this needed? Presumably it is, but why? (Or maybe it was needed, but isn't now.)
                 (funcall new-value-action-fun new-level))
             (funcall (if out-of-range?
-                         #'norg/popup/error-message
-                       #'norg/popup/message)
+                         #'nomis/popup/error-message
+                       #'nomis/popup/message)
                      (concat message-format-string "%s")
                      new-level
                      maximum

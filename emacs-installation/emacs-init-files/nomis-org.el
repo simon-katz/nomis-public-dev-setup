@@ -160,14 +160,14 @@
                      (if (if delta? (< n 0) (= n 0))
                          -nomis/org-visibility-span/min-detail
                        -nomis/org-visibility-span/max-detail))))
-          (norg/popup/error-message "%s" msg))
+          (nomis/popup/error-message "%s" msg))
       (cl-multiple-value-bind (detail show? msg)
           (nth new-pos-or-nil
                -nomis/org-visibility-span/detail-values)
         (-nomis/org-visibility-span/set-level/rawish detail)
         (if show? (norg/w/show-entry) (norg/w/hide-entry))
         (unless no-message?
-          (norg/popup/message "%s" msg))))))
+          (nomis/popup/message "%s" msg))))))
 
 (defun nomis/org-visibility-span/more ()
   (interactive)
