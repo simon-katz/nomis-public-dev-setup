@@ -1147,7 +1147,7 @@ the parameter."
     (-norg/show-children-from-all-roots/set-level-etc v :less :dummy)))
 
 (defun norg/show-children-from-all-roots/incremental/more (&optional arg)
-  "Incrementally expand the all roots by `arg` levels, default 1."
+  "Incrementally expand all roots by `arg` levels, default 1."
   (interactive "P")
   (let* ((v (-> (norg/smallest-invisible-level-below-or-infinity/buffer)
                 (-norg/unmodified-value-and-arg->level arg :more))))
