@@ -168,28 +168,6 @@ message and in case adding org level messes things up.")
                 (apply orig-fun args)))
             '((name . norg/add-level-info)))
 
-;;;; ____ ** nomis-scrolling
-
-(defun norg/-with-maybe-maintain-line-no-in-window* (fun force?)
-  (cl-flet ((do-it () (funcall fun)))
-    (if (not (featurep 'nomis-scrolling))
-        (do-it)
-      (let* ((nomis/scrolling/maintain-line-no-in-window?
-              (or force?
-                  nomis/scrolling/maintain-line-no-in-window?)))
-        (nomis/scrolling/with-maybe-maintain-line-no-in-window
-          (do-it))))))
-
-(cl-defmacro norg/-with-maybe-maintain-line-no-in-window (&body body)
-  (declare (indent 0))
-  `(norg/-with-maybe-maintain-line-no-in-window* (lambda () ,@body)
-                                                 nil))
-
-(cl-defmacro norg/-with-force-maintain-line-no-in-window (&body body)
-  (declare (indent 0))
-  `(norg/-with-maybe-maintain-line-no-in-window* (lambda () ,@body)
-                                                 t))
-
 ;;;; ___________________________________________________________________________
 ;;;; ____ * Infinity
 
@@ -464,7 +442,7 @@ When in a body, \"current headline\" means the current body's parent headline."
 
 (defun norg/-heading-same-level-helper (move-fun
                                         error-message)
-  (norg/-with-maybe-maintain-line-no-in-window
+  (nomis/scrolling/with-maybe-maintain-line-no-in-window
     (norg/w/back-to-heading t)
     (let* ((starting-point (point)))
       (funcall move-fun 1 t)
@@ -493,7 +471,7 @@ Like `org-backward-heading-same-level` but:
 ;;;; ____ ** Forward and backward at same level, allow cross-parent
 
 (defun norg/-heading-same-level/allow-cross-parent/helper (direction)
-  (norg/-with-maybe-maintain-line-no-in-window
+  (nomis/scrolling/with-maybe-maintain-line-no-in-window
     (let ((start-position-fun (case direction
                                 (:forward 'norg/w/end-of-line)
                                 (:backward 'norg/w/beginning-of-line)))
@@ -560,7 +538,7 @@ Same for the `backward` commands.")
 
 (defun norg/forward-heading/any-level ()
   (interactive)
-  (norg/-with-maybe-maintain-line-no-in-window
+  (nomis/scrolling/with-maybe-maintain-line-no-in-window
     (norg/w/previous-heading)
     (if norg/-heading-any-level-show-entry?
         (norg/w/show-entry)
@@ -568,7 +546,7 @@ Same for the `backward` commands.")
 
 (defun norg/backward-heading/any-level ()
   (interactive)
-  (norg/-with-maybe-maintain-line-no-in-window
+  (nomis/scrolling/with-maybe-maintain-line-no-in-window
     (norg/w/next-heading)
     (if norg/-heading-any-level-show-entry?
         (norg/w/show-entry)
@@ -615,7 +593,7 @@ Same for the `backward` commands.")
        (norg/-step-then-step-cross-parent?)))
 
 (defun norg/-step/impl (n allow-cross-parent?)
-  (norg/-with-maybe-maintain-line-no-in-window
+  (nomis/scrolling/with-maybe-maintain-line-no-in-window
     (cl-flet ((try-to-move
                ()
                (if allow-cross-parent?
@@ -939,7 +917,7 @@ When in a body, \"current headline\" means the current body's parent headline."
                                                        setting-kind
                                                        current-value))))
           (prog1
-              (norg/-with-force-maintain-line-no-in-window
+              (nomis/scrolling/with-force-maintain-line-no-in-window
                 (funcall new-value-action-fun new-level))
             (funcall (if out-of-range?
                          #'norg/popup/error-message
