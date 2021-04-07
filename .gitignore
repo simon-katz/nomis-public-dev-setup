@@ -14,5 +14,14 @@ emacs-installation/.emacs.d/projectile.cache
 emacs-installation/.emacs.d/server/
 emacs-installation/.gnupg/
 emacs-installation/.emacs.d/logview-cache.extmap
+
+# To get vterm to work on a new machine:
+# - delete the following things (the ignored things after this comment)
+# - restart Emacs
+# - run `vterm`.
+# That will build the following things.
+# (The following things have version numbers of cmake and its dependencies baked
+# into them, and if they don't exist on the new machine things won't work -- I
+# saw Emacs crashing after I copied Emacs config from one machine to another.)
 emacs-installation/.emacs.d/elpa/vterm-20210217.737/build/
 emacs-installation/.emacs.d/elpa/vterm-20210217.737/vterm-module.so
