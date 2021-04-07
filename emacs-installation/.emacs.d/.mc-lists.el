@@ -16,6 +16,7 @@
         delete-indentation
         down-list
         electric-newline-and-maybe-indent
+        end-of-visual-line
         eval-last-sexp
         forward-sentence
         forward-sexp
