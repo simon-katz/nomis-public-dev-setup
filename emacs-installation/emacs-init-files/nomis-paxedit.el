@@ -1,4 +1,4 @@
-;;;; Init stuff -- Paxedit.
+;;;; nomis-paxedit.el --- Paxedit stuff  -*- lexical-binding: t -*-
 
 ;;;; ___________________________________________________________________________
 
@@ -45,4 +45,7 @@ vectors that have two entries. I haven't looked into why.)"
      ;; (define-key paxedit-mode-map (kbd "C-#") 'paxedit-symbol-kill)
      ))
 
+;;;; ___________________________________________________________________________
+
 (provide 'nomis-paxedit)
+;;; nomis-paxedit.el ends here
