@@ -6,6 +6,24 @@
 (require 'nomis-undo)
 
 ;;;; ___________________________________________________________________________
+;;;; ---- Make things work for ClojureScript ----
+
+;;;; - See:
+;;;;   - https://github.com/promethial/paxedit/pull/10
+;;;;   - https://github.com/promethial/paxedit/pull/10#issuecomment-816749415
+
+(cond
+ ((equal (pkg-info-package-version 'paxedit)
+         '(1 1 8))
+  (let* ((paxedit-implicit-clojure '(paxedit-implicit-functions-clojure
+                                     paxedit-implicit-structures-clojure)))
+    (dolist (mode '(clojurescript-mode clojurec-mode))
+      (add-to-list 'paxedit-assoc
+                   `(,mode . ,paxedit-implicit-clojure)))))
+ (t
+  (message "You need to revisit your paxedit hacks for ClojureScript")))
+
+;;;; ___________________________________________________________________________
 ;;;; ---- nomis/paxedit-transpose-backward ----
 
 (defun nomis/paxedit-transpose-backward (&optional n)
