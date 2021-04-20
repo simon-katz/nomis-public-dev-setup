@@ -3,11 +3,31 @@
 ;;;; ___________________________________________________________________________
 
 (require 'paxedit)
+(require 'nomis-undo)
+
+;;;; ___________________________________________________________________________
+;;;; ---- nomis/paxedit-transpose-backward ----
+
+(defun nomis/paxedit-transpose-backward (&optional n)
+  "A replacement for PAXEDIT-TRANSPOSE-BACKWARD that restores
+point when undone. (It seems that PAXEDIT-TRANSPOSE-BACKWARD
+doesn't restore point when undone in Clojure maps and binding
+vectors that have two entries. I haven't looked into why.)"
+  (interactive "p")
+  (nomis/with-atomic-undo
+    ;; Do something that makes the undo system remember where we are:
+    (insert "x")
+    (delete-char -1)
+    ;; Do what we really want to do:
+    (paxedit-transpose-backward n)))
+
+;;;; ___________________________________________________________________________
+;;;; ---- Key bindings ----
 
 (eval-after-load "paxedit"
   '(progn
      (define-key paxedit-mode-map (kbd "M-<right>") 'paxedit-transpose-forward)
-     (define-key paxedit-mode-map (kbd "M-<left>") 'paxedit-transpose-backward)
+     (define-key paxedit-mode-map (kbd "M-<left>")  'nomis/paxedit-transpose-backward)
      ;; (define-key paxedit-mode-map (kbd "M-<up>") 'paxedit-backward-up)
      ;; (define-key paxedit-mode-map (kbd "M-<down>") 'paxedit-backward-end)
      ;; (define-key paxedit-mode-map (kbd "M-b") 'paxedit-previous-symbol)
