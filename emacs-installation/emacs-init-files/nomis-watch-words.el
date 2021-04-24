@@ -8,7 +8,7 @@
     "--.*?--\\▶"))
 
 (defconst nomis/ww/regexps/standout
-  '("•[[:graph:]]*?•"))
+  '("[[:graph:]•]+•"))
 
 (defconst nomis/ww/regexps/operators
   ;; Use \\ in the strings below so you don't get the highlighting here.
@@ -192,6 +192,7 @@
 ;;;; - •abc•
 ;;;; - •abc•s
 ;;;; - •abc•s and •def•
+;;;; - a•bc• and a•bc•s and a•bc•def• and a•bc•def•s
 ;;;; - (and (• a b) (• d e)) ; Not caught by •...•.
 
 ;;;; - aaa[--OR--]aaa
