@@ -527,7 +527,9 @@
                (when (nomis/clojure-like-mode? major-mode)
                  (nomis/rx/or ""
                               "/.*?" ; for namespace names or aliases
-                              )))))
+                              ))
+               ;; For full stops and Clojure `Foo.`-style instance creation:
+               "\\.?")))
         ;; We make our own regexps for just-before and just-after symbols, and
         ;; so we match a character before and after each symbol. This means that
         ;; two symbols separated by a single character require special
@@ -563,6 +565,9 @@
   (nomis/ih/loop (lambda () (-any? #'looking-at-p regexps))
                  #'nomis/ih/start-of-buffer?
                  #'backward-char))
+
+(defun nomis/remove-trailing-dot (s)
+  (replace-regexp-in-string "\\.\\'" "" s))
 
 (defun nomis/idle-highlight-thing ()
   (let* ((prefix-regexp (nomis/symbol-prefix-char-regexp))
@@ -610,7 +615,9 @@
                   (set-text-properties 0 (length text) nil text)
                   text))))))
       (if (looking-at-symbol-p-or-b-or-just-after?)
-          (grab-symbol-name)
+          (let* ((symbol-name (grab-symbol-name)))
+            ;; For full stops and Clojure `Foo.`-style instance creation:
+            (nomis/remove-trailing-dot symbol-name))
         (progn
           (nomis/report-char-at-point "boring char -- not highlighting")
           nil)))))
