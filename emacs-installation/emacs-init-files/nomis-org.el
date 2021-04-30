@@ -225,6 +225,9 @@
         (remq 'org-optimize-window-after-visibility-change
               org-cycle-hook))
 
+  ;; Display the first row of the table at point in the header line.
+  (org-table-header-line-mode)
+
   ;; Misc
   (visual-line-mode 1) ; Try this for a while and see whether you like it
   )
