@@ -235,6 +235,48 @@
 (add-hook 'org-mode-hook 'nomis/org-mode)
 
 ;;;; ___________________________________________________________________________
+;;;; ____ * Hacky fix for `org-table-header-set-header`
+
+(cond
+ ((string-match-p (regexp-quote "/org-9.4.4/")
+                  (org-version nil t))
+  ;; From org-mode commit f12ca1a56 2021-04-17
+  ;; - "table: Restore temporary-goal-column after displaying header"
+  ;; Note that this new version of the function also has changes that are not
+  ;; from that commit.
+  ;;
+  ;; See near `org-table-header-overlay` for old version.
+  ;;
+  (defun org-table-header-set-header ()
+    "Display the header of the table at point."
+    (let ((gcol temporary-goal-column))
+      (unwind-protect
+          (progn
+            (when (overlayp org-table-header-overlay)
+              (delete-overlay org-table-header-overlay))
+            (let* ((ws (window-start))
+                   (beg (save-excursion
+                          (goto-char (org-table-begin))
+                          (while (or (org-at-table-hline-p)
+                                     (looking-at-p ".*|\\s-+<[rcl]?\\([0-9]+\\)?>"))
+                            (move-beginning-of-line 2))
+                          (line-beginning-position)))
+                   (end (save-excursion (goto-char beg) (point-at-eol))))
+              (if (pos-visible-in-window-p beg)
+                  (when (overlayp org-table-header-overlay)
+                    (delete-overlay org-table-header-overlay))
+                (setq org-table-header-overlay
+                      (make-overlay ws (+ ws (- end beg))))
+                (org-overlay-display
+                 org-table-header-overlay
+                 (org-table-row-get-visible-string beg)
+                 'org-table-header))))
+        (setq temporary-goal-column gcol)))))
+ (t
+  (message-box
+   "You need to fix your hacking of org-table-header-set-header for this version of Org Mode.")))
+
+;;;; ___________________________________________________________________________
 ;;;; ____ * Dependencies
 
 (setq org-enforce-todo-dependencies t)
