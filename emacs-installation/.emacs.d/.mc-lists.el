@@ -4,6 +4,7 @@
 (setq mc/cmds-to-run-for-all
       '(
         backward-sexp
+        beginning-of-visual-line
         c-electric-paren
         c-electric-semi&comma
         cljr-raise-sexp
