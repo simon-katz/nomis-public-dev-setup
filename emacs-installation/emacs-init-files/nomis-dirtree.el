@@ -1309,6 +1309,14 @@ Then display contents of file under point in other window.")
     (when file
       (shell-command (concat "open \"" file "\"")))))
 
+(defun nomis/dirtree/goto-standard-position ()
+  ;; Without this movement, S-TAB is sometimes bound to `widget-backward` when
+  ;; on a directory. It seems that different kinds of widget have different key
+  ;; maps, but I don't fully understand. Anyway, this movement fixes the
+  ;; problem.
+  (goto-char (widget-get (nomis/dirtree/selected-widget/no-extras)
+                         :from)))
+
 (nomis/dirtree/define-command/with-and-without-and-display
     nomis/dirtree/next-line
     nomis/dirtree/next-line-and-display
@@ -1321,7 +1329,9 @@ Then display contents of file under point in other window.")
                                     (point)))))
            (if on-last-line?
                (error "Can't move forward from last line.")
-             (nomis/dirtree/next-line/impl arg)))))
+             (progn
+               (nomis/dirtree/next-line/impl arg)
+               (nomis/dirtree/goto-standard-position))))))
 
 (nomis/dirtree/define-command/with-and-without-and-display
     nomis/dirtree/previous-line
@@ -1335,7 +1345,9 @@ Then display contents of file under point in other window.")
                                      (point)))))
            (if on-first-line?
                (error "Can't move up from first line.")
-             (nomis/dirtree/previous-line/impl arg)))))
+             (progn
+               (nomis/dirtree/previous-line/impl arg)
+               (nomis/dirtree/goto-standard-position))))))
 
 (defun nomis/dirtree/expand-widget-y-or-n-p (widget)
   (nomis/y-or-n-p-with-quit->nil
@@ -1495,7 +1507,8 @@ If <arg> is supplied, first collapse all and then expand to <arg> levels."
               (nomis/dirtree/collapse-all))
             (expand-recursively widget
                                 (or arg 1)
-                                t))
+                                t)
+            (nomis/dirtree/goto-standard-position))
         (progn
           (message "Not a directory, so can't expand.")
           (beep))))))
@@ -1701,6 +1714,15 @@ Mostly for debugging purposes."
   (dk (kbd "C-,")           'nomis/dirtree/history-step-back-and-display)
   (dk (kbd ".")             'nomis/dirtree/history-step-forward)
   (dk (kbd "C-.")           'nomis/dirtree/history-step-forward-and-display)
+
+  ;; We got the following set of keys from org.el.
+  ;; TAB key with modifiers
+  (dk "\C-i"                'nomis/dirtree/expand)
+  (dk [(tab)]               'nomis/dirtree/expand)
+  ;; The following line is necessary under Suse GNU/Linux
+  (dk [S-iso-lefttab]       'nomis/dirtree/collapse)
+  (dk [(shift tab)]         'nomis/dirtree/collapse)
+  (dk [backtab]             'nomis/dirtree/collapse)
 
   (dk (kbd "M-<right>")     'nomis/dirtree/expand)
   (dk (kbd "M-<left>")      'nomis/dirtree/collapse)
