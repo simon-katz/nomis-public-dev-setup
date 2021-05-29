@@ -146,7 +146,6 @@ H-?  Show this help")
 
 (org-defkey org-mode-map (kbd "C-H-,")   'norg/forward-heading/any-level)
 (org-defkey org-mode-map (kbd "C-H-.")   'norg/backward-heading/any-level)
-
 (org-defkey org-mode-map (kbd "C-H-M-,") 'norg/forward-heading/any-level/set-tree+body)
 (org-defkey org-mode-map (kbd "C-H-M-.") 'norg/backward-heading/any-level/set-tree+body)
 
