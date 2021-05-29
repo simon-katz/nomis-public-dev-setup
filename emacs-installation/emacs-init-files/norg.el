@@ -511,7 +511,7 @@ subheading at this level in the previous parent."
 (defvar norg/-heading-any-level-show-entry?
   t
   "Truthy if `norg/forward-heading/any-level` should show bodies (and so match
-`norg/forward-heading/any-level/tree+body)`.
+`norg/forward-heading/any-level/set-tree+body)`.
 Same for the `backward` commands.")
 
 (defun norg/forward-heading/any-level ()
@@ -530,12 +530,12 @@ Same for the `backward` commands.")
         (norg/w/show-entry)
       (norg/show-point))))
 
-(defun norg/forward-heading/any-level/tree+body ()
+(defun norg/forward-heading/any-level/set-tree+body ()
   (interactive)
   (norg/forward-heading/any-level)
   (nomis/org-visibility-span/set-tree+body))
 
-(defun norg/backward-heading/any-level/tree+body ()
+(defun norg/backward-heading/any-level/set-tree+body ()
   (interactive)
   (norg/backward-heading/any-level)
   (nomis/org-visibility-span/set-tree+body))

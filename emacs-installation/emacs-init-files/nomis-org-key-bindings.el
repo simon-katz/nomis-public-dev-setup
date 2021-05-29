@@ -147,8 +147,8 @@ H-?  Show this help")
 (org-defkey org-mode-map (kbd "C-H-,")   'norg/forward-heading/any-level)
 (org-defkey org-mode-map (kbd "C-H-.")   'norg/backward-heading/any-level)
 
-(org-defkey org-mode-map (kbd "C-H-M-,") 'norg/forward-heading/any-level/tree+body)
-(org-defkey org-mode-map (kbd "C-H-M-.") 'norg/backward-heading/any-level/tree+body)
+(org-defkey org-mode-map (kbd "C-H-M-,") 'norg/forward-heading/any-level/set-tree+body)
+(org-defkey org-mode-map (kbd "C-H-M-.") 'norg/backward-heading/any-level/set-tree+body)
 
 ;; (org-defkey org-mode-map (kbd "C-H-M-,") ????) ; TODO Want something that visits headlines at any level and collapses as it goes
 ;; (org-defkey org-mode-map (kbd "C-H-M-.") ????) ; TODO Want something that visits headlines at any level and collapses as it goes
