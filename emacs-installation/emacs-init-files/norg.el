@@ -590,27 +590,42 @@ Same for the `backward` commands.")
                                      ""))))
                  (nomis/popup/error-message msg))))
       (norg/w/back-to-heading t)
-      (if (not (or (norg/fully-expanded?)
-                   ;; If we very recently did a `norg/step-xxxx` which tried to
-                   ;; go too far and which so collapsed the current heading, and
-                   ;; if now we're doing a `norg/step-xxxx/allow-cross-parent`,
-                   ;; we're happy to do a step across the parent.
-                   (norg/-step-then-step-cross-parent-with-small-time-gap?)))
-          (norg/expand-fully)
-        (let* ((starting-point (point)))
-          (try-to-move)
-          (let* ((moved? (not (= (point) starting-point))))
-            (if moved?
-                (progn
-                  (save-excursion
-                    (goto-char starting-point)
-                    (norg/collapse))
-                  (norg/expand-fully))
-              (if (not (norg/fully-expanded?))
-                  (norg/expand-fully)
-                (progn
-                  (norg/collapse)
-                  (tried-to-go-too-far)))))))))
+      (case :simple
+        (:simple
+         (let* ((starting-point (point)))
+           (try-to-move)
+           (let* ((moved? (not (= (point) starting-point))))
+             (if moved?
+                 (progn
+                   (save-excursion
+                     (goto-char starting-point)
+                     (norg/collapse))
+                   (norg/expand-fully))
+               (progn
+                 (norg/collapse)
+                 (tried-to-go-too-far))))))
+        (:clever-and-confusing-for-the-user
+         (if (not (or (norg/fully-expanded?)
+                      ;; If we very recently did a `norg/step-xxxx` which tried to
+                      ;; go too far and which so collapsed the current heading, and
+                      ;; if now we're doing a `norg/step-xxxx/allow-cross-parent`,
+                      ;; we're happy to do a step across the parent.
+                      (norg/-step-then-step-cross-parent-with-small-time-gap?)))
+             (norg/expand-fully)
+           (let* ((starting-point (point)))
+             (try-to-move)
+             (let* ((moved? (not (= (point) starting-point))))
+               (if moved?
+                   (progn
+                     (save-excursion
+                       (goto-char starting-point)
+                       (norg/collapse))
+                     (norg/expand-fully))
+                 (if (not (norg/fully-expanded?))
+                     (norg/expand-fully)
+                   (progn
+                     (norg/collapse)
+                     (tried-to-go-too-far)))))))))))
   (setq norg/-most-recent-step-time (float-time)))
 
 (defun norg/step-forward ()
