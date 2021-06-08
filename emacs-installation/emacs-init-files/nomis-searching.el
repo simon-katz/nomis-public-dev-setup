@@ -84,5 +84,14 @@
 ;; (define-key global-map (kbd "C-c C-v C-s") 'rgrep)
 
 ;;;; ___________________________________________________________________________
+;;;; ---- Window position for hits ----
+
+(defun nomis/next-error-stuff ()
+  ;; (recenter 2) ; For now, uncomment this when you want it.
+  )
+
+(add-hook 'next-error-hook 'nomis/next-error-stuff)
+
+;;;; ___________________________________________________________________________
 
 (provide 'nomis-searching)
