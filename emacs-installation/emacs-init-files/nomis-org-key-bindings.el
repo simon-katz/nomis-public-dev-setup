@@ -144,10 +144,10 @@ H-?  Show this help")
 (org-defkey org-mode-map (kbd "H-M-<")   'norg/step-backward/allow-cross-parent)
 (org-defkey org-mode-map (kbd "H-M->")   'norg/step-forward/allow-cross-parent)
 
-(org-defkey org-mode-map (kbd "C-H-,")   'norg/forward-heading/any-level)
-(org-defkey org-mode-map (kbd "C-H-.")   'norg/backward-heading/any-level)
-(org-defkey org-mode-map (kbd "C-H-M-,") 'norg/forward-heading/any-level/set-tree+body)
-(org-defkey org-mode-map (kbd "C-H-M-.") 'norg/backward-heading/any-level/set-tree+body)
+(org-defkey org-mode-map (kbd "C-H-,")   'norg/backward-heading/any-level)
+(org-defkey org-mode-map (kbd "C-H-.")   'norg/forward-heading/any-level)
+(org-defkey org-mode-map (kbd "C-H-M-,") 'norg/backward-heading/any-level/set-tree+body)
+(org-defkey org-mode-map (kbd "C-H-M-.") 'norg/forward-heading/any-level/set-tree+body)
 
 ;; (org-defkey org-mode-map (kbd "C-H-<")   ????) ; No real meaning -- with the M we are already crossing parent levels
 ;; (org-defkey org-mode-map (kbd "C-H->")   ????) ; No real meaning -- with the M we are already crossing parent levels

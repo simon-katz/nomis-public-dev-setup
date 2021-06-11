@@ -517,7 +517,7 @@ Same for the `backward` commands.")
 (defun norg/forward-heading/any-level ()
   (interactive)
   (nomis/scrolling/with-maybe-maintain-line-no-in-window
-    (norg/w/previous-heading)
+    (norg/w/next-heading)
     (if norg/-heading-any-level-show-entry?
         (norg/w/show-entry)
       (norg/show-point))))
@@ -525,7 +525,7 @@ Same for the `backward` commands.")
 (defun norg/backward-heading/any-level ()
   (interactive)
   (nomis/scrolling/with-maybe-maintain-line-no-in-window
-    (norg/w/next-heading)
+    (norg/w/previous-heading)
     (if norg/-heading-any-level-show-entry?
         (norg/w/show-entry)
       (norg/show-point))))
