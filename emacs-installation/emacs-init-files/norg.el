@@ -541,7 +541,33 @@ Same for the `backward` commands.")
   (nomis/org-visibility-span/set-tree+body))
 
 ;;;; ___________________________________________________________________________
+;;;; ____ * Info that relies on our navigation stuff
+
+(defun norg/on-first-child?/must-be-at-boh ()
+  (save-excursion
+    (let ((starting-point (point)))
+      (norg/w/backward-heading-same-level 1 t)
+      (= (point) starting-point))))
+
+(defun norg/on-last-child?/must-be-at-boh ()
+  (save-excursion
+    (let ((starting-point (point)))
+      (norg/w/forward-heading-same-level 1 t)
+      (= (point) starting-point))))
+
+;;;; ___________________________________________________________________________
 ;;;; ____ * Stepping TODO This uses `norg/fully-expanded?`, and so belongs later in the file
+
+;;;; TODO Reorder some of this, so that the time-dependent stuff is last and
+;;;; all together.
+
+(defun norg/-doing-one-of-the-step-forward-commands? ()
+  (member this-command '(norg/step-forward
+                         norg/step-forward/allow-cross-parent)))
+
+(defun norg/-doing-one-of-the-step-backward-commands? ()
+  (member this-command '(norg/step-backward
+                         norg/step-backward/allow-cross-parent)))
 
 (defvar norg/-most-recent-step-time -9999)
 
@@ -570,6 +596,16 @@ Same for the `backward` commands.")
   (and (norg/-small-time-gap-since-prev-step-command?)
        (norg/-step-then-step-cross-parent?)))
 
+(defun norg/-stepping-forward-on-last-but-not-first-child/must-be-at-boh ()
+  (and (norg/-doing-one-of-the-step-forward-commands?)
+       (norg/on-last-child?/must-be-at-boh)
+       (not (norg/on-first-child?/must-be-at-boh))))
+
+(defun norg/-stepping-backward-on-first-but-not-last-child/must-be-at-boh ()
+  (and (norg/-doing-one-of-the-step-backward-commands?)
+       (norg/on-first-child?/must-be-at-boh)
+       (not (norg/on-last-child?/must-be-at-boh))))
+
 (defun norg/-step/impl (n allow-cross-parent?)
   (nomis/scrolling/with-maybe-maintain-line-no-in-window
     (cl-flet ((try-to-move
@@ -590,7 +626,7 @@ Same for the `backward` commands.")
                                      ""))))
                  (nomis/popup/error-message msg))))
       (norg/w/back-to-heading t)
-      (case :simple
+      (case :clever-and-not-confusing-for-the-user
         (:simple
          (let* ((starting-point (point)))
            (try-to-move)
@@ -625,7 +661,29 @@ Same for the `backward` commands.")
                      (norg/expand-fully)
                    (progn
                      (norg/collapse)
-                     (tried-to-go-too-far)))))))))))
+                     (tried-to-go-too-far))))))))
+        (:clever-and-not-confusing-for-the-user
+         (if (not (or (norg/-stepping-forward-on-last-but-not-first-child/must-be-at-boh)
+                      (norg/-stepping-backward-on-first-but-not-last-child/must-be-at-boh)
+                      ;; If we very recently did a `norg/step-xxxx` which tried to
+                      ;; go too far and which so collapsed the current heading, and
+                      ;; if now we're doing a `norg/step-xxxx/allow-cross-parent`,
+                      ;; we're happy to do a step across the parent.
+                      (norg/-step-then-step-cross-parent-with-small-time-gap?)
+                      (norg/fully-expanded?)))
+             (norg/expand-fully)
+           (let* ((starting-point (point)))
+             (try-to-move)
+             (let* ((moved? (not (= (point) starting-point))))
+               (if moved?
+                   (progn
+                     (save-excursion
+                       (goto-char starting-point)
+                       (norg/collapse))
+                     (norg/expand-fully))
+                 (progn
+                   (norg/collapse)
+                   (tried-to-go-too-far))))))))))
   (setq norg/-most-recent-step-time (float-time)))
 
 (defun norg/step-forward ()
