@@ -44,6 +44,8 @@
 
 (setq org-startup-indented t)
 
+(setq org-startup-folded t)
+
 (progn ; Use current window when clicking links.
   (setq org-link-frame-setup
         (acons 'file
