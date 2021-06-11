@@ -558,43 +558,24 @@ Same for the `backward` commands.")
 ;;;; ___________________________________________________________________________
 ;;;; ____ * Stepping TODO This uses `norg/fully-expanded?`, and so belongs later in the file
 
-;;;; TODO Reorder some of this, so that the time-dependent stuff is last and
-;;;; all together.
-
-(defun norg/-doing-one-of-the-step-forward-commands? ()
-  (member this-command '(norg/step-forward
-                         norg/step-forward/allow-cross-parent)))
-
-(defun norg/-doing-one-of-the-step-backward-commands? ()
-  (member this-command '(norg/step-backward
-                         norg/step-backward/allow-cross-parent)))
-
-(defvar norg/-most-recent-step-time -9999)
-
-(defvar norg/quick-repeat-delay
-  (if (boundp 'nomis/popup/duration)
-      nomis/popup/duration
-    1))
-
-(defun norg/-small-time-gap-since-prev-step-command? ()
-  (< (float-time)
-     (+ norg/-most-recent-step-time
-        norg/quick-repeat-delay)))
-
-(defvar norg/-step-then-step-cross-parent-command-pairs
-  '((norg/step-forward
-     norg/step-forward/allow-cross-parent)
-    (norg/step-backward
-     norg/step-backward/allow-cross-parent)))
-
 (defun norg/-step-then-step-cross-parent? ()
   (let ((cmds (list (norg/last-command)
                     this-command)))
-    (member cmds norg/-step-then-step-cross-parent-command-pairs)))
+    (member cmds
+            '((norg/step-forward
+               norg/step-forward/allow-cross-parent)
+              (norg/step-backward
+               norg/step-backward/allow-cross-parent)))))
 
-(defun norg/-step-then-step-cross-parent-with-small-time-gap? ()
-  (and (norg/-small-time-gap-since-prev-step-command?)
-       (norg/-step-then-step-cross-parent?)))
+(defun norg/-doing-one-of-the-step-forward-commands? ()
+  (member this-command
+          '(norg/step-forward
+            norg/step-forward/allow-cross-parent)))
+
+(defun norg/-doing-one-of-the-step-backward-commands? ()
+  (member this-command
+          '(norg/step-backward
+            norg/step-backward/allow-cross-parent)))
 
 (defun norg/-stepping-forward-on-last-but-not-first-child/must-be-at-boh ()
   (and (norg/-doing-one-of-the-step-forward-commands?)
@@ -605,6 +586,22 @@ Same for the `backward` commands.")
   (and (norg/-doing-one-of-the-step-backward-commands?)
        (norg/on-first-child?/must-be-at-boh)
        (not (norg/on-last-child?/must-be-at-boh))))
+
+(defvar norg/-most-recent-step-time -9999)
+
+(defvar norg/step-quick-repeat-delay
+  (if (boundp 'nomis/popup/duration)
+      nomis/popup/duration
+    1))
+
+(defun norg/-small-time-gap-since-prev-step-command? ()
+  (< (float-time)
+     (+ norg/-most-recent-step-time
+        norg/step-quick-repeat-delay)))
+
+(defun norg/-step-then-step-cross-parent-with-small-time-gap? ()
+  (and (norg/-small-time-gap-since-prev-step-command?)
+       (norg/-step-then-step-cross-parent?)))
 
 (defun norg/-step/impl (n allow-cross-parent?)
   (nomis/scrolling/with-maybe-maintain-line-no-in-window
