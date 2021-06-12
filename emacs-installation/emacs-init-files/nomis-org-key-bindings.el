@@ -21,6 +21,15 @@
 (add-hook 'org-mode-hook 'nomis/turn-on-idle-highlight-mode)
 
 ;;;; ___________________________________________________________________________
+;;;; ____ * Scrolling
+
+;;;; These normally do `org-shiftcontrolup` and `org-shiftcontroldown`. They do
+;;;; things with timestamps, which I don't use.
+;;;; So use the key bindings to do my normal thing:
+(org-defkey org-mode-map (kbd "C-S-<up>")     'nomis/scroll-down-line-in-place)
+(org-defkey org-mode-map (kbd "C-S-<down>")   'nomis/scroll-up-line-in-place)
+
+;;;; ___________________________________________________________________________
 ;;;; ____ * Navigation and cycling
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
