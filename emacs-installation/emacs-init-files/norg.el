@@ -678,21 +678,43 @@ Same for the `backward` commands.")
   (setq norg/-most-recent-step-time (float-time))
   (message "n-levels-to-show = %s" (or n-levels-or-nil "all")))
 
-(defun norg/step-forward (&optional n-levels-or-nil)
-  (interactive "P")
-  (norg/-step/impl 1 nil n-levels-or-nil))
+(defvar norg/step-n-levels-to-show nil)
 
-(defun norg/step-backward (&optional n-levels-or-nil)
+(defun norg/set-step-n-levels-to-show (n)
   (interactive "P")
-  (norg/-step/impl -1 nil n-levels-or-nil))
+  (when (null n)
+    (setq n
+          (let* ((s (read-string
+                     (cl-format nil
+                                "Number of levels to show ~
+                                 (empty string for all children) ~
+                                 (currently ~s): "
+                                norg/step-n-levels-to-show))))
+            (if (member (s-trim s) '("" "nil"))
+                nil
+              (string-to-number s)))))
+  (setq norg/step-n-levels-to-show (if (null n) n (max 1 (floor n))))
+  (message "n-levels-to-show set to %s" norg/step-n-levels-to-show))
 
-(defun norg/step-forward/allow-cross-parent (&optional n-levels-or-nil)
+(defun norg/step-forward (n-levels-to-show)
   (interactive "P")
-  (norg/-step/impl 1 t n-levels-or-nil))
+  (norg/-step/impl 1 nil (or n-levels-to-show
+                             norg/step-n-levels-to-show)))
 
-(defun norg/step-backward/allow-cross-parent (&optional n-levels-or-nil)
+(defun norg/step-backward (n-levels-to-show)
   (interactive "P")
-  (norg/-step/impl -1 t n-levels-or-nil))
+  (norg/-step/impl -1 nil (or n-levels-to-show
+                              norg/step-n-levels-to-show)))
+
+(defun norg/step-forward/allow-cross-parent (n-levels-to-show)
+  (interactive "P")
+  (norg/-step/impl 1 t (or n-levels-to-show
+                           norg/step-n-levels-to-show)))
+
+(defun norg/step-backward/allow-cross-parent (n-levels-to-show)
+  (interactive "P")
+  (norg/-step/impl -1 t (or n-levels-to-show
+                            norg/step-n-levels-to-show)))
 
 ;;;; ___________________________________________________________________________
 ;;;; ____ * Info about trees
