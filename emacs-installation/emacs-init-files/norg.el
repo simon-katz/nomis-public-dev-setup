@@ -632,13 +632,19 @@ Same for the `backward` commands.")
                    (norg/-step-then-step-cross-parent-with-small-time-gap?)
                    (norg/fully-expanded?)))
           (norg/expand-fully)
-        (let* ((starting-point (point)))
+        (let* ((starting-point (point))
+               (start-on-first-or-last-child?
+                (if (< n 0)
+                    (norg/on-first-child?/must-be-at-boh)
+                  (norg/on-last-child?/must-be-at-boh))))
           (try-to-move)
           (let* ((moved? (not (= (point) starting-point))))
             (if moved?
                 (progn
                   (save-excursion
                     (goto-char starting-point)
+                    (when start-on-first-or-last-child?
+                      (norg/w/up-heading 1))
                     (norg/collapse))
                   (norg/expand-fully))
               (progn
