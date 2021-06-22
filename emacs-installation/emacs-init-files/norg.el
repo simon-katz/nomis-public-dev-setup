@@ -982,7 +982,7 @@ When in a body, \"current headline\" means the current body's parent headline."
                                                        setting-kind
                                                        current-value))))
           (prog1
-              (nomis/scrolling/with-force-maintain-line-no-in-window ; Is this needed? Presumably it is, but why? (Or maybe it was needed, but isn't now.)
+              (progn ; nomis/scrolling/with-force-maintain-line-no-in-window ; Is this needed? Presumably it is, but why? (Or maybe it was needed, but isn't now.) -- 2021-06-22 I've removed it. It was causing one-line scrolling in certain situations.
                 (funcall new-value-action-fun new-level))
             (funcall (if out-of-range?
                          #'nomis/popup/error-message
