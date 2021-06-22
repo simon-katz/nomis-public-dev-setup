@@ -252,6 +252,10 @@
 
 (require 'show-point-mode)
 
+;; (eval-after-load "isearch" '(require 'isearch+))
+;; Is this the cause of problems with Magit when trying to commit?...
+;; -- *ERROR*: ‘recenter’ing a window that does not display current-buffer.
+
 (progn
   ;; Putting this where it belongs (in "nomis/very-general-stuff") doesn't work;
   ;; I guess something blats it.
