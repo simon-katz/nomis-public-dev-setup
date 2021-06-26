@@ -275,8 +275,9 @@
                  'org-table-header))))
         (setq temporary-goal-column gcol)))))
  (t
-  (message-box
-   "You need to fix your hacking of org-table-header-set-header for this version of Org Mode.")))
+  ;; All OK in Org mode version 9.4.6 (which has the above version of
+  ;; `org-table-header-set-header`).
+  ))
 
 ;;;; ___________________________________________________________________________
 ;;;; ____ * Dependencies
