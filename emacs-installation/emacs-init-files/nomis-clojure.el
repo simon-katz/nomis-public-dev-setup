@@ -128,6 +128,17 @@
 (define-key cider-repl-mode-map (kbd "C-c C-r")
   'nomis/cider-repl-mode-c-c-c-r-replacement) ; default was `cider-eval-region` or something
 
+(setq cider-ns-refresh-show-log-buffer t
+      ;; I don't understand why, but the messages displayed in the echo area by
+      ;; `cider-ns-refresh--handle-response` often disappear after a short time.
+      ;; -- Maybe this only happens when you define one or both of
+      ;;    `cider-ns-refresh-before-fn` and `cider-ns-refresh-after-fn`, as you
+      ;;    do in `nomis-kafka-clj-examples`.
+      ;;    -- Nope, that doesn't seem to be it.
+      ;; So, we set `cider-ns-refresh-show-log-buffer`.
+      )
+
+
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ;;;; Company mode for Cider
 
