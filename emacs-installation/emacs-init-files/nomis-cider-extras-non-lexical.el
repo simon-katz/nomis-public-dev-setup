@@ -468,4 +468,4 @@ window."
 
 ;;;; ___________________________________________________________________________
 
-(provide 'nomis-cider-extras)
+(provide 'nomis-cider-extras-non-lexical)
