@@ -39,21 +39,9 @@
    'cider-repl-history-just-save
    :around
    (lambda (orig-fun &rest args)
-     (let* ((buffer-name (buffer-name (current-buffer))))
-       (message "==== buffer-name = %s (%s)"
-                buffer-name
-                (s-starts-with? "*cider-repl" buffer-name))
-       (with-current-buffer (or (cider-current-repl)
-                                (current-buffer))
-         (let* ((res (apply orig-fun args)))
-           (with-temp-file (format "nomis-cider-repl-history-info-%s--%s"
-                                   (nomis/timestamp :date-time)
-                                   (if (s-starts-with? "*cider-repl" buffer-name)
-                                       "repl-buffer"
-                                     buffer-name))
-             ;; empty file
-             )
-           res))))
+     (with-current-buffer (or (cider-current-repl)
+                              (current-buffer))
+       (apply orig-fun args)))
    '((name . nomis/set-buffer-for-history))))
  (t
   (message-box
