@@ -1,4 +1,7 @@
-;;;; Init stuff -- CIDER extras
+;;;; Init stuff -- CIDER extras (old, non-lexical)
+
+;;;; Move this stuff to `nomis-cider-extras`, making any necessary changes to
+;;;; make things work with lexical binding.
 
 ;;## ;;;; TODO: Look at all this in the light of:
 ;;## ;;;;       - Now have nrepl.el 0.1.8. (Hmmm, no, reverted to 0.1.7 because eldoc
