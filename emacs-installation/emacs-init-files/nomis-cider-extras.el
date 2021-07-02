@@ -88,6 +88,8 @@
            (existing-log-buffer (get-buffer cider-ns-refresh-log-buffer))
            (log-buffer (or existing-log-buffer
                            (cider-make-popup-buffer cider-ns-refresh-log-buffer)))
+           ;; TODO: Also pass through `cider-ns-refresh-before-fn` and
+           ;;       `cider-ns-refresh-after-fn`.
            (forbid-refresh-all? nomis/cider-forbid-refresh-all?))
       (with-current-buffer log-buffer
         (unless truncate-lines
