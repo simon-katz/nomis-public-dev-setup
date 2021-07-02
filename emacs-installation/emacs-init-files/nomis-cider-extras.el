@@ -55,10 +55,9 @@
 ;;;;    in `nomis-kafka-clj-examples`.
 ;;;;    -- Nope, that doesn't seem to be it.
 ;;;;
-;;;; So, I've set `cider-ns-refresh-show-log-buffer`. But that doesn't select the
-;;;; log buffer, so we hack `cider-popup-buffer-display` to fix that. And also
-;;;; make sure that we disregard any window in another frame that is showing the
-;;;; log buffer.
+;;;; So, I've set `cider-ns-refresh-show-log-buffer`. But that doesn't select
+;;;; the log buffer, so we hack things to fix that. And also make sure that we
+;;;; disregard any window in another frame that is showing the log buffer.
 ;;;;
 ;;;; -- jsk 2021-06-28
 
@@ -88,11 +87,13 @@
     (let* (;; Copied from `cider-ns-refresh`:
            (existing-log-buffer (get-buffer cider-ns-refresh-log-buffer))
            (log-buffer (or existing-log-buffer
-                           (cider-make-popup-buffer cider-ns-refresh-log-buffer))))
-      (when (null existing-log-buffer)
-        (with-current-buffer log-buffer
-          (unless truncate-lines
-            (toggle-truncate-lines))))
+                           (cider-make-popup-buffer cider-ns-refresh-log-buffer)))
+           (forbid-refresh-all? nomis/cider-forbid-refresh-all?))
+      (with-current-buffer log-buffer
+        (unless truncate-lines
+          (toggle-truncate-lines))
+        (make-local-variable 'nomis/cider-forbid-refresh-all?)
+        (setq nomis/cider-forbid-refresh-all? forbid-refresh-all?))
       log-buffer))
 
   (defvar *nomis/-hacking-cider-ns-refresh nil)
@@ -104,19 +105,7 @@
      (incf nomis/-cider-ns-refresh-count)
      (let* ((log-buffer (nomis/-get-cider-ns-refresh-log-buffer))
             (msg (nomis/-cider-ns-refresh-log-pre-message)))
-       (cider-emit-into-popup-buffer log-buffer
-                                     msg
-                                     'font-lock-string-face
-                                     t))
-     (let* ((*nomis/-hacking-cider-ns-refresh t))
-       (apply orig-fun args)))
-   '((name . nomis/in-cider-ns-refresh)))
-
-  (advice-add
-   'cider-popup-buffer-display
-   :around
-   (lambda (orig-fun buffer &rest other-args)
-     (if *nomis/-hacking-cider-ns-refresh
+       (when cider-ns-refresh-show-log-buffer
          ;; Delay this, because we mustn't change the current buffer for
          ;; the code that is running -- people can use a .dir-locals.el
          ;; to define buffer-local variables like
@@ -126,7 +115,21 @@
          (run-at-time 0
                       nil
                       (lambda ()
-                        (display-buffer-same-window buffer nil)))
+                        (display-buffer-same-window log-buffer nil))))
+       (cider-emit-into-popup-buffer log-buffer
+                                     msg
+                                     'font-lock-string-face
+                                     t))
+     (let* ((*nomis/-hacking-cider-ns-refresh t))
+       (apply orig-fun args)))
+   '((name . nomis/in-cider-ns-refresh)))
+  ;; (advice-remove 'cider-ns-refresh 'nomis/in-cider-ns-refresh)
+
+  (advice-add
+   'cider-popup-buffer-display
+   :around
+   (lambda (orig-fun buffer &rest other-args)
+     (unless *nomis/-hacking-cider-ns-refresh
        (apply orig-fun buffer other-args)))
    `((name . nomis/cider-popup-buffer-display/pop-to-buffer)))
 
@@ -146,12 +149,36 @@
                                             msg
                                             'font-lock-string-face
                                             t)))))))
-   '((name . nomis/in-cider-ns-refresh))))
+   '((name . nomis/in-cider-ns-refresh)
+     (depth . -100))))
  (t
   (message-box
    "You need to fix `cider-popup-buffer-display for this version of CIDER.")))
 
 ;; (advice-remove 'cider-popup-buffer-display 'nomis/cider-popup-buffer-display/pop-to-buffer)
+
+;;;; ___________________________________________________________________________
+
+(defvar nomis/cider-forbid-refresh-all? nil) ; Use dir-locals to set this when needed.
+
+(advice-add
+ 'cider-ns-refresh
+ :around
+ (lambda (orig-fun mode &rest other-args)
+   (when (and nomis/cider-forbid-refresh-all?
+              (member mode '(refresh-all 4 clear 16)))
+     (let* ((log-buffer (nomis/-get-cider-ns-refresh-log-buffer))
+            (msg "nomis/cider-forbid-refresh-all? is truthy, so I won't refresh-all"))
+       (cider-emit-into-popup-buffer log-buffer
+                                     (s-concat msg "\n")
+                                     'font-lock-string-face
+                                     t)
+       (nomis/msg/grab-user-attention/high)
+       (error msg)))
+   (apply orig-fun mode args))
+ '((name . nomis/maybe-forbid-refresh)
+   (depth . 100)))
+;; (advice-remove 'cider-ns-refresh 'nomis/maybe-forbid-refresh)
 
 ;;;; ___________________________________________________________________________
 
