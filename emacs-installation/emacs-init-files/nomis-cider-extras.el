@@ -63,14 +63,18 @@
 
 (defvar nomis/-cider-ns-refresh-count 0)
 
+(defvar nomis/-cider-ns-refresh-log-pre-message/prefix
+  "----------------------------------------\n>>>> Doing cider-ns-refresh")
+
 (defun nomis/-cider-ns-refresh-log-pre-message ()
   (s-join
    "\n"
-   (list (format "%s----------------------------------------"
+   (list (format "%s"
                  (if (= 1 nomis/-cider-ns-refresh-count)
                      ""
                    "\n\n"))
-         (format ">>>> Doing cider-ns-refresh #%s"
+         (format "%s #%s"
+                 nomis/-cider-ns-refresh-log-pre-message/prefix
                  nomis/-cider-ns-refresh-count)
          "")))
 
@@ -78,6 +82,15 @@
   (format
    "<<<< Done cider-ns-refresh #%s\nPress \"q\" to exit"
    nomis/-cider-ns-refresh-count))
+
+(defun nomis/cider-refresh-log/delete-to-start-of-buffer ()
+  (interactive)
+  (let* ((inhibit-read-only t))
+    (delete-region 1 (point))))
+
+(defun nomis/cider-refresh-log/jump-to-start-of-refresh (arg)
+  (interactive "P")
+  (search-backward nomis/-cider-ns-refresh-log-pre-message/prefix))
 
 (cond
  ((member (nomis/cider-version)
