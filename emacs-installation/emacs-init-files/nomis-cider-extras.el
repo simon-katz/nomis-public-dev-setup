@@ -83,21 +83,37 @@
  ((member (nomis/cider-version)
           '("CIDER 0.26.1 (Nesebar)"))
 
+  (defvar nomis/cider-vars-to-pass-to-log-buffer
+    '(nomis/cider-forbid-refresh-all?
+      cider-ns-refresh-before-fn
+      cider-ns-refresh-after-fn))
+
   (defun nomis/-get-cider-ns-refresh-log-buffer ()
     (let* (;; Copied from `cider-ns-refresh`:
            (existing-log-buffer (get-buffer cider-ns-refresh-log-buffer))
            (log-buffer (or existing-log-buffer
-                           (cider-make-popup-buffer cider-ns-refresh-log-buffer)))
-           ;; TODO: Also pass through `cider-ns-refresh-before-fn` and
-           ;;       `cider-ns-refresh-after-fn`.
-           (forbid-refresh-all? nomis/cider-forbid-refresh-all?))
-      (with-current-buffer log-buffer
-        (unless existing-log-buffer
+                           (cider-make-popup-buffer cider-ns-refresh-log-buffer))))
+      (unless existing-log-buffer
+        (with-current-buffer log-buffer
           (unless truncate-lines
-            (toggle-truncate-lines)))
-        (make-local-variable 'nomis/cider-forbid-refresh-all?)
-        (setq nomis/cider-forbid-refresh-all? forbid-refresh-all?))
+            (toggle-truncate-lines))))
       log-buffer))
+
+  (defun nomis/-set-vars-in-log-buffer ()
+    (let* ((vars-vals-to-pass-to-log-buffer
+            (mapcar (lambda (var) (list var (symbol-value var)))
+                    nomis/cider-vars-to-pass-to-log-buffer))
+           (log-buffer (nomis/-get-cider-ns-refresh-log-buffer)))
+      (with-current-buffer log-buffer
+        (dolist (var-val vars-vals-to-pass-to-log-buffer)
+          (cl-multiple-value-bind (sym val) var-val
+            (let* ((msg (format "Setting %s to %s\n" sym val)))
+              (cider-emit-into-popup-buffer log-buffer
+                                            msg
+                                            'font-lock-string-face
+                                            t))
+            (make-local-variable sym)
+            (set sym val))))))
 
   (defvar *nomis/-hacking-cider-ns-refresh nil)
 
@@ -106,8 +122,7 @@
    :around
    (lambda (orig-fun &rest args)
      (incf nomis/-cider-ns-refresh-count)
-     (let* ((log-buffer (nomis/-get-cider-ns-refresh-log-buffer))
-            (msg (nomis/-cider-ns-refresh-log-pre-message)))
+     (let* ((log-buffer (nomis/-get-cider-ns-refresh-log-buffer)))
        (when cider-ns-refresh-show-log-buffer
          ;; Delay this, because we mustn't change the current buffer for
          ;; the code that is running -- people can use a .dir-locals.el
@@ -119,10 +134,12 @@
                       nil
                       (lambda ()
                         (display-buffer-same-window log-buffer nil))))
-       (cider-emit-into-popup-buffer log-buffer
-                                     msg
-                                     'font-lock-string-face
-                                     t))
+       (let* ((msg (nomis/-cider-ns-refresh-log-pre-message)))
+         (cider-emit-into-popup-buffer log-buffer
+                                       msg
+                                       'font-lock-string-face
+                                       t))
+       (nomis/-set-vars-in-log-buffer))
      (let* ((*nomis/-hacking-cider-ns-refresh t))
        (apply orig-fun args)))
    '((name . nomis/in-cider-ns-refresh)))
