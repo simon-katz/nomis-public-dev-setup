@@ -165,16 +165,20 @@
  'cider-ns-refresh
  :around
  (lambda (orig-fun mode &rest other-args)
-   (when (and nomis/cider-forbid-refresh-all?
-              (member mode '(refresh-all 4 clear 16)))
-     (let* ((log-buffer (nomis/-get-cider-ns-refresh-log-buffer))
-            (msg "nomis/cider-forbid-refresh-all? is truthy, so I won't refresh-all"))
-       (cider-emit-into-popup-buffer log-buffer
-                                     (s-concat msg "\n")
-                                     'font-lock-string-face
-                                     t)
-       (nomis/msg/grab-user-attention/high)
-       (error msg)))
+   (let* ((log-buffer (nomis/-get-cider-ns-refresh-log-buffer)))
+     (cider-emit-into-popup-buffer log-buffer
+                                   (format "mode = %s\n" mode)
+                                   'font-lock-string-face
+                                   t)
+     (when (and nomis/cider-forbid-refresh-all?
+                (member mode '(refresh-all 4 clear 16)))
+       (let* ((msg "nomis/cider-forbid-refresh-all? is truthy, so I won't refresh-all"))
+         (cider-emit-into-popup-buffer log-buffer
+                                       (s-concat msg "\n")
+                                       'font-lock-string-face
+                                       t)
+         (nomis/msg/grab-user-attention/high)
+         (error msg))))
    (apply orig-fun mode args))
  '((name . nomis/maybe-forbid-refresh)
    (depth . 100)))
