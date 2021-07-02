@@ -92,8 +92,9 @@
            ;;       `cider-ns-refresh-after-fn`.
            (forbid-refresh-all? nomis/cider-forbid-refresh-all?))
       (with-current-buffer log-buffer
-        (unless truncate-lines
-          (toggle-truncate-lines))
+        (unless existing-log-buffer
+          (unless truncate-lines
+            (toggle-truncate-lines)))
         (make-local-variable 'nomis/cider-forbid-refresh-all?)
         (setq nomis/cider-forbid-refresh-all? forbid-refresh-all?))
       log-buffer))
