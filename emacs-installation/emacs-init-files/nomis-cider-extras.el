@@ -66,17 +66,12 @@
 (defvar nomis/-cider-ns-refresh-log-pre-message/prefix
   "----------------------------------------\n>>>> Doing cider-ns-refresh")
 
-(defun nomis/-cider-ns-refresh-log-pre-message ()
-  (s-join
-   "\n"
-   (list (format "%s"
-                 (if (= 1 nomis/-cider-ns-refresh-count)
-                     ""
-                   "\n\n"))
-         (format "%s #%s"
-                 nomis/-cider-ns-refresh-log-pre-message/prefix
-                 nomis/-cider-ns-refresh-count)
-         "")))
+(defun nomis/-cider-ns-refresh-log-pre-message (first-time?)
+  (s-concat (if first-time? "" "\n\n\n")
+            (format "%s #%s"
+                    nomis/-cider-ns-refresh-log-pre-message/prefix
+                    nomis/-cider-ns-refresh-count)
+            "\n"))
 
 (defun nomis/-cider-ns-refresh-log-post-message ()
   (format
@@ -135,7 +130,8 @@
    :around
    (lambda (orig-fun &rest args)
      (incf nomis/-cider-ns-refresh-count)
-     (let* ((log-buffer (nomis/-get-cider-ns-refresh-log-buffer)))
+     (let* ((existing-log-buffer (get-buffer cider-ns-refresh-log-buffer))
+            (log-buffer (nomis/-get-cider-ns-refresh-log-buffer)))
        (when cider-ns-refresh-show-log-buffer
          ;; Delay this, because we mustn't change the current buffer for
          ;; the code that is running -- people can use a .dir-locals.el
@@ -147,7 +143,8 @@
                       nil
                       (lambda ()
                         (display-buffer-same-window log-buffer nil))))
-       (let* ((msg (nomis/-cider-ns-refresh-log-pre-message)))
+       (let* ((msg (nomis/-cider-ns-refresh-log-pre-message
+                    (null existing-log-buffer))))
          (cider-emit-into-popup-buffer log-buffer
                                        msg
                                        'font-lock-string-face
