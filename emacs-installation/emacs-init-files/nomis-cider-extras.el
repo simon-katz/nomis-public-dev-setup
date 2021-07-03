@@ -66,8 +66,8 @@
 (defvar nomis/-cider-ns-refresh-log-pre-message/prefix
   "----------------------------------------\n>>>> Doing cider-ns-refresh")
 
-(defun nomis/-cider-ns-refresh-log-pre-message (first-time?)
-  (s-concat (if first-time? "" "\n\n\n")
+(defun nomis/-cider-ns-refresh-log-pre-message (log-buffer-freshly-created?)
+  (s-concat (if log-buffer-freshly-created? "" "\n\n\n")
             (format "%s #%s"
                     nomis/-cider-ns-refresh-log-pre-message/prefix
                     nomis/-cider-ns-refresh-count)
@@ -130,7 +130,8 @@
    :around
    (lambda (orig-fun &rest args)
      (incf nomis/-cider-ns-refresh-count)
-     (let* ((existing-log-buffer (get-buffer cider-ns-refresh-log-buffer))
+     (let* ((log-buffer-freshly-created?
+             (null (get-buffer cider-ns-refresh-log-buffer)))
             (log-buffer (nomis/-get-cider-ns-refresh-log-buffer)))
        (when cider-ns-refresh-show-log-buffer
          ;; Delay this, because we mustn't change the current buffer for
@@ -144,7 +145,7 @@
                       (lambda ()
                         (display-buffer-same-window log-buffer nil))))
        (let* ((msg (nomis/-cider-ns-refresh-log-pre-message
-                    (null existing-log-buffer))))
+                    log-buffer-freshly-created?)))
          (cider-emit-into-popup-buffer log-buffer
                                        msg
                                        'font-lock-string-face
