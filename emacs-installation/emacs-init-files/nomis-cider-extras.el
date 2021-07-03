@@ -96,17 +96,11 @@
       cider-ns-refresh-after-fn))
 
   (defun nomis/-get-cider-ns-refresh-log-buffer ()
-    (let* (;; Copied from `cider-ns-refresh`:
-           (existing-log-buffer (get-buffer cider-ns-refresh-log-buffer))
-           (log-buffer (or existing-log-buffer
-                           (cider-make-popup-buffer cider-ns-refresh-log-buffer))))
-      (unless existing-log-buffer
-        (with-current-buffer log-buffer
-          (unless truncate-lines
-            (toggle-truncate-lines))))
-      log-buffer))
+    ;; Copied from `cider-ns-refresh`:
+    (or (get-buffer cider-ns-refresh-log-buffer)
+        (cider-make-popup-buffer cider-ns-refresh-log-buffer)))
 
-  (defun nomis/-set-vars-in-log-buffer ()
+  (defun nomis/-set-vars-in-log-buffer (log-buffer-freshly-created?)
     (let* ((vars-vals-to-pass-to-log-buffer
             (mapcar (lambda (var) (list var (symbol-value var)))
                     nomis/cider-vars-to-pass-to-log-buffer))
@@ -120,7 +114,11 @@
                                             'font-lock-string-face
                                             t))
             (make-local-variable sym)
-            (set sym val))))))
+            (set sym val)))
+        (when (and log-buffer-freshly-created?
+                   (not truncate-lines))
+          (let* ((inhibit-message t))
+            (toggle-truncate-lines))))))
 
   (defvar *nomis/-hacking-cider-ns-refresh nil)
 
@@ -149,7 +147,7 @@
                                        msg
                                        'font-lock-string-face
                                        t))
-       (nomis/-set-vars-in-log-buffer))
+       (nomis/-set-vars-in-log-buffer log-buffer-freshly-created?))
      (let* ((*nomis/-hacking-cider-ns-refresh t))
        (apply orig-fun args)))
    '((name . nomis/in-cider-ns-refresh)))
