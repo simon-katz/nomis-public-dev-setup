@@ -74,9 +74,8 @@
             "\n"))
 
 (defun nomis/-cider-ns-refresh-log-post-message ()
-  (format
-   "<<<< Done cider-ns-refresh #%s\nPress \"q\" to exit"
-   nomis/-cider-ns-refresh-count))
+  (format "<<<< Done cider-ns-refresh #%s\nPress \"q\" to exit"
+          nomis/-cider-ns-refresh-count))
 
 (defun nomis/cider-refresh-log/delete-to-start-of-buffer ()
   (interactive)
