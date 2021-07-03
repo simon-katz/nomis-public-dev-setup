@@ -59,7 +59,9 @@
 ;;;; the log buffer, so we hack things to fix that. And also make sure that we
 ;;;; disregard any window in another frame that is showing the log buffer.
 ;;;;
-;;;; -- jsk 2021-06-28
+;;;; And a bunch of other cool stuff.
+;;;;
+;;;; -- jsk 2021-06-28 and later
 
 (defvar nomis/-cider-ns-refresh-count 0)
 
@@ -77,12 +79,12 @@
   (format "<<<< Done cider-ns-refresh #%s\nPress \"q\" to exit"
           nomis/-cider-ns-refresh-count))
 
-(defun nomis/cider-refresh-log/delete-to-start-of-buffer ()
+(defun nomis/cider-ns-refresh-log/delete-to-start-of-buffer ()
   (interactive)
   (let* ((inhibit-read-only t))
     (delete-region 1 (point))))
 
-(defun nomis/cider-refresh-log/jump-to-start-of-refresh (arg)
+(defun nomis/cider-ns-refresh-log/jump-to-start-of-refresh (arg)
   (interactive "P")
   (search-backward nomis/-cider-ns-refresh-log-pre-message/prefix))
 
@@ -100,7 +102,8 @@
     (or (get-buffer cider-ns-refresh-log-buffer)
         (cider-make-popup-buffer cider-ns-refresh-log-buffer)))
 
-  (defun nomis/-set-vars-in-log-buffer (log-buffer-freshly-created?)
+  (defun nomis/-cider-ns-refresh-set-vars-in-log-buffer
+      (log-buffer-freshly-created?)
     (let* ((vars-vals-to-pass-to-log-buffer
             (mapcar (lambda (var) (list var (symbol-value var)))
                     nomis/cider-vars-to-pass-to-log-buffer))
@@ -147,7 +150,8 @@
                                        msg
                                        'font-lock-string-face
                                        t))
-       (nomis/-set-vars-in-log-buffer log-buffer-freshly-created?))
+       (nomis/-cider-ns-refresh-set-vars-in-log-buffer
+        log-buffer-freshly-created?))
      (let* ((*nomis/-hacking-cider-ns-refresh t))
        (apply orig-fun args)))
    '((name . nomis/in-cider-ns-refresh)))
