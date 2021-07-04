@@ -60,6 +60,7 @@
 
 (require 'nomis-cider-extras-non-lexical)
 (require 'nomis-cider-extras)
+(require 'nomis-cider-ns-refresh)
 (require 'nomis-cider-eval-clj-and-cljs)
 (require 'nomis-cider-post-interactive-eval)
 (require 'nomis-cider-repl-history)
