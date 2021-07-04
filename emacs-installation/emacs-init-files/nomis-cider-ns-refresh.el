@@ -85,7 +85,8 @@
       (search-backward nomis/cider-ns-refresh/-prefix-for-log-pre-message)
     (error
      (nomis/msg/grab-user-attention/high)
-     (error "There is no previous section"))))
+     (error "There is no previous section")))
+  (recenter 0))
 
 (defun nomis/cider-ns-refresh/forward-section ()
   (interactive)
@@ -100,7 +101,8 @@
         (goto-char pos)
       (progn
         (nomis/msg/grab-user-attention/high)
-        (error "There is no next section")))))
+        (error "There is no next section"))))
+  (recenter 0))
 
 (defun nomis/cider-ns-refresh/delete-to-beginning-of-buffer ()
   (interactive)
@@ -156,6 +158,11 @@
                       nil
                       (lambda ()
                         (display-buffer-same-window log-buffer nil))))
+       (let* ((b (current-buffer)))
+         (switch-to-buffer log-buffer)
+         (goto-char (point-max))
+         (recenter 0)
+         (switch-to-buffer b))
        (let* ((msg (nomis/cider-ns-refresh/pre-message mode)))
          (nomis/cider-ns-refresh/log log-buffer msg))
        (nomis/cider-ns-refresh/-set-vars-in-log-buffer
