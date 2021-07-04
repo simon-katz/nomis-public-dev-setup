@@ -23,7 +23,8 @@
     (org vterm logview keycast flycheck-kotlin kotlin-mode terraform-mode flycheck dumb-jump json-mode gnu-elpa-keyring-update flycheck-clj-kondo yasnippet yaml-mode yafolding which-key undo-tree spinner smex sesman rainbow-delimiters queue projectile pos-tip paxedit parseedn org-bullets multiple-cursors markdown-mode magit key-chord js2-mode inflections ido-vertical-mode ido-completing-read+ hydra ht highlight-indentation helm fuzzy flycheck-joker fill-column-indicator exec-path-from-shell elisp-slime-nav edn discover dash-functional company clojure-mode cl-format cider-eval-sexp-fu auto-complete aggressive-indent)))
  '(safe-local-variable-values
    (quote
-    ((cider-ns-refresh-after-fn . "user/cider-refresh--start!")
+    ((nomis/cider-forbid-refresh-all? . t)
+     (cider-ns-refresh-after-fn . "user/cider-refresh--start!")
      (cider-ns-refresh-before-fn . "user/cider-refresh--stop!")
      (nomis/grep/local-ignored-directories "resources/public/assets" "resources/dev-and-build/icons/bootstrap-icons-1.1.0")
      (nomis/grep/local-ignored-files "package-lock.json")
