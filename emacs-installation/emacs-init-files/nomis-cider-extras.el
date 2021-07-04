@@ -67,6 +67,7 @@
 ;;;; disregard any window in another frame that is showing the log buffer.
 ;;;;
 ;;;; And a bunch of other cool stuff:
+;;;; - Add logging to show the mode of the refresh.
 ;;;; - Add logging to make boundaries between refreshes clear.
 ;;;; - Pass refresh-related variables through to the log buffer as
 ;;;;   buffer-locals.
@@ -78,11 +79,13 @@
 (defvar nomis/-cider-ns-refresh-log-pre-message/prefix
   "----------------------------------------\n>>>> Doing cider-ns-refresh")
 
-(defun nomis/-cider-ns-refresh-log-pre-message (log-buffer-freshly-created?)
+(defun nomis/-cider-ns-refresh-log-pre-message (mode
+                                                log-buffer-freshly-created?)
   (s-concat (if log-buffer-freshly-created? "" "\n\n\n")
-            (format "%s #%s"
+            (format "%s #%s -- mode = %s"
                     nomis/-cider-ns-refresh-log-pre-message/prefix
-                    nomis/-cider-ns-refresh-count)
+                    nomis/-cider-ns-refresh-count
+                    mode)
             "\n"))
 
 (defun nomis/-cider-ns-refresh-log-post-message ()
@@ -124,7 +127,7 @@
   (advice-add
    'cider-ns-refresh
    :around
-   (lambda (orig-fun &rest args)
+   (lambda (orig-fun mode &rest other-args)
      (incf nomis/-cider-ns-refresh-count)
      (let* ((log-buffer-freshly-created?
              (null (get-buffer cider-ns-refresh-log-buffer)))
@@ -140,8 +143,8 @@
                       nil
                       (lambda ()
                         (display-buffer-same-window log-buffer nil))))
-       (let* ((msg (nomis/-cider-ns-refresh-log-pre-message
-                    log-buffer-freshly-created?)))
+       (let* ((msg (nomis/-cider-ns-refresh-log-pre-message mode
+                                                            log-buffer-freshly-created?)))
          (cider-emit-into-popup-buffer log-buffer
                                        msg
                                        'font-lock-string-face
@@ -149,7 +152,7 @@
        (nomis/-cider-ns-refresh-set-vars-in-log-buffer
         log-buffer-freshly-created?))
      (let* ((*nomis/-hacking-cider-ns-refresh t))
-       (apply orig-fun args)))
+       (apply orig-fun mode other-args)))
    '((name . nomis/hack-cider-ns-refresh)
      (depth . -100)))
 
