@@ -143,6 +143,9 @@
    'cider-ns-refresh
    :around
    (lambda (orig-fun mode &rest other-args)
+     (unless (cider-repls)
+       (nomis/msg/grab-user-attention/high)
+       (error "There are no CIDER REPLs associated with this buffer"))
      (incf nomis/cider-ns-refresh/-count)
      (let* ((log-buffer-freshly-created?
              (null (get-buffer cider-ns-refresh-log-buffer)))
