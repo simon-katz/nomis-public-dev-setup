@@ -72,13 +72,24 @@
  ((member (nomis/cider-version)
           '("CIDER 0.26.1 (Nesebar)"))
 
+  (defun nomis/-cider-ns-refresh-set-vars-in-log-buffer
+      (log-buffer-freshly-created?)
+    (when log-buffer-freshly-created?
+      (let* ((log-buffer (nomis/-get-cider-ns-refresh-log-buffer)))
+        (with-current-buffer log-buffer
+          (when (not truncate-lines)
+            (let* ((inhibit-message t))
+              (toggle-truncate-lines)))))))
+
   (defvar *nomis/-hacking-cider-ns-refresh nil)
 
   (advice-add
    'cider-ns-refresh
    :around
    (lambda (orig-fun &rest args)
-     (let* ((log-buffer (nomis/-get-cider-ns-refresh-log-buffer)))
+     (let* ((log-buffer-freshly-created?
+             (null (get-buffer cider-ns-refresh-log-buffer)))
+            (log-buffer (nomis/-get-cider-ns-refresh-log-buffer)))
        (when cider-ns-refresh-show-log-buffer
          ;; Delay this, because we mustn't change the current buffer for
          ;; the code that is running -- people can use a .dir-locals.el
@@ -89,7 +100,9 @@
          (run-at-time 0
                       nil
                       (lambda ()
-                        (display-buffer-same-window log-buffer nil)))))
+                        (display-buffer-same-window log-buffer nil))))
+       (nomis/-cider-ns-refresh-set-vars-in-log-buffer
+        log-buffer-freshly-created?))
      (let* ((*nomis/-hacking-cider-ns-refresh t))
        (apply orig-fun args)))
    '((name . nomis/hack-cider-ns-refresh)
