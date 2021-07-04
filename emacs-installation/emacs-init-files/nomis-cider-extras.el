@@ -71,6 +71,7 @@
 ;;;; - Add logging to make boundaries between refreshes clear.
 ;;;; - Pass refresh-related variables through to the log buffer as
 ;;;;   buffer-locals.
+;;;; - Add commands to jump and delete in the log buffer.
 ;;;;
 ;;;; -- jsk 2021-06-28 and later
 
@@ -91,6 +92,15 @@
 (defun nomis/-cider-ns-refresh-log-post-message ()
   (format "<<<< Done cider-ns-refresh #%s\nPress \"q\" to exit"
           nomis/-cider-ns-refresh-count))
+
+(defun nomis/cider-ns-refresh-log/delete-to-start-of-buffer ()
+  (interactive)
+  (let* ((inhibit-read-only t))
+    (delete-region 1 (point))))
+
+(defun nomis/cider-ns-refresh-log/jump-to-start-of-refresh (arg)
+  (interactive "P")
+  (search-backward nomis/-cider-ns-refresh-log-pre-message/prefix))
 
 (cond
  ((member (nomis/cider-version)
