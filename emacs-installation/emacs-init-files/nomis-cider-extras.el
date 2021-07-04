@@ -53,6 +53,12 @@
   (or (get-buffer cider-ns-refresh-log-buffer)
       (cider-make-popup-buffer cider-ns-refresh-log-buffer)))
 
+(defun nomis/cider-ns-refresh/log (log-buffer msg)
+  (cider-emit-into-popup-buffer log-buffer
+                                msg
+                                'font-lock-string-face
+                                t))
+
 ;;;; ___________________________________________________________________________
 
 ;;;; I don't understand why, but the messages displayed in the echo area by
@@ -121,10 +127,7 @@
         (dolist (var-val vars-vals-to-pass-to-log-buffer)
           (cl-multiple-value-bind (sym val) var-val
             (let* ((msg (format "Setting %s to %s\n" sym val)))
-              (cider-emit-into-popup-buffer log-buffer
-                                            msg
-                                            'font-lock-string-face
-                                            t))
+              (nomis/cider-ns-refresh/log log-buffer msg))
             (make-local-variable sym)
             (set sym val)))
         (when (and log-buffer-freshly-created?
@@ -155,10 +158,7 @@
                         (display-buffer-same-window log-buffer nil))))
        (let* ((msg (nomis/-cider-ns-refresh-log-pre-message mode
                                                             log-buffer-freshly-created?)))
-         (cider-emit-into-popup-buffer log-buffer
-                                       msg
-                                       'font-lock-string-face
-                                       t))
+         (nomis/cider-ns-refresh/log log-buffer msg))
        (nomis/-cider-ns-refresh-set-vars-in-log-buffer
         log-buffer-freshly-created?))
      (let* ((*nomis/-hacking-cider-ns-refresh t))
@@ -193,10 +193,7 @@
           (lambda ()
             (let* ((log-buffer (nomis/-get-cider-ns-refresh-log-buffer))
                    (msg (nomis/-cider-ns-refresh-log-post-message)))
-              (cider-emit-into-popup-buffer log-buffer
-                                            msg
-                                            'font-lock-string-face
-                                            t)))))))
+              (nomis/cider-ns-refresh/log log-buffer msg)))))))
    '((name . nomis/hack-cider-ns-refresh)))
 
   ;; (advice-remove 'cider-ns-refresh 'nomis/hack-cider-ns-refresh)
@@ -221,10 +218,7 @@
      (when (and nomis/cider-forbid-refresh-all?
                 (member mode '(refresh-all 4 clear 16)))
        (let* ((msg "nomis/cider-forbid-refresh-all? is truthy, so I won't refresh-all"))
-         (cider-emit-into-popup-buffer log-buffer
-                                       (s-concat msg "\n")
-                                       'font-lock-string-face
-                                       t)
+         (nomis/cider-ns-refresh/log log-buffer (s-concat msg "\n"))
          (nomis/msg/grab-user-attention/high)
          (error msg))))
    (apply orig-fun mode args))
