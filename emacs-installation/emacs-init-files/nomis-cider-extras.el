@@ -1,4 +1,4 @@
-;;;; Init stuff -- CIDER extras 2 --  -*- lexical-binding: t -*-
+;;;; Init stuff -- CIDER extras --  -*- lexical-binding: t -*-
 
 ;;;; ___________________________________________________________________________
 
@@ -52,4 +52,4 @@
 
 ;;;; ___________________________________________________________________________
 
-(provide 'nomis-cider-extras-2)
+(provide 'nomis-cider-extras)
