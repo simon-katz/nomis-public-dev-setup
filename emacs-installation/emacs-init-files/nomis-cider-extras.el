@@ -179,7 +179,9 @@
    :after
    (lambda (response &rest other-args)
      (nrepl-dbind-response response (status)
-       (when (member "invoked-after" status)
+       ;; The final call of the `cider-ns-refresh--handle-response` callback
+       ;; has a status of `("state")`.
+       (when (equal status '("state"))
          (run-at-time
           ;; Without this delay, if the refresh happens very quickly or if no
           ;; refresh is needed, the refresh buffer will pop up and the user
