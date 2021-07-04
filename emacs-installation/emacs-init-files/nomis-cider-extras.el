@@ -48,7 +48,7 @@
 
 ;;;; ___________________________________________________________________________
 
-(defun nomis/-get-cider-ns-refresh-log-buffer ()
+(defun nomis/cider-ns-refresh/-get-log-buffer ()
   ;; Copied from `cider-ns-refresh`:
   (or (get-buffer cider-ns-refresh-log-buffer)
       (cider-make-popup-buffer cider-ns-refresh-log-buffer)))
@@ -81,48 +81,48 @@
 ;;;;
 ;;;; -- jsk 2021-06-28 and later
 
-(defvar nomis/-cider-ns-refresh-count 0)
+(defvar nomis/cider-ns-refresh/-count 0)
 
-(defvar nomis/-cider-ns-refresh-log-pre-message/prefix
+(defvar nomis/cider-ns-refresh/-prefix-for-log-pre-message
   "----------------------------------------\n>>>> Doing cider-ns-refresh")
 
-(defun nomis/-cider-ns-refresh-log-pre-message (mode
-                                                log-buffer-freshly-created?)
+(defun nomis/cider-ns-refresh/log-pre-message (mode
+                                               log-buffer-freshly-created?)
   (s-concat (if log-buffer-freshly-created? "" "\n\n\n")
             (format "%s #%s -- mode = %s"
-                    nomis/-cider-ns-refresh-log-pre-message/prefix
-                    nomis/-cider-ns-refresh-count
+                    nomis/cider-ns-refresh/-prefix-for-log-pre-message
+                    nomis/cider-ns-refresh/-count
                     mode)
             "\n"))
 
-(defun nomis/-cider-ns-refresh-log-post-message ()
+(defun nomis/cider-ns-refresh/-log-post-message ()
   (format "<<<< Done cider-ns-refresh #%s\nPress \"q\" to exit"
-          nomis/-cider-ns-refresh-count))
+          nomis/cider-ns-refresh/-count))
 
-(defun nomis/cider-ns-refresh-log/delete-to-start-of-buffer ()
+(defun nomis/cider-ns-refresh/delete-to-start-of-log-buffer ()
   (interactive)
   (let* ((inhibit-read-only t))
     (delete-region 1 (point))))
 
-(defun nomis/cider-ns-refresh-log/jump-to-start-of-refresh (arg)
+(defun nomis/cider-ns-refresh/jump-to-start-of-log-buffer (arg)
   (interactive "P")
-  (search-backward nomis/-cider-ns-refresh-log-pre-message/prefix))
+  (search-backward nomis/cider-ns-refresh/-prefix-for-log-pre-message))
 
 (cond
  ((member (nomis/cider-version)
           '("CIDER 0.26.1 (Nesebar)"))
 
-  (defvar nomis/cider-vars-to-pass-to-log-buffer
+  (defvar nomis/cider-ns-refresh/-vars-to-pass-to-log-buffer
     '(nomis/cider-forbid-refresh-all?
       cider-ns-refresh-before-fn
       cider-ns-refresh-after-fn))
 
-  (defun nomis/-cider-ns-refresh-set-vars-in-log-buffer
+  (defun nomis/cider-ns-refresh/-set-vars-in-log-buffer
       (log-buffer-freshly-created?)
     (let* ((vars-vals-to-pass-to-log-buffer
             (mapcar (lambda (var) (list var (symbol-value var)))
-                    nomis/cider-vars-to-pass-to-log-buffer))
-           (log-buffer (nomis/-get-cider-ns-refresh-log-buffer)))
+                    nomis/cider-ns-refresh/-vars-to-pass-to-log-buffer))
+           (log-buffer (nomis/cider-ns-refresh/-get-log-buffer)))
       (with-current-buffer log-buffer
         (dolist (var-val vars-vals-to-pass-to-log-buffer)
           (cl-multiple-value-bind (sym val) var-val
@@ -135,16 +135,16 @@
           (let* ((inhibit-message t))
             (toggle-truncate-lines))))))
 
-  (defvar *nomis/-hacking-cider-ns-refresh nil)
+  (defvar *nomis/cider-ns-refresh/-in-refresh?* nil)
 
   (advice-add
    'cider-ns-refresh
    :around
    (lambda (orig-fun mode &rest other-args)
-     (incf nomis/-cider-ns-refresh-count)
+     (incf nomis/cider-ns-refresh/-count)
      (let* ((log-buffer-freshly-created?
              (null (get-buffer cider-ns-refresh-log-buffer)))
-            (log-buffer (nomis/-get-cider-ns-refresh-log-buffer)))
+            (log-buffer (nomis/cider-ns-refresh/-get-log-buffer)))
        (when cider-ns-refresh-show-log-buffer
          ;; Delay this, because we mustn't change the current buffer for
          ;; the code that is running -- people can use a .dir-locals.el
@@ -156,23 +156,23 @@
                       nil
                       (lambda ()
                         (display-buffer-same-window log-buffer nil))))
-       (let* ((msg (nomis/-cider-ns-refresh-log-pre-message mode
-                                                            log-buffer-freshly-created?)))
+       (let* ((msg (nomis/cider-ns-refresh/log-pre-message mode
+                                                           log-buffer-freshly-created?)))
          (nomis/cider-ns-refresh/log log-buffer msg))
-       (nomis/-cider-ns-refresh-set-vars-in-log-buffer
+       (nomis/cider-ns-refresh/-set-vars-in-log-buffer
         log-buffer-freshly-created?))
-     (let* ((*nomis/-hacking-cider-ns-refresh t))
+     (let* ((*nomis/cider-ns-refresh/-in-refresh?* t))
        (apply orig-fun mode other-args)))
-   '((name . nomis/hack-cider-ns-refresh)
+   '((name . nomis/cider-ns-refresh/hack)
      (depth . -100)))
 
   (advice-add
    'cider-popup-buffer-display
    :around
    (lambda (orig-fun buffer &rest other-args)
-     (unless *nomis/-hacking-cider-ns-refresh
+     (unless *nomis/cider-ns-refresh/-in-refresh?*
        (apply orig-fun buffer other-args)))
-   `((name . nomis/hack-cider-ns-refresh)))
+   `((name . nomis/cider-ns-refresh/hack)))
 
   (advice-add
    'cider-ns-refresh--handle-response
@@ -191,20 +191,18 @@
           1
           nil
           (lambda ()
-            (let* ((log-buffer (nomis/-get-cider-ns-refresh-log-buffer))
-                   (msg (nomis/-cider-ns-refresh-log-post-message)))
+            (let* ((log-buffer (nomis/cider-ns-refresh/-get-log-buffer))
+                   (msg (nomis/cider-ns-refresh/-log-post-message)))
               (nomis/cider-ns-refresh/log log-buffer msg)))))))
-   '((name . nomis/hack-cider-ns-refresh)))
+   '((name . nomis/cider-ns-refresh/hack)))
 
-  ;; (advice-remove 'cider-ns-refresh 'nomis/hack-cider-ns-refresh)
-  ;; (advice-remove 'cider-popup-buffer-display 'nomis/hack-cider-ns-refresh)
-  ;; (advice-remove 'cider-ns-refresh--handle-response 'nomis/hack-cider-ns-refresh)
+  ;; (advice-remove 'cider-ns-refresh 'nomis/cider-ns-refresh/hack)
+  ;; (advice-remove 'cider-popup-buffer-display 'nomis/cider-ns-refresh/hack)
+  ;; (advice-remove 'cider-ns-refresh--handle-response 'nomis/cider-ns-refresh/hack)
   )
  (t
   (message-box
-   "You need to fix `cider-popup-buffer-display for this version of CIDER.")))
-
-;; (advice-remove 'cider-popup-buffer-display 'nomis/cider-popup-buffer-display/pop-to-buffer)
+   "You need to fix `nomis/cider-ns-refresh/hack` for this version of CIDER.")))
 
 ;;;; ___________________________________________________________________________
 
@@ -214,7 +212,7 @@
  'cider-ns-refresh
  :around
  (lambda (orig-fun mode &rest other-args)
-   (let* ((log-buffer (nomis/-get-cider-ns-refresh-log-buffer)))
+   (let* ((log-buffer (nomis/cider-ns-refresh/-get-log-buffer)))
      (when (and nomis/cider-forbid-refresh-all?
                 (member mode '(refresh-all 4 clear 16)))
        (let* ((msg "nomis/cider-forbid-refresh-all? is truthy, so I won't refresh-all"))
