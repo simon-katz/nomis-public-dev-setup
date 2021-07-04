@@ -123,14 +123,18 @@
                          nomis/cider-ns-refresh/-count)))
        (nomis/cider-ns-refresh/log log-buffer msg)))))
 
+(defun nomis/cider-ns-refresh/backward-section ()
+  (interactive)
+  (condition-case nil
+      (search-backward nomis/cider-ns-refresh/-prefix-for-log-pre-message)
+    (error
+     (nomis/msg/grab-user-attention/high)
+     (error "There is no previous section"))))
+
 (defun nomis/cider-ns-refresh/delete-to-beginning-of-buffer ()
   (interactive)
   (let* ((inhibit-read-only t))
     (delete-region 1 (point))))
-
-(defun nomis/cider-ns-refresh/backward-section (arg)
-  (interactive "P")
-  (search-backward nomis/cider-ns-refresh/-prefix-for-log-pre-message))
 
 (cond
  ((member (nomis/cider-version)
