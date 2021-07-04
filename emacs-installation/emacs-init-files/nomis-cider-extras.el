@@ -117,8 +117,8 @@
                           (list
                            "<<<< Done cider-ns-refresh #%s"
                            "Some useful commands:"
-                           "  nomis/cider-ns-refresh/backward-section"
-                           "  nomis/cider-ns-refresh/forward-section"
+                           "  nomis/cider-ns-refresh/backward-section (M-up)"
+                           "  nomis/cider-ns-refresh/forward-section  (M-down)"
                            "  nomis/cider-ns-refresh/delete-to-beginning-of-buffer"
                            "Press \"q\" to exit"))
                          nomis/cider-ns-refresh/-count)))
@@ -174,10 +174,11 @@
               (nomis/cider-ns-refresh/log log-buffer msg))
             (make-local-variable sym)
             (set sym val)))
-        (when (and log-buffer-freshly-created?
-                   (not truncate-lines))
-          (let* ((inhibit-message t))
-            (toggle-truncate-lines))))))
+        (when log-buffer-freshly-created?
+          (nomis/cider-ns-refresh/mode t)
+          (when (not truncate-lines)
+            (let* ((inhibit-message t))
+              (toggle-truncate-lines)))))))
 
   (defvar *nomis/cider-ns-refresh/-in-refresh?* nil)
 
@@ -257,6 +258,16 @@
  '((name . nomis/maybe-forbid-refresh)
    (depth . 100)))
 ;; (advice-remove 'cider-ns-refresh 'nomis/maybe-forbid-refresh)
+
+;;;; ___________________________________________________________________________
+
+(define-minor-mode nomis/cider-ns-refresh/mode
+  "Toggle nomis/cider-ns-refresh/mode."
+  :init-value nil
+  :lighter " cider-ns-refresh-log"
+  :keymap
+  '(([M-up]   . nomis/cider-ns-refresh/backward-section)
+    ([M-down] . nomis/cider-ns-refresh/forward-section)))
 
 ;;;; ___________________________________________________________________________
 
