@@ -53,10 +53,14 @@
   (or (get-buffer cider-ns-refresh-log-buffer)
       (cider-make-popup-buffer cider-ns-refresh-log-buffer)))
 
+(defface nomis/cider-ns-refresh/-log-face
+  '((t (:foreground "blue3" :italic t)))
+  "Face for `nomis/cider-ns-refresh/log`.")
+
 (defun nomis/cider-ns-refresh/log (log-buffer msg)
   (cider-emit-into-popup-buffer log-buffer
                                 msg
-                                'font-lock-string-face
+                                'nomis/cider-ns-refresh/-log-face
                                 t))
 
 ;;;; ___________________________________________________________________________
