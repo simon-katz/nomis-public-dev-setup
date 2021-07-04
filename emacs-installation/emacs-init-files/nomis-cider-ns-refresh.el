@@ -49,8 +49,6 @@
 ;;;;
 ;;;; -- jsk 2021-06-28 and later
 
-(defvar nomis/cider-ns-refresh/delay-for-post-message 0.75)
-
 (defvar nomis/cider-ns-refresh/-count 0)
 
 (defvar nomis/cider-ns-refresh/-prefix-for-log-pre-message
@@ -67,27 +65,18 @@
           mode))
 
 (defun nomis/cider-ns-refresh/log-post-message ()
-  (run-at-time
-   ;; Without this delay, if the refresh happens very quickly or if no
-   ;; refresh is needed, the refresh buffer will pop up and the user
-   ;; won't see anything being added to the log buffer. So use
-   ;; `run-at-time` so that there is a delay before the post-message
-   ;; appears, so that the user sees that something happened.
-   nomis/cider-ns-refresh/delay-for-post-message
-   nil
-   (lambda ()
-     (let* ((log-buffer (nomis/cider-ns-refresh/-get-log-buffer))
-            (msg (format (s-join
-                          "\n"
-                          (list
-                           "<<<< Done cider-ns-refresh #%s"
-                           "Some useful commands:"
-                           "  nomis/cider-ns-refresh/backward-section (M-up)"
-                           "  nomis/cider-ns-refresh/forward-section  (M-down)"
-                           "  nomis/cider-ns-refresh/delete-to-beginning-of-buffer"
-                           "Press \"q\" to exit\n"))
-                         nomis/cider-ns-refresh/-count)))
-       (nomis/cider-ns-refresh/log log-buffer msg)))))
+  (let* ((log-buffer (nomis/cider-ns-refresh/-get-log-buffer))
+         (msg (format (s-join
+                       "\n"
+                       (list
+                        "<<<< Done cider-ns-refresh #%s"
+                        "Some useful commands:"
+                        "  nomis/cider-ns-refresh/backward-section (M-up)"
+                        "  nomis/cider-ns-refresh/forward-section  (M-down)"
+                        "  nomis/cider-ns-refresh/delete-to-beginning-of-buffer"
+                        "Press \"q\" to exit\n"))
+                      nomis/cider-ns-refresh/-count)))
+    (nomis/cider-ns-refresh/log log-buffer msg)))
 
 (defun nomis/cider-ns-refresh/backward-section ()
   (interactive)
