@@ -85,7 +85,7 @@
 ;;;;
 ;;;; -- jsk 2021-06-28 and later
 
-(defvar nomis/cider-ns-refresh/delay-for-post-message 1)
+(defvar nomis/cider-ns-refresh/delay-for-post-message 0.75)
 
 (defvar nomis/cider-ns-refresh/-count 0)
 
