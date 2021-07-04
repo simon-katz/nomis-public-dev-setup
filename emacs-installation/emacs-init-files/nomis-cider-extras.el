@@ -68,6 +68,8 @@
 ;;;;
 ;;;; And a bunch of other cool stuff:
 ;;;; - Add logging to make boundaries between refreshes clear.
+;;;; - Pass refresh-related variables through to the log buffer as
+;;;;   buffer-locals.
 ;;;;
 ;;;; -- jsk 2021-06-28 and later
 
@@ -91,14 +93,31 @@
  ((member (nomis/cider-version)
           '("CIDER 0.26.1 (Nesebar)"))
 
+  (defvar nomis/cider-vars-to-pass-to-log-buffer
+    '(nomis/cider-forbid-refresh-all?
+      cider-ns-refresh-before-fn
+      cider-ns-refresh-after-fn))
+
   (defun nomis/-cider-ns-refresh-set-vars-in-log-buffer
       (log-buffer-freshly-created?)
-    (when log-buffer-freshly-created?
-      (let* ((log-buffer (nomis/-get-cider-ns-refresh-log-buffer)))
-        (with-current-buffer log-buffer
-          (when (not truncate-lines)
-            (let* ((inhibit-message t))
-              (toggle-truncate-lines)))))))
+    (let* ((vars-vals-to-pass-to-log-buffer
+            (mapcar (lambda (var) (list var (symbol-value var)))
+                    nomis/cider-vars-to-pass-to-log-buffer))
+           (log-buffer (nomis/-get-cider-ns-refresh-log-buffer)))
+      (with-current-buffer log-buffer
+        (dolist (var-val vars-vals-to-pass-to-log-buffer)
+          (cl-multiple-value-bind (sym val) var-val
+            (let* ((msg (format "Setting %s to %s\n" sym val)))
+              (cider-emit-into-popup-buffer log-buffer
+                                            msg
+                                            'font-lock-string-face
+                                            t))
+            (make-local-variable sym)
+            (set sym val)))
+        (when (and log-buffer-freshly-created?
+                   (not truncate-lines))
+          (let* ((inhibit-message t))
+            (toggle-truncate-lines))))))
 
   (defvar *nomis/-hacking-cider-ns-refresh nil)
 
