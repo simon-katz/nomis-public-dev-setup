@@ -118,6 +118,7 @@
                            "<<<< Done cider-ns-refresh #%s"
                            "Some useful commands:"
                            "  nomis/cider-ns-refresh/backward-section"
+                           "  nomis/cider-ns-refresh/forward-section"
                            "  nomis/cider-ns-refresh/delete-to-beginning-of-buffer"
                            "Press \"q\" to exit"))
                          nomis/cider-ns-refresh/-count)))
@@ -130,6 +131,21 @@
     (error
      (nomis/msg/grab-user-attention/high)
      (error "There is no previous section"))))
+
+(defun nomis/cider-ns-refresh/forward-section ()
+  (interactive)
+  (let* ((pos (save-excursion
+                (condition-case nil
+                    (progn
+                      (forward-line)
+                      (search-forward nomis/cider-ns-refresh/-prefix-for-log-pre-message)
+                      (goto-char (match-beginning 0)))
+                  (error nil)))))
+    (if pos
+        (goto-char pos)
+      (progn
+        (nomis/msg/grab-user-attention/high)
+        (error "There is no next section")))))
 
 (defun nomis/cider-ns-refresh/delete-to-beginning-of-buffer ()
   (interactive)
