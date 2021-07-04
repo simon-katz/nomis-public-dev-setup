@@ -101,9 +101,20 @@
                     mode)
             "\n"))
 
-(defun nomis/cider-ns-refresh/-log-post-message ()
-  (format "<<<< Done cider-ns-refresh #%s\nPress \"q\" to exit"
-          nomis/cider-ns-refresh/-count))
+(defun nomis/cider-ns-refresh/log-post-message ()
+  (run-at-time
+   ;; Without this delay, if the refresh happens very quickly or if no
+   ;; refresh is needed, the refresh buffer will pop up and the user
+   ;; won't see anything being added to the log buffer. So use
+   ;; `run-at-time` so that there is a delay before the post-message
+   ;; appears, so that the user sees that something happened.
+   nomis/cider-ns-refresh/delay-for-post-message
+   nil
+   (lambda ()
+     (let* ((log-buffer (nomis/cider-ns-refresh/-get-log-buffer))
+            (msg (format "<<<< Done cider-ns-refresh #%s\nPress \"q\" to exit"
+                         nomis/cider-ns-refresh/-count)))
+       (nomis/cider-ns-refresh/log log-buffer msg)))))
 
 (defun nomis/cider-ns-refresh/delete-to-start-of-log-buffer ()
   (interactive)
@@ -188,18 +199,7 @@
        ;; The final call of the `cider-ns-refresh--handle-response` callback
        ;; has a status of `("state")`.
        (when (equal status '("state"))
-         (run-at-time
-          ;; Without this delay, if the refresh happens very quickly or if no
-          ;; refresh is needed, the refresh buffer will pop up and the user
-          ;; won't see anything being added to the log buffer. So use
-          ;; `run-at-time` so that there is a delay before the post-message
-          ;; appears, so that the user sees that something happened.
-          nomis/cider-ns-refresh/delay-for-post-message
-          nil
-          (lambda ()
-            (let* ((log-buffer (nomis/cider-ns-refresh/-get-log-buffer))
-                   (msg (nomis/cider-ns-refresh/-log-post-message)))
-              (nomis/cider-ns-refresh/log log-buffer msg)))))))
+         (nomis/cider-ns-refresh/log-post-message))))
    '((name . nomis/cider-ns-refresh/hack)))
 
   ;; (advice-remove 'cider-ns-refresh 'nomis/cider-ns-refresh/hack)
@@ -223,6 +223,7 @@
                 (member mode '(refresh-all 4 clear 16)))
        (let* ((msg "nomis/cider-forbid-refresh-all? is truthy, so I won't refresh-all"))
          (nomis/cider-ns-refresh/log log-buffer (s-concat msg "\n"))
+         (nomis/cider-ns-refresh/log-post-message)
          (nomis/msg/grab-user-attention/high)
          (error msg))))
    (apply orig-fun mode args))
