@@ -27,6 +27,28 @@
   (setq cider-repl-history-size 5000) ; the default is 500
   )
 
+(cond
+ ;; CIDER has `(add-hook 'kill-emacs-hook #'cider-repl-history-just-save)`. But
+ ;; that doesn't save history unless the current buffer is the REPL buffer, and
+ ;; it also creates an empty ".cider-repl-history" file in the same directory as
+ ;; the current buffer's file. This fixes things by changing the current buffer
+ ;; to the REPL buffer.
+ ((member (nomis/cider-version)
+          '("CIDER 0.26.1 (Nesebar)"))
+  (advice-add
+   'cider-repl-history-just-save
+   :around
+   (lambda (orig-fun &rest args)
+     (with-current-buffer (or (cider-current-repl)
+                              (current-buffer))
+       (apply orig-fun args)))
+   '((name . nomis/set-buffer-for-history))))
+ (t
+  (message-box
+   "You need to fix `cider-repl-history-just-save for this version of CIDER.")))
+
+;; (advice-remove 'cider-repl-history-just-save 'nomis/set-buffer-for-history)
+
 ;;;; ___________________________________________________________________________
 
 (provide 'nomis-cider-repl-history)
