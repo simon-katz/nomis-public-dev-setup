@@ -85,6 +85,8 @@
 ;;;;
 ;;;; -- jsk 2021-06-28 and later
 
+(defvar nomis/cider-ns-refresh/delay-for-post-message 1)
+
 (defvar nomis/cider-ns-refresh/-count 0)
 
 (defvar nomis/cider-ns-refresh/-prefix-for-log-pre-message
@@ -192,7 +194,7 @@
           ;; won't see anything being added to the log buffer. So use
           ;; `run-at-time` so that there is a delay before the post-message
           ;; appears, so that the user sees that something happened.
-          1
+          nomis/cider-ns-refresh/delay-for-post-message
           nil
           (lambda ()
             (let* ((log-buffer (nomis/cider-ns-refresh/-get-log-buffer))
