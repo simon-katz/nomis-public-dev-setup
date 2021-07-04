@@ -66,7 +66,26 @@
 ;;;; the log buffer, so we hack things to fix that. And also make sure that we
 ;;;; disregard any window in another frame that is showing the log buffer.
 ;;;;
+;;;; And a bunch of other cool stuff:
+;;;; - Add logging to make boundaries between refreshes clear.
+;;;;
 ;;;; -- jsk 2021-06-28 and later
+
+(defvar nomis/-cider-ns-refresh-count 0)
+
+(defvar nomis/-cider-ns-refresh-log-pre-message/prefix
+  "----------------------------------------\n>>>> Doing cider-ns-refresh")
+
+(defun nomis/-cider-ns-refresh-log-pre-message (log-buffer-freshly-created?)
+  (s-concat (if log-buffer-freshly-created? "" "\n\n\n")
+            (format "%s #%s"
+                    nomis/-cider-ns-refresh-log-pre-message/prefix
+                    nomis/-cider-ns-refresh-count)
+            "\n"))
+
+(defun nomis/-cider-ns-refresh-log-post-message ()
+  (format "<<<< Done cider-ns-refresh #%s\nPress \"q\" to exit"
+          nomis/-cider-ns-refresh-count))
 
 (cond
  ((member (nomis/cider-version)
@@ -87,6 +106,7 @@
    'cider-ns-refresh
    :around
    (lambda (orig-fun &rest args)
+     (incf nomis/-cider-ns-refresh-count)
      (let* ((log-buffer-freshly-created?
              (null (get-buffer cider-ns-refresh-log-buffer)))
             (log-buffer (nomis/-get-cider-ns-refresh-log-buffer)))
@@ -101,6 +121,12 @@
                       nil
                       (lambda ()
                         (display-buffer-same-window log-buffer nil))))
+       (let* ((msg (nomis/-cider-ns-refresh-log-pre-message
+                    log-buffer-freshly-created?)))
+         (cider-emit-into-popup-buffer log-buffer
+                                       msg
+                                       'font-lock-string-face
+                                       t))
        (nomis/-cider-ns-refresh-set-vars-in-log-buffer
         log-buffer-freshly-created?))
      (let* ((*nomis/-hacking-cider-ns-refresh t))
@@ -116,8 +142,32 @@
        (apply orig-fun buffer other-args)))
    `((name . nomis/hack-cider-ns-refresh)))
 
+  (advice-add
+   'cider-ns-refresh--handle-response
+   :after
+   (lambda (response &rest other-args)
+     (nrepl-dbind-response response (status)
+       (when (member "invoked-after" status)
+         (run-at-time
+          ;; Without this delay, if the refresh happens very quickly or if no
+          ;; refresh is needed, the refresh buffer will pop up and the user
+          ;; won't see anything being added to the log buffer. So use
+          ;; `run-at-time` so that there is a delay before the post-message
+          ;; appears, so that the user sees that something happened.
+          1
+          nil
+          (lambda ()
+            (let* ((log-buffer (nomis/-get-cider-ns-refresh-log-buffer))
+                   (msg (nomis/-cider-ns-refresh-log-post-message)))
+              (cider-emit-into-popup-buffer log-buffer
+                                            msg
+                                            'font-lock-string-face
+                                            t)))))))
+   '((name . nomis/hack-cider-ns-refresh)))
+
   ;; (advice-remove 'cider-ns-refresh 'nomis/hack-cider-ns-refresh)
   ;; (advice-remove 'cider-popup-buffer-display 'nomis/hack-cider-ns-refresh)
+  ;; (advice-remove 'cider-ns-refresh--handle-response 'nomis/hack-cider-ns-refresh)
   )
  (t
   (message-box
