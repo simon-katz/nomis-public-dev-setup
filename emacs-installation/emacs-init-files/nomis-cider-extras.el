@@ -116,12 +116,12 @@
                          nomis/cider-ns-refresh/-count)))
        (nomis/cider-ns-refresh/log log-buffer msg)))))
 
-(defun nomis/cider-ns-refresh/delete-to-start-of-log-buffer ()
+(defun nomis/cider-ns-refresh/delete-to-beginning-of-buffer ()
   (interactive)
   (let* ((inhibit-read-only t))
     (delete-region 1 (point))))
 
-(defun nomis/cider-ns-refresh/jump-to-start-of-log-buffer (arg)
+(defun nomis/cider-ns-refresh/backward-section (arg)
   (interactive "P")
   (search-backward nomis/cider-ns-refresh/-prefix-for-log-pre-message))
 
