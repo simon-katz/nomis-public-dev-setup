@@ -11,10 +11,20 @@
   '((t (:foreground "blue3" :italic t)))
   "Face for `nomis/cider-ns-refresh/log`.")
 
+(defface nomis/cider-ns-refresh/-error-face
+  '((t (:foreground "red" :italic t)))
+  "Face for `nomis/cider-ns-refresh/log-error`.")
+
 (defun nomis/cider-ns-refresh/log (log-buffer msg)
   (cider-emit-into-popup-buffer log-buffer
                                 msg
                                 'nomis/cider-ns-refresh/-log-face
+                                t))
+
+(defun nomis/cider-ns-refresh/log-error (log-buffer msg)
+  (cider-emit-into-popup-buffer log-buffer
+                                msg
+                                'nomis/cider-ns-refresh/-error-face
                                 t))
 
 ;;;; ___________________________________________________________________________
@@ -214,7 +224,7 @@
      (when (and nomis/cider-forbid-refresh-all?
                 (member mode '(refresh-all 4 clear 16)))
        (let* ((msg "nomis/cider-forbid-refresh-all? is truthy, so I won't refresh-all"))
-         (nomis/cider-ns-refresh/log log-buffer (s-concat msg "\n"))
+         (nomis/cider-ns-refresh/log-error log-buffer (s-concat msg "\n"))
          (nomis/cider-ns-refresh/log-post-message)
          (nomis/msg/grab-user-attention/high)
          (error msg))))
