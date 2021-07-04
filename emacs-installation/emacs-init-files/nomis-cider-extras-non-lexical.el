@@ -1,4 +1,4 @@
-;;;; Init stuff -- CIDER extras
+;;;; Init stuff -- CIDER extras (old, non-lexical)
 
 ;;## ;;;; TODO: Look at all this in the light of:
 ;;## ;;;;       - Now have nrepl.el 0.1.8. (Hmmm, no, reverted to 0.1.7 because eldoc
@@ -468,4 +468,4 @@ window."
 
 ;;;; ___________________________________________________________________________
 
-(provide 'nomis-cider-extras)
+(provide 'nomis-cider-extras-non-lexical)
