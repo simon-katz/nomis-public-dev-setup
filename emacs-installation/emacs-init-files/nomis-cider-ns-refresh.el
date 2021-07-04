@@ -44,16 +44,17 @@
 (defvar nomis/cider-ns-refresh/-count 0)
 
 (defvar nomis/cider-ns-refresh/-prefix-for-log-pre-message
-  "----------------------------------------\n>>>> Doing cider-ns-refresh")
+  (s-join
+   "\n"
+   (list
+    "--------------------------------------------------------------------------------"
+    ">>>> Doing cider-ns-refresh")))
 
-(defun nomis/cider-ns-refresh/log-pre-message (mode
-                                               log-buffer-freshly-created?)
-  (s-concat (if log-buffer-freshly-created? "" "\n\n\n")
-            (format "%s #%s -- mode = %s"
-                    nomis/cider-ns-refresh/-prefix-for-log-pre-message
-                    nomis/cider-ns-refresh/-count
-                    mode)
-            "\n"))
+(defun nomis/cider-ns-refresh/pre-message (mode)
+  (format "%s #%s -- mode = %s\n"
+          nomis/cider-ns-refresh/-prefix-for-log-pre-message
+          nomis/cider-ns-refresh/-count
+          mode))
 
 (defun nomis/cider-ns-refresh/log-post-message ()
   (run-at-time
@@ -74,7 +75,7 @@
                            "  nomis/cider-ns-refresh/backward-section (M-up)"
                            "  nomis/cider-ns-refresh/forward-section  (M-down)"
                            "  nomis/cider-ns-refresh/delete-to-beginning-of-buffer"
-                           "Press \"q\" to exit"))
+                           "Press \"q\" to exit\n"))
                          nomis/cider-ns-refresh/-count)))
        (nomis/cider-ns-refresh/log log-buffer msg)))))
 
@@ -155,8 +156,7 @@
                       nil
                       (lambda ()
                         (display-buffer-same-window log-buffer nil))))
-       (let* ((msg (nomis/cider-ns-refresh/log-pre-message mode
-                                                           log-buffer-freshly-created?)))
+       (let* ((msg (nomis/cider-ns-refresh/pre-message mode)))
          (nomis/cider-ns-refresh/log log-buffer msg))
        (nomis/cider-ns-refresh/-set-vars-in-log-buffer
         log-buffer-freshly-created?))
