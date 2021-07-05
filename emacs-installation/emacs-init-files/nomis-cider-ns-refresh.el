@@ -72,24 +72,27 @@
                        (list
                         "<<<< Done cider-ns-refresh #%s"
                         "Some useful commands:"
-                        "  nomis/cider-ns-refresh/backward-section (M-up)"
-                        "  nomis/cider-ns-refresh/forward-section  (M-down)"
+                        "  nomis/cider-ns-refresh/backward-section              (M-up)"
+                        "  nomis/cider-ns-refresh/forward-section               (M-down)"
+                        "  nomis/cider-ns-refresh/backward-section-align-top    (M-S-up)"
+                        "  nomis/cider-ns-refresh/forward-section-align-top     (M-S-down)"
                         "  nomis/cider-ns-refresh/delete-to-beginning-of-buffer"
                         "Press \"q\" to exit\n"))
                       nomis/cider-ns-refresh/-count)))
     (nomis/cider-ns-refresh/log log-buffer msg)))
 
-(defun nomis/cider-ns-refresh/backward-section ()
-  (interactive)
+(defun nomis/cider-ns-refresh/backward-section (align-top?)
+  (interactive "P")
   (condition-case nil
       (search-backward nomis/cider-ns-refresh/-prefix-for-log-pre-message)
     (error
      (nomis/msg/grab-user-attention/high)
      (error "There is no previous section")))
-  (recenter 0))
+  (when align-top?
+    (recenter 0)))
 
-(defun nomis/cider-ns-refresh/forward-section ()
-  (interactive)
+(defun nomis/cider-ns-refresh/forward-section (align-top?)
+  (interactive "P")
   (let* ((pos (save-excursion
                 (condition-case nil
                     (progn
@@ -102,7 +105,16 @@
       (progn
         (nomis/msg/grab-user-attention/high)
         (error "There is no next section"))))
-  (recenter 0))
+  (when align-top?
+    (recenter 0)))
+
+(defun nomis/cider-ns-refresh/backward-section-align-top ()
+  (interactive)
+  (nomis/cider-ns-refresh/backward-section t))
+
+(defun nomis/cider-ns-refresh/forward-section-align-top ()
+  (interactive)
+  (nomis/cider-ns-refresh/forward-section t))
 
 (defun nomis/cider-ns-refresh/delete-to-beginning-of-buffer ()
   (interactive)
@@ -230,8 +242,10 @@
   :init-value nil
   :lighter " cider-ns-refresh-log"
   :keymap
-  '(([M-up]   . nomis/cider-ns-refresh/backward-section)
-    ([M-down] . nomis/cider-ns-refresh/forward-section)))
+  '(([M-up]     . nomis/cider-ns-refresh/backward-section)
+    ([M-down]   . nomis/cider-ns-refresh/forward-section)
+    ([M-S-up]   . nomis/cider-ns-refresh/backward-section-align-top)
+    ([M-S-down] . nomis/cider-ns-refresh/forward-section-align-top)))
 
 ;;;; ___________________________________________________________________________
 
