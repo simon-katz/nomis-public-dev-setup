@@ -10,4 +10,10 @@
                                   (2 "LightGoldenrod1")
                                   (3 "yellow1")))
 
+(defun nomis/init-occur-mode ()
+  (unless truncate-lines
+    (toggle-truncate-lines)))
+
+(add-hook 'occur-mode-hook 'nomis/init-occur-mode)
+
 (provide 'nomis-loccur)
