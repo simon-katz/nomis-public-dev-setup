@@ -678,6 +678,30 @@
     (-nomis/org-search-heading-text/search t)))
 
 ;;;; ___________________________________________________________________________
+;;;; * nomis/org-get-links-to-current-heading
+
+;;;; Inspired by
+;;;; https://stackoverflow.com/questions/9844154/list-all-inbound-links-to-a-header-in-org-mode
+
+(defun nomis/org-get-links-to-current-heading (arg)
+  "Show links to the current heading.
+
+By default search in all .org buffers. With a prefix argument,
+limit the search to the current buffer."
+  (interactive "P")
+  (let* ((title (nth 4 (org-heading-components)))
+         (regexp (concat (nomis/rx/or (nomis/rx/wrap "\\[\\[")
+                                      (nomis/rx/wrap "::"))
+                         "\\*"
+                         (regexp-quote (case 1
+                                         (1 title)
+                                         (2 (url-hexify-string title))))
+                         "\\]\\[")))
+    (if arg
+        (occur regexp)
+      (multi-occur-in-matching-buffers ".*\\.org$" regexp))))
+
+;;;; ___________________________________________________________________________
 ;;;; * Key bindings
 
 (require 'nomis-org-key-bindings)
