@@ -693,10 +693,10 @@ limit the search to the current buffer."
          (regexp (concat (nomis/rx/or (nomis/rx/wrap "\\[\\[")
                                       (nomis/rx/wrap "::"))
                          "\\*"
-                         (regexp-quote (case 1
-                                         (1 title)
-                                         (2 (url-hexify-string title))))
-                         "\\]\\[")))
+                         (->> (org-link-make-string title)
+                              (s-chop-prefix "[[")
+                              (s-chop-suffix "]")
+                              regexp-quote))))
     (if arg
         (occur regexp)
       (multi-occur-in-matching-buffers ".*\\.org$" regexp))))
