@@ -11,8 +11,11 @@
                                   (3 "yellow1")))
 
 (defun nomis/init-occur-mode ()
-  (unless truncate-lines
-    (toggle-truncate-lines)))
+  ;; This `toggle-truncate-lines` seemed like a good idea at first, but using
+  ;; `next-error` it causes the list window to scroll in a way that means you
+  ;; lose your bearings.
+  ;; (unless truncate-lines (toggle-truncate-lines))
+  )
 
 (add-hook 'occur-mode-hook 'nomis/init-occur-mode)
 
