@@ -56,10 +56,10 @@
 (defun nomis/indent-buffer ()
   (interactive)
   (save-excursion
-    (delete-trailing-whitespace)
     (unless (member major-mode '(yaml-mode)) ; serious hack
       (indent-region (point-min) (point-max) nil))
-    (untabify (point-min) (point-max))))
+    (untabify (point-min) (point-max))
+    (delete-trailing-whitespace)))
 
 (global-set-key [f12] 'nomis/indent-buffer)
 
