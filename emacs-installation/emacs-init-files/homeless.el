@@ -53,13 +53,36 @@
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+(advice-add
+ 'org-indent-region
+ :around
+ (lambda (orig-fun &rest args)
+   (cl-flet ((hack-to-make-undo-not-multistage
+              ()
+              ;; Without this, undo is multi-stage for `nomis/indent-buffer`
+              ;; with weird jumping around the buffer.
+              ;; I've tried many things that don't fix the problem, including:
+              ;; - calling `undo-boundary`
+              ;; - binding `undo-inhibit-record-point`
+              ;; - manually removing `nil`s from `buffer-undo-list`.
+              ;; But I can't get any of those to work.
+              ;; This "no-op" makes undo behave nicely (but I don't understand
+              ;; why):
+              (let* ((text "hack-to-make-undo-behave-nicely"))
+                (insert text)
+                (delete-char (- (length text))))))
+     (hack-to-make-undo-not-multistage)
+     (apply orig-fun args)))
+ '((name . nomis/hack-to-make-undo-not-multistage)))
+
 (defun nomis/indent-buffer ()
   (interactive)
-  (save-excursion
-    (unless (member major-mode '(yaml-mode)) ; serious hack
-      (indent-region (point-min) (point-max) nil))
-    (untabify (point-min) (point-max))
-    (delete-trailing-whitespace)))
+  (nomis/with-atomic-undo
+    (save-excursion
+      (unless (member major-mode '(yaml-mode)) ; serious hack
+        (indent-region (point-min) (point-max) nil))
+      (untabify (point-min) (point-max))
+      (delete-trailing-whitespace))))
 
 (global-set-key [f12] 'nomis/indent-buffer)
 
