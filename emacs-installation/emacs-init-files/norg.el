@@ -560,6 +560,24 @@ Same for the `backward` commands.")
 ;;;; ___________________________________________________________________________
 ;;;; ____ * Stepping TODO This uses `norg/fully-expanded?`, and so belongs later in the file
 
+(defvar norg/step-n-levels-to-show nil)
+
+(defun norg/set-step-n-levels-to-show (n)
+  (interactive "P")
+  (when (null n)
+    (setq n
+          (let* ((s (read-string
+                     (cl-format nil
+                                "Number of levels to show ~
+                                 (empty string for all children) ~
+                                 (currently ~s): "
+                                norg/step-n-levels-to-show))))
+            (if (member (s-trim s) '("" "nil"))
+                nil
+              (string-to-number s)))))
+  (setq norg/step-n-levels-to-show (if (null n) n (max 1 (floor n))))
+  (message "n-levels-to-show set to %s" norg/step-n-levels-to-show))
+
 (defun norg/-step-then-step-cross-parent? ()
   (let ((cmds (list (norg/last-command)
                     this-command)))
@@ -677,24 +695,6 @@ Same for the `backward` commands.")
                 (tried-to-go-too-far))))))))
   (setq norg/-most-recent-step-time (float-time))
   (message "n-levels-to-show = %s" (or n-levels-or-nil "all")))
-
-(defvar norg/step-n-levels-to-show nil)
-
-(defun norg/set-step-n-levels-to-show (n)
-  (interactive "P")
-  (when (null n)
-    (setq n
-          (let* ((s (read-string
-                     (cl-format nil
-                                "Number of levels to show ~
-                                 (empty string for all children) ~
-                                 (currently ~s): "
-                                norg/step-n-levels-to-show))))
-            (if (member (s-trim s) '("" "nil"))
-                nil
-              (string-to-number s)))))
-  (setq norg/step-n-levels-to-show (if (null n) n (max 1 (floor n))))
-  (message "n-levels-to-show set to %s" norg/step-n-levels-to-show))
 
 (defun norg/step-forward (n-levels-to-show)
   (interactive "P")
