@@ -429,6 +429,10 @@ headline."
     (collapse)
     (org-show-set-visibility detail)))
 
+(defun norg/show-tree-only ()
+  (interactive)
+  (norg/collapse-all-and-set-visibility-span 'tree))
+
 ;;;; ___________________________________________________________________________
 ;;;; ____ * Navigation
 

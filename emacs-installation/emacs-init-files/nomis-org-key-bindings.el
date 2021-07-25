@@ -65,6 +65,9 @@ Use H with various other keys:
         - =
         Add M to fully expand or collapse
 
+
+H-M-m    norg/show-tree-only
+
 H-q H-]  norg/show-children-from-root/to-current-level
 H-q H-=  norg/show-children-from-all-roots/to-current-level
 
@@ -101,6 +104,8 @@ H-?  Show this help")
 (org-defkey org-mode-map (kbd "C-H-\\")   'nomis/org-visibility-span/more)
 (org-defkey org-mode-map (kbd "C-H-M-'")  'nomis/org-visibility-span/set-min)
 (org-defkey org-mode-map (kbd "C-H-M-\\") 'nomis/org-visibility-span/set-max)
+
+(org-defkey org-mode-map (kbd "H-M-m")    'norg/show-tree-only)
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ;;;; ____ ** Expand/collapse
