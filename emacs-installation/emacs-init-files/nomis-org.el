@@ -77,17 +77,6 @@
 ;;;; ___________________________________________________________________________
 ;;;; ____ * Visibility span
 
-(defun -nomis/org-visibility-span/set-level/rawish (detail)
-  (cl-flet ((collapse
-             ()
-             (case 1
-               (1 (org-overview))
-               (2 (save-excursion
-                    (norg/goto-root)
-                    (norg/collapse))))))
-    (collapse)
-    (org-show-set-visibility detail)))
-
 (defconst -nomis/org-visibility-span/detail-values
   ;;  See `org-show-context-detail`.
   '((minimal   nil "Minimal")
@@ -166,7 +155,7 @@
       (cl-multiple-value-bind (detail show? msg)
           (nth new-pos-or-nil
                -nomis/org-visibility-span/detail-values)
-        (-nomis/org-visibility-span/set-level/rawish detail)
+        (norg/collapse-all-and-set-visibility-span detail)
         (if show? (norg/w/show-entry) (norg/w/hide-entry))
         (unless no-message?
           (nomis/popup/message "%s" msg))))))

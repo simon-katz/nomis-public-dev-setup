@@ -416,6 +416,20 @@ headline."
   )
 
 ;;;; ___________________________________________________________________________
+;;;; ____ * Visibility span
+
+(defun norg/collapse-all-and-set-visibility-span (detail)
+  (cl-flet ((collapse
+             ()
+             (case 1
+               (1 (org-overview))
+               (2 (save-excursion
+                    (norg/goto-root)
+                    (norg/collapse))))))
+    (collapse)
+    (org-show-set-visibility detail)))
+
+;;;; ___________________________________________________________________________
 ;;;; ____ * Navigation
 
 ;;;; ____ ** Forward and backward at same level
