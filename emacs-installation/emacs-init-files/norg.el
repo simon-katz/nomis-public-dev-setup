@@ -704,11 +704,14 @@ Same for the `backward` commands.")
             (let* ((moved? (not (= (point) starting-point))))
               (if moved?
                   (progn
+                    ;; Collapse the headline where we started.
                     (save-excursion
                       (goto-char starting-point)
                       (when start-on-first-or-last-child?
+                        ;; We've moved across a parent, so collapse that.
                         (norg/w/up-heading 1))
                       (norg/collapse))
+                    ;; Expand.
                     (expand))
                 (progn
                   (norg/collapse)
