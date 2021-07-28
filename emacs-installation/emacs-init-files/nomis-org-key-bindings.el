@@ -68,6 +68,7 @@ Use H with various other keys:
 
 H-M-m    norg/show-tree-only
 
+H-q H-s  norg/set-step-n-levels-to-show
 H-q H-m  nomis/scrolling/toggle-maintain-line-no-in-window
 
 H-q H-]  norg/show-children-from-root/to-current-level
@@ -106,6 +107,7 @@ H-q H-/  Show this help")
 (org-defkey org-mode-map (kbd "C-H-M-\\") 'nomis/org-visibility-span/set-max)
 
 (org-defkey org-mode-map (kbd "H-M-m")    'norg/show-tree-only)
+(org-defkey org-mode-map (kbd "H-q H-s")  'norg/set-step-n-levels-to-show)
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ;;;; ____ ** Expand/collapse
