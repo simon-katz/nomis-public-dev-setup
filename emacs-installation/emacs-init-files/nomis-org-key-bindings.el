@@ -73,7 +73,7 @@ H-q H-=  norg/show-children-from-all-roots/to-current-level
 
 H-q H-s  nomis/scrolling/toggle-maintain-line-no-in-window
 
-H-?  Show this help")
+H-q H-/  Show this help")
 
 (defun nomis/org/pop-up-navigation-and-cycling-help ()
   (interactive)
@@ -83,7 +83,7 @@ H-?  Show this help")
     (2 (with-help-window (help-buffer)
          (princ -nomis/org/navigation-and-cycling-help)))))
 
-(org-defkey org-mode-map (kbd "H-?") 'nomis/org/pop-up-navigation-and-cycling-help)
+(org-defkey org-mode-map (kbd "H-q H-/") 'nomis/org/pop-up-navigation-and-cycling-help)
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ;;;; ____ ** Following links
