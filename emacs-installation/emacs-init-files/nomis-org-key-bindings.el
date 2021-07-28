@@ -84,7 +84,7 @@ H-q H-/  Show this help")
     (2 (with-help-window (help-buffer)
          (princ -nomis/org/navigation-and-cycling-help)))))
 
-(org-defkey org-mode-map (kbd "H-q H-/") 'nomis/org/pop-up-navigation-and-cycling-help)
+(org-defkey org-mode-map (kbd "H-q H-q /") 'nomis/org/pop-up-navigation-and-cycling-help)
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ;;;; ____ ** Following links
@@ -106,8 +106,8 @@ H-q H-/  Show this help")
 (org-defkey org-mode-map (kbd "C-H-M-'")  'nomis/org-visibility-span/set-min)
 (org-defkey org-mode-map (kbd "C-H-M-\\") 'nomis/org-visibility-span/set-max)
 
-(org-defkey org-mode-map (kbd "H-M-m")    'norg/show-tree-only)
-(org-defkey org-mode-map (kbd "H-q H-s")  'norg/set-step-n-levels-to-show)
+(org-defkey org-mode-map (kbd "H-M-m")       'norg/show-tree-only)
+(org-defkey org-mode-map (kbd "H-q H-q s") 'norg/set-step-n-levels-to-show)
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ;;;; ____ ** Expand/collapse
@@ -132,8 +132,8 @@ H-q H-/  Show this help")
 (org-defkey org-mode-map (kbd "H-M--")   'norg/show-children-from-all-roots/set-min)
 (org-defkey org-mode-map (kbd "H-M-=")   'norg/show-children-from-all-roots/fully-expand)
 
-(org-defkey org-mode-map (kbd "H-q H-]") 'norg/show-children-from-root/to-current-level)
-(org-defkey org-mode-map (kbd "H-q H-=") 'norg/show-children-from-all-roots/to-current-level)
+(org-defkey org-mode-map (kbd "H-q H-q ]") 'norg/show-children-from-root/to-current-level)
+(org-defkey org-mode-map (kbd "H-q H-q =") 'norg/show-children-from-all-roots/to-current-level)
 
 ;;; The following keys are copied from org.el.
 ;; TAB key with modifiers
@@ -173,7 +173,7 @@ H-q H-/  Show this help")
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ;;;; ____ ** Maintain cursor position
 
-(org-defkey org-mode-map (kbd "H-q H-m") 'nomis/scrolling/toggle-maintain-line-no-in-window)
+(org-defkey org-mode-map (kbd "H-q H-q m") 'nomis/scrolling/toggle-maintain-line-no-in-window)
 
 ;;;; ___________________________________________________________________________
 ;;;; ____ * Agenda
