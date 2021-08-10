@@ -8,6 +8,7 @@
 (require 'clojure-mode)
 (require 'nomis-clojure-mode-fixes)
 (require 'nomis-clojure-mode-extras)
+(require 'nomis-clojure-lsp)
 
 (define-key clojure-mode-map (kbd "RET") 'newline-and-indent)
 
@@ -17,7 +18,7 @@
 ;;;; Linting
 
 ;; (require 'flycheck-joker)
-(require 'flycheck-clj-kondo)
+;; (require 'flycheck-clj-kondo)
 
 ;;;; https://github.com/borkdude/flycheck-clj-kondo says "To set up multiple
 ;;;; linters, e.g. in combination with flycheck-joker, add this after you
