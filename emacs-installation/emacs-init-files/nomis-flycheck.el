@@ -14,7 +14,8 @@
   (cond
    ((member (flycheck-version)
             '("31"
-              "32snapshot (package: 20191126.2142)"))
+              "32snapshot (package: 20191126.2142)"
+              "32snapshot (package: 20210708.1337)"))
     (defvar *-nomis/add-checker-name-to-flycheck-message?* nil)
     (advice-add 'flycheck-display-error-messages
                 :around
@@ -24,7 +25,7 @@
                 '((name . nomis/add-checker-name-to-flycheck-message*)))
     (advice-add 'flycheck-error-format-message-and-id
                 :around
-                (lambda (orig-fun err)
+                (lambda (orig-fun err &optional include-snippet)
                   (let* ((raw-value (funcall orig-fun err)))
                     (if *-nomis/add-checker-name-to-flycheck-message?*
                         (let* ((error-checker-info
