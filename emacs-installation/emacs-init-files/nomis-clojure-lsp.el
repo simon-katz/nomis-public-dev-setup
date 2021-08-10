@@ -8,4 +8,12 @@
 (add-hook 'clojurescript-mode-hook 'lsp)
 (add-hook 'clojurec-mode-hook 'lsp)
 
+(defface lsp-ui-sideline-code-action
+  '((((background light))
+     :foreground "gray95"
+     :background "springgreen4")
+    (t :foreground "yellow"))
+  "Face used to highlight code action text."
+  :group 'lsp-ui-sideline)
+
 (provide 'nomis-clojure-lsp)
