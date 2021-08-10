@@ -48,4 +48,14 @@
 This face have a low priority over the others."
   :group 'lsp-ui-sideline)
 
+(defcustom lsp-diagnostics-attributes
+  `((unnecessary :foreground "grey45") ; was "gray"
+    (deprecated  :strike-through t))
+  "The Attributes used on the diagnostics.
+List containing (tag attributes) where tag is the LSP diagnostic tag and
+attributes is a `plist' containing face attributes which will be applied
+on top the flycheck face for that error level."
+  :type '(repeat list)
+  :group 'lsp-diagnostics)
+
 (provide 'nomis-clojure-lsp)
