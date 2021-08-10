@@ -40,4 +40,12 @@
   "Face used to highlight code action text."
   :group 'lsp-ui-sideline)
 
+(defface lsp-ui-sideline-global ; this is used for Flycheck errors
+  '((((background light))
+     :background "yellow2")
+    (t))
+  "Face which apply to all overlays.
+This face have a low priority over the others."
+  :group 'lsp-ui-sideline)
+
 (provide 'nomis-clojure-lsp)
