@@ -41,7 +41,8 @@
                   (apply orig-fun args)))
               `((name . if-no-prefix-do-nothing))))
  ((member (company-version)
-          '("0.9.12"))
+          '("0.9.12"
+            "0.9.13"))
   (advice-add 'company-calculate-candidates
               :around
               (lambda (orig-fun &rest args)
