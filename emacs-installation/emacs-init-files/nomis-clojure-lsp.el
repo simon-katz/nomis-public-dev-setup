@@ -32,18 +32,19 @@
 (add-hook 'clojurescript-mode-hook 'lsp)
 (add-hook 'clojurec-mode-hook 'lsp)
 
+;; Tailoring of faces, needed especially for light themes.
+
 (defface lsp-ui-sideline-code-action
-  '((((background light))
+  '((t
      :foreground "gray95"
-     :background "springgreen4")
-    (t :foreground "yellow"))
+     :background "springgreen4"))
   "Face used to highlight code action text."
   :group 'lsp-ui-sideline)
 
 (defface lsp-ui-sideline-global ; this is used for Flycheck errors
-  '((((background light))
-     :background "yellow2")
-    (t))
+  '((t
+     :foreground "black"
+     :background "yellow2"))
   "Face which apply to all overlays.
 This face have a low priority over the others."
   :group 'lsp-ui-sideline)
