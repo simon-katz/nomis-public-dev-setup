@@ -61,6 +61,7 @@
                       yafolding
                       highlight-indentation
                       discover
+                      flycheck
                       flycheck-joker
                       treepy
                       cl-format
@@ -72,7 +73,16 @@
                       auto-dim-other-buffers
                       loccur
                       logview
-                      vterm))
+                      vterm
+                      keycast
+                      flycheck-kotlin
+                      kotlin-mode
+                      terraform-mode
+                      lsp-ui
+                      lsp-treemacs
+                      lsp-mode
+                      json-mode
+                      gnu-elpa-keyring-update))
 
 (dolist (p my-packages)
   (when (not (package-installed-p p))
