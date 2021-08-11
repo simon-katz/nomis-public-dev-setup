@@ -46,6 +46,18 @@ Show the last `magit-log-section-commit-count' commits."
     (set-face-background 'magit-diff-hunk-heading-highlight "CadetBlue3")
     (set-face-foreground 'magit-diff-hunk-heading-highlight "gray10")))
 
+(defvar nomis/-magit-section-visibility/seens '())
+(make-variable-buffer-local 'nomis/-magit-section-visibility/seens)
+(put 'nomis/-magit-section-visibility/seens 'permanent-local t)
+
+(defun nomis/-magit-section-visibility (section)
+  (let* ((item (magit-section-lineage section))
+         (seen? (member item nomis/-magit-section-visibility/seens)))
+    (if seen?
+        nil
+      (progn (push item nomis/-magit-section-visibility/seens)
+             'show))))
+
 (defun nomis/-magic-init-sections ()
   ;; Change what's in Magit status buffers:
   ;; - By default, if there are unpushed commits Magit status doesn't show
@@ -63,7 +75,9 @@ Show the last `magit-log-section-commit-count' commits."
                             t))
   (remove-hook 'magit-status-sections-hook
                'magit-insert-unpushed-to-upstream-or-recent
-               t))
+               t)
+  ;; Make all sections initially expanded.
+  (add-hook 'magit-section-set-visibility-hook 'nomis/-magit-section-visibility))
 
 (defun nomis/init-magit-mode ()
   (company-mode 0)
