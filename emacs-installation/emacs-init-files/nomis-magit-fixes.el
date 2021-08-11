@@ -27,7 +27,8 @@
    ((member magit-version '("2.10.3"
                             "2.11.0"
                             "2.13.0"
-                            "2.90.1"))
+                            "2.90.1"
+                            "20210810.800"))
     (-nomis/fix-magit-auto-revert/2.10.3))
    (t
     (message-box (s-join " "

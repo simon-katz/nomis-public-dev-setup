@@ -21,10 +21,9 @@ Show the last `magit-log-section-commit-count' commits."
           (format (propertize "Recently merged into %s:" 'face 'magit-section-heading)
                   (magit-get-upstream-branch)))
         (magit-insert-log range
-                          (cons (format "-n%d" magit-log-section-commit-count
-                                        )
+                          (cons (format "-n%d" magit-log-section-commit-count)
                                 (--remove (string-prefix-p "-n" it)
-                                          magit-log-section-arguments)))))))
+                                          magit-buffer-log-args)))))))
 
 (defun nomis/set-magit-faces ()
   (set-face-background 'magit-diff-context-highlight "lavender")
@@ -47,6 +46,25 @@ Show the last `magit-log-section-commit-count' commits."
     (set-face-background 'magit-diff-hunk-heading-highlight "CadetBlue3")
     (set-face-foreground 'magit-diff-hunk-heading-highlight "gray10")))
 
+(defun nomis/-magic-init-sections ()
+  ;; Change what's in Magit status buffers:
+  ;; - By default, if there are unpushed commits Magit status doesn't show
+  ;;   pushed commits.
+  ;;   That's not good.
+  ;;   Fix this by replacing `magit-insert-unpushed-to-upstream-or-recent`, with
+  ;;   `magit-insert-unpushed-to-upstream` and
+  ;;   `nomis/magit-insert-pushed-commits`.
+  (dolist (f '(magit-insert-unpushed-to-upstream
+               nomis/magit-insert-pushed-commits))
+    (magit-add-section-hook 'magit-status-sections-hook
+                            f
+                            'magit-insert-unpushed-to-upstream-or-recent
+                            nil ; before
+                            t))
+  (remove-hook 'magit-status-sections-hook
+               'magit-insert-unpushed-to-upstream-or-recent
+               t))
+
 (defun nomis/init-magit-mode ()
   (company-mode 0)
   (nomis/set-magit-faces)
@@ -64,21 +82,7 @@ Show the last `magit-log-section-commit-count' commits."
   ;; (setq git-commit-summary-max-length 999)
   (setq magit-display-buffer-function
         'magit-display-buffer-same-window-except-diff-v1)
-  (progn
-    ;; The behaviour of only showing unpushed commits is annoying with my
-    ;; "apply-local-formatting" stuff, so show all recent commits instead:
-    (magit-add-section-hook 'magit-status-sections-hook
-                            'nomis/temp-to-delete
-                            'magit-insert-unpushed-to-upstream-or-recent
-                            'replace)
-    (magit-add-section-hook 'magit-status-sections-hook
-                            'magit-insert-unpushed-to-upstream
-                            'nomis/temp-to-delete
-                            nil)
-    (magit-add-section-hook 'magit-status-sections-hook
-                            'nomis/magit-insert-pushed-commits
-                            'nomis/temp-to-delete
-                            'replace)))
+  (nomis/-magic-init-sections))
 
 (add-hook 'magit-mode-hook 'nomis/init-magit-mode)
 
@@ -93,7 +97,7 @@ Show the last `magit-log-section-commit-count' commits."
   (when (equal arg '(4))
     (make-frame)
     (nomis/w-double))
-  (magit-status))
+  (magit-status-setup-buffer))
 
 (global-set-key (kbd "C-c g") 'nomis/magit/status)
 
