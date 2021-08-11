@@ -21,23 +21,11 @@ or call the function `auto-dim-other-buffers-mode'.")
 (custom-autoload 'auto-dim-other-buffers-mode "auto-dim-other-buffers" nil)
 
 (autoload 'auto-dim-other-buffers-mode "auto-dim-other-buffers" "\
-Visually makes windows without focus less prominent.
-
-Windows without input focus are made to look less prominent by
-applying ‘auto-dim-other-buffers-face’ to them.  With many
-windows in a frame, the idea is that this mode helps recognise
-which is the selected window by providing a non-intrusive but
-still noticeable visual indicator.
-
-Note that despite it’s name, since Emacs 27 this mode operates
-on *windows* rather than buffers.  In older versions of Emacs, if
-a buffer was displayed in multiple windows, none of them would be
-dimmed even though at most one could have focus.  This historic
-behaviour is where the mode gets its name from.
+Visually makes non-current buffers less prominent
 
 \(fn &optional ARG)" t nil)
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "auto-dim-other-buffers" '("adob--" "auto-dim-other-buffers-")))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "auto-dim-other-buffers" '("auto-dim-other-buffers-dim-on-" "adob--")))
 
 ;;;***
 

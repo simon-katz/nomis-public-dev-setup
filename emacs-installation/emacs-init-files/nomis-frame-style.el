@@ -92,6 +92,9 @@ unselected buffers.")
 ;;;; I would like to do this for unselected windows (rather than buffers), but
 ;;;; I don't think there's a way to do that.
 
+;; This will need revisiting if you upgrade to
+;; auto-dim-other-buffers-20210210.1744
+
 (defun nomis/turn-on-auto-dim-other-buffers-mode ()
   (when (fboundp 'auto-dim-other-buffers-mode)
     (auto-dim-other-buffers-mode t)))
