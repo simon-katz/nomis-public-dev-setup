@@ -93,7 +93,6 @@
 (require 'org)
 (require 'cl-lib)
 (require 'dash)
-(require 'dash-functional)
 
 ;;;; Things that you might want to make into packages if you make norg into a
 ;;;; package.

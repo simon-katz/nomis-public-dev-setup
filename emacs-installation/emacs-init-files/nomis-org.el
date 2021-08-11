@@ -31,7 +31,6 @@
 (require 'org-bullets)
 (require 'cl)
 (require 'dash)
-(require 'dash-functional)
 
 ;;;; ___________________________________________________________________________
 ;;;; ____ * General

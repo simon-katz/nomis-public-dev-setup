@@ -67,7 +67,6 @@
                       cl-format
                       parseedn
                       dumb-jump
-                      dash-functional
                       org-bullets
                       flycheck-clj-kondo
                       auto-dim-other-buffers
