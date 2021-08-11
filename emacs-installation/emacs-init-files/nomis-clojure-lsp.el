@@ -2,6 +2,9 @@
 
 ;;;; See https://emacs-lsp.github.io/lsp-mode/tutorials/clojure-guide/
 
+;;;; ___________________________________________________________________________
+;;;; General setup.
+
 (setq lsp-keymap-prefix "H-q H-s")
 
 (defun nomis/lsp-init ()
@@ -32,7 +35,8 @@
 (add-hook 'clojurescript-mode-hook 'lsp)
 (add-hook 'clojurec-mode-hook 'lsp)
 
-;; Tailoring of faces, needed especially for light themes.
+;;;; ___________________________________________________________________________
+;;;; Tailoring of faces, needed especially for light themes.
 
 (defface lsp-ui-sideline-code-action
   '((t
