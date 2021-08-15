@@ -146,6 +146,8 @@
 
 (require 'nomis-dictionaries-etc)
 
+(require 'nomis-vterm-hacks)
+
 ;;;; ---- Lisp and Clojure stuff probably good for anyone ----
 
 (require 'nomis-paredit)
