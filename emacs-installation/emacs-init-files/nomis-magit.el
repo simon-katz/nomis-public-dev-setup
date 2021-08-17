@@ -4,26 +4,13 @@
 
 (require 'nomis-magit-fixes)
 
+;;;; ___________________________________________________________________________
+;;;; ---- Turn off the annoying auto-revert ---
+
 (magit-auto-revert-mode 0)
 
-(defun nomis/magit-insert-pushed-commits ()
-  "Insert section showing pushed commits.
-Show the last `magit-log-section-commit-count' commits."
-  (when (magit-git-success "rev-parse" "@{upstream}")
-    (let* ((pushed (magit-rev-parse "@{upstream}"))
-           (start (format "%s~%s" pushed magit-log-section-commit-count
-                          ))
-           (range (and (magit-rev-verify start)
-                       (concat start ".." "@{upstream}"))))
-      (magit-insert-section (recent
-                             range)
-        (magit-insert-heading
-          (format (propertize "Recently merged into %s:" 'face 'magit-section-heading)
-                  (magit-get-upstream-branch)))
-        (magit-insert-log range
-                          (cons (format "-n%d" magit-log-section-commit-count)
-                                (--remove (string-prefix-p "-n" it)
-                                          magit-buffer-log-args)))))))
+;;;; ___________________________________________________________________________
+;;;; ---- Faces ----
 
 (defun nomis/set-magit-faces ()
   (set-face-background 'magit-diff-context-highlight "lavender")
@@ -46,17 +33,27 @@ Show the last `magit-log-section-commit-count' commits."
     (set-face-background 'magit-diff-hunk-heading-highlight "CadetBlue3")
     (set-face-foreground 'magit-diff-hunk-heading-highlight "gray10")))
 
-(defvar nomis/-magit-section-visibility/seens '())
-(make-variable-buffer-local 'nomis/-magit-section-visibility/seens)
-(put 'nomis/-magit-section-visibility/seens 'permanent-local t)
+;;;; ___________________________________________________________________________
+;;;; ---- Status sections ----
 
-(defun nomis/-magit-section-visibility (section)
-  (let* ((item (magit-section-lineage section))
-         (seen? (member item nomis/-magit-section-visibility/seens)))
-    (if seen?
-        nil
-      (progn (push item nomis/-magit-section-visibility/seens)
-             'show))))
+(defun nomis/magit-insert-pushed-commits ()
+  "Insert section showing pushed commits.
+Show the last `magit-log-section-commit-count' commits."
+  (when (magit-git-success "rev-parse" "@{upstream}")
+    (let* ((pushed (magit-rev-parse "@{upstream}"))
+           (start (format "%s~%s" pushed magit-log-section-commit-count
+                          ))
+           (range (and (magit-rev-verify start)
+                       (concat start ".." "@{upstream}"))))
+      (magit-insert-section (recent
+                             range)
+        (magit-insert-heading
+          (format (propertize "Recently merged into %s:" 'face 'magit-section-heading)
+                  (magit-get-upstream-branch)))
+        (magit-insert-log range
+                          (cons (format "-n%d" magit-log-section-commit-count)
+                                (--remove (string-prefix-p "-n" it)
+                                          magit-buffer-log-args)))))))
 
 (defun nomis/-magic-init-sections ()
   ;; Change what's in Magit status buffers:
@@ -75,9 +72,30 @@ Show the last `magit-log-section-commit-count' commits."
                             t))
   (remove-hook 'magit-status-sections-hook
                'magit-insert-unpushed-to-upstream-or-recent
-               t)
-  ;; Make all sections initially expanded.
-  (add-hook 'magit-section-set-visibility-hook 'nomis/-magit-section-visibility))
+               t))
+
+;;;; ___________________________________________________________________________
+;;;; ---- Section visibility ----
+
+;;;; Make all sections initially expanded.
+
+(defvar nomis/-magit-section-visibility/seens '())
+(make-variable-buffer-local 'nomis/-magit-section-visibility/seens)
+(put 'nomis/-magit-section-visibility/seens 'permanent-local t)
+
+(defun nomis/-magit-section-visibility (section)
+  (let* ((item (magit-section-lineage section))
+         (seen? (member item nomis/-magit-section-visibility/seens)))
+    (if seen?
+        nil
+      (progn (push item nomis/-magit-section-visibility/seens)
+             'show))))
+
+(defun nomis/-magit-init-section-visibility ()
+  (add-hook 'magit-section-set-visibility-hook
+            'nomis/-magit-section-visibility))
+
+;;;; ___________________________________________________________________________
 
 (defun nomis/init-magit-mode ()
   (company-mode 0)
@@ -96,7 +114,8 @@ Show the last `magit-log-section-commit-count' commits."
   ;; (setq git-commit-summary-max-length 999)
   (setq magit-display-buffer-function
         'magit-display-buffer-same-window-except-diff-v1)
-  (nomis/-magic-init-sections))
+  (nomis/-magic-init-sections)
+  (nomis/-magit-init-section-visibility))
 
 (add-hook 'magit-mode-hook 'nomis/init-magit-mode)
 
