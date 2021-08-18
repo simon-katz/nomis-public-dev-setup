@@ -52,6 +52,25 @@
         ))
 
 ;;;; ___________________________________________________________________________
+;;;; Don't stop showing flycheck info in the echo area. Useful, and also
+;;;; sometimes diagnostics are not shown in the LSP UI.
+
+(advice-add 'lsp-ui-sideline-mode
+            :after
+            (lambda (&rest _)
+              (when lsp-ui-sideline-mode
+                (kill-local-variable 'flycheck-display-errors-function)))
+            '((name . nomis/show-flycheck-info)))
+
+(advice-add 'flycheck-display-error-messages
+            :around
+            (lambda (orig-fun &rest args)
+              (run-at-time 0
+                           nil
+                           (lambda () (apply orig-fun args))))
+            '((name . nomis/lsp-avoid-slow-sideline-update)))
+
+;;;; ___________________________________________________________________________
 ;;;; Additional functionality.
 
 (defun nomis/lsp-toggle-lsp-ui-sideline-show-code-actions ()
