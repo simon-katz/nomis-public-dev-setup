@@ -83,7 +83,7 @@
             '((name . nomis/lsp-avoid-slow-sideline-update)))
 
 ;;;; ___________________________________________________________________________
-;;;; Additional functionality.
+;;;; Additional functionality
 
 (defun nomis/lsp-toggle-lsp-ui-sideline-show-code-actions ()
   (interactive)
@@ -91,16 +91,17 @@
              ()
              (let* ((inhibit-message t))
                (lsp-ui-sideline-mode 0)
-               (lsp-ui-sideline-mode 1))
-             ;; Why does this take so long too update the UI with M-x, but is
-             ;; fast when invoked using a keyboard binding?
-             ;; Note that `M-x lsp-ui-sideline-mode` is slow to update too.
-             ))
+               (lsp-ui-sideline-mode 1))))
     (setq lsp-ui-sideline-show-code-actions
           (not lsp-ui-sideline-show-code-actions))
     (force-update-sideline-with-a-slegehammer))
-  (message "Set `lsp-ui-sideline-show-code-actions` to `%s` -- Use the keyboard binding for faster UI update!"
-           lsp-ui-sideline-show-code-actions))
+  ;; We use `run-at-time` here because otherwise the UI refresh is slow.
+  ;; - See https://debbugs.gnu.org/cgi/bugreport.cgi?bug=50042
+  (run-at-time 0.2
+               nil
+               (lambda ()
+                 (message "Set `lsp-ui-sideline-show-code-actions` to `%s`"
+                          lsp-ui-sideline-show-code-actions))))
 
 ;;;; ___________________________________________________________________________
 ;;;; Key bindings
