@@ -152,6 +152,8 @@
 
 ;;;; ---- Lisp and Clojure stuff probably good for anyone ----
 
+(require 'nomis-sexp-navigation)
+
 (require 'nomis-paredit)
 (require 'nomis-paxedit)
 (require 'nomis-emacs-lisp-and-ielm)
