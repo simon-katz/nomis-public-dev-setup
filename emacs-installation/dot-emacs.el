@@ -148,6 +148,8 @@
 
 (require 'nomis-dictionaries-etc)
 
+(require 'nomis-lsp-hacks)
+
 (require 'nomis-vterm-hacks)
 
 ;;;; ---- Lisp and Clojure stuff probably good for anyone ----
