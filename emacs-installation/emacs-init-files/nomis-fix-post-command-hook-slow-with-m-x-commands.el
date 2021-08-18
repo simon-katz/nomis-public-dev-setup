@@ -1,6 +1,12 @@
 ;;; nomis-fix-post-command-hook-slow-with-m-x-commands.el --- Fix for post-sommand hooks being slow with M-x commands      -*- lexical-binding: t; -*-
 
 (cond
+ ;; See https://debbugs.gnu.org/cgi/bugreport.cgi?bug=50042
+ ;; See https://github.com/emacs-lsp/lsp-ui/issues/647
+ ;; Without this, various commands take ages to refresh the UI:
+ ;; - `M-x nomis/lsp-toggle-lsp-ui-sideline-show-code-actions`
+ ;; - `M-x flycheck-previous-error`
+ ;; - `M-x flycheck-next-error`
  ((member emacs-version
           '("26.3"))
   ;; The original `execute-extended-command` is defined in `simple`.
@@ -66,15 +72,24 @@ invoking, give a prefix argument to `execute-extended-command'."
               (setq binding (execute-extended-command--shorter
                              (symbol-name function) typed))))
           (when binding
-            (with-temp-message
-                (format-message "You can run the command `%s' with %s"
-                                function
-                                (if (stringp binding)
-                                    (concat "M-x " binding " RET")
-                                  (key-description binding)))
-              (sit-for (if (numberp suggest-key-bindings)
-                           suggest-key-bindings
-                         2)))))))))
+            ;; nomis-hack:
+            ;; - See https://debbugs.gnu.org/cgi/bugreport.cgi?bug=50042
+            ;; - Introducing `run-at-time` as a hack.
+            (run-at-time
+             ;; Using `0` as the first arg works in simple cases, but not
+             ;; when using `lsp-ui` sidebars for diagnostics.
+             0.2
+             nil
+             (lambda ()
+               (with-temp-message
+                   (format-message "You can run the command `%s' with %s"
+                                   function
+                                   (if (stringp binding)
+                                       (concat "M-x " binding " RET")
+                                     (key-description binding)))
+                 (sit-for (if (numberp suggest-key-bindings)
+                              suggest-key-bindings
+                            2)))))))))))
  (t
   (message-box
    "You need to fix `execute-extended-command` for this version of Emacs.")))
