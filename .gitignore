@@ -15,6 +15,7 @@ emacs-installation/.emacs.d/server/
 emacs-installation/.gnupg/
 emacs-installation/.emacs.d/logview-cache.extmap
 emacs-installation/.emacs.d/transient/
+emacs-installation/.emacs.d/.lsp-session-v1
 
 # To get vterm to work on a new machine:
 # - delete the following things (the ignored things after this comment)
