@@ -134,15 +134,6 @@ Show the last `magit-log-section-commit-count' commits."
 
 (global-set-key (kbd "C-c g") 'nomis/magit/status)
 
-
-
-;; (eval-after-load 'magit
-;;   '(progn
-;;      (set-face-foreground 'magit-diff-added "green4")
-;;      (set-face-foreground 'magit-diff-removed "orangered2")
-;;      ;; This has gone: (set-face-background 'magit-item-highlight "palegoldenrod")
-;;      ))
-
 ;;;; ___________________________________________________________________________
 
 (provide 'nomis-magit)
