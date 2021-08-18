@@ -47,5 +47,12 @@
      "You need to fix our 'include checker name in flycheck messages' for this version of flycheck."))))
 
 ;;;; ___________________________________________________________________________
+;;;; Provide some easier-to-type key bindings than the built-in ones
+
+(let* ((m flycheck-mode-map))
+  (define-key m (kbd "C-z C-<left>")  'flycheck-previous-error)
+  (define-key m (kbd "C-z C-<right>") 'flycheck-next-error))
+
+;;;; ___________________________________________________________________________
 
 (provide 'nomis-flycheck)
