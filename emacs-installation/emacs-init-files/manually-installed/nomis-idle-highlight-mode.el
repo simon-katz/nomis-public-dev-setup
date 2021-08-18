@@ -180,14 +180,15 @@
   "Face used to highlight other occurrences of the word at point."
   :group 'nomis/idle-highlight)
 
-(defvar nomis/ih/muted-yellow "#fefd90")
+(defconst nomis/ih/idle-highlight-muted-color "#eeee99")
 
 (defface nomis/idle-highlight-muted
+  ;; c.f. tailoring of `lsp-face-highlight-textual`.
   `((((min-colors 88) (background dark))
-     (:background ,nomis/ih/muted-yellow :foreground "black"))
-    (((background dark)) (:background ,nomis/ih/muted-yellow :foreground "black"))
-    (((min-colors 88)) (:background ,nomis/ih/muted-yellow))
-    (t (:background ,nomis/ih/muted-yellow)))
+     (:background ,nomis/ih/idle-highlight-muted-color :foreground "black"))
+    (((background dark)) (:background ,nomis/ih/idle-highlight-muted-color :foreground "black"))
+    (((min-colors 88)) (:background ,nomis/ih/idle-highlight-muted-color))
+    (t (:background ,nomis/ih/idle-highlight-muted-color)))
   "Default face for hi-lock mode."
   :group 'hi-lock-faces)
 

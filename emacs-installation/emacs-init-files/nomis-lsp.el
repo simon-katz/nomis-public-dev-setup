@@ -35,6 +35,17 @@
 ;;;; ___________________________________________________________________________
 ;;;; Tailoring of faces, needed especially for light themes.
 
+(defconst nomis/lsp-symbol-highlight-color "#ffff00")
+
+(face-spec-set
+ 'lsp-face-highlight-textual
+ ;; c.f. tailoring of `nomis/idle-highlight-muted`.
+ `((((min-colors 88) (background dark))
+    (:background ,nomis/lsp-symbol-highlight-color :foreground "black"))
+   (((background dark)) (:background ,nomis/lsp-symbol-highlight-color :foreground "black"))
+   (((min-colors 88)) (:background ,nomis/lsp-symbol-highlight-color))
+   (t (:background ,nomis/lsp-symbol-highlight-color))))
+
 (face-spec-set
  'lsp-ui-sideline-code-action
  '((t
