@@ -113,6 +113,8 @@
 (require 'cl)
 (require 'mmt)
 
+(require 'nomis-fix-post-command-hook-slow-with-m-x-commands)
+
 (require 'nomis-core-utils)
 (require 'nomis-very-general-stuff-new)
 (require 'nomis-message-window)
