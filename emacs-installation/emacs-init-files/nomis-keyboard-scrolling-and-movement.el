@@ -23,10 +23,11 @@ in the display."
   (next-line n)
   (scroll-up-line n))
 
-(define-key global-map (kbd "C-M-S-<up>")   'scroll-down-line)
-(define-key global-map (kbd "C-M-S-<down>") 'scroll-up-line)
-(define-key global-map (kbd "C-S-<up>")     'nomis/scroll-down-line-in-place)
-(define-key global-map (kbd "C-S-<down>")   'nomis/scroll-up-line-in-place)
+(progn
+  (define-key global-map (kbd "C-M-S-<up>")   'scroll-down-line)
+  (define-key global-map (kbd "C-M-S-<down>") 'scroll-up-line)
+  (define-key global-map (kbd "C-S-<up>")     'nomis/scroll-down-line-in-place)
+  (define-key global-map (kbd "C-S-<down>")   'nomis/scroll-up-line-in-place))
 
 ;;;; ___________________________________________________________________________
 
