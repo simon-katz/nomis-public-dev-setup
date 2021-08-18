@@ -34,20 +34,17 @@
 ;;;; ___________________________________________________________________________
 ;;;; Tailoring of faces, needed especially for light themes.
 
-(defface lsp-ui-sideline-code-action
-  '((t
-     :foreground "gray95"
-     :background "springgreen4"))
-  "Face used to highlight code action text."
-  :group 'lsp-ui-sideline)
+(face-spec-set
+ 'lsp-ui-sideline-code-action
+ '((t
+    :foreground "gray95"
+    :background "springgreen4")))
 
-(defface lsp-ui-sideline-global ; this is used for Flycheck errors
-  '((t
-     :foreground "black"
-     :background "yellow2"))
-  "Face which apply to all overlays.
-This face have a low priority over the others."
-  :group 'lsp-ui-sideline)
+(face-spec-set
+ 'lsp-ui-sideline-global ; this is used for Flycheck errors
+ '((t
+    :foreground "black"
+    :background "yellow2")))
 
 (defcustom lsp-diagnostics-attributes
   `((unnecessary :foreground "grey45") ; was "gray"
