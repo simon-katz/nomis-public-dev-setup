@@ -7,7 +7,39 @@
    ((member (pkg-info-package-version 'lsp-ui)
             '((20210802 305)))
 
-    ;; Copied from Emacs source ready for hacking.
+    ;; There's a thing where long diagnostic messages aren't displayed. The code
+    ;; here truncates long messages so that there is more chance of them being
+    ;; displayed.
+    ;;
+    ;; The code that determines where to put messages and whether they will fit
+    ;; is side-effecty. I had tried repeatedly trying things in a loop, each
+    ;; time knocking a character off the end of the message until `pos-ov` is
+    ;; non-nil, but the side effects meant that the messages would jump about in
+    ;; a mad way as you typed (because each attempt caused the recording of a
+    ;; position as being used for messages, I think.)
+    ;;
+    ;; So instead I have an approach that works only some of the time: simply
+    ;; truncate long messages to the window width and hope that there's a place
+    ;; they can be displayed.
+
+    (defconst nomis/lsp-ui-sideline--truncation-suffix " ▶▶")
+    (defconst nomis/lsp-ui-sideline--truncation-suffix-len
+      (length nomis/lsp-ui-sideline--truncation-suffix))
+
+    (defun nomis/lsp-ui-sideline--maybe-truncate (msg n)
+      (let* ((suffix nomis/lsp-ui-sideline--truncation-suffix)
+             (suffix-len nomis/lsp-ui-sideline--truncation-suffix-len)
+             (len (length msg)))
+        (cond ((<= len n)
+               ;; No need to truncate.
+               msg)
+              ((< n suffix-len)
+               ;; Not a good situation. What should we do?
+               (apply #'concat (-repeat n "◼")))
+              (t
+               (concat (substring msg 0 (- n suffix-len))
+                       suffix)))))
+
     ;; The original `lsp-ui-sideline--diagnostics` is in `lsp-ui-sideline`.
     (defun lsp-ui-sideline--diagnostics (buffer bol eol)
       "Show diagnostics belonging to the current line.
@@ -28,6 +60,14 @@ Push sideline overlays on `lsp-ui-sideline--ovs'."
             (dolist (line (nreverse display-lines))
               (let* ((msg (string-trim (replace-regexp-in-string "[\t ]+" " " line)))
                      (msg (replace-regexp-in-string " " " " msg))
+                     ;; nomis-hack: Without this, over-long messages are not
+                     ;;             shown. This limits `msg` to the window
+                     ;;             width.
+                     (msg (let* ((window-width (1-
+                                                ;; gives 1 too big for me
+                                                (lsp-ui-sideline--window-width))))
+                            (nomis/lsp-ui-sideline--maybe-truncate msg
+                                                                   window-width)))
                      (len (length msg))
                      (level (flycheck-error-level e))
                      (face (if (eq level 'info) 'success level))
