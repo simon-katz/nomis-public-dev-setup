@@ -46,15 +46,10 @@
     :foreground "black"
     :background "yellow2")))
 
-(defcustom lsp-diagnostics-attributes
-  `((unnecessary :foreground "grey45") ; was "gray"
-    (deprecated  :strike-through t))
-  "The Attributes used on the diagnostics.
-List containing (tag attributes) where tag is the LSP diagnostic tag and
-attributes is a `plist' containing face attributes which will be applied
-on top the flycheck face for that error level."
-  :type '(repeat list)
-  :group 'lsp-diagnostics)
+(with-eval-after-load 'lsp-diagnostics
+  (setf (alist-get 'unnecessary lsp-diagnostics-attributes)
+        '(:foreground "grey45") ; was "gray"
+        ))
 
 ;;;; ___________________________________________________________________________
 ;;;; Additional functionality.
