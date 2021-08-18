@@ -8,7 +8,7 @@
 (defun nomis/lsp-init ()
   (setq
    lsp-lens-enable                   t
-   lsp-enable-symbol-highlighting    nil ; I prefer `nomis/idle-highlight`.
+   lsp-enable-symbol-highlighting    t
    lsp-ui-doc-enable                 nil ; Don't show horrible big grey boxes.
    lsp-eldoc-hook                    nil ; Don't blat signatures from CIDER.
    lsp-enable-indentation            nil ; Use CIDER indentation.
