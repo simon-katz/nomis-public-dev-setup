@@ -9,11 +9,11 @@
   (setq
    lsp-lens-enable                   t
    lsp-enable-symbol-highlighting    nil ; I prefer `nomis/idle-highlight`.
-   lsp-ui-doc-enable                 nil ; Horrible big grey doc boxes.
+   lsp-ui-doc-enable                 nil ; Don't show horrible big grey boxes.
    lsp-enable-indentation            nil ; Use CIDER indentation.
    lsp-ui-sideline-show-code-actions nil ; Don't show clutter! But see `nomis/lsp-toggle-lsp-ui-sideline-show-code-actions`.
 
-   ;; lsp-completion-enable            nil ; Uncomment to use Use CIDER completion
+   ;; lsp-completion-enable            nil ; Uncomment to use CIDER completion
    ;; gc-cons-threshold (* 100 1024 1024)
    ;; read-process-output-max (* 1024 1024)
    ;; treemacs-space-between-root-nodes nil
