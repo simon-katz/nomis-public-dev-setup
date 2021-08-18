@@ -67,20 +67,26 @@
 ;;;; Don't stop showing flycheck info in the echo area. Useful, and also
 ;;;; sometimes diagnostics are not shown in the LSP UI.
 
-(advice-add 'lsp-ui-sideline-mode
-            :after
-            (lambda (&rest _)
-              (when lsp-ui-sideline-mode
-                (kill-local-variable 'flycheck-display-errors-function)))
-            '((name . nomis/show-flycheck-info)))
+(advice-add
+ 'lsp-ui-sideline-mode
+ :after
+ (lambda (&rest _)
+   (when lsp-ui-sideline-mode
+     (kill-local-variable 'flycheck-display-errors-function)))
+ '((name . nomis/show-flycheck-info)))
 
-(advice-add 'flycheck-display-error-messages
-            :around
-            (lambda (orig-fun &rest args)
-              (run-at-time 0
-                           nil
-                           (lambda () (apply orig-fun args))))
-            '((name . nomis/lsp-avoid-slow-sideline-update)))
+(advice-add
+ 'flycheck-display-error-messages
+ ;; Note that we still need this after we added
+ ;; `nomis-fix-post-command-hook-slow-with-m-x-commands`.
+ ;; Maybe this will be unnecessary after
+ ;; https://debbugs.gnu.org/cgi/bugreport.cgi?bug=50042 is fixed.
+ :around
+ (lambda (orig-fun &rest args)
+   (run-at-time 0
+                nil
+                (lambda () (apply orig-fun args))))
+ '((name . nomis/lsp-avoid-slow-sideline-update)))
 
 ;;;; ___________________________________________________________________________
 ;;;; Additional functionality
