@@ -128,6 +128,8 @@
 
 ;;;; ---- General stuff ----
 
+(require 'nomis-disable-c-z)
+
 (require 'nomis-datetime)
 
 (require 'nomis-y-or-n-p)

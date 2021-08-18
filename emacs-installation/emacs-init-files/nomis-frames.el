@@ -14,10 +14,6 @@
 ;;;; ___________________________________________________________________________
 ;;;; ---- Get rid of some annoying key bindings ----
 
-(when (and (not (null window-system))
-           (eql (key-binding (kbd "C-z")) 'suspend-frame))
-  (global-unset-key (kbd "C-z")))
-
 (defun nomis/do-not-close-lots-of-frames (arg)
   (interactive "p")
   (message "No, I won't close lots of frames."))
