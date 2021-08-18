@@ -2,6 +2,57 @@
 
 ;;;; ___________________________________________________________________________
 
+(with-eval-after-load 'lsp-ui-sideline
+  (cond
+   ((member (pkg-info-package-version 'lsp-ui)
+            '((20210802 305)))
+
+    ;; Copied from Emacs source ready for hacking.
+    ;; The original `lsp-ui-sideline--diagnostics` is in `lsp-ui-sideline`.
+    (defun lsp-ui-sideline--diagnostics (buffer bol eol)
+      "Show diagnostics belonging to the current line.
+Loop over flycheck errors with `flycheck-overlay-errors-in'.
+Find appropriate position for sideline overlays with `lsp-ui-sideline--find-line'.
+Push sideline overlays on `lsp-ui-sideline--ovs'."
+      (when (and (bound-and-true-p flycheck-mode)
+                 (bound-and-true-p lsp-ui-sideline-mode)
+                 lsp-ui-sideline-show-diagnostics
+                 (eq (current-buffer) buffer))
+        (lsp-ui-sideline--delete-kind 'diagnostics)
+        (dolist (e (flycheck-overlay-errors-in bol (1+ eol)))
+          (let* ((lines (--> (flycheck-error-format-message-and-id e)
+                             (split-string it "\n")
+                             (lsp-ui-sideline--split-long-lines it)))
+                 (display-lines (butlast lines (- (length lines) lsp-ui-sideline-diagnostic-max-lines)))
+                 (offset 1))
+            (dolist (line (nreverse display-lines))
+              (let* ((msg (string-trim (replace-regexp-in-string "[\t ]+" " " line)))
+                     (msg (replace-regexp-in-string " " " " msg))
+                     (len (length msg))
+                     (level (flycheck-error-level e))
+                     (face (if (eq level 'info) 'success level))
+                     (margin (lsp-ui-sideline--margin-width))
+                     (msg (progn (add-face-text-property 0 len 'lsp-ui-sideline-global nil msg)
+                                 (add-face-text-property 0 len face nil msg)
+                                 msg))
+                     (string (concat (propertize " " 'display `(space :align-to (- right-fringe ,(lsp-ui-sideline--align len margin))))
+                                     (propertize msg 'display (lsp-ui-sideline--compute-height))))
+                     (pos-ov (lsp-ui-sideline--find-line len bol eol t offset))
+                     (ov (and pos-ov (make-overlay (car pos-ov) (car pos-ov)))))
+                (when pos-ov
+                  (setq offset (1+ (car (cdr pos-ov))))
+                  (overlay-put ov 'after-string string)
+                  (overlay-put ov 'kind 'diagnostics)
+                  (overlay-put ov 'before-string " ")
+                  (overlay-put ov 'position (car pos-ov))
+                  (push ov lsp-ui-sideline--ovs)))))))))
+
+   (t
+    (message-box
+     "You need to fix `lsp-ui-sideline--diagnostics` for this version of lsp-ui-sideline."))))
+
+;;;; ___________________________________________________________________________
+
 (with-eval-after-load 'lsp-diagnostics ; hack `lsp-diagnostics--flycheck-level`
 
   ;; Get rid of huge numbers of messages like this:
