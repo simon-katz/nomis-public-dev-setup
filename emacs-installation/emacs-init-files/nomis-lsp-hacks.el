@@ -4,6 +4,12 @@
 
 (with-eval-after-load 'lsp-diagnostics ; hack `lsp-diagnostics--flycheck-level`
 
+  ;; Get rid of huge numbers of messages like this:
+  ;;     Invalid face reference: lsp-flycheck-info-unnecessary
+  ;;     Invalid face reference: lsp-flycheck-warning-unnecessary
+  ;;
+  ;; See https://github.com/emacs-lsp/lsp-mode/issues/2255
+
   (cond
    ((member (pkg-info-package-version 'lsp-mode)
             '((20210808 2036)))
@@ -18,7 +24,7 @@ g. `error', `warning') and list of LSP TAGS."
                           flycheck-level
                           (mapconcat #'symbol-name tags "-"))))
         (or (intern-soft name)
-            (let* ((face (--doto (intern (format "lsp-%s-face" name))
+            (let* ((face (--doto (intern name)
                            (copy-face (-> flycheck-level
                                           (get 'flycheck-overlay-category)
                                           (get 'face))
@@ -27,7 +33,7 @@ g. `error', `warning') and list of LSP TAGS."
                                    (apply #'set-face-attribute it nil
                                           (cl-rest (assoc tag lsp-diagnostics-attributes))))
                                  tags)))
-                   (category (--doto (intern (format "lsp-%s-category" name))
+                   (category (--doto (intern (format "%s-category" name))
                                (setf (get it 'face) face
                                      (get it 'priority) 100)))
                    (new-level (intern name))
