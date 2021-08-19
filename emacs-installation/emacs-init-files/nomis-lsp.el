@@ -5,12 +5,17 @@
 
 (setq lsp-keymap-prefix "H-q H-s")
 
+(defun nomis/lsp-eldoc ()
+  ;; Don't blat signatures from CIDER.
+  (unless (ignore-errors (cider-repls))
+    (lsp-hover)))
+
 (defun nomis/lsp-init ()
   (setq
    lsp-lens-enable                   t
    lsp-enable-symbol-highlighting    t
    lsp-ui-doc-enable                 nil ; Don't show horrible big grey boxes.
-   lsp-eldoc-hook                    nil ; Don't blat signatures from CIDER.
+   lsp-eldoc-hook                    '(nomis/lsp-eldoc)
    lsp-enable-indentation            nil ; Use CIDER indentation.
    lsp-ui-sideline-show-code-actions nil ; Don't show clutter! But see `nomis/lsp-toggle-lsp-ui-sideline-show-code-actions`.
 
