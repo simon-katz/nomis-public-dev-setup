@@ -153,6 +153,7 @@
 (require 'nomis-lsp-hacks)
 
 (require 'nomis-vterm-hacks)
+(require 'nomis-vterm)
 
 ;;;; ---- Lisp and Clojure stuff probably good for anyone ----
 
