@@ -51,5 +51,26 @@
 (pushnew "deftest-msg" cider-test-defining-forms) ; a Wefarm Nabu thing
 
 ;;;; ___________________________________________________________________________
+;;;; Add a prefix to CIDER eldoc info
+
+(defconst nomis/-cider-eldoc-message-prefix "[cider] ")
+
+(with-eval-after-load 'cider-eldoc
+  (cond
+   ((member (nomis/cider-version)
+            '("CIDER 0.26.1 (Nesebar)"))
+    (advice-add
+     'cider-eldoc-format-function
+     :around
+     (lambda (orig-fun &rest args)
+       (concat nomis/-cider-eldoc-message-prefix
+               (apply orig-fun args)))
+     '((name . nomis/add-lsp-prefix))))
+
+   (t
+    (message-box
+     "You need to fix `cider-eldoc-format-function` for this version of `cider`."))))
+
+;;;; ___________________________________________________________________________
 
 (provide 'nomis-cider-extras)
