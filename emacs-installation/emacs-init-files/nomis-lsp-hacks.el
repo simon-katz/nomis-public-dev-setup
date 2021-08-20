@@ -144,5 +144,38 @@ g. `error', `warning') and list of LSP TAGS."
      "You need to fix `lsp-diagnostics--flycheck-level` for this version of lsp-ui-sideline."))))
 
 ;;;; ___________________________________________________________________________
+;;;; Add a prefix to LSP eldoc info
+
+(defconst nomis/-lsp-eldoc-message-prefix "[lsp] ")
+
+(with-eval-after-load 'lsp-mode
+  (cond
+   ((member (pkg-info-package-version 'lsp-mode)
+            '((20210808 2036)))
+    (advice-add
+     'lsp--eldoc-message
+     :around
+     (lambda (orig-fun &optional msg)
+       (if (or (null msg)
+               (equal msg ""))
+           msg
+         ;; Because of the way `lsp--eldoc-message` saves the message, and later
+         ;; it is called with the saved message, we need to check whether `msg`
+         ;; already has the prefix.
+         (let* ((prefix-already-present? (string-prefix-p
+                                          nomis/-lsp-eldoc-message-prefix
+                                          msg))
+                (msg (if prefix-already-present?
+                         msg
+                       (concat nomis/-lsp-eldoc-message-prefix
+                               msg))))
+           (funcall orig-fun msg))))
+     '((name . nomis/add-lsp-prefix))))
+
+   (t
+    (message-box
+     "You need to fix `lsp--eldoc-message` for this version of `lsp`."))))
+
+;;;; ___________________________________________________________________________
 
 (provide 'nomis-lsp-hacks)
