@@ -80,19 +80,6 @@
      (kill-local-variable 'flycheck-display-errors-function)))
  '((name . nomis/show-flycheck-info)))
 
-(advice-add
- 'flycheck-display-error-messages
- ;; Note that we still need this after we added
- ;; `nomis-fix-post-command-hook-slow-with-m-x-commands`.
- ;; Maybe this will be unnecessary after
- ;; https://debbugs.gnu.org/cgi/bugreport.cgi?bug=50042 is fixed.
- :around
- (lambda (orig-fun &rest args)
-   (run-at-time 0
-                nil
-                (lambda () (apply orig-fun args))))
- '((name . nomis/lsp-avoid-slow-sideline-update)))
-
 ;;;; ___________________________________________________________________________
 ;;;; Additional functionality
 
@@ -106,13 +93,8 @@
     (setq lsp-ui-sideline-show-code-actions
           (not lsp-ui-sideline-show-code-actions))
     (force-update-sideline-with-a-slegehammer))
-  ;; We use `run-at-time` here because otherwise the UI refresh is slow.
-  ;; - See https://debbugs.gnu.org/cgi/bugreport.cgi?bug=50042
-  (run-at-time 0.2
-               nil
-               (lambda ()
-                 (message "Set `lsp-ui-sideline-show-code-actions` to `%s`"
-                          lsp-ui-sideline-show-code-actions))))
+  (message "Set `lsp-ui-sideline-show-code-actions` to `%s`"
+           lsp-ui-sideline-show-code-actions))
 
 ;;;; ___________________________________________________________________________
 ;;;; Key bindings
