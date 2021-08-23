@@ -19,10 +19,12 @@
    ;; lsp-eldoc-hook                    '(nomis/lsp-eldoc)
    lsp-enable-indentation            nil ; Use CIDER indentation.
    lsp-ui-sideline-show-code-actions nil ; Don't show clutter! But see `nomis/lsp-toggle-lsp-ui-sideline-show-code-actions`.
-
+   ;; See https://emacs-lsp.github.io/lsp-mode/page/performance/ (BTW, I'm not
+   ;; sure these belong here).
+   gc-cons-threshold (* 100 1024 1024)
+   read-process-output-max (* 1024 1024)
+   ;; Stuff to maybe look at:
    ;; lsp-completion-enable            nil ; Uncomment to use CIDER completion
-   ;; gc-cons-threshold (* 100 1024 1024)
-   ;; read-process-output-max (* 1024 1024)
    ;; treemacs-space-between-root-nodes nil
    ;; lsp-signature-auto-activate      nil ; TODO: What is this?
    ;; lsp-enable-dap-auto-configure    nil ; => t
