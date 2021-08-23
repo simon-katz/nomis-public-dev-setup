@@ -61,10 +61,10 @@
     :background "springgreen4")))
 
 (face-spec-set
- 'lsp-ui-sideline-global ; this is used for Flycheck errors
+ 'lsp-ui-sideline-global
  '((t
     :foreground "black"
-    :background "yellow2")))
+    :background "LemonChiffon1")))
 
 (with-eval-after-load 'lsp-diagnostics
   (setf (alist-get 'unnecessary lsp-diagnostics-attributes)
