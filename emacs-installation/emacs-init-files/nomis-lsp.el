@@ -3,21 +3,6 @@
 ;;;; ___________________________________________________________________________
 ;;;; General setup.
 
-;;;; TODO: Where are `lsp` and `lsp-clojure` options and commands listed?
-;;;;       I haven't found documentation yet.
-;;;;       Is there a better way to learn than looking at the source code in
-;;;;       the following?...
-;;;;       - `lsp-mode` etc
-;;;;       - `lsp-clojure`
-
-;;;; Clojure snippets
-;;;; - https://clojure-lsp.github.io/clojure-lsp/features/#snippets
-
-;;;; Useful commands:
-;;;; - `lsp-workspace-restart`
-;;;; - `lsp-treemacs-errors-list`
-;;;; - `lsp-clojure-xxxx` (eg `lsp-clojure-move-to-let`)
-
 (setq lsp-keymap-prefix "H-q H-s")
 
 ;; 2021-08-20 Suddenly this isn't needed. (Why?)
