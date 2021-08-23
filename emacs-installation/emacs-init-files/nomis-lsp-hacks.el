@@ -5,7 +5,8 @@
 (with-eval-after-load 'lsp-ui-sideline
   (cond
    ((member (pkg-info-package-version 'lsp-ui)
-            '((20210802 305)))
+            '((20210802 305)
+              (20210820 1331)))
 
     ;; There's a thing where long diagnostic messages aren't displayed. The code
     ;; here truncates long messages so that there is more chance of them being
@@ -103,7 +104,8 @@ Push sideline overlays on `lsp-ui-sideline--ovs'."
 
   (cond
    ((member (pkg-info-package-version 'lsp-mode)
-            '((20210808 2036)))
+            '((20210808 2036)
+              (20210821 1359)))
 
     ;; The original `lsp-diagnostics--flycheck-level` is in the
     ;; `lsp-diagnostics` package (but note that `M-.` on that takes you to a
@@ -151,7 +153,8 @@ g. `error', `warning') and list of LSP TAGS."
 (with-eval-after-load 'lsp-mode
   (cond
    ((member (pkg-info-package-version 'lsp-mode)
-            '((20210808 2036)))
+            '((20210808 2036)
+              (20210821 1359)))
     (advice-add
      'lsp--eldoc-message
      :around
