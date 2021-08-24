@@ -12,31 +12,38 @@
 ;;     (lsp-hover)))
 
 (defun nomis/lsp-init ()
-  (setq
-   lsp-lens-enable                   t
-   lsp-enable-symbol-highlighting    t
-   lsp-ui-doc-enable                 nil ; Don't show horrible big grey boxes.
-   ;; lsp-eldoc-hook                    '(nomis/lsp-eldoc)
-   lsp-enable-indentation            nil ; Use CIDER indentation.
-   lsp-ui-sideline-show-code-actions nil ; Don't show clutter! But see `nomis/lsp-toggle-lsp-ui-sideline-show-code-actions`.
-   ;; See https://emacs-lsp.github.io/lsp-mode/page/performance/ (BTW, I'm not
-   ;; sure these belong here).
-   gc-cons-threshold (* 100 1024 1024)
-   read-process-output-max (* 1024 1024)
-   ;; Stuff to maybe look at:
-   ;; lsp-completion-enable            nil ; Uncomment to use CIDER completion
-   ;; treemacs-space-between-root-nodes nil
-   ;; lsp-signature-auto-activate      nil ; TODO: What is this?
-   ;; lsp-enable-dap-auto-configure    nil ; => t
-   ;; lsp-enable-file-watchers         nil ; => t
-   ;; lsp-enable-folding               nil ; => t
-   ;; lsp-enable-imenu                 nil ; => t
-   ;; lsp-enable-links                 nil ; => t
-   ;; lsp-enable-on-type-formatting    nil ; => t
-   ;; lsp-enable-snippet               nil ; => t
-   ;; lsp-enable-text-document-color   nil ; => t
-   ;; lsp-enable-xref                  nil ; => t
-   ))
+  ;; Non-LSP stuff. I guess these don't belong here.
+  ;; See https://emacs-lsp.github.io/lsp-mode/page/performance/
+  (setq gc-cons-threshold (* 100 1024 1024))
+  (setq read-process-output-max (* 1024 1024))
+
+  ;; Stuff I want:
+  (setq lsp-lens-enable                   t)
+  (setq lsp-enable-symbol-highlighting    t)
+  (setq lsp-ui-doc-enable                 nil) ; Don't show big grey boxes.
+  ;; (setq lsp-eldoc-hook                    '(nomis/lsp-eldoc))
+  (setq lsp-enable-indentation            nil) ; Use CIDER indentation.
+  (setq lsp-ui-sideline-show-code-actions nil) ; Don't show clutter! But see `nomis/lsp-toggle-lsp-ui-sideline-show-code-actions`.
+
+  ;; Playing with `lsp-ui-sideline-show-hover`:
+  ;; - This doesn't work very well. If I have `(f1 (f2 (f3 ...)))` on a single
+  ;;   line with the cursor on `f2` or `f3`, it shows info for `f1`.
+  ;; (setq lsp-ui-sideline-show-hover        t)
+
+  ;; Stuff to maybe look at:
+  ;; (setq lsp-completion-enable            nil) ; Uncomment to use CIDER completion
+  ;; (setq treemacs-space-between-root-nodes nil)
+  ;; (setq lsp-signature-auto-activate      nil) ; TODO: What is this?
+  ;; (setq lsp-enable-dap-auto-configure    nil) ; => t
+  ;; (setq lsp-enable-file-watchers         nil) ; => t
+  ;; (setq lsp-enable-folding               nil) ; => t
+  ;; (setq lsp-enable-imenu                 nil) ; => t
+  ;; (setq lsp-enable-links                 nil) ; => t
+  ;; (setq lsp-enable-on-type-formatting    nil) ; => t
+  ;; (setq lsp-enable-snippet               nil) ; => t
+  ;; (setq lsp-enable-text-document-color   nil) ; => t
+  ;; (setq lsp-enable-xref                  nil) ; => t
+  )
 
 (add-hook 'lsp-mode-hook 'nomis/lsp-init)
 
