@@ -15,7 +15,7 @@
 
 (defvar nomis/y-or-n-p-query-replace-map-with-ret-for-y
   (let* ((m (copy-keymap query-replace-map)))
-    (define-key m (kbd "RET") 'act)
+    (define-key m [return] 'act)
     m))
 
 (advice-add
