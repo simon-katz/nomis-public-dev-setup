@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+mkdir -p _analysis
+
+find dev src test -name "*.clj" \
+    | xargs lein with-profile +clj-usage-graph \
+            run -m com.gfredericks.clj-usage-graph/var-graph \
+    | dot -Tpng -o _analysis/gfredericks-var-graph-with-tests.png

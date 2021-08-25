@@ -1,0 +1,212 @@
+#!/usr/bin/env bash
+
+#### ___________________________________________________________________________
+#### Options and usage
+
+script=$(basename "${BASH_SOURCE[0]}")
+
+# Switches
+print_branch_p=
+print_branch_if_not_master_p="YES"
+print_short_status_if_clean_p=
+print_ahead_or_behind_branches_if_none_p=
+print_local_branches_with_no_remote_if_none_p=
+remove_certain_lines_p=
+
+function usage {
+    echo "Usage:"
+    echo ""
+    echo "$script [options]"
+    echo ""
+    echo "options:"
+    echo "-h             Print this help"
+    echo "-b             Include 'branch name'  section always"
+    echo "-m             Exclude 'branch name'  section even when branch is not master"
+    echo "                 The -b option takes precedence over the -m option."
+    echo "-c             Include 'status'       section even if repo is clean"
+    echo "-d             Include 'ahead/behind' section even if no branches are ahead/behind"
+    echo "-r             Include 'no remotes'   section even if all branches have a remote"
+    echo "-v             Verbose; equivalent to -bcdr"
+    echo "-z             Look at ~/.nomis-git-status-patterns-to-ignore"
+}
+
+while getopts "hmbcdrvz" option; do
+    case "${option}" in
+        h)
+            usage
+            exit 0
+            ;;
+        b)
+            print_branch_p="YES"
+            ;;
+        m)
+            print_branch_if_not_master_p=
+            ;;
+        c)
+            print_short_status_if_clean_p="YES"
+            ;;
+        d)
+            print_ahead_or_behind_branches_if_none_p="YES"
+            ;;
+        r)
+            print_local_branches_with_no_remote_if_none_p="YES"
+            ;;
+        v)
+            print_branch_p="YES"
+            print_short_status_if_clean_p="YES"
+            print_ahead_or_behind_branches_if_none_p="YES"
+            print_local_branches_with_no_remote_if_none_p="YES"
+            ;;
+        z)
+            remove_certain_lines_p="YES"
+            ;;
+        *)
+            usage 1>&2
+            exit 1
+            ;;
+    esac
+done
+
+shift $((OPTIND-1))
+
+#### ___________________________________________________________________________
+#### Colours
+
+RED=$(tput setaf 1)
+GREEN=$(tput setaf 2)
+RESET=$(tput sgr0)
+
+HIGHLIGHT=${GREEN}
+NORMAL=${RESET}
+
+function print_in_red {
+    while IFS= read -r line
+    do
+        echo -e "${RED}$line${NORMAL}"
+    done <<< "$1"
+}
+
+#### ___________________________________________________________________________
+#### Main functionality
+
+function print_heading {
+    echo -e "${HIGHLIGHT}----${1}${NORMAL}"
+}
+
+function contains_p {
+    local multi_line_string=$1
+    local input=$2
+    local line
+    while IFS= read -r line
+    do
+        if [[ "$input" == "${line}" ]] ; then
+            return 0
+        fi
+    done <<< "$multi_line_string"
+    return 1
+}
+
+#### TODO "patterns" is a misnomer. Either fix file name or make it use patterns.
+
+lines_to_ignore="$(cat "$HOME/.nomis-git-status-patterns-to-ignore" \
+                       2> /dev/null)"
+
+function remove_certain_lines {
+    local input="$1"
+    if [[ ! "${lines_to_ignore}"  \
+              || ! "${remove_certain_lines_p}" ]] ; then
+        echo "$input"
+    else
+        local line
+        while IFS= read -r line
+        do
+            if ! contains_p "$lines_to_ignore" "${line}" ; then
+                echo "${line}"
+            fi
+        done <<< "$input"
+    fi
+}
+
+function maybe_print_branch_helper {
+    local heading="$1"
+    local branch="$2"
+    if [[ "${print_branch_p}" \
+              || ( "${branch}" != "master" \
+                       && "${branch}" != "main" \
+                       && "${print_branch_if_not_master_p}" ) ]]
+    then
+        echo "${branch}"
+    fi
+}
+
+function maybe_print_branch {
+    local heading="$1"
+    local branch="$2"
+    local output
+    output=$(maybe_print_branch_helper "$@")
+    output=$(remove_certain_lines "$output")
+    if [[ "${output}" ]] ; then
+        print_heading "${heading}"
+        echo "${output}"
+    fi
+}
+
+function maybe_print_short_status {
+    local output
+    output=$(git status --short) # Adding `--branch` would mention the branch and whether ahrad/behind
+    output=$(remove_certain_lines "$output")
+    if [[ "${output}" || "${print_short_status_if_clean_p}" ]]
+    then
+        print_heading "Short status"
+        if [[ "${output}" ]] ; then
+            print_in_red "${output}"
+        else
+            echo "Status is clean"
+        fi
+    fi
+}
+
+function maybe_print_ahead_or_behind_branches {
+    local output
+    output=$(git branch -vv | grep ahead\\\|behind)
+    output=$(remove_certain_lines "$output")
+    if [[ "${output}" || "${print_ahead_or_behind_branches_if_none_p}" ]]
+    then
+        print_heading "Branches that are ahead of or behind the remote"
+        if [[ "${output}" ]] ; then
+            print_in_red "${output}"
+        else
+            echo "No branches are ahead or behind"
+        fi
+    fi
+}
+
+function maybe_print_local_branches_with_no_remote {
+    local output
+    local output_2
+    output=$(git branch -vv | cut -c 3- | awk '$3 !~/\[/ { print "Only local: "$1 }')
+    output_2=$(git branch -vv | cut -c 3- | grep "gone\]" | awk '{ print "Only local: " $1 " (but used to have a remote)"}')
+    if [[ "${output_2}" ]] ; then
+        if [[ "${output}" ]] ; then
+            output+=$'\n'
+        fi
+        output+="${output_2}"
+    fi
+    output=$(remove_certain_lines "$output")
+    if [[ "${output}" || "${print_local_branches_with_no_remote_if_none_p}" ]]
+    then
+        print_heading "Local branches with no remote"
+        if [[ "${output}" ]] ; then
+            print_in_red "${output}"
+        else
+            echo "All branches have a remote"
+        fi
+    fi
+}
+
+current_branch=$(git rev-parse --abbrev-ref HEAD)
+
+maybe_print_branch "Current Branch" "${current_branch}"
+maybe_print_short_status
+maybe_print_ahead_or_behind_branches
+maybe_print_local_branches_with_no_remote

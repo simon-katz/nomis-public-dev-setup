@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+echo -en '\a' ; sleep 0.15 ; echo -en '\a'

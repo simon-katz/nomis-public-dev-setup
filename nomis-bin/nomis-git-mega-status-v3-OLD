@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+set -e
+
+nomis-git-mega-status-v2-OLD "$@" | less -NR

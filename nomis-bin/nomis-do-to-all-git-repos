@@ -1,0 +1,140 @@
+#!/usr/bin/env bash
+set -e
+
+#### ___________________________________________________________________________
+#### Description
+####
+#### Do things to all git directories below current directory.
+#### Skips directories that contain a file called .ignore
+
+#### Copied from
+#### http://stackoverflow.com/questions/11981716/how-to-quickly-find-all-git-repos-under-a-directory
+#### with modifications.
+
+#### ___________________________________________________________________________
+#### Options and usage
+
+script=$(basename "${BASH_SOURCE[0]}")
+
+# Switches
+print_repo_heading_even_when_no_output_p=
+no_exit_on_error=
+
+function usage {
+    echo "Usage:"
+    echo ""
+    echo "${script} [options]"
+    echo ""
+    echo "options:"
+    echo "-h             Print this help"
+    echo "-f             Print repo heading even when there's no output for it"
+    echo "-n             Don't exit when subcommand returns an error status"
+}
+
+while getopts "hfn" option; do
+    case "${option}" in
+        h)
+            usage
+            exit 0
+            ;;
+        f)
+            print_repo_heading_even_when_no_output_p="YES"
+            ;;
+        n)
+            no_exit_on_error="YES"
+            ;;
+        *)
+            usage 1>&2
+            exit 1
+            ;;
+    esac
+done
+
+shift $((OPTIND-1))
+
+ARGS_ARRAY=( "$@" )
+
+#### ___________________________________________________________________________
+#### Colours
+
+RED=$(tput setaf 1)
+GREEN=$(tput setaf 2)
+RESET=$(tput sgr0)
+
+HIGHLIGHT=${GREEN}
+NORMAL=${RESET}
+
+#### ___________________________________________________________________________
+#### Utils
+
+function readable_local_date_time {
+    date +"%Y-%m-%d %H:%M:%S"
+}
+
+
+#### ___________________________________________________________________________
+#### Main functionality
+
+function capture_output {
+    local error_file
+    error_file=$(mktemp)
+    stdout=$("$@" 2>"${error_file}")
+    status="$?"
+    stderr=$(< "${error_file}")
+    rm "${error_file}"
+}
+
+function do_things {
+    local d="$1"
+    if [ -d "$d" ]; then
+        if [ -e "$d/.ignore" ]; then
+            echo -e "${HIGHLIGHT}________________________________________________________________________________"
+            echo -e "${HIGHLIGHT}Ignoring $d${NORMAL}"
+        else
+            (
+                cd "$d" > /dev/null
+                if [ -d ".git" ]; then
+                    # TODO Consider adding a flag to say what to do on error
+                    #      (exit or continue).
+                    set +e
+                    capture_output "${ARGS_ARRAY[@]}"
+                    set -e
+                    if [[ -n "${print_repo_heading_even_when_no_output_p}" \
+                              || -n "${stdout}" \
+                              || -n "${stderr}" ]]
+                    then
+                        echo -e "${HIGHLIGHT}________________________________________________________________________________"
+                        echo -e "${HIGHLIGHT}$PWD$NORMAL"
+                    fi
+                    if [[ -n "${stdout}" ]]
+                    then
+                        echo -e "${stdout}"
+                    fi
+                    if [[ -n "${stderr}" ]]
+                    then
+                        >&2 echo -e "${stderr}"
+                    fi
+                    if [[ -z "${no_exit_on_error}" && "${status}" -ne 0 ]] ; then
+                        >&2 echo "Error -- exiting"
+                        exit 1
+                    fi
+                    true
+                else
+                    scan ./*
+                fi
+            )
+        fi
+    fi
+    #echo "Exiting do_things: pwd=`pwd`"
+}
+
+function scan {
+    #echo "`pwd`"
+    for x in "$@"; do
+        do_things "$x"
+    done
+}
+
+echo -e "${HIGHLIGHT}$(readable_local_date_time)"
+echo -e "${HIGHLIGHT}Scanning ${PWD}${NORMAL}"
+scan .

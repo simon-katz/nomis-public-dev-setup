@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+mkdir -p _analysis
+
+find dev src -name "*.clj" \
+    | xargs lein with-profile +clj-usage-graph \
+            run -m com.gfredericks.clj-usage-graph/namespace-graph \
+    | dot -Tpng -o _analysis/gfredericks-namespace-graph.png

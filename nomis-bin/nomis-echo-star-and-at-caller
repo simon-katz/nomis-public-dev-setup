@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+set -e
+
+echo "@@@@ in quotes"
+nomis-echo-star-and-at "$@"
+
+echo "**** in quotes"
+nomis-echo-star-and-at "$*"
+
+echo "@@@@ not in quotes"
+nomis-echo-star-and-at $@
+
+echo "**** not in quotes"
+nomis-echo-star-and-at $*

@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+mkdir -p _analysis
+
+lein nomis-ns-graph \
+     :platform cljs \
+     :filename _analysis/nomis-deps-graph-global-cljs \
+     :exclusions dev

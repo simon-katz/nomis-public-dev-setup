@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+app="/Applications/Google Chrome Dev Version.app/Contents/MacOS/Google Chrome"
+
+user_data_dir="${HOME}/zzzz-stuff/dev-chrome-settings-etc"
+
+"${app}" --user-data-dir=${user_data_dir} \
+         --no-default-browser-check \
+         > /dev/null 2>&1 \
+         &

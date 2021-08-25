@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+set -e
+
+if [ "$#" -lt 2 ]; then
+    echo "Usage: nomis-do-to-files pattern command-prefix"
+fi
+
+pattern=$1
+shift
+command_array=( "$@" )
+
+# echo pattern = "${pattern}"
+# echo command_array = "${command_array}"
+
+find . -name "${pattern}" -exec "${command_array[@]}" {} +

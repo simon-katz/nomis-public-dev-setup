@@ -1,0 +1,87 @@
+#!/usr/bin/env bash
+set -e
+
+#### ___________________________________________________________________________
+#### Description
+####
+#### Search recursively for Git repos and produce status reports on them.
+####
+#### ___________________________________________________________________________
+#### Options and usage
+
+script=$(basename "${BASH_SOURCE[0]}")
+
+function usage {
+    echo "Description"
+    echo ""
+    echo "  Searches recursively for Git repos and produces status reports on them."
+    echo "  Uses red output to highlight differences between local and remote."
+    echo "  Uses white output for other info such as branch names."
+    echo ""
+    echo "Usage:"
+    echo ""
+    echo "  To print this help:"
+    echo "    nomis-git-mega-status -h"
+    echo ""
+    echo "  To run:"
+    echo "    nomis-git-mega-status [<options for nomis-git-status>]"
+    echo "                          [-- <options for nomis-do-to-all-git-repos>]"
+    echo ""
+    echo "  See nomis-do-to-all-git-repos and nomis-git-status for details of their options."
+    echo ""
+    echo "Examples:"
+    echo ""
+    echo "  nomis-git-mega-status"
+    echo "    Produces a report for each repo that has something different between local and"
+    echo "    remote, showing just those differences."
+    echo "    Also reports on any current non-master, non-main branches."
+    echo ""
+    echo "  nomis-git-mega-status -m"
+    echo "    Does not report on current non-master, non-main branches."
+    echo ""
+    echo "  nomis-git-mega-status -m | less -NR"
+    echo "    As above, and pipes the output into less."
+    echo "    (The -N option gives line numbers and the -R option deals with ANSI color codes.)"
+    echo ""
+    echo "  nomis-git-mega-status -- -f"
+    echo "    Produces a report for each repo, showing just the differences between local and"
+    echo "    remote. Includes reports with empty bodies (ie with just a heading identifying"
+    echo "    the repo)."
+    echo ""
+    echo "  nomis-git-mega-status -v"
+    echo "    Produces a full report on each repo."
+    echo ""
+    echo "  nomis-git-mega-status -v | less -NR"
+    echo "    Produces a full report on each repo and pipes the output into less."
+}
+
+if [[ "$*" == "-h" ]] ; then
+    usage
+    exit 0
+fi
+
+
+args_before_double_dash=
+args_after_double_dash=
+
+doing_args_before_double_dash_p="YES"
+
+while [[ $# -gt 0 ]]
+do
+    if [[ "$1" == "--" ]] ; then
+        doing_args_before_double_dash_p=
+    else
+        if [[ "${doing_args_before_double_dash_p}" ]] ; then
+            args_before_double_dash="${args_before_double_dash} $1"
+        else
+            args_after_double_dash="${args_after_double_dash} $1"
+        fi
+    fi
+    shift
+done
+
+#### ___________________________________________________________________________
+#### Main functionality
+
+nomis-do-to-all-git-repos ${args_after_double_dash} \
+                          nomis-git-status ${args_before_double_dash}
