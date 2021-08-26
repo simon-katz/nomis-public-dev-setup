@@ -180,6 +180,7 @@
 (require 'nomis-mouse-scrolling)
 (require 'nomis-avoid-window-stealing)
 (require 'nomis-whitespace)
+(require 'nomis-highlight-chars)
 (require 'nomis-right-margin)
 (require 'nomis-fci-mode)
 (require 'nomis-highlighting)
