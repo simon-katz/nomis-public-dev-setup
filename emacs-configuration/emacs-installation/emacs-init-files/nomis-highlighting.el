@@ -116,7 +116,7 @@
   (defun nomis/turn-on-idle-highlight-mode ()
     (nomis/idle-highlight-mode t))
   (add-hook 'prog-mode-hook 'nomis/turn-on-idle-highlight-mode)
-  (add-hook 'inferior-emacs-lisp-mode-hook 'nomis/turn-on-idle-highlight-mode)
+  (add-hook 'ielm-mode-hook 'nomis/turn-on-idle-highlight-mode)
   (setq nomis/idle-highlight-exceptions
         (append '("-")
                 nomis/idle-highlight-exceptions)))
