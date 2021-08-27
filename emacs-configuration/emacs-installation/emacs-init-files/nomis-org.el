@@ -451,6 +451,11 @@
 (add-hook 'post-command-hook 'nomis/org-show-link-destination)
 
 ;;;; ___________________________________________________________________________
+;;;; ____ * Display -- faces
+
+(set-face-foreground 'org-verbatim "#cc0088")
+
+;;;; ___________________________________________________________________________
 ;;;; ____ * Display -- blog faces
 
 (defconst nomis/org-blog-faces
