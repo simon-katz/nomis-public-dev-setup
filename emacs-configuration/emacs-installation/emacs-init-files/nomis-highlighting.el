@@ -51,18 +51,19 @@
 
 (progn
   (defvar nomis/hl-line/approach 0)
-  (set-face-attribute 'hl-line nil
-                      :inherit nil
-                      :background (case nomis/hl-line/approach
-                                    (0 "darkseagreen1")
-                                    (1 "palegoldenrod")
-                                    (2 'unspecified))
-                      :box (case nomis/hl-line/approach
-                             (0 nil)
-                             (1 nil)
-                             (2 (list :line-width -1
-                                      :color "grey25"
-                                      :style nil)))))
+  (apply #'set-face-attribute
+         'hl-line nil
+         :inherit nil
+         (-concat (case nomis/hl-line/approach
+                    (0 `(:background "darkseagreen1"))
+                    (1 `(:background "palegoldenrod"))
+                    (2 nil))
+                  (case nomis/hl-line/approach
+                    (0 nil)
+                    (1 nil)
+                    (2 `(:box ,(list :line-width -1
+                                     :color "grey25"
+                                     :style nil)))))))
 
 ;; (set-face-background 'hl-line "lightcyan")
 ;; (set-face-background 'hl-line "lightcyan1")
