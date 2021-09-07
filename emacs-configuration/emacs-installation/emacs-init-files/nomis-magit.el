@@ -83,13 +83,19 @@ Show the last `magit-log-section-commit-count' commits."
 (make-variable-buffer-local 'nomis/-magit-section-visibility/seens)
 (put 'nomis/-magit-section-visibility/seens 'permanent-local t)
 
+(defvar nomis/-magit-sections-to-always-expand
+  '((unpulled status) ; because the visibility of this gets queried when it has no commits, and Magit decides that we don't want to expand it
+    ))
+
 (defun nomis/-magit-section-visibility (section)
-  (let* ((item (magit-section-lineage section))
-         (seen? (member item nomis/-magit-section-visibility/seens)))
-    (if seen?
-        nil
-      (progn (push item nomis/-magit-section-visibility/seens)
-             'show))))
+  (let* ((item (magit-section-lineage section)))
+    (if (member item nomis/-magit-sections-to-always-expand)
+        'show
+      (let* ((seen? (member item nomis/-magit-section-visibility/seens)))
+        (if seen?
+            nil
+          (progn (push item nomis/-magit-section-visibility/seens)
+                 'show))))))
 
 (defun nomis/-magit-init-section-visibility ()
   (add-hook 'magit-section-set-visibility-hook
