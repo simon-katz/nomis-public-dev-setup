@@ -9,28 +9,28 @@
 
 (eval-after-load 'grep
   '(setq grep-find-ignored-directories ; Note that this is idempotent.
-         (let ((v (append '(".emacs-backups"
-                            ".worksheet"
-                            ".lsp"
-                            "out"
-                            "target"
-                            ".cpcache"
-                            ".repl"
-                            "bundle"
-                            ".idea"
-                            ;; "labrepl*/public/javascripts/jquery.js"
-                            ;; "emacs-configuration/nomis-addons/cygwin-mount.el"
-                            "node_modules"
-                            ".shadow-cljs"
-                            ".emacs.d"
-                            "emacs-configuration-pre-2018-06-upgrade-packages"
-                            "clojure-for-the-brave-and-true/emacs-for-clojure-book1"
-                            "cljs-runtime"
+         (let ((v (append '(;; Instead of adding stuff here, consider defining
+                            ;; `nomis/grep/local-ignored-directories` in a .dir-locals file.
                             ".cache"
+                            ".cpcache"
+                            ".emacs-backups"
+                            ".emacs.d"
+                            ".idea"
+                            ".lsp"
+                            ".repl"
+                            ".shadow-cljs"
+                            ".worksheet"
+                            "bundle"
+                            "cljs-runtime"
+                            "clojure-for-the-brave-and-true/emacs-for-clojure-book1"
+                            "emacs-configuration-pre-2018-06-upgrade-packages"
+                            ;; "emacs-configuration/nomis-addons/cygwin-mount.el"
+                            ;; "labrepl*/public/javascripts/jquery.js"
                             "log"
                             "logs"
-                            ;; Instead of adding stuff here, consider defining
-                            ;; `nomis/grep/local-ignored-directories` in a .dir-locals file.
+                            "node_modules"
+                            "out"
+                            "target"
                             )
                           grep-find-ignored-directories)))
            (cl-remove-duplicates v :from-end t :test #'equal))))

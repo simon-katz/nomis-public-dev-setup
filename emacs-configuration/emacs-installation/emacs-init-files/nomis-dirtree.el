@@ -108,22 +108,22 @@
 (defvar nomis/dirtree/file-not-in-dirtree-fg-when-following "VioletRed4")
 
 (defvar nomis/dirtree/dirs-to-keep-collapsed-unless-forced
-  '("\\.emacs\\.d"
+  '("\\.cache"
+    "\\.cpcache"
+    "\\.emacs\\.d"
     "\\.git"
     "\\.idea"
-    "\\.repl"
-    "\\.vagrant"
-    "\\.sync"
-    "checkouts"
-    "node_modules"
     "\\.lsp"
+    "\\.repl"
+    "\\.shadow-cljs"
+    "\\.sync"
+    "\\.vagrant"
+    "checkouts"
+    "cljs-runtime"
+    "node_modules"
     "out"
     "target"
-    "\\.cpcache"
-    "zzzz-nomis-dirtree-test-keep-collapsed"
-    "\\.shadow-cljs"
-    "cljs-runtime"
-    "\\.cache"))
+    "zzzz-nomis-dirtree-test-keep-collapsed"))
 
 ;;;; ___________________________________________________________________________
 ;;;; Variables that need to be defined early
