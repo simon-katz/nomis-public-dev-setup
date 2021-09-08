@@ -13,6 +13,7 @@
                             ".worksheet"
                             "out"
                             "target"
+                            ".cpcache"
                             ".repl"
                             "bundle"
                             ".idea"

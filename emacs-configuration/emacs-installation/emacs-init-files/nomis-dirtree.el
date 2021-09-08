@@ -118,6 +118,7 @@
     "node_modules"
     "out"
     "target"
+    "\\.cpcache"
     "zzzz-nomis-dirtree-test-keep-collapsed"
     "\\.shadow-cljs"
     "cljs-runtime"
