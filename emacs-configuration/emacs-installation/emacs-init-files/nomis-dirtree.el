@@ -116,6 +116,7 @@
     "\\.sync"
     "checkouts"
     "node_modules"
+    "\\.lsp"
     "out"
     "target"
     "\\.cpcache"

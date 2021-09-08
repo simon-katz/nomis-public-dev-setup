@@ -11,6 +11,7 @@
   '(setq grep-find-ignored-directories ; Note that this is idempotent.
          (let ((v (append '(".emacs-backups"
                             ".worksheet"
+                            ".lsp"
                             "out"
                             "target"
                             ".cpcache"
