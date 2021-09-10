@@ -2,7 +2,7 @@
 # - See Nic Ferrier's http://www.emacsbites.com/episode/scratch-emacs.
 
 case "$OSTYPE" in
-  darwin*)  emacs_exec="open -n -a /Applications/Emacs-26-3.app --args" ;;
+  darwin*)  emacs_exec="open -n -a /Applications/Emacs-27-2-2.app --args" ;;
   msys)     emacs_exec="runemacs" ;;
   *)        emacs_exec="emacs -nw" ;;
 esac
