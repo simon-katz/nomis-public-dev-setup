@@ -9,8 +9,8 @@
  ;; - `M-x flycheck-next-error`
  ((member emacs-version
           '("26.3"
-            "27.2" ; TODO: Hmmm, I actually have 27.2.2.
-            ))
+            "27.1"
+            "27.2"))
   ;; The original `execute-extended-command` is defined in `simple`.
   ;; This fix comes from Emacs commit 00a9c50ad7.
 
