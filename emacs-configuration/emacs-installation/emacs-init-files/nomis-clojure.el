@@ -48,7 +48,6 @@
 
 (progn
   (require 'cider)
-  (require 'cider-autoloads) ; needed when you have your own local CIDER repo
   (unless (featurep 'cider-macroexpansion)
     ;; Needed in:
     ;; - 0.8.2

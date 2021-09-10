@@ -30,10 +30,7 @@
                       undo-tree
                       ;; ac-nrepl
                       clojure-mode
-                      sesman  ; needed by cider
-                      spinner ; needed by cider
-                      queue   ; needed by cider
-                      ;; cider ;-- you have cloned this repo yourself
+                      cider
                       cider-eval-sexp-fu
                       edn ; needed by clj-refactor, I think
                       inflections ; needed by clj-refactor, I think
