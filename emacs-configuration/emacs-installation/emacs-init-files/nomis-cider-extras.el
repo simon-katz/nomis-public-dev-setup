@@ -39,7 +39,11 @@
         (lambda (buffer warning)
           (cider-repl-emit-stderr buffer warning)))))
    '((name . nomis/cider-avoid-multiple-result-prefixes))))
- ((version<= "0.26.1" (pkg-info-version-info 'cider))
+ ((let* ((v (pkg-info-version-info 'cider)))
+    (or (ignore-errors ; because version string may be invalid
+          (version<= "0.26.1" v))
+        (member v
+                '("1.2.0snapshot (package: 20210909.1011)"))))
   ;; I think this is now fixed.
   )
  (t
@@ -57,8 +61,10 @@
 
 (with-eval-after-load 'cider-eldoc
   (cond
-   ((member (nomis/cider-version)
-            '("CIDER 0.26.1 (Nesebar)"))
+   ((or (member (nomis/cider-version)
+                '("CIDER 0.26.1 (Nesebar)"))
+        (member (pkg-info-version-info 'cider)
+                '("1.2.0snapshot (package: 20210909.1011)")))
     (advice-add
      'cider-eldoc-format-function
      :around

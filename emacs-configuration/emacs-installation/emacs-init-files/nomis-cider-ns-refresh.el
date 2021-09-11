@@ -122,8 +122,10 @@
     (delete-region 1 (point))))
 
 (cond
- ((member (nomis/cider-version)
-          '("CIDER 0.26.1 (Nesebar)"))
+ ((or (member (nomis/cider-version)
+              '("CIDER 0.26.1 (Nesebar)"))
+      (member (pkg-info-version-info 'cider)
+              '("1.2.0snapshot (package: 20210909.1011)")))
 
   (defvar nomis/cider-ns-refresh/-vars-to-pass-to-log-buffer
     '(nomis/cider-forbid-refresh-all?

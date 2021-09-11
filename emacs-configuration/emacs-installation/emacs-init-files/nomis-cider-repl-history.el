@@ -33,8 +33,10 @@
  ;; it also creates an empty ".cider-repl-history" file in the same directory as
  ;; the current buffer's file. This fixes things by changing the current buffer
  ;; to the REPL buffer.
- ((member (nomis/cider-version)
-          '("CIDER 0.26.1 (Nesebar)"))
+ ((or (member (nomis/cider-version)
+              '("CIDER 0.26.1 (Nesebar)"))
+      (member (pkg-info-version-info 'cider)
+              '("1.2.0snapshot (package: 20210909.1011)")))
   (advice-add
    'cider-repl-history-just-save
    :around

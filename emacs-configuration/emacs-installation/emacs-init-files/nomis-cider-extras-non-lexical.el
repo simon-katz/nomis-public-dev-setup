@@ -453,11 +453,13 @@ window."
 (defvar nomis/cider-cljs-offer-to-open-app-in-browser? t)
 
 (cond
- ((member (nomis/cider-version)
-          '("CIDER 0.22.1snapshot"
-            "CIDER 0.23.0 (Lima)"
-            "CIDER 0.24.0snapshot"
-            "CIDER 0.26.1 (Nesebar)"))
+ ((or (member (nomis/cider-version)
+              '("CIDER 0.22.1snapshot"
+                "CIDER 0.23.0 (Lima)"
+                "CIDER 0.24.0snapshot"
+                "CIDER 0.26.1 (Nesebar)"))
+      (member (pkg-info-version-info 'cider)
+              '("1.2.0snapshot (package: 20210909.1011)")))
   (advice-add
    'cider--offer-to-open-app-in-browser
    :around
