@@ -28,11 +28,6 @@
   )
 
 (cond
- ;; CIDER has `(add-hook 'kill-emacs-hook #'cider-repl-history-just-save)`. But
- ;; that doesn't save history unless the current buffer is the REPL buffer, and
- ;; it also creates an empty ".cider-repl-history" file in the same directory as
- ;; the current buffer's file. This fixes things by changing the current buffer
- ;; to the REPL buffer.
  ((or (member (nomis/cider-version)
               '("CIDER 0.26.1 (Nesebar)"))
       (member (pkg-info-version-info 'cider)
@@ -41,15 +36,24 @@
    'cider-repl-history-just-save
    :around
    (lambda (orig-fun &rest args)
-     (with-current-buffer (or (cider-current-repl)
-                              (current-buffer))
-       (apply orig-fun args)))
-   '((name . nomis/set-buffer-for-history))))
+     (let* ((repl (cider-current-repl)))
+       (case 1
+         (1 (when (null repl)
+              (message-box "I think this might be a situation where we create a random CIDER history file. current-buffer = %s"
+                           (current-buffer))
+              (setq repl (current-buffer)))
+            (with-current-buffer repl
+              (apply orig-fun args)))
+         (2 (if repl
+                (with-current-buffer repl
+                  (apply orig-fun args))
+              (message-box "I think this might be a situation where we would have created a random CIDER history file."))))))
+   '((name . nomis/set-buffer-for-history-and-prevent-random-history-files))))
  (t
   (message-box
    "You need to fix `cider-repl-history-just-save for this version of CIDER.")))
 
-;; (advice-remove 'cider-repl-history-just-save 'nomis/set-buffer-for-history)
+;; (advice-remove 'cider-repl-history-just-save 'nomis/set-buffer-for-history-and-prevent-random-history-files)
 
 ;;;; ___________________________________________________________________________
 
