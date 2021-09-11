@@ -60,17 +60,35 @@
 ;;;; - C-M-q in elisp               indent-pp-sexp
 ;;;; - C-M-q in clojure             prog-indent-sexp
 ;;;; -   M-q in clojure and elisp   paredit-reindent-defun
-;;;;
 
-(nomis/define-indent-command indent-pp-sexp
+(progn ; Override keyboard bindings
+  (define-key emacs-lisp-mode-map (kbd "C-M-q") 'nomis/indent-pp-sexp)
+  (eval-after-load 'clojure-mode
+    '(define-key clojure-mode-map (kbd "C-M-q") 'nomis/prog-indent-sexp))
+  (eval-after-load 'paredit
+    '(define-key paredit-mode-map (kbd "M-q") 'nomis/paredit-reindent-defun)))
+
+(defun nomis/indent-pp-sexp (&optional arg)
+  (interactive "P")
+  (indent-pp-sexp))
+
+(defun nomis/prog-indent-sexp (&optional arg)
+  (interactive "P")
+  (prog-indent-sexp))
+
+(defun nomis/paredit-reindent-defun (&optional arg)
+  (interactive "P")
+  (paredit-reindent-defun))
+
+(nomis/define-indent-command nomis/indent-pp-sexp
   (nomis/start-of-this-or-enclosing-form)
   (%do-indentation%))
 
-(nomis/define-indent-command prog-indent-sexp
+(nomis/define-indent-command nomis/prog-indent-sexp
   (nomis/start-of-this-or-enclosing-form)
   (%do-indentation%))
 
-(nomis/define-indent-command paredit-reindent-defun
+(nomis/define-indent-command nomis/paredit-reindent-defun
   (nomis/beginning-of-top-level-form)
   (let* ((in-a-top-level-symbol-p (not
                                    (nomis/looking-at-bracketed-sexp-start))))
