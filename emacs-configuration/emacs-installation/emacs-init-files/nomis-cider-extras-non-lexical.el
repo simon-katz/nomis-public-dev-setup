@@ -450,6 +450,9 @@ window."
 
 ;;;; ___________________________________________________________________________
 
+;;;; TODO: Now there is `cider-offer-to-open-cljs-app-in-browser`, so this
+;;;;       isn't needed.
+
 (defvar nomis/cider-cljs-offer-to-open-app-in-browser? t)
 
 (cond
