@@ -14,4 +14,14 @@
 
 ;;;; ___________________________________________________________________________
 
+(defun nomis/clojure-lsp-init ()
+  (setq lsp-clojure-workspace-dir
+        (expand-file-name "~/.emacs-d-stuff/lsp-clojure-workspace"))
+  (setq lsp-clojure-workspace-cache-dir
+        (expand-file-name "~/.emacs-d-stuff/lsp-clojure-workspace/cache")))
+
+(add-hook 'lsp-mode-hook 'nomis/clojure-lsp-init)
+
+;;;; ___________________________________________________________________________
+
 (provide 'nomis-clojure-lsp)
