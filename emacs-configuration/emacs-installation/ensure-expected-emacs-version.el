@@ -1,4 +1,8 @@
-(let ((expected-version "27.1")
+(let (
+
+      ;; BEWARE OF UPGRADING TO Emacs 27.2 -- see https://emacs.stackexchange.com/questions/68288/error-retrieving-https-elpa-gnu-org-packages-archive-contents
+
+      (expected-version "27.1")
       (version emacs-version))
   (unless (or (equal version expected-version)
               (y-or-n-p

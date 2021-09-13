@@ -2,6 +2,9 @@
 # - See Nic Ferrier's http://www.emacsbites.com/episode/scratch-emacs.
 
 case "$OSTYPE" in
+
+ # BEWARE OF UPGRADING TO Emacs 27.2 -- see https://emacs.stackexchange.com/questions/68288/error-retrieving-https-elpa-gnu-org-packages-archive-contents
+
   darwin*)  emacs_exec="open -n -a /Applications/Emacs-27-1-1.app --args" ;;
   msys)     emacs_exec="runemacs" ;;
   *)        emacs_exec="emacs -nw" ;;
