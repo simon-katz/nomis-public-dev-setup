@@ -113,7 +113,6 @@
     "\\.emacs\\.d"
     "\\.git"
     "\\.idea"
-    "\\.lsp"
     "\\.repl"
     "\\.shadow-cljs"
     "\\.sync"

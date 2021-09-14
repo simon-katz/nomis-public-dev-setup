@@ -16,7 +16,6 @@
                             ".emacs-backups"
                             ".emacs.d"
                             ".idea"
-                            ".lsp"
                             ".repl"
                             ".shadow-cljs"
                             ".worksheet"
