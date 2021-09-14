@@ -13,6 +13,7 @@ emacs-configuration/emacs-installation/.emacs.d/projectile-bookmarks.eld
 emacs-configuration/emacs-installation/.emacs.d/projectile.cache
 emacs-configuration/emacs-installation/.emacs.d/server/
 emacs-configuration/emacs-installation/.gnupg/
+emacs-configuration/emacs-installation/.emacs.d/.cache
 emacs-configuration/emacs-installation/.emacs.d/logview-cache.extmap
 emacs-configuration/emacs-installation/.emacs.d/transient/
 emacs-configuration/emacs-installation/.emacs.d/.lsp-session-v1
