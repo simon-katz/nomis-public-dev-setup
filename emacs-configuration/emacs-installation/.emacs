@@ -21,9 +21,11 @@
  '(package-selected-packages
    '(aggressive-indent
      auto-complete
+     auto-dim-other-buffers
      cider
      cider-eval-sexp-fu
      cl-format
+     cl-lib
      clojure-mode
      company
      dash-functional
@@ -51,6 +53,7 @@
      key-chord
      keycast
      kotlin-mode
+     loccur
      logview
      lsp-mode
      lsp-treemacs
@@ -60,16 +63,18 @@
      multiple-cursors
      org
      org-bullets
+     paredit
      parseedn
      paxedit
      pos-tip
      projectile
      queue
      rainbow-delimiters
-     sesman
+     saveplace
      smex
      spinner
      terraform-mode
+     treepy
      undo-tree
      vterm
      which-key

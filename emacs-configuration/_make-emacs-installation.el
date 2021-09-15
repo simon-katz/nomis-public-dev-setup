@@ -55,15 +55,18 @@
     magit
     markdown-mode
     multiple-cursors
+    org
     org-bullets
     paredit
     parseedn
     paxedit
     pos-tip
     projectile
+    queue
     rainbow-delimiters
     saveplace
     smex
+    spinner
     terraform-mode
     treepy
     undo-tree
