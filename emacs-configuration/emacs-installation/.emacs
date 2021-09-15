@@ -26,6 +26,7 @@
      cl-format
      clojure-mode
      company
+     dash-functional
      discover
      dumb-jump
      edn
