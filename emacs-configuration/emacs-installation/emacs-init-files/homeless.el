@@ -25,22 +25,14 @@
 (defun nomis/revert-all-unmodified-buffers ()
   "Refreshes all open unmodified buffers from their files."
   (interactive)
-  (-nomis/revert-all-buffers (lambda (b) (not (buffer-modified-p b)))) )
+  (-nomis/revert-all-buffers (lambda (b) (not (buffer-modified-p b)))))
 
 (defun nomis/revert-all-modified-buffers ()
   "Refreshes all open modified buffers from their files."
   ;; Copied from http://www.emacswiki.org/emacs/RevertBuffer, and renamed.
   (interactive)
   (when (y-or-n-p "Really revert modified buffers? You will lose stuff.")
-    (-nomis/revert-all-buffers 'buffer-modified-p)) )
-
-(defun nomis/revert-all-unmodified-buffers-in-git-repo ()
-  "Refreshes all open unmodified buffers in current buffer's Git repo
- from their files."
-  (interactive)
-  (-nomis/revert-all-buffers (lambda (b)
-                               (and (not (buffer-modified-p b))
-                                    (magit-auto-revert-repository-buffer-p b)))))
+    (-nomis/revert-all-buffers 'buffer-modified-p)))
 
 ;;;; ___________________________________________________________________________
 

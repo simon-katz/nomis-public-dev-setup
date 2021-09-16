@@ -1,40 +1,39 @@
 ;;;; Init stuff -- Fix problems with Magit.
 
 ;;;; ___________________________________________________________________________
+;;;; ---- nomis/revert-all-unmodified-buffers-in-git-repo ----
+
+(defun nomis/revert-all-unmodified-buffers-in-git-repo ()
+  "Refreshes all open unmodified buffers in current buffer's Git repo
+ from their files."
+  (interactive)
+  (-nomis/revert-all-buffers (lambda (b)
+                               (and (not (buffer-modified-p b))
+                                    (magit-auto-revert-repository-buffer-p b)))))
+
+;;;; ___________________________________________________________________________
 ;;;; ---- -nomis/fix-magit-auto-revert ----
 
 ;;;; See https://emacs.stackexchange.com/questions/35701/magit-sets-auto-revert-mode-annoying
 ;;;;
-;;;; I've simplified things since the first version of this stuff:
-;;;; - Be happy with completely turning off Magit's reverting, even when a
-;;;;   Magit operation changes files.
-;;;; - Add a keybinding for `nomis/revert-all-unmodified-buffers-in-git-repo`
-;;;;   in `magit-mode-map`.
-;;;; This will save me thinking each time I upgrade Magit.
+;;;; Don't globally set auto-revert-mode (that's very rude!). Instead, revert
+;;;; buffers in the repo after each Magit operation.
 
-(defun -nomis/fix-magit-auto-revert/2.10.3 ()
-
-  (with-eval-after-load 'magit-autorevert
-
-    (magit-auto-revert-mode 0)
-
-    (define-key magit-mode-map "©" ; Option-g on a Mac
-      'nomis/revert-all-unmodified-buffers-in-git-repo)))
-
+(magit-auto-revert-mode 0)
 
 (defun -nomis/fix-magit-auto-revert ()
   (cond
-   ((member magit-version '("2.10.3"
-                            "2.11.0"
-                            "2.13.0"
-                            "2.90.1"
-                            "20210810.800"))
-    (-nomis/fix-magit-auto-revert/2.10.3))
+   ((member magit-version '("20210913.1931"))
+    (advice-add
+     'magit-auto-revert-buffers
+     :around
+     (lambda (_orig-fun &rest _args)
+       (nomis/revert-all-unmodified-buffers-in-git-repo))
+     '((name . nomis/revert-all-unmodified-buffers-in-git-repo))))
    (t
     (message-box (s-join " "
                          '("Revisit `-nomis/fix-magit-auto-revert`"
                            "for this version of Magit."))))))
-
 
 (add-hook 'magit-mode-hook '-nomis/fix-magit-auto-revert)
 

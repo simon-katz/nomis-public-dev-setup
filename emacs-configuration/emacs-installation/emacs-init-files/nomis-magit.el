@@ -5,11 +5,6 @@
 (require 'nomis-magit-fixes)
 
 ;;;; ___________________________________________________________________________
-;;;; ---- Turn off the annoying auto-revert ---
-
-(magit-auto-revert-mode 0)
-
-;;;; ___________________________________________________________________________
 ;;;; ---- Faces ----
 
 (defun nomis/set-magit-faces ()
