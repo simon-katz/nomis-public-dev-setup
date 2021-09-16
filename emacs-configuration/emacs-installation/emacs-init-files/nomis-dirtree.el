@@ -121,6 +121,7 @@
     "cljs-runtime"
     "node_modules"
     "out"
+    "out2"
     "target"
     "zzzz-nomis-dirtree-test-keep-collapsed"))
 

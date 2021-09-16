@@ -29,6 +29,7 @@
                             "logs"
                             "node_modules"
                             "out"
+                            "out2"
                             "target"
                             )
                           grep-find-ignored-directories)))
