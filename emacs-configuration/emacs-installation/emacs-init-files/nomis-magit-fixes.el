@@ -129,5 +129,53 @@
                              "for this version of Magit.")))))))
 
 ;;;; ___________________________________________________________________________
+;;;; ---- nomis/hack-magit-diff ----
+;;;; Fix `C-c C-d`.
+
+(when (equal emacs-version "27.2")
+  (with-eval-after-load 'magit-diff
+    (cond
+     ((member (magit-version)
+              '("20210913.1931"))
+
+      (defvar nomis/-magit-diff/commit+staged?)
+
+      (advice-add
+       'magit-diff-staged ; shows only the staged changes
+       :around
+       (lambda (orig-fun &rest args)
+         (cl-flet ((do-it () (apply orig-fun args)))
+           (setq nomis/-magit-diff/commit+staged? nil)
+           (do-it)))
+       '((name . nomis/hack-magit-diff)))
+
+      (advice-add
+       'magit-diff-while-amending ; shows commit + staged changes
+       :around
+       (lambda (orig-fun &rest args)
+         (cl-flet ((do-it () (apply orig-fun args)))
+           (setq nomis/-magit-diff/commit+staged? t)
+           (do-it)))
+       '((name . nomis/hack-magit-diff)))
+
+      (defun nomis/-toggle-magit-diff (&optional args)
+        (interactive (list (car (magit-diff-arguments))))
+        (setq nomis/-magit-diff/commit+staged?
+              (not nomis/-magit-diff/commit+staged?))
+        (let* ((w (get-buffer-window)))
+          (if nomis/-magit-diff/commit+staged?
+              (magit-diff-while-amending args)
+            (magit-diff-staged nil args))
+          (select-window w)))
+
+      (define-key magit-diff-mode-map (kbd "C-c C-d") 'nomis/-toggle-magit-diff)
+      (define-key git-commit-mode-map (kbd "C-c C-d") 'nomis/-toggle-magit-diff))
+
+     (t
+      (message-box (s-join " "
+                           '("Revisit `nomis/hack-magit-diff`"
+                             "for this version of Magit.")))))))
+
+;;;; ___________________________________________________________________________
 
 (provide 'nomis-magit-fixes)
