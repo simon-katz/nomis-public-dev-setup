@@ -11,7 +11,8 @@
 (eval-after-load 'cus-edit
   '(cond
     ((member emacs-version
-             '("27.1"))
+             '("27.1"
+               "27.2"))
      ;; The original `custom-save-variables` is defined in `cus-edit`.
      (defun custom-save-variables ()
        "Save all customized variables in `custom-file'."
