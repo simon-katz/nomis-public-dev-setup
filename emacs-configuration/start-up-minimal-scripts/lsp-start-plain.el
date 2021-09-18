@@ -31,6 +31,11 @@
 
 ;;; Code:
 
+(when (and (equal emacs-version "27.2")
+           (eql system-type 'darwin))
+  ;; See https://emacs.stackexchange.com/questions/68288/error-retrieving-https-elpa-gnu-org-packages-archive-contents and https://emacs.stackexchange.com/questions/60560/error-retrieving-https-elpa-gnu-org-packages-archive-contents-error-http-400#comment105217_62321
+  (setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3"))
+
 (require 'package)
 
 (setq debug-on-error t
