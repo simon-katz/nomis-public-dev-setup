@@ -40,7 +40,8 @@
      'magit-auto-revert-buffers
      :around
      (lambda (_orig-fun &rest _args)
-       (nomis/revert-all-unmodified-buffers-in-git-repo t))
+       (unless (member this-command '(magit-refresh))
+         (nomis/revert-all-unmodified-buffers-in-git-repo t)))
      '((name . -nomis/hack-magit-auto-revert))))
    (t
     (message-box (s-join " "
