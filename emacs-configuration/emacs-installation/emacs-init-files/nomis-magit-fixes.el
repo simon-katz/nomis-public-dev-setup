@@ -3,14 +3,25 @@
 ;;;; ___________________________________________________________________________
 ;;;; ---- nomis/revert-all-unmodified-buffers-in-git-repo ----
 
+(defun nomis/vc/buffer-in-current-repo? (b)
+  (s-starts-with? (nomis/dirtree/vc-root-dir)
+                  (buffer-file-name b)))
+
 (defun nomis/revert-all-unmodified-buffers-in-git-repo (inhibit-message?)
   "Refreshes all open unmodified buffers in current buffer's Git repo
  from their files."
   (interactive "P")
-  (-nomis/revert-all-buffers (lambda (b)
-                               (and (not (buffer-modified-p b))
-                                    (magit-auto-revert-repository-buffer-p b)))
-                             inhibit-message?))
+  (let* ((this-buffer (current-buffer)))
+    (cl-flet ((repository-buffer?
+               (b)
+               (with-current-buffer this-buffer
+                 (case 2
+                   (1 (magit-auto-revert-repository-buffer-p b))
+                   (2 (nomis/vc/buffer-in-current-repo? b))))))
+      (-nomis/revert-all-buffers (lambda (b)
+                                   (and (not (buffer-modified-p b))
+                                        (repository-buffer? b)))
+                                 inhibit-message?))))
 
 ;;;; ___________________________________________________________________________
 ;;;; ---- -nomis/hack-magit-auto-revert ----

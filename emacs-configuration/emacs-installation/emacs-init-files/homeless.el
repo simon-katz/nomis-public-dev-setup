@@ -7,6 +7,11 @@
 ;;;; Copy-and-hack of http://www.emacswiki.org/emacs/RevertBuffer.
 
 (defun -nomis/revert-all-buffers (buffer-predicate inhibit-message?)
+  "Revert all buffers that satisfy `buffer-predicate`.
+For each buffer, the predicate is run with the buffer as the
+current buffer. Unless `inhibit-message?` is non-nil, emit
+a message when finished. The message includes the names of any
+buffers that could not be reverted."
   (let (failures '())
     (dolist (buf (buffer-list))
       (with-current-buffer buf
