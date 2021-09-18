@@ -3,16 +3,17 @@
 ;;;; ___________________________________________________________________________
 ;;;; ---- nomis/revert-all-unmodified-buffers-in-git-repo ----
 
-(defun nomis/revert-all-unmodified-buffers-in-git-repo ()
+(defun nomis/revert-all-unmodified-buffers-in-git-repo (inhibit-message?)
   "Refreshes all open unmodified buffers in current buffer's Git repo
  from their files."
-  (interactive)
+  (interactive "P")
   (-nomis/revert-all-buffers (lambda (b)
                                (and (not (buffer-modified-p b))
-                                    (magit-auto-revert-repository-buffer-p b)))))
+                                    (magit-auto-revert-repository-buffer-p b)))
+                             inhibit-message?))
 
 ;;;; ___________________________________________________________________________
-;;;; ---- -nomis/fix-magit-auto-revert ----
+;;;; ---- -nomis/hack-magit-auto-revert ----
 
 ;;;; See https://emacs.stackexchange.com/questions/35701/magit-sets-auto-revert-mode-annoying
 ;;;;
@@ -21,21 +22,20 @@
 
 (magit-auto-revert-mode 0)
 
-(defun -nomis/fix-magit-auto-revert ()
+(with-eval-after-load 'magit-mode
   (cond
-   ((member magit-version '("20210913.1931"))
+   ((member (magit-version) '("20210913.1931"))
     (advice-add
      'magit-auto-revert-buffers
      :around
      (lambda (_orig-fun &rest _args)
-       (nomis/revert-all-unmodified-buffers-in-git-repo))
-     '((name . nomis/revert-all-unmodified-buffers-in-git-repo))))
+       (nomis/revert-all-unmodified-buffers-in-git-repo t))
+     '((name . -nomis/hack-magit-auto-revert))))
    (t
     (message-box (s-join " "
-                         '("Revisit `-nomis/fix-magit-auto-revert`"
+                         '("Revisit `-nomis/hack-magit-auto-revert`"
                            "for this version of Magit."))))))
 
-(add-hook 'magit-mode-hook '-nomis/fix-magit-auto-revert)
 
 ;;;; ___________________________________________________________________________
 

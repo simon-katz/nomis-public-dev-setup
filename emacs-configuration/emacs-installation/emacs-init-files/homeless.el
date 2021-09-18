@@ -6,7 +6,7 @@
 ;;;; Reverting buffers.
 ;;;; Copy-and-hack of http://www.emacswiki.org/emacs/RevertBuffer.
 
-(defun -nomis/revert-all-buffers (buffer-predicate)
+(defun -nomis/revert-all-buffers (buffer-predicate inhibit-message?)
   (let (failures '())
     (dolist (buf (buffer-list))
       (with-current-buffer buf
@@ -17,22 +17,25 @@
              (push (buffer-file-name) failures)
              (message "%s" e)
              (beep))))))
-    (message "Refreshed open files. %s"
-             (if failures
-                 (s-join " " (cons "Failures: " failures))
-               ""))))
+    (let* ((inhibit-message inhibit-message?))
+      (message "Refreshed open files. %s"
+               (if failures
+                   (s-join " " (cons "Failures: " failures))
+                 "")))))
 
-(defun nomis/revert-all-unmodified-buffers ()
+(defun nomis/revert-all-unmodified-buffers (inhibit-message?)
   "Refreshes all open unmodified buffers from their files."
-  (interactive)
-  (-nomis/revert-all-buffers (lambda (b) (not (buffer-modified-p b)))))
+  (interactive "P")
+  (-nomis/revert-all-buffers (lambda (b) (not (buffer-modified-p b)))
+                             inhibit-message?))
 
-(defun nomis/revert-all-modified-buffers ()
+(defun nomis/revert-all-modified-buffers (inhibit-message?)
   "Refreshes all open modified buffers from their files."
   ;; Copied from http://www.emacswiki.org/emacs/RevertBuffer, and renamed.
-  (interactive)
+  (interactive "P")
   (when (y-or-n-p "Really revert modified buffers? You will lose stuff.")
-    (-nomis/revert-all-buffers 'buffer-modified-p)))
+    (-nomis/revert-all-buffers 'buffer-modified-p
+                               inhibit-message?)))
 
 ;;;; ___________________________________________________________________________
 
