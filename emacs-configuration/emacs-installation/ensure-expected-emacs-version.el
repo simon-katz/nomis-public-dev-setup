@@ -1,4 +1,4 @@
-(let ((expected-version "27.1")
+(let ((expected-version "27.2")
       (version emacs-version))
   (unless (or (equal version expected-version)
               (y-or-n-p
