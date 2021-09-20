@@ -29,6 +29,7 @@
      clojure-mode
      company
      dash-functional
+     diff-hl
      discover
      dumb-jump
      edn

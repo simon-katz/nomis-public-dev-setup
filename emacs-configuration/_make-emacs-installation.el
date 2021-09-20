@@ -26,6 +26,7 @@
      clojure-mode
      company
      dash-functional
+     diff-hl
      discover
      dumb-jump
      edn ; needed by clj-refactor, I think
