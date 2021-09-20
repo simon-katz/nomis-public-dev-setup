@@ -236,6 +236,7 @@
 (require 'nomis-json)
 
 (require 'nomis-magit)
+(require 'nomis-diff-hl)
 
 (require 'nomis-projectile)
 
