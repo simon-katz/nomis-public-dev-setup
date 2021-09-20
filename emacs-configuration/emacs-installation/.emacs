@@ -72,6 +72,7 @@
      queue
      rainbow-delimiters
      saveplace
+     smartrep
      smex
      spinner
      terraform-mode
