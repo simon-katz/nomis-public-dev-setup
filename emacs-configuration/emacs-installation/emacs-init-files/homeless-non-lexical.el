@@ -1,4 +1,4 @@
-;;;; Init stuff -- homeless -- to maybe move to a better place
+;;;; Init stuff -- homeless-non-lexical -- to maybe move to a better place
 
 ;;;; TODO: Move homeless stuff to somewhere appropriate.
 
@@ -190,4 +190,4 @@ buffers that could not be reverted."
 
 ;;;; ___________________________________________________________________________
 
-(provide 'homeless)
+(provide 'homeless-non-lexical)

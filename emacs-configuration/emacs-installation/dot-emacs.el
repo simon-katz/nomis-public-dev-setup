@@ -249,7 +249,7 @@
 (require 'nomis-yafolding)
 (require 'nomis-yaml)
 
-(require 'homeless)
+(require 'homeless-non-lexical)
 
 (require 'string-inflection)
 
