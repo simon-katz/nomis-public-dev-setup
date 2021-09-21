@@ -2,6 +2,8 @@
 
 ;;;; TODO: Move homeless stuff to somewhere appropriate.
 
+(require 'dash)
+
 ;;;; ___________________________________________________________________________
 ;;;; Reverting buffers.
 ;;;; Copy-and-hack of http://www.emacswiki.org/emacs/RevertBuffer.
