@@ -235,7 +235,7 @@
 (require 'nomis-javascript)
 (require 'nomis-json)
 
-(require 'nomis-magit)
+(require 'nomis-magit-non-lexical)
 (require 'nomis-diff-hl)
 
 (require 'nomis-projectile)

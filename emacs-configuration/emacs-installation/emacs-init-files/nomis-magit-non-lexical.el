@@ -1,4 +1,4 @@
-;;;; Init stuff -- magit
+;;;; Init stuff -- nomis-magit-non-lexical
 
 ;;;; ___________________________________________________________________________
 
@@ -137,4 +137,4 @@ Show the last `magit-log-section-commit-count' commits."
 
 ;;;; ___________________________________________________________________________
 
-(provide 'nomis-magit)
+(provide 'nomis-magit-non-lexical)
