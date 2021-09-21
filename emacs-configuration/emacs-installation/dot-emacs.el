@@ -237,6 +237,8 @@
 
 (require 'nomis-magit-fixes)
 (require 'nomis-magit-non-lexical)
+(require 'nomis-magit)
+(require 'nomis-revert)
 (require 'nomis-diff-hl)
 
 (require 'nomis-projectile)

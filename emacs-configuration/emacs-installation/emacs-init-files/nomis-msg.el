@@ -187,4 +187,10 @@
 
 ;;;; ___________________________________________________________________________
 
+(defun nomis/message-no-disp (format-string &rest args)
+  (let* ((inhibit-message t))
+    (apply #'message format-string args)))
+
+;;;; ___________________________________________________________________________
+
 (provide 'nomis-msg)
