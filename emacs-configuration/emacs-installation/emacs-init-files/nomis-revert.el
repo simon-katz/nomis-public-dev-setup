@@ -219,14 +219,9 @@ buffers that could not be reverted."
 (defun nomis/-magit-clever-revert/do-set-up/part-2 ()
   ;; Set up later possible non-reverting of obsolete unmodified buffers.
   (let* ((in-current-repo?-fun (nomis/-vc-make/buffer-in-current-repo?-fun))
-         (up-to-date-and-unmodified?-fun
-          (lambda (b)
-            (nomis/-vc-buffer-unmodified-and-up-to-date? in-current-repo?-fun b)))
          (obsolete-unmodified?-fun
           (lambda (b)
             (nomis/-vc-buffer-unmodified-and-out-of-date? in-current-repo?-fun b)))
-         (up-to-date-unmodified-buffers
-          (nomis/find-buffers up-to-date-and-unmodified?-fun))
          (obsolete-unmodified-buffers
           (nomis/find-buffers obsolete-unmodified?-fun)))
     (setq nomis/-magit-clever-revert/obsolete-buffers-to-not-revert
