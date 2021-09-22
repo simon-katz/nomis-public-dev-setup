@@ -286,7 +286,11 @@ buffers that could not be reverted."
       '(nomis/magit-refresh
         magit-commit-amend
         magit-commit-create
-        magit-discard)))
+        magit-discard
+        magit-reset-hard
+        magit-reset-soft
+        magit-stash-both
+        magit-stash-pop)))
 
   (dolist (c nomis/-magit-clever-revert/commands)
     (advice-add c
