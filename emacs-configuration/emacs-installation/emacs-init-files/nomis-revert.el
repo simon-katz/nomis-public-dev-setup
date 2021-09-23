@@ -96,6 +96,10 @@
       (when non-local-exit?
         (nomis/message-no-disp "==== Quitting")))))
 
+(defun nomis/buffers->string-of-names (buffers)
+  (s-join " "
+          (-map #'buffer-file-name buffers)))
+
 ;;;; ___________________________________________________________________________
 ;;;; Reverting buffers.
 ;;;; Copy-and-hack of http://www.emacswiki.org/emacs/RevertBuffer.
@@ -149,6 +153,20 @@ buffers that could not be reverted."
     (nomis/revert-all-buffers 'buffer-modified-p
                               inhibit-message?)))
 
+(defun nomis/-magit-revert/modified-buffers-ok? ()
+  (let* ((in-current-repo?-fun (nomis/-vc-make/buffer-in-current-repo?-fun))
+         (unsaved-buffers (nomis/find-buffers
+                           (lambda (b)
+                             (and (buffer-file-name b)
+                                  (buffer-modified-p b)
+                                  (funcall in-current-repo?-fun b)))))
+         (prompt-1 "There are unsaved buffers. If you continue you will be asked many times whether you want to save them. The questions might sometimes be obliterated by other messages. This is probably a bad idea. Do you want to continue?")
+         (prompt-2 "Are you absolutely sure? I won't ask again."))
+    (if unsaved-buffers
+        (and (nomis/y-or-n-p-reporting-non-local-exit prompt-1)
+             (nomis/y-or-n-p-reporting-non-local-exit prompt-2))
+      t)))
+
 ;;;; ___________________________________________________________________________
 ;;;; ---- Fallback reverting ----
 
@@ -190,20 +208,6 @@ buffers that could not be reverted."
 (defvar nomis/-magit-clever-revert/obsolete-buffers-to-not-revert '())
 (defvar *nomis/-magit-clever-revert/advised-commands* nil)
 
-(defun nomis/-magit-clever-revert/user-happy-with-any-modified-buffers? ()
-  (let* ((in-current-repo?-fun (nomis/-vc-make/buffer-in-current-repo?-fun))
-         (unsaved-buffers (nomis/find-buffers
-                           (lambda (b)
-                             (and (buffer-file-name b)
-                                  (buffer-modified-p b)
-                                  (funcall in-current-repo?-fun b)))))
-         (prompt-1 "There are unsaved buffers. If you continue you will be asked many times whether you want to save them. The questions might sometimes be obliterated by other messages. This is probably a bad idea. Do you want to continue?")
-         (prompt-2 "Are you absolutely sure? I won't ask again."))
-    (if unsaved-buffers
-        (and (nomis/y-or-n-p-reporting-non-local-exit prompt-1)
-             (nomis/y-or-n-p-reporting-non-local-exit prompt-2))
-      t)))
-
 (defun nomis/-magit-clever-revert/do-set-up/do-internal-checks ()
   (when nomis/-magit-clever-revert/set-up-and-waiting?
     (nomis/message-no-disp "===================================")
@@ -216,7 +220,7 @@ buffers that could not be reverted."
     (nomis/message-no-disp "**** ▲▲▲▲ SOMETHING WENT WRONG ▲▲▲▲")
     (nomis/message-no-disp "===================================")))
 
-(defun nomis/-magit-clever-revert/do-set-up/part-2 ()
+(defun nomis/-magit-clever-revert/do-set-up* ()
   ;; Set up later possible non-reverting of obsolete unmodified buffers.
   (let* ((in-current-repo?-fun (nomis/-vc-make/buffer-in-current-repo?-fun))
          (obsolete-unmodified?-fun
@@ -229,9 +233,8 @@ buffers that could not be reverted."
                      (let* ((msg-1 (format
                                     "Do you want to revert the following %s buffer(s) that are out-of-sync with their files? %s"
                                     (length obsolete-unmodified-buffers)
-                                    (s-join " "
-                                            (-map #'buffer-file-name
-                                                  obsolete-unmodified-buffers))))
+                                    (nomis/buffers->string-of-names
+                                     obsolete-unmodified-buffers)))
                             (msg-2 (format
                                     "For %s, advised commands = %s ---- %s"
                                     this-command
@@ -261,13 +264,9 @@ buffers that could not be reverted."
 (defun nomis/-magit-clever-revert/do-set-up ()
   (nomis/-magit-clever-revert/do-set-up/do-internal-checks)
   (nomis/message-no-disp ">>>> nomis/-magit-clever-revert/do-set-up")
-  (let* ((happy?
-          (nomis/-magit-clever-revert/user-happy-with-any-modified-buffers?)))
-    (unwind-protect
-        (when happy?
-          (nomis/-magit-clever-revert/do-set-up/part-2)
-          t)
-      (nomis/message-no-disp "<<<< nomis/-magit-clever-revert/do-set-up"))))
+  (unwind-protect
+      (nomis/-magit-clever-revert/do-set-up*)
+    (nomis/message-no-disp "<<<< nomis/-magit-clever-revert/do-set-up")))
 
 (progn ; nomis/-magit-clever-revert/advice -- treat this as a unit of work
 
@@ -288,25 +287,30 @@ buffers that could not be reverted."
         magit-stash-pop)))
 
   (dolist (c nomis/-magit-clever-revert/commands)
-    (advice-add c
-                :around
-                (lambda (orig-fun &rest args)
-                  (when (null *nomis/-magit-clever-revert/advised-commands*)
-                    (nomis/message-no-disp "%s"
-                                           nomis/-magit-log-string/clever-setup-begin))
-                  (nomis/message-no-disp ">>>> %s" c)
-                  (let* ((do-special-stuff? (null *nomis/-magit-clever-revert/advised-commands*)))
-                    (unwind-protect
-                        (let* ((*nomis/-magit-clever-revert/advised-commands*
-                                (cons c *nomis/-magit-clever-revert/advised-commands*)))
-                          (when (or (not do-special-stuff?)
-                                    (nomis/-magit-clever-revert/do-set-up))
-                            (apply orig-fun args)))
-                      (nomis/message-no-disp "<<<< %s" c)
-                      (when (null *nomis/-magit-clever-revert/advised-commands*)
-                        (nomis/message-no-disp "%s"
-                                               nomis/-magit-log-string/clever-setup-end)))))
-                '((name . nomis/-magit-clever-revert/advice)))))
+    (advice-add
+     c
+     :around
+     (lambda (orig-fun &rest args)
+       (cl-flet* ((do-it () (apply orig-fun args)))
+         (when (null *nomis/-magit-clever-revert/advised-commands*)
+           (nomis/message-no-disp "%s"
+                                  nomis/-magit-log-string/clever-setup-begin))
+         (nomis/message-no-disp ">>>> %s" c)
+         (let* ((do-special-stuff?
+                 (null *nomis/-magit-clever-revert/advised-commands*)))
+           (unwind-protect
+               (let* ((*nomis/-magit-clever-revert/advised-commands*
+                       (cons c *nomis/-magit-clever-revert/advised-commands*)))
+                 (if (not do-special-stuff?)
+                     (do-it)
+                   (when (nomis/-magit-revert/modified-buffers-ok?)
+                     (nomis/-magit-clever-revert/do-set-up)
+                     (do-it))))
+             (nomis/message-no-disp "<<<< %s" c)
+             (when (null *nomis/-magit-clever-revert/advised-commands*)
+               (nomis/message-no-disp "%s"
+                                      nomis/-magit-log-string/clever-setup-end))))))
+     '((name . nomis/-magit-clever-revert/advice)))))
 
 (defun nomis/-magit-clever-revert/do-reverts ()
   (nomis/message-no-disp "%s" nomis/-magit-log-string/clever-revert-begin)
