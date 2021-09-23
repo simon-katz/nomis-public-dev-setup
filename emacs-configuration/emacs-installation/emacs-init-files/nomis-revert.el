@@ -163,20 +163,19 @@ buffers that could not be reverted."
          (n-unsaved-buffers (length unsaved-buffers)))
     (or (null unsaved-buffers)
         (progn
-          (nomis/message-no-disp "==== There are %s unsaved buffer(s) = %s"
-                                 n-unsaved-buffers
-                                 (nomis/buffers->string-of-names unsaved-buffers))
-          (let* ((prompt-1 (format "There are %s unsaved buffer(s). If you continue you may be asked many times whether you want to save them. The questions might sometimes be obliterated by other messages. This is probably a bad idea. See *Messages* buffer for details. Do you want to continue?"
-                                   n-unsaved-buffers))
-                 (prompt-2 (format "Are you absolutely sure? I won't ask again.\n%s"
-                                   prompt-1)))
-            (let* ((continue? (and (nomis/y-or-n-p-reporting-non-local-exit prompt-1)
-                                   (nomis/y-or-n-p-reporting-non-local-exit prompt-2))))
-              (nomis/message-no-disp
-               (if continue?
-                   "==== User chose to continue despite unsaved buffers"
-                 "==== User chose not to continue because of unsaved buffers"))
-              continue?))))))
+          (nomis/message-no-disp
+           "==== There are %s unsaved buffer(s) = %s"
+           n-unsaved-buffers
+           (nomis/buffers->string-of-names unsaved-buffers))
+           (let* ((prompt (format "There are %s unsaved buffer(s). If you continue you may be asked many times whether you want to save them. The questions might sometimes be obliterated by other messages. This is probably a bad idea. See *Messages* buffer for details. Do you want to continue?"
+                                 n-unsaved-buffers))
+                 (continue? (nomis/y-or-n-p-reporting-non-local-exit prompt))
+                 (msg
+                  (if continue?
+                      "==== User chose to continue despite unsaved buffers"
+                    "==== User chose not to continue because of unsaved buffers")))
+            (nomis/message-no-disp msg)
+            continue?)))))
 
 ;;;; ___________________________________________________________________________
 ;;;; ---- Fallback reverting ----
