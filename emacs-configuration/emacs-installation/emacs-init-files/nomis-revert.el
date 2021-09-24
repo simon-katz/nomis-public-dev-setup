@@ -254,6 +254,20 @@ buffers that could not be reverted."
                 (nomis/y-or-n-p-reporting-non-local-exit (format "%s" msg))))))
     (nomis/polite-revert/-report-status/new)))
 
+
+
+;;;; 2021-09-24 OK, enough.
+;;;;
+;;;;            I've spent ages on this.
+;;;;
+;;;;            Now I've realised that rebasing calls `with-editor-finish`, and
+;;;;            we'd need to revert for that. But not for eg
+;;;;            `magit-commit-create` which also calls `with-editor-finish`.
+;;;;
+;;;;           It's time to give up and go back to auto-revert turned off and
+;;;;           manual reverting when things change.
+
+
 (progn ; nomis/polite-revert/-advice -- treat this as a unit of work
 
   ;; magit-push
