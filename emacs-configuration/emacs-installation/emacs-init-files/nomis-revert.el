@@ -114,35 +114,29 @@ buffers that could not be reverted."
 
 ;;;; ___________________________________________________________________________
 
-(defun nomis/revert/revert-out-of-sync-buffers/maybe
+(defun nomis/revert-out-of-sync-buffers-in-repo
     (&optional force?)
+  (interactive "P")
   (let* ((in-current-repo?-fun (nomis/-vc-make/buffer-in-current-repo?-fun))
          (revert-buffer?-fun (lambda (b)
                                (and (buffer-file-name b)
-                                    ;; The user will already have been
-                                    ;; given the opportunity to save
-                                    ;; modified buffers, so we silently
-                                    ;; don't revert modified buffers.
                                     (not (buffer-modified-p b))
                                     (funcall in-current-repo?-fun b)
                                     (not (verify-visited-file-modtime b)))))
-         (buffers-to-maybe-revert (nomis/find-buffers revert-buffer?-fun))
-         (revert-buffers? (or force?
-                              (if (not buffers-to-maybe-revert)
-                                  nil
-                                (nomis/y-or-n-p-reporting-non-local-exit
-                                 (format
-                                  "Do you want to revert the following %s buffer(s) that are out-of-sync with their files? %s"
-                                  (length buffers-to-maybe-revert)
-                                  buffers-to-maybe-revert))))))
-    (when revert-buffers?
-      (dolist (b buffers-to-maybe-revert)
-        (nomis/message-no-disp "==== ==== Reverting %s" b)
-        (nomis/revert-buffer-reporting-failures b)))))
-
-(defun nomis/revert-out-of-sync-buffers-in-repo-getting-user-confirmation ()
-  (interactive)
-  (nomis/revert/revert-out-of-sync-buffers/maybe))
+         (buffers-to-maybe-revert (nomis/find-buffers revert-buffer?-fun)))
+    (if (null buffers-to-maybe-revert)
+        (message "No buffers are out-of-sync")
+      (let* ((revert-buffers?
+              (or force?
+                  (nomis/y-or-n-p-reporting-non-local-exit
+                   (format
+                    "Do you want to revert the following %s buffer(s) that are out-of-sync with their files? %s"
+                    (length buffers-to-maybe-revert)
+                    buffers-to-maybe-revert)))))
+        (when revert-buffers?
+          (dolist (b buffers-to-maybe-revert)
+            (nomis/message-no-disp "==== ==== Reverting %s" b)
+            (nomis/revert-buffer-reporting-failures b)))))))
 
 ;;;; ___________________________________________________________________________
 
