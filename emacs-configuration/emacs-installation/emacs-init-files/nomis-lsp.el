@@ -11,6 +11,13 @@
 ;;   (unless (ignore-errors (cider-repls))
 ;;     (lsp-hover)))
 
+;; TODO: lsp settings
+;;   See:
+;;      lsp-eldoc-enable-hover
+;;      cider-eldoc-display-for-symbol-at-point
+;;      https://github.com/clojure-lsp/clojure-lsp/issues/569
+;;      https://github.com/emacs-lsp/lsp-mode/pull/3106
+
 (defun nomis/lsp-init ()
   ;; Non-LSP stuff. I guess these don't belong here.
   ;; See https://emacs-lsp.github.io/lsp-mode/page/performance/
