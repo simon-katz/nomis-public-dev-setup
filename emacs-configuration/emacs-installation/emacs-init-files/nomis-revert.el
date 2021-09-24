@@ -136,6 +136,18 @@ buffers that could not be reverted."
 ;;;; We have auto-revert turned off, and we only revert when we are sure it
 ;;;; won't clobber anything.
 
+(defvar *nomis/polite-revert/-advised-commands* nil)
+
+(defvar nomis/polite-revert/-revert-buffers-following-a-setup? nil
+  ;; We turn this on when we are sure it's OK, and then turn it off again.
+  ;; This could be dynamically bound for most commands, because the refesh
+  ;; happens as part of the command. That would be simpler and more robust -- no
+  ;; use of `setq`. But some commands, eg `magit-commit-create`, work in two
+  ;; steps with the refresh not called by the command. So in those cases you
+  ;; can't use dynamic binding. Maybe we should use dynamic binding when we can,
+  ;; and the current approach only when necessary. But that would be extra work.
+  )
+
 (defun nomis/polite-revert/-make-multiline-string (&rest strings)
   (s-join "\n" strings))
 
@@ -169,10 +181,10 @@ buffers that could not be reverted."
 (defconst nomis/polite-revert/-log-string/note-end
   "    ▲▲▲▲▲▲▲▲▲▲▲▲")
 
-(defun nomis/polite-revert/-maybe-revert-out-of-sync-buffers
+(defun nomis/polite-revert/-revert-out-of-sync-buffers/maybe
     (&optional force?)
   (nomis/message-no-disp
-   ">>>> nomis/polite-revert/-maybe-revert-out-of-sync-buffers")
+   ">>>> nomis/polite-revert/-revert-out-of-sync-buffers/maybe")
   (unwind-protect
       (let* ((in-current-repo?-fun (nomis/-vc-make/buffer-in-current-repo?-fun))
              (revert-buffer?-fun (lambda (b)
@@ -198,20 +210,16 @@ buffers that could not be reverted."
             (nomis/message-no-disp "==== ==== Reverting %s" b)
             (nomis/revert-buffer-ignoring-failures b))))
     (nomis/message-no-disp
-     "<<<< nomis/polite-revert/-maybe-revert-out-of-sync-buffers")))
+     "<<<< nomis/polite-revert/-revert-out-of-sync-buffers/maybe")))
 
-(defun nomis/polite-revert/-maybe-revert-out-of-sync-buffers/forced ()
-  (nomis/polite-revert/-maybe-revert-out-of-sync-buffers t))
-
-(defvar *nomis/polite-revert/-advised-commands* nil)
-
-(defvar nomis/polite-revert/-revert-buffers? nil) ; we turn this on when we are sure it's OK, and then turn it off again
+(defun nomis/polite-revert/-revert-out-of-sync-buffers/forced ()
+  (nomis/polite-revert/-revert-out-of-sync-buffers/maybe t))
 
 (defun nomis/polite-revert/-report-status/helper (middle-words)
   (nomis/message-no-disp
-   "==== nomis/polite-revert/-revert-buffers? %s %s"
+   "==== nomis/polite-revert/-revert-buffers-following-a-setup? %s %s"
    middle-words
-   nomis/polite-revert/-revert-buffers?))
+   nomis/polite-revert/-revert-buffers-following-a-setup?))
 
 (defun nomis/polite-revert/-report-status/new ()
   (nomis/polite-revert/-report-status/helper "has been set to"))
@@ -219,16 +227,19 @@ buffers that could not be reverted."
 (defun nomis/polite-revert/-report-status/existing ()
   (nomis/polite-revert/-report-status/helper "="))
 
-(defun nomis/polite-revert/-do-set-up ()
+(defun nomis/polite-revert/-obsolete-unmodified-buffers ()
   (let* ((in-current-repo?-fun (nomis/-vc-make/buffer-in-current-repo?-fun))
          (obsolete-unmodified?-fun
           (lambda (b)
-            (nomis/-vc-buffer-unmodified-and-out-of-date? in-current-repo?-fun b)))
-         (obsolete-unmodified-buffers
-          (nomis/find-buffers obsolete-unmodified?-fun))
+            (nomis/-vc-buffer-unmodified-and-out-of-date? in-current-repo?-fun b))))
+    (nomis/find-buffers obsolete-unmodified?-fun)))
+
+(defun nomis/polite-revert/-do-set-up ()
+  (let* ((obsolete-unmodified-buffers
+          (nomis/polite-revert/-obsolete-unmodified-buffers))
          (n-obsolete-unmodified-buffers (length obsolete-unmodified-buffers)))
     (if (null obsolete-unmodified-buffers)
-        (setq nomis/polite-revert/-revert-buffers? t)
+        (setq nomis/polite-revert/-revert-buffers-following-a-setup? t)
       (progn
         (nomis/message-no-disp "==== this-command = %s" this-command)
         (nomis/message-no-disp "==== advised commands = %s"
@@ -239,21 +250,34 @@ buffers that could not be reverted."
          (nomis/buffers->string-of-names obsolete-unmodified-buffers))
         (let* ((msg (format "There are %s buffer(s) that are out-of-sync with their files. Are you happy to clobber them? If not, all reverting will be turned off for this operation.\nSee *Messages* buffer for details\n"
                             n-obsolete-unmodified-buffers)))
-          (setq nomis/polite-revert/-revert-buffers?
+          (setq nomis/polite-revert/-revert-buffers-following-a-setup?
                 (nomis/y-or-n-p-reporting-non-local-exit (format "%s" msg))))))
     (nomis/polite-revert/-report-status/new)))
 
 (progn ; nomis/polite-revert/-advice -- treat this as a unit of work
 
   ;; magit-push
-  ;; with-editor-finish
 
   (defconst nomis/polite-revert/-commands/non-reverting
-    '(magit-stage
-      magit-unstage))
+    ;; Commands that don't make changes to files.
+    '(magit-commit-amend
+      magit-commit-create
+      magit-reset-soft
+      magit-stage
+      magit-unstage
+      with-editor-finish ; this happens eg following a `magit-commit-create`
+      ))
 
   (defconst nomis/polite-revert/-commands/reverting/not-requiring-setup
-    '())
+    ;; Commands that don't make changes to files but after which we want to ask
+    ;; the user whether to revert.
+    '(nomis/magit-refresh ; Provide an easy way to revert
+      ))
+
+  ;; TODO: Might we need
+  ;;       `nomis/polite-revert/-commands/reverting/following-a-setup` for
+  ;;       two-step Magit commands? (So `with-editor-finish` would go here if we
+  ;;       wanted to revert for `magit-commit-create`).
 
   (defconst nomis/polite-revert/-commands/reverting/requiring-setup
     (progn
@@ -262,12 +286,10 @@ buffers that could not be reverted."
       (when (boundp 'nomis/polite-revert/-commands/reverting/requiring-setup)
         (dolist (c nomis/polite-revert/-commands/reverting/requiring-setup)
           (advice-remove c 'nomis/polite-revert/-advice)))
-      '(nomis/magit-refresh
-        magit-commit-amend
-        magit-commit-create
-        magit-discard
+      ;; Commands that make changes to files and before which we want to ask the
+      ;; user whether to revert.
+      '(magit-discard
         magit-reset-hard
-        magit-reset-soft
         magit-stash-both
         magit-stash-index
         magit-stash-pop)))
@@ -284,68 +306,92 @@ buffers that could not be reverted."
            (nomis/message-no-disp "%s"
                                   nomis/polite-revert/-log-string/setup-begin))
          (nomis/message-no-disp ">>>> %s" c)
-         (let* ((do-special-stuff?
-                 (null *nomis/polite-revert/-advised-commands*)))
-           (unwind-protect
-               (let* ((*nomis/polite-revert/-advised-commands*
-                       (cons c *nomis/polite-revert/-advised-commands*)))
-                 (if (not do-special-stuff?)
-                     (do-it)
-                   (progn
-                     (nomis/polite-revert/-do-set-up)
-                     (nomis/with-cleanup-on-non-local-exit
-                         (do-it)
-                       ;; Can get here, for example, if user enters C-g when
-                       ;; asked whether to save a file.
-                       (nomis/message-no-disp "==== non-local exit")
-                       (when nomis/polite-revert/-revert-buffers?
-                         (nomis/polite-revert/-maybe-revert-out-of-sync-buffers/forced)
-                         (setq nomis/polite-revert/-revert-buffers?
-                               nil)
-                         (nomis/polite-revert/-report-status/new))))))
-             (nomis/message-no-disp "<<<< %s" c)
-             (when (null *nomis/polite-revert/-advised-commands*)
-               (nomis/message-no-disp "%s"
-                                      nomis/polite-revert/-log-string/setup-end))))))
+         (unwind-protect
+             (let* ((do-special-stuff?
+                     (null *nomis/polite-revert/-advised-commands*))
+                    (*nomis/polite-revert/-advised-commands*
+                     (cons c *nomis/polite-revert/-advised-commands*)))
+               (if (not do-special-stuff?)
+                   (do-it)
+                 (progn
+                   (nomis/polite-revert/-do-set-up)
+                   (nomis/with-cleanup-on-non-local-exit
+                       (do-it)
+                     ;; Can get here, for example, if user enters C-g when
+                     ;; asked whether to save a file.
+                     (nomis/message-no-disp "==== non-local exit")
+                     (when nomis/polite-revert/-revert-buffers-following-a-setup?
+                       (nomis/polite-revert/-revert-out-of-sync-buffers/forced)
+                       (setq nomis/polite-revert/-revert-buffers-following-a-setup?
+                             nil)
+                       (nomis/polite-revert/-report-status/new))))))
+           (nomis/message-no-disp "<<<< %s" c)
+           (when (null *nomis/polite-revert/-advised-commands*)
+             (nomis/message-no-disp "%s"
+                                    nomis/polite-revert/-log-string/setup-end)))))
      '((name . nomis/polite-revert/-advice)))))
+
+(defun nomis/polite-revert/-emit-message-if-unknown-command (command
+                                                             command-kind)
+  (when (eql command-kind :unspecified-command-kind)
+    (nomis/message-no-disp "%s" nomis/polite-revert/-log-string/note-begin)
+    (nomis/message-no-disp "    Consider adding `%s` to one of the commands lists"
+                           command)
+    (nomis/message-no-disp "%s" nomis/polite-revert/-log-string/note-end)))
 
 (defun nomis/polite-revert/auto-revert ()
   (nomis/message-no-disp "%s" nomis/polite-revert/-log-string/revert-begin)
-  (nomis/message-no-disp "==== this-command = %s" this-command)
-  (nomis/message-no-disp
-   "==== nomis/polite-revert/auto-revert *nomis/polite-revert/-advised-commands* = %s"
-   *nomis/polite-revert/-advised-commands*)
   (unwind-protect
-      (when (null (cdr *nomis/polite-revert/-advised-commands*))
-        (nomis/polite-revert/-report-status/existing)
-        (if (member this-command
-                    nomis/polite-revert/-commands/non-reverting)
-            (nomis/message-no-disp "==== Not reverting because this-command (%s) is a member of `nomis/polite-revert/-commands/non-reverting`"
-                                   this-command)
-          (unless (or ; (null this-command) ; this happens in `magit-auto-revert-buffers` for `TODO What?`
-                   (member this-command
-                           nomis/polite-revert/-commands/reverting/requiring-setup)
-                   (member this-command
-                           nomis/polite-revert/-commands/reverting/not-requiring-setup))
-            (nomis/message-no-disp "%s" nomis/polite-revert/-log-string/note-begin)
-            (nomis/message-no-disp "    Consider adding `%s` to one of the commands lists"
-                                   this-command)
-            (nomis/message-no-disp "%s" nomis/polite-revert/-log-string/note-end))
-          (when nomis/polite-revert/-revert-buffers?
-            (nomis/polite-revert/-maybe-revert-out-of-sync-buffers/forced)
-            ;; TODO: We are turning off reverting so that if there's something
-            ;;       I'm unclear about we don't revert.
-            ;;       i.e. I don't know when Magit calls
-            ;;       `magit-auto-revert-buffers`.
-            (setq nomis/polite-revert/-revert-buffers? nil)
-            (nomis/polite-revert/-report-status/new))))
+      (let* ((command-kind
+              (cond
+               ;; ((null this-command) ; this happens in `magit-auto-revert-buffers` for `TODO What?`
+               ;;  :null)
+               ((member this-command
+                        nomis/polite-revert/-commands/non-reverting)
+                :non-reverting-command)
+               ((member this-command
+                        nomis/polite-revert/-commands/reverting/requiring-setup)
+                :reverting-command-requiring-setup)
+               ((member this-command
+                        nomis/polite-revert/-commands/reverting/not-requiring-setup)
+                :reverting-command-not-requiring-setup)
+               (t
+                :unspecified-command-kind))))
+        (nomis/message-no-disp "==== this-command = %s (which is a %s)"
+                               this-command
+                               command-kind)
+        (nomis/message-no-disp
+         "==== nomis/polite-revert/auto-revert *nomis/polite-revert/-advised-commands* = %s"
+         *nomis/polite-revert/-advised-commands*)
+        (when (null (cdr *nomis/polite-revert/-advised-commands*))
+          (nomis/polite-revert/-emit-message-if-unknown-command this-command
+                                                                command-kind)
+          (ecase command-kind
+            (:non-reverting-command
+             ;; Do nothing.
+             )
+            (:reverting-command-requiring-setup
+             (nomis/polite-revert/-report-status/existing)
+             (when nomis/polite-revert/-revert-buffers-following-a-setup?
+               (nomis/polite-revert/-revert-out-of-sync-buffers/forced)))
+            (:reverting-command-not-requiring-setup
+             (nomis/polite-revert/-revert-out-of-sync-buffers/maybe))
+            (:unspecified-command-kind
+             ;; Do nothing. We've already emitted a message.
+             ))))
+    ;; We are turning off reverting so that if there's something we're unclear
+    ;; about we don't revert. (We don't know when Magit calls
+    ;; `magit-auto-revert-buffers`.)
+    (when nomis/polite-revert/-revert-buffers-following-a-setup?
+      (setq nomis/polite-revert/-revert-buffers-following-a-setup? nil)
+      (nomis/polite-revert/-report-status/new))
     (nomis/message-no-disp "%s" nomis/polite-revert/-log-string/revert-end)))
 
 ;;;; ___________________________________________________________________________
 
 (defun nomis/revert-out-of-sync-buffers-in-repo-getting-user-confirmation ()
   (interactive)
-  (nomis/polite-revert/-maybe-revert-out-of-sync-buffers))
+  (nomis/polite-revert/-revert-out-of-sync-buffers/maybe))
 
 ;;;; ___________________________________________________________________________
 
