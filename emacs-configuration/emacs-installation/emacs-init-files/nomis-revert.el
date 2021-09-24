@@ -1,5 +1,7 @@
 ;;;; Init stuff -- nomis-revert --  -*- lexical-binding: t -*-
 
+;;;; TODO: Consider adding `nomis/with-before-and-after`.
+
 (require 'dash)
 (require 's)
 (require 'nomis-msg)
@@ -215,7 +217,7 @@ buffers that could not be reverted."
   (nomis/polite-revert/-report-status/helper "has been set to"))
 
 (defun nomis/polite-revert/-report-status/existing ()
-  (nomis/polite-revert/-report-status/helper " ="))
+  (nomis/polite-revert/-report-status/helper "="))
 
 (defun nomis/polite-revert/-do-set-up ()
   (let* ((in-current-repo?-fun (nomis/-vc-make/buffer-in-current-repo?-fun))
@@ -243,15 +245,22 @@ buffers that could not be reverted."
 
 (progn ; nomis/polite-revert/-advice -- treat this as a unit of work
 
-  (defconst nomis/polite-revert/-non-reverting-commands
+  ;; magit-push
+  ;; with-editor-finish
+
+  (defconst nomis/polite-revert/-commands/non-reverting
+    '(magit-stage
+      magit-unstage))
+
+  (defconst nomis/polite-revert/-commands/reverting/not-requiring-setup
     '())
 
-  (defconst nomis/polite-revert/-reverting-commands
+  (defconst nomis/polite-revert/-commands/reverting/requiring-setup
     (progn
       ;; If already defined, remove the advice that was set up (so that we can
       ;; remove entries from this list in dev).
-      (when (boundp 'nomis/polite-revert/-reverting-commands)
-        (dolist (c nomis/polite-revert/-reverting-commands)
+      (when (boundp 'nomis/polite-revert/-commands/reverting/requiring-setup)
+        (dolist (c nomis/polite-revert/-commands/reverting/requiring-setup)
           (advice-remove c 'nomis/polite-revert/-advice)))
       '(nomis/magit-refresh
         magit-commit-amend
@@ -263,7 +272,7 @@ buffers that could not be reverted."
         magit-stash-index
         magit-stash-pop)))
 
-  (dolist (c nomis/polite-revert/-reverting-commands)
+  (dolist (c nomis/polite-revert/-commands/reverting/requiring-setup)
     (advice-add
      c
      :around
@@ -301,29 +310,35 @@ buffers that could not be reverted."
      '((name . nomis/polite-revert/-advice)))))
 
 (defun nomis/polite-revert/auto-revert ()
+  (nomis/message-no-disp "%s" nomis/polite-revert/-log-string/revert-begin)
+  (nomis/message-no-disp "==== this-command = %s" this-command)
   (nomis/message-no-disp
    "==== nomis/polite-revert/auto-revert *nomis/polite-revert/-advised-commands* = %s"
    *nomis/polite-revert/-advised-commands*)
-  (nomis/message-no-disp "%s" nomis/polite-revert/-log-string/revert-begin)
   (unwind-protect
       (when (null (cdr *nomis/polite-revert/-advised-commands*))
         (nomis/polite-revert/-report-status/existing)
-        (unless (or (member this-command
-                            nomis/polite-revert/-reverting-commands)
-                    (member this-command
-                            nomis/polite-revert/-non-reverting-commands))
-          (nomis/message-no-disp "%s" nomis/polite-revert/-log-string/note-begin)
-          (nomis/message-no-disp "    Consider adding `%s` to `nomis/polite-revert/-reverting-commands` or `nomis/polite-revert/-non-reverting-commands`"
-                                 this-command)
-          (nomis/message-no-disp "%s" nomis/polite-revert/-log-string/note-end))
-        (when nomis/polite-revert/-revert-buffers?
-          (nomis/polite-revert/-maybe-revert-out-of-sync-buffers/forced)
-          ;; TODO: We are turning off reverting so that if there's something
-          ;;       I'm unclear about we don't revert.
-          ;;       i.e. I don't know when Magit calls
-          ;;       `magit-auto-revert-buffers`.
-          (setq nomis/polite-revert/-revert-buffers? nil)
-          (nomis/polite-revert/-report-status/new)))
+        (if (member this-command
+                    nomis/polite-revert/-commands/non-reverting)
+            (nomis/message-no-disp "==== Not reverting because this-command (%s) is a member of `nomis/polite-revert/-commands/non-reverting`"
+                                   this-command)
+          (unless (or ; (null this-command) ; this happens in `magit-auto-revert-buffers` for `TODO What?`
+                   (member this-command
+                           nomis/polite-revert/-commands/reverting/requiring-setup)
+                   (member this-command
+                           nomis/polite-revert/-commands/reverting/not-requiring-setup))
+            (nomis/message-no-disp "%s" nomis/polite-revert/-log-string/note-begin)
+            (nomis/message-no-disp "    Consider adding `%s` to one of the commands lists"
+                                   this-command)
+            (nomis/message-no-disp "%s" nomis/polite-revert/-log-string/note-end))
+          (when nomis/polite-revert/-revert-buffers?
+            (nomis/polite-revert/-maybe-revert-out-of-sync-buffers/forced)
+            ;; TODO: We are turning off reverting so that if there's something
+            ;;       I'm unclear about we don't revert.
+            ;;       i.e. I don't know when Magit calls
+            ;;       `magit-auto-revert-buffers`.
+            (setq nomis/polite-revert/-revert-buffers? nil)
+            (nomis/polite-revert/-report-status/new))))
     (nomis/message-no-disp "%s" nomis/polite-revert/-log-string/revert-end)))
 
 ;;;; ___________________________________________________________________________
