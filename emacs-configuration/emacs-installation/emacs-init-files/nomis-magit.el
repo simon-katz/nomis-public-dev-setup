@@ -1,7 +1,7 @@
 ;;;; Init stuff -- nomis-magit  -*- lexical-binding: t; -*-
 
 ;;;; ___________________________________________________________________________
-;;;; ---- -nomis/hack-magit-auto-revert ----
+;;;; ---- -nomis/polite-revert ----
 
 ;;;; See https://emacs.stackexchange.com/questions/35701/magit-sets-auto-revert-mode-annoying
 ;;;;
@@ -23,11 +23,11 @@
      'magit-auto-revert-buffers
      :around
      (lambda (_orig-fun &rest _args)
-       (nomis/-magit-maybe-revert))
-     '((name . -nomis/hack-magit-auto-revert))))
+       (nomis/polite-revert/auto-revert))
+     '((name . -nomis/polite-revert))))
    (t
     (message-box (s-join " "
-                         '("Revisit `-nomis/hack-magit-auto-revert`"
+                         '("Revisit `-nomis/polite-revert`"
                            "for this version of Magit."))))))
 
 (provide 'nomis-magit)
