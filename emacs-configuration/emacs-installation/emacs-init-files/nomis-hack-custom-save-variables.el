@@ -80,7 +80,7 @@
                        (save-excursion
                          (goto-char beginning-of-val)
                          (indent-pp-sexp 1)
-                         ;; :nomis-hacks
+                         ;; :nomis-hack
                          (nomis/-make-list-one-item-per-line)))))
                  (when (or now requests comment)
                    (princ " ")
