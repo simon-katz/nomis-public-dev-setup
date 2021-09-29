@@ -153,27 +153,14 @@
 
 ;;;; ___________________________________________________________________________
 
-;;;; `(setq visible-bell t)` is broken, so...
-
 (setq visible-bell t)
 
-(defun nomis/msg/set-ring-bell-function ()
-  (setq ring-bell-function 'nomis/msg/beep))
-
-(nomis/msg/set-ring-bell-function)
-
-;;;; ___________________________________________________________________________
-
-(nomis/def-timer-with-fixed-repeats
-    nomis/msg/ensure-ring-bell-function-not-nil
-    ;; With one of your flash functions, repeated C-g can cause
-    ;; `ring-bell-function` to be set to nil. Not sure when this happens.
-    ;; This fixes things.
-    10
-    10
-  (when (null ring-bell-function) ;
-    (message "`ring-bell-function` is nil. Resetting.")
-    (nomis/msg/set-ring-bell-function)))
+(advice-add
+ 'beep
+ :after
+ (lambda ()
+   (nomis/msg/beep))
+ '((name . nomis/msg/beep)))
 
 ;;;; ___________________________________________________________________________
 
