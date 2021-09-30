@@ -46,7 +46,8 @@ the need to save files so that a file-watcher can spot changes).")
                 "CIDER 0.24.0snapshot"
                 "CIDER 0.26.1 (Nesebar)"))
       (member (pkg-info-version-info 'cider)
-              '("1.2.0snapshot (package: 20210909.1011)")))
+              '("1.2.0snapshot (package: 20210909.1011)"
+                "1.2.0snapshot (package: 20210929.1032)")))
 
   (cl-flet*
       ((check-current-buffer
