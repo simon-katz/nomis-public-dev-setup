@@ -10,4 +10,13 @@
 
 ;;;; ___________________________________________________________________________
 
+(with-eval-after-load 'magit-diff
+  ;; Add H key to some existing key bindings to get "other-window".
+  (define-key magit-hunk-section-map (kbd "<kp-enter>") ; H-<return>
+    'magit-diff-visit-file-other-window)
+  (define-key magit-hunk-section-map (kbd "<C-kp-enter>") ; H-C-<return>
+    'magit-diff-visit-worktree-file-other-window))
+
+;;;; ___________________________________________________________________________
+
 (provide 'nomis-magit)
