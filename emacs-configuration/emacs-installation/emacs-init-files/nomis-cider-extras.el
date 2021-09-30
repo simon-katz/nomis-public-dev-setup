@@ -65,7 +65,8 @@
    ((or (member (nomis/cider-version)
                 '("CIDER 0.26.1 (Nesebar)"))
         (member (pkg-info-version-info 'cider)
-                '("1.2.0snapshot (package: 20210909.1011)")))
+                '("1.2.0snapshot (package: 20210909.1011)"
+                  "1.2.0snapshot (package: 20210929.1032)")))
     (advice-add
      'cider-eldoc-format-function
      :around
@@ -76,7 +77,7 @@
 
    (t
     (message-box
-     "You need to fix `cider-eldoc-format-function` for this version of `cider`."))))
+     "You need to fix `cider-eldoc-format-function` for this version of `CIDER`."))))
 
 ;;;; ___________________________________________________________________________
 
