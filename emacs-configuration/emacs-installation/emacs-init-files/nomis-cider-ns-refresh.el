@@ -125,7 +125,8 @@
  ((or (member (nomis/cider-version)
               '("CIDER 0.26.1 (Nesebar)"))
       (member (pkg-info-version-info 'cider)
-              '("1.2.0snapshot (package: 20210909.1011)")))
+              '("1.2.0snapshot (package: 20210909.1011)"
+                "1.2.0snapshot (package: 20210929.1032)")))
 
   (defvar nomis/cider-ns-refresh/-vars-to-pass-to-log-buffer
     '(nomis/cider-forbid-refresh-all?
