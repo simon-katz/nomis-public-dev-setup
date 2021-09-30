@@ -450,12 +450,32 @@ window."
 
 ;;;; ___________________________________________________________________________
 
-;;;; TODO: Now there is `cider-offer-to-open-cljs-app-in-browser`, so this
-;;;;       isn't needed.
-
-(defvar nomis/cider-cljs-offer-to-open-app-in-browser? t)
+(defvar nomis/cider-cljs-offer-to-open-app-in-browser? t
+  "Obsolete. Use `cider-offer-to-open-cljs-app-in-browser` instead.")
 
 (cond
+ ((boundp 'cider-offer-to-open-cljs-app-in-browser)
+  (advice-add
+   'cider--offer-to-open-app-in-browser
+   :around
+   (lambda (orig-fun &rest args)
+     (cl-flet ((do-it () (apply orig-fun args)))
+       ;; We only get here when `cider-offer-to-open-cljs-app-in-browser` is
+       ;; non-null.
+       (assert cider-offer-to-open-cljs-app-in-browser
+               nil
+               "`cider-offer-to-open-cljs-app-in-browser` is unexpectedly true")
+       ;; Tell user to use CIDER's built-in approach.
+       (when (or (local-variable-p
+                  'nomis/cider-cljs-offer-to-open-app-in-browser?)
+                 (null nomis/cider-cljs-offer-to-open-app-in-browser?))
+         (beep)
+         (message "Please use `cider-offer-to-open-cljs-app-in-browser` instead of `nomis/cider-cljs-offer-to-open-app-in-browser?`"))
+       ;; Do what the user asked.
+       (when nomis/cider-cljs-offer-to-open-app-in-browser?
+         (do-it))))
+   '((name . nomis/no-longer-need-nomis-hack))))
+
  ((or (member (nomis/cider-version)
               '("CIDER 0.22.1snapshot"
                 "CIDER 0.23.0 (Lima)"
@@ -470,6 +490,7 @@ window."
      (when nomis/cider-cljs-offer-to-open-app-in-browser?
        (apply orig-fun args)))
    '((name . nomis/maybe-do-not-offer-to-open-app-in-browser))))
+
  (t
   (message-box
    "You need to fix `cider--offer-to-open-app-in-browser` for this version of Cider.")))
