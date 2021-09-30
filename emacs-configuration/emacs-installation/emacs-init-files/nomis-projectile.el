@@ -59,5 +59,40 @@
             '((name . nomis/hack-projectile-midje-projects)))
 
 ;;;; ___________________________________________________________________________
+;;;; ---- Fix broken `projectile-grep` ----
+
+;;;; See https://github.com/bbatsov/projectile/issues/1687
+
+(with-eval-after-load 'projectile
+  (cond
+   ((member (pkg-info-version-info 'projectile)
+            '("20210811.435"))
+
+    (defvar *nomis/in-projectile-grep?* nil)
+
+    (advice-add
+     'projectile-grep
+     :around
+     (lambda (orig-fun &rest args)
+       (let* ((*nomis/in-projectile-grep?* t))
+         (apply orig-fun args)))
+     '((name . nomis/hack-projectile-grep)))
+
+    (advice-add
+     'rename-buffer
+     :around
+     (lambda (orig-fun newname &optional unique)
+       (when *nomis/in-projectile-grep?*
+         (pop-to-buffer "*grep*"))
+       (funcall orig-fun
+                newname
+                (if *nomis/in-projectile-grep?* t unique)))
+     '((name . nomis/hack-projectile-grep))))
+
+   (t
+    (message-box
+     "You need to fix `nomis/hack-projectile-grep` for this version of projectile."))))
+
+;;;; ___________________________________________________________________________
 
 (provide 'nomis-projectile)
