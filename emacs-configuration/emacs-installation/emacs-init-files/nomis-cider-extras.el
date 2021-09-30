@@ -43,12 +43,13 @@
     (or (ignore-errors ; because version string may be invalid
           (version<= "0.26.1" v))
         (member v
-                '("1.2.0snapshot (package: 20210909.1011)"))))
+                '("1.2.0snapshot (package: 20210909.1011)"
+                  "1.2.0snapshot (package: 20210929.1032)"))))
   ;; I think this is now fixed.
   )
  (t
   (message-box
-   "You need to fix `nomis/cider-avoid-multiple-result-prefixes` for this version of Cider.")))
+   "You need to fix `nomis/cider-avoid-multiple-result-prefixes` for this version of CIDER.")))
 
 ;;;; ___________________________________________________________________________
 
