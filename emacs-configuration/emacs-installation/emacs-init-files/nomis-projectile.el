@@ -1,6 +1,6 @@
 ;;;; Init stuff -- projectile -*- lexical-binding: t -*-
 
-(projectile-global-mode)
+(projectile-mode)
 
 ;; If you ever forget any of Projectile's keybindings just do a: C-c p C-h
 
