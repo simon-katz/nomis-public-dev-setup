@@ -116,9 +116,9 @@
    "Which buffers do you want to revert? "
    '((:out-of-sync-unmodified-only     "Out-of-sync unmodified buffers only")
      (:unmodified-buffers-only         "Unmodified buffers only")
+     (:unmodified-only-if-no-modified  "Unmodified buffers only, only if there are no modified buffers")
      (:modified-buffers-only           "Modified buffers only")
-     (:modified-and-unmodified-buffers "Modified and unmodified buffers")
-     (:no-revert-when-unmodified-exist "Don't revert when there are unmodified buffers"))
+     (:modified-and-unmodified-buffers "Modified and unmodified buffers"))
    'nomis/revert/-prompt-for-mode))
 
 (defun nomis/revert/-prompt-for-restrict-to-current-repo ()
@@ -151,9 +151,9 @@
       (ecase mode
         (:out-of-sync-unmodified-only     '(nil t   t   nil))
         (:unmodified-buffers-only         '(nil t   nil nil))
+        (:unmodified-only-if-no-modified  '(nil t   nil t))
         (:modified-buffers-only           '(t   nil nil nil))
-        (:modified-and-unmodified-buffers '(t   t   nil nil))
-        (:no-revert-when-unmodified-exist '(nil t   nil t)))
+        (:modified-and-unmodified-buffers '(t   t   nil nil)))
     (let* ((buffer-predicates
             (-concat (when only-current-repo?
                        (list (nomis/-vc-make/buffer-in-current-repo?-fun)))
