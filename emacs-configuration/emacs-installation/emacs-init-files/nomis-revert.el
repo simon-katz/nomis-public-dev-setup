@@ -12,14 +12,18 @@
                                               value-string-pairs
                                               &optional
                                               history-list-name)
-  (let* ((s (ido-completing-read prompt
-                                 (-map #'second value-string-pairs)
+  (let* ((value-string-pairs-2 (cl-loop
+                                for i = 1 then (1+ i)
+                                for (v s) in value-string-pairs
+                                collect (list v (format "%s %s" i s))))
+         (s (ido-completing-read prompt
+                                 (-map #'second value-string-pairs-2)
                                  nil
                                  t
                                  nil
                                  history-list-name)))
     (first (-find (lambda (pair) (equal (second pair) s))
-                  value-string-pairs))))
+                  value-string-pairs-2))))
 
 (defun nomis/vc-buffer-in-current-repo? (b)
   (case 2
