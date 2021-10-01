@@ -110,8 +110,7 @@
                       (format "Failed to revert the above %s buffer(s):"
                               (length failures))))
               (list "See *Messages* buffer for details"))))
-       (s-join "\n" lines)))
-    (when failures (beep))))
+       (s-join "\n" lines)))))
 
 (defconst nomis/revert/-mode-pairs
   '((:unmodified-only-if-out-of-sync  "Unmodified buffers only, and only out-of-sync ones")
