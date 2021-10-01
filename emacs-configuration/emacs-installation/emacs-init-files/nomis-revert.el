@@ -135,9 +135,9 @@
      (nil "No, revert modes"))
    'nomis/revert/-prompt-for-preserve-modes))
 
-(defun nomis/revert-buffers (no-confirm?)
+(defun nomis/revert-buffers ()
   "Revert buffers."
-  (interactive (list current-prefix-arg))
+  (interactive)
   (let* ((mode (nomis/revert/-prompt-for-mode))
          (only-current-repo? (nomis/revert/-prompt-for-restrict-to-current-repo)))
     (cl-multiple-value-bind (revert-unmodified-buffers?
@@ -177,12 +177,11 @@
             (if (null buffers-to-revert)
                 (message "There are no buffers to revert")
               (let* ((preserve-modes? (nomis/revert/-prompt-for-preserve-modes)))
-                (when (or no-confirm?
-                          (nomis/y-or-n-p-reporting-non-local-exit
-                           (format
-                            "%s\nAre you sure you want to revert the above %s buffer(s)?"
-                            (nomis/buffers->string-of-names buffers-to-revert)
-                            (length buffers-to-revert))))
+                (when (nomis/y-or-n-p-reporting-non-local-exit
+                       (format
+                        "%s\nAre you sure you want to revert the above %s buffer(s)?"
+                        (nomis/buffers->string-of-names buffers-to-revert)
+                        (length buffers-to-revert)))
                   (nomis/-revert-buffers* buffers-to-revert
                                           preserve-modes?))))))))))
 
