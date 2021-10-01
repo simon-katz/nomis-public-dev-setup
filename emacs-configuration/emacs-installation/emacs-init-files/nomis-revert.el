@@ -135,59 +135,56 @@
      (nil "No, revert modes"))
    'nomis/revert/-prompt-for-preserve-modes))
 
-(defun nomis/revert-buffers (no-confirm?
-                             mode
-                             only-current-repo?
-                             preserve-modes?)
+(defun nomis/revert-buffers (no-confirm?)
   "Revert buffers."
-  (interactive (list current-prefix-arg
-                     (nomis/revert/-prompt-for-mode)
-                     (nomis/revert/-prompt-for-restrict-to-current-repo)
-                     (nomis/revert/-prompt-for-preserve-modes)))
-  (cl-multiple-value-bind (revert-unmodified-buffers?
-                           revert-modified-buffers?
-                           out-of-sync-buffers-only?
-                           bail-out-when-modified-buffers?)
-      (ecase mode
-        (:unmodified-only-if-out-of-sync  '(t   nil t   nil))
-        (:unmodified-only-if-no-modified  '(t   nil nil t))
-        (:unmodified-buffers-only         '(t   nil nil nil))
-        (:modified-buffers-only           '(nil t   nil nil))
-        (:modified-and-unmodified-buffers '(t   t   nil nil)))
-    (let* ((buffer-predicates
-            (-concat (when only-current-repo?
-                       (list (nomis/-vc-make/buffer-in-current-repo?-fun)))
-                     (when out-of-sync-buffers-only?
-                       (list (-compose #'not #'verify-visited-file-modtime)))))
-           (buffers-to-consider (apply #'nomis/find-buffers
-                                       #'buffer-file-name
-                                       buffer-predicates))
-           (modified-buffers (-filter #'buffer-modified-p
-                                      buffers-to-consider)))
-      (if (and bail-out-when-modified-buffers?
-               modified-buffers)
-          (progn
-            (beep)
-            (message "The following %s buffers are unsaved:\n%s\nThe above %s buffer(s) are unsaved.\nSave them or revert them first."
-                     (length modified-buffers)
-                     (nomis/buffers->string-of-names modified-buffers)
-                     (length modified-buffers)))
-        (let* ((unmodified-buffers (-filter (-compose #'not #'buffer-modified-p)
-                                            buffers-to-consider))
-               (buffers-to-revert (-concat (when revert-modified-buffers?
-                                             modified-buffers)
-                                           (when revert-unmodified-buffers?
-                                             unmodified-buffers))))
-          (if (null buffers-to-revert)
-              (message "There are no buffers to revert")
-            (when (or no-confirm?
-                      (nomis/y-or-n-p-reporting-non-local-exit
-                       (format
-                        "%s\nAre you sure you want to revert the above %s buffer(s)?"
-                        (nomis/buffers->string-of-names buffers-to-revert)
-                        (length buffers-to-revert))))
-              (nomis/-revert-buffers* buffers-to-revert
-                                      preserve-modes?))))))))
+  (interactive (list current-prefix-arg))
+  (let* ((mode (nomis/revert/-prompt-for-mode))
+         (only-current-repo? (nomis/revert/-prompt-for-restrict-to-current-repo)))
+    (cl-multiple-value-bind (revert-unmodified-buffers?
+                             revert-modified-buffers?
+                             out-of-sync-buffers-only?
+                             bail-out-when-modified-buffers?)
+        (ecase mode
+          (:unmodified-only-if-out-of-sync  '(t   nil t   nil))
+          (:unmodified-only-if-no-modified  '(t   nil nil t))
+          (:unmodified-buffers-only         '(t   nil nil nil))
+          (:modified-buffers-only           '(nil t   nil nil))
+          (:modified-and-unmodified-buffers '(t   t   nil nil)))
+      (let* ((buffer-predicates
+              (-concat (when only-current-repo?
+                         (list (nomis/-vc-make/buffer-in-current-repo?-fun)))
+                       (when out-of-sync-buffers-only?
+                         (list (-compose #'not #'verify-visited-file-modtime)))))
+             (buffers-to-consider (apply #'nomis/find-buffers
+                                         #'buffer-file-name
+                                         buffer-predicates))
+             (modified-buffers (-filter #'buffer-modified-p
+                                        buffers-to-consider)))
+        (if (and bail-out-when-modified-buffers?
+                 modified-buffers)
+            (progn
+              (beep)
+              (message "The following %s buffers are unsaved:\n%s\nThe above %s buffer(s) are unsaved.\nSave them or revert them first."
+                       (length modified-buffers)
+                       (nomis/buffers->string-of-names modified-buffers)
+                       (length modified-buffers)))
+          (let* ((unmodified-buffers (-filter (-compose #'not #'buffer-modified-p)
+                                              buffers-to-consider))
+                 (buffers-to-revert (-concat (when revert-modified-buffers?
+                                               modified-buffers)
+                                             (when revert-unmodified-buffers?
+                                               unmodified-buffers))))
+            (if (null buffers-to-revert)
+                (message "There are no buffers to revert")
+              (let* ((preserve-modes? (nomis/revert/-prompt-for-preserve-modes)))
+                (when (or no-confirm?
+                          (nomis/y-or-n-p-reporting-non-local-exit
+                           (format
+                            "%s\nAre you sure you want to revert the above %s buffer(s)?"
+                            (nomis/buffers->string-of-names buffers-to-revert)
+                            (length buffers-to-revert))))
+                  (nomis/-revert-buffers* buffers-to-revert
+                                          preserve-modes?))))))))))
 
 ;;;; ___________________________________________________________________________
 
