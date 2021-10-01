@@ -26,14 +26,12 @@
                   value-string-pairs-2))))
 
 (defun nomis/vc-buffer-in-current-repo? (b)
-  (case 2
-    (1 (magit-auto-revert-repository-buffer-p b))
-    (2 (let* ((vc-root-dir (nomis/dirtree/vc-root-dir)))
-         (when (null vc-root-dir)
-           (beep)
-           (error "Not in a repository"))
-         (s-starts-with? vc-root-dir
-                         (buffer-file-name b))))))
+  (let* ((vc-root-dir (nomis/dirtree/vc-root-dir)))
+    (when (null vc-root-dir)
+      (beep)
+      (error "Not in a repository"))
+    (s-starts-with? vc-root-dir
+                    (buffer-file-name b))))
 
 (defun nomis/-vc-make/buffer-in-current-repo?-fun ()
   (let* ((this-buffer (current-buffer)))
@@ -135,8 +133,10 @@
 (defun nomis/revert/-prompt-for-restrict-to-current-repo ()
   (nomis/prompt-using-value-string-pairs
    "Restrict to current repository? "
-   '((t   "Yes, restrict to buffers in the current repository")
-     (nil "No, don't restrict"))
+   (if (nomis/dirtree/vc-root-dir)
+       '((t   "Yes, restrict to buffers in the current repository")
+         (nil "No, don't restrict"))
+     '((nil "No, don't restrict (only option because not in a repository)")))
    'nomis/revert/-prompt-for-restrict-to-current-repo))
 
 (defun nomis/revert/-prompt-for-preserve-modes ()
