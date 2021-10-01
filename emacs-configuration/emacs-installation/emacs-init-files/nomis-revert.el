@@ -111,13 +111,21 @@
        (s-join "\n" lines)))
     (when failures (beep))))
 
+(defconst nomis/revert/-mode-pairs
+  '((:unmodified-only-if-out-of-sync  "Unmodified buffers only, and only out-of-sync ones")
+    (:unmodified-buffers-only         "Unmodified buffers only")
+    (:modified-buffers-only           "Modified buffers only")
+    (:modified-and-unmodified-buffers "Modified and unmodified buffers")))
+
+(defun nomis/revert/-mode->text (mode)
+  (cl-loop for (mode-2 text) in nomis/revert/-mode-pairs
+           when (eql mode mode-2)
+           return text))
+
 (defun nomis/revert/-prompt-for-mode ()
   (nomis/prompt-using-value-string-pairs
    "Which buffers do you want to revert? "
-   '((:unmodified-only-if-out-of-sync  "Unmodified buffers only, and only out-of-sync ones")
-     (:unmodified-buffers-only         "Unmodified buffers only")
-     (:modified-buffers-only           "Modified buffers only")
-     (:modified-and-unmodified-buffers "Modified and unmodified buffers"))
+   nomis/revert/-mode-pairs
    'nomis/revert/-prompt-for-mode))
 
 (defun nomis/revert/-prompt-for-restrict-to-current-repo ()
@@ -165,7 +173,9 @@
                                            (when revert-unmodified-buffers?
                                              unmodified-buffers))))
           (if (null buffers-to-revert)
-              (message "There are no buffers to revert")
+              (message "There are no buffers to revert (Options: %s / %s)"
+                       (nomis/revert/-mode->text mode)
+                       (if only-current-repo? "Only current repo" "All repos"))
             (when (or (null modified-buffers)
                       (not tell-user-about-modified-non-reverting-buffers?)
                       (nomis/y-or-n-p-reporting-non-local-exit
@@ -176,9 +186,10 @@
               (let* ((preserve-modes? (nomis/revert/-prompt-for-preserve-modes)))
                 (when (nomis/y-or-n-p-reporting-non-local-exit
                        (format
-                        "%s\nAre you sure you want to revert the above %s buffer(s)?"
+                        "%s\nAre you sure you want to revert the above %s buffer(s), %s modes?"
                         (nomis/buffers->string-of-names buffers-to-revert)
-                        (length buffers-to-revert)))
+                        (length buffers-to-revert)
+                        (if preserve-modes? "preserving" "reverting")))
                   (nomis/-revert-buffers* buffers-to-revert
                                           preserve-modes?))))))))))
 
