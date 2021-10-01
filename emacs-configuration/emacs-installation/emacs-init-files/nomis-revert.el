@@ -114,7 +114,7 @@
 (defun nomis/revert/-prompt-for-mode ()
   (nomis/prompt-using-value-string-pairs
    "Which buffers do you want to revert? "
-   '((:out-of-sync-unmodified-only     "Out-of-sync unmodified buffers only")
+   '((:out-of-sync-unmodified-only     "Unmodified buffers only, and only out-of-sync ones")
      (:unmodified-buffers-only         "Unmodified buffers only")
      (:unmodified-only-if-no-modified  "Unmodified buffers only, only if there are no modified buffers")
      (:modified-buffers-only           "Modified buffers only")
