@@ -179,8 +179,7 @@
                                            (when revert-unmodified-buffers?
                                              unmodified-buffers))))
           (if (null buffers-to-revert)
-              (progn (beep)
-                     (message "There are no buffers to revert"))
+              (message "There are no buffers to revert")
             (when (or no-confirm?
                       (nomis/y-or-n-p-reporting-non-local-exit
                        (format
