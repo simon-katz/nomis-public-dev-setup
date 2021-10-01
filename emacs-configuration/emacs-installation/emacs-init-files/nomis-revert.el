@@ -144,15 +144,15 @@
                      (nomis/revert/-prompt-for-mode)
                      (nomis/revert/-prompt-for-restrict-to-current-repo)
                      (nomis/revert/-prompt-for-preserve-modes)))
-  (cl-multiple-value-bind (revert-modified-buffers?
-                           revert-unmodified-buffers?
+  (cl-multiple-value-bind (revert-unmodified-buffers?
+                           revert-modified-buffers?
                            out-of-sync-buffers-only?
                            bail-out-when-modified-buffers?)
       (ecase mode
-        (:unmodified-only-if-out-of-sync  '(nil t   t   nil))
-        (:unmodified-only-if-no-modified  '(nil t   nil t))
-        (:unmodified-buffers-only         '(nil t   nil nil))
-        (:modified-buffers-only           '(t   nil nil nil))
+        (:unmodified-only-if-out-of-sync  '(t   nil t   nil))
+        (:unmodified-only-if-no-modified  '(t   nil nil t))
+        (:unmodified-buffers-only         '(t   nil nil nil))
+        (:modified-buffers-only           '(nil t   nil nil))
         (:modified-and-unmodified-buffers '(t   t   nil nil)))
     (let* ((buffer-predicates
             (-concat (when only-current-repo?
