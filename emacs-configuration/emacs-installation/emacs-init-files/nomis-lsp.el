@@ -8,15 +8,15 @@
 ;; 2021-08-20 Suddenly this isn't needed. (Why?)
 ;; (defun nomis/lsp-eldoc ()
 ;;   ;; Don't blat signatures from CIDER.
+;;   ;;
+;;   ;; Things to look at if you ever need to revisit this:
+;;   ;;   lsp-eldoc-enable-hover
+;;   ;;   cider-eldoc-display-for-symbol-at-point
+;;   ;;   https://github.com/clojure-lsp/clojure-lsp/issues/569
+;;   ;;   https://github.com/emacs-lsp/lsp-mode/pull/3106
+;;   ;;
 ;;   (unless (ignore-errors (cider-repls))
 ;;     (lsp-hover)))
-
-;; TODO: lsp settings
-;;   See:
-;;      lsp-eldoc-enable-hover
-;;      cider-eldoc-display-for-symbol-at-point
-;;      https://github.com/clojure-lsp/clojure-lsp/issues/569
-;;      https://github.com/emacs-lsp/lsp-mode/pull/3106
 
 (defun nomis/lsp-init ()
   ;; Non-LSP stuff. I guess these don't belong here.
