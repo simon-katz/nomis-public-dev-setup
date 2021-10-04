@@ -8,8 +8,21 @@
 ;; 2021-08-20 Suddenly this isn't needed. (Why?)
 ;; (defun nomis/lsp-eldoc ()
 ;;   ;; Don't blat signatures from CIDER.
+;;   ;; I prefer CIDER signatures to LSP signatures for these reasons:
+;;   ;; - CIDER gives better doc for `def` and `defn`. (Maybe LSP doesn't do
+;;   ;;   macros properly.)
+;;   ;; - When the cursor is placed after the symbol:
+;;   ;;   - With CIDER, the signature appears.
+;;   ;;   - With LSP, the echo area doesn't change.
+;;   ;; - When the cursor is on an arg:
+;;   ;;   - With CIDER, the signature for the function is shown with the formal
+;;   ;;     arg bold.
+;;   ;;   - With LSP, details of the arg are shown.
+;;   ;; - When the cursor is moved away to empty space:
+;;   ;;   - With CIDER, the echo area is cleared.
+;;   ;;   - With LSP, the echo area doesn't change.
 ;;   ;;
-;;   ;; Things to look at if you ever need to revisit this:
+;;   ;; Things to look at if you ever want/need to revisit this:
 ;;   ;;   lsp-eldoc-enable-hover
 ;;   ;;   cider-eldoc-display-for-symbol-at-point
 ;;   ;;   https://github.com/clojure-lsp/clojure-lsp/issues/569
