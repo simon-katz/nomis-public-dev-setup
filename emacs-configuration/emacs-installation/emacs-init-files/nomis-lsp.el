@@ -99,8 +99,18 @@
         ))
 
 ;;;; ___________________________________________________________________________
+;;;; Hack echo area messages.
+
 ;;;; Don't stop showing flycheck info in the echo area. Useful, and also
-;;;; sometimes diagnostics are not shown in the LSP UI.
+;;;; sometimes diagnostics are not shown in the lsp-ui-sideline.
+;;;;
+;;;; Don't blat signatures in the echo area with diagnostics -- append them
+;;;; instead.
+
+;;;; We depend on the fact that signatures are displayed before diagnostics.
+
+;;;; Note: If you quit CIDER, lsp signatures are not shown unless you revert
+;;;; buffers. That's nothing to do with these hacks.
 
 (advice-add
  'lsp-ui-sideline-mode
@@ -109,6 +119,28 @@
    (when lsp-ui-sideline-mode
      (kill-local-variable 'flycheck-display-errors-function)))
  '((name . nomis/show-flycheck-info)))
+;; (advice-remove 'lsp-ui-sideline-mode 'nomis/show-flycheck-info)
+
+(with-eval-after-load 'lsp-mode ; nomis/show-lsp-errors-elsewhere
+  (cond
+   ((member (pkg-info-package-version 'lsp-mode)
+            '((20210821 1359)))
+    (advice-add
+     'flycheck-display-error-messages
+     :around
+     (lambda (orig-fun errs)
+       (let* ((message-1 (current-message)))
+         (prog1 (funcall orig-fun errs)
+           (let* ((message-2 (current-message)))
+             (when message-1
+               (if message-2
+                   (message "%s\n%s" message-1 message-2)
+                 (message "%s" message-1)))))))
+     '((name . nomis/show-lsp-errors-elsewhere))))
+   (t
+    (message-box
+     "You need to fix `nomis/show-lsp-errors-elsewhere` for this version of `lsp`."))))
+;; (advice-remove 'flycheck-display-error-messages 'nomis/show-lsp-errors-elsewhere)
 
 ;;;; ___________________________________________________________________________
 ;;;; Additional functionality
