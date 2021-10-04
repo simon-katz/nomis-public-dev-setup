@@ -112,13 +112,19 @@
 ;;;; Note: If you quit CIDER, lsp signatures are not shown unless you revert
 ;;;; buffers. That's nothing to do with these hacks.
 
-(advice-add
- 'lsp-ui-sideline-mode
- :after
- (lambda (&rest _)
-   (when lsp-ui-sideline-mode
-     (kill-local-variable 'flycheck-display-errors-function)))
- '((name . nomis/show-flycheck-info)))
+(cond
+ ((member (pkg-info-package-version 'lsp-ui)
+          '((20210820 1331)))
+  (advice-add
+   'lsp-ui-sideline-mode
+   :after
+   (lambda (&rest _)
+     (when lsp-ui-sideline-mode
+       (kill-local-variable 'flycheck-display-errors-function)))
+   '((name . nomis/show-flycheck-info))))
+ (t
+  (message-box
+   "You need to fix `nomis/show-flycheck-info` for this version of `lsp-ui`.")))
 ;; (advice-remove 'lsp-ui-sideline-mode 'nomis/show-flycheck-info)
 
 (with-eval-after-load 'lsp-mode ; nomis/show-lsp-errors-elsewhere
