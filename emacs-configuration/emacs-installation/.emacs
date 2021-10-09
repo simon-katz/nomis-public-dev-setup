@@ -88,7 +88,7 @@
      (nomis/cider-forbid-refresh-all\? . t)
      (cider-ns-refresh-after-fn . "user/cider-refresh--start!")
      (cider-ns-refresh-before-fn . "user/cider-refresh--stop!")
-     (nomis/grep/local-ignored-directories "resources/public/assets" "resources/dev-and-build/icons/bootstrap-icons-1.1.0")
+     (nomis/grep/local-ignored-directories "resources/pub-dev/assets" "resources/pub-prod/assets" "resources/dev-and-build/icons/bootstrap-icons-1.1.0")
      (nomis/grep/local-ignored-files "package-lock.json")
      (nomis/grep/local-ignored-directories "resources/public/assets")
      (cider-ns-refresh-after-fn . "integrant.repl/resume")
