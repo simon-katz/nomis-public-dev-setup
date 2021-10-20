@@ -31,6 +31,15 @@
 ;;   (unless (ignore-errors (cider-repls))
 ;;     (lsp-hover)))
 
+;; Stuff to maybe consider:
+;; - 2021-10-20 Number of workspaces increases as time goes by.
+;;   - Maybe, on startup, clear the list of workspaces. Otherwise you get
+;;     loads of workspaces over time.
+;; - Maybe:
+;;     `(setq lsp-keep-workspace-alive t)`
+;;   You need a better understanding of workspaces and sessions.
+;;   See https://clojurians.slack.com/archives/CPABC1H61/p1634721926477500
+
 (defun nomis/lsp-init ()
   ;; Non-LSP stuff. I guess these don't belong here.
   ;; See https://emacs-lsp.github.io/lsp-mode/page/performance/
