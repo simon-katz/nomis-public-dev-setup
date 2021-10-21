@@ -69,24 +69,40 @@
             '("20210811.435"))
 
     (defvar *nomis/in-projectile-grep?* nil)
+    (defvar *nomis/projectile-grep-regexp* nil)
 
     (advice-add
      'projectile-grep
      :around
      (lambda (orig-fun &rest args)
+       (setq *nomis/projectile-grep-regexp* nil)
        (let* ((*nomis/in-projectile-grep?* t))
          (apply orig-fun args)))
+     '((name . nomis/hack-projectile-grep)))
+
+    (advice-add
+     'rgrep
+     :around
+     (lambda (orig-fun search-regexp &rest other-args)
+       (setq *nomis/projectile-grep-regexp*
+             (when *nomis/in-projectile-grep?* search-regexp))
+       (apply orig-fun search-regexp other-args))
      '((name . nomis/hack-projectile-grep)))
 
     (advice-add
      'rename-buffer
      :around
      (lambda (orig-fun newname &optional unique)
-       (when *nomis/in-projectile-grep?*
-         (pop-to-buffer "*grep*"))
-       (funcall orig-fun
-                newname
-                (if *nomis/in-projectile-grep?* t unique)))
+       (if (not *nomis/in-projectile-grep?*)
+           (funcall orig-fun newname unique)
+         (progn
+           (pop-to-buffer "*grep*")
+           (funcall orig-fun
+                    (concat "grep--"
+                            (or (projectile-project-name) "no-project-name")
+                            "--"
+                            (or *nomis/projectile-grep-regexp* "no-regexp"))
+                    (if *nomis/in-projectile-grep?* t unique)))))
      '((name . nomis/hack-projectile-grep))))
 
    (t
