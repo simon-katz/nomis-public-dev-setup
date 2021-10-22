@@ -92,17 +92,22 @@
     (advice-add
      'rename-buffer
      :around
-     (lambda (orig-fun newname &optional unique)
-       (if (not *nomis/in-projectile-grep?*)
-           (funcall orig-fun newname unique)
-         (progn
-           (pop-to-buffer "*grep*")
-           (funcall orig-fun
-                    (concat "grep--"
-                            (or (projectile-project-name) "no-project-name")
-                            "--"
-                            (or *nomis/projectile-grep-regexp* "no-regexp"))
-                    (if *nomis/in-projectile-grep?* t unique)))))
+     (lambda (orig-fun new-name &optional unique)
+       (when *nomis/in-projectile-grep?*
+         (pop-to-buffer "*grep*") ; do we want this?
+         )
+       (let* ((new-name (if *nomis/in-projectile-grep?*
+                            (concat "grep--"
+                                    (or (projectile-project-name)
+                                        "no-project-name")
+                                    "--"
+                                    (or *nomis/projectile-grep-regexp*
+                                        "no-regexp"))
+                          new-name))
+              (unique (if *nomis/in-projectile-grep?* t unique)))
+         (funcall orig-fun
+                  new-name
+                  unique)))
      '((name . nomis/hack-projectile-grep))))
 
    (t
