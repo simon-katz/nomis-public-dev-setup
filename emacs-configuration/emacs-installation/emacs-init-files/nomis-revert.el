@@ -150,7 +150,8 @@
                               revert-unmodified-buffers?
                               revert-modified-buffers?
                               out-of-sync-buffers-only?
-                              tell-user-about-modified-non-reverting-buffers?)
+                              tell-user-about-modified-non-reverting-buffers?
+                              force-preserve-modes?)
   (let* ((buffer-predicates
           (-concat (when only-current-repo?
                      (list (nomis/-vc-make/buffer-in-current-repo?-fun)))
@@ -177,7 +178,9 @@
                            (length modified-buffers)
                            (nomis/buffers->string-of-names modified-buffers)
                            (length modified-buffers)"Some buffers are modified.")))
-          (let* ((preserve-modes? (nomis/revert/-prompt-for-preserve-modes)))
+          (let* ((preserve-modes?
+                  (or force-preserve-modes?
+                      (nomis/revert/-prompt-for-preserve-modes))))
             (when (nomis/y-or-n-p-reporting-non-local-exit
                    (format
                     "%s\nAre you sure you want to revert the above %s buffer(s), %s modes?"
@@ -210,7 +213,12 @@
                              revert-unmodified-buffers?
                              revert-modified-buffers?
                              out-of-sync-buffers-only?
-                             tell-user-about-modified-non-reverting-buffers?))))
+                             tell-user-about-modified-non-reverting-buffers?
+                             nil))))
+
+(defun nomis/revert-buffers-current-repo-quick ()
+  (interactive)
+  (nomis/revert-buffers* "current-repo-quick" t t nil t t t))
 
 ;;;; ___________________________________________________________________________
 
