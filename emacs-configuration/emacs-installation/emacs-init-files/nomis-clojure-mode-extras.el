@@ -10,30 +10,46 @@
 
 (define-key clojure-mode-map (kbd "C-c ;")
   'nomis/clojure/insert-reader-comment)
+
+(define-key clojure-mode-map (kbd "C-c C-;")
+  'nomis/clojure/move-reader-comment-up)
+
 (define-key clojure-mode-map (kbd "C-c :")
   'nomis/clojure/remove-reader-comment)
 
-(defun nomis/clojure/insert-reader-comment (prefix)
+(defun nomis/clojure/move-reader-comment-up ()
+  "Move the current or previous reader comment up a level."
+  (interactive)
+  (save-excursion
+    (forward-char 2)
+    (if (not (search-backward "#_" nil t)) ; wrong -- not structure-aware
+        (error "No reader comment found")
+      (progn
+        (when (nomis/at-top-level?)
+          (error "Reader comment is already at top level"))
+        (while (looking-at-p "#_") (forward-char 2))
+        (backward-char 2)
+        (let ((cnt 0))
+          (while (looking-at-p "#_") (incf cnt) (backward-char 2))
+          (forward-char 2)
+          (dotimes (_ cnt) (delete-char 2))
+          (backward-up-list)
+          (dotimes (_ cnt) (insert "#_"))
+          (dotimes (_ cnt) (backward-char 2)))))))
+
+(defun nomis/clojure/insert-reader-comment (n)
   "Insert a reader comment (#_) around the s-expression containing the point.
-If this command is invoked repeatedly (without any other command
-occurring between invocations), the comment progressively moves outward
-over enclosing expressions. If invoked with a positive prefix argument,
-the s-expression prefix expressions out is enclosed in a set of balanced
-comments."
+With a zero prefix argument, move the current or previous reader
+comment up a level. With a positive prefix argument, insert that
+number of reader comments."
   (interactive "*p")
   (save-excursion
-    (if (eq last-command this-command)
-        (when (or (looking-at-p "#_")
-                  (search-backward "#_" nil t)) ; wrong -- not structure-aware
-          (delete-char 2)
-          (backward-up-list)
-          (insert "#_"))
+    (if (zerop n) ; (eq last-command this-command)
+        (nomis/clojure/move-reader-comment-up)
       (progn
         (nomis/move-to-start-of-bracketed-sexp-around-point)
-        (dotimes (i (1- prefix))
-          (backward-up-list)
-          (decf prefix))
-        (insert "#_")))))
+        (dotimes (_ n)
+          (insert "#_"))))))
 
 (defun nomis/clojure/remove-reader-comment ()
   "Remove a reader comment enclosing point."
