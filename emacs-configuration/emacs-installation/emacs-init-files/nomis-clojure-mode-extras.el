@@ -8,13 +8,13 @@
 ;;;;     inspired by http://bc.tech.coop/blog/070122.html
 ;;;;     ported from slime/contrib/slime-editing-commands.el
 
-(define-key clojure-mode-map (kbd "C-c ;")
+(define-key clojure-mode-map (kbd "H-;")
   'nomis/clojure/insert-reader-comment)
 
-(define-key clojure-mode-map (kbd "C-c C-;")
+(define-key clojure-mode-map (kbd "H-M-;")
   'nomis/clojure/move-reader-comment-up)
 
-(define-key clojure-mode-map (kbd "C-c :")
+(define-key clojure-mode-map (kbd "H-:")
   'nomis/clojure/remove-reader-comment)
 
 (defun nomis/clojure/move-reader-comment-up ()
