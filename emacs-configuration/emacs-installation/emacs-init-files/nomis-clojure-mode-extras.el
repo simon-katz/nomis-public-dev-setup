@@ -23,7 +23,8 @@ comments."
   (interactive "*p")
   (save-excursion
     (if (eq last-command this-command)
-        (when (search-backward "#_" nil t) ; wrong -- not structure-aware
+        (when (or (looking-at-p "#_")
+                  (search-backward "#_" nil t)) ; wrong -- not structure-aware
           (delete-char 2)
           (backward-up-list)
           (insert "#_"))
