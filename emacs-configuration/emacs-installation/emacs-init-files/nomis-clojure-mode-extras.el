@@ -20,6 +20,13 @@
 (defun nomis/clojure/move-reader-comment-up ()
   "Move the current or previous reader comment up a level."
   (interactive)
+  (unless (member last-command
+                  '(nomis/clojure/move-reader-comment-up
+                    nomis/clojure/insert-reader-comment))
+    ;; Because otherwise it's too easy to accidentally change code that's not
+    ;; visible in the current window. The use of `search-backward` is bad, and
+    ;; can end up making changes miles away.
+    (error "Can only move reader comment up immediately after it's been inserted."))
   (save-excursion
     (forward-char 2)
     (if (not (search-backward "#_" nil t)) ; wrong -- not structure-aware
