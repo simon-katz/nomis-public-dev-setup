@@ -106,11 +106,12 @@ Push sideline overlays on `lsp-ui-sideline--ovs'."
   (cond
    ((member (pkg-info-package-version 'lsp-mode)
             '((20210808 2036)
-              (20210821 1359)))
+              (20210821 1359)
+              (20211103 1331)))
 
     ;; The original `lsp-diagnostics--flycheck-level` is in the
-    ;; `lsp-diagnostics` package (but note that `M-.` on that takes you to a
-    ;; function in `lsp-mode` so be careful).
+    ;; `lsp-diagnostics` package (but note that `M-.` on `lsp-diagnostics` takes
+    ;; you to a function in `lsp-mode` so be careful).
     (defun lsp-diagnostics--flycheck-level (flycheck-level tags)
       "Generate flycheck level from the original FLYCHECK-LEVEL (e.
 g. `error', `warning') and list of LSP TAGS."
@@ -144,7 +145,7 @@ g. `error', `warning') and list of LSP TAGS."
 
    (t
     (message-box
-     "You need to fix `lsp-diagnostics--flycheck-level` for this version of lsp-ui-sideline."))))
+     "You need to fix `lsp-diagnostics--flycheck-level` for this version of `lsp-mode`."))))
 
 ;;;; ___________________________________________________________________________
 ;;;; Add a prefix to LSP eldoc info
