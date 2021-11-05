@@ -47,7 +47,8 @@ the need to save files so that a file-watcher can spot changes).")
                 "CIDER 0.26.1 (Nesebar)"))
       (member (pkg-info-version-info 'cider)
               '("1.2.0snapshot (package: 20210909.1011)"
-                "1.2.0snapshot (package: 20210929.1032)")))
+                "1.2.0snapshot (package: 20210929.1032)"
+                "1.2.0snapshot (package: 20211105.708)")))
 
   (cl-flet*
       ((check-current-buffer
@@ -161,7 +162,7 @@ the need to save files so that a file-watcher can spot changes).")
 
  (t
   (message-box
-   "You need to fix `nomis/cider/post-interactive-eval` for this version of Cider.")))
+   "You need to fix `nomis/cider/post-interactive-eval` for this version of CIDER.")))
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
