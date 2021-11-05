@@ -48,6 +48,7 @@
      hydra
      ido-completing-read+
      ido-vertical-mode
+     iedit
      inflections
      js2-mode
      json-mode

@@ -45,6 +45,7 @@
      hydra
      ido-completing-read+
      ido-vertical-mode
+     iedit
      inflections ; needed by clj-refactor, I think
      js2-mode
      json-mode
