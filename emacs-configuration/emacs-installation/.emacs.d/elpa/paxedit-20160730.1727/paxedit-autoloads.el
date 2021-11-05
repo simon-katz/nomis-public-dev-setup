@@ -11,15 +11,11 @@
 
 (autoload 'paxedit-whitespace-delete-left "paxedit" "\
 Delete all whitespace left of the cursor, until a non-space character
-is encountered.
-
-\(fn)" t nil)
+is encountered." t nil)
 
 (autoload 'paxedit-whitespace-delete-right "paxedit" "\
 Delete all whitespace right of the cursor, until a non-space character
-is encountered.
-
-\(fn)" t nil)
+is encountered." t nil)
 
 (autoload 'paxedit-delete-whitespace "paxedit" "\
 Delete all whitespace (e.g. space, tab, newlines) to the left and
@@ -42,47 +38,33 @@ e.g.
  ;;; ->
 
  (+ 1-!-2)
-
-\(fn)" t nil)
+" t nil)
 
 (autoload 'paxedit-untabify-buffer "paxedit" "\
-Remove all tabs in the buffer.
-
-\(fn)" t nil)
+Remove all tabs in the buffer." t nil)
 
 (autoload 'paxedit-indent-buffer "paxedit" "\
-Re-indent buffer.
-
-\(fn)" t nil)
+Re-indent buffer." t nil)
 
 (autoload 'paxedit-cleanup "paxedit" "\
 Indent buffer as defined by mode, remove tabs, and delete trialing
-whitespace.
-
-\(fn)" t nil)
+whitespace." t nil)
 
 (autoload 'paxedit-goto-start-of-symbol "paxedit" "\
 Move cursor to the start of the current symbol.
 
 e.g.
-
-\(fn)" t nil)
+" t nil)
 
 (autoload 'paxedit-goto-end-of-symbol "paxedit" "\
-Move cursor to the end of the current symbol.
-
-\(fn)" t nil)
+Move cursor to the end of the current symbol." t nil)
 
 (autoload 'paxedit-symbol-copy "paxedit" "\
-Copy the symbol the cursor is on or next to.
-
-\(fn)" t nil)
+Copy the symbol the cursor is on or next to." t nil)
 
 (autoload 'paxedit-symbol-kill "paxedit" "\
 Kill the symbol the text cursor is next to or in and cleans up the
-left-over whitespace from kill.
-
-\(fn)" t nil)
+left-over whitespace from kill." t nil)
 
 (autoload 'paxedit-symbol-change-case "paxedit" "\
 Change the symbol to all uppercase if any of the symbol characters are
@@ -93,15 +75,11 @@ e.g.
 
  CL-!-AVIER -> cl-!-avier
 
- Tempe-!-red -> TEMPE-!-RED
-
-\(fn)" t nil)
+ Tempe-!-red -> TEMPE-!-RED" t nil)
 
 (autoload 'paxedit-symbol-occur "paxedit" "\
 Search for symbol the cursor is on or next to in the current buffer
-with occur.
-
-\(fn)" t nil)
+with occur." t nil)
 
 (autoload 'paxedit-next-symbol "paxedit" "\
 Go to the next symbol regardless of what may seperate the
@@ -132,9 +110,7 @@ e.g.
 \(fn &optional N)" t nil)
 
 (autoload 'paxedit-comment-align-all "paxedit" "\
-Align all the comments from the point of the cursor onwards.
-
-\(fn)" t nil)
+Align all the comments from the point of the cursor onwards." t nil)
 
 (autoload 'paxedit-sexp-backward-up "paxedit" "\
 Go to the start of the containing parent expression.
@@ -147,9 +123,7 @@ Go to the end of the containing parent expression.
 \(fn &optional N)" t nil)
 
 (autoload 'paxedit-quoted-open-round "paxedit" "\
-Insert quoted open round.
-
-\(fn)" t nil)
+Insert quoted open round." t nil)
 
 (autoload 'paxedit-open-quoted-round "paxedit" "\
 Context specific single-quoted, open round. When the cursor is located within a
@@ -187,8 +161,7 @@ Scenario 4. Region has mark set
  ->
 
  (a b '(c d)-!-)
-
-\(fn)" t nil)
+" t nil)
 
 (autoload 'paxedit-open-round "paxedit" "\
 Context specific open round. When the cursor is located within a
@@ -226,8 +199,7 @@ Scenario 4. Region has mark set
  ->
 
  (a b (c d)-!-)
-
-\(fn)" t nil)
+" t nil)
 
 (autoload 'paxedit-open-bracket "paxedit" "\
 Context specific open bracket. When the cursor is located within a
@@ -265,8 +237,7 @@ Scenario 4. Region has mark set
  ->
 
  [a b [c d]-!-]
-
-\(fn)" t nil)
+" t nil)
 
 (autoload 'paxedit-open-curly "paxedit" "\
 Context specific open curly bracket. When the cursor is located within a
@@ -304,23 +275,16 @@ Scenario 4. Region has mark set
  ->
 
  {a b {c d}-!-}
-
-\(fn)" t nil)
+" t nil)
 
 (autoload 'paxedit-close-sexp-newline "paxedit" "\
-Close current round and newline. Faster version of the default paredit close round and newline procedure.
-
-\(fn)" t nil)
+Close current round and newline. Faster version of the default paredit close round and newline procedure." t nil)
 
 (autoload 'paxedit-close-sexp-newline-round "paxedit" "\
-Close the current expression, create a newline, and create a new parenthesis pair.
-
-\(fn)" t nil)
+Close the current expression, create a newline, and create a new parenthesis pair." t nil)
 
 (autoload 'paxedit-sexp-raise "paxedit" "\
-Raises the expression the cursor is in while perserving the cursor location.
-
-\(fn)" t nil)
+Raises the expression the cursor is in while perserving the cursor location." t nil)
 
 (autoload 'paxedit-wrap-comment "paxedit" "\
 Wrap a comment macro around the current expression. If the current
@@ -332,31 +296,21 @@ Comment or uncomment the expression.
 
 Executing the paxedit-wrap-comment function on a commented
 expression causes the comment to be removed.
- (comment  (message -!-\"hello world\")) ->  (message -!-\"hello world\")
-
-\(fn)" t nil)
+ (comment  (message -!-\"hello world\")) ->  (message -!-\"hello world\")" t nil)
 
 (autoload 'paxedit-macro-expand-replace "paxedit" "\
 Replace the current expression (if there is a macro in the functional
-position) with its macro expansion.
-
-\(fn)" t nil)
+position) with its macro expansion." t nil)
 
 (autoload 'paxedit-sexp-close-statement "paxedit" "\
-Faster version of the default paredit close round and newline procedure.
-
-\(fn)" t nil)
+Faster version of the default paredit close round and newline procedure." t nil)
 
 (autoload 'paxedit-function-goto-definition "paxedit" "\
-Split the current window and display the definition of the function.
-
-\(fn)" t nil)
+Split the current window and display the definition of the function." t nil)
 
 (autoload 'paxedit-sexp-close-newline "paxedit" "\
 Faster version of the default paredit close round and newline
-procedure.
-
-\(fn)" t nil)
+procedure." t nil)
 
 (autoload 'paxedit-backward-up "paxedit" "\
 Move to the start of the explicit expression, implicit expression
@@ -436,9 +390,7 @@ Create a new SEXP depending on the context.
 \(fn &optional N)" t nil)
 
 (autoload 'paxedit-context-goto-definition "paxedit" "\
-Go to the function definition.
-
-\(fn)" t nil)
+Go to the function definition." t nil)
 
 (autoload 'paxedit-kill "paxedit" "\
 Kill current explicit expression, implicit expression, or comment. Also cleans up left-over whitespace from kill and corrects indentation.
@@ -522,6 +474,11 @@ swap with. Swaps in the opposite direction of
 
 (autoload 'paxedit-mode "paxedit" "\
 Major mode to enable Paxedit functionality.
+
+If called interactively, enable Paxedit mode if ARG is positive,
+and disable it if ARG is zero or negative.  If called from Lisp,
+also enable the mode if ARG is omitted or nil, and toggle it if
+ARG is `toggle'; disable the mode otherwise.
 
 Paxedit is an Emacs extension which eliminates the work, tedium, and
 mistakes involved with manual editing and refactoring LISP
@@ -629,7 +586,7 @@ left of the cursor.
 
 \(fn &optional ARG)" t nil)
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "paxedit" '("paxedit-" "defun-paxedit-")))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "paxedit" '("defun-paxedit-" "paxedit-")))
 
 ;;;***
 

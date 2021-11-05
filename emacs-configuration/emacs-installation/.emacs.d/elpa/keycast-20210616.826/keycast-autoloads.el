@@ -22,6 +22,11 @@ or call the function `keycast-mode'.")
 (autoload 'keycast-mode "keycast" "\
 Show current command and its key binding in the mode line.
 
+If called interactively, enable Keycast mode if ARG is positive,
+and disable it if ARG is zero or negative.  If called from Lisp,
+also enable the mode if ARG is omitted or nil, and toggle it if
+ARG is `toggle'; disable the mode otherwise.
+
 \(fn &optional ARG)" t nil)
 
 (defvar keycast-log-mode nil "\
@@ -36,6 +41,11 @@ or call the function `keycast-log-mode'.")
 
 (autoload 'keycast-log-mode "keycast" "\
 Log invoked commands and their key bindings in a buffer.
+
+If called interactively, enable Keycast-Log mode if ARG is
+positive, and disable it if ARG is zero or negative.  If called
+from Lisp, also enable the mode if ARG is omitted or nil, and
+toggle it if ARG is `toggle'; disable the mode otherwise.
 
 \(fn &optional ARG)" t nil)
 

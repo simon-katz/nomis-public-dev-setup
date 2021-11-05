@@ -27,9 +27,7 @@ on troubleshooting.)
 \(fn &optional ARG)" t nil)
 
 (autoload 'turn-on-fci-mode "fill-column-indicator" "\
-Turn on fci-mode unconditionally.
-
-\(fn)" t nil)
+Turn on fci-mode unconditionally." t nil)
 
 (if (fboundp 'register-definition-prefixes) (register-definition-prefixes "fill-column-indicator" '("fci-" "turn-off-fci-mode")))
 

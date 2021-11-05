@@ -13,9 +13,7 @@
 (defvar gnu-elpa-keyring-update--keyring (let ((kr (expand-file-name "etc/gnu-elpa.gpg-keyring" (file-name-directory load-file-name)))) (if (and load-file-name (file-readable-p kr)) kr "etc/gnu-elpa.gpg-keyring")))
 
 (autoload 'gnu-elpa-keyring-update "gnu-elpa-keyring-update" "\
-Import new GNU ELPA keys (if any) into package.el's keyring.
-
-\(fn)" nil nil)
+Import new GNU ELPA keys (if any) into package.el's keyring." nil nil)
  (eval-after-load 'package
   `(and (bound-and-true-p package-user-dir)
         (file-directory-p package-user-dir)

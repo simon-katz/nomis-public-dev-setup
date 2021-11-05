@@ -23,7 +23,7 @@ Return the pluralized version of STR.
 
 (define-obsolete-function-alias 'pluralize-string 'inflection-pluralize-string "2.6")
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "inflections" '("inflection-" "define-inflectors")))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "inflections" '("define-inflectors" "inflection-")))
 
 ;;;***
 

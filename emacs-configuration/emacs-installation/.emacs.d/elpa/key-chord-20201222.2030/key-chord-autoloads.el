@@ -22,6 +22,11 @@ or call the function `key-chord-mode'.")
 (autoload 'key-chord-mode "key-chord" "\
 Map pairs of simultaneously pressed keys to commands.
 
+If called interactively, enable Key-Chord mode if ARG is
+positive, and disable it if ARG is zero or negative.  If called
+from Lisp, also enable the mode if ARG is omitted or nil, and
+toggle it if ARG is `toggle'; disable the mode otherwise.
+
 See functions `key-chord-define-global', `key-chord-define-local',
 and `key-chord-define' and variables `key-chord-two-keys-delay'
 and `key-chord-one-key-delay'.

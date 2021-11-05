@@ -10,9 +10,7 @@
 ;;; Generated autoloads from loccur.el
 
 (autoload 'loccur-current "loccur" "\
-Call `loccur' for the current word.
-
-\(fn)" t nil)
+Call `loccur' for the current word." t nil)
 
 (autoload 'loccur "loccur" "\
 Perform a simple grep in current buffer.

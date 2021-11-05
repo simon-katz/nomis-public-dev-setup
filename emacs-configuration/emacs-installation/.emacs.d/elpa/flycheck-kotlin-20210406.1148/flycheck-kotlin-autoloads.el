@@ -11,9 +11,7 @@
 ;;; Generated autoloads from flycheck-kotlin.el
 
 (autoload 'flycheck-kotlin-setup "flycheck-kotlin" "\
-Setup Flycheck for Kotlin.
-
-\(fn)" nil nil)
+Setup Flycheck for Kotlin." nil nil)
 
 ;;;***
 

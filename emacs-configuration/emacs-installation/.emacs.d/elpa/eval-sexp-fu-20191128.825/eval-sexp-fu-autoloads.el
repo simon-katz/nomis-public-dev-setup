@@ -9,7 +9,7 @@
 ;;;### (autoloads nil "eval-sexp-fu" "eval-sexp-fu.el" (0 0 0 0))
 ;;; Generated autoloads from eval-sexp-fu.el
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "eval-sexp-fu" '("eval-sexp-fu-" "esf-" "geiser-bounds-of-" "define-e" "turn-on-eval-sexp-fu-flash-mode")))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "eval-sexp-fu" '("define-e" "esf-" "eval-sexp-fu-" "geiser-bounds-of-" "turn-on-eval-sexp-fu-flash-mode")))
 
 ;;;***
 
