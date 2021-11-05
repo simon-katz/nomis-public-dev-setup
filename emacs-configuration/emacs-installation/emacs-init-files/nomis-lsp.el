@@ -123,7 +123,8 @@
 
 (cond
  ((member (pkg-info-package-version 'lsp-ui)
-          '((20210820 1331)))
+          '((20210820 1331)
+            (20211101 131)))
   (advice-add
    'lsp-ui-sideline-mode
    :after
