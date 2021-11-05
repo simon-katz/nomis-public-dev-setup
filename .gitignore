@@ -26,5 +26,5 @@ emacs-configuration/emacs-installation/.emacs.d/.lsp-session-v1
 # (The following things have version numbers of cmake and its dependencies baked
 # into them, and if they don't exist on the new machine things won't work -- I
 # saw Emacs crashing after I copied Emacs config from one machine to another.)
-emacs-configuration/emacs-installation/.emacs.d/elpa/vterm-20210804.405/build/
-emacs-configuration/emacs-installation/.emacs.d/elpa/vterm-20210804.405/vterm-module.so
+emacs-configuration/emacs-installation/.emacs.d/elpa/vterm-20210908.640/build/
+emacs-configuration/emacs-installation/.emacs.d/elpa/vterm-20210908.640/vterm-module.so
