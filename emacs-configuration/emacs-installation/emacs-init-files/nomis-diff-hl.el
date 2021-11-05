@@ -56,7 +56,8 @@
 
   (cond
    ((member (pkg-info-package-version 'diff-hl)
-            '((20210909 207)))
+            '((20210909 207)
+              (20211105 145)))
 
     (defun diff-hl-inline-popup--compute-header (width &optional header)
       ;; The original `diff-hl-inline-popup--compute-header` is in
