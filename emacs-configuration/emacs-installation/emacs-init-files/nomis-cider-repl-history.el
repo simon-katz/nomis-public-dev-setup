@@ -32,7 +32,8 @@
               '("CIDER 0.26.1 (Nesebar)"))
       (member (pkg-info-version-info 'cider)
               '("1.2.0snapshot (package: 20210909.1011)"
-                "1.2.0snapshot (package: 20210929.1032)")))
+                "1.2.0snapshot (package: 20210929.1032)"
+                "1.2.0snapshot (package: 20211105.708)")))
   (advice-add
    'cider-repl-history-just-save
    :around
@@ -52,7 +53,7 @@
    '((name . nomis/set-buffer-for-history-and-prevent-random-history-files))))
  (t
   (message-box
-   "You need to fix `cider-repl-history-just-save for this version of CIDER.")))
+   "You need to fix `nomis/set-buffer-for-history-and-prevent-random-history-files` for this version of CIDER.")))
 
 ;; (advice-remove 'cider-repl-history-just-save 'nomis/set-buffer-for-history-and-prevent-random-history-files)
 
