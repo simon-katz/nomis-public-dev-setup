@@ -125,7 +125,7 @@
 
      (t
       (message-box (s-join " "
-                           '("Revisit `nomis/hack-magit-diff`"
+                           '("You need to fix `nomis/hack-magit-diff`"
                              "for this version of Magit.")))))))
 
 ;;;; ___________________________________________________________________________
