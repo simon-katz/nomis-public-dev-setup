@@ -154,7 +154,8 @@ g. `error', `warning') and list of LSP TAGS."
   (cond
    ((member (pkg-info-package-version 'lsp-mode)
             '((20210808 2036)
-              (20210821 1359)))
+              (20210821 1359)
+              (20211103 1331)))
     (advice-add
      'lsp--eldoc-message
      :around
