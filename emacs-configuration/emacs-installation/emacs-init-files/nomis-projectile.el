@@ -66,7 +66,8 @@
 (with-eval-after-load 'projectile
   (cond
    ((member (pkg-info-version-info 'projectile)
-            '("20210811.435"))
+            '("20210811.435"
+              "20211103.2050"))
 
     (defvar *nomis/in-projectile-grep?* nil)
     (defvar *nomis/projectile-grep-regexp* nil)
@@ -112,7 +113,7 @@
 
    (t
     (message-box
-     "You need to fix `nomis/hack-projectile-grep` for this version of projectile."))))
+     "You need to fix `nomis/hack-projectile-grep` for this version of `projectile`."))))
 
 ;;;; ___________________________________________________________________________
 
