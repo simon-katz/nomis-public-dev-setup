@@ -54,7 +54,8 @@
                     (pkg-info-package-version 'lsp-mode) ; Hmmm, I guess you really want to depend on the version of `clojure-lsp` executable installed on the system.
                     )
               '(((20210909 1011) (20210821 1359))
-                ((20210929 1032) (20210821 1359))))
+                ((20210929 1032) (20210821 1359))
+                ((20211105 708)  (20211103 1331))))
 
       (dolist (m (list clojure-mode-map
                        cider-mode-map
