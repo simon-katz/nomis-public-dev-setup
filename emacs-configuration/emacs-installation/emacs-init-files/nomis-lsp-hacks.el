@@ -6,7 +6,8 @@
   (cond
    ((member (pkg-info-package-version 'lsp-ui)
             '((20210802 305)
-              (20210820 1331)))
+              (20210820 1331)
+              (20211101 131)))
 
     ;; There's a thing where long diagnostic messages aren't displayed. The code
     ;; here truncates long messages so that there is more chance of them being
@@ -90,7 +91,7 @@ Push sideline overlays on `lsp-ui-sideline--ovs'."
 
    (t
     (message-box
-     "You need to fix `lsp-ui-sideline--diagnostics` for this version of lsp-ui-sideline."))))
+     "You need to fix `lsp-ui-sideline--diagnostics` for this version of `lsp-ui`."))))
 
 ;;;; ___________________________________________________________________________
 
