@@ -15,7 +15,8 @@
    ((member (flycheck-version)
             '("31"
               "32snapshot (package: 20191126.2142)"
-              "32snapshot (package: 20210708.1337)"))
+              "32snapshot (package: 20210708.1337)"
+              "32snapshot (package: 20210825.1804)"))
     (defvar *-nomis/add-checker-name-to-flycheck-message?* nil)
     (advice-add 'flycheck-display-error-messages
                 :around
@@ -44,7 +45,7 @@
                 '((name . nomis/add-checker-name-to-flycheck-message*))))
    (t
     (message-box
-     "You need to fix our 'include checker name in flycheck messages' for this version of flycheck."))))
+     "You need to fix `nomis/add-checker-name-to-flycheck-message*` for this version of `flycheck`."))))
 
 ;;;; ___________________________________________________________________________
 ;;;; Provide some easier-to-type key bindings than the built-in ones
