@@ -140,7 +140,8 @@
 (with-eval-after-load 'lsp-mode ; nomis/show-lsp-errors-elsewhere
   (cond
    ((member (pkg-info-package-version 'lsp-mode)
-            '((20210821 1359)))
+            '((20210821 1359)
+              (20211103 1331)))
     (advice-add
      'flycheck-display-error-messages
      :around
