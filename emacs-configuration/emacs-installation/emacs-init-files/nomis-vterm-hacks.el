@@ -4,7 +4,8 @@
 
 (cond
  ((member (pkg-info-package-version 'vterm)
-          '((20210804 405)))
+          '((20210804 405)
+            (20210908 640)))
 
   ;; Special behaviour for `vterm--internal` when arg is null:
   ;; - Always create a new buffer.
@@ -42,6 +43,6 @@
 
  (t
   (message-box
-   "You need to fix `vterm--internal` for this version of vterm.")))
+   "You need to fix `nomis/vterm-null-arg-gives-new-buffer` for this version of vterm.")))
 
 (provide 'nomis-vterm-hacks)
