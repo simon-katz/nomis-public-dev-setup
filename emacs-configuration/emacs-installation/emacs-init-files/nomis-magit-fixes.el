@@ -88,7 +88,8 @@
   (with-eval-after-load 'magit-diff
     (cond
      ((member (magit-version)
-              '("20210913.1931"))
+              '("20210913.1931"
+                "20211101.1824"))
 
       (defvar nomis/-magit-diff/commit+staged?)
 
