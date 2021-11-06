@@ -64,6 +64,7 @@
 (require 'nomis-cider-eval-clj-and-cljs)
 (require 'nomis-cider-post-interactive-eval)
 (require 'nomis-cider-repl-history)
+(require 'nomis-cider-repl-history-hacks)
 
 (setq nrepl-buffer-name-separator "--")
 
