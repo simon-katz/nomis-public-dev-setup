@@ -97,7 +97,12 @@ utf-8-unix."
           (insert ";; -*- coding: utf-8-unix -*-\n")
           (insert ";; Automatically written history of CIDER REPL session\n")
           (insert ";; Edit at your own risk\n\n")
-          (prin1 (mapcar #'substring-no-properties hist) (current-buffer))))))
+          (insert "(\n")
+          (cl-loop for s in hist
+                   do (insert " ")
+                   do (prin1 (substring-no-properties s) (current-buffer))
+                   do (insert "\n"))
+          (insert ")\n")))))
 
   (defun nomis/-cider-repl-history-maybe-write-most-recent-item ()
     (let* ((filename (nomis/-cider-repl-history-file)))
