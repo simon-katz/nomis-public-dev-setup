@@ -47,6 +47,23 @@ If REGEXP is non-nil, only lines matching REGEXP are considered."
 ;;;; ___________________________________________________________________________
 ;;;; ---- nomis/-write-cider-repl-history-file-immediately ----
 
+;;;; CIDER REPL history is broken: when quitting, Emacs history is not saved
+;;;; properly. CIDER does...
+;;;;
+;;;;   `(add-hook 'kill-emacs-hook #'cider-repl-history-just-save)`
+;;;;
+;;;; ...but that's no good. `cider-repl-history-just-save` needs to run with
+;;;; a REPL buffer current, because history is stored in a buffer-local variable
+;;;; (`cider-repl-input-history`).
+;;;;
+;;;; If there are multiple REPLs the save function should be called for each
+;;;; active REPL, but it isn't.
+;;;;
+;;;; We get around these problems by updating history files as and when new
+;;;; commands are entered.
+;;;;
+;;;; As a bonus, we have separate histories for CLJ and CLJS.
+
 (defvar nomis/-write-cider-repl-history-file-immediately
   ;; The purpose of this is to have a thing that we can refer to and can find
   ;; with `M-.`.
