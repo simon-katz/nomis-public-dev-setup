@@ -168,5 +168,39 @@ utf-8-unix."
  '((name . nomis/hack-check-cider-repl-history-file)))
 
 ;;;; ___________________________________________________________________________
+;;;; ---- nomis/-note-random-history-files ----
+
+;; This shouldn't be needed now that we are dealing with CIDER history
+;; ourselves in `nomis/-write-cider-repl-history-file-immediately`.
+(cond
+ ((or (member (nomis/cider-version)
+              '("CIDER 0.26.1 (Nesebar)"))
+      (member (pkg-info-version-info 'cider)
+              '("1.2.0snapshot (package: 20210909.1011)"
+                "1.2.0snapshot (package: 20210929.1032)"
+                "1.2.0snapshot (package: 20211105.708)"
+
+                ;; Don't add new versions here if we are right that this problem
+                ;; has gone away now that we are using
+                ;; `nomis/-write-cider-repl-history-file-immediately`.
+                )))
+  (advice-add
+   'cider-repl-history-just-save
+   :after
+   (lambda ()
+     (message-box "`cider-repl-history-just-save` was unexpectedly called. This shouldn't happen now that we are using `nomis/-write-cider-repl-history-file-immediately`.")
+     (let* ((repl-type (cider-repl-type (current-buffer))))
+       (when (null repl-type)
+         ;; Current buffer is not a REPL buffer.
+         (message-box "I think this is a situation where we have created a random CIDER history file. current-buffer = %s"
+                      (current-buffer)))))
+   '((name . nomis/-note-random-history-files))))
+ (t
+  (message-box
+   "You need to fix `nomis/-note-random-history-files` for this version of CIDER.")))
+
+;; (advice-remove 'cider-repl-history-just-save 'nomis/-note-random-history-files)
+
+;;;; ___________________________________________________________________________
 
 (provide 'nomis-cider-repl-history-hacks)
