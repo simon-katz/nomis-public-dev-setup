@@ -157,5 +157,16 @@ utf-8-unix."
    "You need to fix `nomis/-write-cider-repl-history-file-immediately` for this version of CIDER.")))
 
 ;;;; ___________________________________________________________________________
+;;;; ---- nomis/hack-check-cider-repl-history-file ----
+
+(advice-add
+ 'cider-repl-history-just-save ; this can be called when `cider-repl-history-file` is nil
+ :around
+ (lambda (orig-fun &rest args)
+   (when cider-repl-history-file
+     (apply orig-fun args)))
+ '((name . nomis/hack-check-cider-repl-history-file)))
+
+;;;; ___________________________________________________________________________
 
 (provide 'nomis-cider-repl-history-hacks)
