@@ -49,27 +49,20 @@
                 )))
   (advice-add
    'cider-repl-history-just-save
-   :around
-   (lambda (orig-fun &rest args)
+   :after
+   (lambda ()
      (message-box "`cider-repl-history-just-save` was unexpectedly called. This shouldn't happen now that we are using `nomis/-write-cider-repl-history-file-immediately`.")
-     (let* ((repl (cider-current-repl)))
-       (case 1
-         (1 (when (null repl)
-              (message-box "I think this might be a situation where we create a random CIDER history file. current-buffer = %s"
-                           (current-buffer))
-              (setq repl (current-buffer)))
-            (with-current-buffer repl
-              (apply orig-fun args)))
-         (2 (if repl
-                (with-current-buffer repl
-                  (apply orig-fun args))
-              (message-box "I think this might be a situation where we would have created a random CIDER history file."))))))
-   '((name . nomis/set-buffer-for-history-and-prevent-random-history-files))))
+     (let* ((repl-type (cider-repl-type (current-buffer))))
+       (when (null repl-type)
+         ;; Current buffer is not a REPL buffer.
+         (message-box "I think this is a situation where we have created a random CIDER history file. current-buffer = %s"
+                      (current-buffer)))))
+   '((name . nomis/-note-random-history-files))))
  (t
   (message-box
-   "You need to fix `nomis/set-buffer-for-history-and-prevent-random-history-files` for this version of CIDER.")))
+   "You need to fix `nomis/-note-random-history-files` for this version of CIDER.")))
 
-;; (advice-remove 'cider-repl-history-just-save 'nomis/set-buffer-for-history-and-prevent-random-history-files)
+;; (advice-remove 'cider-repl-history-just-save 'nomis/-note-random-history-files)
 
 ;;;; ___________________________________________________________________________
 
