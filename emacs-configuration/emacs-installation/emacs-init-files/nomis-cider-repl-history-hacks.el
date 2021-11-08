@@ -71,24 +71,33 @@ If REGEXP is non-nil, only lines matching REGEXP are considered."
 
 (defconst nomis/-cider-repl-history-filename-clj  ".cider-repl-history-clj")
 (defconst nomis/-cider-repl-history-filename-cljs ".cider-repl-history-cljs")
+
 (defvar-local nomis/-cider-repl-history-loaded? nil)
+(defvar-local nomis/-cider-repl-history-warning-issued? nil)
 
 (cond
  ((member (pkg-info-version-info 'cider)
           '("1.2.0snapshot (package: 20211105.708)"))
 
+  (defun nomis/-cider-repl-history-maybe-warn ()
+    (when (and cider-repl-history-file
+               (not nomis/-cider-repl-history-warning-issued?))
+      (setq nomis/-cider-repl-history-warning-issued? t)
+      (let* ((msg "You have `cider-repl-history-file` defined, so I will use standard (broken) CIDER functionality."))
+        (nomis/msg/grab-user-attention/high)
+        (message "%s" msg)
+        (message-box "%s" msg))))
+
+  (add-hook 'cider-repl-mode-hook
+            'nomis/-cider-repl-history-maybe-warn)
+
   (defun nomis/-cider-repl-history-file ()
-    (let* ((repl-type (cider-repl-type (current-buffer)))
-           (res (case repl-type
-                  ('clj  nomis/-cider-repl-history-filename-clj)
-                  ('cljs nomis/-cider-repl-history-filename-cljs))))
-      (if (not (and res cider-repl-history-file))
-          res
-        (let* ((msg "You have both `cider-repl-history-file` and at least one of `nomis/-cider-repl-history-filename-clj` and `nomis/-cider-repl-history-filename-cljs` set. Using `cider-repl-history-file` to avoid conflicts."))
-          (message "%s" msg)
-          (nomis/msg/grab-user-attention/high)
-          (message-box "%s" msg)
-          nil))))
+    (if cider-repl-history-file
+        nil
+      (let* ((repl-type (cider-repl-type (current-buffer))))
+        (case repl-type
+          ('clj  nomis/-cider-repl-history-filename-clj)
+          ('cljs nomis/-cider-repl-history-filename-cljs)))))
 
   (defun nomis/-cider-repl-history-maybe-load ()
     (unless nomis/-cider-repl-history-loaded?
