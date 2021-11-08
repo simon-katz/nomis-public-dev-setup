@@ -2,7 +2,8 @@
 
 (add-hook 'text-mode-hook 'turn-on-flyspell)
 
-(setq ispell-program-name "/usr/local/bin/ispell")
+(setq ispell-program-name "aspell")
+
 (setq flyspell-issue-message-flag nil)
 
 (setq flyspell-mark-duplications-exceptions
