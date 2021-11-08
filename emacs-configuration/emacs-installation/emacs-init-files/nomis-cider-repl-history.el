@@ -51,6 +51,7 @@
    'cider-repl-history-just-save
    :around
    (lambda (orig-fun &rest args)
+     (message-box "`cider-repl-history-just-save` was unexpectedly called. This shouldn't happen now that we are using `nomis/-write-cider-repl-history-file-immediately`.")
      (let* ((repl (cider-current-repl)))
        (case 1
          (1 (when (null repl)
