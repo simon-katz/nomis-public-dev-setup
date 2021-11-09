@@ -1,4 +1,4 @@
-;;;; Init stuff -- emacs-lisp and ielm.
+;;;; Init stuff -- emacs-lisp and ielm  -*- lexical-binding: t; -*-
 
 ;;;; ___________________________________________________________________________
 
@@ -20,6 +20,6 @@
 
 (define-key emacs-lisp-mode-map (kbd "RET") 'newline-and-indent)
 
-;;; ___________________________________________________________________________
+;;;; ___________________________________________________________________________
 
 (provide 'nomis-emacs-lisp-and-ielm)
