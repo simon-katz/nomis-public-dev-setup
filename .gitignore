@@ -12,6 +12,7 @@ emacs-configuration/emacs-installation/.emacs.d/places
 emacs-configuration/emacs-installation/.emacs.d/projectile-bookmarks.eld
 emacs-configuration/emacs-installation/.emacs.d/projectile.cache
 emacs-configuration/emacs-installation/.emacs.d/server/
+emacs-configuration/emacs-installation/.emacs.d/history
 emacs-configuration/emacs-installation/.gnupg/
 emacs-configuration/emacs-installation/.emacs.d/.cache
 emacs-configuration/emacs-installation/.emacs.d/logview-cache.extmap
