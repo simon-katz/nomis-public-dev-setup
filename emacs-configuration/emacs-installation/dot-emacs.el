@@ -162,6 +162,7 @@
 (require 'nomis-paredit)
 (require 'nomis-paxedit)
 (require 'nomis-emacs-lisp-and-ielm)
+(require 'nomis-ielm-persistent-history)
 (require 'nomis-clojure)
 
 ;;;; ---- Lisp and Clojure stuff probably only for me ----
