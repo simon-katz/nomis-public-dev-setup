@@ -186,6 +186,7 @@
 (require 'nomis-highlighting)
 (require 'nomis-line-numbering)
 (require 'nomis-saveplace)
+(require 'nomis-savehist)
 
 (require 'nomis-string-edit)
 
