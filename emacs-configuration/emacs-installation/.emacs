@@ -101,6 +101,7 @@
      (nomis/cider/cljs-dev-host . "localhost")
      (nomis/grep/local-ignored-directories "giggin/public/js" "increments")
      (nomis/grep/local-ignored-directories "compiler-output" "resources/dev-and-build/icons/bootstrap-icons-1.1.0" "resources/pub-prod/cross-env")
+     (nomis/grep/local-ignored-directories "compiler-output" "resources/pub-dev/assets")
      (nomis/cider-cljs-offer-to-open-app-in-browser\?)
      (elisp-lint-indent-specs
       (if-let* . 2)
