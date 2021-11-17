@@ -274,6 +274,8 @@
 
 (require 'nomis-avro)
 
+(require 'nomis-terraform)
+
 (require 'nomis-text-processing)
 
 ;; (eval-after-load "isearch" '(require 'isearch+))
