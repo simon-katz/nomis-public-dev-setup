@@ -116,6 +116,7 @@
     "\\.repl"
     "\\.shadow-cljs"
     "\\.sync"
+    "\\.terraform"
     "\\.vagrant"
     "bootstrap-icons-1.1.0"
     "checkouts"

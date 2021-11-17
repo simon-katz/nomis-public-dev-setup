@@ -18,6 +18,7 @@
                             ".idea"
                             ".repl"
                             ".shadow-cljs"
+                            ".terraform"
                             ".worksheet"
                             "bootstrap-icons-1.1.0"
                             "bundle"
