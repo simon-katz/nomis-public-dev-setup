@@ -19,6 +19,8 @@
                             "*.zip"
                             "figwheel_server.log"
                             "archive-contents"
+                            "terraform.tfstate"
+                            "terraform.tfstate.backup"
                             ;; Instead of adding stuff here, consider defining
                             ;; `nomis/grep/local-ignored-files` in a .dir-locals file.
                             )
