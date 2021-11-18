@@ -23,13 +23,14 @@
      cider-eval-sexp-fu
      cl-format
      cl-lib
+     clj-refactor
      clojure-mode
      company
      dash-functional
      diff-hl
      discover
      dumb-jump
-     edn ; needed by clj-refactor, I think
+     edn
      elisp-slime-nav
      exec-path-from-shell
      fill-column-indicator
@@ -46,7 +47,7 @@
      ido-completing-read+
      ido-vertical-mode
      iedit
-     inflections ; needed by clj-refactor, I think
+     inflections
      js2-mode
      json-mode
      key-chord

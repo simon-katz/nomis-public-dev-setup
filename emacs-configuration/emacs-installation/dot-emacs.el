@@ -53,7 +53,6 @@
      (byte-recompile-directory dir))))
 
 (when i-am-nomis/p
-  (add-and-recompile-directory "../../../emacs-package-repos/clj-refactor" t)
   (add-and-recompile-directory "../../../emacs-package-repos/align-cljlet")
   (add-and-recompile-directory "../../../emacs-package-repos/cljr-helm")
   (add-and-recompile-directory "../../../emacs-package-repos/multi-web-mode"))

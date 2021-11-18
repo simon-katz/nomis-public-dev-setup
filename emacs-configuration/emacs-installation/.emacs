@@ -26,6 +26,7 @@
      cider-eval-sexp-fu
      cl-format
      cl-lib
+     clj-refactor
      clojure-mode
      company
      dash-functional
