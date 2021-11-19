@@ -219,6 +219,11 @@
 
 (setq cljr-magic-requires :prompt)
 
+;; I don't like `cljr-raise-sexp` and `cljr-splice-sexp-killing-backward`, so
+;; get rid of the key binding remapping:
+(define-key clj-refactor-map [remap paredit-raise-sexp] nil)
+(define-key clj-refactor-map [remap paredit-splice-sexp-killing-backward] nil)
+
 ;;;; ___________________________________________________________________________
 ;;;; Hooks
 
