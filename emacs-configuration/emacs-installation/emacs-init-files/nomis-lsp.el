@@ -54,6 +54,8 @@
   (setq lsp-enable-indentation            nil) ; Use CIDER indentation.
   (setq lsp-ui-sideline-show-code-actions nil) ; Don't show clutter! But see `nomis/lsp-toggle-lsp-ui-sideline-show-code-actions`.
 
+  (setq lsp-ui-sideline-delay 2)
+
   ;; Playing with `lsp-ui-sideline-show-hover`:
   ;; - This doesn't work very well. If I have `(f1 (f2 (f3 ...)))` on a single
   ;;   line with the cursor on `f2` or `f3`, it shows info for `f1`.
