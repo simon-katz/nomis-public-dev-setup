@@ -253,4 +253,39 @@
 
 ;;;; ___________________________________________________________________________
 
+(cond
+ ((member (pkg-info-version-info 'cider)
+          '("1.2.0snapshot (package: 20211105.708)"))
+
+  (defvar *nomis/cider-ns-refresh/-in-handle-response?* nil)
+
+  (advice-add
+   'cider-ns-refresh--handle-response
+   :around
+   (lambda (orig-fun &rest args)
+     (let* ((*nomis/cider-ns-refresh/-in-handle-response?* t))
+       (apply orig-fun args)))
+   '((name . nomis/cider-ns-refresh/multiple-lines)))
+
+  (advice-add
+   'format
+   :around
+   (lambda (orig-fun string &rest objects)
+     (if (not (and *nomis/cider-ns-refresh/-in-handle-response?*
+                   (equal string "Reloading %s\n")))
+         (apply orig-fun string objects)
+       (let* ((*nomis/cider-ns-refresh/-in-handle-response?* nil))
+         (apply #'s-concat (-map (lambda (x) (format string x))
+                                 (first objects))))))
+   '((name . nomis/cider-ns-refresh/multiple-lines)))
+
+  ;; (advice-remove 'cider-ns-refresh--handle-response 'nomis/cider-ns-refresh/multiple-lines)
+  ;; (advice-remove 'format 'nomis/cider-ns-refresh/multiple-lines)
+  )
+ (t
+  (message-box
+   "You need to fix `nomis/cider-ns-refresh/multiple-lines` for this version of CIDER.")))
+
+;;;; ___________________________________________________________________________
+
 (provide 'nomis-cider-ns-refresh)
