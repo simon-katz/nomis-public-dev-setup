@@ -86,7 +86,9 @@
      yaml-mode
      yasnippet))
  '(safe-local-variable-values
-   '((cider-clojure-cli-aliases . "-A:test")
+   '((nomis/grep/local-ignored-directories)
+     (nomis/grep/local-ignored-files "package-lock.json" "main.js")
+     (cider-clojure-cli-aliases . "-A:test")
      (nomis/cider-forbid-refresh-all\? . t)
      (cider-ns-refresh-after-fn . "user/cider-refresh--start!")
      (cider-ns-refresh-before-fn . "user/cider-refresh--stop!")
