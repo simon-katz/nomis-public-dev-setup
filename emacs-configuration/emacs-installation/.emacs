@@ -121,6 +121,7 @@
      (nomis/grep/local-ignored-directories "compiler-output" "resources/dev-and-build/icons/bootstrap-icons-1.1.0" "resources/pub-prod/cross-env")
      (nomis/grep/local-ignored-directories "compiler-output" "resources/pub-dev/assets")
      (nomis/grep/local-ignored-directories "giggin/public/js" "increments")
+     (nomis/grep/local-ignored-directories "resources/public/js")
      (nomis/grep/local-ignored-directories)
      (nomis/grep/local-ignored-files "package-lock.json" "main.js")
      (nomis/grep/local-ignored-files "package-lock.json"))))
