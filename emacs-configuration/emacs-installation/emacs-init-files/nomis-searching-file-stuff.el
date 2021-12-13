@@ -14,6 +14,7 @@
                             ;; ".jar"
                             ;; ".exe"
                             ".cider-repl-history"
+                            ".cider-repl-history-cljs"
                             ".lein-repl-history"
                             "*.iml"
                             "*.zip"
