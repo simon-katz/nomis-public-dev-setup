@@ -6,30 +6,33 @@
 (setq lsp-keymap-prefix "H-q H-s")
 
 ;; 2021-08-20 Suddenly this isn't needed. (Why?)
-;; (defun nomis/lsp-eldoc ()
-;;   ;; Don't blat signatures from CIDER.
-;;   ;; I prefer CIDER signatures to LSP signatures for these reasons:
-;;   ;; - CIDER gives better doc for `def` and `defn`. (Maybe LSP doesn't do
-;;   ;;   macros properly.)
-;;   ;; - When the cursor is placed after the symbol:
-;;   ;;   - With CIDER, the signature appears.
-;;   ;;   - With LSP, the echo area doesn't change.
-;;   ;; - When the cursor is on an arg:
-;;   ;;   - With CIDER, the signature for the function is shown with the formal
-;;   ;;     arg bold.
-;;   ;;   - With LSP, details of the arg are shown.
-;;   ;; - When the cursor is moved away to empty space:
-;;   ;;   - With CIDER, the echo area is cleared.
-;;   ;;   - With LSP, the echo area doesn't change.
-;;   ;;
-;;   ;; Things to look at if you ever want/need to revisit this:
-;;   ;;   lsp-eldoc-enable-hover
-;;   ;;   cider-eldoc-display-for-symbol-at-point
-;;   ;;   https://github.com/clojure-lsp/clojure-lsp/issues/569
-;;   ;;   https://github.com/emacs-lsp/lsp-mode/pull/3106
-;;   ;;
-;;   (unless (ignore-errors (cider-repls))
-;;     (lsp-hover)))
+;; 2021-12-17 Hmmm, it /is/ needed. Maybe not initially, but during a session
+;;            things can change so that CIDER signatures get blatted.
+;;            Ah! It seems that doing `lsp-restart-workspace` causes the change.
+(defun nomis/lsp-eldoc ()
+  ;; Don't blat signatures from CIDER.
+  ;; I prefer CIDER signatures to LSP signatures for these reasons:
+  ;; - CIDER gives better doc for `def` and `defn`. (Maybe LSP doesn't do
+  ;;   macros properly.)
+  ;; - When the cursor is placed after the symbol:
+  ;;   - With CIDER, the signature appears.
+  ;;   - With LSP, the echo area doesn't change.
+  ;; - When the cursor is on an arg:
+  ;;   - With CIDER, the signature for the function is shown with the formal
+  ;;     arg bold.
+  ;;   - With LSP, details of the arg are shown.
+  ;; - When the cursor is moved away to empty space:
+  ;;   - With CIDER, the echo area is cleared.
+  ;;   - With LSP, the echo area doesn't change.
+  ;;
+  ;; Things to look at if you ever want/need to revisit this:
+  ;;   lsp-eldoc-enable-hover
+  ;;   cider-eldoc-display-for-symbol-at-point
+  ;;   https://github.com/clojure-lsp/clojure-lsp/issues/569
+  ;;   https://github.com/emacs-lsp/lsp-mode/pull/3106
+  ;;
+  (unless (ignore-errors (cider-repls))
+    (lsp-hover)))
 
 ;; Stuff to maybe consider:
 ;; - 2021-10-20 Number of workspaces increases as time goes by.
@@ -50,7 +53,7 @@
   (setq lsp-lens-enable                   t)
   (setq lsp-enable-symbol-highlighting    t)
   (setq lsp-ui-doc-enable                 nil) ; Don't show big grey boxes.
-  ;; (setq lsp-eldoc-hook                    '(nomis/lsp-eldoc))
+  (setq lsp-eldoc-hook                    '(nomis/lsp-eldoc))
   (setq lsp-enable-indentation            nil) ; Use CIDER indentation.
   (setq lsp-ui-sideline-show-code-actions nil) ; Don't show clutter! But see `nomis/lsp-toggle-lsp-ui-sideline-show-code-actions`.
 
