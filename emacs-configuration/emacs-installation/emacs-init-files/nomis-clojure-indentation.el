@@ -23,19 +23,18 @@
      (for-all 2)
      ;; core.match
      (match 1)
-     ;; Om
-     ;; (dom/h1 1)
-     ;; (dom/h2 1)
-     ;; (dom/h3 1)
-     ;; (dom/li 1)
-     ;; (dom/ul 1)
-     ;; (dom/div 1)
-     ;; (dom/input 1)
-     ;; (dom/label 1)
-     ;; (dom/form 1)
-     ;; (dom/textarea 1)
-     ;; (dom/button 1)
-     ))
+     ;; Om & Fulcro
+     (dom/button   1)
+     (dom/div      1)
+     (dom/form     1)
+     (dom/h1       1)
+     (dom/h2       1)
+     (dom/h3       1)
+     (dom/input    1)
+     (dom/label    1)
+     (dom/li       1)
+     (dom/textarea 1)
+     (dom/ul       1)))
 
 ;; (defvar nomis/clojure-indent-method-1-function-prefixes
 ;;   '("dom/"))
