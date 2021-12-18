@@ -24,6 +24,7 @@
      ;; core.match
      (match 1)
      ;; Om & Fulcro
+     (dom/a        1)
      (dom/button   1)
      (dom/div      1)
      (dom/form     1)
