@@ -118,6 +118,7 @@
      (nomis/cider/cljs-dev-host . "localhost")
      (nomis/cider/cljs-dev-port . 3333)
      (nomis/cider/cljs-dev-port . 8777)
+     (nomis/cider/cljs-dev-port . 9000)
      (nomis/cider/post-interactive-eval/clj-function-name . "dev/post-interactive-eval-hook")
      (nomis/cider/post-interactive-eval/cljs-function-name . "cljs.user/post-interactive-eval-hook")
      (nomis/grep/local-ignored-directories "compiler-output" "resources/dev-and-build/icons/bootstrap-icons-1.1.0" "resources/pub-prod/cross-env")
