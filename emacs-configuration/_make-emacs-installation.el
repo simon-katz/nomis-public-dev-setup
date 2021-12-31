@@ -70,6 +70,7 @@
      projectile
      queue
      rainbow-delimiters
+     rainbow-blocks
      saveplace
      smartrep
      smex
