@@ -13,7 +13,7 @@
                             ".smex-items"
                             ;; ".jar"
                             ;; ".exe"
-                            ".cider-repl-history"
+                            ".cider-repl-history-clj"
                             ".cider-repl-history-cljs"
                             ".lein-repl-history"
                             "*.iml"
