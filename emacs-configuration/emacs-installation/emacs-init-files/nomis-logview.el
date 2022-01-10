@@ -9,11 +9,6 @@
 
 (setq logview-show-ellipses nil)
 
-(pushnew '("nomis-extra: ISO 8601 datetime + millis using comma"
-           (java-pattern . "yyyy-MM-dd HH:mm:ss,SSS"))
-         logview-additional-timestamp-formats
-         :test 'equal)
-
 ;;;; ___________________________________________________________________________
 ;;;; ---- Per-buffer ----
 
