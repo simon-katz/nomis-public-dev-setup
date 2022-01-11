@@ -36,8 +36,11 @@
 (defvar -nomis/auto-revert/tails (make-hash-table)
   "Hash table from buffer to most-recently seen last-n-chars of buffer.")
 
-(cl-defun -nomis/auto-revert/note-buffer-killed (&rest _)
+(defun -nomis/auto-revert/forget-buffer ()
   (remhash (current-buffer) -nomis/auto-revert/tails))
+
+(cl-defun -nomis/auto-revert/note-buffer-killed (&rest _)
+  (-nomis/auto-revert/forget-buffer))
 
 (add-hook 'kill-buffer-hook
           '-nomis/auto-revert/note-buffer-killed)
@@ -55,30 +58,61 @@
 ;;;; _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 ;;;; ---- -nomis/auto-revert/eob-stuff ----
 
+(defun -nomis/auto-revert/buffer-file-size (&optional buffer) ; TODO: Move to a generic place.
+  (let* ((buffer (or buffer (current-buffer))))
+    (->> (buffer-file-name buffer)
+         file-attributes
+         (nth 7))))
+
 (defun -nomis/auto-revert/old-eob-if-buffer-changed ()
   ;; Return old eob if buffer has changed since previous call, otherwise nil.
+  ;; If there's been a rollover (but see TODO below), revert buffer and
+  ;; return nil.
+  ;; TODO: About rollover: We revert the buffer if the log file reduces in size.
+  ;;       This doesn't catch rollovers when the old file was smaller than the
+  ;;       current file, which can happen. So there is more to do here if we
+  ;;       want something perfect!
+  ;; TODO: We no longer use `previous-tail-chars`, so we don't need to save
+  ;;       that info.
   (cl-multiple-value-bind (previous-tail-chars
-                           old-eob)
+                           old-eob
+                           old-file-size)
       (-nomis/auto-revert/get-tail-info (current-buffer))
-    (let* ((pmax (point-max))
-           (current-tail-chars (buffer-substring-no-properties
-                                (max 1
-                                     (- pmax
-                                        nomis/auto-revert/n-chars-to-compare))
-                                pmax)))
-      (-nomis/auto-revert/put-tail-info (current-buffer)
-                                        (list current-tail-chars
-                                              pmax))
-      (when (and previous-tail-chars
-                 (not (equal previous-tail-chars
-                             current-tail-chars)))
-        old-eob))))
+    (let* ((current-file-size (-nomis/auto-revert/buffer-file-size)))
+      (if (and current-file-size ; nil if file has been deleted
+               old-eob
+               (< current-file-size old-file-size))
+          (progn
+            ;; The file has changed and not simply been appended to; /eg/
+            ;; a log rollover.
+            (message "Fully reverting buffer (perhaps a rollover happened): %s"
+                     (buffer-name))
+            (-nomis/auto-revert/forget-buffer)
+            (revert-buffer t t t)
+            nil)
+        (let* ((pmax (point-max))
+               (current-tail-chars (buffer-substring-no-properties
+                                    (max 1
+                                         (- pmax
+                                            nomis/auto-revert/n-chars-to-compare))
+                                    pmax)))
+          (-nomis/auto-revert/put-tail-info (current-buffer)
+                                            (list current-tail-chars
+                                                  pmax
+                                                  current-file-size))
+          (when (and old-eob
+                     (not (eq old-eob pmax)))
+            old-eob))))))
 
 (defun -nomis/auto-revert/extras-for-buffer ()
   ;; If at eob and buffer has changed since previous call:
   ;; - Bottomise (ie scroll so that eob is at bottom of window).
   ;; - Temporarily highlight the changes.
-  (when (= (point) (point-max))
+  ;; TODO: We are confusing general auto-reversion with log file tailing with
+  ;;       what we get from
+  ;;       `(setq logview-auto-revert-mode 'auto-revert-tail-mode)`?
+  (when (and (eq major-mode 'logview-mode) ; TODO: Move all to `nomis-logview`.
+             (= (point) (point-max)))
     (when-let (old-eob (-nomis/auto-revert/old-eob-if-buffer-changed))
       (recenter-top-bottom -1)
       (let* ((begin-pos (save-excursion (goto-char old-eob)
@@ -91,6 +125,9 @@
         (nomis/popup/message-v2 t end-pos   end-message)))))
 
 (defun -nomis/auto-revert-extras (&rest _)
+  ;; TODO: Why are we dealing with windows here? If we do need
+  ;;       `with-selected-window`, we should avoid doing work for the same
+  ;;       buffer multiple times.
   (dolist (w (get-buffer-window-list nil nil t))
     (with-selected-window w
       (-nomis/auto-revert/extras-for-buffer))))
