@@ -20,6 +20,9 @@
 ;;;; _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 ;;;; ---- Vars that can be tailored ----
 
+(defvar nomis/auto-revert/revert-text
+  "▶▶▶▶ Reverted buffer -- maybe a rollover happened ◀◀◀◀")
+
 (defvar nomis/auto-revert/new-content-text/begin
   "▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼  New content  ▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼")
 
@@ -89,6 +92,8 @@
                      (buffer-name))
             (-nomis/auto-revert/forget-buffer)
             (revert-buffer t t t)
+            (let* ((pos (save-excursion (beginning-of-line) (point))))
+              (nomis/popup/message-v2 t pos nomis/auto-revert/revert-text))
             nil)
         (let* ((pmax (point-max))
                (current-tail-chars (buffer-substring-no-properties
