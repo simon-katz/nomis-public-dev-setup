@@ -62,7 +62,7 @@
       (-nomis/auto-revert/get-tail-info (current-buffer))
     (let* ((pmax (point-max))
            (current-tail-chars (buffer-substring-no-properties
-                                (max 0
+                                (max 1
                                      (- pmax
                                         nomis/auto-revert/n-chars-to-compare))
                                 pmax)))
