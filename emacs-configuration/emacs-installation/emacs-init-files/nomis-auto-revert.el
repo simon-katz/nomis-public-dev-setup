@@ -1,5 +1,7 @@
 ;;;; nomis-auto-revert.el --- auto-revert-mode tailoring ---  -*- lexical-binding: t -*-
 
+(require 'nomis-lightweight-objects)
+
 ;;;; ___________________________________________________________________________
 ;;;; ---- Standard tailoring ----
 
@@ -36,11 +38,11 @@
 ;;;; _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 ;;;; ---- Hash table of recent buffer tails ----
 
-(defvar -nomis/auto-revert/tails (make-hash-table)
+(defvar -nomis/auto-revert/tail-infos (make-hash-table)
   "Hash table from buffer to most-recently seen last-n-chars of buffer.")
 
 (defun -nomis/auto-revert/forget-buffer ()
-  (remhash (current-buffer) -nomis/auto-revert/tails))
+  (remhash (current-buffer) -nomis/auto-revert/tail-infos))
 
 (cl-defun -nomis/auto-revert/note-buffer-killed (&rest _)
   (-nomis/auto-revert/forget-buffer))
@@ -49,14 +51,14 @@
           '-nomis/auto-revert/note-buffer-killed)
 
 ;;;; To help when debugging:
-;;;;   (hash-table-count -nomis/auto-revert/tails)
-;;;;   (hash-table-keys -nomis/auto-revert/tails)
+;;;;   (hash-table-count -nomis/auto-revert/tail-infos)
+;;;;   (hash-table-keys -nomis/auto-revert/tail-infos)
 
 (defun -nomis/auto-revert/get-tail-info (buffer)
-  (gethash buffer -nomis/auto-revert/tails))
+  (gethash buffer -nomis/auto-revert/tail-infos))
 
 (defun -nomis/auto-revert/put-tail-info (buffer info)
-  (puthash buffer info -nomis/auto-revert/tails))
+  (puthash buffer info -nomis/auto-revert/tail-infos))
 
 ;;;; _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 ;;;; ---- -nomis/auto-revert/eob-stuff ----
@@ -67,48 +69,54 @@
          file-attributes
          (nth 7))))
 
-(defun -nomis/auto-revert/old-eob-if-buffer-changed ()
+(defun -nomis/auto-revert/revert-needed? (file-size eob prev-tail-info)
+  "Return non-nil if a revert is needed. That's the case if
+either:
+(1) `file-size` is less than the previous `:file-size`, or
+(2) the previous `:tail-chars` do not match the characters that are in the
+buffer at the previous `:start-pos`.
+This isn't perfect, but it's probably the best we can do."
+  (-let* (((&hash :file-size  prev-file-size
+                  :tail-chars prev-tail-chars
+                  :start-pos  prev-start-pos
+                  :eob        prev-eob)
+           prev-tail-info))
+    (or (< file-size prev-file-size)
+        (not (equal prev-tail-chars
+                    (buffer-substring-no-properties prev-start-pos
+                                                    prev-eob))))))
+
+(defun -nomis/auto-revert/prev-eob-if-buffer-changed ()
   ;; Return old eob if buffer has changed since previous call, otherwise nil.
-  ;; If there's been a rollover (but see TODO below), revert buffer and
-  ;; return nil.
-  ;; TODO: About rollover: We revert the buffer if the log file reduces in size.
-  ;;       This doesn't catch rollovers when the old file was smaller than the
-  ;;       current file, which can happen. So there is more to do here if we
-  ;;       want something perfect!
-  ;; TODO: We no longer use `previous-tail-chars`, so we don't need to save
-  ;;       that info.
-  (cl-multiple-value-bind (previous-tail-chars
-                           old-eob
-                           old-file-size)
-      (-nomis/auto-revert/get-tail-info (current-buffer))
-    (let* ((we-have-old-stuff? old-eob)
-           (current-file-size (-nomis/auto-revert/buffer-file-size)))
-      (if (and current-file-size ; nil if file has been deleted
-               we-have-old-stuff?
-               (< current-file-size old-file-size))
-          (progn
-            ;; The file has changed and not simply been appended to; /eg/
-            ;; a log rollover.
-            (message "Reverting buffer (perhaps a rollover happened): %s"
-                     (buffer-name))
-            (-nomis/auto-revert/forget-buffer)
-            (revert-buffer t t t)
-            (let* ((pos (save-excursion (beginning-of-line) (point))))
-              (nomis/popup/message-v2 t pos nomis/auto-revert/revert-text))
-            nil)
-        (let* ((pmax (point-max))
-               (current-tail-chars (buffer-substring-no-properties
-                                    (max 1
-                                         (- pmax
-                                            nomis/auto-revert/n-chars-to-compare))
-                                    pmax)))
-          (-nomis/auto-revert/put-tail-info (current-buffer)
-                                            (list current-tail-chars
-                                                  pmax
-                                                  current-file-size))
-          (when (and we-have-old-stuff?
-                     (not (eq old-eob pmax)))
-            old-eob))))))
+  ;; If there's been a rollover, revert buffer and return nil.
+  (let* ((prev-tail-info (-nomis/auto-revert/get-tail-info (current-buffer)))
+         (file-size (-nomis/auto-revert/buffer-file-size))
+         (eob (point-max))
+         (start-pos (max 1
+                         (- eob nomis/auto-revert/n-chars-to-compare)))
+         (tail-chars (buffer-substring-no-properties start-pos eob)))
+    (if (and prev-tail-info
+             file-size ; nil if file has been deleted
+             (-nomis/auto-revert/revert-needed? file-size eob prev-tail-info))
+        (progn
+          ;; The file has changed and not simply been appended to; /eg/
+          ;; a log rollover.
+          (message "Reverting buffer (perhaps a rollover happened): %s"
+                   (buffer-name))
+          (-nomis/auto-revert/forget-buffer)
+          (revert-buffer t t t)
+          (let* ((pos (save-excursion (beginning-of-line) (point))))
+            (nomis/popup/message-v2 t pos nomis/auto-revert/revert-text))
+          nil)
+      (let* ((tail-info ($$ :file-size  file-size
+                            :start-pos  start-pos
+                            :eob        eob
+                            :tail-chars tail-chars)))
+        (-nomis/auto-revert/put-tail-info (current-buffer) tail-info)
+        (when prev-tail-info
+          (let* ((prev-eob ($ :eob prev-tail-info)))
+            (when (not (eq prev-eob eob))
+              prev-eob)))))))
 
 (defun -nomis/auto-revert/extras-for-buffer ()
   ;; If at eob and buffer has changed since previous call:
@@ -117,11 +125,11 @@
   ;; TODO: We are confusing general auto-reversion with log file tailing with
   ;;       what we get from
   ;;       `(setq logview-auto-revert-mode 'auto-revert-tail-mode)`?
-  (when (and (eq major-mode 'logview-mode) ; TODO: Move all to `nomis-logview`.
-             (= (point) (point-max)))
-    (when-let (old-eob (-nomis/auto-revert/old-eob-if-buffer-changed))
-      (recenter-top-bottom -1)
-      (let* ((begin-pos (save-excursion (goto-char old-eob)
+  (when (eq major-mode 'logview-mode) ; TODO: Move all to `nomis-logview`.
+    (when-let (prev-eob (-nomis/auto-revert/prev-eob-if-buffer-changed))
+      (when (= (point) (point-max))
+        (recenter-top-bottom -1))
+      (let* ((begin-pos (save-excursion (goto-char prev-eob)
                                         (forward-line -1)
                                         (point)))
              (begin-message nomis/auto-revert/new-content-text/begin)
