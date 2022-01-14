@@ -79,10 +79,9 @@
     ov))
 
 (defun -nomis/popup/point-invisible? (&optional pos)
-  ;; Copied from `org-invisible-p`. Why "after POS" (in doc string)?
-  "Non-nil if the character after POS is invisible.
+  "Non-nil if the character at POS is invisible.
 If POS is nil, use `point' instead."
-  (get-char-property (or pos (point)) 'invisible))
+  (invisible-p (or pos (point))))
 
 (defun -nomis/popup/a-good-popup-position ()
   (save-excursion
