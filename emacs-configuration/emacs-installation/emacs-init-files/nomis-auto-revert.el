@@ -81,14 +81,15 @@
                            old-eob
                            old-file-size)
       (-nomis/auto-revert/get-tail-info (current-buffer))
-    (let* ((current-file-size (-nomis/auto-revert/buffer-file-size)))
+    (let* ((we-have-old-stuff? old-eob)
+           (current-file-size (-nomis/auto-revert/buffer-file-size)))
       (if (and current-file-size ; nil if file has been deleted
-               old-eob
+               we-have-old-stuff?
                (< current-file-size old-file-size))
           (progn
             ;; The file has changed and not simply been appended to; /eg/
             ;; a log rollover.
-            (message "Fully reverting buffer (perhaps a rollover happened): %s"
+            (message "Reverting buffer (perhaps a rollover happened): %s"
                      (buffer-name))
             (-nomis/auto-revert/forget-buffer)
             (revert-buffer t t t)
@@ -105,7 +106,7 @@
                                             (list current-tail-chars
                                                   pmax
                                                   current-file-size))
-          (when (and old-eob
+          (when (and we-have-old-stuff?
                      (not (eq old-eob pmax)))
             old-eob))))))
 
