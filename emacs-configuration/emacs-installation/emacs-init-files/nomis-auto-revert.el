@@ -89,34 +89,35 @@ This isn't perfect, but it's probably the best we can do."
 (defun -nomis/auto-revert/prev-eob-if-buffer-changed ()
   ;; Return old eob if buffer has changed since previous call, otherwise nil.
   ;; If there's been a rollover, revert buffer and return nil.
-  (let* ((prev-tail-info (-nomis/auto-revert/get-tail-info (current-buffer)))
-         (file-size (-nomis/auto-revert/buffer-file-size))
-         (eob (point-max))
-         (start-pos (max 1
-                         (- eob nomis/auto-revert/n-chars-to-compare)))
-         (tail-chars (buffer-substring-no-properties start-pos eob)))
-    (if (and prev-tail-info
-             file-size ; nil if file has been deleted
-             (-nomis/auto-revert/revert-needed? file-size eob prev-tail-info))
-        (progn
-          ;; The file has changed and not simply been appended to; /eg/
-          ;; a log rollover.
-          (message "Reverting buffer (perhaps a rollover happened): %s"
-                   (buffer-name))
-          (-nomis/auto-revert/forget-buffer)
-          (revert-buffer t t t)
-          (let* ((pos (save-excursion (beginning-of-line) (point))))
-            (nomis/popup/message-v2 t pos nomis/auto-revert/revert-text))
-          nil)
-      (let* ((tail-info ($$ :file-size  file-size
-                            :start-pos  start-pos
-                            :eob        eob
-                            :tail-chars tail-chars)))
-        (-nomis/auto-revert/put-tail-info (current-buffer) tail-info)
-        (when prev-tail-info
-          (let* ((prev-eob ($ :eob prev-tail-info)))
-            (when (not (eq prev-eob eob))
-              prev-eob)))))))
+  (let* ((file-size (-nomis/auto-revert/buffer-file-size)))
+    (when (null file-size)
+      (error "file-size is unexpectedly nil"))
+    (let* ((prev-tail-info (-nomis/auto-revert/get-tail-info (current-buffer)))
+           (eob (point-max)))
+      (if (and prev-tail-info
+               (-nomis/auto-revert/revert-needed? file-size eob prev-tail-info))
+          (progn
+            ;; The file has changed and not simply been appended to; /eg/
+            ;; a log rollover.
+            (message "Reverting buffer (perhaps a rollover happened): %s"
+                     (buffer-name))
+            (-nomis/auto-revert/forget-buffer)
+            (revert-buffer t t t)
+            (let* ((pos (save-excursion (beginning-of-line) (point))))
+              (nomis/popup/message-v2 t pos nomis/auto-revert/revert-text))
+            nil)
+        (let* ((start-pos (max 1
+                               (- eob nomis/auto-revert/n-chars-to-compare)))
+               (tail-chars (buffer-substring-no-properties start-pos eob))
+               (tail-info ($$ :file-size  file-size
+                              :start-pos  start-pos
+                              :eob        eob
+                              :tail-chars tail-chars)))
+          (-nomis/auto-revert/put-tail-info (current-buffer) tail-info)
+          (when prev-tail-info
+            (let* ((prev-eob ($ :eob prev-tail-info)))
+              (when (not (eq prev-eob eob))
+                prev-eob))))))))
 
 (defun -nomis/auto-revert/extras-for-buffer ()
   ;; If at eob and buffer has changed since previous call:
