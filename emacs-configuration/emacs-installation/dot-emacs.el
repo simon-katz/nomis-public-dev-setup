@@ -107,7 +107,12 @@
 ;;;; ---- Very general stuff ----
 
 (require 's)
+
 (require 'dash)
+(global-dash-fontify-mode)
+(with-eval-after-load 'info-look
+  (dash-register-info-lookup))
+
 (require 'cl)
 (require 'mmt)
 
