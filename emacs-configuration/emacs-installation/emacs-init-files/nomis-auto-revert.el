@@ -150,7 +150,7 @@ This isn't perfect, but it's probably the best we can do."
              (progn
                (message "Reverting buffer because a rollover happened): %s"
                         (buffer-name))
-               (revert-buffer t t t)
+               (revert-buffer t t) ; a third `t` here causes buffer to become writeable, so don't do that
                (nomis/foreach-buffer-window
                 (current-buffer)
                 (lambda ()
