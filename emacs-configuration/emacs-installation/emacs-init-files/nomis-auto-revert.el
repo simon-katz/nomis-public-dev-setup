@@ -152,8 +152,7 @@ This isn't perfect, but it's probably the best we can do."
                 (current-buffer)
                 (lambda ()
                   (let* ((bol (save-excursion (beginning-of-line) (point))))
-                    (nomis/popup/message-v2 t bol nomis/auto-revert/revert-text))))
-               nil))
+                    (nomis/popup/message-v2 t bol nomis/auto-revert/revert-text))))))
             (t
              (let* ((prev-eob prev-eob-or-change-desc)
                     (begin-pos (save-excursion (goto-char prev-eob)
