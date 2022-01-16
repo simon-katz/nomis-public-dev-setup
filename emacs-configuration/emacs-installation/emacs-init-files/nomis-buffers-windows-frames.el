@@ -24,6 +24,11 @@
   (or (nomis/find-window-in-frame buffer-name frame)
       (nomis/find-window-in-any-frame buffer-name)))
 
+(defun nomis/foreach-buffer-window (buffer f)
+  (dolist (w (get-buffer-window-list buffer nil t))
+    (with-selected-window w
+      (funcall f))))
+
 ;;;; ___________________________________________________________________________
 
 (provide 'nomis-buffers-windows-frames)
