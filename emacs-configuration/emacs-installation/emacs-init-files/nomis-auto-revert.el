@@ -71,26 +71,24 @@
 ;;;; _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 ;;;; ---- -nomis/logview-auto-revert-extras ----
 
-(defun -nomis/auto-revert/buffer-file-size (&optional buffer) ; TODO: Move to a generic place.
-  (let* ((buffer (or buffer (current-buffer))))
-    (->> (buffer-file-name buffer)
-         file-attributes
-         (nth 7))))
-
-(defun -nomis/auto-revert/probable-rollover? (file-size prev-tail-info)
-  "Return non-nil if a revert is needed. That's the case if
-either:
-(1) `file-size` is less than the previous `:file-size`, or
-(2) the previous `:tail-chars` do not match the characters that are in the
+(defun -nomis/auto-revert/probable-rollover? (file-size mod-time-ms prev-tail-info)
+  "Return non-nil if a revert is needed. That's the case if any of the following
+are true:
+- The file size is smaller than before.
+- The file size is the same as before and the modification time is later.
+- the previous `:tail-chars` do not match the characters that are in the
 buffer at the previous `:start-pos`.
 This isn't perfect, but it's probably the best we can do."
   (and prev-tail-info
-       (-let* (((&hash :file-size  prev-file-size
-                       :tail-chars prev-tail-chars
-                       :start-pos  prev-start-pos
-                       :eob        prev-eob)
+       (-let* (((&hash :file-size   prev-file-size
+                       :mod-time-ms prev-mod-time-ms
+                       :tail-chars  prev-tail-chars
+                       :start-pos   prev-start-pos
+                       :eob         prev-eob)
                 prev-tail-info))
          (or (< file-size prev-file-size)
+             (and (= file-size prev-file-size)
+                  (> mod-time-ms prev-mod-time-ms))
              (not (equal prev-tail-chars
                          (buffer-substring-no-properties prev-start-pos
                                                          prev-eob)))))))
@@ -106,11 +104,15 @@ This isn't perfect, but it's probably the best we can do."
   ;; - If `buffer` has not changed, return `nil`.
   ;; - Otherwise return the previous eob. (The caller is expected to highlight
   ;;   the new buffer content.)
-  (let* ((file-size (-nomis/auto-revert/buffer-file-size)))
+  (let* ((file-attrs (file-attributes (buffer-file-name)))
+         (file-size  (file-attribute-size file-attrs))
+         (mod-time-ms (-> (file-attribute-modification-time file-attrs)
+                          (time-convert 1000)
+                          car)))
     (when (null file-size)
       (error "file-size is unexpectedly nil"))
     (let* ((prev-tail-info (-nomis/auto-revert/get-tail-info (current-buffer))))
-      (if (-nomis/auto-revert/probable-rollover? file-size prev-tail-info)
+      (if (-nomis/auto-revert/probable-rollover? file-size mod-time-ms prev-tail-info)
           (progn
             (-nomis/auto-revert/forget-buffer)
             :rollover)
@@ -118,10 +120,11 @@ This isn't perfect, but it's probably the best we can do."
                (start-pos (max 1
                                (- eob nomis/auto-revert/n-chars-to-compare)))
                (tail-chars (buffer-substring-no-properties start-pos eob))
-               (tail-info ($$ :file-size  file-size
-                              :start-pos  start-pos
-                              :eob        eob
-                              :tail-chars tail-chars)))
+               (tail-info ($$ :file-size   file-size
+                              :mod-time-ms mod-time-ms
+                              :start-pos   start-pos
+                              :eob         eob
+                              :tail-chars  tail-chars)))
           (-nomis/auto-revert/put-tail-info (current-buffer) tail-info)
           (when prev-tail-info
             (let* ((prev-eob ($ :eob prev-tail-info)))
