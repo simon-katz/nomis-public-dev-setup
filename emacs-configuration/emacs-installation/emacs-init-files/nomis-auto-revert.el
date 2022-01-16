@@ -8,7 +8,7 @@
 ;;;; Make things more responsive when you cause a log file to update more than
 ;;;; once in quick succession.
 (setq auto-revert-use-notify nil)
-(setq auto-revert-interval 1)
+(setq auto-revert-interval 2)
 
 ;;;; ___________________________________________________________________________
 ;;;; ---- Extra behaviour when new content is added ----
