@@ -181,16 +181,12 @@ This isn't perfect, but it's probably the best we can do."
                                               bol
                                               nomis/auto-revert/new-content-text)))))))))))
 
-(defun -nomis/auto-revert-extras (&rest _)
-  (dolist (b (buffer-list))
-    (with-current-buffer b
-      (-nomis/auto-revert/extras-for-buffer))))
-
 (let* ((advice-name '-nomis/logview-auto-revert-extras))
   (advice-add
    'auto-revert-handler
    :after
-   '-nomis/auto-revert-extras
+   (lambda (&rest _)
+     (-nomis/auto-revert/extras-for-buffer))
    `((name . ,advice-name))))
 
 (when nil ; Code to remove advice when in dev.
