@@ -25,6 +25,9 @@
 (defvar nomis/auto-revert/revert-text
   "▶▶▶▶ Reverted buffer -- maybe a rollover happened ◀◀◀◀")
 
+(defvar nomis/auto-revert/new-content-text
+  "▶▶▶▶ New content added to bottom of buffer ◀◀◀◀")
+
 (defvar nomis/auto-revert/new-content-text/begin
   "▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼  New content  ▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼")
 
@@ -135,7 +138,8 @@ This isn't perfect, but it's probably the best we can do."
   ;;       `(setq logview-auto-revert-mode 'auto-revert-tail-mode)`?
   (when (eq major-mode 'logview-mode) ; TODO: Move all to `nomis-logview`.
     (let* ((prev-eob-or-change-desc
-            (-nomis/auto-revert/prev-eob-or-change-desc)))
+            (-nomis/auto-revert/prev-eob-or-change-desc))
+           (bol (save-excursion (beginning-of-line) (point))))
       (cond ((null prev-eob-or-change-desc)
              ;; Nothing to do.
              )
@@ -144,26 +148,30 @@ This isn't perfect, but it's probably the best we can do."
                (message "Reverting buffer because a rollover happened): %s"
                         (buffer-name))
                (revert-buffer t t t)
-               (let* ((pos (save-excursion (beginning-of-line) (point))))
-                 (nomis/popup/message-v2 t pos nomis/auto-revert/revert-text))
+               (nomis/popup/message-v2 t bol nomis/auto-revert/revert-text)
                nil))
             (t
-             (let* ((prev-eob prev-eob-or-change-desc))
-               ;; Highlight the changes.
-               (when (= (point) (point-max))
-                 (recenter-top-bottom -1))
-               (let* ((begin-pos (save-excursion (goto-char prev-eob)
-                                                 (forward-line -1)
-                                                 (point)))
-                      (begin-message nomis/auto-revert/new-content-text/begin)
-                      (end-pos (point-max))
-                      (end-message   nomis/auto-revert/new-content-text/end))
-                 (nomis/popup/message-v2 t begin-pos begin-message)
-                 (nomis/popup/message-v2 t end-pos   end-message)
-                 (let* ((face '-nomis/auto-revert/new-text-highlight-face))
-                   (nomis/popup/display-temp-overlay prev-eob
-                                                     end-pos
-                                                     'face face)))))))))
+             (let* ((prev-eob prev-eob-or-change-desc)
+                    (begin-pos (save-excursion (goto-char prev-eob)
+                                               (forward-line -1)
+                                               (point))))
+               (if (>= begin-pos (window-end nil t))
+                   ;; Say that text has been added at end of file.
+                   (nomis/popup/message-v2 t
+                                           bol
+                                           nomis/auto-revert/new-content-text)
+                 ;; Maybe scroll, and highlight the changes.
+                 (when (= (point) (point-max))
+                   (recenter-top-bottom -1))
+                 (let* ((begin-message nomis/auto-revert/new-content-text/begin)
+                        (end-pos (point-max))
+                        (end-message   nomis/auto-revert/new-content-text/end))
+                   (nomis/popup/message-v2 t begin-pos begin-message)
+                   (nomis/popup/message-v2 t end-pos   end-message)
+                   (let* ((face '-nomis/auto-revert/new-text-highlight-face))
+                     (nomis/popup/display-temp-overlay prev-eob
+                                                       end-pos
+                                                       'face face))))))))))
 
 (defun -nomis/auto-revert-extras (&rest _)
   ;; TODO: Why are we dealing with windows here?
