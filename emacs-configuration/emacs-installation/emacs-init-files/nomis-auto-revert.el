@@ -35,6 +35,10 @@
   "Number of characters to check at end of buffer to see whether
   auto-tailing has changed things.")
 
+(defface -nomis/auto-revert/new-text-highlight-face
+  `((t (:background "PaleGreen1")))
+  "Face used for highlighting new text.")
+
 ;;;; _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 ;;;; ---- Hash table of recent buffer tails ----
 
@@ -155,7 +159,11 @@ This isn't perfect, but it's probably the best we can do."
                       (end-pos (point-max))
                       (end-message   nomis/auto-revert/new-content-text/end))
                  (nomis/popup/message-v2 t begin-pos begin-message)
-                 (nomis/popup/message-v2 t end-pos   end-message))))))))
+                 (nomis/popup/message-v2 t end-pos   end-message)
+                 (let* ((face '-nomis/auto-revert/new-text-highlight-face))
+                   (nomis/popup/display-temp-overlay prev-eob
+                                                     end-pos
+                                                     'face face)))))))))
 
 (defun -nomis/auto-revert-extras (&rest _)
   ;; TODO: Why are we dealing with windows here?

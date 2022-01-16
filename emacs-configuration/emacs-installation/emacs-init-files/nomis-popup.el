@@ -201,6 +201,24 @@ If POS is nil, use `point' instead."
                                  -nomis/popup/error-suffix)))
 
 ;;;; ___________________________________________________________________________
+
+(defun nomis/popup/display-temp-overlay (start-pos end-pos &rest props)
+  (let* ((ov-id (gensym))
+         (overlay (apply #'-make-nomis-popup-overlay
+                         start-pos
+                         end-pos
+                         'face '-nomis/auto-revert/highlight-face
+                         :nomis/id ov-id
+                         props))
+         (buffer (current-buffer)))
+    (run-at-time nomis/popup/duration
+                 nil
+                 (lambda ()
+                   (when (buffer-live-p buffer)
+                     (with-current-buffer buffer
+                       (remove-overlays nil nil :nomis/id ov-id)))))))
+
+;;;; ___________________________________________________________________________
 ;;;; * End
 
 (provide 'nomis-popup)
