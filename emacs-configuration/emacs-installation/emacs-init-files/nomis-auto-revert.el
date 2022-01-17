@@ -71,7 +71,7 @@
 ;;;; _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 ;;;; ---- -nomis/auto-revert/extras-for-buffer ----
 
-(defun -nomis/auto-revert/probable-rollover? (file-size mod-time-ms prev-tail-info)
+(defun -nomis/auto-revert/rollover-kind (file-size mod-time-ms prev-tail-info)
   "Return non-nil if a revert is needed. That's the case if any of the following
 are true:
 - The file size is smaller than before.
@@ -82,26 +82,31 @@ This isn't perfect, but it's probably the best we can do."
   ;; TODO: Are we doing unnecessary reversions when `auto-revert` has already
   ;;       reverted? (But there are some situations where `auto-revert` should
   ;;       but doesn't revert, so we need the equal-file-size test at least.)
-  (and prev-tail-info
-       (-let* (((&hash :file-size   prev-file-size
-                       :mod-time-ms prev-mod-time-ms
-                       :tail-chars  prev-tail-chars
-                       :start-pos   prev-start-pos
-                       :eob         prev-eob)
-                prev-tail-info))
-         (or (< file-size prev-file-size)
-             (and (= file-size prev-file-size)
+  (when prev-tail-info
+    (-let* (((&hash :file-size   prev-file-size
+                    :mod-time-ms prev-mod-time-ms
+                    :tail-chars  prev-tail-chars
+                    :start-pos   prev-start-pos
+                    :eob         prev-eob)
+             prev-tail-info))
+      (cond ((< file-size prev-file-size)
+             :file-got-smaller)
+            ((and (= file-size prev-file-size)
                   (> mod-time-ms prev-mod-time-ms))
-             ;; TODO: Does this tail char checking give you anything?
-             ;;       What does `logview` do?
-             ;;       See `logview-reassurance-chars`. And why isn't that
-             ;;       idea part of `auto-revert-tail-mode`?
-             (not (equal prev-tail-chars
+             :file-same-size-but-modified)
+            ;; TODO: Does this tail char checking give you anything?
+            ;;       What does `logview` do?
+            ;;       See `logview-reassurance-chars`. And why isn't that
+            ;;       idea part of `auto-revert-tail-mode`?
+            ((not (equal prev-tail-chars
                          (buffer-substring-no-properties prev-start-pos
-                                                         prev-eob)))))))
+                                                         prev-eob)))
+             :prev-tail-chars-changed)
+            (t
+             nil)))))
 
 ;; TODO: Pass in `buffer` from the very-outside.
-(defun -nomis/auto-revert/prev-eob-or-change-desc ()
+(defun -nomis/auto-revert/prev-eob-or-rollover-kind ()
   ;; Determine how `buffer` and its file have changed since the previous call of
   ;; this function for `buffer`, and:
   ;; - If there has been a rollover, return `:rollover`. (The caller is expected
@@ -119,10 +124,13 @@ This isn't perfect, but it's probably the best we can do."
     (when (null file-size)
       (error "file-size is unexpectedly nil"))
     (let* ((prev-tail-info (-nomis/auto-revert/get-tail-info (current-buffer))))
-      (if (-nomis/auto-revert/probable-rollover? file-size mod-time-ms prev-tail-info)
+      (if-let (rollover-kind (-nomis/auto-revert/rollover-kind file-size
+                                                               mod-time-ms
+                                                               prev-tail-info))
           (progn
+            (message "==== Rollover kind = %s" rollover-kind) ; TODO: Delete.
             (-nomis/auto-revert/forget-buffer)
-            :rollover)
+            rollover-kind)
         (let* ((eob (point-max))
                (start-pos (max 1
                                (- eob nomis/auto-revert/n-chars-to-compare)))
@@ -144,25 +152,35 @@ This isn't perfect, but it's probably the best we can do."
   ;; Otherwise:
   ;; - If point is at eob, scroll so that eob is the bottom line of the window.
   ;; - Temporarily highlight the changes.
-  (let* ((prev-eob-or-change-desc
-          (-nomis/auto-revert/prev-eob-or-change-desc)))
-    (cond ((null prev-eob-or-change-desc)
+  (let* ((prev-eob-or-rollover-kind
+          (-nomis/auto-revert/prev-eob-or-rollover-kind)))
+    (cond ((null prev-eob-or-rollover-kind)
            ;; Nothing to do.
            )
-          ((eq prev-eob-or-change-desc :rollover)
-           (progn
-             ;; The "-" at the beginning of this message lines things up with
-             ;; Emacs's own revert messages.
-             (message "-Reverted buffer '%s' because a rollover happened."
-                      (buffer-name))
-             (revert-buffer t t) ; a third `t` here causes buffer to become writeable, so don't do that
-             (nomis/foreach-buffer-window
-              (current-buffer)
-              (lambda ()
-                (let* ((bol (save-excursion (beginning-of-line) (point))))
-                  (nomis/popup/message-v2 t bol nomis/auto-revert/revert-text))))))
+          ((not (integerp prev-eob-or-rollover-kind))
+           (let* ((rollover-kind prev-eob-or-rollover-kind))
+             (when (member rollover-kind '(:file-got-smaller
+                                           :file-same-size-but-modified
+                                           ;; Not sure that the following is
+                                           ;; neeeded.
+                                           :prev-tail-chars-changed))
+               ;; `auto-revert-tail-mode` doesn't revert in these situations, so
+               ;; we do it ourselves.
+               (revert-buffer t t
+                              ;; A third `t` here for `preserve-modes` causes
+                              ;; the buffer to become writeable, so we don't
+                              ;; do that.
+                              )
+               (message "Nomis: Reverted buffer '%s' because a '%s' rollover happened."
+                        (buffer-name)
+                        rollover-kind)))
+           (nomis/foreach-buffer-window
+            (current-buffer)
+            (lambda ()
+              (let* ((bol (save-excursion (beginning-of-line) (point))))
+                (nomis/popup/message-v2 t bol nomis/auto-revert/revert-text)))))
           (t
-           (let* ((prev-eob prev-eob-or-change-desc)
+           (let* ((prev-eob prev-eob-or-rollover-kind)
                   (begin-pos (save-excursion (goto-char prev-eob)
                                              (forward-line -1)
                                              (point))))
