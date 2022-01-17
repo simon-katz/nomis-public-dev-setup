@@ -42,7 +42,7 @@
 ;;;; ___________________________________________________________________________
 ;;;; ____ * Parameterisation
 
-(defvar nomis/popup/duration 1)
+(defvar *nomis/popup/duration* 1)
 
 ;;;; ___________________________________________________________________________
 ;;;; ____ * Private parameterisation
@@ -160,7 +160,7 @@ If POS is nil, use `point' instead."
                                               :nomis/id         ov2-id
                                               :nomis/stickiness stickiness))
              (buffer (current-buffer)))
-        (run-at-time nomis/popup/duration
+        (run-at-time *nomis/popup/duration*
                      nil
                      (lambda ()
                        (when (buffer-live-p buffer)
@@ -211,7 +211,7 @@ If POS is nil, use `point' instead."
                          :nomis/id ov-id
                          props))
          (buffer (current-buffer)))
-    (run-at-time nomis/popup/duration
+    (run-at-time *nomis/popup/duration*
                  nil
                  (lambda ()
                    (when (buffer-live-p buffer)

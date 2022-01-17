@@ -627,8 +627,8 @@ Same for the `backward` commands.")
 (defvar norg/-most-recent-step-time -9999)
 
 (defvar norg/step-quick-repeat-delay
-  (if (boundp 'nomis/popup/duration)
-      nomis/popup/duration
+  (if (boundp '*nomis/popup/duration*)
+      *nomis/popup/duration*
     1))
 
 (defun norg/-small-time-gap-since-prev-step-command? ()
@@ -945,8 +945,8 @@ When in a body, \"current headline\" means the current body's parent headline."
 
 (defun norg/-allow-cycle-to-zero-for-a-while ()
   (setq *norg/-allow-cycle-wrap-now?* t)
-  (let ((secs (if (boundp 'nomis/popup/duration)
-                  nomis/popup/duration
+  (let ((secs (if (boundp '*nomis/popup/duration*)
+                  *nomis/popup/duration*
                 1)))
     (setq *norg/-allow-cycle-wrap-timer*
           (run-at-time secs
