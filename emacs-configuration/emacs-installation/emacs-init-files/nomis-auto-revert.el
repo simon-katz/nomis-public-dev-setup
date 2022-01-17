@@ -167,25 +167,7 @@ This isn't perfect, but it's probably the best we can do."
     (cond ((null prev-eob-or-rollover-kind)
            ;; Nothing to do.
            )
-          ((not (integerp prev-eob-or-rollover-kind))
-           (let* ((rollover-kind prev-eob-or-rollover-kind))
-             (when (member rollover-kind '(:file-got-smaller
-                                           :file-same-size-but-modified
-                                           ;; Not sure that the following is
-                                           ;; neeeded.
-                                           :prev-tail-chars-changed))
-               ;; `auto-revert-tail-mode` doesn't revert in these situations, so
-               ;; we do it ourselves.
-               (-nomis/auto-revert/revert-buffer-reinstating-point)
-               (message "Nomis: Reverted buffer '%s' because a '%s' rollover happened."
-                        (buffer-name)
-                        rollover-kind)))
-           (nomis/foreach-buffer-window
-            (current-buffer)
-            (lambda ()
-              (let* ((bol (save-excursion (beginning-of-line) (point))))
-                (nomis/popup/message-v2 t bol nomis/auto-revert/revert-text)))))
-          (t
+          ((integerp prev-eob-or-rollover-kind)
            (let* ((prev-eob prev-eob-or-rollover-kind)
                   (begin-pos (save-excursion (goto-char prev-eob)
                                              (forward-line -1)
@@ -211,7 +193,25 @@ This isn't perfect, but it's probably the best we can do."
                   (let* ((bol (save-excursion (beginning-of-line) (point))))
                     (nomis/popup/message-v2 t
                                             bol
-                                            nomis/auto-revert/new-content-text))))))))))
+                                            nomis/auto-revert/new-content-text)))))))
+          (t
+           (let* ((rollover-kind prev-eob-or-rollover-kind))
+             (when (member rollover-kind '(:file-got-smaller
+                                           :file-same-size-but-modified
+                                           ;; Not sure that the following is
+                                           ;; neeeded.
+                                           :prev-tail-chars-changed))
+               ;; `auto-revert-tail-mode` doesn't revert in these situations, so
+               ;; we do it ourselves.
+               (-nomis/auto-revert/revert-buffer-reinstating-point)
+               (message "Nomis: Reverted buffer '%s' because a '%s' rollover happened."
+                        (buffer-name)
+                        rollover-kind)))
+           (nomis/foreach-buffer-window
+            (current-buffer)
+            (lambda ()
+              (let* ((bol (save-excursion (beginning-of-line) (point))))
+                (nomis/popup/message-v2 t bol nomis/auto-revert/revert-text))))))))
 
 (let* ((advice-name '-nomis/auto-revert/extras-for-buffer))
   (advice-add
