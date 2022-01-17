@@ -69,7 +69,7 @@
   (puthash buffer info -nomis/auto-revert/tail-infos))
 
 ;;;; _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
-;;;; ---- -nomis/logview-auto-revert-extras ----
+;;;; ---- -nomis/auto-revert/extras-for-buffer ----
 
 (defun -nomis/auto-revert/probable-rollover? (file-size mod-time-ms prev-tail-info)
   "Return non-nil if a revert is needed. That's the case if any of the following
@@ -190,7 +190,7 @@ This isn't perfect, but it's probably the best we can do."
                                               bol
                                               nomis/auto-revert/new-content-text)))))))))))
 
-(let* ((advice-name '-nomis/logview-auto-revert-extras))
+(let* ((advice-name '-nomis/auto-revert/extras-for-buffer))
   (advice-add
    'auto-revert-handler ; TODO: Should we be advising some `logview` thing instead? (How does `logview` do things? What function can we advise? And see `logview-reassurance-chars`
    :after
@@ -199,7 +199,7 @@ This isn't perfect, but it's probably the best we can do."
    `((name . ,advice-name))))
 
 (when nil ; Code to remove advice when in dev.
-  (advice-remove 'auto-revert-handler '-nomis/logview-auto-revert-extras)
+  (advice-remove 'auto-revert-handler '-nomis/auto-revert/extras-for-buffer)
   )
 
 ;;;; ___________________________________________________________________________
