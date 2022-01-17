@@ -143,7 +143,8 @@ This isn't perfect, but it's probably the best we can do."
   ;; TODO: We are confusing general auto-reversion with log file tailing with
   ;;       what we get from
   ;;       `(setq logview-auto-revert-mode 'auto-revert-tail-mode)`?
-  (when (eq major-mode 'logview-mode) ; TODO: Move all to `nomis-logview`.
+  (when (and (eq major-mode 'logview-mode) ; TODO: Move all to `nomis-logview`.
+             (eq logview-auto-revert-mode 'auto-revert-tail-mode))
     (let* ((prev-eob-or-change-desc
             (-nomis/auto-revert/prev-eob-or-change-desc)))
       (cond ((null prev-eob-or-change-desc)
