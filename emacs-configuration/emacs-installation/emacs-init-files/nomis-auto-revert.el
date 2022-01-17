@@ -6,7 +6,7 @@
 ;;;; ___________________________________________________________________________
 ;;;; ---- Standard tailoring ----
 
-(setq auto-revert-verbose nil)
+(setq auto-revert-verbose t)
 
 ;;;; Make things more responsive when you cause a log file to update more than
 ;;;; once in quick succession.
@@ -152,7 +152,9 @@ This isn't perfect, but it's probably the best we can do."
              )
             ((eq prev-eob-or-change-desc :rollover)
              (progn
-               (message "Reverting buffer because a rollover happened): %s"
+               ;; The "-" at the beginning of this message lines things up with
+               ;; Emacs's own revert messages.
+               (message "-Reverted buffer '%s' because a rollover happened."
                         (buffer-name))
                (revert-buffer t t) ; a third `t` here causes buffer to become writeable, so don't do that
                (nomis/foreach-buffer-window
