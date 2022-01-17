@@ -89,6 +89,9 @@ This isn't perfect, but it's probably the best we can do."
          (or (< file-size prev-file-size)
              (and (= file-size prev-file-size)
                   (> mod-time-ms prev-mod-time-ms))
+             ;; TODO: Does this tail char checking give you anything?
+             ;;       What does `logview` do?
+             ;;       See `logview-reassurance-chars`.
              (not (equal prev-tail-chars
                          (buffer-substring-no-properties prev-start-pos
                                                          prev-eob)))))))
