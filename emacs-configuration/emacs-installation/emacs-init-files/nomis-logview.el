@@ -18,7 +18,8 @@
   ;; decided against before).
   (setq truncate-lines t)
   ;; Avoid `diff-hl` problem of `revert-buffer-preserve-modes` being unbound:
-  (diff-hl-mode 0))
+  (diff-hl-mode 0)
+  (setq revert-buffer-preserve-modes t))
 
 (add-hook 'logview-mode-hook
           '-nomis/logview-setup)
