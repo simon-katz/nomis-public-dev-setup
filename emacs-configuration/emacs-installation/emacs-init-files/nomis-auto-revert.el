@@ -192,7 +192,7 @@ This isn't perfect, but it's probably the best we can do."
 
 (let* ((advice-name '-nomis/logview-auto-revert-extras))
   (advice-add
-   'auto-revert-handler
+   'auto-revert-handler ; TODO: Should we be advising some `logview` thing instead? (How does `logview` do things? What function can we advise? And see `logview-reassurance-chars`
    :after
    (lambda (&rest _)
      (-nomis/auto-revert/extras-for-buffer))
