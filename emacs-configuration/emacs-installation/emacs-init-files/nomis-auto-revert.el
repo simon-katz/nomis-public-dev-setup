@@ -79,6 +79,9 @@ are true:
 - the previous `:tail-chars` do not match the characters that are in the
 buffer at the previous `:start-pos`.
 This isn't perfect, but it's probably the best we can do."
+  ;; TODO: Are we doing unnecessary reversions when `auto-revert` has already
+  ;;       reverted? (But there are some situations where `auto-revert` should
+  ;;       but doesn't revert, so we need the equal-file-size test at least.)
   (and prev-tail-info
        (-let* (((&hash :file-size   prev-file-size
                        :mod-time-ms prev-mod-time-ms
@@ -91,7 +94,8 @@ This isn't perfect, but it's probably the best we can do."
                   (> mod-time-ms prev-mod-time-ms))
              ;; TODO: Does this tail char checking give you anything?
              ;;       What does `logview` do?
-             ;;       See `logview-reassurance-chars`.
+             ;;       See `logview-reassurance-chars`. And why isn't that
+             ;;       idea part of `auto-revert-tail-mode`?
              (not (equal prev-tail-chars
                          (buffer-substring-no-properties prev-start-pos
                                                          prev-eob)))))))
