@@ -24,7 +24,7 @@
 ;;;; ---- Vars that can be tailored ----
 
 (defvar nomis/auto-revert/revert-text
-  "▶▶▶▶ Reverted buffer -- maybe a rollover happened ◀◀◀◀")
+  "▶▶▶▶ Reverted buffer because a rollover happened ◀◀◀◀")
 
 (defvar nomis/auto-revert/new-content-text
   "▶▶▶▶ New content added to bottom of buffer ◀◀◀◀")
