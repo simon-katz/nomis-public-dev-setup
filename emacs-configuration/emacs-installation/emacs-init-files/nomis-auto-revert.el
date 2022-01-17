@@ -175,7 +175,8 @@ This isn't perfect, but it's probably the best we can do."
              ;; Highlight the changes.
              (let* ((begin-message nomis/auto-revert/new-content-text/begin)
                     (end-pos (point-max))
-                    (end-message   nomis/auto-revert/new-content-text/end))
+                    (end-message   nomis/auto-revert/new-content-text/end)
+                    (*nomis/popup/duration* auto-revert-interval))
                (nomis/popup/message-v2 t begin-pos begin-message)
                (nomis/popup/message-v2 t end-pos   end-message)
                (let* ((face '-nomis/auto-revert/new-text-highlight-face))
@@ -190,7 +191,8 @@ This isn't perfect, but it's probably the best we can do."
                   (recenter-top-bottom -1))
                 (when (>= begin-pos (window-end nil t))
                   ;; Say that text has been added at end of file.
-                  (let* ((bol (save-excursion (beginning-of-line) (point))))
+                  (let* ((bol (save-excursion (beginning-of-line) (point)))
+                         (*nomis/popup/duration* auto-revert-interval))
                     (nomis/popup/message-v2 t
                                             bol
                                             nomis/auto-revert/new-content-text)))))))
@@ -210,7 +212,8 @@ This isn't perfect, but it's probably the best we can do."
            (nomis/foreach-buffer-window
             (current-buffer)
             (lambda ()
-              (let* ((bol (save-excursion (beginning-of-line) (point))))
+              (let* ((bol (save-excursion (beginning-of-line) (point)))
+                     (*nomis/popup/duration* auto-revert-interval))
                 (nomis/popup/message-v2 t bol nomis/auto-revert/revert-text))))))))
 
 (let* ((advice-name '-nomis/auto-revert/extras-for-buffer))
