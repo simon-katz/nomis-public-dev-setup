@@ -140,51 +140,50 @@ This isn't perfect, but it's probably the best we can do."
   ;; Otherwise:
   ;; - If point is at eob, scroll so that eob is the bottom line of the window.
   ;; - Temporarily highlight the changes.
-  (when t ; TODO: Remove `when t`.
-    (let* ((prev-eob-or-change-desc
-            (-nomis/auto-revert/prev-eob-or-change-desc)))
-      (cond ((null prev-eob-or-change-desc)
-             ;; Nothing to do.
-             )
-            ((eq prev-eob-or-change-desc :rollover)
-             (progn
-               ;; The "-" at the beginning of this message lines things up with
-               ;; Emacs's own revert messages.
-               (message "-Reverted buffer '%s' because a rollover happened."
-                        (buffer-name))
-               (revert-buffer t t) ; a third `t` here causes buffer to become writeable, so don't do that
-               (nomis/foreach-buffer-window
-                (current-buffer)
-                (lambda ()
+  (let* ((prev-eob-or-change-desc
+          (-nomis/auto-revert/prev-eob-or-change-desc)))
+    (cond ((null prev-eob-or-change-desc)
+           ;; Nothing to do.
+           )
+          ((eq prev-eob-or-change-desc :rollover)
+           (progn
+             ;; The "-" at the beginning of this message lines things up with
+             ;; Emacs's own revert messages.
+             (message "-Reverted buffer '%s' because a rollover happened."
+                      (buffer-name))
+             (revert-buffer t t) ; a third `t` here causes buffer to become writeable, so don't do that
+             (nomis/foreach-buffer-window
+              (current-buffer)
+              (lambda ()
+                (let* ((bol (save-excursion (beginning-of-line) (point))))
+                  (nomis/popup/message-v2 t bol nomis/auto-revert/revert-text))))))
+          (t
+           (let* ((prev-eob prev-eob-or-change-desc)
+                  (begin-pos (save-excursion (goto-char prev-eob)
+                                             (forward-line -1)
+                                             (point))))
+             ;; Highlight the changes.
+             (let* ((begin-message nomis/auto-revert/new-content-text/begin)
+                    (end-pos (point-max))
+                    (end-message   nomis/auto-revert/new-content-text/end))
+               (nomis/popup/message-v2 t begin-pos begin-message)
+               (nomis/popup/message-v2 t end-pos   end-message)
+               (let* ((face '-nomis/auto-revert/new-text-highlight-face))
+                 (nomis/popup/display-temp-overlay prev-eob
+                                                   end-pos
+                                                   'face face)))
+             (nomis/foreach-buffer-window
+              (current-buffer)
+              (lambda ()
+                ;; Maybe scroll.
+                (when (= (point) (point-max))
+                  (recenter-top-bottom -1))
+                (when (>= begin-pos (window-end nil t))
+                  ;; Say that text has been added at end of file.
                   (let* ((bol (save-excursion (beginning-of-line) (point))))
-                    (nomis/popup/message-v2 t bol nomis/auto-revert/revert-text))))))
-            (t
-             (let* ((prev-eob prev-eob-or-change-desc)
-                    (begin-pos (save-excursion (goto-char prev-eob)
-                                               (forward-line -1)
-                                               (point))))
-               ;; Highlight the changes.
-               (let* ((begin-message nomis/auto-revert/new-content-text/begin)
-                      (end-pos (point-max))
-                      (end-message   nomis/auto-revert/new-content-text/end))
-                 (nomis/popup/message-v2 t begin-pos begin-message)
-                 (nomis/popup/message-v2 t end-pos   end-message)
-                 (let* ((face '-nomis/auto-revert/new-text-highlight-face))
-                   (nomis/popup/display-temp-overlay prev-eob
-                                                     end-pos
-                                                     'face face)))
-               (nomis/foreach-buffer-window
-                (current-buffer)
-                (lambda ()
-                  ;; Maybe scroll.
-                  (when (= (point) (point-max))
-                    (recenter-top-bottom -1))
-                  (when (>= begin-pos (window-end nil t))
-                    ;; Say that text has been added at end of file.
-                    (let* ((bol (save-excursion (beginning-of-line) (point))))
-                      (nomis/popup/message-v2 t
-                                              bol
-                                              nomis/auto-revert/new-content-text)))))))))))
+                    (nomis/popup/message-v2 t
+                                            bol
+                                            nomis/auto-revert/new-content-text))))))))))
 
 (let* ((advice-name '-nomis/auto-revert/extras-for-buffer))
   (advice-add
