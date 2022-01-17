@@ -137,6 +137,25 @@ This isn't perfect, but it's probably the best we can do."
               (unless (eq prev-eob eob)
                 prev-eob))))))))
 
+(defun -nomis/auto-revert/revert-buffer-reinstating-point ()
+  (let* ((window-point-pairs '()))
+    (nomis/foreach-buffer-window (current-buffer)
+                                 (lambda ()
+                                   (push (list (get-buffer-window)
+                                               (if (eobp) :point-max (point)))
+                                         window-point-pairs)))
+    (revert-buffer t t
+                   ;; A third `t` here for `preserve-modes` causes
+                   ;; the buffer to become writeable, so we don't
+                   ;; do that.
+                   )
+    (cl-loop
+     for (w p) in window-point-pairs
+     do (with-selected-window w
+          (goto-char (if (eq p :point-max)
+                         (point-max)
+                       (min p (point-max))))))))
+
 (defun -nomis/auto-revert/extras-for-buffer ()
   ;; If there have been no changes, do nothing
   ;; If a rollover has happeneed, revert the buffer.
@@ -157,11 +176,7 @@ This isn't perfect, but it's probably the best we can do."
                                            :prev-tail-chars-changed))
                ;; `auto-revert-tail-mode` doesn't revert in these situations, so
                ;; we do it ourselves.
-               (revert-buffer t t
-                              ;; A third `t` here for `preserve-modes` causes
-                              ;; the buffer to become writeable, so we don't
-                              ;; do that.
-                              )
+               (-nomis/auto-revert/revert-buffer-reinstating-point)
                (message "Nomis: Reverted buffer '%s' because a '%s' rollover happened."
                         (buffer-name)
                         rollover-kind)))
