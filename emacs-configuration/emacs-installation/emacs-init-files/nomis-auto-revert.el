@@ -79,9 +79,6 @@ are true:
 - the previous `:tail-chars` do not match the characters that are in the
 buffer at the previous `:start-pos`.
 This isn't perfect, but it's probably the best we can do."
-  ;; TODO: Are we doing unnecessary reversions when `auto-revert` has already
-  ;;       reverted? (But there are some situations where `auto-revert` should
-  ;;       but doesn't revert, so we need the equal-file-size test at least.)
   (when prev-tail-info
     (-let* (((&hash :file-size   prev-file-size
                     :mod-time-ms prev-mod-time-ms
@@ -94,10 +91,6 @@ This isn't perfect, but it's probably the best we can do."
             ((and (= file-size prev-file-size)
                   (> mod-time-ms prev-mod-time-ms))
              :file-same-size-but-modified)
-            ;; TODO: Does this tail char checking give you anything?
-            ;;       What does `logview` do?
-            ;;       See `logview-reassurance-chars`. And why isn't that
-            ;;       idea part of `auto-revert-tail-mode`?
             ((not (equal prev-tail-chars
                          (buffer-substring-no-properties prev-start-pos
                                                          prev-eob)))
@@ -105,7 +98,6 @@ This isn't perfect, but it's probably the best we can do."
             (t
              nil)))))
 
-;; TODO: Pass in `buffer` from the very-outside.
 (defun -nomis/auto-revert/prev-eob-or-rollover-kind ()
   ;; Determine how `buffer` and its file have changed since the previous call of
   ;; this function for `buffer`, and:
@@ -128,7 +120,6 @@ This isn't perfect, but it's probably the best we can do."
                                                                mod-time-ms
                                                                prev-tail-info))
           (progn
-            (message "==== Rollover kind = %s" rollover-kind) ; TODO: Delete.
             (-nomis/auto-revert/forget-buffer)
             rollover-kind)
         (let* ((eob (point-max))
