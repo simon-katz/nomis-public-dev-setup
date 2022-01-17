@@ -140,11 +140,7 @@ This isn't perfect, but it's probably the best we can do."
   ;; Otherwise:
   ;; - If point is at eob, scroll so that eob is the bottom line of the window.
   ;; - Temporarily highlight the changes.
-  ;; TODO: We are confusing general auto-reversion with log file tailing with
-  ;;       what we get from
-  ;;       `(setq logview-auto-revert-mode 'auto-revert-tail-mode)`?
-  (when (and (eq major-mode 'logview-mode) ; TODO: Move all to `nomis-logview`.
-             (eq logview-auto-revert-mode 'auto-revert-tail-mode))
+  (when t ; TODO: Remove `when t`.
     (let* ((prev-eob-or-change-desc
             (-nomis/auto-revert/prev-eob-or-change-desc)))
       (cond ((null prev-eob-or-change-desc)
@@ -192,14 +188,17 @@ This isn't perfect, but it's probably the best we can do."
 
 (let* ((advice-name '-nomis/auto-revert/extras-for-buffer))
   (advice-add
-   'auto-revert-handler ; TODO: Should we be advising some `logview` thing instead? (How does `logview` do things? What function can we advise? And see `logview-reassurance-chars`
+   'auto-revert-buffers
    :after
    (lambda (&rest _)
-     (-nomis/auto-revert/extras-for-buffer))
+     (dolist (b (buffer-list))
+       (with-current-buffer b
+         (when auto-revert-tail-mode
+           (-nomis/auto-revert/extras-for-buffer)))))
    `((name . ,advice-name))))
 
 (when nil ; Code to remove advice when in dev.
-  (advice-remove 'auto-revert-handler '-nomis/auto-revert/extras-for-buffer)
+  (advice-remove 'auto-revert-buffers '-nomis/auto-revert/extras-for-buffer)
   )
 
 ;;;; ___________________________________________________________________________
