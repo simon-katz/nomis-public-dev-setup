@@ -195,6 +195,8 @@
 ;;;; ___________________________________________________________________________
 ;;;; ____ * Org mode hook function
 
+(setq org-startup-shrink-all-tables t)
+
 (defun nomis/org-mode ()
   ;; Layout
   (linum-mode 0) ; see "Linum-mode + org-indent-mode gives strange graphical refresh bugs" at http://orgmode.org/worg/org-issues.html
