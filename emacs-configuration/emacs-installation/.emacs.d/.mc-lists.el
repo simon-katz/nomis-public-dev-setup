@@ -27,6 +27,8 @@
         markdown-outdent-or-delete
         nomis/meta-w
         nomis/meta-x
+        norg/cycle
+        norg/shifttab
         org-beginning-of-line
         org-cycle
         org-end-of-line
