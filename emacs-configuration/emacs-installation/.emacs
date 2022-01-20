@@ -126,13 +126,15 @@
      (nomis/cider/post-interactive-eval/clj-function-name . "dev/post-interactive-eval-hook")
      (nomis/cider/post-interactive-eval/cljs-function-name . "cljs.user/post-interactive-eval-hook")
      (nomis/grep/local-ignored-directories "compiler-output" "resources/dev-and-build/icons/bootstrap-icons-1.1.0" "resources/pub-prod/cross-env")
+     (nomis/grep/local-ignored-directories "_exported-site" "_pretty-printed-pages")
      (nomis/grep/local-ignored-directories "compiler-output" "resources/pub-dev/assets")
      (nomis/grep/local-ignored-directories "compiler-output")
      (nomis/grep/local-ignored-directories "giggin/public/js" "increments")
      (nomis/grep/local-ignored-directories "resources/public/js")
      (nomis/grep/local-ignored-directories)
      (nomis/grep/local-ignored-files "package-lock.json" "main.js")
-     (nomis/grep/local-ignored-files "package-lock.json"))))
+     (nomis/grep/local-ignored-files "package-lock.json")
+     (nomis/grep/local-ignored-files))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
