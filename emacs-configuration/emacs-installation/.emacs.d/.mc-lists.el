@@ -10,6 +10,7 @@
         cljr-raise-sexp
         cljr-slash
         cljr-splice-sexp-killing-backward
+        clojure-convert-collection-to-list
         clojure-convert-collection-to-map
         clojure-convert-collection-to-vector
         company-indent-or-complete-common
