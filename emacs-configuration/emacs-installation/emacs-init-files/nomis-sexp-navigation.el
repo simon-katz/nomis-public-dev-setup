@@ -26,4 +26,21 @@
 
 ;;;; ___________________________________________________________________________
 
+(defun nomis/reverse-transpose-sexps (arg)
+  (interactive "*p")
+  (let* ((start-pos (point)))
+    (nomis/with-cleanup-on-non-local-exit
+        (transpose-sexps (- arg))
+      (goto-char start-pos))))
+
+;;;; † is Option-t on Mac, so "C-†" is physically very like "C-M-t" which does
+;;;; `transpose-sexps`.
+(define-key global-map (kbd "C-†")   'nomis/reverse-transpose-sexps)
+(define-key global-map (kbd "C-M-y") 'nomis/reverse-transpose-sexps)
+
+;;;; For playing:
+;;;; (1 2 3 5 4 6 7 8 9)
+
+;;;; ___________________________________________________________________________
+
 (provide 'nomis-sexp-navigation)
