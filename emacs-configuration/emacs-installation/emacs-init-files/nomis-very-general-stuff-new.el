@@ -28,6 +28,21 @@ This allows you to temporarily modify read-only buffers too."
 
 ;;;; ___________________________________________________________________________
 
+(defun nomis/with-cleanup-on-non-local-exit/fun (f cleanup-f)
+  (let* ((non-local-exit? t))
+    (unwind-protect
+        (prog1 (funcall f)
+          (setq non-local-exit? nil))
+      (when non-local-exit?
+        (funcall cleanup-f)))))
+
+(defmacro nomis/with-cleanup-on-non-local-exit (bodyform &rest cleanup-forms)
+  (declare (indent 1))
+  `(nomis/with-cleanup-on-non-local-exit/fun (lambda () ,bodyform)
+                                             (lambda () ,@cleanup-forms)))
+
+;;;; ___________________________________________________________________________
+
 (progn
   ;; These are useful when using `visual-line-mode`.
   (define-key global-map (kbd "C-S-a") 'beginning-of-line)

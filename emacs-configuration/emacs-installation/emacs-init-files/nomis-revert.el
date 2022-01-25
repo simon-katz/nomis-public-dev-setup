@@ -46,19 +46,6 @@
                         buffer-predicates)))
            (buffer-list)))
 
-(defun nomis/with-cleanup-on-non-local-exit/fun (f cleanup-f)
-  (let* ((non-local-exit? t))
-    (unwind-protect
-        (prog1 (funcall f)
-          (setq non-local-exit? nil))
-      (when non-local-exit?
-        (funcall cleanup-f)))))
-
-(defmacro nomis/with-cleanup-on-non-local-exit (bodyform &rest cleanup-forms)
-  (declare (indent 1))
-  `(nomis/with-cleanup-on-non-local-exit/fun (lambda () ,bodyform)
-                                             (lambda () ,@cleanup-forms)))
-
 (defun nomis/y-or-n-p-reporting-non-local-exit (prompt)
   (nomis/with-cleanup-on-non-local-exit
       (y-or-n-p prompt)
