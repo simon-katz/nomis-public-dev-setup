@@ -96,18 +96,14 @@ If POS is nil, use `point' instead."
                           (< (point) (point-max)))))
     ;; Go to beginning of line.
     (beginning-of-line)
-    ;; We'll pop up on the previous line if that's on-screen and visible,
+    ;; We'll pop up on the previous (screen) line if that's on-screen and visible,
     ;; otherwise on the current line.
-    ;; We use `previous-line` and `next-line` below. Doc strings say they
-    ;; not for programmatic use, but the things it suggests to use instead
-    ;; don't do what we want -- we want screen lines (we want to jump over
-    ;; invisible lines).
     (unless (= (nomis/popup/-line-no-in-window) 1)
-      (previous-line)
+      (vertical-motion -1)
       ;; Sometimes org mode gets into a state where there's a strange invisible
       ;; line at the top of the window, so check for that.
       (when (-nomis/popup/point-invisible?)
-        (next-line)))
+        (vertical-motion 1)))
     ;; We're done. Where are we?
     (point)))
 
