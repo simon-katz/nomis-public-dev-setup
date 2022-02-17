@@ -6,6 +6,35 @@
 (require 'nomis-sexp-utils)
 
 ;;;; ___________________________________________________________________________
+;;;; ---- Don't indent ";;" comments at bracketed-sexp-start ----
+
+(defvar nomis/no-space-before-two-semicolon-comment-after-sexp-start? t)
+
+(advice-add
+ 'comment-choose-indent
+ :around
+ (lambda (orig-fun &rest args)
+   (or (and nomis/no-space-before-two-semicolon-comment-after-sexp-start?
+            (not (bolp))
+            (looking-at ";;")
+            ;; Go to first non-whitespace before this comment and check whether
+            ;; it is a bracketed-sexp-start. If it is, return the column
+            ;; following the bracketed-sexp-start.
+            (save-excursion (while (progn
+                                     (backward-char)
+                                     (and (not (bolp))
+                                          (nomis/looking-at-whitespace))))
+                            (when (nomis/looking-at-bracketed-sexp-start)
+                              (1+ (current-column)))))
+       (apply orig-fun args)))
+ '((name . nomis/-no-space-before-two-semicolon-comment-after-sexp-start)))
+
+(when nil ; Code to remove advice when in dev.
+  (advice-remove 'comment-choose-indent
+                 'nomis/-no-space-before-two-semicolon-comment-after-sexp-start)
+  )
+
+;;;; ___________________________________________________________________________
 ;;;; ---- Support for flashing forms when indenting ----
 
 (defvar nomis/prog-indent-sexp-flash-duration 0.2)
