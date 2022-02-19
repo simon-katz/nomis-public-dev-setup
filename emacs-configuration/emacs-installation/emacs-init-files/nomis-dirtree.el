@@ -109,10 +109,12 @@
 
 (defvar nomis/dirtree/dirs-to-keep-collapsed-unless-forced
   '("\\.cache"
+    "\\.clj-kondo"
     "\\.cpcache"
     "\\.emacs\\.d"
     "\\.git"
     "\\.idea"
+    "\\.lsp"
     "\\.repl"
     "\\.shadow-cljs"
     "\\.sync"
