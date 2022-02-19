@@ -107,6 +107,11 @@
 (defvar nomis/dirtree/file-in-dirtree-fg-when-following-but-no-auto "LightSteelBlue")
 (defvar nomis/dirtree/file-not-in-dirtree-fg-when-following "VioletRed4")
 
+(defface nomis/dirtree/no-auto-expand
+  '((t
+     :foreground "grey60"))
+  "Face for no-auto-expand directories.")
+
 (defvar nomis/dirtree/dirs-to-keep-collapsed-unless-forced
   '("\\.cache"
     "\\.clj-kondo"
@@ -168,6 +173,11 @@ See `windata-display-buffer' for setup the arguments."
   :format         "%[%t%]\n"
   :button-face    'default)
 
+(define-widget 'nomis/dirtree/internal-directory-widget/no-auto-expand 'push-button
+  "File widget."
+  :format         "%[%t%]\n"
+  :button-face    'nomis/dirtree/no-auto-expand)
+
 (define-widget 'nomis/dirtree/file-widget 'push-button
   "File widget."
   :format         "%[%t%]\n"
@@ -177,17 +187,22 @@ See `windata-display-buffer' for setup the arguments."
                                                &key root?)
   (let* ((file (car file-&-basename))
          (tag  (cdr file-&-basename))
-         (tag (if (nomis/dirtree/directory-to-keep-collapsed?/basename tag)
+         (no-auto-expand?
+          (nomis/dirtree/directory-to-keep-collapsed?/basename tag))
+         (tag (if no-auto-expand?
                   (concat tag "  [no auto-expand]")
-                tag)))
+                tag))
+         (node `(,(if no-auto-expand?
+                      'nomis/dirtree/internal-directory-widget/no-auto-expand
+                    'nomis/dirtree/internal-directory-widget)
+                 :tag ,tag
+                 :file ,file)))
     (when root?
       (nomis/dirtree/note-directory-expanded file))
     `(nomis/dirtree/directory-widget
       :tag ,tag
       :file ,file
-      :node (nomis/dirtree/internal-directory-widget
-             :tag ,tag
-             :file ,file)
+      :node ,node
       :open ,root?
       :nomis/root ,root?)))
 
@@ -215,7 +230,8 @@ See `windata-display-buffer' for setup the arguments."
   (eql (car widget) 'nomis/dirtree/directory-widget))
 
 (defun nomis/dirtree/internal-directory-widget? (widget)
-  (eql (car widget) 'nomis/dirtree/internal-directory-widget))
+  (or (eql (car widget) 'nomis/dirtree/internal-directory-widget)
+      (eql (car widget) 'nomis/dirtree/internal-directory-widget/no-auto-expand)))
 
 (defun nomis/dirtree/file-widget? (widget)
   (eql (car widget) 'nomis/dirtree/file-widget))
@@ -924,9 +940,7 @@ With prefix argument select `nomis/dirtree/buffer'"
   (widget-get widget :children))
 
 (defun nomis/dirtree/widget-children (widget)
-  (-remove (lambda (w)
-             (eql (car w)
-                  'nomis/dirtree/internal-directory-widget))
+  (-remove #'nomis/dirtree/internal-directory-widget?
            (nomis/dirtree/widget-children/all widget)))
 
 (defun nomis/dirtree/selected-widget/no-extras ()
