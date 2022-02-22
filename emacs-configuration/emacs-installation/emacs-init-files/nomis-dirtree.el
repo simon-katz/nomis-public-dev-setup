@@ -168,7 +168,7 @@ See `windata-display-buffer' for setup the arguments."
   :dynargs        'nomis/dirtree/setup-children
   :has-children   t)
 
-(define-widget 'nomis/dirtree/internal-directory-widget 'push-button
+(define-widget 'nomis/dirtree/internal-directory-widget/auto-expand 'push-button
   "File widget."
   :format         "%[%t%]\n"
   :button-face    'default)
@@ -194,7 +194,7 @@ See `windata-display-buffer' for setup the arguments."
                 tag))
          (node `(,(if no-auto-expand?
                       'nomis/dirtree/internal-directory-widget/no-auto-expand
-                    'nomis/dirtree/internal-directory-widget)
+                    'nomis/dirtree/internal-directory-widget/auto-expand)
                  :tag ,tag
                  :file ,file)))
     (when root?
@@ -230,7 +230,7 @@ See `windata-display-buffer' for setup the arguments."
   (eql (car widget) 'nomis/dirtree/directory-widget))
 
 (defun nomis/dirtree/internal-directory-widget? (widget)
-  (or (eql (car widget) 'nomis/dirtree/internal-directory-widget)
+  (or (eql (car widget) 'nomis/dirtree/internal-directory-widget/auto-expand)
       (eql (car widget) 'nomis/dirtree/internal-directory-widget/no-auto-expand)))
 
 (defun nomis/dirtree/file-widget? (widget)
