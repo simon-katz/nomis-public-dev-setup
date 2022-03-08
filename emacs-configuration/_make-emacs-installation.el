@@ -50,6 +50,7 @@
      inflections
      js2-mode
      json-mode
+     kaocha-runner
      key-chord
      keycast
      kotlin-mode
