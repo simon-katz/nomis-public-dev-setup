@@ -135,6 +135,18 @@
 (add-hook 'cider-mode-hook #'cider-company-enable-fuzzy-completion)
 
 ;;;; ___________________________________________________________________________
+;;;; Make `cider-repl-clear-buffer` scroll to top and add M-k key binding
+
+(let* ((advice-name '-nomis/cider-repl-clear-buffer/scroll-to-top))
+  (advice-add 'cider-repl-clear-buffer
+              :after
+              (lambda (&rest args)
+                (set-window-start (get-buffer-window) 0))
+              `((name . ,advice-name))))
+
+(define-key cider-repl-mode-map (kbd "M-k") 'cider-repl-clear-buffer)
+
+;;;; ___________________________________________________________________________
 ;;;; CIDER debug broken
 
 ;;;; See https://github.com/clojure-emacs/cider-nrepl/issues/460
