@@ -9,6 +9,7 @@
 (require 'nomis-clojure-mode-fixes)
 (require 'nomis-clojure-mode-extras)
 (require 'nomis-clojure-lsp)
+(require 'nomis-kaocha-runner)
 
 (define-key clojure-mode-map (kbd "RET") 'newline-and-indent)
 
