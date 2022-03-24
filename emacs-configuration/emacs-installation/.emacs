@@ -29,6 +29,7 @@
      clj-refactor
      clojure-mode
      company
+     counsel
      dash-functional
      diff-hl
      discover
