@@ -4,6 +4,6 @@ mkdir -p _analysis
 
 lein nomis-ns-graph \
      :platform clj \
-     :filename _analysis/nomis-deps-graph-global-clj \
+     :filename _analysis/nomis-deps-graph-global-clj-show-non-project-deps \
      :exclusions dev \
      :show-non-project-deps
