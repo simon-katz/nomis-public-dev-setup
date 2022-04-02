@@ -81,6 +81,10 @@
 
 (add-hook 'lsp-mode-hook 'nomis/lsp-init)
 
+(with-eval-after-load 'lsp-lens
+  (set-face-foreground 'lsp-lens-face "black")
+  (set-face-background 'lsp-lens-face "DarkSeaGreen2"))
+
 ;;;; ___________________________________________________________________________
 ;;;; Tailoring of faces, needed especially for light themes.
 
