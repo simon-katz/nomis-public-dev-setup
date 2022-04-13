@@ -76,7 +76,7 @@
                         "  nomis/cider-ns-refresh/forward-section               (M-down)"
                         "  nomis/cider-ns-refresh/backward-section-align-top    (M-S-up)"
                         "  nomis/cider-ns-refresh/forward-section-align-top     (M-S-down)"
-                        "  nomis/cider-ns-refresh/delete-to-beginning-of-buffer"
+                        "  nomis/cider-ns-refresh/delete-to-beginning-of-buffer (M-k)"
                         "Press \"q\" to exit\n"))
                       nomis/cider-ns-refresh/-count)))
     (nomis/cider-ns-refresh/log log-buffer msg)))
@@ -246,10 +246,11 @@
   :init-value nil
   :lighter " cider-ns-refresh-log"
   :keymap
-  '(([M-up]     . nomis/cider-ns-refresh/backward-section)
-    ([M-down]   . nomis/cider-ns-refresh/forward-section)
-    ([M-S-up]   . nomis/cider-ns-refresh/backward-section-align-top)
-    ([M-S-down] . nomis/cider-ns-refresh/forward-section-align-top)))
+  `(([M-up]       . nomis/cider-ns-refresh/backward-section)
+    ([M-down]     . nomis/cider-ns-refresh/forward-section)
+    ([M-S-up]     . nomis/cider-ns-refresh/backward-section-align-top)
+    ([M-S-down]   . nomis/cider-ns-refresh/forward-section-align-top)
+    (,(kbd "M-k") . nomis/cider-ns-refresh/delete-to-beginning-of-buffer)))
 
 ;;;; ___________________________________________________________________________
 
