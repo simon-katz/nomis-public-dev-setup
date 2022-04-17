@@ -59,11 +59,11 @@
     ">>>> Doing cider-ns-refresh")))
 
 (defun nomis/cider-ns-refresh/pre-message (mode)
-  (format "%s #%s -- mode = %s\n%s\n"
+  (format "%s #%s    %s    mode = %s\n"
           nomis/cider-ns-refresh/-prefix-for-log-pre-message
           nomis/cider-ns-refresh/-count
-          mode
-          (nomis/timestamp-no-t :date-time-zone)))
+          (nomis/timestamp-no-t :date-time-zone)
+          mode))
 
 (defun nomis/cider-ns-refresh/log-post-message ()
   (let* ((log-buffer (nomis/cider-ns-refresh/-get-log-buffer))
