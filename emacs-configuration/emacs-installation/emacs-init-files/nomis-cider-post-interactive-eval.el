@@ -48,7 +48,8 @@ the need to save files so that a file-watcher can spot changes).")
       (member (pkg-info-version-info 'cider)
               '("1.2.0snapshot (package: 20210909.1011)"
                 "1.2.0snapshot (package: 20210929.1032)"
-                "1.2.0snapshot (package: 20211105.708)")))
+                "1.2.0snapshot (package: 20211105.708)"
+                "1.3.0 (package: 20220405.1216)")))
 
   (cl-flet*
       ((check-current-buffer

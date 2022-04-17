@@ -127,7 +127,8 @@
       (member (pkg-info-version-info 'cider)
               '("1.2.0snapshot (package: 20210909.1011)"
                 "1.2.0snapshot (package: 20210929.1032)"
-                "1.2.0snapshot (package: 20211105.708)")))
+                "1.2.0snapshot (package: 20211105.708)"
+                "1.3.0 (package: 20220405.1216)")))
 
   (defvar nomis/cider-ns-refresh/-vars-to-pass-to-log-buffer
     '(nomis/cider-forbid-refresh-all?
@@ -256,7 +257,8 @@
 
 (cond
  ((member (pkg-info-version-info 'cider)
-          '("1.2.0snapshot (package: 20211105.708)"))
+          '("1.2.0snapshot (package: 20211105.708)"
+            "1.3.0 (package: 20220405.1216)"))
 
   (defvar *nomis/cider-ns-refresh/-in-handle-response?* nil)
 
