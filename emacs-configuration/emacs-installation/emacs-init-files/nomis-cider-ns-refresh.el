@@ -186,8 +186,8 @@
                         (display-buffer-same-window log-buffer nil))))
        (let* ((b (current-buffer)))
          (switch-to-buffer log-buffer)
-         (goto-char (point-max))
-         (recenter 0)
+         (when (eobp)
+           (recenter 0))
          (switch-to-buffer b))
        (let* ((msg (nomis/cider-ns-refresh/pre-message mode)))
          (nomis/cider-ns-refresh/log log-buffer msg))
@@ -208,13 +208,22 @@
 
   (advice-add
    'cider-ns-refresh--handle-response
-   :after
-   (lambda (response &rest other-args)
-     (nrepl-dbind-response response (status)
-       ;; The final call of the `cider-ns-refresh--handle-response` callback
-       ;; has a status of `("state")`.
-       (when (equal status '("state"))
-         (nomis/cider-ns-refresh/log-post-message))))
+   :around
+   (lambda (orig-fun response &rest other-args)
+     (let* ((pos-when-not-eob (with-current-buffer cider-ns-refresh-log-buffer
+                                (when (not (eobp))
+                                  (point)))))
+       (apply orig-fun response other-args)
+       (when pos-when-not-eob
+         ;; Undo the `(goto-char (point-max))` done by
+         ;; `cider-ns-refresh--handle-response`.
+         (with-current-buffer cider-ns-refresh-log-buffer
+           (goto-char pos-when-not-eob)))
+       (nrepl-dbind-response response (status)
+         ;; The final call of the `cider-ns-refresh--handle-response` callback
+         ;; has a status of `("state")`.
+         (when (equal status '("state"))
+           (nomis/cider-ns-refresh/log-post-message)))))
    '((name . nomis/cider-ns-refresh/hack)))
 
   ;; (advice-remove 'cider-ns-refresh 'nomis/cider-ns-refresh/hack)
