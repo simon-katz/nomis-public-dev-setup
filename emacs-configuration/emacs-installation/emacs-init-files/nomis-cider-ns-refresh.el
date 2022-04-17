@@ -280,7 +280,7 @@
        (let* ((*nomis/cider-ns-refresh/-in-handle-response?* nil)
               (cnt 0))
          (apply #'s-concat
-                "Reloading\n"
+                "The following namespaces will be reloaded:\n"
                 (-map (lambda (x) (format "%4d Reloading %s\n"
                                           (incf cnt)
                                           x))
