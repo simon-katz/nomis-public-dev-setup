@@ -291,4 +291,35 @@
 
 ;;;; ___________________________________________________________________________
 
+(defface nomis/cider-ns-refresh/-reloading-face
+  '((t (:foreground "green4")))
+  "Face for reloading messages.")
+
+(cond
+ ((member (pkg-info-version-info 'cider)
+          '("1.2.0snapshot (package: 20211105.708)"
+            "1.3.0 (package: 20220405.1216)"))
+
+  (advice-add
+   'cider-emit-into-popup-buffer
+   :around
+   (lambda (orig-fun buffer value &optional face inhibit-indent)
+     (let* ((do-hack? (and (stringp value)
+                           (or (equal value "Nothing to reload\n")
+                               (s-contains? "reloading" value t)))))
+       (funcall orig-fun
+                buffer
+                value
+                (if do-hack? 'nomis/cider-ns-refresh/-reloading-face face)
+                inhibit-indent)))
+   '((name . -nomis/cider-ns-refresh/reloading-face)))
+
+  ;; (advice-remove 'cider-emit-into-popup-buffer '-nomis/cider-ns-refresh/reloading-face)
+  )
+ (t
+  (message-box
+   "You need to fix `-nomis/cider-ns-refresh/reloading-face` for this version of CIDER.")))
+
+;;;; ___________________________________________________________________________
+
 (provide 'nomis-cider-ns-refresh)
