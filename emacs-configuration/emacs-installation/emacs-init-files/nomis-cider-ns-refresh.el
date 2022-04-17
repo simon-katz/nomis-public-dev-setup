@@ -70,7 +70,6 @@
          (msg (format (s-join
                        "\n"
                        (list
-                        "<<<< Done cider-ns-refresh #%s"
                         "Some useful commands:"
                         "  nomis/cider-ns-refresh/backward-section              (M-up)"
                         "  nomis/cider-ns-refresh/forward-section               (M-down)"
@@ -78,7 +77,9 @@
                         "  nomis/cider-ns-refresh/forward-section-align-top     (M-S-down)"
                         "  nomis/cider-ns-refresh/delete-to-beginning-of-buffer (M-j)"
                         "  nomis/cider-ns-refresh/clear-buffer                  (M-k)"
-                        "Press \"q\" to exit\n"))
+                        "Press \"q\" to exit"
+                        "<<<< Done cider-ns-refresh #%s"
+                        ""))
                       nomis/cider-ns-refresh/-count)))
     (nomis/cider-ns-refresh/log log-buffer msg)))
 
