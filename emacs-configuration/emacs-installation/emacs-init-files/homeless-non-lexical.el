@@ -116,6 +116,19 @@
                (substring timezone 0 3)
                (substring timezone 3 5))))))
 
+(defun nomis/timestamp-no-t (kind)
+  (case kind
+    (:date
+     (format-time-string "%Y-%m-%d"))
+    (:date-time
+     (format-time-string "%Y-%m-%d %H:%M:%S"))
+    ((:date-time-zone t)
+     (let ((timezone (format-time-string "%z")))
+       (format "%s%s:%s"
+               (nomis/timestamp-no-t :date-time)
+               (substring timezone 0 3)
+               (substring timezone 3 5))))))
+
 (defun nomis/insert-timestamp (p)
   (interactive "P")
   (insert (nomis/timestamp (case (prefix-numeric-value p)
