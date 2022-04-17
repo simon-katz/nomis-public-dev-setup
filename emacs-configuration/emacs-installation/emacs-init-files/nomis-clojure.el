@@ -292,5 +292,13 @@
   (setq nrepl-sync-request-timeout 30))
 
 ;;;; ___________________________________________________________________________
+;;;; grep-files-aliases tailoring
+
+(with-eval-after-load 'grep
+  (push (cons "nomis-clj-etc-el-sh"
+              "*.clj *.cljs *.cljc *.cljx *.edn *.el *.sh")
+        grep-files-aliases))
+
+;;;; ___________________________________________________________________________
 
 (provide 'nomis-clojure)
