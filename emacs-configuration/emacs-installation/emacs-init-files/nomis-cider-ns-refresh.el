@@ -63,7 +63,7 @@
           nomis/cider-ns-refresh/-prefix-for-log-pre-message
           nomis/cider-ns-refresh/-count
           mode
-          (nomis/timestamp :date-time-zone)))
+          (nomis/timestamp-no-t :date-time-zone)))
 
 (defun nomis/cider-ns-refresh/log-post-message ()
   (let* ((log-buffer (nomis/cider-ns-refresh/-get-log-buffer))
