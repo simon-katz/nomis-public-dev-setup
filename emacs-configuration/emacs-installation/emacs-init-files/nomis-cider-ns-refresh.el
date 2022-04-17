@@ -279,10 +279,12 @@
          (apply orig-fun string objects)
        (let* ((*nomis/cider-ns-refresh/-in-handle-response?* nil)
               (cnt 0))
-         (apply #'s-concat (-map (lambda (x) (format "%4d Reloading %s\n"
-                                                     (incf cnt)
-                                                     x))
-                                 (first objects))))))
+         (apply #'s-concat
+                "Reloading\n"
+                (-map (lambda (x) (format "%4d Reloading %s\n"
+                                          (incf cnt)
+                                          x))
+                      (first objects))))))
    '((name . nomis/cider-ns-refresh/multiple-lines)))
 
   ;; (advice-remove 'cider-ns-refresh--handle-response 'nomis/cider-ns-refresh/multiple-lines)
