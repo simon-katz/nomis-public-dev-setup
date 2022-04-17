@@ -1,16 +1,16 @@
 ;;; clj-refactor.el --- A collection of commands for refactoring Clojure code -*- lexical-binding: t -*-
 
 ;; Copyright © 2012-2014 Magnar Sveen
-;; Copyright © 2014-2021 Magnar Sveen, Lars Andersen, Benedek Fazekas, Bozhidar Batsov
+;; Copyright © 2014-2022 Magnar Sveen, Lars Andersen, Benedek Fazekas, Bozhidar Batsov
 
 ;; Author: Magnar Sveen <magnars@gmail.com>
 ;;         Lars Andersen <expez@expez.com>
 ;;         Benedek Fazekas <benedek.fazekas@gmail.com>
 ;;         Bozhidar Batsov <bozhidar@batsov.dev>
-;; Version: 3.2.2
+;; Version: 3.5.2
 ;; Keywords: convenience, clojure, cider
 
-;; Package-Requires: ((emacs "26.1") (seq "2.19") (yasnippet "0.6.1") (paredit "24") (multiple-cursors "1.2.2") (clojure-mode "5.9") (cider "1.0") (parseedn "1.0.6") (inflections "2.3") (hydra "0.13.2"))
+;; Package-Requires: ((emacs "26.1") (seq "2.19") (yasnippet "0.6.1") (paredit "24") (multiple-cursors "1.2.2") (clojure-mode "5.14") (cider "1.3") (parseedn "1.0.6") (inflections "2.3") (hydra "0.13.2"))
 
 ;; This program is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU General Public License
@@ -33,7 +33,6 @@
 
 (require 'seq)
 
-(require 'clj-refactor-compat)
 (require 'yasnippet)
 (require 'paredit)
 (require 'multiple-cursors-core)
@@ -54,13 +53,11 @@
 
 (defcustom cljr-add-ns-to-blank-clj-files t
   "If t, automatically add a ns form to new .clj files."
-  :group 'cljr
   :type 'boolean
   :safe #'booleanp)
 
 (defcustom cljr-auto-sort-ns t
   "If t, sort ns form after any command that changes it."
-  :group 'cljr
   :type 'boolean
   :safe #'booleanp)
 
@@ -73,7 +70,6 @@ If this variable is `:prompt', typing the short form followed by
 `\\[cljr-slash]' will ask if you want to add the corresponding require
 statement to the ns form.
 Any other non-nil value means to add the form without asking."
-  :group 'cljr
   :type '(choice (const :tag "true" t)
                  (const :tag "prompt" :prompt)
                  (const :tag "false" nil)))
@@ -87,13 +83,11 @@ Any other non-nil value means to add the form without asking."
   "Alist of aliases and namespaces used by `cljr-slash'."
   :type '(repeat (cons (string :tag "Short alias")
                        (string :tag "Full namespace")))
-  :safe #'listp
-  :group 'cljr)
+  :safe #'listp)
 
 (defcustom cljr-project-clean-prompt t
   "If t, `cljr-project-clean' asks before doing anything.
 If nil, the project clean functions are run without warning."
-  :group 'cljr
   :type 'boolean
   :safe #'booleanp)
 
@@ -101,38 +95,32 @@ If nil, the project clean functions are run without warning."
   (list #'cljr-clean-ns)
   "List of functions called by `cljr-project-clean'.
 These are called on all .clj files in the project."
-  :group 'cljr
   :type '(repeat function)
   :safe #'listp)
 
 (defcustom cljr-project-clean-exceptions '("dev/user.clj" "project.clj" "boot.clj")
   "A list of files that `cljr-project-clean' should avoid."
-  :group 'cljr
   :type '(repeat string)
   :safe #'listp)
 
 (defcustom cljr-hotload-dependencies nil
   "If t, newly added dependencies are also hotloaded into the repl.
 This only applies to dependencies added by `cljr-add-project-dependency'."
-  :group 'cljr
   :type 'boolean
   :safe #'booleanp)
 
 (defcustom cljr-favor-private-functions t
   "If t, refactorings insert private function declarations."
-  :group 'cljr
   :type 'boolean
   :safe #'booleanp)
 
 (defcustom cljr-favor-prefix-notation nil
   "If t, `cljr-clean-ns' favors prefix notation in the ns form."
-  :group 'cljr
   :type 'boolean
   :safe #'booleanp)
 
 (defcustom cljr-insert-newline-after-require t
   "If t, `cljr-clean-ns' will place a newline after the `:require` and `:import` tokens."
-  :group 'cljr
   :type 'boolean
   :safe #'booleanp)
 
@@ -140,20 +128,17 @@ This only applies to dependencies added by `cljr-add-project-dependency'."
   "If t, some refactorings use the `multiple-cursors' package.
 This improves interactivity of the commands.  If nil, those
 refactorings will use regular prompts instead."
-  :group 'cljr
   :type 'boolean
   :safe #'booleanp)
 
 (defcustom cljr-auto-clean-ns t
   "If t, call `cljr-clean-ns' after commands that change the ns."
-  :group 'cljr
   :type 'boolean
   :safe #'booleanp)
 
 (defcustom cljr-populate-artifact-cache-on-startup t
   "If t, the middleware will eagerly populate the artifact cache.
 This makes `cljr-add-project-dependency' as snappy as can be."
-  :group 'cljr
   :type 'boolean
   :safe #'booleanp)
 
@@ -163,7 +148,6 @@ This makes `cljr-add-project-dependency' as snappy as can be."
    be aborted.  Also effectively overrides `cljr-eagerly-build-asts-on-startup'
    so if this is on the AST cache is not warmed at startup or after certain
    operations."
-  :group 'cljr
   :type 'boolean
   :safe #'booleanp)
 
@@ -171,13 +155,11 @@ This makes `cljr-add-project-dependency' as snappy as can be."
   "If t, the middleware will eagerly populate the ast cache.
 This makes `cljr-find-usages' and `cljr-rename-symbol' as snappy
 as can be."
-  :group 'cljr
   :type 'boolean
   :safe #'booleanp)
 
 (defcustom cljr-suppress-middleware-warnings nil
   "If t, no middleware warnings are printed to the repl."
-  :group 'cljr
   :type 'boolean
   :safe #'booleanp)
 
@@ -185,7 +167,6 @@ as can be."
   "If t, no warning is printed when starting a REPL outside a project.
 By default, a warning is printed in this case since clj-refactor
 will not work as expected in such REPLs."
-  :group 'cljr
   :type 'boolean
   :safe #'booleanp)
 
@@ -198,7 +179,6 @@ namespaces which can be analyzed.
 
 If nil, `cljr-find-usages'  `cljr-inline-symbol' `cljr-rename-symbol'
 won't run if there is a broken namespace in the project."
-  :group 'cljr
   :type 'boolean
   :safe #'booleanp)
 
@@ -207,50 +187,42 @@ won't run if there is a broken namespace in the project."
 (defcustom cljr-auto-eval-ns-form t
   "When true refactorings which change the ns form also trigger
   its re-evaluation."
-  :group 'cljr
   :type 'boolean
   :safe #'booleanp)
 
 (defcustom cljr-midje-test-declaration "[midje.sweet :as midje]"
   "The require form to use when midje is in use."
-  :group 'cljr
   :type 'string
   :safe #'stringp)
 
 (defcustom cljr-expectations-test-declaration "[expectations :as e]"
   "The require form to use when expectations is in use."
-  :group 'cljr
   :type 'string
   :safe #'stringp)
 
 (defcustom cljr-cljc-clojure-test-declaration "#?(:clj [clojure.test :as t]
 :cljs [cljs.test :as t :include-macros true])"
   "The require form to use when clojure.test and cljs.test is in use in a cljc file."
-  :group 'cljr
   :type 'string
   :safe #'stringp)
 
 (defcustom cljr-cljs-clojure-test-declaration "[cljs.test :as t :include-macros true]"
   "The require form to use when cljs.test is in use in a cljs file."
-  :group 'cljr
   :type 'string
   :safe #'stringp)
 
 (defcustom cljr-clojure-test-declaration "[clojure.test :as t]"
   "The require form to use when clojure.test is in use in a clj file."
-  :group 'cljr
   :type 'string
   :safe #'stringp)
 
 (defcustom cljr-clojure-test-namespace-under-test-alias  "sut"
   "The package alias to use for the namespace under test."
-  :group 'cljr
   :type 'string
   :safe #'stringp)
 
 (defcustom cljr-inject-dependencies-at-jack-in t
   "When nil, do not inject repl dependencies (most likely nREPL middlewares) at `cider-jack-in' time."
-  :group 'cljr
   :type 'boolean
   :safe #'booleanp)
 
@@ -258,7 +230,6 @@ won't run if there is a broken namespace in the project."
   "If set to 'clj' or 'cljs', clj-refactor will use that value in situations
   where the language context is ambiguous. If set to nil, a popup will be
   created in each ambiguous case asking user to choose language context."
-  :group 'cljr
   :type 'string
   :safe #'stringp)
 
@@ -268,7 +239,6 @@ won't run if there is a broken namespace in the project."
 
 This is useful when `clean-ns' should leave a libspec alone even
 if it appears to be unused."
-  :group 'cljr
   :type '(repeat string)
   :safe #'listp)
 
@@ -306,18 +276,15 @@ if it appears to be unused."
 
 (defcustom cljr-before-warming-ast-cache-hook nil
   "Runs before each time the AST is loaded."
-  :group 'cljr
   :type 'hook)
 
 (defcustom cljr-after-warming-ast-cache-hook nil
   "Runs after each time the AST is loaded."
-  :group 'cljr
   :type 'hook)
 
 (defcustom cljr-middleware-ignored-paths nil
   "List of (Java style) regexes to paths that should be ignored
   by the middleware."
-  :group 'cljr
   :type '(repeat string)
   :safe #'listp)
 
@@ -585,15 +552,18 @@ If optional `with-whitespace' is T sexp elements are not trimmed."
     (goto-char (point-at-bol))
     (looking-at "\\s-*;+")))
 
-(defun cljr--search-forward-within-sexp (s &optional save-excursion)
+(defun cljr--search-forward-within-sexp (s &optional save-excursion regexp)
   "Searches forward for S in the current sexp.
 
 if SAVE-EXCURSION is T POINT does not move."
-  (let ((bound (save-excursion (forward-list 1) (point))))
+  (let ((bound (save-excursion (forward-list 1) (point)))
+        (f (if regexp
+               're-search-forward
+             'search-forward)))
     (if save-excursion
         (save-excursion
-          (search-forward s bound t))
-      (search-forward s bound t))))
+          (funcall f s bound t))
+      (funcall f s bound t))))
 
 (defun cljr--goto-toplevel ()
   (paredit-backward-up (cljr--depth-at-point))
@@ -723,7 +693,7 @@ refactor-nrepl.util will be returned."
   (save-excursion
     (cljr--goto-ns)
     (when (re-search-forward
-           (format ":as\\s-*\n*\\s-*%s\\_>" (regexp-quote alias))
+           (format ":as\\(-alias\\)?\\s-*\n*\\s-*%s\\_>" (regexp-quote alias))
            (cljr--point-after 'paredit-forward)
            :noerror)
       (paredit-backward-up)
@@ -922,7 +892,6 @@ as performed after `clean-ns', `rename-file-or-dir', etc.
 You can set it to the string \"nil\" for disabling line wrapping.
 
 See also: `cljr-print-miser-width'."
-  :group 'cljr
   :type '(choice integer string)
   :safe (lambda (s) (or (integerp s) (stringp s)))
   :package-version "3.2.0")
@@ -934,7 +903,6 @@ as performed after `clean-ns', `rename-file-or-dir', etc.
 You can set it to the string \"nil\" for disabling line wrapping.
 
 See also: `cljr-print-right-margin'."
-  :group 'cljr
   :type '(choice integer string)
   :safe (lambda (s) (or (integerp s) (stringp s)))
   :package-version "3.2.0")
@@ -1057,13 +1025,20 @@ no namespace form above point, return the first one in the buffer."
 (defun cljr--insert-in-ns (type &optional cljs?)
   "Insert another clause into the TYPE clause of the ns statement.
 
-TYPE is :require, :use etc
+TYPE is :require, :use etc.
 
 If CLJS? is T we insert in the cljs part of the ns declaration."
   (cljr--goto-ns)
   (when cljs?
     (cljr--goto-cljs-branch))
-  (if (cljr--search-forward-within-sexp (concat "(" type))
+  (if (cljr--search-forward-within-sexp (concat "("
+                                                type
+                                                ;; match e.g. `require' but not `require-macros',
+                                                ;; or vice versa.
+                                                ;; See https://github.com/clojure-emacs/clj-refactor.el/issues/512
+                                                "\\(?:$\\|[^-a-zA-Z]\\)")
+                                        nil
+                                        t)
       (if (looking-at " *)")
           (progn
             (search-backward "(")
@@ -1967,10 +1942,18 @@ FEATURE is either :clj or :cljs."
 (defun cljr--aget (map key)
   (cdr (assoc key map)))
 
+(defcustom cljr-suggest-namespace-aliases t
+  "If `t', `namespace-aliases' and `cljr-slash' will take into account suggested namespace aliases,
+following this convention: https://stuartsierra.com/2015/05/10/clojure-namespace-aliases"
+  :group 'cljr
+  :type 'boolean)
+
 (defun cljr--call-middleware-for-namespace-aliases ()
   (thread-first "namespace-aliases"
     cljr--ensure-op-supported
-    cljr--create-msg
+    (cljr--create-msg "suggest" (if cljr-suggest-namespace-aliases
+                                    "true"
+                                  "false"))
     (cljr--call-middleware-sync "namespace-aliases")
     parseedn-read-str))
 
@@ -2051,11 +2034,14 @@ will add the corresponding require statement to the ns form."
                           (not (cljr--in-number-p))
                           (clojure-find-ns)
                           (cljr--magic-requires-lookup-alias)))
-    (let ((short (cl-first aliases)))
-      (when-let (long (cljr--prompt-user-for "Require " (cl-second aliases)))
+    (let ((short (cl-first aliases))
+          ;; Ensure it's a list (and not a vector):
+          (candidates (mapcar 'identity (cl-second aliases))))
+      (when-let (long (cljr--prompt-user-for "Require " candidates))
         (when (and (not (cljr--in-namespace-declaration-p (concat ":as " short "\b")))
+                   (not (cljr--in-namespace-declaration-p (concat ":as-alias " short "\b")))
                    (or (not (eq :prompt cljr-magic-requires))
-                       (not (> (length (cl-second aliases)) 1)) ; already prompted
+                       (not (> (length candidates) 1)) ; already prompted
                        (yes-or-no-p (format "Add %s :as %s to requires?" long short))))
           (save-excursion
             (cljr--insert-in-ns ":require")
@@ -3309,14 +3295,13 @@ if REMOVE-PACKAGE_VERSION is t get rid of the (package: 20150828.1048) suffix."
 ;; We used to derive the version out of `(cljr--version t)`,
 ;; but now prefer a fixed version to fully decouple things and prevent unforeseen behavior.
 ;; This suits better our current pace of development.
-(defcustom cljr-injected-middleware-version "3.1.0"
+(defcustom cljr-injected-middleware-version "3.5.2"
   "The refactor-nrepl version to be injected.
 
 You can customize this in order to try out new releases.
 
 If customizing it, you most likely should `(setq cljr-suppress-middleware-warnings nil)' too,
 for avoiding a warning that would be irrelevant for this case."
-  :group 'cljr
   :type 'string
   :safe #'stringp
   :package-version "3.0.0")
@@ -4216,8 +4201,16 @@ See: https://github.com/clojure-emacs/clj-refactor.el/wiki/cljr-change-function-
   "Inject the REPL dependencies of clj-refactor at `cider-jack-in'.
 If injecting the dependencies is not preferred set `cljr-inject-dependencies-at-jack-in' to nil."
   (when (and cljr-inject-dependencies-at-jack-in
+             (fboundp 'cider-add-to-alist)
+             (boundp 'cider-preferred-build-tool)
+             (boundp 'cider-jack-in-dependencies)
              (boundp 'cider-jack-in-lein-plugins)
              (boundp 'cider-jack-in-nrepl-middlewares))
+
+    (when (not (eq cider-preferred-build-tool 'lein))
+      (cider-add-to-alist 'cider-jack-in-dependencies
+                          "refactor-nrepl/refactor-nrepl" cljr-injected-middleware-version))
+
     (add-to-list 'cider-jack-in-lein-plugins `("refactor-nrepl/refactor-nrepl" ,cljr-injected-middleware-version
                                                :predicate cljr--inject-middleware-p))
     (add-to-list 'cider-jack-in-nrepl-middlewares '("refactor-nrepl.middleware/wrap-refactor"

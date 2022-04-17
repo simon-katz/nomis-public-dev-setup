@@ -1,6 +1,58 @@
-# Change log
+# Changelog
 
 ## Unreleased
+
+## 3.5.2
+
+* Use refactor-nrepl [3.5.2](https://github.com/clojure-emacs/refactor-nrepl/blob/v3.5.2/CHANGELOG.md#352).
+
+## 3.5.1
+
+* Use refactor-nrepl [3.5.1](https://github.com/clojure-emacs/refactor-nrepl/blob/v3.5.1/CHANGELOG.md#351).
+
+## 3.5.0
+
+* Use refactor-nrepl [3.5.0](https://github.com/clojure-emacs/refactor-nrepl/blob/v3.5.0/CHANGELOG.md#350).
+* Improve integration with Clojure 1.11's new `:as-alias` namespace directive.
+  * Closes [#515](https://github.com/clojure-emacs/clj-refactor.el/issues/515), [#515](https://github.com/clojure-emacs/clj-refactor.el/issues/516)
+
+## 3.4.3
+
+- Use refactor-nrepl [3.4.2](https://github.com/clojure-emacs/refactor-nrepl/blob/v3.4.2/CHANGELOG.md#342).
+
+## 3.4.2
+
+- [#514](https://github.com/clojure-emacs/clj-refactor.el/issues/514): cljr-slash: Fix `Wrong type argument: listp`.
+- Use refactor-nrepl [3.4.1](https://github.com/clojure-emacs/refactor-nrepl/blob/v3.4.1/CHANGELOG.md#341).
+
+## 3.4.1
+
+- Introduce `cljr-suggest-namespace-aliases` defcustom.
+
+## 3.4.0
+
+- Use refactor-nrepl [3.4.0](https://github.com/clojure-emacs/refactor-nrepl/blob/v3.4.0/CHANGELOG.md#340).
+- [#512](https://github.com/clojure-emacs/clj-refactor.el/issues/512): Fix occasional :require` / `:require-macros` confusion in `cljr-slash`.
+
+## 3.3.3
+
+- Adapt `cljr--inject-jack-in-dependencies` to upstream changes in CIDER. 
+
+## 3.3.2
+
+- Use refactor-nrepl [3.3.2](https://github.com/clojure-emacs/refactor-nrepl/blob/v3.3.2/CHANGELOG.md#332).
+
+## 3.3.1
+
+- Use refactor-nrepl [3.3.1](https://github.com/clojure-emacs/refactor-nrepl/blob/v3.3.1/CHANGELOG.md#331).
+
+## 3.3.0
+
+- Use refactor-nrepl [3.3.0](https://github.com/clojure-emacs/refactor-nrepl/blob/6c599d22579886b834ca4b46fec45beb34abf2d8/CHANGELOG.md#330).
+
+## 3.2.3
+
+- Use refactor-nrepl [3.2.2](https://github.com/clojure-emacs/refactor-nrepl/blob/deploy-typo/CHANGELOG.md#322-2022-01-29).
 
 ## 3.2.0, 3.2.1, 3.2.2 (2021-11-16)
 

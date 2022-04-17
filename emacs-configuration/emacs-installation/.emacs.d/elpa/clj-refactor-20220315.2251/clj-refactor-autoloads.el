@@ -294,8 +294,7 @@ toggle it if ARG is `toggle'; disable the mode otherwise.
 
 ;;;***
 
-;;;### (autoloads nil nil ("clj-refactor-compat.el" "clj-refactor-pkg.el")
-;;;;;;  (0 0 0 0))
+;;;### (autoloads nil nil ("clj-refactor-pkg.el") (0 0 0 0))
 
 ;;;***
 
