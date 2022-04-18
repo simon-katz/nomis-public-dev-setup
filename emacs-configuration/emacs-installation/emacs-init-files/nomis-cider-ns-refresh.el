@@ -95,20 +95,22 @@
 
 (defun nomis/cider-ns-refresh/forward-section (align-top?)
   (interactive "P")
-  (let* ((pos (save-excursion
-                (condition-case nil
-                    (progn
-                      (forward-line)
-                      (search-forward nomis/cider-ns-refresh/-prefix-for-log-pre-message)
-                      (goto-char (match-beginning 0)))
-                  (error nil)))))
-    (if pos
-        (goto-char pos)
-      (progn
-        (nomis/msg/grab-user-attention/high)
-        (error "There is no next section"))))
-  (when align-top?
-    (recenter 0)))
+  (if (eobp)
+      (progn (nomis/msg/grab-user-attention/high)
+             (error "There is no next section"))
+    (let* ((pos (save-excursion
+                  (condition-case nil
+                      (progn
+                        (forward-line)
+                        (search-forward nomis/cider-ns-refresh/-prefix-for-log-pre-message)
+                        (goto-char (match-beginning 0)))
+                    (error nil)))))
+      (if pos
+          (progn
+            (goto-char pos)
+            (when align-top?
+              (recenter 0)))
+        (goto-char (point-max))))))
 
 (defun nomis/cider-ns-refresh/backward-section-align-top ()
   (interactive)
