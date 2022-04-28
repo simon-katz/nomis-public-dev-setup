@@ -82,7 +82,12 @@
 
 (setq cider-eval-result-prefix ";; => ")
 
-(setq cider-repl-result-prefix ";; =>\n")
+(setq cider-repl-result-prefix (case 1
+                                 ;; This is broken when the result is large.
+                                 ;; It seems that `cider-repl-emit-result` is
+                                 ;; called for each chunk of output.
+                                 (1 ";; =>\n")
+                                 (2 "")))
 
 (setq cider-repl-use-pretty-printing t)
 
