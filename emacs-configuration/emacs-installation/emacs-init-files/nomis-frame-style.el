@@ -136,5 +136,32 @@ unselected buffers.")
             '((name . nomis/replace-adob--dim-buffer)))
 
 ;;;; ___________________________________________________________________________
+;;;; ---- Highlight the current frame ----
+
+(defvar nomis/frame-style/highlight-fg-color "black")
+(defvar nomis/frame-style/highlight-bg-color (face-attribute 'mode-line
+                                                             :background))
+
+(defvar -nomis/frame-style/current-frame nil)
+
+(defun -nomis/frame-style/set-colors ()
+  (cl-flet* ((set-colors
+              (frame fg bg)
+              (set-face-foreground 'fringe fg frame)
+              (set-face-background 'fringe bg frame)))
+    (let* ((old-frame -nomis/frame-style/current-frame)
+           (new-frame (selected-frame)))
+      (when (and old-frame (not (eq old-frame new-frame)))
+        (set-colors old-frame nil nil))
+      ;; Set colors even if `(eq old-frame new-frame)`, otherwise the initial
+      ;; frame doesn't have colours set.
+      (set-colors new-frame
+                  nomis/frame-style/highlight-fg-color
+                  nomis/frame-style/highlight-bg-color)
+      (setq -nomis/frame-style/current-frame new-frame))))
+
+(add-hook 'buffer-list-update-hook '-nomis/frame-style/set-colors)
+
+;;;; ___________________________________________________________________________
 
 (provide 'nomis-frame-style)
