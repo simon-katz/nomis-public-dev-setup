@@ -102,6 +102,11 @@ invoking, give a prefix argument to `execute-extended-command'."
                          (sit-for (if (numberp suggest-key-bindings)
                                       suggest-key-bindings
                                     2)))))))))))))
+
+ ((version<= "28.1" emacs-version)
+  ;; This is fixed.
+  )
+
  (t
   (message-box
    "You need to fix `execute-extended-command` for this version of Emacs.")))
