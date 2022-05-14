@@ -5,11 +5,14 @@
 ;;;; Fix diffs when amending a pushed commit.
 ;;;; See https://github.com/magit/magit/discussions/4507
 
-(when (equal emacs-version "27.1")
+(when (member emacs-version
+              '("27.1"
+                "28.1"))
   (with-eval-after-load 'magit-diff
     (cond
      ((member (magit-version)
-              '("20210913.1931"))
+              '("20210913.1931"
+                "20211101.1824"))
 
       (defvar nomis/-magit-assume-last-was-amend? nil
         "Note that we can't use special binding to get what we
