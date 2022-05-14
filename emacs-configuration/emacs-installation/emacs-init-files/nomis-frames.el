@@ -101,6 +101,9 @@
     (:sheringham
      ;; 900 pixels - menu bar
      60)
+    (:defoe
+     ;; 900 pixels - menu bar
+     60)
     (:simon-katzs-wefarm-macbook-pro
      60)
     (:probably-windows-at-work-place
