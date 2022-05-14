@@ -7,7 +7,15 @@
 ;;;; ___________________________________________________________________________
 ;;;; ---- Sort out menu bars, tools bars and scroll bars ----
 
-(if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
+(defvar -nomis/homebrew-emacsmacport-versions
+  '("GNU Emacs 28.1 (build 1, aarch64-apple-darwin21.4.0, Carbon Version 165 AppKit 2113.4)
+ of 2022-05-04"))
+
+(if (and (fboundp 'menu-bar-mode)
+         ;; With homebrew-emacsmacport, withouit the menu bar frames lose focus
+         ;; when changing spaces.
+         (not (member (version) -nomis/homebrew-emacsmacport-versions)))
+    (menu-bar-mode -1))
 (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
 (if (fboundp 'scroll-bar-mode) (scroll-bar-mode +1))
 
