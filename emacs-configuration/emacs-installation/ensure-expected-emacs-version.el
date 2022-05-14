@@ -1,12 +1,14 @@
-(let ((expected-version "27.2")
+(let ((expected-versions '("27.2"
+                           "28.1"))
       (version emacs-version))
-  (unless (or (equal version expected-version)
+  (unless (or (member version expected-versions)
               (y-or-n-p
                (format (concat
                         "Things might not work. This Emacs init is"
-                        " expecting Emacs %s, but this is Emacs %s."
+                        " expecting an Emacs version that is one of %s, but"
+                        " this is Emacs %s."
                         " Type 'y' to continue or 'n' to exit.")
-                       expected-version
+                       expected-versions
                        version)))
     (kill-emacs)))
 
