@@ -697,6 +697,14 @@ limit the search to the current buffer."
       (multi-occur-in-matching-buffers ".*\\.org$" regexp))))
 
 ;;;; ___________________________________________________________________________
+;;;; * nomis/org-global-todo-list
+
+(defun nomis/org-global-todo-list ()
+  (interactive)
+  (nomis/buffer-backgrounds/set-alternative)
+  (org-todo-list))
+
+;;;; ___________________________________________________________________________
 ;;;; * Key bindings
 
 (require 'nomis-org-key-bindings)
