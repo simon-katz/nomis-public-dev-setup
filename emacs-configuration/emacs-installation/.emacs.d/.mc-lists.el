@@ -60,6 +60,7 @@
         paredit-splice-sexp-killing-backward
         sh-assignment
         transpose-sexps
+        wdired--self-insert
         wdired-finish-edit
         yaml-electric-backspace
         yaml-electric-dash-and-dot
