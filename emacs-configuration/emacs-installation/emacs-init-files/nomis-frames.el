@@ -111,7 +111,18 @@
      60)
     (:defoe
      ;; 900 pixels - menu bar
-     60)
+     ;;
+     ;; Bug fix:
+     ;; If we leave this as 60, we see some weird behaviour:
+     ;;
+     ;;   1. M-x and down-arrow can cause crashes. We see that after using
+     ;;      `nomis/set-up-devvy-windows-for-clj-and-jack-in`.
+     ;;
+     ;;   2. There's something weird with window height:
+     ;;      `maximize-frame-vertically` sometimes makes the right height and
+     ;;      sometimes too high.
+     ;;      - Is that consistent within each invocation of Emacs?
+     59)
     (:simon-katzs-wefarm-macbook-pro
      60)
     (:probably-windows-at-work-place
