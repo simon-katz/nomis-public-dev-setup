@@ -39,6 +39,7 @@
         org-self-insert-command
         org-shiftmetaleft
         org-shifttab
+        org-todo
         org-yank
         paredit-backslash
         paredit-backward
