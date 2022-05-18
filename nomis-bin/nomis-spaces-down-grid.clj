@@ -1,22 +1,22 @@
 #!/usr/bin/env /usr/local/bin/bb
 
 (def space->next-space
-  {1   nil
-   2   nil
-   3   nil
-   4   nil
-   5   1
-   6   2
-   7   3
-   8   4
-   9   5
-   10  6
-   11  7
-   12  8
-   13  9
-   14 10
-   15 11
-   16 12})
+  {1   5
+   2   6
+   3   7
+   4   8
+   5   9
+   6  10
+   7  11
+   8  12
+   9  13
+   10 14
+   11 15
+   12 16
+   13 nil
+   14 nil
+   15 nil
+   16 nil})
 
 (def ^:private space->key-spec
   ;; See https://eastmanreference.com/complete-list-of-applescript-key-codes
