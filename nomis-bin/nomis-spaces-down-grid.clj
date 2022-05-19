@@ -13,10 +13,10 @@
    10 14
    11 15
    12 16
-   13 nil
-   14 nil
-   15 nil
-   16 nil})
+   13  1
+   14  2
+   15  3
+   16  4})
 
 (def ^:private space->key-spec
   ;; See https://eastmanreference.com/complete-list-of-applescript-key-codes

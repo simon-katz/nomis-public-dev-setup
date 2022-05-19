@@ -1,10 +1,10 @@
 #!/usr/bin/env /usr/local/bin/bb
 
 (def space->next-space
-  {1   nil
-   2   nil
-   3   nil
-   4   nil
+  {1   13
+   2   14
+   3   15
+   4   16
    5   1
    6   2
    7   3
