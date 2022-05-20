@@ -63,26 +63,29 @@ end tell")
     (println cmd)
     (osa cmd)))
 
-(let [current-space (->> (get-desktop-picture-filename)
-                         :out
-                         (re-find #"macos-desktop-backgrounds:([0-9]*)")
-                         second
-                         parse-long)
-      [new-space wrapped?] (space->next-space-details current-space)]
-  (go-to-space new-space)
-  (when wrapped?
-    (cl-case 5
-      0 (osa "tell application \"System Events\" to repeat 2 times
+(do
+  (shell/sh "touch"
+            "/Users/simonkatz/development-100/repositories/nomis/dev-setup/nomis-public-dev-setup/nomis-bin/zzzz-nomis-spaces-up-grid-ran")
+  (let [current-space (->> (get-desktop-picture-filename)
+                           :out
+                           (re-find #"macos-desktop-backgrounds:([0-9]*)")
+                           second
+                           parse-long)
+        [new-space wrapped?] (space->next-space-details current-space)]
+    (shell/sh "touch"
+              (str "/Users/simonkatz/development-100/repositories/nomis/dev-setup/nomis-public-dev-setup/nomis-bin/zzzz-nomis-spaces-up-grid-ran-"
+                   new-space))
+    (go-to-space new-space)
+    (when wrapped?
+      (case 5
+        0 (osa "tell application \"System Events\" to repeat 2 times
 key code 18 using {command down, control down, option down}
 delay 0
 end repeat")
-      1 (osa "display alert \"wrapped\" buttons {\"Wrapped\"} giving up after 1")
-      2 (osa "beep")
-      ;; TODO: Not working.
-      3 (shell/sh "/Users/simonkatz/development-100/repositories/nomis/dev-setup/nomis-public-dev-setup/nomis-bin/bells")
-      4 (osa "display alert \"wrapped\" buttons {\"•\"} giving up after 1")
-      5 (osa "display dialog \"wrapped\" buttons {\"•\"} giving up after 1")))
-  (shell/sh "touch"
-            (str "/Users/simonkatz/development-100/repositories/zzzz-nomis-spaces-up-grid-ran-"
-                 new-space))
-  new-space)
+        1 (osa "display alert \"wrapped\" buttons {\"Wrapped\"} giving up after 1")
+        2 (osa "beep")
+        ;; TODO: Not working.
+        3 (shell/sh "/Users/simonkatz/development-100/repositories/nomis/dev-setup/nomis-public-dev-setup/nomis-bin/bells")
+        4 (osa "display alert \"wrapped\" buttons {\"•\"} giving up after 1")
+        5 (osa "display dialog \"wrapped\" buttons {\"•\"} giving up after 1")))
+    new-space))
