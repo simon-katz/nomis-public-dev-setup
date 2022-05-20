@@ -32,12 +32,12 @@
 ;;;; ---- Strings ----
 
 (defun -nomis/grep/directory-or-file-string (kind)
-  (case kind
+  (cl-case kind
     (:directories "directory")
     (:files       "file")))
 
 (defun -nomis/grep/directories-or-files-string (kind)
-  (case kind
+  (cl-case kind
     (:directories "directories")
     (:files       "files")))
 
@@ -45,26 +45,26 @@
 ;;;; ---- grep var access ----
 
 (defun -nomis/grep/ignored/all/vars (kind)
-  (case kind
+  (cl-case kind
     (:directories '(nomis/grep/local-ignored-directories
                     grep-find-ignored-directories))
     (:files       '(nomis/grep/local-ignored-files
                     grep-find-ignored-files))))
 
 (defun -nomis/grep/all/vars/with-overridden-ignore (kind)
-  (case kind
+  (cl-case kind
     (:directories '(-nomis/grep/directories/with-overridden-ignore/builtin
                     -nomis/grep/directories/with-overridden-ignore/local))
     (:files       '(-nomis/grep/files/with-overridden-ignore/builtin
                     -nomis/grep/files/with-overridden-ignore/local))))
 
 (defun -nomis/grep/recent-names (kind)
-  (case kind
+  (cl-case kind
     (:directories -nomis/grep/recent-names/directories)
     (:files       -nomis/grep/recent-names/files)))
 
 (defun -nomis/grep/set-recent-names (kind v)
-  (case kind
+  (cl-case kind
     (:directories (setq -nomis/grep/recent-names/directories v))
     (:files       (setq -nomis/grep/recent-names/files v))))
 
@@ -72,7 +72,7 @@
 ;;;; ---- grep logic ----
 
 (defun -nomis/grep/history-list-name (kind)
-  (case kind
+  (cl-case kind
     (:directories 'nomis/grep/history-list-name/directories)
     (:files       'nomis/grep/history-list-name/files)))
 

@@ -13,11 +13,11 @@
 
 (add-hook 'eshell-mode-hook 'nomis/eshell-hook)
 
-(defvar nomis/eshell-prompt-foreground (case 1
+(defvar nomis/eshell-prompt-foreground (cl-case 1
                                          (1 "black")
                                          (2 "purple")))
 
-(defvar nomis/eshell-prompt-background (case 1
+(defvar nomis/eshell-prompt-background (cl-case 1
                                          (1 "grey80")
                                          (2 "burlywood")
                                          (3 "SandyBrown")

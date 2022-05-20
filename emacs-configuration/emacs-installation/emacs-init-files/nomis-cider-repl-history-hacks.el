@@ -97,7 +97,7 @@ If REGEXP is non-nil, only lines matching REGEXP are considered."
     (if cider-repl-history-file
         nil
       (let* ((repl-type (cider-repl-type (current-buffer))))
-        (case repl-type
+        (cl-case repl-type
           ('clj  nomis/-cider-repl-history-filename-clj)
           ('cljs nomis/-cider-repl-history-filename-cljs)))))
 

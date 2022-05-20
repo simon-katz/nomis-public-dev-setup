@@ -54,11 +54,11 @@
   (apply #'set-face-attribute
          'hl-line nil
          :inherit nil
-         (-concat (case nomis/hl-line/approach
+         (-concat (cl-case nomis/hl-line/approach
                     (0 `(:background "darkseagreen1"))
                     (1 `(:background "palegoldenrod"))
                     (2 nil))
-                  (case nomis/hl-line/approach
+                  (cl-case nomis/hl-line/approach
                     (0 nil)
                     (1 nil)
                     (2 `(:box ,(list :line-width -1

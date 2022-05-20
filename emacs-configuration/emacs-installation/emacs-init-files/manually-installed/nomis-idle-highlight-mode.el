@@ -403,7 +403,7 @@
 (defvar nomis/ih/extra-body-chars "")
 
 (defun nomis/ih/toggle-include-in-body-extras (char)
-  (assert (characterp char))
+  (cl-assert (characterp char))
   (let* ((string (string char))
          (contains? (s-contains? string nomis/ih/extra-body-chars)))
     (setq nomis/ih/extra-body-chars
@@ -470,7 +470,7 @@
 (defun nomis/ih/use-hack-for-symbol-boundaries? ()
   ;; "\\_<" and "\\_>" don't work well with Lispy symbols that contain
   ;; single quotes, or with yaml-mode, so we need this.
-  (case 2
+  (cl-case 2
     (1 (or (nomis/clojure-like-mode? major-mode)
              (member major-mode
                      '(emacs-lisp-mode
@@ -481,7 +481,7 @@
      t)))
 
 (defun nomis/hacky-non-symbol-char-regexp ()
-  (assert (nomis/ih/use-hack-for-symbol-boundaries?))
+  (cl-assert (nomis/ih/use-hack-for-symbol-boundaries?))
   (nomis/rx/or "^"
                "$"
                (if nomis/ih/use-simple-regexps-p
@@ -662,7 +662,7 @@
                      captured-target)
             (message "Looking for regexp \"%s\""
                      nomis/idle-highlight-regexp))
-          (ecase nomis/ih/approach
+          (cl-ecase nomis/ih/approach
             (:old (highlight-regexp nomis/idle-highlight-regexp
                                     nomis/idle-highlight-face))
             (:new (hlt-highlight-regexp-region (point-min)
@@ -684,7 +684,7 @@
 
 (defsubst nomis/idle-highlight-unhighlight ()
   (when nomis/idle-highlight-regexp
-    (ecase nomis/ih/approach
+    (cl-ecase nomis/ih/approach
       (:old (unhighlight-regexp nomis/idle-highlight-regexp))
       (:new (hlt-unhighlight-region (point-min)
                                     (point-max)

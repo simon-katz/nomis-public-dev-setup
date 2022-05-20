@@ -116,7 +116,7 @@ Bare symbols in SPECS are equivalent to
 Example:
 
   (defmacro cons1 (x) (mmt-once-only (x) `(cons ,x ,x)))
-  (let ((y 0)) (cons1 (incf y))) => (1 . 1)"
+  (let ((y 0)) (cons1 (cl-incf y))) => (1 . 1)"
   (declare (indent 1))
   (let* ((gensyms (mmt-make-gensym-list (length specs) "ONCE-ONLY"))
          (names-and-forms

@@ -31,7 +31,7 @@
             (f-on  () (fci-mode 1))
             (c-off () (column-marker-1 '(4)))
             (c-on  () (column-marker-1 nomis/right-margin-column)))
-    (case n
+    (cl-case n
       (0 (f-off) (c-off))
       (1 (f-on)  (c-off))
       (2 (f-off) (c-on))

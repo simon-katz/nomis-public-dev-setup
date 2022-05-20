@@ -71,7 +71,7 @@ end tell")
       [new-space wrapped?] (space->next-space-details current-space)]
   (go-to-space new-space)
   (when wrapped?
-    (case 5
+    (cl-case 5
       0 (osa "tell application \"System Events\" to repeat 2 times
 key code 18 using {command down, control down, option down}
 delay 0

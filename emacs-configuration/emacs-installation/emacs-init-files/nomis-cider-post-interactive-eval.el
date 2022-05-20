@@ -54,14 +54,14 @@ the need to save files so that a file-watcher can spot changes).")
   (cl-flet*
       ((check-current-buffer
         (buffer)
-        (assert (eql buffer (current-buffer))
+        (cl-assert (eql buffer (current-buffer))
                 nil
                 "Unexpected change of buffer"))
 
        (running-message
         (form repl-buffer)
         (let ((inhibit-message t))
-          (case :do-not-do-this
+          (cl-case :do-not-do-this
             (1 (message "nomis/cider/post-interactive-eval Running %S in buffer %S"
                         form (buffer-name repl-buffer)))
             (2 (message "Doing %s post-interactive-eval work"
@@ -75,7 +75,7 @@ the need to save files so that a file-watcher can spot changes).")
        (repl-buffer->form-string
         (repl-buffer)
         (let* ((form-symbol
-                (case (cider-repl-type repl-buffer)
+                (cl-case (cider-repl-type repl-buffer)
                   (clj  'nomis/cider/post-interactive-eval/clj-function-name)
                   (cljs 'nomis/cider/post-interactive-eval/cljs-function-name)))
                (form-symbol-value (eval form-symbol)))

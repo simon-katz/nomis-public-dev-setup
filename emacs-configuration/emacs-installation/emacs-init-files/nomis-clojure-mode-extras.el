@@ -37,7 +37,7 @@
         (while (looking-at-p "#_") (forward-char 2))
         (backward-char 2)
         (let ((cnt 0))
-          (while (looking-at-p "#_") (incf cnt) (backward-char 2))
+          (while (looking-at-p "#_") (cl-incf cnt) (backward-char 2))
           (forward-char 2)
           (dotimes (_ cnt) (delete-char 2))
           (backward-up-list)

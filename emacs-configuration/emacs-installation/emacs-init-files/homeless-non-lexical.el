@@ -104,7 +104,7 @@
 ;;;; ___________________________________________________________________________
 
 (defun nomis/timestamp (kind)
-  (case kind
+  (cl-case kind
     (:date
      (format-time-string "%Y-%m-%d"))
     (:date-time
@@ -117,7 +117,7 @@
                (substring timezone 3 5))))))
 
 (defun nomis/timestamp-no-t (kind)
-  (case kind
+  (cl-case kind
     (:date
      (format-time-string "%Y-%m-%d"))
     (:date-time
@@ -131,7 +131,7 @@
 
 (defun nomis/insert-timestamp (p)
   (interactive "P")
-  (insert (nomis/timestamp (case (prefix-numeric-value p)
+  (insert (nomis/timestamp (cl-case (prefix-numeric-value p)
                              (1 :date)
                              (4 :date-time)
                              (t t)))))

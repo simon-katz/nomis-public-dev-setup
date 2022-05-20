@@ -9,7 +9,7 @@
 
 (global-set-key (kbd "TAB") #'company-indent-or-complete-common)
 
-(case 1
+(cl-case 1
   ;; Only one of these makes sense. Which do you prefer?
   (1 (setq company-idle-delay nil))
   (2 (setq company-minimum-prefix-length 2)))

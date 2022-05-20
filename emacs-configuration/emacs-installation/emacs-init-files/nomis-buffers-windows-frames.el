@@ -14,10 +14,10 @@
                 windows)))
 
 (defun nomis/find-window-in-any-frame (buffer-name)
-  (loop for f in (frame-list)
-        for w = (nomis/find-window-in-frame buffer-name f)
-        when w
-        return w))
+  (cl-loop for f in (frame-list)
+           for w = (nomis/find-window-in-frame buffer-name f)
+           when w
+           return w))
 
 (cl-defun nomis/find-window-in-any-frame-pref-this-one (buffer-name
                                                         &optional frame)

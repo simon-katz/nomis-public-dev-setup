@@ -6,7 +6,7 @@
 (defun nomis/lookup-word-at-point ()
   "Lookup word at point in dictionary."
   (interactive)
-  (case system-type
+  (cl-case system-type
     (darwin
      (call-process-shell-command
       (format "open dict:///%s/" (word-at-point))))

@@ -24,10 +24,10 @@
     ;; Blimey!
     (append s nil))
 
-  (assert (equal (string->list-of-chars "")
+  (cl-assert (equal (string->list-of-chars "")
                  '()))
 
-  (assert (equal (string->list-of-chars "abc")
+  (cl-assert (equal (string->list-of-chars "abc")
                  '(?a ?b ?c))))
 
 ;;;; ___________________________________________________________________________

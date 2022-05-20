@@ -34,7 +34,7 @@ string."
                                             (beginning-of-line)
                                             (let* ((cnt 0))
                                               (while (looking-at-p " ")
-                                                (incf cnt)
+                                                (cl-incf cnt)
                                                 (forward-char))
                                               cnt))))
     (atomic-change-group
@@ -108,7 +108,7 @@ string."
          ;; `max-line-length`.)
          ((>= (length word-sofar)
               max-line-length)
-          (assert (null line-sofar))
+          (cl-assert (null line-sofar))
           (puthash :lines-sofar (cons word-sofar lines-sofar) sofar)
           (puthash :line-sofar '() sofar)
           (puthash :word-sofar '() sofar)

@@ -79,12 +79,12 @@
     (completing-read "Name: "
                      wc-names
                      nil
-                     (ecase save-or-restore
+                     (cl-ecase save-or-restore
                        (:save nil)
                        (:restore t))
                      nil
                      'nomis/wc/wc-name-history
-                     (ecase save-or-restore
+                     (cl-ecase save-or-restore
                        (:save "")
                        (:restore (first wc-names))))))
 

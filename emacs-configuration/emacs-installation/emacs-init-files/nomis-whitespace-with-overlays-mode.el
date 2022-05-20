@@ -184,7 +184,7 @@ With a zero or negative prefix arg, turn off nomis/wwo/mode."
   (nomis/wwo/error-if-not-wwo-mode)
   (message "nomis/wwo/set-binary-encoding: setting value to %s" n)
   (nomis/wwo/with-refresh-when-done
-    (case n
+    (cl-case n
       (0 (nomis/wwo/beyond-margin/turn-off)
          (nomis/wwo/trailing/turn-off))
       (1 (nomis/wwo/beyond-margin/turn-on)

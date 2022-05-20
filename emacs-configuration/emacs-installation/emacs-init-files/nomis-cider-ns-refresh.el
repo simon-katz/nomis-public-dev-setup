@@ -172,7 +172,7 @@
      (unless (cider-repls)
        (nomis/msg/grab-user-attention/high)
        (error "There are no CIDER REPLs associated with this buffer"))
-     (incf nomis/cider-ns-refresh/-count)
+     (cl-incf nomis/cider-ns-refresh/-count)
      (let* ((log-buffer-freshly-created?
              (null (get-buffer cider-ns-refresh-log-buffer)))
             (log-buffer (nomis/cider-ns-refresh/-get-log-buffer)))
@@ -301,7 +301,7 @@
          (apply #'s-concat
                 "The following namespaces will be reloaded:\n"
                 (-map (lambda (x) (format "%4d Reloading %s\n"
-                                          (incf cnt)
+                                          (cl-incf cnt)
                                           x))
                       (first objects))))))
    '((name . nomis/cider-ns-refresh/multiple-lines)))

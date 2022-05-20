@@ -78,7 +78,7 @@ H-q H-/  Show this help")
 
 (defun nomis/org/pop-up-navigation-and-cycling-help ()
   (interactive)
-  (case 2
+  (cl-case 2
     (1 (let* ((*nomis/popup/message/auto-dismiss?* nil))
          (nomis/popup/message "%s" -nomis/org/navigation-and-cycling-help)))
     (2 (with-help-window (help-buffer)

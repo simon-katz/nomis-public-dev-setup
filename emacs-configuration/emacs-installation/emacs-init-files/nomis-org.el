@@ -181,7 +181,7 @@
   (let* ((v (position '(tree nil "Tree")
                       -nomis/org-visibility-span/detail-values
                       :test #'equal)))
-    (assert (not (null v)))
+    (cl-assert (not (null v)))
     (-nomis/org-visibility-span/set-level/numeric v nil t))
   (norg/w/show-entry))
 
@@ -568,7 +568,7 @@
 ;;   ;; https://www.gnu.org/software/emacs/manual/html_node/elisp/Filter-Functions.html#Filter-Functions
 ;;   (when (buffer-live-p (process-buffer proc))
 ;;     (with-current-buffer (process-buffer proc)
-;;       (let ((moving (case 2
+;;       (let ((moving (cl-case 2
 ;;                       (1 (= (point) (process-mark proc)))
 ;;                       (2 t))))
 ;;         (save-excursion
@@ -589,7 +589,7 @@
 ;;     (with-current-buffer output-buffer
 ;;       (goto-char (point-max))
 ;;       (insert "\n____________________________________\n"))
-;;     (case 2
+;;     (cl-case 2
 ;;       (1 (call-process "/Users/simonkatz/development-100/repositories/nomis/nomis-blog/_scripts/publish.sh"
 ;;                        nil
 ;;                        output-buffer
@@ -628,10 +628,10 @@
 (defvar -nomis/org-search-heading-text/text nil)
 
 (defun -nomis/org-search-heading-text/search (again?)
-  (assert (not (null -nomis/org-search-heading-text/text)))
+  (cl-assert (not (null -nomis/org-search-heading-text/text)))
   (cl-flet ((search-for-text
              ()
-             (search-backward (case 1
+             (search-backward (cl-case 1
                                 (1
                                  ;; Simply look for the text.
                                  -nomis/org-search-heading-text/text)

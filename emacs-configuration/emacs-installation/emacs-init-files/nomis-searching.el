@@ -21,7 +21,7 @@
   '(when (equal system-type 'darwin)
      (grep-apply-setting
       'grep-find-template
-      (case 2
+      (cl-case 2
         (1
          ;; The default computed on Sheringham
          "find <D> <X> -type f <F> -exec grep <C> -nH --null -e <R> \\{\\} +")

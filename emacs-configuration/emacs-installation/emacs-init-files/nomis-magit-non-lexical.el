@@ -8,7 +8,7 @@
   (set-face-background 'magit-section-highlight
                        ;; default is "grey95", which is pretty much the same as
                        ;; my default background colour ("#f5f5f5")
-                       (case 5
+                       (cl-case 5
                          (1 "palegoldenrod")
                          (2 "skyblue")
                          (3 "lightblue")

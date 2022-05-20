@@ -240,15 +240,15 @@ Currently, the valid submode is:
 ")
 
 (defvar ace-jump-mode-move-keys
-  (nconc (loop for i from ?a to ?z collect i)
-         (loop for i from ?A to ?Z collect i))
+  (nconc (cl-loop for i from ?a to ?z collect i)
+         (cl-loop for i from ?A to ?Z collect i))
   "*The keys that used to move when enter AceJump mode.
 Each key should only an printable character, whose name will
 fill each possible location.
 
 If you want your own moving keys, you can custom that as follow,
 for example, you only want to use lower case character:
-\(setq ace-jump-mode-move-keys (loop for i from ?a to ?z collect i)) ")
+\(setq ace-jump-mode-move-keys (cl-loop for i from ?a to ?z collect i)) ")
 
 
 ;;; some internal variable for ace jump
@@ -359,28 +359,28 @@ You can control whether use the case sensitive or not by `ace-jump-mode-case-fol
 
 Every possible `match-beginning' will be collected.
 The returned value is a list of `aj-position' record."
-  (loop for va in visual-area-list
-        append (let* ((current-window (aj-visual-area-window va))
-                      (start-point (window-start current-window))
-                      (end-point   (window-end   current-window t)))
-                 (with-selected-window current-window
-                   (save-excursion
-                     (goto-char start-point)
-                     (let ((case-fold-search ace-jump-mode-case-fold))
-                       (loop while (re-search-forward re-query-string nil t)
-                             until (or
-                                    (> (point) end-point)
-                                    (eobp))
-                             if (or ace-jump-allow-invisible (not (invisible-p (match-beginning 0))))
-                             collect (make-aj-position :offset (match-beginning 0)
-                                                       :visual-area va)
-                             ;; when we use "^" to search line mode,
-                             ;; re-search-backward will not move one
-                             ;; char after search success, as line
-                             ;; begin is not a valid visible char.
-                             ;; We need to help it to move forward.
-                             do (if (string-equal re-query-string "^")
-                                    (goto-char (1+ (match-beginning 0)))))))))))
+  (cl-loop for va in visual-area-list
+           append (let* ((current-window (aj-visual-area-window va))
+                         (start-point (window-start current-window))
+                         (end-point   (window-end   current-window t)))
+                    (with-selected-window current-window
+                      (save-excursion
+                        (goto-char start-point)
+                        (let ((case-fold-search ace-jump-mode-case-fold))
+                          (cl-loop while (re-search-forward re-query-string nil t)
+                                   until (or
+                                          (> (point) end-point)
+                                          (eobp))
+                                   if (or ace-jump-allow-invisible (not (invisible-p (match-beginning 0))))
+                                   collect (make-aj-position :offset (match-beginning 0)
+                                                             :visual-area va)
+                                   ;; when we use "^" to search line mode,
+                                   ;; re-search-backward will not move one
+                                   ;; char after search success, as line
+                                   ;; begin is not a valid visible char.
+                                   ;; We need to help it to move forward.
+                                   do (if (string-equal re-query-string "^")
+                                          (goto-char (1+ (match-beginning 0)))))))))))
 
 (defun ace-jump-tree-breadth-first-construct (total-leaf-node max-child-node)
   "Constrct the search tree, each item in the tree is a cons cell.
@@ -405,8 +405,8 @@ while a child node list when type is 'branch"
           ;; current child can fill the left leaf
           (progn
             (setf (cdr node)
-                  (loop for i from 1 to left-leaf-node
-                        collect (cons 'leaf nil)))
+                  (cl-loop for i from 1 to left-leaf-node
+                           collect (cons 'leaf nil)))
             ;; so this should be the last action for while
             (setq left-leaf-node 0))
         ;; the child can not cover the left leaf
@@ -414,10 +414,10 @@ while a child node list when type is 'branch"
           ;; fill as much as possible. Push them to queue, so it have
           ;; the oppotunity to become 'branch node if necessary
           (setf (cdr node)
-                (loop for i from 1 to max-child-node
-                      collect (let ((n (cons 'leaf nil)))
-                                (aj-queue-push n q)
-                                n)))
+                (cl-loop for i from 1 to max-child-node
+                         collect (let ((n (cons 'leaf nil)))
+                                   (aj-queue-push n q)
+                                   n)))
           (setq left-leaf-node (- left-leaf-node max-child-node)))))
     ;; return the root node
     root))
@@ -517,16 +517,16 @@ node and call LEAF-FUNC on each leaf node"
                                    "\n")
                                   (t
                                    "")))))))))
-    (loop for k in keys
-          for n in (cdr tree)
-          do (progn
-               ;; update "key" variable so that the function can use
-               ;; the correct context
-               (setq key k)
-               (if (eq (car n) 'branch)
-                   (ace-jump-tree-preorder-traverse n
-                                                    func-update-overlay)
-                 (funcall func-update-overlay n))))))
+    (cl-loop for k in keys
+             for n in (cdr tree)
+             do (progn
+                  ;; update "key" variable so that the function can use
+                  ;; the correct context
+                  (setq key k)
+                  (if (eq (car n) 'branch)
+                      (ace-jump-tree-preorder-traverse n
+                                                       func-update-overlay)
+                    (funcall func-update-overlay n))))))
 
 
 
@@ -534,16 +534,16 @@ node and call LEAF-FUNC on each leaf node"
   "Based on `ace-jump-mode-scope', search the possible buffers that is showing now."
   (cond
    ((eq ace-jump-mode-scope 'global)
-    (loop for f in (frame-list)
-          append (loop for w in (window-list f)
-                       collect (make-aj-visual-area :buffer (window-buffer w)
-                                                    :window w
-                                                    :frame f))))
+    (cl-loop for f in (frame-list)
+             append (cl-loop for w in (window-list f)
+                             collect (make-aj-visual-area :buffer (window-buffer w)
+                                                          :window w
+                                                          :frame f))))
    ((eq ace-jump-mode-scope 'frame)
-    (loop for w in (window-list (selected-frame))
-          collect (make-aj-visual-area :buffer (window-buffer w)
-                                       :window w
-                                       :frame (selected-frame))))
+    (cl-loop for w in (window-list (selected-frame))
+             collect (make-aj-visual-area :buffer (window-buffer w)
+                                          :window w
+                                          :frame (selected-frame))))
    ((eq ace-jump-mode-scope 'window)
     (list 
      (make-aj-visual-area :buffer (current-buffer)
@@ -563,35 +563,35 @@ return the structure list for those make a indirect buffer.
 
 Side affect: All the created indirect buffer will show in its
 relevant window."
-  (loop for va in visual-area-list
-        ;; check if the current visual-area (va) has the same buffer with
-        ;; the previous ones (vai)
-        if (loop for vai in visual-area-list
-                 ;; stop at itself, don't need to find the ones behind it (va)
-                 until (eq vai va)
-                 ;; if the buffer is same, return those(vai) before
-                 ;; it(va) so that we know the some visual area has
-                 ;; the same buffer with current one (va)
-                 if (eq (aj-visual-area-buffer va)
-                        (aj-visual-area-buffer vai))
-                 collect vai)
-        ;; if indeed the same one find, we need create an indirect buffer
-        ;; to current visual area(va)
-        collect (with-selected-window (aj-visual-area-window va)
-                  ;; store the orignal buffer
-                  (setf (aj-visual-area-recover-buffer va)
-                        (aj-visual-area-buffer va))
-                  ;; create indirect buffer to use as working buffer
-                  (setf (aj-visual-area-buffer va)
-                        (clone-indirect-buffer nil nil))
-                  ;; update window to the indirect buffer
-                  (let ((ws (window-start)))
-                    (set-window-buffer (aj-visual-area-window va)
-                                       (aj-visual-area-buffer va))
-                    (set-window-start
-                     (aj-visual-area-window va)
-                     ws))
-                  va)))
+  (cl-loop for va in visual-area-list
+           ;; check if the current visual-area (va) has the same buffer with
+           ;; the previous ones (vai)
+           if (cl-loop for vai in visual-area-list
+                       ;; stop at itself, don't need to find the ones behind it (va)
+                       until (eq vai va)
+                       ;; if the buffer is same, return those(vai) before
+                       ;; it(va) so that we know the some visual area has
+                       ;; the same buffer with current one (va)
+                       if (eq (aj-visual-area-buffer va)
+                              (aj-visual-area-buffer vai))
+                       collect vai)
+           ;; if indeed the same one find, we need create an indirect buffer
+           ;; to current visual area(va)
+           collect (with-selected-window (aj-visual-area-window va)
+                     ;; store the orignal buffer
+                     (setf (aj-visual-area-recover-buffer va)
+                           (aj-visual-area-buffer va))
+                     ;; create indirect buffer to use as working buffer
+                     (setf (aj-visual-area-buffer va)
+                           (clone-indirect-buffer nil nil))
+                     ;; update window to the indirect buffer
+                     (let ((ws (window-start)))
+                       (set-window-buffer (aj-visual-area-window va)
+                                          (aj-visual-area-buffer va))
+                       (set-window-start
+                        (aj-visual-area-window va)
+                        ws))
+                     va)))
 
 
 (defun ace-jump-do( re-query-string )
@@ -628,14 +628,14 @@ You can constrol whether use the case sensitive via `ace-jump-mode-case-fold'.
       ;; create background for each visual area
       (if ace-jump-mode-gray-background
           (setq ace-jump-background-overlay-list
-                (loop for va in visual-area-list
-                      collect (let* ((w (aj-visual-area-window va))
-                                     (b (aj-visual-area-buffer va))
-                                     (ol (make-overlay (window-start w)
-                                                       (window-end w)
-                                                       b)))
-                                (overlay-put ol 'face 'ace-jump-face-background)
-                                ol))))
+                (cl-loop for va in visual-area-list
+                         collect (let* ((w (aj-visual-area-window va))
+                                        (b (aj-visual-area-buffer va))
+                                        (ol (make-overlay (window-start w)
+                                                          (window-end w)
+                                                          b)))
+                                   (overlay-put ol 'face 'ace-jump-face-background)
+                                   ol))))
 
       ;; construct search tree and populate overlay into tree
       (setq ace-jump-search-tree
@@ -965,25 +965,25 @@ You can constrol whether use the case sensitive via
   (force-mode-line-update)
 
   ;; delete background overlay
-  (loop for ol in ace-jump-background-overlay-list
-        do (delete-overlay ol))
+  (cl-loop for ol in ace-jump-background-overlay-list
+           do (delete-overlay ol))
   (setq ace-jump-background-overlay-list nil)
 
 
   ;; we clean the indirect buffer
-  (loop for va in ace-jump-recover-visual-area-list
-        do (with-selected-window (aj-visual-area-window va)
-             (let ((fake-buffer (aj-visual-area-buffer va))
-                   (original-buffer (aj-visual-area-recover-buffer va)))
-               ;; recover display buffer
-               (set-window-buffer (aj-visual-area-window va)
-                                  original-buffer)
-               ;; update visual area, which we need to use it to do the
-               ;; final jump, and as well, save in history
-               (setf (aj-visual-area-buffer va) original-buffer)
-               (setf (aj-visual-area-recover-buffer va) nil)
-               ;; kill indirect buffer
-               (ace-jump-kill-buffer fake-buffer))))
+  (cl-loop for va in ace-jump-recover-visual-area-list
+           do (with-selected-window (aj-visual-area-window va)
+                (let ((fake-buffer (aj-visual-area-buffer va))
+                      (original-buffer (aj-visual-area-recover-buffer va)))
+                  ;; recover display buffer
+                  (set-window-buffer (aj-visual-area-window va)
+                                     original-buffer)
+                  ;; update visual area, which we need to use it to do the
+                  ;; final jump, and as well, save in history
+                  (setf (aj-visual-area-buffer va) original-buffer)
+                  (setf (aj-visual-area-recover-buffer va) nil)
+                  ;; kill indirect buffer
+                  (ace-jump-kill-buffer fake-buffer))))
 
   ;; delete overlays in search tree
   (ace-jump-delete-overlay-in-search-tree ace-jump-search-tree)
@@ -1014,10 +1014,10 @@ PRED is a function object which can pass to funcall and accept
 one argument, which will be every element in the list.
 Such as : (lambda (x) (equal x 1)) "
   (let (true-list false-list)
-    (loop for e in l
-          do (if (funcall pred e)
-                 (setq true-list (cons e true-list))
-               (setq false-list (cons e false-list))))
+    (cl-loop for e in l
+             do (if (funcall pred e)
+                    (setq true-list (cons e true-list))
+                  (setq false-list (cons e false-list))))
     (nconc (nreverse false-list)
            (and true-list (nreverse true-list)))))
 

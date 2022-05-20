@@ -48,7 +48,7 @@
   ;; I think this is now fixed.
   )
  (t
-  (case 2
+  (cl-case 2
     (1 (message-box
         "You need to fix `nomis/cider-avoid-multiple-result-prefixes` for this version of CIDER."))
     (2 ; Assume it's fixed.

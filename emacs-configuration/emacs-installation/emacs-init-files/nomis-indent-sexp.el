@@ -67,7 +67,7 @@
                                    (point)))))
      (advice-add ',indentation-command
                  :around
-                 ,(case 2 ; an easy way to turn off the advice if you feel a need to
+                 ,(cl-case 2 ; an easy way to turn off the advice if you feel a need to
                     (1 `(lambda (orig-fun &rest args)
                           (apply orig-fun args)))
                     (2 `(lambda (orig-fun &rest args)

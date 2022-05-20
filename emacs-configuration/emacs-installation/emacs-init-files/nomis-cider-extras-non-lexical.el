@@ -19,7 +19,7 @@
   (let ((inhibit-message t))
     (cider-version)))
 
-(assert (equal (nomis/cider-version)
+(cl-assert (equal (nomis/cider-version)
                (cider-version)))
 
 ;;;; ___________________________________________________________________________
@@ -267,9 +267,9 @@ Control of evaluation:
                (nomis/grab-text :top-level-p top-level-p :delete-p nil))
               (the-text
                ()
-               (case action
+               (cl-case action
                  ((:send-top-level-form)
-                  (case :new-experimental
+                  (cl-case :new-experimental
                     (:old
                      (grab-text t))
                     (:new-experimental
@@ -426,7 +426,7 @@ window."
               :around
               (lambda (orig-fun buffer &rest other-args)
                 (if *nomis/cider-jump-to/reuse-selected-window?*
-                    (case 2
+                    (cl-case 2
                       ;; See https://github.com/clojure-emacs/cider/issues/2499
                       ;; Either of these should work.
                       (1 (switch-to-buffer buffer nil t))
@@ -462,7 +462,7 @@ window."
      (cl-flet ((do-it () (apply orig-fun args)))
        ;; We only get here when `cider-offer-to-open-cljs-app-in-browser` is
        ;; non-null.
-       (assert cider-offer-to-open-cljs-app-in-browser
+       (cl-assert cider-offer-to-open-cljs-app-in-browser
                nil
                "`cider-offer-to-open-cljs-app-in-browser` is unexpectedly true")
        ;; Tell user to use CIDER's built-in approach.

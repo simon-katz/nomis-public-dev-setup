@@ -277,7 +277,7 @@ value."
 
 (defun norg/show-point ()
   (interactive)
-  (case 1
+  (cl-case 1
     (1
      (unless (norg/point-is-visible?)
        ;; Make point visible and leave subtree collapsed
@@ -384,7 +384,7 @@ When in a body, \"current headline\" means the current body's parent headline."
 ;;;; Expanding and collapsing
 
 (defun norg/collapse ()
-  (case 2
+  (cl-case 2
     (1
      ;; This hides too much stuff.
      (norg/w/overview)
@@ -420,7 +420,7 @@ headline."
 (defun norg/collapse-all-and-set-visibility-span (detail)
   (cl-flet ((collapse
              ()
-             (case 1
+             (cl-case 1
                (1 (org-overview))
                (2 (save-excursion
                     (norg/goto-root)
@@ -469,13 +469,13 @@ Like `org-backward-heading-same-level` but:
 
 (defun norg/-heading-same-level/allow-cross-parent/helper (direction)
   (nomis/scrolling/with-maybe-maintain-line-no-in-window
-    (let ((start-position-fun (case direction
+    (let ((start-position-fun (cl-case direction
                                 (:forward 'norg/w/end-of-line)
                                 (:backward 'norg/w/beginning-of-line)))
-          (re-search-function (case direction
+          (re-search-function (cl-case direction
                                 (:forward 're-search-forward)
                                 (:backward 're-search-backward)))
-          (post-search-adjust-function (case direction
+          (post-search-adjust-function (cl-case direction
                                          (:forward 'norg/w/beginning-of-line)
                                          (:backward #'(lambda ())))))
       (let* ((text-to-look-for (save-excursion
@@ -498,7 +498,7 @@ Like `org-backward-heading-same-level` but:
                 (funcall post-search-adjust-function))
             (progn
               (norg/w/beginning-of-line)
-              (let* ((msg (case direction
+              (let* ((msg (cl-case direction
                             (:forward
                              "No next heading at this level, even across parents")
                             (:backward
@@ -666,7 +666,7 @@ Same for the `backward` commands.")
                  ()
                  (if allow-cross-parent?
                      (norg/-heading-same-level/allow-cross-parent/helper
-                      (case n
+                      (cl-case n
                         (1 :forward)
                         (-1 :backward)))
                    (norg/w/forward-heading-same-level n t)))
@@ -911,7 +911,7 @@ When in a body, \"current headline\" means the current body's parent headline."
 
 (defun norg/-unmodified-value-and-arg->level (unmodified-value arg setting-kind)
   (let* ((delta (if (numberp arg) arg 1))
-         (f (ecase setting-kind
+         (f (cl-ecase setting-kind
               (:less #'-)
               (:more #'+))))
     (funcall f
@@ -922,7 +922,7 @@ When in a body, \"current headline\" means the current body's parent headline."
 
 (defun norg/-out-of-range (v maximum setting-kind current-value)
   (let* ((min-allowed-value (if *expanding-parent?* 1 0)))
-    (ecase setting-kind
+    (cl-ecase setting-kind
       (:no-check
        )
       (:less
@@ -1009,7 +1009,7 @@ When in a body, \"current headline\" means the current body's parent headline."
                      new-level
                      maximum
                      (if out-of-range?
-                         (ecase setting-kind
+                         (cl-ecase setting-kind
                            ((:less :setting-min)
                             " —- already fully collapsed")
                            ((:more :setting-max)

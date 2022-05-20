@@ -19,7 +19,7 @@
 (setq diff-hl-show-hunk-inline-popup-smart-lines nil)
 
 (setq diff-hl-show-hunk-function
-      (case :default
+      (cl-case :default
         (:default 'diff-hl-show-hunk-inline-popup)
         (:other   'diff-hl-show-hunk-posframe)))
 

@@ -162,7 +162,7 @@
                          string)
          0))
 
-  (assert (equal (mapcar 'reasonable-string-for-frame-width-or-height-p
+  (cl-assert (equal (mapcar 'reasonable-string-for-frame-width-or-height-p
                          '("0" "1" "12" "123" "1234" "xyz12"))
                  '(nil t t t nil nil)))
 
@@ -229,7 +229,7 @@
 ;;;; Fix for broken `move-frame-to-screen-bottom`
 
 (defun move-frame-to-screen-bottom/nomis/hacked (n-pixels)
-  (case 2
+  (cl-case 2
     (1
      (move-frame-to-screen-bottom n-pixels))
     (2

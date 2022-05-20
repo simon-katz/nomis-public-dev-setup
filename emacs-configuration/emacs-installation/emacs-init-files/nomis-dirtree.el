@@ -341,7 +341,7 @@ With prefix argument select `nomis/dirtree/buffer'"
 
 (defun nomis/dirtree/setup-children (tree)
   "expand directory"
-  (case nomis/dirtree/approach-to-children
+  (cl-case nomis/dirtree/approach-to-children
     (:old
      (or (widget-get tree :args)
          (let ((directory (widget-get tree :file))
@@ -533,7 +533,7 @@ With prefix argument select `nomis/dirtree/buffer'"
   (null *nomis/dirtree/filenames/future-list*))
 
 (defun nomis/dirtree/history-step-back-impl ()
-  (assert (not (nomis/dirtree/no-history?)))
+  (cl-assert (not (nomis/dirtree/no-history?)))
   (let* ((filename (pop *nomis/dirtree/filenames/history-list*)))
     (push *nomis/dirtree/filenames/current*
           *nomis/dirtree/filenames/future-list*)
@@ -541,7 +541,7 @@ With prefix argument select `nomis/dirtree/buffer'"
     (nomis/dirtree/goto-filename filename)))
 
 (defun nomis/dirtree/history-step-forward-impl ()
-  (assert (not (nomis/dirtree/no-future?)))
+  (cl-assert (not (nomis/dirtree/no-future?)))
   (let* ((filename (pop *nomis/dirtree/filenames/future-list*)))
     (push *nomis/dirtree/filenames/current*
           *nomis/dirtree/filenames/history-list*)
@@ -560,7 +560,7 @@ With prefix argument select `nomis/dirtree/buffer'"
 ;;;; nomis/dirtree/with-run-in-dirtree-window-or-buffer
 
 (defun nomis/dirtree/with-run-in-dirtree-window-or-buffer-fun (fun)
-  (assert (get-buffer nomis/dirtree/buffer))
+  (cl-assert (get-buffer nomis/dirtree/buffer))
   (cl-flet ((do-it () (funcall fun)))
     (save-selected-window
       (let* ((w (nomis/find-window-in-any-frame-pref-this-one
@@ -582,7 +582,7 @@ With prefix argument select `nomis/dirtree/buffer'"
 ;;;; nomis/dirtree/with-run-in-dirtree-buffer
 
 (defun nomis/dirtree/with-run-in-dirtree-buffer-fun (fun)
-  (assert (get-buffer nomis/dirtree/buffer))
+  (cl-assert (get-buffer nomis/dirtree/buffer))
   (cl-flet ((do-it () (funcall fun)))
     (with-current-buffer nomis/dirtree/buffer
       (do-it))))
@@ -606,10 +606,10 @@ With prefix argument select `nomis/dirtree/buffer'"
                   ;; problem.
                   )))))
     (save-selected-window
-      (loop for w in (get-buffer-window-list nomis/dirtree/buffer nil t)
-            do (progn
-                 (select-window w)
-                 (do-it))))))
+      (cl-loop for w in (get-buffer-window-list nomis/dirtree/buffer nil t)
+               do (progn
+                    (select-window w)
+                    (do-it))))))
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ;;;; nomis/dirtree/with-fix-selection-in-all-windows
@@ -634,7 +634,7 @@ With prefix argument select `nomis/dirtree/buffer'"
 (defvar *in-nomis/dirtree/with-run-in-dirtree-window-and-fixup-selection?* nil)
 
 (defun nomis/dirtree/with-run-in-dirtree-window-and-fixup-selection-fun (fun)
-  (assert (get-buffer nomis/dirtree/buffer))
+  (cl-assert (get-buffer nomis/dirtree/buffer))
   (cl-flet ((do-it () (funcall fun)))
     (if *in-nomis/dirtree/with-run-in-dirtree-window-and-fixup-selection?*
         (progn
@@ -707,7 +707,7 @@ With prefix argument select `nomis/dirtree/buffer'"
 
 (defun nomis/dirtree/turn-on-auto-refresh ()
   (when (not nomis/dirtree/auto-refresh?)
-    (assert (null nomis/dirtree/directory-watchers))
+    (cl-assert (null nomis/dirtree/directory-watchers))
     (setq nomis/dirtree/auto-refresh? t)
     (nomis/dirtree/refresh/plain)
     (mapc #'nomis/dirtree/add-directory-watcher
@@ -718,7 +718,7 @@ With prefix argument select `nomis/dirtree/buffer'"
     (setq nomis/dirtree/auto-refresh? nil)
     (mapc #'nomis/dirtree/remove-directory-watcher
           nomis/dirtree/expanded-directories)
-    (assert (null nomis/dirtree/directory-watchers))))
+    (cl-assert (null nomis/dirtree/directory-watchers))))
 
 (defun nomis/dirtree/toggle-auto-refresh ()
   (interactive)
@@ -772,11 +772,11 @@ With prefix argument select `nomis/dirtree/buffer'"
                                          (file-notify-valid-p (cdr entry)))))))
                   (nomis/dirtree/remove-roots-whose-dirs-are-deleted
                    ()
-                   (loop for tree in (copy-list (nomis/dirtree/all-trees))
-                         unless (file-exists-p (nomis/dirtree/widget-file tree))
-                         do (progn
-                              (nomis/dirtree/goto-widget tree)
-                              (nomis/dirtree/delete-tree/do-it)))))
+                   (cl-loop for tree in (copy-list (nomis/dirtree/all-trees))
+                            unless (file-exists-p (nomis/dirtree/widget-file tree))
+                            do (progn
+                                 (nomis/dirtree/goto-widget tree)
+                                 (nomis/dirtree/delete-tree/do-it)))))
           (let* ((*nomis/dirtree/inhibit-history?* t))
             (nomis/dirtree/with-run-in-dirtree-window-and-fixup-selection
               (nomis/dirtree/remove-watchers-of-deleted-dirs)
@@ -933,7 +933,7 @@ With prefix argument select `nomis/dirtree/buffer'"
   (widget-get widget :tag))
 
 (defun nomis/dirtree/widget-parent (widget)
-  (assert (nomis/dirtree/widget? widget))
+  (cl-assert (nomis/dirtree/widget? widget))
   (widget-get widget :parent))
 
 (defun nomis/dirtree/widget-children/all (widget)
@@ -948,7 +948,7 @@ With prefix argument select `nomis/dirtree/buffer'"
 
 (defun nomis/dirtree/selected-widget/with-extras ()
   ;; TODO Add more of these assertions.
-  (assert (equal (buffer-name (current-buffer))
+  (cl-assert (equal (buffer-name (current-buffer))
                  nomis/dirtree/buffer)
           t
           "Buffer name is %s, but wanted %s"
@@ -968,7 +968,7 @@ With prefix argument select `nomis/dirtree/buffer'"
       nomis/dirtree/widget-file))
 
 (defun nomis/dirtree/root-p (widget)
-  (assert (nomis/dirtree/widget? widget))
+  (cl-assert (nomis/dirtree/widget? widget))
   (plist-get (rest widget)
              :nomis/root))
 
@@ -1091,7 +1091,7 @@ With prefix argument select `nomis/dirtree/buffer'"
                                       (nomis/dirtree/selected-file))
                            (signal 'nomis/dirtree/file-not-found
                                    target-file)))))
-                    (search
+                    (cl-search
                      ()
                      (cl-loop for (f . r) on path
                               do (progn
@@ -1102,14 +1102,14 @@ With prefix argument select `nomis/dirtree/buffer'"
           (when *nomis/dirtree/goto-filename/start-at-root?*
             (nomis/dirtree/goto-root/impl))
           (condition-case err
-              (search)
+              (cl-search)
             (nomis/dirtree/file-not-found
              (if refresh-not-allowed?
                  (signal (car err) (cdr err))
                (progn
                  (nomis/dirtree/refresh-tree/impl/no-arg)
                  (nomis/dirtree/goto-root/impl) ; because refresh sometimes jumps us to mad and/or bad place
-                 (search))))))))))
+                 (cl-search))))))))))
 
 (defun nomis/dirtree/refresh/internal ()
   (mapc #'nomis/dirtree/refresh-tree/impl/with-arg
@@ -1181,7 +1181,7 @@ Then display contents of file under point in other window.")
          (error "No such file: %S" filename))))
 
 (defun nomis/dirtree/has-file? (filename)
-  (assert (get-buffer nomis/dirtree/buffer))
+  (cl-assert (get-buffer nomis/dirtree/buffer))
   (with-current-buffer nomis/dirtree/buffer
     (nomis/dirtree/filename->root-widget/no-error filename)))
 
@@ -1639,8 +1639,8 @@ sub-subdirectories, etc, so that subsequent expansion shows only one level."
                           (line-end-position)
                           (plist-get (rest widget) :from)
                           (plist-get (rest widget) :to)
-                          (loop for k in (rest widget) by 'cddr
-                                collect k)
+                          (cl-loop for k in (rest widget) by 'cddr
+                                   collect k)
                           (-map #'car
                                 (nomis/dirtree/widget-children/all widget))
                           (-map #'car
@@ -1667,9 +1667,9 @@ Mostly for debugging purposes."
     (nomis/dirtree/show-widget-info widget t)))
 
 (defun nomis/dirtree/delete-tree/do-it ()
-  (assert (get-buffer nomis/dirtree/buffer))
+  (cl-assert (get-buffer nomis/dirtree/buffer))
   (nomis/dirtree/with-run-in-dirtree-buffer
-    (assert (tree-mode-root-linep))
+    (cl-assert (tree-mode-root-linep))
     (nomis/dirtree/collapse-all) ; an easy way to remove watchers.
     (tree-mode-delete (tree-mode-tree-ap))))
 

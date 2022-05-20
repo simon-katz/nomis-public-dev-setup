@@ -82,7 +82,7 @@
 
 (setq cider-eval-result-prefix ";; => ")
 
-(setq cider-repl-result-prefix (case 1
+(setq cider-repl-result-prefix (cl-case 1
                                  ;; This is broken when the result is large.
                                  ;; It seems that `cider-repl-emit-result` is
                                  ;; called for each chunk of output.
@@ -98,9 +98,9 @@
 (when (equal (cider-version) "CIDER 0.10.0")
   ;; Fix curly braces bug.
   (add-hook 'cider-repl-mode-hook
-            '(lambda ()
-               (define-key cider-repl-mode-map "{" #'paredit-open-curly)
-               (define-key cider-repl-mode-map "}" #'paredit-close-curly))))
+            (lambda ()
+              (define-key cider-repl-mode-map "{" #'paredit-open-curly)
+              (define-key cider-repl-mode-map "}" #'paredit-close-curly))))
 
 
 (defun nomis/cider-repl-mode-c-c-c-r-replacement (arg)

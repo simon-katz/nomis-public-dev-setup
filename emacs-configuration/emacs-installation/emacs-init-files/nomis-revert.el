@@ -186,7 +186,7 @@
                              revert-modified-buffers?
                              out-of-sync-buffers-only?
                              tell-user-about-modified-non-reverting-buffers?)
-        (ecase mode
+        (cl-ecase mode
           (:unmodified-only-if-out-of-sync  '(t   nil t   nil))
           (:unmodified-buffers-only         '(t   nil nil t))
           (:modified-buffers-only           '(nil t   nil nil))

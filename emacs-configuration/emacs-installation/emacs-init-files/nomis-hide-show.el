@@ -336,7 +336,7 @@ Otherwise, go to the beginning of the sexp after point and show it."
     (cl-flet ((error--cannot-move
                ()
                (error "Can't move forward")))
-      (case nomis/hs/step-forward-position
+      (cl-case nomis/hs/step-forward-position
         (:before-form
          (cond ((not (nomis/can-forward-sexp?))
                 (error--cannot-move))
