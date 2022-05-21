@@ -258,24 +258,20 @@ end if
      wrapped?]))
 
 (defn ^:private move-space-vertically [direction]
-  (touch-debug-file (case direction
-                      :up   "nomis-spaces-up-grid-ran"
-                      :down "nomis-spaces-down-grid-ran"))
-  (let [current-space (->> (get-desktop-picture-filename)
-                           :out
-                           (re-find #"macos-desktop-backgrounds:([0-9]*)")
-                           second
-                           parse-long)
-        [new-space wrapped?] (next-space-details current-space
-                                                 direction)]
-    (touch-debug-file (format (case direction
-                                :up   "nomis-spaces-up-grid-ran-%02d"
-                                :down "nomis-spaces-down-grid-ran-%02d")
-                              new-space))
-    (go-to-space new-space)
-    (when wrapped?
-      (flash-screen))
-    new-space))
+  (let [filename-to-touch (str "move-space-on-grid--" (name direction))]
+    (touch-debug-file filename-to-touch)
+    (let [current-space (->> (get-desktop-picture-filename)
+                             :out
+                             (re-find #"macos-desktop-backgrounds:([0-9]*)")
+                             second
+                             parse-long)
+          [new-space wrapped?] (next-space-details current-space
+                                                   direction)]
+      (touch-debug-file (str filename-to-touch "-" new-space))
+      (go-to-space new-space)
+      (when wrapped?
+        (flash-screen))
+      new-space)))
 
 ;;;; ___________________________________________________________________________
 ;;;; Do stuff
