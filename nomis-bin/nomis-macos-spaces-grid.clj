@@ -290,5 +290,3 @@ end if
                       "down"  :down
                       "left"  :left
                       "right" :right))
-
-;;;; TODO: Rename file `nomis-move-space-on-grid.clj`
