@@ -7,59 +7,144 @@
 ;;;;   for navigating macOS Spaces (virtual desktops). It is not available for
 ;;;;   recent versions of macOS or recent Mac hardware.
 
+;;;; - A key feature of TotalSpaces is a grid of spaces. (macOS used to have
+;;;;   this functionality built in until the early 2010s (until El Capitan,
+;;;;   I think) but for some reason it was removed.)
+
 ;;;; - I hope a new version of TotalSpaces becomes available at some point.
 ;;;;   As of today (2022-05-21), that seems to be a possibility -- see
 ;;;;   https://discuss.binaryage.com/t/can-we-help-test-total-spaces-3-if-we-have-apple-silicon/8199/134
 
-;;;; - I've hacked a replacement for parts of TotalSpaces's functionality.
-;;;;   And it is very much a hack -- cobbling a bunch of things together.
+;;;; - Even though macOS doesn't support a Spaces grid, we can still have a grid
+;;;;   in our head. I have 16 Spaces. In macOS that's just a linear sequence of
+;;;;   Spaces, but in my head it's a 4 x 4 grid. (If you don't want 4 x 4, You
+;;;;   can easily change things below to have a different size and shape grid.)
+;;;;
+;;;;   My notional grid looks like this:
+;;;;
+;;;;        ----+----+----+----
+;;;;       |  1 |  2 |  3 |  4 |
+;;;;       |----+----+----+----|
+;;;;       |  5 |  6 |  7 |  8 |
+;;;;       |----+----+----+----|
+;;;;       |  9 | 10 | 11 | 12 |
+;;;;       |----+----+----+----|
+;;;;       | 13 | 14 | 15 | 16 |
+;;;;        ----+----+----+----
 
-;;;; - TODO: Explain the Spaces grid.
+;;;; - This script provides grid-aware functionality for moving left, right, up
+;;;;   and down through the notional Spaces grid. When moving left from the
+;;;;   leftmost column or right from the rightmost column, it wraps and stays
+;;;;   within the same row. When moving up or down it jumps by multiple spaces,
+;;;;   up or down one space within a column. wrapping when moving up from the
+;;;;   topmost row or down from the bottom-most row.
 
-;;;; - This Script provides the ability to move up and down a grid of Spaces.
-;;;;   The grid exists in your head, not in macOS, so the visual feedback is not
-;;;;   ideal -- it indicates left and right movement when you've moved up
-;;;;   or down.
-
-;;;; - TODO: Explain what you've done in BetterTouchTool.
-;;;;         - Not just calling this script.
+;;;; - The grid is not part of macOS, so the visual feedback is not ideal -- it
+;;;;   indicates left and right movement when you've moved up or down.
+;;;;   (Maybe I can find a way to improve that.)
 
 
-;;;; Overview
+;;;; See Also
 ;;;; ========
 
-;;;; •••
+;;;; You might want to consider Keyboard Maestro.
+;;;;
+;;;; It seems that Keyboard Maestro way be the eay to go if you want more
+;;;; control. I came across a couple of things (maybe related):
+;;;;
+;;;; https://forum.keyboardmaestro.com/t/move-frontmost-window-to-a-different-space/10512
+;;;; The macro moves the mouse to the toolbar of the window, performs
+;;;; a click-and-hold, and activates one of Mission Control’s Space movement
+;;;; shortcuts (see below). After that, it moves the mouse back to the
+;;;; previous position.
+;;;;
+;;;; https://forum.keyboardmaestro.com/t/macros-desktop-spaces-macros-to-improve-navigation-and-window-management-v1-1/27033
+;;;; MACROS: Desktop Spaces • Macros to Improve Navigation and Window Management, v1.1
+;;;;
+;;;; Both look like things you could modify to use the keystrokes you want, get wrapping,
+;;;; get nice animations.
+;;;;
+;;;; But the Space switching is /so/ slow. So I gave up on it.
 
 
-;;;; Installation
-;;;; ============
+;;;; Suggested Keystrokes
+;;;; ====================
 
-;;;; TODO: Babashka
+;;;; (You will need a keystroke-to-action mapper. In this section I talk about
+;;;; keystrokes without saying how they are mapped to actions. See the Set Up
+;;;; section for that.)
+
+;;;; I suggest using keystrokes that reinforce the notional grid by using
+;;;; a grid of keys on the keyboard.
+
+;;;; I use the following as my grid:
+;;;;
+;;;;         7 8 9 0
+;;;;         U I O P
+;;;;         J K L ;
+;;;;         M , . /
+
+;;;; To switch to a Space, I use Control-Option-Command-<X>, where:
+;;;; - <X> can be one of the keys in the grid above.
+;;;; - <X> can be a cursor key, to move up/down/left/right.
+
+;;;; To move a window to a Space, I add the Fn key to the above keystrokes.
+;;;; I only have this for moving a window directly to a Space, not for moving
+;;;; Spaces through the grid. Maybe I can add that missing functionality later.
+
+
+;;;; Babashka
+;;;; ========
+
+;;;; This script is written in Babashka (https://github.com/babashka/babashka).
+
+;;;; To install Babashka, see https://github.com/babashka/babashka#installation
 
 
 ;;;; Set Up
 ;;;; ======
 
-;;;; - You need a tool to map keystrokes to actions. I use BetterTouchTool.
-;;;;   Below we call this the keystroke-to-action mapper.
+;;;; - This script invokes macOS functionality to switch Spaces using the
+;;;;   keystrokes that are defined in System Preferences / Keyboard / Shortcuts
+;;;;   / Mission Control.
 
-;;;; - Using your keystroke-to-action mapper, set up keystrokes to invoke the
-;;;;   following commands:
-;;;;   - <path-to-this-script> down
-;;;;   - <path-to-this-script> up
-;;;;   - <path-to-this-script> left
-;;;;   - <path-to-this-script> right
-
-;;;; - Set up keyboard shortcuts to switch between Spaces:
-;;;;     System Preferences / Keyboard / Shortcuts / Mission Control
+;;;;   If you want to use this script as-is, set things as follows:
+;;;;
 ;;;;     - Switch to Desktop  1: Control-1
 ;;;;     - Switch to Desktop  2: Control-2
-;;;;       etc
+;;;;     - Switch to Desktop  3: Control-3
+;;;;     - Switch to Desktop  4: Control-4
+;;;;     - Switch to Desktop  5: Control-5
+;;;;     - Switch to Desktop  6: Control-6
+;;;;     - Switch to Desktop  7: Control-7
+;;;;     - Switch to Desktop  8: Control-8
+;;;;     - Switch to Desktop  9: Control-9
 ;;;;     - Switch to Desktop 10: Control-0
 ;;;;     - Switch to Desktop 11: Control-Option-1
 ;;;;     - Switch to Desktop 12: Control-Option-2
-;;;;     - etc
-;;;;   This script invokes those keystrokes to switch between Spaces.
+;;;;     - Switch to Desktop 13: Control-Option-3
+;;;;     - Switch to Desktop 14: Control-Option-4
+;;;;     - Switch to Desktop 15: Control-Option-5
+;;;;     - Switch to Desktop 16: Control-Option-6
+;;;;
+;;;;  If you want different keystrokes you will need to edit this script.
+
+;;;; - Copy this script to somewhere on your computer. If it is not executable,
+;;;;   make it so (`chmod +x <filename>`).
+
+;;;; - You need a tool to map keystrokes to actions -- a keystroke-to-action
+;;;;   mapper. I use BetterTouchTool, and here I talk about how I set that up.
+
+;;;; - For most of the keystrokes defined in the Suggested Keystrokes section.
+;;;;   I use built-in BetterTouchTool functionality.
+
+;;;; - For moving around the grid I invoke this script using
+;;;;   BetterTouchTool's "Execute Terminal Command (Async, non-blocking)"
+;;;;   action type to invoke the foilowing commands:
+;;;;       <full-path-to-this-script> down
+;;;;       <full-path-to-this-script> up
+;;;;       <full-path-to-this-script> left
+;;;;       <full-path-to-this-script> right
 
 ;;;; - When wrapping across the top or bottom of the Spaces grid, this script
 ;;;;   tries to flash the screen. If you want that to happen, turn on the
@@ -124,6 +209,8 @@
 ;;;; Other Useful Tools
 ;;;; ==================
 
+;;;; - WhichSpace
+
 ;;;; - SpaceMan (https://github.com/Jaysce/Spaceman) uses the macOS menu bar to
 ;;;;   show which Space is current.
 
@@ -137,8 +224,8 @@
 ;;;;         to provide feedback such as flashing the current Space number or
 ;;;;         other graphic after moving Space.
 
-;;;; - TODO: An overview grid. Is there somthing that does this? I don't
-;;;;         think so.
+;;;; - TODO: Display of an overview grid. Is there something that does this?
+;;;;         I don't think so.
 
 
 ;;;; ___________________________________________________________________________
