@@ -247,17 +247,26 @@ end if
 ;;;; Our algorithm
 
 (defn ^:private next-space-details [from direction]
-  (let [op       (case direction :up - :down +)
-        n-spaces (* n-rows n-columns)
-        to       (inc (mod (dec (op from n-columns))
-                           n-spaces))
-        wrapped? (case direction
-                   :up   (> to from)
-                   :down (< to from))]
+  (let [n-spaces    (* n-rows n-columns)
+        to          (case direction
+                      :up   (inc (mod (dec (- from n-columns))
+                                      n-spaces))
+                      :down (inc (mod (dec (+ from n-columns))
+                                      n-spaces))
+                      :left (if (zero? (mod (dec from) n-columns))
+                              (+ from (dec n-columns))
+                              (dec from))
+                      :right (if (zero? (mod from n-columns))
+                               (- from (dec n-columns))
+                               (inc from)))
+        wrapped?-op (case direction
+                      (:up :left)    >
+                      (:down :right) <)
+        wrapped?    (wrapped?-op to from)]
     [to
      wrapped?]))
 
-(defn ^:private move-space-vertically [direction]
+(defn ^:private move-space-on-grid [direction]
   (let [filename-to-touch (str "move-space-on-grid--" (name direction))]
     (touch-debug-file filename-to-touch)
     (let [current-space (->> (get-desktop-picture-filename)
@@ -276,8 +285,10 @@ end if
 ;;;; ___________________________________________________________________________
 ;;;; Do stuff
 
-(touch-debug-file (first *command-line-args*))
+(move-space-on-grid (case (first *command-line-args*)
+                      "up"    :up
+                      "down"  :down
+                      "left"  :left
+                      "right" :right))
 
-(move-space-vertically (case (first *command-line-args*)
-                         "up"   :up
-                         "down" :down))
+;;;; TODO: Rename file `nomis-move-space-on-grid.clj`
