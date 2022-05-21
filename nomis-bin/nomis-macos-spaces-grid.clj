@@ -162,16 +162,13 @@
 ;;;;     Space. /NB/ This means that if you change the order of Spaces you will
 ;;;;     break this script's idea of the grid.
 ;;;;   - We got the idea from https://stackoverflow.com/a/34691386/2148181
-;;;;   - TODO: Move your macos-desktop-backgrounds to this repo (this dir) so
-;;;;           that other people can use them.
 ;;;;   - For each Space:
-;;;;     - Create a desktop background picture file. The filename must include
+;;;;     - You need a desktop background picture file. The filename must include
 ;;;;       the Space number.
 ;;;;     - Set up the desktop background picture in
 ;;;;       System Preferences / Desktop & Screen Saver.
-;;;;   - I generated the files using
-;;;;     https://seotoolscentre.com/text-to-image-generator
-;;;;   - I use the following filenames:
+;;;;   - I use the files in the `macos-desktop-backgrounds` subdirectory where
+;;;;     this script is. My files have the following names:
 ;;;;        1.png
 ;;;;        2.png
 ;;;;        3.png
@@ -188,6 +185,8 @@
 ;;;;        14.png
 ;;;;        15.png
 ;;;;        16.png
+;;;;   - I generated the files using
+;;;;     https://seotoolscentre.com/text-to-image-generator
 
 
 ;;;; Notes on Use
