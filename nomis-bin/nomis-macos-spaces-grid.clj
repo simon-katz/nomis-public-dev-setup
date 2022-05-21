@@ -195,17 +195,9 @@
 ;;;; - After pressing the keys to invoke your keystroke-to-action mapper, you
 ;;;;   must release them so that when this script does Control-1 etc to
 ;;;;   do the work, no other keys are being pressed.
-;;;;   TODO: Can you somehow "release" the keys in software-land?
-;;;;         I think so. After all, you can press them.
-;;;;         See `go-to-space-applescript-format-string`, for example.
 
 ;;;; - Don't change the order of Spaces. Because of the way we get the current
 ;;;;   Space number, that will break this script's idea of the grid.
-;;;;   - TODO: Is there a better way to find the current Space number?
-;;;;   - TODO: Maybe, if all Space movement were to come through a single
-;;;;           script, you could remember the current Space. But probably that's
-;;;;           a bad idea because you won't know the initial state and you
-;;;;           probably won't always know when the Space changes.
 
 
 ;;;; Other Useful Tools
@@ -220,14 +212,30 @@
 ;;;; Things I Would Like to Do
 ;;;; =========================
 
-;;;; - TODO: Move windows between spaces.
+;;;; TODO: Move windows between spaces.
 
-;;;; - TODO: Is it possible to briefly flash an image? If so, that could be used
-;;;;         to provide feedback such as flashing the current Space number or
-;;;;         other graphic after moving Space.
+;;;; TODO: Is it possible to briefly flash an image? If so, that could be used
+;;;;       to provide feedback such as flashing the current Space number or
+;;;;       other graphic after moving Space.
 
-;;;; - TODO: Display of an overview grid. Is there something that does this?
-;;;;         I don't think so.
+;;;; TODO: Display of an overview grid. Is there something that does this?
+;;;;       I don't think so.
+
+;;;; TODO: Can you somehow "release" the keys in software-land?
+;;;;       I think so. After all, you can press them.
+;;;;       See `go-to-space-applescript-format-string`, for example.
+
+;;;; TODO: Is there a better way to find the current Space number?
+;;;;
+;;;;       Maybe, if all Space movement were to come through a single script,
+;;;;       you could remember the current Space. But probably that's a bad idea
+;;;;       because you won't know the initial state and you probably won't
+;;;;       always know when the Space changes.
+;;;;
+;;;;       Apparently the Total Maestro macros you looked at briefly use
+;;;;       WhichSpace via AppleScript to find the current Space number.
+;;;;       But I looked at that using ScriptEditor which claimed there was no
+;;;;       AppleScript interface.
 
 
 ;;;; ___________________________________________________________________________
