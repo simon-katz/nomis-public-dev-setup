@@ -47,6 +47,8 @@
 ;;;;   following commands:
 ;;;;   - <path-to-this-script> down
 ;;;;   - <path-to-this-script> up
+;;;;   - <path-to-this-script> left
+;;;;   - <path-to-this-script> right
 
 ;;;; - Set up keyboard shortcuts to switch between Spaces:
 ;;;;     System Preferences / Keyboard / Shortcuts / Mission Control
@@ -130,8 +132,6 @@
 ;;;; =========================
 
 ;;;; - TODO: Move windows between spaces.
-
-;;;; - TODO: Do horizontal movement so that you can wrap to the same row.
 
 ;;;; - TODO: Is it possible to briefly flash an image? If so, that could be used
 ;;;;         to provide feedback such as flashing the current Space number or
