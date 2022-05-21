@@ -4,12 +4,12 @@
 ;;;; ============
 
 ;;;; - TotalSpaces (https://totalspaces.binaryage.com/) is, or was, a great tool
-;;;;   for navigating macOS Spaces (virtual desktops). It is not available for
-;;;;   recent versions of macOS or recent Mac hardware.
+;;;;   for navigating macOS Spaces (virtual desktops), but it is not available
+;;;;   for recent versions of macOS or recent Mac hardware.
 
-;;;; - A key feature of TotalSpaces is a grid of spaces. (macOS used to have
-;;;;   this functionality built in until the early 2010s (until El Capitan,
-;;;;   I think) but for some reason it was removed.)
+;;;; - A key feature of TotalSpaces is a grid of Spaces. (macOS used to have
+;;;;   this functionality built in until the early 2010s, until El Capitan,
+;;;;   I think, but for some reason it was removed.)
 
 ;;;; - I hope a new version of TotalSpaces becomes available at some point.
 ;;;;   As of today (2022-05-21), that seems to be a possibility -- see
@@ -34,13 +34,13 @@
 
 ;;;; - This script provides grid-aware functionality for moving left, right, up
 ;;;;   and down through the notional Spaces grid. When moving left from the
-;;;;   leftmost column or right from the rightmost column, it wraps and stays
-;;;;   within the same row. When moving up or down it jumps by multiple spaces,
-;;;;   up or down one space within a column. wrapping when moving up from the
-;;;;   topmost row or down from the bottom-most row.
+;;;;   leftmost column or right from the rightmost column, it wraps and stays in
+;;;;   the same row. When moving up from the topmost row or down from the
+;;;;   bottom-most row, it wraps and stays in the same column.
 
-;;;; - The grid is not part of macOS, so the visual feedback is not ideal -- it
-;;;;   indicates left and right movement when you've moved up or down.
+;;;; - The visual feedback is not ideal because macOS doesn't understand the
+;;;;   grid -- it indicates left and right movement when you've moved up
+;;;;   or down.
 ;;;;   (Maybe I can find a way to improve that.)
 
 
@@ -48,6 +48,10 @@
 ;;;; ========
 
 ;;;; You might want to consider Keyboard Maestro.
+;;;;
+;;;; I took a look at it and some Space-switching functionlity that is build
+;;;; using it, but I found that functionlity to be very slow and I gave up
+;;;; on it.
 ;;;;
 ;;;; It seems that Keyboard Maestro way be the eay to go if you want more
 ;;;; control. I came across a couple of things (maybe related):
@@ -63,8 +67,6 @@
 ;;;;
 ;;;; Both look like things you could modify to use the keystrokes you want, get wrapping,
 ;;;; get nice animations.
-;;;;
-;;;; But the Space switching is /so/ slow. So I gave up on it.
 
 
 ;;;; Suggested Keystrokes
@@ -85,12 +87,14 @@
 ;;;;         M , . /
 
 ;;;; To switch to a Space, I use Control-Option-Command-<X>, where:
-;;;; - <X> can be one of the keys in the grid above.
+;;;; - <X> can be one of the keys in the grid above, to move directly to a Space.
+;;;;   Call these the alphanumeric keystrokes.
 ;;;; - <X> can be a cursor key, to move up/down/left/right.
+;;;;   Call these the cursor keystrokes.
 
-;;;; To move a window to a Space, I add the Fn key to the above keystrokes.
-;;;; I only have this for moving a window directly to a Space, not for moving
-;;;; Spaces through the grid. Maybe I can add that missing functionality later.
+;;;; To move a window to a Space, I add the Fn key to the alphanumeric
+;;;; keystrokes. I don't have this functionality with the cursor keystrokes.
+;;;; Maybe I can add that later.
 
 
 ;;;; Babashka
@@ -127,7 +131,7 @@
 ;;;;     - Switch to Desktop 15: Control-Option-5
 ;;;;     - Switch to Desktop 16: Control-Option-6
 ;;;;
-;;;;  If you want different keystrokes you will need to edit this script.
+;;;;   If you want different keystrokes you will need to edit this script.
 
 ;;;; - Copy this script to somewhere on your computer. If it is not executable,
 ;;;;   make it so (`chmod +x <filename>`).
@@ -135,12 +139,11 @@
 ;;;; - You need a tool to map keystrokes to actions -- a keystroke-to-action
 ;;;;   mapper. I use BetterTouchTool, and here I talk about how I set that up.
 
-;;;; - For most of the keystrokes defined in the Suggested Keystrokes section.
-;;;;   I use built-in BetterTouchTool functionality.
-
-;;;; - For moving around the grid I invoke this script using
-;;;;   BetterTouchTool's "Execute Terminal Command (Async, non-blocking)"
-;;;;   action type to invoke the foilowing commands:
+;;;; - For the keystrokes defined in the Suggested Keystrokes section:
+;;;;   - Alphanumeric keystrokes: I use built-in BetterTouchTool functionality.
+;;;;   - Cursor keystrokes: I invoke this script using
+;;;;     BetterTouchTool's "Execute Terminal Command (Async, non-blocking)"
+;;;;     action type to invoke the foilowing commands:
 ;;;;       <full-path-to-this-script> down
 ;;;;       <full-path-to-this-script> up
 ;;;;       <full-path-to-this-script> left
