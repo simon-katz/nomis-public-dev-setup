@@ -171,7 +171,7 @@
 (def ^:private debug? false)
 
 (def ^:private debug-dir
-  (str "/Users/simonkatz/development-100/repositories/nomis/dev-setup/nomis-public-dev-setup/nomis-bin/.nomis-space-debug/"))
+  (str "/Users/simonkatz/nomis-bin/.nomis-space-debug/"))
 
 ;;;; ___________________________________________________________________________
 ;;;; Utility functions
