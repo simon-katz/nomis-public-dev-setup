@@ -214,6 +214,8 @@
 
 ;;;; TODO: Maybe use yabai to switch Spaces.
 ;;;;       It has `yabai -m space --focus 1` etc.
+;;;;       - See
+;;;;         https://github.com/koekeishiya/yabai/wiki/Commands#space-commands
 ;;;;
 ;;;;       Oh, I just got "cannot focus space due to an error with the
 ;;;;       scripting-addition."
