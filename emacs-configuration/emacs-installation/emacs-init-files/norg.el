@@ -934,6 +934,7 @@ When in a body, \"current headline\" means the current body's parent headline."
       (:setting-max
        (= current-value norg/-plus-infinity)))))
 
+(defvar *norg/wrap-expand-collapse? nil)
 (defvar *norg/-allow-cycle-wrap-now?* nil)
 (defvar *norg/-allow-cycle-wrap-timer* nil)
 
@@ -970,7 +971,8 @@ When in a body, \"current headline\" means the current body's parent headline."
             (normal-behaviour)
           (if (not allow-cycle-wrap-now?)
               (progn
-                (norg/-allow-cycle-to-zero-for-a-while)
+                (when *norg/wrap-expand-collapse?
+                  (norg/-allow-cycle-to-zero-for-a-while))
                 (normal-behaviour))
             ;; Don't cycle if we moved to another position that also
             ;; happens to be fully-expanded.
