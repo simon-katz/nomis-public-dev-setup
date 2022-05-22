@@ -212,6 +212,23 @@
 ;;;; Things I Would Like to Do
 ;;;; =========================
 
+;;;; TODO: Maybe use yabai to switch Spaces.
+;;;;       It has `yabai -m space --focus 1` etc.
+;;;;
+;;;;       Oh, I just got "cannot focus space due to an error with the
+;;;;       scripting-addition."
+;;;;       - Fixed with:
+;;;;             brew services stop yabai
+;;;;             sudo yabai --load-sa
+;;;;             brew services start yabai
+;;;;
+;;;;       This approach has several advantages:
+;;;;       - You don't need to set up keystrokes in Mission Control.
+;;;;       - You don't need to release keys to allow the Mission Control
+;;;;         keystrokes to be invoked.
+;;;;       - It doesn't use animations, so when you move up it doesn't show that
+;;;;         you've moved left/right.
+
 ;;;; TODO: Move windows between spaces.
 
 ;;;; TODO: Is it possible to briefly flash an image? If so, that could be used
@@ -327,15 +344,17 @@ end if
   (osa "tell application \"Finder\" to get (desktop picture) as string"))
 
 (defn ^:private go-to-space [n]
-  (let [[modifier-keys char] (space->shortcut-key-spec n)
-        key-code             (char->key-code char)
-        cmd                  (format go-to-space-applescript-format-string
-                                     key-code
-                                     ;; control down, option down
-                                     (str/join " ,"
-                                               (map #(str % " down")
-                                                    modifier-keys)))]
-    (osa cmd)))
+  (case 2
+    1 (let [[modifier-keys char] (space->shortcut-key-spec n)
+            key-code             (char->key-code char)
+            cmd                  (format go-to-space-applescript-format-string
+                                         key-code
+                                         ;; control down, option down
+                                         (str/join " ,"
+                                                   (map #(str % " down")
+                                                        modifier-keys)))]
+        (osa cmd))
+    2 (shell/sh "/opt/homebrew/bin/yabai" "-m" "space" "--focus" (str n))))
 
 (defn ^:private flash-screen []
   (osa flash-screen-applescript))
