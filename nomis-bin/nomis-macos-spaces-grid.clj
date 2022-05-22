@@ -223,6 +223,9 @@
 ;;;;             brew services stop yabai
 ;;;;             sudo yabai --load-sa
 ;;;;             brew services start yabai
+;;;;       - TODO: Notice when the Space doesn't change (may need try...catch to
+;;;;               not exit), and issue an alert saying to fix -- and maybe fix
+;;;;               automatically -- notifying when finished.
 ;;;;
 ;;;;       This approach has several advantages:
 ;;;;       - You don't need to set up keystrokes in Mission Control.
