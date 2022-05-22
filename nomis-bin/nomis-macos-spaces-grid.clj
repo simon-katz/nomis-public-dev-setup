@@ -363,8 +363,8 @@ end if
     [to
      wrapped?]))
 
-(defn ^:private move-space-on-grid [direction]
-  (let [filename-to-touch (str "move-space-on-grid--" (name direction))]
+(defn ^:private nomis-macos-spaces-grid [direction]
+  (let [filename-to-touch (str "nomis-macos-spaces-grid--" (name direction))]
     (touch-debug-file filename-to-touch)
     (let [current-space (->> (get-desktop-picture-filename)
                              :out
@@ -382,8 +382,8 @@ end if
 ;;;; ___________________________________________________________________________
 ;;;; Do stuff
 
-(move-space-on-grid (case (first *command-line-args*)
-                      "up"    :up
-                      "down"  :down
-                      "left"  :left
-                      "right" :right))
+(nomis-macos-spaces-grid (case (first *command-line-args*)
+                           "up"    :up
+                           "down"  :down
+                           "left"  :left
+                           "right" :right))
