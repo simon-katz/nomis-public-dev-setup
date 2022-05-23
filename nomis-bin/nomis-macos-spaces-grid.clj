@@ -406,8 +406,4 @@ end if
 ;;;; ___________________________________________________________________________
 ;;;; Do stuff
 
-(nomis-macos-spaces-grid (case (first *command-line-args*)
-                           "up"    :up
-                           "down"  :down
-                           "left"  :left
-                           "right" :right))
+(nomis-macos-spaces-grid (keyword (first *command-line-args*)))
