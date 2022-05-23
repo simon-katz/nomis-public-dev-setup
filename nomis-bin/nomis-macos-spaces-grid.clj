@@ -385,7 +385,13 @@ end if
                       (:down :right) <)
         wrapped?    (wrapped?-op to current-space)]
     [to
-     wrapped?]))
+     (when wrapped? :wrapped)]))
+
+(defn ^:private goto-space [current-space]
+  (let [n (parse-long (second *command-line-args*))]
+    [n
+     (when (= current-space n)
+       :same-space)]))
 
 (defn ^:private nomis-macos-spaces-grid [command]
   (let [filename-to-touch (str "nomis-macos-spaces-grid--" (name command))]
@@ -395,12 +401,18 @@ end if
                              (re-find #"macos-desktop-backgrounds:([0-9]*)")
                              second
                              parse-long)
-          [new-space wrapped?] (next-space-details current-space
-                                                   command)]
+          [new-space special-info] (case command
+                                     (:up :down :left :right)
+                                     (next-space-details current-space command)
+                                     ;;
+                                     :goto-space
+                                     (goto-space current-space))]
       (touch-debug-file (str filename-to-touch "-" new-space))
       (make-space-current new-space)
-      (when wrapped?
-        (flash-screen))
+      (condp = special-info
+        :wrapped (flash-screen)
+        :same-space (flash-screen)
+        nil)
       new-space)))
 
 ;;;; ___________________________________________________________________________
