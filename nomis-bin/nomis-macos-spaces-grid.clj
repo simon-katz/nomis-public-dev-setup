@@ -367,23 +367,23 @@ end if
 ;;;; ___________________________________________________________________________
 ;;;; Our algorithm
 
-(defn ^:private next-space-details [from command]
+(defn ^:private next-space-details [current-space command]
   (let [n-spaces    (* n-rows n-columns)
         to          (case command
-                      :up   (inc (mod (dec (- from n-columns))
+                      :up   (inc (mod (dec (- current-space n-columns))
                                       n-spaces))
-                      :down (inc (mod (dec (+ from n-columns))
+                      :down (inc (mod (dec (+ current-space n-columns))
                                       n-spaces))
-                      :left (if (zero? (mod (dec from) n-columns))
-                              (+ from (dec n-columns))
-                              (dec from))
-                      :right (if (zero? (mod from n-columns))
-                               (- from (dec n-columns))
-                               (inc from)))
+                      :left (if (zero? (mod (dec current-space) n-columns))
+                              (+ current-space (dec n-columns))
+                              (dec current-space))
+                      :right (if (zero? (mod current-space n-columns))
+                               (- current-space (dec n-columns))
+                               (inc current-space)))
         wrapped?-op (case command
                       (:up :left)    >
                       (:down :right) <)
-        wrapped?    (wrapped?-op to from)]
+        wrapped?    (wrapped?-op to current-space)]
     [to
      wrapped?]))
 
