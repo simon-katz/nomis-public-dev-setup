@@ -367,9 +367,9 @@ end if
 ;;;; ___________________________________________________________________________
 ;;;; Our algorithm
 
-(defn ^:private next-space-details [from direction]
+(defn ^:private next-space-details [from command]
   (let [n-spaces    (* n-rows n-columns)
-        to          (case direction
+        to          (case command
                       :up   (inc (mod (dec (- from n-columns))
                                       n-spaces))
                       :down (inc (mod (dec (+ from n-columns))
@@ -380,15 +380,15 @@ end if
                       :right (if (zero? (mod from n-columns))
                                (- from (dec n-columns))
                                (inc from)))
-        wrapped?-op (case direction
+        wrapped?-op (case command
                       (:up :left)    >
                       (:down :right) <)
         wrapped?    (wrapped?-op to from)]
     [to
      wrapped?]))
 
-(defn ^:private nomis-macos-spaces-grid [direction]
-  (let [filename-to-touch (str "nomis-macos-spaces-grid--" (name direction))]
+(defn ^:private nomis-macos-spaces-grid [command]
+  (let [filename-to-touch (str "nomis-macos-spaces-grid--" (name command))]
     (touch-debug-file filename-to-touch)
     (let [current-space (->> (get-desktop-picture-filename)
                              :out
@@ -396,7 +396,7 @@ end if
                              second
                              parse-long)
           [new-space wrapped?] (next-space-details current-space
-                                                   direction)]
+                                                   command)]
       (touch-debug-file (str filename-to-touch "-" new-space))
       (go-to-space new-space)
       (when wrapped?
