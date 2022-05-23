@@ -319,6 +319,15 @@
 ;;;; ___________________________________________________________________________
 ;;;; AppleScript
 
+(def ^:private open-with-qview-format-string
+  "tell application \"qView\" to open \"%s\"")
+
+(def ^:private applescript-close-qview-top-window
+  "tell application \"qView\" to if it is running then close its front window")
+
+(def ^:private applescript-quit-qview
+  "tell application \"qView\" to quit")
+
 (def ^:private make-space-current-format-string
   "
 tell application \"System Events\"
@@ -344,6 +353,12 @@ end if
 
 (defn ^:private osa [cmd]
   (shell/sh "osascript" "-e" cmd))
+
+(defn ^:private current-app []
+  (osa "
+tell application \"System Events\"
+    get name of first application process whose frontmost is true
+end tell"))
 
 (defn ^:private get-desktop-picture-filename []
   (osa "tell application \"Finder\" to get (desktop picture) as string"))
@@ -413,6 +428,13 @@ end if
         :wrapped (flash-screen)
         :same-space (flash-screen)
         nil)
+      #_(let [current-app (current-app)]
+          (osa (format open-with-qview-format-string
+                       (format "/Users/simonkatz/development-100/repositories/nomis/dev-setup/nomis-public-dev-setup/nomis-bin/macos-desktop-backgrounds/%s.png"
+                               new-space)))
+          (osa "delay 0.1")
+          ;; (osa applescript-close-qview-top-window)
+          (osa applescript-quit-qview))
       new-space)))
 
 ;;;; ___________________________________________________________________________
