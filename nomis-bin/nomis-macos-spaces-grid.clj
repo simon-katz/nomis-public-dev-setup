@@ -245,7 +245,7 @@
 
 ;;;; TODO: Can you somehow "release" the keys in software-land?
 ;;;;       I think so. After all, you can press them.
-;;;;       See `go-to-space-applescript-format-string`, for example.
+;;;;       See `make-space-current-format-string`, for example.
 
 ;;;; TODO: Is there a better way to find the current Space number?
 ;;;;
@@ -319,7 +319,7 @@
 ;;;; ___________________________________________________________________________
 ;;;; AppleScript
 
-(def ^:private go-to-space-applescript-format-string
+(def ^:private make-space-current-format-string
   "
 tell application \"System Events\"
         tell application \"System Events\"
@@ -348,11 +348,11 @@ end if
 (defn ^:private get-desktop-picture-filename []
   (osa "tell application \"Finder\" to get (desktop picture) as string"))
 
-(defn ^:private go-to-space [n]
+(defn ^:private make-space-current [n]
   (case 2
     1 (let [[modifier-keys char] (space->shortcut-key-spec n)
             key-code             (char->key-code char)
-            cmd                  (format go-to-space-applescript-format-string
+            cmd                  (format make-space-current-format-string
                                          key-code
                                          ;; control down, option down
                                          (str/join " ,"
@@ -398,7 +398,7 @@ end if
           [new-space wrapped?] (next-space-details current-space
                                                    command)]
       (touch-debug-file (str filename-to-touch "-" new-space))
-      (go-to-space new-space)
+      (make-space-current new-space)
       (when wrapped?
         (flash-screen))
       new-space)))
