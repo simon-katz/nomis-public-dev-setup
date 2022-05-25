@@ -1,4 +1,4 @@
-#!/usr/bin/env /usr/local/bin/bb
+#!/usr/bin/env /opt/homebrew/bin/bb
 
 ;;;; Introduction
 ;;;; ============
