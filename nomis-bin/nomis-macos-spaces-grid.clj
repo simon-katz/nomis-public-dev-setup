@@ -319,6 +319,22 @@
 ;;;; ___________________________________________________________________________
 ;;;; AppleScript
 
+(def ^:private flash-picture
+  "
+-- set frontmostApp to (path to frontmost application)
+set frontmostApp to path to frontmost application as text
+activate application \"Preview\"
+tell application \"Preview\" to open \"%s\"
+-- delay 1
+tell application \"Preview\" to close its front window
+-- activate application frontmostApp
+-- activate application (path to frontmost application as text)
+tell application frontmostApp to activate
+")
+
+(def ^:private preview-close-current-window-string
+  "tell application \"Preview\" to if it is running then close its front window")
+
 (def ^:private open-with-qview-format-string
   "tell application \"qView\" to open \"%s\"")
 
@@ -435,6 +451,15 @@ end tell"))
           (osa "delay 0.1")
           ;; (osa applescript-close-qview-top-window)
           (osa applescript-quit-qview))
+      #_
+      (let [;; current-app (current-app)
+            ]
+        (osa (format flash-picture
+                     (format "/Users/simonkatz/development-100/repositories/nomis/dev-setup/nomis-public-dev-setup/nomis-bin/macos-desktop-backgrounds/%s.png"
+                             new-space)))
+        ;; (osa "delay 0.1")
+        ;; (osa preview-close-current-window-string)
+        )
       new-space)))
 
 ;;;; ___________________________________________________________________________
