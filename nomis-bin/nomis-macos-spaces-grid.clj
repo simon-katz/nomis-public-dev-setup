@@ -246,6 +246,8 @@
 ;;;; =========================
 
 ;;;; TODO: Move windows between spaces.
+;;;;       Ah! `yabai -m window --space 2`
+;;;;       - And this reliably moves my Emacs windows, unlike BetterTouchTool.
 
 ;;;; TODO: Is it possible to briefly flash an image? If so, that could be used
 ;;;;       to provide feedback such as flashing the current Space number or
@@ -404,7 +406,13 @@ end tell"))
       (osa cmd))
     ;;
     :yabai
-    (shell/sh "/opt/homebrew/bin/yabai" "-m" "space" "--focus" (str n))))
+    (do
+      ;; TODO: Design the command-line args properly.
+      ;; TODO: Mention "/opt/homebrew" and alternatives in documentation.
+      ;;       Store that in a var.
+      (when (= (second *command-line-args*) "move-window")
+        (shell/sh "/opt/homebrew/bin/yabai" "-m" "window" "--space" (str n)))
+      (shell/sh "/opt/homebrew/bin/yabai" "-m" "space" "--focus" (str n)))))
 
 (defn ^:private flash-screen []
   (osa flash-screen-applescript))
@@ -450,6 +458,7 @@ end tell"))
                                      (:up :down :left :right)
                                      (next-space-details current-space command)
                                      ;;
+                                     ;; TODO: We're not using this, right?
                                      :goto-space
                                      (goto-space current-space))]
       (touch-debug-file (str filename-to-touch "-" new-space))
