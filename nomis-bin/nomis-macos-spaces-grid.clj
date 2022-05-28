@@ -39,12 +39,10 @@
 ;;;;   bottom-most row, it wraps and stays in the same column.
 
 ;;;; - We support two ways of invoking the underlying functionality for
-;;;;   switching between Spaces. The default is to use
-;;;;   yabai (https://github.com/koekeishiya/yabai). You need yabai scripting to
-;;;;   be installed and the yabai service to be running. (TODO: Maybe add
-;;;;   more detail.) If you don't use yabai, you need to change the value of
-;;;;   `approach-for-make-space-current` (below) to `:control-1-etc` and
-;;;;   set up Mission Control keystrokes as described later.
+;;;;   switching between Spaces. The default is to use yabai. The alternative is
+;;;;   to make use of keystrokes that are defined in Mission Control.
+;;;;   See the "Notes on `:yabai` vs `:control-1-etc`" section to help you
+;;;;   decide which approach is right for you.
 
 
 ;;;; See Also
@@ -70,6 +68,22 @@
 ;;;;
 ;;;; Both look like things you could modify to use the keystrokes you want, get wrapping,
 ;;;; get nice animations.
+
+
+;;;; Notes on `:yabai` vs `:control-1-etc`
+;;;; =====================================
+
+;;;; With `:yabai`:
+;;;; - You have to install and set up yabai.
+
+;;;; With `:control-1-etc`
+;;;; - You have to set up keystrokes in Mission Control.
+;;;; - You get misleading visual feedback because macOS doesn't understand the
+;;;;   grid -- it indicates left and right movement when you've moved up or
+;;;;   down. yabai doesn't use animations.
+;;;; - After pressing the keys to invoke your keystroke-to-action mapper, you
+;;;;   must release them so that when this script does Control-1 etc to do the
+;;;;   work, no other keys are being pressed.
 
 
 ;;;; Suggested Keystrokes
@@ -106,6 +120,12 @@
 ;;;; This script is written in Babashka (https://github.com/babashka/babashka).
 
 ;;;; To install Babashka, see https://github.com/babashka/babashka#installation
+
+;;;; If you are using a Mac with an Intel CPU Intel Mac, you need to change the
+;;;; first line of this script to:
+;;;;     #!/usr/bin/env /usr/local/bin/bb
+;;;; That's because Homebrew installs executables in different locations for
+;;;; Intel And Silicon Macs
 
 
 ;;;; General Set Up
@@ -167,15 +187,48 @@
 ;;;;     https://seotoolscentre.com/text-to-image-generator
 
 
+;;;; Additional Set Up for `approach-for-make-space-current` = `:yabai`
+;;;; =================================================================
+
+;;;; If you want to use yabai to invoke the underlying functionality for
+;;;; switching between Spaces, follow the instructions in this section.
+
+;;;; See https://github.com/koekeishiya/yabai.
+
+;;;; The minimum yabai set up is:
+;;;; - Install yabai.
+;;;; - Set up yabai scripting.
+;;;; - Run the yabai service.
+
+;;;; You may want to set up yabai in the same way as me:
+;;;; - I don't use its window management functionality.
+;;;; - I do use its window-border-coloring functionality.
+;;;; - My `yabairc` file is as follows (remove the ;;;; and whitespace at the
+;;;;   start of each line):
+;;;;     --------8<-------- BEGIN my `yabairc` file
+;;;;     # Disable window management.
+;;;;     yabai -m config layout float
+;;;;
+;;;;     # Enable window borders.
+;;;;     yabai -m config window_border on
+;;;;     yabai -m config window_border_width 6
+;;;;     yabai -m config active_window_border_color 0xFF0000FF   # - was 0XFF50FA7B
+;;;;     yabai -m config normal_window_border_color 0x00112233 # transparent - was 0xFFBD93F9
+;;;;     --------8<-------- END my `yabairc` file
+
+
 ;;;; Additional Set Up for `approach-for-make-space-current` = `:control-1-etc`
 ;;;; ==========================================================================
 
-;;;; If you set `approach-for-make-space-current` to `:control-1-etc` (not the
-;;;; default of `:yabai`), this script invokes macOS functionality to switch
-;;;; Spaces using the keystrokes that are defined in System Preferences /
-;;;; Keyboard / Shortcuts / Mission Control.
-;;;;
-;;;; In that case, to use this script as-is set things as follows:
+;;;; If you want to use Mission Control keystrokes to invoke the underlying
+;;;; functionality for switching between Spaces, follow the instructions in
+;;;; this section.
+
+;;;; Change the value of `approach-for-make-space-current` (below) to
+;;;; `:control-1-etc`.
+
+;;;; In System Preferences / Keyboard / Shortcuts / Mission Control, set things
+;;;; as follows:
 ;;;;
 ;;;;     - Switch to Desktop  1: Control-1
 ;;;;     - Switch to Desktop  2: Control-2
@@ -194,30 +247,15 @@
 ;;;;     - Switch to Desktop 15: Control-Option-5
 ;;;;     - Switch to Desktop 16: Control-Option-6
 ;;;;
-;;;; If you want different keystrokes you will need to edit this script.
+;;;; You can use different keystrokes, but then you would have to edit this
+;;;; script to invoke those.
 
 
 ;;;; Notes on Use
 ;;;; ============
 
-;;;; - Don't change the order of Spaces. Because of the way we get the current
-;;;;   Space number, that will break this script's idea of the grid.
-
-
-;;;; Notes on `:yabai` vs `:control-1-etc`
-;;;; =====================================
-
-;;;; - With `:control-1-etc`: You have to set up keystrokes in Mission Control
-;;;; - as described above.
-
-;;;; - With `:control-1-etc`: You get misleading visual feedback because macOS
-;;;;   doesn't understand the grid -- it indicates left and right movement when
-;;;;   you've moved up or down. yabai doesn't use animations.
-
-;;;; - With `:control-1-etc`: After pressing the keys to invoke your
-;;;;   keystroke-to-action mapper, you must release them so that when this
-;;;;   script does Control-1 etc to do the work, no other keys are
-;;;;   being pressed.
+;;;; Don't change the order of Spaces. Because of the way we get the current
+;;;; Space number, that will break this script's idea of the grid.
 
 
 ;;;; Other Useful Tools
