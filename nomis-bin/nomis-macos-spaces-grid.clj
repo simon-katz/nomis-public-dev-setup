@@ -38,10 +38,13 @@
 ;;;;   the same row. When moving up from the topmost row or down from the
 ;;;;   bottom-most row, it wraps and stays in the same column.
 
-;;;; - The visual feedback is not ideal because macOS doesn't understand the
-;;;;   grid -- it indicates left and right movement when you've moved up
-;;;;   or down.
-;;;;   (Maybe I can find a way to improve that.)
+;;;; - We support two ways of invoking the underlying functionality for
+;;;;   switching between Spaces. The default is to use
+;;;;   yabai (https://github.com/koekeishiya/yabai). You need yabai scripting to
+;;;;   be installed and the yabai service to be running. (TODO: Maybe add
+;;;;   more detail.) If you don't use yabai, you need to change the value of
+;;;;   `approach-for-make-space-current` (below) to `:control-1-etc` and
+;;;;   set up Mission Control keystrokes as described later.
 
 
 ;;;; See Also
@@ -105,33 +108,8 @@
 ;;;; To install Babashka, see https://github.com/babashka/babashka#installation
 
 
-;;;; Set Up
-;;;; ======
-
-;;;; - This script invokes macOS functionality to switch Spaces using the
-;;;;   keystrokes that are defined in System Preferences / Keyboard / Shortcuts
-;;;;   / Mission Control.
-
-;;;;   If you want to use this script as-is, set things as follows:
-;;;;
-;;;;     - Switch to Desktop  1: Control-1
-;;;;     - Switch to Desktop  2: Control-2
-;;;;     - Switch to Desktop  3: Control-3
-;;;;     - Switch to Desktop  4: Control-4
-;;;;     - Switch to Desktop  5: Control-5
-;;;;     - Switch to Desktop  6: Control-6
-;;;;     - Switch to Desktop  7: Control-7
-;;;;     - Switch to Desktop  8: Control-8
-;;;;     - Switch to Desktop  9: Control-9
-;;;;     - Switch to Desktop 10: Control-0
-;;;;     - Switch to Desktop 11: Control-Option-1
-;;;;     - Switch to Desktop 12: Control-Option-2
-;;;;     - Switch to Desktop 13: Control-Option-3
-;;;;     - Switch to Desktop 14: Control-Option-4
-;;;;     - Switch to Desktop 15: Control-Option-5
-;;;;     - Switch to Desktop 16: Control-Option-6
-;;;;
-;;;;   If you want different keystrokes you will need to edit this script.
+;;;; General Set Up
+;;;; ==============
 
 ;;;; - Copy this script to somewhere on your computer. If it is not executable,
 ;;;;   make it so (`chmod +x <filename>`).
@@ -189,15 +167,57 @@
 ;;;;     https://seotoolscentre.com/text-to-image-generator
 
 
+;;;; Additional Set Up for `approach-for-make-space-current` = `:control-1-etc`
+;;;; ==========================================================================
+
+;;;; If you set `approach-for-make-space-current` to `:control-1-etc` (not the
+;;;; default of `:yabai`), this script invokes macOS functionality to switch
+;;;; Spaces using the keystrokes that are defined in System Preferences /
+;;;; Keyboard / Shortcuts / Mission Control.
+;;;;
+;;;; In that case, to use this script as-is set things as follows:
+;;;;
+;;;;     - Switch to Desktop  1: Control-1
+;;;;     - Switch to Desktop  2: Control-2
+;;;;     - Switch to Desktop  3: Control-3
+;;;;     - Switch to Desktop  4: Control-4
+;;;;     - Switch to Desktop  5: Control-5
+;;;;     - Switch to Desktop  6: Control-6
+;;;;     - Switch to Desktop  7: Control-7
+;;;;     - Switch to Desktop  8: Control-8
+;;;;     - Switch to Desktop  9: Control-9
+;;;;     - Switch to Desktop 10: Control-0
+;;;;     - Switch to Desktop 11: Control-Option-1
+;;;;     - Switch to Desktop 12: Control-Option-2
+;;;;     - Switch to Desktop 13: Control-Option-3
+;;;;     - Switch to Desktop 14: Control-Option-4
+;;;;     - Switch to Desktop 15: Control-Option-5
+;;;;     - Switch to Desktop 16: Control-Option-6
+;;;;
+;;;; If you want different keystrokes you will need to edit this script.
+
+
 ;;;; Notes on Use
 ;;;; ============
 
-;;;; - After pressing the keys to invoke your keystroke-to-action mapper, you
-;;;;   must release them so that when this script does Control-1 etc to
-;;;;   do the work, no other keys are being pressed.
-
 ;;;; - Don't change the order of Spaces. Because of the way we get the current
 ;;;;   Space number, that will break this script's idea of the grid.
+
+
+;;;; Notes on `:yabai` vs `:control-1-etc`
+;;;; =====================================
+
+;;;; - With `:control-1-etc`: You have to set up keystrokes in Mission Control
+;;;; - as described above.
+
+;;;; - With `:control-1-etc`: You get misleading visual feedback because macOS
+;;;;   doesn't understand the grid -- it indicates left and right movement when
+;;;;   you've moved up or down. yabai doesn't use animations.
+
+;;;; - With `:control-1-etc`: After pressing the keys to invoke your
+;;;;   keystroke-to-action mapper, you must release them so that when this
+;;;;   script does Control-1 etc to do the work, no other keys are
+;;;;   being pressed.
 
 
 ;;;; Other Useful Tools
@@ -212,28 +232,6 @@
 ;;;; Things I Would Like to Do
 ;;;; =========================
 
-;;;; TODO: Maybe use yabai to switch Spaces.
-;;;;       It has `yabai -m space --focus 1` etc.
-;;;;       - See
-;;;;         https://github.com/koekeishiya/yabai/wiki/Commands#space-commands
-;;;;
-;;;;       Oh, I just got "cannot focus space due to an error with the
-;;;;       scripting-addition."
-;;;;       - Fixed with:
-;;;;             brew services stop yabai
-;;;;             sudo yabai --load-sa
-;;;;             brew services start yabai
-;;;;       - TODO: Notice when the Space doesn't change (may need try...catch to
-;;;;               not exit), and issue an alert saying to fix -- and maybe fix
-;;;;               automatically -- notifying when finished.
-;;;;
-;;;;       This approach has several advantages:
-;;;;       - You don't need to set up keystrokes in Mission Control.
-;;;;       - You don't need to release keys to allow the Mission Control
-;;;;         keystrokes to be invoked.
-;;;;       - It doesn't use animations, so when you move up it doesn't show that
-;;;;         you've moved left/right.
-
 ;;;; TODO: Move windows between spaces.
 
 ;;;; TODO: Is it possible to briefly flash an image? If so, that could be used
@@ -242,10 +240,6 @@
 
 ;;;; TODO: Display of an overview grid. Is there something that does this?
 ;;;;       I don't think so.
-
-;;;; TODO: Can you somehow "release" the keys in software-land?
-;;;;       I think so. After all, you can press them.
-;;;;       See `make-space-current-format-string`, for example.
 
 ;;;; TODO: Is there a better way to find the current Space number?
 ;;;;
