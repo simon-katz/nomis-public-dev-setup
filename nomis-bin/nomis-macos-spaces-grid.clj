@@ -474,6 +474,7 @@ end tell"))
         ;; (osa "delay 0.1")
         ;; (osa preview-close-current-window-string)
         )
+      (touch-debug-file (str filename-to-touch "-" new-space "-done"))
       new-space)))
 
 ;;;; ___________________________________________________________________________
