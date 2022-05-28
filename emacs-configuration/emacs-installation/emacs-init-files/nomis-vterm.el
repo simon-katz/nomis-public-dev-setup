@@ -2,6 +2,8 @@
 
 ;;;; ___________________________________________________________________________
 
+(add-to-list 'load-path "/Users/simonkatz/development-100/repositories/software-installations/emacs-libvterm")
+
 (with-eval-after-load 'vterm
 
   (setq vterm-max-scrollback 10000)

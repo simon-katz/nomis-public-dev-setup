@@ -22,6 +22,8 @@ emacs-configuration/emacs-installation/.emacs.d/.lsp-session-v1
 .nomis-space-debug
 
 # To get vterm to work on a new machine:
+#
+# OLD
 # - delete the following things (the ignored things after this comment)
 # - restart Emacs
 # - run `vterm`.
@@ -31,3 +33,10 @@ emacs-configuration/emacs-installation/.emacs.d/.lsp-session-v1
 # saw Emacs crashing after I copied Emacs config from one machine to another.)
 emacs-configuration/emacs-installation/.emacs.d/elpa/vterm-20210908.640/build/
 emacs-configuration/emacs-installation/.emacs.d/elpa/vterm-20210908.640/vterm-module.so
+#
+# NEW 2022-05-28
+# Now I have my own local clone of `emacs-libvterm`.
+# See "Get emacs-libvterm working" in `machine-log-my-mac-defoe.org` (at
+# `/Users/simonkatz/development-100/repositories/nomis/notes/sys-admin--mine/sys-admin-log-files/machine-log-my-mac-defoe.org`).
+# So you just need to delete stuff (see ignored stuff above) and rebuild
+# following the README.
