@@ -135,10 +135,10 @@
 ;;;; - Current Space Number
 ;;;;   - This script needs a way to find the current Space number.
 ;;;;   - It seems that recent versions of AppleScript don't provide this.
-;;;;   - Maybe there's a better way, but for now at least we set up each Space
-;;;;     to have a unique background image, and we use that to identify the
-;;;;     Space. /NB/ This means that if you change the order of Spaces you will
-;;;;     break this script's idea of the grid.
+;;;;   - Maybe there's a better way, but for now at least you must set up each
+;;;;     Space to have a unique background image, and we use that to identify
+;;;;     the Space. /NB/ This means that if you change the order of Spaces you
+;;;;     will break this script's idea of the grid.
 ;;;;   - We got the idea from https://stackoverflow.com/a/34691386/2148181
 ;;;;   - For each Space:
 ;;;;     - You need a desktop background picture file. The filename must include
