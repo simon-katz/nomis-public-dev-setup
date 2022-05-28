@@ -45,31 +45,6 @@
 ;;;;   decide which approach is right for you.
 
 
-;;;; See Also
-;;;; ========
-
-;;;; You might want to consider Keyboard Maestro.
-;;;;
-;;;; I took a look at it and some Space-switching functionlity that is build
-;;;; using it, but I found that functionlity to be very slow and I gave up
-;;;; on it.
-;;;;
-;;;; It seems that Keyboard Maestro way be the eay to go if you want more
-;;;; control. I came across a couple of things (maybe related):
-;;;;
-;;;; https://forum.keyboardmaestro.com/t/move-frontmost-window-to-a-different-space/10512
-;;;; The macro moves the mouse to the toolbar of the window, performs
-;;;; a click-and-hold, and activates one of Mission Control’s Space movement
-;;;; shortcuts (see below). After that, it moves the mouse back to the
-;;;; previous position.
-;;;;
-;;;; https://forum.keyboardmaestro.com/t/macros-desktop-spaces-macros-to-improve-navigation-and-window-management-v1-1/27033
-;;;; MACROS: Desktop Spaces • Macros to Improve Navigation and Window Management, v1.1
-;;;;
-;;;; Both look like things you could modify to use the keystrokes you want, get wrapping,
-;;;; get nice animations.
-
-
 ;;;; Notes on `:yabai` vs `:control-1-etc`
 ;;;; =====================================
 
