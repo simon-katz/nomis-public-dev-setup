@@ -263,6 +263,10 @@
 ;;;; ___________________________________________________________________________
 ;;;; Stuff that other people might want to change.
 
+(def ^:private approach-for-make-space-current
+  ;; One of `:yabai` or `:control-1-etc`.
+  :yabai)
+
 (def ^:private n-rows    4)
 (def ^:private n-columns 4)
 
@@ -380,17 +384,20 @@ end tell"))
   (osa "tell application \"Finder\" to get (desktop picture) as string"))
 
 (defn ^:private make-space-current [n]
-  (case 2
-    1 (let [[modifier-keys char] (space->shortcut-key-spec n)
-            key-code             (char->key-code char)
-            cmd                  (format make-space-current-format-string
-                                         key-code
-                                         ;; control down, option down
-                                         (str/join " ,"
-                                                   (map #(str % " down")
-                                                        modifier-keys)))]
-        (osa cmd))
-    2 (shell/sh "/opt/homebrew/bin/yabai" "-m" "space" "--focus" (str n))))
+  (case approach-for-make-space-current
+    :control-1-etc
+    (let [[modifier-keys char] (space->shortcut-key-spec n)
+          key-code             (char->key-code char)
+          cmd                  (format make-space-current-format-string
+                                       key-code
+                                       ;; control down, option down
+                                       (str/join " ,"
+                                                 (map #(str % " down")
+                                                      modifier-keys)))]
+      (osa cmd))
+    ;;
+    :yabai
+    (shell/sh "/opt/homebrew/bin/yabai" "-m" "space" "--focus" (str n))))
 
 (defn ^:private flash-screen []
   (osa flash-screen-applescript))
