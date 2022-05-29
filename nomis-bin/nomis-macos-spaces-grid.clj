@@ -352,7 +352,7 @@ set frontmost to true
 set frontmostApp to path to frontmost application as text
 -- activate application \"qview\"
 tell application \"qview\" to open \"%s\"
-delay 0.1
+delay 0.3
 tell application \"qview\" to quit
 -- activate application frontmostApp
 -- activate application (path to frontmost application as text)
@@ -482,22 +482,9 @@ end tell"))
         :wrapped (flash-screen)
         :same-space (flash-screen)
         nil)
-      #_(let [current-app (current-app)]
-          (osa (format open-with-qview-format-string
-                       (format "/Users/simonkatz/development-100/repositories/nomis/dev-setup/nomis-public-dev-setup/nomis-bin/macos-desktop-backgrounds/%s.png"
-                               new-space)))
-          (osa "delay 0.1")
-          ;; (osa applescript-close-qview-top-window)
-          (osa applescript-quit-qview))
-      #_
-      (let [;; current-app (current-app)
-            ]
-        (osa (format flash-picture
-                     (format "/Users/simonkatz/development-100/repositories/nomis/dev-setup/nomis-public-dev-setup/nomis-bin/macos-desktop-backgrounds/%s.png"
-                             new-space)))
-        ;; (osa "delay 0.1")
-        ;; (osa preview-close-current-window-string)
-        )
+      (osa (format flash-picture-with-qview
+                   (format "/Users/simonkatz/development-100/repositories/nomis/dev-setup/nomis-public-dev-setup/nomis-bin/macos-desktop-backgrounds/%s.png"
+                           new-space)))
       (touch-debug-file (str filename-to-touch "-" new-space "-done"))
       new-space)))
 
