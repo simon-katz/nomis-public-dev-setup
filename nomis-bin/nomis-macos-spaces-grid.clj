@@ -352,7 +352,7 @@ set frontmost to true
 set frontmostApp to path to frontmost application as text
 -- activate application \"qview\"
 tell application \"qview\" to open \"%s\"
-delay 0.3
+delay 0.5
 tell application \"qview\" to quit
 -- activate application frontmostApp
 -- activate application (path to frontmost application as text)
