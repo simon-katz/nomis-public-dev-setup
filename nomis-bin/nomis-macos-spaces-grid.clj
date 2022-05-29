@@ -461,6 +461,12 @@ end tell"))
      (when (= current-space n)
        :same-space)]))
 
+(defn ^:private flash-picture [new-space]
+  (let [filename (format "/Users/simonkatz/development-100/repositories/nomis/dev-setup/nomis-public-dev-setup/nomis-bin/macos-desktop-backgrounds/%s.png"
+                             new-space)]
+    (osa (format flash-picture-with-qview
+                 filename))))
+
 (defn ^:private nomis-macos-spaces-grid [command]
   (let [filename-to-touch (str "nomis-macos-spaces-grid--" (name command))]
     (touch-debug-file filename-to-touch)
@@ -482,9 +488,7 @@ end tell"))
         :wrapped (flash-screen)
         :same-space (flash-screen)
         nil)
-      (osa (format flash-picture-with-qview
-                   (format "/Users/simonkatz/development-100/repositories/nomis/dev-setup/nomis-public-dev-setup/nomis-bin/macos-desktop-backgrounds/%s.png"
-                           new-space)))
+      (flash-picture new-space)
       (touch-debug-file (str filename-to-touch "-" new-space "-done"))
       new-space)))
 
