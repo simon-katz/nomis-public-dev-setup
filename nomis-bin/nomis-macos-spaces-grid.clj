@@ -343,6 +343,7 @@ tell application \"Preview\" to close its front window
 -- activate application frontmostApp
 -- activate application (path to frontmost application as text)
 tell application frontmostApp to activate
+set frontmost to true
 ")
 
 (def ^:private preview-close-current-window-string
