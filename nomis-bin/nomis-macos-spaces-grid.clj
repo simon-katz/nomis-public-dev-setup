@@ -346,6 +346,20 @@ tell application frontmostApp to activate
 set frontmost to true
 ")
 
+(def ^:private flash-picture-with-qview
+  "
+-- set frontmostApp to (path to frontmost application)
+set frontmostApp to path to frontmost application as text
+-- activate application \"qview\"
+tell application \"qview\" to open \"%s\"
+delay 0.1
+tell application \"qview\" to quit
+-- activate application frontmostApp
+-- activate application (path to frontmost application as text)
+-- tell application frontmostApp to activate
+-- set frontmost to true
+")
+
 (def ^:private preview-close-current-window-string
   "tell application \"Preview\" to if it is running then close its front window")
 
