@@ -332,21 +332,6 @@
 ;;;; ___________________________________________________________________________
 ;;;; AppleScript
 
-#_
-(def ^:private flash-picture
-  "
--- set frontmostApp to (path to frontmost application)
-set frontmostApp to path to frontmost application as text
-activate application \"Preview\"
-tell application \"Preview\" to open \"%s\"
--- delay 1
-tell application \"Preview\" to close its front window
--- activate application frontmostApp
--- activate application (path to frontmost application as text)
-tell application frontmostApp to activate
-set frontmost to true
-")
-
 (def ^:private make-space-current-format-string
   "
 tell application \"System Events\"
