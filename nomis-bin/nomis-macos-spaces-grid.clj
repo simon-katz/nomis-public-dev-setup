@@ -475,7 +475,7 @@ end tell"))
                                  qlmanage -t %s &
                                  sleep 0.5
                                  qlmanage -t %s &
-                                 sleep 0.7
+                                 sleep 0.5
                                  kill %%1
                                  kill %%2
                                EOF"
