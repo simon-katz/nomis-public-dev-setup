@@ -31,6 +31,8 @@
 ;;;;       |----+----+----+----|
 ;;;;       | 13 | 14 | 15 | 16 |
 ;;;;        ----+----+----+----
+;;;;
+;;;;   TODO: Change the above to explain my feedback images (which show a grid).
 
 ;;;; - This script provides grid-aware functionality for moving left, right, up
 ;;;;   and down through the notional Spaces grid. When moving left from the
@@ -160,6 +162,9 @@
 ;;;;        16.png
 ;;;;   - I generated the files using
 ;;;;     https://seotoolscentre.com/text-to-image-generator
+
+;;;; - TODO: Feedback files.
+;;;;         - Mine show a 4x4 grid.
 
 
 ;;;; Additional Set Up for `approach-for-make-space-current` = `:yabai`
