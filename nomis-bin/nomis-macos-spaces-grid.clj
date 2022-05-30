@@ -438,7 +438,7 @@ end if
               "-c"
               (format "bash <<EOF
                                  qlmanage -p %s &
-                                 sleep 1
+                                 sleep 0.7
                                  kill %%1
                                EOF"
                       (space->feedback-filename new-space)))))
@@ -451,7 +451,7 @@ end if
               "-c"
               (format "bash <<EOF
                                  qlmanage -p %s &
-                                 sleep 0.5
+                                 sleep 0.2
                                  qlmanage -p %s &
                                  sleep 0.5
                                  kill %%1
