@@ -347,31 +347,8 @@ tell application frontmostApp to activate
 set frontmost to true
 ")
 
-(def ^:private flash-picture-with-qview
-  "
--- set frontmostApp to (path to frontmost application)
-set frontmostApp to path to frontmost application as text
--- activate application \"qview\"
-tell application \"qview\" to open \"%s\"
-delay 0.5
-tell application \"qview\" to quit
--- activate application frontmostApp
--- activate application (path to frontmost application as text)
--- tell application frontmostApp to activate
--- set frontmost to true
-")
-
 (def ^:private preview-close-current-window-string
   "tell application \"Preview\" to if it is running then close its front window")
-
-(def ^:private open-with-qview-format-string
-  "tell application \"qView\" to open \"%s\"")
-
-(def ^:private applescript-close-qview-top-window
-  "tell application \"qView\" to if it is running then close its front window")
-
-(def ^:private applescript-quit-qview
-  "tell application \"qView\" to quit")
 
 (def ^:private make-space-current-format-string
   "
@@ -462,42 +439,26 @@ end tell"))
      (when (= current-space n)
        :same-space)]))
 
-(def ^:private flasher (case 2
-                         1 :qview
-                         2 :qlmanage))
-
 (defn ^:private flash-one-picture [new-space]
   (let [space->feedback-filename (fn [space]
                                    (format "/Users/simonkatz/development-100/repositories/nomis/dev-setup/nomis-public-dev-setup/nomis-bin/macos-desktop-backgrounds/feedback-%s.png"
                                            space))]
-    (case flasher
-      :qview
-      (osa (format flash-picture-with-qview
-                   (space->feedback-filename new-space)))
-      ;;
-      :qlmanage
-      (shell/sh "sh"
-                "-c"
-                (format "bash <<EOF
+    (shell/sh "sh"
+              "-c"
+              (format "bash <<EOF
                                  qlmanage -p %s &
                                  sleep 1
                                  kill %%1
                                EOF"
-                        (space->feedback-filename new-space))))))
+                      (space->feedback-filename new-space)))))
 
 (defn ^:private flash-two-pictures [old-space new-space]
   (let [space->feedback-filename (fn [space]
                                    (format "/Users/simonkatz/development-100/repositories/nomis/dev-setup/nomis-public-dev-setup/nomis-bin/macos-desktop-backgrounds/feedback-%s.png"
                                            space))]
-    (case flasher
-      :qview
-      (osa (format flash-picture-with-qview
-                   (space->feedback-filename new-space)))
-      ;;
-      :qlmanage
-      (shell/sh "sh"
-                "-c"
-                (format "bash <<EOF
+    (shell/sh "sh"
+              "-c"
+              (format "bash <<EOF
                                  qlmanage -p %s &
                                  sleep 0.5
                                  qlmanage -p %s &
@@ -505,8 +466,8 @@ end tell"))
                                  kill %%1
                                  kill %%2
                                EOF"
-                        (space->feedback-filename old-space)
-                        (space->feedback-filename new-space))))))
+                      (space->feedback-filename old-space)
+                      (space->feedback-filename new-space)))))
 
 (defn ^:private nomis-macos-spaces-grid [command]
   (let [filename-to-touch (str "nomis-macos-spaces-grid--" (name command))
