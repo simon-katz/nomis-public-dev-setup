@@ -483,10 +483,10 @@ end if
         ;; often gets left behind.
         (flash-two-pictures current-space new-space))
       (make-space-current new-space move-window?)
-      (condp = special-info
-        :wrapped (flash-screen)
-        :same-space (flash-screen)
-        nil)
+      #_(condp = special-info
+          :wrapped (flash-screen)
+          :same-space (flash-screen)
+          nil)
       (touch-debug-file (str filename-to-touch "-" new-space "-done"))
       new-space)))
 
