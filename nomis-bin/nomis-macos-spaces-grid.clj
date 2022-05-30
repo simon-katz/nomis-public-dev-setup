@@ -421,25 +421,23 @@ end if
 
 (defn ^:private flash-one-picture [new-space]
   (shell/sh "sh"
+            "--norc"
             "-c"
-            (format "bash <<EOF
-                       qlmanage -p %s &
-                       sleep 0.7
-                       kill %%1
-                     EOF"
+            (format "qlmanage -p %s &
+                     sleep 0.7
+                     kill %%1"
                     (space->feedback-filename new-space))))
 
 (defn ^:private flash-two-pictures [old-space new-space]
   (shell/sh "sh"
+            "--norc"
             "-c"
-            (format "bash --norc <<EOF
-                       qlmanage -p %s &
-                       sleep 0.2
-                       qlmanage -p %s &
-                       sleep 0.5
-                       kill %%1
-                       kill %%2
-                     EOF"
+            (format "qlmanage -p %s &
+                     sleep 0.2
+                     qlmanage -p %s &
+                     sleep 0.5
+                     kill %%1
+                     kill %%2"
                     (space->feedback-filename old-space)
                     (space->feedback-filename new-space))))
 
