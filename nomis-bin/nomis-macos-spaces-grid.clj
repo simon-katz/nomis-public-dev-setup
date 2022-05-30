@@ -408,7 +408,7 @@ end tell"))
 (defn ^:private get-desktop-picture-filename []
   (osa "tell application \"Finder\" to get (desktop picture) as string"))
 
-(defn ^:private make-space-current [n]
+(defn ^:private make-space-current [n move-window?]
   (case approach-for-make-space-current
     :control-1-etc
     (let [[modifier-keys char] (space->shortcut-key-spec n)
@@ -426,7 +426,7 @@ end tell"))
       ;; TODO: Design the command-line args properly.
       ;; TODO: Mention "/opt/homebrew" and alternatives in documentation.
       ;;       Store that in a var.
-      (when ((set *command-line-args*) "move-window")
+      (when move-window?
         (shell/sh "/opt/homebrew/bin/yabai" "-m" "window" "--space" (str n)))
       (shell/sh "/opt/homebrew/bin/yabai" "-m" "space" "--focus" (str n)))))
 
@@ -462,7 +462,23 @@ end tell"))
      (when (= current-space n)
        :same-space)]))
 
-(defn ^:private flash-pictures [old-space new-space]
+(defn ^:private flash-one-picture [new-space]
+  (let [space->feedback-filename (fn [space]
+                                   (format "/Users/simonkatz/development-100/repositories/nomis/dev-setup/nomis-public-dev-setup/nomis-bin/macos-desktop-backgrounds/feedback-%s.png"
+                                           space))]
+    (case 2
+      1 (osa (format flash-picture-with-qview
+                     (space->feedback-filename new-space)))
+      2 (shell/sh "sh"
+                  "-c"
+                  (format "bash <<EOF
+                                 qlmanage -p %s &
+                                 sleep 1
+                                 kill %%1
+                               EOF"
+                          (space->feedback-filename new-space))))))
+
+(defn ^:private flash-two-pictures [old-space new-space]
   (let [space->feedback-filename (fn [space]
                                    (format "/Users/simonkatz/development-100/repositories/nomis/dev-setup/nomis-public-dev-setup/nomis-bin/macos-desktop-backgrounds/feedback-%s.png"
                                            space))]
@@ -483,7 +499,8 @@ end tell"))
                           (space->feedback-filename new-space))))))
 
 (defn ^:private nomis-macos-spaces-grid [command]
-  (let [filename-to-touch (str "nomis-macos-spaces-grid--" (name command))]
+  (let [filename-to-touch (str "nomis-macos-spaces-grid--" (name command))
+        move-window? ((set *command-line-args*) "move-window")]
     (touch-debug-file filename-to-touch)
     (let [current-space (->> (get-desktop-picture-filename)
                              :out
@@ -498,8 +515,12 @@ end tell"))
                                      :goto-space
                                      (goto-space current-space))]
       (touch-debug-file (str filename-to-touch "-" new-space))
-      (flash-pictures current-space new-space)
-      (make-space-current new-space)
+      (if move-window?
+        (flash-one-picture new-space)
+        ;; With move-window, `flash-two-pictures` breaks things -- the window
+        ;; often gets left behind.
+        (flash-two-pictures current-space new-space))
+      (make-space-current new-space move-window?)
       (condp = special-info
         :wrapped (flash-screen)
         :same-space (flash-screen)
