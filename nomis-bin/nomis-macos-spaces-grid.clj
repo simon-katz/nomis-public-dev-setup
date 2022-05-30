@@ -332,6 +332,7 @@
 ;;;; ___________________________________________________________________________
 ;;;; AppleScript
 
+#_
 (def ^:private flash-picture
   "
 -- set frontmostApp to (path to frontmost application)
@@ -461,20 +462,25 @@ end tell"))
      (when (= current-space n)
        :same-space)]))
 
-(defn ^:private flash-picture [new-space]
-  (let [filename (format "/Users/simonkatz/development-100/repositories/nomis/dev-setup/nomis-public-dev-setup/nomis-bin/macos-desktop-backgrounds/%s.png"
-                             new-space)]
-        (case 2
-          1 (osa (format flash-picture-with-qview
-                         filename))
-          2 (shell/sh "sh"
-                      "-c"
-                      (format "bash <<EOF
+(defn ^:private flash-pictures [old-space new-space]
+  (let [space->filename (fn [space]
+                          (format "/Users/simonkatz/development-100/repositories/nomis/dev-setup/nomis-public-dev-setup/nomis-bin/macos-desktop-backgrounds/%s.png"
+                                  space))]
+    (case 2
+      1 (osa (format flash-picture-with-qview
+                     (space->filename new-space)))
+      2 (shell/sh "sh"
+                  "-c"
+                  (format "bash <<EOF
+                                 qlmanage -t %s &
+                                 sleep 0.5
                                  qlmanage -t %s &
                                  sleep 0.7
                                  kill %%1
+                                 kill %%2
                                EOF"
-                              filename)))))
+                          (space->filename old-space)
+                          (space->filename new-space))))))
 
 (defn ^:private nomis-macos-spaces-grid [command]
   (let [filename-to-touch (str "nomis-macos-spaces-grid--" (name command))]
@@ -497,9 +503,7 @@ end tell"))
         :wrapped (flash-screen)
         :same-space (flash-screen)
         nil)
-      ;; TODO: Idea: Flash the image for the old Space first.
-      ;; (flash-picture current-space)
-      (flash-picture new-space)
+      (flash-pictures current-space new-space)
       (touch-debug-file (str filename-to-touch "-" new-space "-done"))
       new-space)))
 
