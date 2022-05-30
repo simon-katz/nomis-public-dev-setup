@@ -415,35 +415,33 @@ end if
      (when (= current-space n)
        :same-space)]))
 
+(defn ^:private space->feedback-filename [space]
+  (format "/Users/simonkatz/development-100/repositories/nomis/dev-setup/nomis-public-dev-setup/nomis-bin/macos-desktop-backgrounds/feedback-%s.png"
+          space))
+
 (defn ^:private flash-one-picture [new-space]
-  (let [space->feedback-filename (fn [space]
-                                   (format "/Users/simonkatz/development-100/repositories/nomis/dev-setup/nomis-public-dev-setup/nomis-bin/macos-desktop-backgrounds/feedback-%s.png"
-                                           space))]
-    (shell/sh "sh"
-              "-c"
-              (format "bash <<EOF
-                                 qlmanage -p %s &
-                                 sleep 0.7
-                                 kill %%1
-                               EOF"
-                      (space->feedback-filename new-space)))))
+  (shell/sh "sh"
+            "-c"
+            (format "bash <<EOF
+                       qlmanage -p %s &
+                       sleep 0.7
+                       kill %%1
+                     EOF"
+                    (space->feedback-filename new-space))))
 
 (defn ^:private flash-two-pictures [old-space new-space]
-  (let [space->feedback-filename (fn [space]
-                                   (format "/Users/simonkatz/development-100/repositories/nomis/dev-setup/nomis-public-dev-setup/nomis-bin/macos-desktop-backgrounds/feedback-%s.png"
-                                           space))]
-    (shell/sh "sh"
-              "-c"
-              (format "bash <<EOF
-                                 qlmanage -p %s &
-                                 sleep 0.2
-                                 qlmanage -p %s &
-                                 sleep 0.5
-                                 kill %%1
-                                 kill %%2
-                               EOF"
-                      (space->feedback-filename old-space)
-                      (space->feedback-filename new-space)))))
+  (shell/sh "sh"
+            "-c"
+            (format "bash <<EOF
+                       qlmanage -p %s &
+                       sleep 0.2
+                       qlmanage -p %s &
+                       sleep 0.5
+                       kill %%1
+                       kill %%2
+                     EOF"
+                    (space->feedback-filename old-space)
+                    (space->feedback-filename new-space))))
 
 (defn ^:private nomis-macos-spaces-grid [command]
   (let [filename-to-touch (str "nomis-macos-spaces-grid--" (name command))
