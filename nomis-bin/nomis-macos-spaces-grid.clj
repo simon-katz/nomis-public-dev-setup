@@ -443,6 +443,7 @@ end if
 
 (defn ^:private nomis-macos-spaces-grid [command]
   (let [filename-to-touch (str "nomis-macos-spaces-grid--" (name command))
+        goto-relative? (#{:up :down :left :right} command)
         move-window? ((set *command-line-args*) "move-window")]
     (touch-debug-file filename-to-touch)
     (let [current-space (->> (get-desktop-picture-filename)
@@ -463,7 +464,7 @@ end if
       (when-not move-window?
         ;; With move-window, flashing breaks things -- the window often gets
         ;; left behind.
-        (if (#{:up :down :left :right} command)
+        (if goto-relative?
           (flash-two-pictures current-space new-space)
           (flash-one-picture new-space)))
       (when-not (= command :report-current-space)
