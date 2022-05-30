@@ -462,8 +462,8 @@ end if
                                      [current-space nil])]
       (touch-debug-file (str filename-to-touch "-" new-space))
       (when-not move-window?
-        ;; With move-window, `flash-two-pictures` breaks things -- the window
-        ;; often gets left behind.
+        ;; With move-window, flashing breaks things -- the window often gets
+        ;; left behind.
         (flash-two-pictures current-space new-space))
       (when-not (= command :report-current-space)
         (make-space-current new-space move-window?))
