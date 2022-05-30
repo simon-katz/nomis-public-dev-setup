@@ -460,8 +460,7 @@ end if
                                      :goto-space
                                      (goto-space current-space))]
       (touch-debug-file (str filename-to-touch "-" new-space))
-      (if move-window?
-        (flash-one-picture new-space)
+      (when-not move-window?
         ;; With move-window, `flash-two-pictures` breaks things -- the window
         ;; often gets left behind.
         (flash-two-pictures current-space new-space))
