@@ -498,12 +498,12 @@ end tell"))
                                      :goto-space
                                      (goto-space current-space))]
       (touch-debug-file (str filename-to-touch "-" new-space))
+      (flash-pictures current-space new-space)
       (make-space-current new-space)
       (condp = special-info
         :wrapped (flash-screen)
         :same-space (flash-screen)
         nil)
-      (flash-pictures current-space new-space)
       (touch-debug-file (str filename-to-touch "-" new-space "-done"))
       new-space)))
 
