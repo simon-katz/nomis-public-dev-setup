@@ -425,7 +425,7 @@ end tell"))
       ;; TODO: Design the command-line args properly.
       ;; TODO: Mention "/opt/homebrew" and alternatives in documentation.
       ;;       Store that in a var.
-      (when (= (second *command-line-args*) "move-window")
+      (when ((set *command-line-args*) "move-window")
         (shell/sh "/opt/homebrew/bin/yabai" "-m" "window" "--space" (str n)))
       (shell/sh "/opt/homebrew/bin/yabai" "-m" "space" "--focus" (str n)))))
 
