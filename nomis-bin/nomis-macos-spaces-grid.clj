@@ -347,9 +347,6 @@ tell application frontmostApp to activate
 set frontmost to true
 ")
 
-(def ^:private preview-close-current-window-string
-  "tell application \"Preview\" to if it is running then close its front window")
-
 (def ^:private make-space-current-format-string
   "
 tell application \"System Events\"
@@ -375,12 +372,6 @@ end if
 
 (defn ^:private osa [cmd]
   (shell/sh "osascript" "-e" cmd))
-
-(defn ^:private current-app []
-  (osa "
-tell application \"System Events\"
-    get name of first application process whose frontmost is true
-end tell"))
 
 (defn ^:private get-desktop-picture-filename []
   (osa "tell application \"Finder\" to get (desktop picture) as string"))
