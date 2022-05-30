@@ -270,6 +270,14 @@
 
 
 ;;;; ___________________________________________________________________________
+
+#_(ns nomis-macos-spaces-grid ; I think you need underscores in the file name.
+  ;; (:require [clojure.string :as str])
+  )
+(require '[clojure.java.shell :as shell])
+(require '[clojure.string :as str])
+
+;;;; ___________________________________________________________________________
 ;;;; Stuff that other people might want to change.
 
 (def ^:private approach-for-make-space-current
