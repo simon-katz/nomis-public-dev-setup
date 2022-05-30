@@ -458,13 +458,17 @@ end if
                                      ;;
                                      ;; TODO: We're not using this, right?
                                      :goto-space
-                                     (goto-space current-space))]
+                                     (goto-space current-space)
+                                     ;;
+                                     :report-current-space
+                                     [current-space nil])]
       (touch-debug-file (str filename-to-touch "-" new-space))
       (when-not move-window?
         ;; With move-window, `flash-two-pictures` breaks things -- the window
         ;; often gets left behind.
         (flash-two-pictures current-space new-space))
-      (make-space-current new-space move-window?)
+      (when-not (= command :report-current-space)
+        (make-space-current new-space move-window?))
       #_(condp = special-info
           :wrapped (flash-screen)
           :same-space (flash-screen)
