@@ -497,6 +497,8 @@ end tell"))
         :wrapped (flash-screen)
         :same-space (flash-screen)
         nil)
+      ;; TODO: Idea: Flash the image for the old Space first.
+      ;; (flash-picture current-space)
       (flash-picture new-space)
       (touch-debug-file (str filename-to-touch "-" new-space "-done"))
       new-space)))
