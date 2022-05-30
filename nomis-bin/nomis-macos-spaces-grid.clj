@@ -454,7 +454,6 @@ end if
                                      (:up :down :left :right)
                                      (next-space-details current-space command)
                                      ;;
-                                     ;; TODO: We're not using this, right?
                                      :goto-space
                                      (goto-space current-space)
                                      ;;
