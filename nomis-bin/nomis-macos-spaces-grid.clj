@@ -448,7 +448,7 @@ end if
     (touch-debug-file filename-to-touch)
     (let [current-space (->> (get-desktop-picture-filename)
                              :out
-                             (re-find #"macos-desktop-backgrounds:([0-9]*)")
+                             (re-find #"macos-desktop-backgrounds:background-([0-9]*)")
                              second
                              parse-long)
           [new-space special-info] (case command
