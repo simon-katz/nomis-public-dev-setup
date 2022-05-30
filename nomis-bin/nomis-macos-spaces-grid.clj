@@ -463,24 +463,24 @@ end tell"))
        :same-space)]))
 
 (defn ^:private flash-pictures [old-space new-space]
-  (let [space->filename (fn [space]
-                          (format "/Users/simonkatz/development-100/repositories/nomis/dev-setup/nomis-public-dev-setup/nomis-bin/macos-desktop-backgrounds/%s.png"
+  (let [space->small-filename (fn [space]
+                          (format "/Users/simonkatz/development-100/repositories/nomis/dev-setup/nomis-public-dev-setup/nomis-bin/macos-desktop-backgrounds/small-%s.png"
                                   space))]
     (case 2
       1 (osa (format flash-picture-with-qview
-                     (space->filename new-space)))
+                     (space->small-filename new-space)))
       2 (shell/sh "sh"
                   "-c"
                   (format "bash <<EOF
-                                 qlmanage -t %s &
+                                 qlmanage -p %s &
                                  sleep 0.5
-                                 qlmanage -t %s &
+                                 qlmanage -p %s &
                                  sleep 0.5
                                  kill %%1
                                  kill %%2
                                EOF"
-                          (space->filename old-space)
-                          (space->filename new-space))))))
+                          (space->small-filename old-space)
+                          (space->small-filename new-space))))))
 
 (defn ^:private nomis-macos-spaces-grid [command]
   (let [filename-to-touch (str "nomis-macos-spaces-grid--" (name command))]
