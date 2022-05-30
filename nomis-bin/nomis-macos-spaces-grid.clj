@@ -463,7 +463,9 @@ end if
       (when-not move-window?
         ;; With move-window, flashing breaks things -- the window often gets
         ;; left behind.
-        (flash-two-pictures current-space new-space))
+        (if (#{:up :down :left :right} command)
+          (flash-two-pictures current-space new-space)
+          (flash-one-picture new-space)))
       (when-not (= command :report-current-space)
         (make-space-current new-space move-window?))
       #_(condp = special-info
