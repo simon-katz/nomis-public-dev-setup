@@ -432,7 +432,7 @@ end if
 (defn ^:private flash-two-pictures [old-space new-space]
   (shell/sh "sh"
             "-c"
-            (format "bash <<EOF
+            (format "bash --norc <<EOF
                        qlmanage -p %s &
                        sleep 0.2
                        qlmanage -p %s &
