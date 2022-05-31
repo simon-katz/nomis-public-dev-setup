@@ -250,10 +250,6 @@
 ;;;; Things I Would Like to Do
 ;;;; =========================
 
-;;;; TODO: Move windows between spaces.
-;;;;       Ah! `yabai -m window --space 2`
-;;;;       - And this reliably moves my Emacs windows, unlike BetterTouchTool.
-
 ;;;; TODO: Is it possible to briefly flash an image? If so, that could be used
 ;;;;       to provide feedback such as flashing the current Space number or
 ;;;;       other graphic after moving Space.
