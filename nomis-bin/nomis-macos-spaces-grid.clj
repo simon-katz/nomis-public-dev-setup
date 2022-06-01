@@ -253,6 +253,17 @@
 ;;;; TODO: Is it possible to briefly flash an image? If so, that could be used
 ;;;;       to provide feedback such as flashing the current Space number or
 ;;;;       other graphic after moving Space.
+;;;;
+;;;;       I've done some work on this, using `qlmanage`. I'm using little
+;;;;       grids, with the appropriate Space(s) highlighted.
+;;;;
+;;;;       Flashing images is a little slow, so now I'm only flashing the image
+;;;;       for the To Space. (I had been flashing the From Space as well, which
+;;;;       looks quite nice but is too slow.)
+;;;;
+;;;; TODO: Look into writing a program to generate 16x16 = 256 images, each
+;;;;       showing the From Space, an arrow and the To Space. And maybe a second
+;;;;       set of 256 images for use when moving a window.
 
 ;;;; TODO: Display of an overview grid. Is there something that does this?
 ;;;;       I don't think so.
