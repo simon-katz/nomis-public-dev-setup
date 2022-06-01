@@ -517,7 +517,7 @@ end if
           :wrapped (flash-screen)
           :same-space (flash-screen)
           nil)
-      (when-not move-window?
+      (when-not false ; move-window?
         ;; With move-window, flashing breaks things -- the window often gets
         ;; left behind.
         (if goto-relative?
