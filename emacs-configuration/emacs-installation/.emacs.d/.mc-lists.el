@@ -62,6 +62,7 @@
         sh-assignment
         transpose-sexps
         wdired--self-insert
+        wdired-downcase-word
         wdired-finish-edit
         yaml-electric-backspace
         yaml-electric-dash-and-dot
