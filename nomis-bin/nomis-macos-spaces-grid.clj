@@ -513,13 +513,16 @@ end if
                                      :report-current-space
                                      [current-space nil])]
       (touch-debug-file (str filename-to-touch "-" new-space))
+      ;; Notes about feedback:
+      ;; - Feedback before move with `flash-two-pictures` means that, for
+      ;;   move-window, window is not reliably moved.
+      ;; - Feedback after move means user tends to try to accidentally
+      ;;   interact with the feedback window.
       #_(condp = special-info
           :wrapped (flash-screen)
           :same-space (flash-screen)
           nil)
       (when-not false ; move-window?
-        ;; With move-window, flashing breaks things -- the window often gets
-        ;; left behind.
         (if false ; goto-relative?
           (flash-two-pictures current-space new-space)
           (flash-one-picture new-space)))
