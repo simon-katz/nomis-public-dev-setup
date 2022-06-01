@@ -410,31 +410,59 @@ end if
 ;;;; ___________________________________________________________________________
 ;;;; Other scripting stuff
 
+(def ^:private use-process? true)
+
 (defn ^:private space->feedback-filename [space]
   (format "/Users/simonkatz/development-100/repositories/nomis/dev-setup/nomis-public-dev-setup/nomis-bin/macos-desktop-backgrounds/feedback-%s.png"
           space))
 
 (defn ^:private flash-one-picture [new-space]
-  (shell/sh "sh"
-            "--norc"
-            "-c"
-            (format "qlmanage -p %s &
-                     sleep 0.7
-                     kill %%1"
-                    (space->feedback-filename new-space))))
+  (if use-process?
+    (let [{:keys [proc]} (p/process ["qlmanage"
+                                     "-p"
+                                     (space->feedback-filename new-space)]
+                                    {:inherit true
+                                     :shutdown p/destroy-tree})]
+      (Thread/sleep 700)
+      (.destroy proc))
+    (shell/sh "sh"
+              "--norc"
+              "-c"
+              (format "qlmanage -p %s &
+                       sleep 0.7
+                       kill %%1"
+                      (space->feedback-filename new-space)))))
 
 (defn ^:private flash-two-pictures [old-space new-space]
-  (shell/sh "sh"
-            "--norc"
-            "-c"
-            (format "qlmanage -p %s &
-                     sleep 0.2
-                     qlmanage -p %s &
-                     sleep 0.5
-                     kill %%1
-                     kill %%2"
-                    (space->feedback-filename old-space)
-                    (space->feedback-filename new-space))))
+  (if use-process?
+    (let [{:keys [proc]} (p/process ["qlmanage"
+                                     "-p"
+                                     (space->feedback-filename old-space)]
+                                    {:inherit true
+                                     :shutdown p/destroy-tree})
+
+          proc-1 proc]
+      (Thread/sleep 200)
+      (let [{:keys [proc]} (p/process ["qlmanage"
+                                       "-p"
+                                       (space->feedback-filename new-space)]
+                                      {:inherit true
+                                       :shutdown p/destroy-tree})
+            proc-2 proc]
+        (Thread/sleep 500)
+        (.destroy proc-1)
+        (.destroy proc-2)))
+    (shell/sh "sh"
+              "--norc"
+              "-c"
+              (format "qlmanage -p %s &
+                       sleep 0.2
+                       qlmanage -p %s &
+                       sleep 0.5
+                       kill %%1
+                       kill %%2"
+                      (space->feedback-filename old-space)
+                      (space->feedback-filename new-space)))))
 
 ;;;; ___________________________________________________________________________
 ;;;; Our algorithm
