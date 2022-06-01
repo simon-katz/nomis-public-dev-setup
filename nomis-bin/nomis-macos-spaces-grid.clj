@@ -520,7 +520,7 @@ end if
       (when-not false ; move-window?
         ;; With move-window, flashing breaks things -- the window often gets
         ;; left behind.
-        (if goto-relative?
+        (if false ; goto-relative?
           (flash-two-pictures current-space new-space)
           (flash-one-picture new-space)))
       (when-not (= command :report-current-space)
