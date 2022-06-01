@@ -484,6 +484,10 @@ end if
                                      :report-current-space
                                      [current-space nil])]
       (touch-debug-file (str filename-to-touch "-" new-space))
+      (condp = special-info
+        :wrapped (flash-screen)
+        :same-space (flash-screen)
+        nil)
       (when-not move-window?
         ;; With move-window, flashing breaks things -- the window often gets
         ;; left behind.
@@ -492,10 +496,6 @@ end if
           (flash-one-picture new-space)))
       (when-not (= command :report-current-space)
         (make-space-current new-space move-window?))
-      #_(condp = special-info
-          :wrapped (flash-screen)
-          :same-space (flash-screen)
-          nil)
       (touch-debug-file (str filename-to-touch "-" new-space "-done"))
       new-space)))
 
