@@ -413,7 +413,7 @@ end if
 (def ^:private use-process? true)
 
 (defn ^:private space->feedback-filename [space]
-  (format "/Users/simonkatz/development-100/repositories/nomis/dev-setup/nomis-public-dev-setup/nomis-bin/macos-desktop-backgrounds/feedback-%s.png"
+  (format "/Users/simonkatz/development-100/repositories/nomis/dev-setup/nomis-public-dev-setup/nomis-bin/feedback-images/feedback-%s.png"
           space))
 
 (defn ^:private flash-one-picture [new-space]
