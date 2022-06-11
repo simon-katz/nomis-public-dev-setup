@@ -23,6 +23,7 @@
         forward-sentence
         forward-sexp
         kill-region
+        kill-sentence
         mark-sexp
         markdown-exdent-or-delete
         markdown-outdent-or-delete
