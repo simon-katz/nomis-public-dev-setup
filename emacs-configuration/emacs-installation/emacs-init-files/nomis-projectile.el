@@ -30,6 +30,14 @@
 
 ;;;; ___________________________________________________________________________
 
+;;;; Two things here:
+
+;;;; (1)
+;;;; If `nomis/projectile/project-type` is non-null, it is used as the return
+;;;; value of `projectile-project-type`. So if you have a funky project setup
+;;;; that projectile doesn't understand, you can set a value in .dir-locals.el.
+
+;;;; (2)
 ;;;; If a Leiningen project has a ".midje.clj" file, Projectile thinks test
 ;;;; files have a "t_" prefix rather than a "_test" suffix.
 ;;;; I think Projectile is confused on two counts:
@@ -49,13 +57,16 @@
 ;;;;     - First try to just hack prefix and suffix.
 ;;;;     - First ask why it's as it is and get agreement on the fix.
 
+(defvar nomis/projectile/project-type nil)
+
 (advice-add 'projectile-project-type
             :around
             (lambda (orig-fun &rest args)
-              (let ((res (apply orig-fun args)))
-                (if (equal res 'lein-midje)
-                    'lein-test
-                  res)))
+              (or nomis/projectile/project-type
+                  (let ((res (apply orig-fun args)))
+                    (if (equal res 'lein-midje)
+                        'lein-test
+                      res))))
             '((name . nomis/hack-projectile-midje-projects)))
 
 ;;;; ___________________________________________________________________________

@@ -136,7 +136,8 @@
      (nomis/grep/local-ignored-directories)
      (nomis/grep/local-ignored-files "package-lock.json" "main.js")
      (nomis/grep/local-ignored-files "package-lock.json")
-     (nomis/grep/local-ignored-files))))
+     (nomis/grep/local-ignored-files)
+     (nomis/projectile/project-type . lein-test))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
