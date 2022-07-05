@@ -12,9 +12,16 @@
                    ))
 
 (when (equal system-type 'darwin)
-  (let ((gls "/usr/local/bin/gls"))
-    (when (file-exists-p gls)
-      (setq insert-directory-program gls))))
+  (let* ((gls (-first #'file-exists-p
+                      '("/opt/homebrew/bin/gls"
+                        "/usr/local/bin/gls"))))
+    (when gls
+      (setq insert-directory-program gls)
+      (setq dired-listing-switches
+            (concatenate 'string
+                         dired-listing-switches
+                         " "
+                         "--time-style long-iso")))))
 
 (when (equal system-type 'windows-nt)
   (message-box "Check dired setup for windows-nt"))
