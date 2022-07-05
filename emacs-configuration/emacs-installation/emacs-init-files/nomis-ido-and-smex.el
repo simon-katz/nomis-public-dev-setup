@@ -54,6 +54,8 @@
 ;;;;   smex remembers the last command, whereas execute-extended-command
 ;;;;   (even with ido-ubiquitous) does not.
 
+(setq smex-save-file (concat nomis/emacs-d-non-repo-dir "/smex-items"))
+
 (smex-initialize) ; Can be omitted. This might cause a (minimal) delay
                   ; when Smex is auto-initialized on its first run.
 

@@ -9,6 +9,9 @@
 ;;;; ___________________________________________________________________________
 ;;;; ---- Emacs setup -- Tailor the installation ----
 
+(setq nomis/emacs-d-non-repo-dir "~/.emacs.d-non-repo")
+(make-directory nomis/emacs-d-non-repo-dir t)
+
 (load-file-relative-to-this-file "ensure-expected-emacs-version")
 (load-file-relative-to-this-file "set-up-package-stuff")
 
