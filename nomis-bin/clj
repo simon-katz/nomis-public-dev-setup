@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 set -e -x
 
-/usr/local/bin/clj -Sforce "$@"
+/opt/homebrew/bin/clj -Sforce "$@"
