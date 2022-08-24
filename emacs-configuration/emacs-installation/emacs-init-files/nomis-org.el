@@ -45,6 +45,8 @@
 
 (setq org-startup-folded t)
 
+(setq org-tags-match-list-sublevels nil)
+
 (progn ; Use current window when clicking links.
   (setq org-link-frame-setup
         (acons 'file
