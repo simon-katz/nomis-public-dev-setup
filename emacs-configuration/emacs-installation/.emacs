@@ -127,6 +127,7 @@
      (nomis/cider/cljs-dev-port . 9002)
      (nomis/cider/post-interactive-eval/clj-function-name . "dev/post-interactive-eval-hook")
      (nomis/cider/post-interactive-eval/cljs-function-name . "cljs.user/post-interactive-eval-hook")
+     (nomis/clojure-lsp-and-cider/find-definition/use-lsp\? . t)
      (nomis/grep/local-ignored-directories "compiler-output" "resources/dev-and-build/icons/bootstrap-icons-1.1.0" "resources/pub-prod/cross-env")
      (nomis/grep/local-ignored-directories "_exported-site" "_pretty-printed-pages")
      (nomis/grep/local-ignored-directories "compiler-output" "resources/pub-dev/assets")

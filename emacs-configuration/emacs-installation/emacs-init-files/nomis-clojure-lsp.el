@@ -29,13 +29,16 @@
 ;; (meaning CIDER is used in preference to LSP), but we've re-introduced it
 ;; because LSP lets us find clojure.spec definitions for symbols.
 
+(defvar nomis/clojure-lsp-and-cider/find-definition/use-lsp? nil)
+
 (defun nomis/clojure-lsp-and-cider/find-definition ()
   "Try to find definition of thing at point.
  If the thing at point is a keyword, use LSP. If the thing at
  point is a not a keyword, try using CIDER; if no luck with
  CIDER, use LSP."
   (interactive)
-  (if (ignore-errors (s-starts-with? ":" (symbol-name (symbol-at-point))))
+  (if (or nomis/clojure-lsp-and-cider/find-definition/use-lsp?
+          (ignore-errors (s-starts-with? ":" (symbol-name (symbol-at-point)))))
       (lsp-find-definition)
     (cl-flet ((buffer-and-point () (list (current-buffer) (point))))
       (let* ((old-bap (buffer-and-point)))
