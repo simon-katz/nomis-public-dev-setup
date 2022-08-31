@@ -213,15 +213,19 @@
    'cider-ns-refresh--handle-response
    :around
    (lambda (orig-fun response &rest other-args)
-     (let* ((pos-when-not-eob (with-current-buffer cider-ns-refresh-log-buffer
-                                (when (not (eobp))
-                                  (point)))))
+     ;; Trying to maintain `pos-when-not-eob` does weird stuff when you show the
+     ;; cider-ns-refresh-log-buffer in different windows at different times.
+     ;; So try without and see if you are happy.
+     (let* (;; (pos-when-not-eob (with-current-buffer cider-ns-refresh-log-buffer
+            ;;                     (when (not (eobp))
+            ;;                       (point))))
+            )
        (apply orig-fun response other-args)
-       (when pos-when-not-eob
-         ;; Undo the `(goto-char (point-max))` done by
-         ;; `cider-ns-refresh--handle-response`.
-         (with-current-buffer cider-ns-refresh-log-buffer
-           (goto-char pos-when-not-eob)))
+       ;; (when pos-when-not-eob
+       ;;   ;; Undo the `(goto-char (point-max))` done by
+       ;;   ;; `cider-ns-refresh--handle-response`.
+       ;;   (with-current-buffer cider-ns-refresh-log-buffer
+       ;;     (goto-char pos-when-not-eob)))
        (nrepl-dbind-response response (status)
          ;; The final call of the `cider-ns-refresh--handle-response` callback
          ;; has a status of `("state")`.
