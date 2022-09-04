@@ -140,7 +140,8 @@
                 "1.3.0 (package: 20220405.1216)")))
 
   (defvar nomis/cider-ns-refresh/-vars-to-pass-to-log-buffer
-    '(nomis/cider-forbid-refresh-all?
+    '(nomis/cider-forbid-refresh?
+      nomis/cider-forbid-refresh-all?
       cider-ns-refresh-before-fn
       cider-ns-refresh-after-fn))
 
@@ -243,6 +244,7 @@
 
 ;;;; ___________________________________________________________________________
 
+(defvar nomis/cider-forbid-refresh? nil)     ; Use dir-locals to set this when needed.
 (defvar nomis/cider-forbid-refresh-all? nil) ; Use dir-locals to set this when needed.
 
 (advice-add
@@ -250,6 +252,12 @@
  :around
  (lambda (orig-fun mode &rest other-args)
    (let* ((log-buffer (nomis/cider-ns-refresh/-get-log-buffer)))
+     (when nomis/cider-forbid-refresh?
+       (let* ((msg "nomis/cider-forbid-refresh? is truthy, so I won't refresh"))
+         (nomis/cider-ns-refresh/log-error log-buffer (s-concat msg "\n"))
+         (nomis/cider-ns-refresh/log-post-message)
+         (nomis/msg/grab-user-attention/high)
+         (error msg)))
      (when (and nomis/cider-forbid-refresh-all?
                 (member mode '(refresh-all 4 clear 16)))
        (let* ((msg "nomis/cider-forbid-refresh-all? is truthy, so I won't refresh-all"))

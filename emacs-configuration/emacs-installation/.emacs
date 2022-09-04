@@ -119,6 +119,7 @@
       (thread-first . 1)
       (thread-last . 1))
      (nomis/cider-cljs-offer-to-open-app-in-browser\?)
+     (nomis/cider-forbid-refresh\? . t)
      (nomis/cider-forbid-refresh-all\? . t)
      (nomis/cider/cljs-dev-host . "localhost")
      (nomis/cider/cljs-dev-port . 3333)
