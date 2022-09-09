@@ -10,6 +10,7 @@
 (require 'nomis-clojure-mode-extras)
 (require 'nomis-clojure-lsp)
 (require 'nomis-kaocha-runner)
+(require 'nomis-clojure-portal)
 
 (define-key clojure-mode-map (kbd "RET") 'newline-and-indent)
 
