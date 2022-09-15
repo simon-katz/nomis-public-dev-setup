@@ -93,6 +93,8 @@
   ;; Replace the built-in `highlight` with the manually-installed one.
   (require 'highlight))
 
+(require 'nomis-clojure-regexps)
+
 ;;;; ___________________________________________________________________________
 
 ;;;; Demo of highlighting with the libraries used by `:old` and `:new` values for
@@ -345,11 +347,7 @@
   "'`#@~^")
 
 (defmethod nomis/symbol-body-chars ((major-mode (eql clojure-mode)))
-  ;; Note the position of the "-" at the beginning. So when augmenting this,
-  ;; you must add at the end (otherwise you will introduce a range when creating
-  ;; regexps using `nomis/rx/make-char-match-regexp/broken`).
-  ;; Horrible.
-  "-[:alnum:]$&*+_<>/'.=?!•●")
+  nomis/clojure-regexps/symbol-body-chars)
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

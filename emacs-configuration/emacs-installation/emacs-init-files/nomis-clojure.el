@@ -11,6 +11,7 @@
 (require 'nomis-clojure-lsp)
 (require 'nomis-kaocha-runner)
 (require 'nomis-clojure-portal)
+(require 'nomis-clojure-privacy-highlighting-mode)
 
 (define-key clojure-mode-map (kbd "RET") 'newline-and-indent)
 
