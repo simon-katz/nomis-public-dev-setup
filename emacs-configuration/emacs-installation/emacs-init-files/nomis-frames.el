@@ -54,7 +54,7 @@
 (defconst nomis/make-windows-one-char-wider? t)
 
 (defconst nomis/extra-width-for-each-window
-  (let* ((v 92))
+  (let* ((v 93))
     (if nomis/make-windows-one-char-wider?
         (1+ v)
       v)))
