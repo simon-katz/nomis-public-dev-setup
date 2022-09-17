@@ -137,7 +137,8 @@
               '("1.2.0snapshot (package: 20210909.1011)"
                 "1.2.0snapshot (package: 20210929.1032)"
                 "1.2.0snapshot (package: 20211105.708)"
-                "1.3.0 (package: 20220405.1216)")))
+                "1.3.0 (package: 20220405.1216)"
+                "1.5.0 (package: 20220830.500)")))
 
   (defvar nomis/cider-ns-refresh/-vars-to-pass-to-log-buffer
     '(nomis/cider-forbid-refresh?
