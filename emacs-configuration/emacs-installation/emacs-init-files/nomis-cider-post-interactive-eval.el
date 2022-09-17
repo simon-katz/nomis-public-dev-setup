@@ -150,7 +150,7 @@ the need to save files so that a file-watcher can spot changes).")
     (advice-add
      'cider-load-buffer
      :around
-     (lambda (orig-fun &optional buffer callback)
+     (lambda (orig-fun &optional buffer callback _undef-all)
        (cl-flet ((do-it
                   (hacked-callback)
                   (funcall orig-fun buffer hacked-callback)))
