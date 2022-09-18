@@ -63,6 +63,7 @@
      lsp-mode
      lsp-treemacs
      lsp-ui
+     lua-mode
      magit
      markdown-mode
      multiple-cursors
