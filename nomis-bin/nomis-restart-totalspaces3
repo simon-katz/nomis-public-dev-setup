@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+osascript -e 'display notification "Restarting TotalSpaces3"'
+
+killall TotalSpaces3 && sleep 1 && open -a /Applications/TotalSpaces3.app
