@@ -114,5 +114,33 @@
    "You need to fix `nomis/cider-browse-ns-all-from-browse-single` for this version of `CIDER`.")))
 
 ;;;; ___________________________________________________________________________
+;;;; Fix annoying prompt for namespace in `cider-browse-ns`.
+
+(cond
+ ((member (pkg-info-version-info 'cider)
+          '("1.5.0 (package: 20220830.500)"))
+
+  (defun nomis/cider-browse-ns ()
+    "Like `cider-browse-ns`, but uses the current namespace instead of prompting."
+    (interactive)
+    (let* ((repls (cider-repls)))
+      (if (null repls)
+          (user-error "This buffer has no CIDER sessions"))
+      (let* ((ns-name (clojure-find-ns)))
+        (if (null ns-name)
+            (user-error "This buffer has no namespace")
+          (let* ((clojure-command (format "(find-ns '%s)" ns-name))
+                 (clojure-return-value-as-string
+                  (nrepl-dict-get (cider-nrepl-sync-request:eval clojure-command)
+                                  "value")))
+            (if (equal "nil" clojure-return-value-as-string)
+                (user-error "Namespace %s is not loaded" ns-name)
+              (cider-browse-ns ns-name))))))))
+
+ (t
+  (message-box
+   "You need to fix `nomis/cider-browse-ns` for this version of `CIDER`.")))
+
+;;;; ___________________________________________________________________________
 
 (provide 'nomis-cider-extras)
