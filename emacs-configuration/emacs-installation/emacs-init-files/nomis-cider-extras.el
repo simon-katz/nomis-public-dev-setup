@@ -86,5 +86,33 @@
      "You need to fix `cider-eldoc-format-function` for this version of `CIDER`."))))
 
 ;;;; ___________________________________________________________________________
+;;;; Fix annoying navigating back from single ns browser to all ns browser,
+;;;; which always goes to top of buffer.
+
+;;;; We want to hack `cider-browse-ns-all`, but only when called from the
+;;;; single-ns browser. We do that by defining a new command
+;;;; `nomis/cider-browse-ns-all-from-browse-single` and changing the
+;;;; appropriate keybinding.
+
+(cond
+ ((member (pkg-info-version-info 'cider)
+          '("1.5.0 (package: 20220830.500)"))
+
+  (defun nomis/cider-browse-ns-all-from-browse-single ()
+    (interactive)
+    (let* ((ns-name-to-go-to cider-browse-ns-current-ns))
+      (cider-browse-ns-all)
+      (let* ((new-pos (or (search-forward  ns-name-to-go-to nil t)
+                          (search-backward ns-name-to-go-to nil t))))
+        (when new-pos
+          (beginning-of-line)))))
+
+  (define-key cider-browse-ns-mode-map "^" #'nomis/cider-browse-ns-all-from-browse-single))
+
+ (t
+  (message-box
+   "You need to fix `nomis/cider-browse-ns-all-from-browse-single` for this version of `CIDER`.")))
+
+;;;; ___________________________________________________________________________
 
 (provide 'nomis-cider-extras)
