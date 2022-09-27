@@ -123,6 +123,7 @@
       ;; So, we set `cider-ns-refresh-show-log-buffer`.
       )
 
+(setq-default cider-browse-ns-group-by 'visibility)
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ;;;; Company mode for Cider
