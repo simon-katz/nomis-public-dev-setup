@@ -1,4 +1,18 @@
 --------------------------------------------------------------------------------
+---- nomisMessage ----
+
+function nomisMessage(str, style, screen, seconds)
+   local messageFile = io.open("logs/hammerspoon-messages.log", "a+")
+   messageFile:write(os.date("%Y-%m-%d %H:%M:%S,000"),
+                     " [] INFO x - ", -- a standard format
+                     string.gsub(str, "\n", "<newline>"),
+                     "\n")
+   messageFile:close()
+
+   return hs.alert.show(str, style, screen, seconds)
+end
+
+--------------------------------------------------------------------------------
 ---- A useful message ----
 
 hs.alert.show("Reloading Hammerspoon config")
