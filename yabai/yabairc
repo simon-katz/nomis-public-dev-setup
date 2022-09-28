@@ -1,0 +1,15 @@
+#!/usr/bin/env sh
+# The above shebang is just to get editors to use an appropriate mode.
+
+# Load scripting addition. See https://github.com/koekeishiya/yabai/wiki/Installing-yabai-(latest-release)#macos-big-sur-and-monterey---automatically-load-scripting-addition-on-startup
+sudo yabai --load-sa
+yabai -m signal --add event=dock_did_restart action="sudo yabai --load-sa"
+
+# Disable window management.
+yabai -m config layout float
+
+# Enable window borders.
+yabai -m config window_border on
+yabai -m config window_border_width 6
+yabai -m config active_window_border_color 0xFF0000FF   # - was 0XFF50FA7B
+yabai -m config normal_window_border_color 0x00112233 # transparent - was 0xFFBD93F9
