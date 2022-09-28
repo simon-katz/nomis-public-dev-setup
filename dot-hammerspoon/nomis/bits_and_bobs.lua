@@ -2,12 +2,12 @@
 ---- nomisHelloWorld ----
 
 function nomisHelloWorld ()
-   hs.alert.show("Hello World! (from Hammerspoon)")
+   nomisMessage("Hello World! (from Hammerspoon)")
 end
 
 --------------------------------------------------------------------------------
 ---- nomisShiftCmdQ ----
 
 function nomisShiftCmdQ ()
-   hs.alert.show("Shift + Cmd + Q is disabled")
+   nomisMessage("Shift + Cmd + Q is disabled")
 end

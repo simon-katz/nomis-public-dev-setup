@@ -2,7 +2,7 @@ require("nomis.window_manipulation.bounds")
 require("nomis.window_manipulation.common")
 
 function nomisWindowLogWindowAndScreenInfo ()
-   hs.alert.show("Writing window info to log file...")
+   nomisMessage("Writing window info to log file...")
 
    local
       applescriptWinX1,
@@ -42,5 +42,5 @@ function nomisWindowLogWindowAndScreenInfo ()
             " h=",  applescriptWinY2 - applescriptWinY1)
    nomisLog("________________________________________")
 
-   hs.alert.show("... written window info to log file")
+   nomisMessage("... written window info to log file")
 end

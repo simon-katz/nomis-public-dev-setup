@@ -139,25 +139,25 @@ function displayBoundsFeedback (x1, y1, x2, y2, extraInfo)
    end
 
    mostRecentSetBoundsInfoAlertUuid =
-      hs.alert.show("     Top left:"
-                    .. " " .. x1CellNo
-                    .. "," .. y1CellNo
-                    .. " \n\n         Size:"
-                    .. " "  .. xNCells
-                    .. ","  .. yNCells
-                    .. " \n\n Bottom right:"
-                    .. " "  .. x2CellNo
-                    .. ","  .. y2CellNo
-                    -- .. " \n\n Coordinates:"
-                    -- .. " ("   .. x1
-                    -- .. ","    .. y1
-                    -- .. "), (" .. x2
-                    -- .. ","    .. y2
-                    -- .. ")"
-                    .. " "
-                    .. hackedExtraInfo ,
-                    {textFont = "courier"},
-                    nomisBoundsAlertFeedbackDuration)
+      nomisMessage("     Top left:"
+                   .. " " .. x1CellNo
+                   .. "," .. y1CellNo
+                   .. " \n\n         Size:"
+                   .. " "  .. xNCells
+                   .. ","  .. yNCells
+                   .. " \n\n Bottom right:"
+                   .. " "  .. x2CellNo
+                   .. ","  .. y2CellNo
+                   -- .. " \n\n Coordinates:"
+                   -- .. " ("   .. x1
+                   -- .. ","    .. y1
+                   -- .. "), (" .. x2
+                   -- .. ","    .. y2
+                   -- .. ")"
+                   .. " "
+                   .. hackedExtraInfo ,
+                   {textFont = "courier"},
+                   nomisBoundsAlertFeedbackDuration)
 end
 
 local giveBoundsFeedback = true

@@ -10,7 +10,7 @@ end
 
 function nomisRestartTotalSpaces ()
    nomisRestartTotalSpacesHelper()
-   hs.alert.show("Restarting TotalSpaces3")
+   nomisMessage("Restarting TotalSpaces3")
 end
 
 --------------------------------------------------------------------------------
@@ -20,7 +20,7 @@ end
 
 function nomisRestartTotalSpacesAfterWaking ()
    nomisRestartTotalSpacesHelper()
-   hs.alert.show("Restarting TotalSpaces3 after waking")
+   nomisMessage("Restarting TotalSpaces3 after waking")
 end
 
 local wakeUpWatcher = hs.caffeinate.watcher.new(function(eventType)

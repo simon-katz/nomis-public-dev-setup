@@ -29,7 +29,7 @@
 
 ### Reload config (skhd, Hammerspoon, maybe more)
 
-             ctrl + alt + cmd - r        : ~/bin-private/hs -c 'hs.alert.show("Reloading skhd")' ; skhd --reload
+             ctrl + alt + cmd - r        : ~/bin-private/hs -c 'nomisMessage("Reloading skhd")' ; skhd --reload
 fn         + ctrl + alt + cmd - r        : ~/bin-private/hs -c 'hs.reload()'
 
 

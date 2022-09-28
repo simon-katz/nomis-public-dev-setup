@@ -59,7 +59,7 @@ function nomisWindowRestoreOldSize ()
    if bounds ~= nil then
       setBounds(bounds[1], bounds[2], bounds[3], bounds[4])
    else
-      hs.alert.show("I don't have the old size stored")
+      nomisMessage("I don't have the old size stored")
    end
 end
 
@@ -68,7 +68,7 @@ function nomisWindowMoveToNextScreen ()
    local currentScreen = win:screen()
    local nextScreen = currentScreen:next()
    if currentScreen == nextScreen then
-      hs.alert.show("Can't move to next screen because there is only one screen")
+      nomisMessage("Can't move to next screen because there is only one screen")
    else
       win:moveToScreen(nextScreen,
                        false,

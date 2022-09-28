@@ -15,7 +15,7 @@ end
 --------------------------------------------------------------------------------
 ---- A useful message ----
 
-hs.alert.show("Reloading Hammerspoon config")
+nomisMessage("Reloading Hammerspoon config")
 
 --------------------------------------------------------------------------------
 ---- Global log file ----

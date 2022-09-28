@@ -1,6 +1,6 @@
 require("nomis.z_obsolete.nomis_applescripts")
 
-hs.alert.show("Whoops! Loading obsolete window-manipulation-using-applescripts")
+nomisMessage("Whoops! Loading obsolete window-manipulation-using-applescripts")
 
 function nomisWindowMoveLeft () runNomisApplescriptFile("window-move-left")       end
 function nomisWindowMoveRight() runNomisApplescriptFile("window-move-right")      end
