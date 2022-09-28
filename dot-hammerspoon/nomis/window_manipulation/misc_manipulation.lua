@@ -3,8 +3,9 @@ local nomisWindowToBounds = {}
 function nomisWindowDisplayBounds (extraInfo)
    local win = hs.window.focusedWindow()
    local winFrame = win:frame()
-   displayBoundsFeedback(winFrame.x1, winFrame.y1, winFrame.x2, winFrame.y2,
-                         extraInfo)
+   displayBoundsFeedbackWithNormalFeedbackDuration(winFrame.x1, winFrame.y1,
+                                                   winFrame.x2, winFrame.y2,
+                                                   extraInfo)
 end
 
 local function nomisNormalIsMaximized(win)
@@ -44,7 +45,9 @@ function nomisWindowMaximize ()
    local win = hs.window.focusedWindow()
    local winFrame = win:frame()
    if nomisIsMaximized(win) then
-      nomisWindowDisplayBounds("* Already maximized *")
+      displayBoundsFeedbackWithshortFeedbackDuration(winFrame.x1, winFrame.y1,
+                                                     winFrame.x2, winFrame.y2,
+                                                     "* Already maximized *")
    else
       nomisWindowToBounds[win:id()]
          = {winFrame.x1, winFrame.y1, winFrame.x2, winFrame.y2}

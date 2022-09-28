@@ -91,7 +91,7 @@ end
 
 local mostRecentSetBoundsInfoAlertUuid = nil
 
-function displayBoundsFeedback (x1, y1, x2, y2, extraInfo)
+function displayBoundsFeedbackHelper (x1, y1, x2, y2, extraInfo, feedbackDuration)
    local cellXs = cellXs()
    local cellYs = cellYs()
    local cellWidth = cellWidth()
@@ -157,7 +157,15 @@ function displayBoundsFeedback (x1, y1, x2, y2, extraInfo)
                    .. " "
                    .. hackedExtraInfo ,
                    {textFont = "courier"},
-                   nomisBoundsAlertFeedbackDuration)
+                   feedbackDuration)
+end
+
+function displayBoundsFeedbackWithNormalFeedbackDuration (x1, y1, x2, y2, extraInfo)
+   displayBoundsFeedbackHelper(x1, y1, x2, y2, extraInfo)
+end
+
+function displayBoundsFeedbackWithshortFeedbackDuration (x1, y1, x2, y2, extraInfo)
+   displayBoundsFeedbackHelper(x1, y1, x2, y2, extraInfo, nomisBoundsAlertFeedbackDuration)
 end
 
 local giveBoundsFeedback = true
@@ -168,7 +176,7 @@ function setBounds (x1, y1, x2, y2)
    x2 = math.floor(x2 + 0.5)
    y2 = math.floor(y2 + 0.5)
    if giveBoundsFeedback then
-      displayBoundsFeedback(x1, y1, x2, y2)
+      displayBoundsFeedbackWithshortFeedbackDuration(x1, y1, x2, y2)
    end
    -- `buggyHammerspoonSetBounds` doesn't work reliablly, so use Applescript
    -- instead...
