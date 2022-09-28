@@ -20,6 +20,7 @@ emacs-configuration/emacs-installation/.emacs.d/transient/
 emacs-configuration/emacs-installation/.emacs.d/.lsp-session-v1
 
 .nomis-space-debug
+hammerspoon.log
 
 # To get vterm to work on a new machine:
 #
