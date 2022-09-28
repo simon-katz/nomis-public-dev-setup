@@ -1,0 +1,126 @@
+#!/usr/bin/env sh
+# The above shebang is just to get editors to use an appropriate mode.
+
+### References and How Tos
+
+# skhd home page: https://github.com/koekeishiya/skhd
+#
+# Info about keys: https://github.com/koekeishiya/skhd/issues/1
+#
+# To restart skhd:
+#     brew services restart skhd
+#
+# To find a key code:
+#     skhd --observe
+#
+# The PATH available when running commands is:
+#   /opt/homebrew/bin
+#   /usr/bin
+#   /bin
+#   /usr/sbin
+#   /sbin
+# See the output produced from `ctrl + alt + cmd - q`.
+
+
+### Display the PATH
+
+             ctrl + alt + cmd - q        : osascript -e "display dialog \"Path is:\n\n$(echo $PATH | tr ':' '\n')\" buttons {\"OK\"} with title \"skhd PATH\""
+
+
+### Reload config (skhd, Hammerspoon, maybe more)
+
+             ctrl + alt + cmd - r        : ~/bin-private/hs -c 'hs.alert.show("Reloading skhd")' ; skhd --reload
+fn         + ctrl + alt + cmd - r        : ~/bin-private/hs -c 'hs.reload()'
+
+
+### Is this thing working? (aka Hello World)
+
+fn         + ctrl + alt + cmd - w        : ~/bin-private/hs -c "nomisHelloWorld()"
+
+
+### Disable some keybindings
+
+     # Keybinding for quitting all apps and logging out.
+     shift              + cmd - q        : ~/bin-private/hs -c "nomisShiftCmdQ()"
+
+
+### Mission Control
+
+             ctrl + alt + cmd - 0x27     : /opt/homebrew/bin/yabai -m space --toggle mission-control # 0x27 is '
+
+
+### TotalSpaces
+
+             ctrl + alt + cmd - t        : ~/bin-private/hs -c "nomisRestartTotalSpaces()"
+
+
+### NotalSpaces
+
+             # This chunk is being handled by TotalSpaces.
+             # ctrl + alt + cmd - left     : ~/.config/notal-spaces/bin/notal_spaces.clj left
+             # ctrl + alt + cmd - right    : ~/.config/notal-spaces/bin/notal_spaces.clj right
+             # ctrl + alt + cmd - up       : ~/.config/notal-spaces/bin/notal_spaces.clj up
+             # ctrl + alt + cmd - down     : ~/.config/notal-spaces/bin/notal_spaces.clj down
+             # ctrl + alt + cmd - 7        : ~/.config/notal-spaces/bin/notal_spaces.clj goto-space 01
+             # ctrl + alt + cmd - 8        : ~/.config/notal-spaces/bin/notal_spaces.clj goto-space 02
+             # ctrl + alt + cmd - 9        : ~/.config/notal-spaces/bin/notal_spaces.clj goto-space 03
+             # ctrl + alt + cmd - 0        : ~/.config/notal-spaces/bin/notal_spaces.clj goto-space 04
+             # ctrl + alt + cmd - u        : ~/.config/notal-spaces/bin/notal_spaces.clj goto-space 05
+             # ctrl + alt + cmd - i        : ~/.config/notal-spaces/bin/notal_spaces.clj goto-space 06
+             # ctrl + alt + cmd - o        : ~/.config/notal-spaces/bin/notal_spaces.clj goto-space 07
+             # ctrl + alt + cmd - p        : ~/.config/notal-spaces/bin/notal_spaces.clj goto-space 08
+             # ctrl + alt + cmd - j        : ~/.config/notal-spaces/bin/notal_spaces.clj goto-space 09
+             # ctrl + alt + cmd - k        : ~/.config/notal-spaces/bin/notal_spaces.clj goto-space 10
+             # ctrl + alt + cmd - l        : ~/.config/notal-spaces/bin/notal_spaces.clj goto-space 11
+             # ctrl + alt + cmd - 0x29     : ~/.config/notal-spaces/bin/notal_spaces.clj goto-space 12 # 0x29 is ;
+             # ctrl + alt + cmd - m        : ~/.config/notal-spaces/bin/notal_spaces.clj goto-space 13
+             # ctrl + alt + cmd - 0x2B     : ~/.config/notal-spaces/bin/notal_spaces.clj goto-space 14 # 0x2B is ,
+             # ctrl + alt + cmd - 0x2F     : ~/.config/notal-spaces/bin/notal_spaces.clj goto-space 15 # 0x2F is .
+             # ctrl + alt + cmd - 0x2C     : ~/.config/notal-spaces/bin/notal_spaces.clj goto-space 16 # 0x2C is /
+             # ctrl + alt + cmd - 0x31     : ~/.config/notal-spaces/bin/notal_spaces.clj report-current-space # 0x31 is space
+
+             ctrl + alt + cmd - home     : ~/.config/notal-spaces/bin/notal_spaces.clj left  move-window
+             ctrl + alt + cmd - end      : ~/.config/notal-spaces/bin/notal_spaces.clj right move-window
+             ctrl + alt + cmd - pageup   : ~/.config/notal-spaces/bin/notal_spaces.clj up    move-window
+             ctrl + alt + cmd - pagedown : ~/.config/notal-spaces/bin/notal_spaces.clj down  move-window
+fn         + ctrl + alt + cmd - 7        : ~/.config/notal-spaces/bin/notal_spaces.clj goto-space 01 move-window
+fn         + ctrl + alt + cmd - 8        : ~/.config/notal-spaces/bin/notal_spaces.clj goto-space 02 move-window
+fn         + ctrl + alt + cmd - 9        : ~/.config/notal-spaces/bin/notal_spaces.clj goto-space 03 move-window
+fn         + ctrl + alt + cmd - 0        : ~/.config/notal-spaces/bin/notal_spaces.clj goto-space 04 move-window
+fn         + ctrl + alt + cmd - u        : ~/.config/notal-spaces/bin/notal_spaces.clj goto-space 05 move-window
+fn         + ctrl + alt + cmd - i        : ~/.config/notal-spaces/bin/notal_spaces.clj goto-space 06 move-window
+fn         + ctrl + alt + cmd - o        : ~/.config/notal-spaces/bin/notal_spaces.clj goto-space 07 move-window
+fn         + ctrl + alt + cmd - p        : ~/.config/notal-spaces/bin/notal_spaces.clj goto-space 08 move-window
+fn         + ctrl + alt + cmd - j        : ~/.config/notal-spaces/bin/notal_spaces.clj goto-space 09 move-window
+fn         + ctrl + alt + cmd - k        : ~/.config/notal-spaces/bin/notal_spaces.clj goto-space 10 move-window
+fn         + ctrl + alt + cmd - l        : ~/.config/notal-spaces/bin/notal_spaces.clj goto-space 11 move-window
+fn         + ctrl + alt + cmd - 0x29     : ~/.config/notal-spaces/bin/notal_spaces.clj goto-space 12 move-window # 0x29 is ;
+fn         + ctrl + alt + cmd - m        : ~/.config/notal-spaces/bin/notal_spaces.clj goto-space 13 move-window
+fn         + ctrl + alt + cmd - 0x2B     : ~/.config/notal-spaces/bin/notal_spaces.clj goto-space 14 move-window # 0x2B is ,
+fn         + ctrl + alt + cmd - 0x2F     : ~/.config/notal-spaces/bin/notal_spaces.clj goto-space 15 move-window # 0x2F is .
+fn         + ctrl + alt + cmd - 0x2C     : ~/.config/notal-spaces/bin/notal_spaces.clj goto-space 16 move-window # 0x2C is /
+
+
+### Screens
+
+fn         + ctrl + alt + cmd - 0x2A     : ~/bin-private/hs -c "nomisWindowMoveToNextScreen()" # 0x2a is backslash
+
+
+### Window manipulation
+
+             ctrl       + cmd - up       : ~/bin-private/hs -c "nomisWindowMaximize()"
+             ctrl       + cmd - down     : ~/bin-private/hs -c "nomisWindowRestoreOldSize()"
+
+             ctrl + alt + cmd - w        : ~/bin-private/hs -c "nomisWindowLogWindowAndScreenInfo()"
+
+     shift        + alt       - 0x2C     : ~/bin-private/hs -c "nomisWindowDisplayBounds()" # 0x2C is /
+
+     shift        + alt       - left     : ~/bin-private/hs -c "nomisWindowMoveLeft()"
+     shift        + alt       - right    : ~/bin-private/hs -c "nomisWindowMoveRight()"
+     shift        + alt       - up       : ~/bin-private/hs -c "nomisWindowMoveUp()"
+     shift        + alt       - down     : ~/bin-private/hs -c "nomisWindowMoveDown()"
+
+     shift        + alt + cmd - left     : ~/bin-private/hs -c "nomisWindowDecWidth()"
+     shift        + alt + cmd - right    : ~/bin-private/hs -c "nomisWindowIncWidth()"
+     shift        + alt + cmd - up       : ~/bin-private/hs -c "nomisWindowDecHeight()"
+     shift        + alt + cmd - down     : ~/bin-private/hs -c "nomisWindowIncHeight()"
