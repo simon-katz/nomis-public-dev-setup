@@ -13,9 +13,10 @@
 ;;;; Faces
 
 (defface nomis/cph/public-face
-  `((t (:background ,(case 2
+  `((t (:background ,(case 3
                        (1 "#b3d7ff")
-                       (2 "#c0f0ff"))
+                       (2 "#c0f0ff")
+                       (3 "#aaeeee"))
                     :bold t)))
   "Face for public Clojure declarations."
   :group 'nomis/clojure-privacy-highlighting)
