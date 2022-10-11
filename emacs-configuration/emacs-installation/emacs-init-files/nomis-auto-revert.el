@@ -6,7 +6,7 @@
 ;;;; ___________________________________________________________________________
 ;;;; ---- Standard tailoring ----
 
-(setq auto-revert-verbose t)
+(setq auto-revert-verbose nil)
 
 ;;;; Make things more responsive when you cause a log file to update more than
 ;;;; once in quick succession.
