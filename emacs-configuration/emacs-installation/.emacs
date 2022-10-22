@@ -119,6 +119,7 @@
       (with-parsed-tramp-file-name . 2)
       (thread-first . 1)
       (thread-last . 1))
+     (eval org-content 999)
      (nomis/cider-cljs-offer-to-open-app-in-browser\?)
      (nomis/cider-forbid-refresh\? . t)
      (nomis/cider-forbid-refresh-all\? . t)
