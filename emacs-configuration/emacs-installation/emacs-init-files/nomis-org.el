@@ -707,6 +707,30 @@ limit the search to the current buffer."
   (org-todo-list))
 
 ;;;; ___________________________________________________________________________
+;;;; * org-content
+
+(cond ((member org-version
+               '("9.5.2"))
+       ;; Fix broken `org-content` — a nil argument should show all headlines.
+       ;; Copied from `org` package and hacked — changed "p" to "P".
+       (defun org-content (&optional arg)
+         "Show all headlines in the buffer, like a table of contents.
+With numerical argument N, show content up to level N."
+         (interactive "P")
+         (org-show-all '(headings drawers))
+         (save-excursion
+           (goto-char (point-max))
+           (let ((regexp (if (and (wholenump arg) (> arg 0))
+                             (format "^\\*\\{1,%d\\} " arg)
+                           "^\\*+ "))
+                 (last (point)))
+             (while (re-search-backward regexp nil t)
+               (org-flag-region (line-end-position) last t 'outline)
+               (setq last (line-end-position 0)))))))
+      (t
+       (message-box "You need to fix `org-content` for this version of org mode.")))
+
+;;;; ___________________________________________________________________________
 ;;;; * Key bindings
 
 (require 'nomis-org-key-bindings)
