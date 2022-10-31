@@ -1,3 +1,7 @@
 #!/usr/bin/env bash
 
-killall TotalSpaces3 && sleep 1 && open -a /Applications/TotalSpaces3.app
+killall TotalSpaces3
+
+sleep 1
+
+open -a /Applications/TotalSpaces3.app
