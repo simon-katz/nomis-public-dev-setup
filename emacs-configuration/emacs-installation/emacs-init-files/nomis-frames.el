@@ -123,6 +123,8 @@
      ;;      sometimes too high.
      ;;      - Is that consistent within each invocation of Emacs?
      59)
+    (:keane
+     65)
     (:simon-katzs-wefarm-macbook-pro
      60)
     (:probably-windows-at-work-place

@@ -87,6 +87,10 @@
                        "defoe.home"))
          :defoe)
         ((member (system-name)
+                 (list "keane.local"
+                       "keane.home"))
+         :keane)
+        ((member (system-name)
                  ;; My Wefarm Mac
                  '("Simons-MBP.home"
                    "Simons-MacBook-Pro.local"))
