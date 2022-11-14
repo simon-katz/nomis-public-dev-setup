@@ -195,6 +195,16 @@ Return the nesting depth of the headline in the outline."
 (defvaralias 'norg/w/catch-invisible-edits 'org-catch-invisible-edits)
 
 ;;;; ___________________________________________________________________________
+;;;; ____ * Whether to show bodies
+
+(defvar norg/show-bodies? t)
+
+(defun norg/toggle-show-bodies ()
+  (interactive)
+  (setq norg/show-bodies? (not norg/show-bodies?))
+  (message "norg/show-bodies? set to %s" norg/show-bodies?))
+
+;;;; ___________________________________________________________________________
 ;;;; ____ * Some wrappers for org functionality
 
 ;;;; Basic stuff
@@ -239,7 +249,10 @@ Return the nesting depth of the headline in the outline."
 (defun norg/level-incl-body/must-be-at-boh ()
   (let* ((heading-level (norg/w/level/must-be-at-boh)))
     (+ heading-level
-       (if (norg/-has-body?/must-be-at-boh) 1 0))))
+       (if (and norg/show-bodies?
+                (norg/-has-body?/must-be-at-boh))
+           1
+         0))))
 
 (defun norg/-in-body? ()
   (> (point)
@@ -255,7 +268,8 @@ value."
   (+ (save-excursion
        (norg/w/back-to-heading t)
        (norg/w/level/must-be-at-boh))
-     (if (and inc-if-in-body?
+     (if (and norg/show-bodies?
+              inc-if-in-body?
               (norg/-in-body?))
          1
        0)))
@@ -403,12 +417,13 @@ a body, \"current headline\" means the current body's parent
 headline."
   (when collapse-first? (norg/collapse))
   (norg/w/show-children n)
-  (let* ((level (norg/current-level)))
-    (norg/mapc-entries-from-point #'(lambda ()
-                                      (when (< (- (norg/w/level/must-be-at-boh)
-                                                  level)
-                                               n)
-                                        (norg/w/show-entry))))))
+  (when norg/show-bodies?
+    (let* ((level (norg/current-level)))
+      (norg/mapc-entries-from-point #'(lambda ()
+                                        (when (< (- (norg/w/level/must-be-at-boh)
+                                                    level)
+                                                 n)
+                                          (norg/w/show-entry)))))))
 
 (defun norg/expand-fully ()
   (norg/expand 1000) ; TODO magic number
@@ -769,7 +784,8 @@ When in a body, \"current headline\" means the current body's parent headline."
                                       has-visible-body?
                                       has-invisible-body?)
                   (norg/-body-info)
-                (if (or (not has-body?)
+                (if (or (not norg/show-bodies?)
+                        (not has-body?)
                         has-visible-body?)
                     norg/-plus-infinity
                   (1+ level))))))
@@ -1007,9 +1023,12 @@ When in a body, \"current headline\" means the current body's parent headline."
             (funcall (if out-of-range?
                          #'nomis/popup/error-message
                        #'nomis/popup/message)
-                     (concat message-format-string "%s")
+                     (concat message-format-string "%s%s")
                      new-level
                      maximum
+                     (if norg/show-bodies?
+                         ""
+                       " (not showing bodies)")
                      (if out-of-range?
                          (cl-ecase setting-kind
                            ((:less :setting-min)
