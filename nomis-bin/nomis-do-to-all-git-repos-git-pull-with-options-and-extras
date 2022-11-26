@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+set -e
+
+nomis-do-to-all-git-repos -n git pull | grep -v "^Already up to date.$"
