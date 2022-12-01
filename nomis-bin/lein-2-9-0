@@ -8,9 +8,7 @@ function msg {
     echo "$@" 1>&2
 }
 
-export LEIN_VERSION="2.9.10"
-# Must be sha256sum, will be replaced by bin/release
-export LEIN_CHECKSUM='a228530f00b50753acfddc3de38a0d737b6f5c1aec49af202e70a0ad28c249c9'
+export LEIN_VERSION="2.9.0"
 
 case $LEIN_VERSION in
     *SNAPSHOT) SNAPSHOT="YES" ;;
@@ -77,17 +75,6 @@ function download_failed_message {
 	EOS
 }
 
-function checksum_failed_message {
-    cat <<-EOS 1>&2
-	Failed to properly download $1
-	The checksum was mismatched. and we could not verify the downloaded
-	file. We expected a sha256 of
-	$2 and actually had
-	$3.
-	We used '$SHASUM_CMD' to verify the downloaded file.
-	EOS
-}
-
 function self_install {
   if [ -r "$LEIN_JAR" ]; then
     cat <<-EOS 1>&2
@@ -98,20 +85,12 @@ function self_install {
   fi
   msg "Downloading Leiningen to $LEIN_JAR now..."
   mkdir -p "$(dirname "$LEIN_JAR")"
-  LEIN_URL="https://github.com/technomancy/leiningen/releases/download/$LEIN_VERSION/leiningen-$LEIN_VERSION-standalone.jar"
+  LEIN_URL="https://github.com/technomancy/leiningen/releases/download/$LEIN_VERSION/leiningen-$LEIN_VERSION-standalone.zip"
   $HTTP_CLIENT "$LEIN_JAR.pending" "$LEIN_URL"
   local exit_code=$?
   if [ $exit_code == 0 ]; then
-      printf "$LEIN_CHECKSUM  $LEIN_JAR.pending\n" > "$LEIN_JAR.pending.shasum"
-      $SHASUM_CMD -c "$LEIN_JAR.pending.shasum"
-      if [ $? == 0 ]; then
-        mv -f "$LEIN_JAR.pending" "$LEIN_JAR"
-      else
-        got_sum="$($SHASUM_CMD "$LEIN_JAR.pending" | cut -f 1 -d ' ')"
-        checksum_failed_message "$LEIN_URL" "$LEIN_CHECKSUM" "$got_sum"
-        rm "$LEIN_JAR.pending" 2> /dev/null
-        exit 1
-      fi
+      # TODO: checksum
+      mv -f "$LEIN_JAR.pending" "$LEIN_JAR"
   else
       rm "$LEIN_JAR.pending" 2> /dev/null
       download_failed_message "$LEIN_URL" "$exit_code"
@@ -142,7 +121,7 @@ if $cygwin; then
     export LEIN_HOME=$(cygpath -w "$LEIN_HOME")
 fi
 
-LEIN_JAR="${LEIN_JAR:-${LEIN_HOME}/self-installs/leiningen-${LEIN_VERSION}-standalone.jar}"
+LEIN_JAR="$LEIN_HOME/self-installs/leiningen-$LEIN_VERSION-standalone.jar"
 
 # normalize $0 on certain BSDs
 if [ "$(dirname "$0")" = "." ]; then
@@ -167,7 +146,7 @@ done
 
 BIN_DIR="$(dirname "$SCRIPT")"
 
-export LEIN_JVM_OPTS="${LEIN_JVM_OPTS-"-XX:+TieredCompilation -XX:TieredStopAtLevel=1"}"
+export LEIN_JVM_OPTS="${LEIN_JVM_OPTS-"-Xverify:none -XX:+TieredCompilation -XX:TieredStopAtLevel=1"}"
 
 # This needs to be defined before we call HTTP_CLIENT below
 if [ "$HTTP_CLIENT" = "" ]; then
@@ -181,18 +160,6 @@ if [ "$HTTP_CLIENT" = "" ]; then
     fi
 fi
 
-# This needs to be defined before we call SHASUM_CMD below
-if [ "$SHASUM_CMD" = "" ]; then
-    if type -p sha256sum >/dev/null 2>&1; then
-        export SHASUM_CMD="sha256sum"
-    elif type -p shasum >/dev/null 2>&1; then
-        export SHASUM_CMD="shasum --algorithm 256"
-    elif type -p sha256 >/dev/null 2>&1; then
-        export SHASUM_CMD="sha256 -q"
-    else
-        command_not_found sha256sum
-    fi
-fi
 
 # When :eval-in :classloader we need more memory
 grep -E -q '^\s*:eval-in\s+:classloader\s*$' project.clj 2> /dev/null && \
@@ -200,7 +167,7 @@ grep -E -q '^\s*:eval-in\s+:classloader\s*$' project.clj 2> /dev/null && \
 
 if [ -r "$BIN_DIR/../src/leiningen/version.clj" ]; then
     # Running from source checkout
-    LEIN_DIR="$(cd $(dirname "$BIN_DIR");pwd -P)"
+    LEIN_DIR="$(dirname "$BIN_DIR")"
 
     # Need to use lein release to bootstrap the leiningen-core library (for aether)
     if [ ! -r "$LEIN_DIR/leiningen-core/.lein-bootstrap" ]; then
@@ -224,12 +191,13 @@ if [ -r "$BIN_DIR/../src/leiningen/version.clj" ]; then
     # Use bin/lein to calculate its own classpath.
     if [ ! -r "$LEIN_DIR/.lein-classpath" ] && [ "$1" != "classpath" ]; then
         msg "Recalculating Leiningen's classpath."
+        ORIG_PWD="$PWD"
         cd "$LEIN_DIR"
 
-        LEIN_NO_USER_PROFILES=1 "$LEIN_DIR/bin/lein" classpath .lein-classpath
+        LEIN_NO_USER_PROFILES=1 $0 classpath .lein-classpath
         sum "$LEIN_DIR/project.clj" "$LEIN_DIR/leiningen-core/project.clj" > \
             .lein-project-checksum
-        cd -
+        cd "$ORIG_PWD"
     fi
 
     mkdir -p "$LEIN_DIR/target/classes"
@@ -321,11 +289,7 @@ elif [ "$1" = "upgrade" ] || [ "$1" = "downgrade" ]; then
             y|Y|"")
                 echo
                 msg "Upgrading..."
-                if hash mktemp 2>/dev/null; then
-                    TARGET="(mktemp -t lein-upgrade.XXXXXXXXX)"
-                else
-                    TARGET="/tmp/lein-${$}-upgrade"
-                fi
+                TARGET="/tmp/lein-${$}-upgrade"
                 if $cygwin; then
                     TARGET=$(cygpath -w "$TARGET")
                 fi
@@ -367,15 +331,23 @@ else
     fi
 
     if [ "$LEIN_FAST_TRAMPOLINE" != "" ] && [ -r project.clj ]; then
-        INPUTS="$* $(cat project.clj) $LEIN_VERSION $(test -f "$LEIN_HOME/profiles.clj" && cat "$LEIN_HOME/profiles.clj") $(test -f profiles.clj && cat profiles.clj)"
+        INPUTS="$* $(cat project.clj) $LEIN_VERSION $(test -f "$LEIN_HOME/profiles.clj" && cat "$LEIN_HOME/profiles.clj")"
 
-        INPUT_CHECKSUM=$(echo "$INPUTS" | $SHASUM_CMD | cut -f 1 -d " ")
+        if command -v shasum >/dev/null 2>&1; then
+            SUM="shasum"
+        elif command -v sha1sum >/dev/null 2>&1; then
+            SUM="sha1sum"
+        else
+            command_not_found "sha1sum or shasum"
+        fi
+
+        INPUT_CHECKSUM=$(echo "$INPUTS" | $SUM | cut -f 1 -d " ")
         # Just don't change :target-path in project.clj, mkay?
         TRAMPOLINE_FILE="target/trampolines/$INPUT_CHECKSUM"
     else
         if hash mktemp 2>/dev/null; then
             # Check if mktemp is available before using it
-            TRAMPOLINE_FILE="$(mktemp -t lein-trampoline-XXXXXXXXXXXXX)"
+            TRAMPOLINE_FILE="$(mktemp /tmp/lein-trampoline-XXXXXXXXXXXXX)"
         else
             TRAMPOLINE_FILE="/tmp/lein-trampoline-$$"
         fi
