@@ -358,7 +358,7 @@
     ;;     You can add the following to your .emacs:
     (remove-text-properties
      (point-min) (point-max) '(mouse-face t)))
-  (add-hook 'org-finalize-agenda-hook
+  (add-hook 'org-agenda-finalize-hook
             'nomis/org-finalize-agenda-hook))
 
 ;;;; ___________________________________________________________________________
