@@ -1,4 +1,4 @@
-;;; nomis/idle-highlight-mode.el --- highlight the word the point is on
+;;; nomis-idle-highlight-mode.el --- highlight the word the point is on
 
 ;;;; ___________________________________________________________________________
 
@@ -92,6 +92,8 @@
 (progn
   ;; Replace the built-in `highlight` with the manually-installed one.
   (require 'highlight))
+
+(require 'hi-lock)
 
 (require 'nomis-clojure-regexps)
 
@@ -736,4 +738,4 @@
    ("M-<down>" nomis/idle-highlight-set-face-muted            "Muted")))
 
 (provide 'nomis-idle-highlight-mode)
-;;; nomis/idle-highlight-mode.el ends here
+;;; nomis-idle-highlight-mode.el ends here
