@@ -20,7 +20,12 @@
   "Face used to visualize trailing whitespace.")
 
 (defface nomis/wwo/beyond-margin-face
-  '((t :background "pink"))
+  `((((background dark)) ,(list :foreground "black"
+                                :background "pink"
+                                ;; :box (list :line-width -1
+                                ;;            :color "red")
+                                ))
+    (t ,(list :background "pink")))
   "Face used to visualize text beyond the margin.")
 
 (defvar nomis/wwo/whitespace-trailing-wwo-spec

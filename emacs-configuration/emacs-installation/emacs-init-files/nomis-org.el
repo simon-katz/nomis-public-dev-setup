@@ -703,7 +703,7 @@ limit the search to the current buffer."
 
 (defun nomis/org-global-todo-list ()
   (interactive)
-  (nomis/buffer-backgrounds/set-alternative)
+  (nomis/window-backgrounds/set-alternative)
   (org-todo-list))
 
 ;;;; ___________________________________________________________________________

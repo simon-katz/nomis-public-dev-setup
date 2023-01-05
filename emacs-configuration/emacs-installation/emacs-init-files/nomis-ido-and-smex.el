@@ -29,15 +29,7 @@
   (ido-vertical-mode 1)
   (setq ido-vertical-show-count t)
   (setq ido-vertical-define-keys 'C-n-C-p-up-down-left-right)
-  (setq ido-use-faces t)
-  (set-face-attribute 'ido-vertical-first-match-face nil
-                      :background nil
-                      :foreground "blue")
-  (set-face-attribute 'ido-vertical-only-match-face nil
-                      :background nil
-                      :foreground nil)
-  (set-face-attribute 'ido-vertical-match-face nil
-                      :foreground nil))
+  (setq ido-use-faces t))
 
 ;;;; ___________________________________________________________________________
 ;;;; ____ * smex normal stuff

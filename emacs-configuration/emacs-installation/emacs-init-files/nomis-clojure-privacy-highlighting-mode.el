@@ -13,16 +13,28 @@
 ;;;; Faces
 
 (defface nomis/cph/public-face
-  `((t (:background ,(case 3
-                       (1 "#b3d7ff")
-                       (2 "#c0f0ff")
-                       (3 "#aaeeee"))
-                    :bold t)))
+  `((((background dark)) ,(list :box (list :line-width -1
+                                           :color "springgreen3"
+                                           :style nil)
+                                ;; :foreground "grey95"
+                                ;; :background "Green4"
+                                ))
+    (t ,(list :background (case 3
+                            (1 "#b3d7ff")
+                            (2 "#c0f0ff")
+                            (3 "#aaeeee"))
+              :bold t)))
   "Face for public Clojure declarations."
   :group 'nomis/clojure-privacy-highlighting)
 
 (defface nomis/cph/private-face
-  `((t (:background "grey90")))
+  `((((background dark)) ,(list :box (list :line-width -1
+                                           :color "salmon"
+                                           :style nil)
+                                ;; :foreground "grey95"
+                                ;; :background "Red4"
+                                ))
+    (t ,(list :background "grey90")))
   "Face for private Clojure declarations."
   :group 'nomis/clojure-privacy-highlighting)
 

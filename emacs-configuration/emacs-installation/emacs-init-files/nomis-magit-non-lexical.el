@@ -1,30 +1,6 @@
 ;;;; Init stuff -- nomis-magit-non-lexical
 
 ;;;; ___________________________________________________________________________
-;;;; ---- Faces ----
-
-(defun nomis/set-magit-faces ()
-  (set-face-background 'magit-diff-context-highlight "lavender")
-  (set-face-background 'magit-section-highlight
-                       ;; default is "grey95", which is pretty much the same as
-                       ;; my default background colour ("#f5f5f5")
-                       (cl-case 5
-                         (1 "palegoldenrod")
-                         (2 "skyblue")
-                         (3 "lightblue")
-                         (4 "lightcyan")
-                         (5 "lavender")
-                         (6 "white")))
-  (progn
-    ;; These faces are used for the headline of the commit message, and for the
-    ;; heading line of each section of diffs. Change it to something that stands
-    ;; out a bit.
-    (set-face-background 'magit-diff-hunk-heading "LightBlue2")
-    (set-face-foreground 'magit-diff-hunk-heading "gray20")
-    (set-face-background 'magit-diff-hunk-heading-highlight "CadetBlue3")
-    (set-face-foreground 'magit-diff-hunk-heading-highlight "gray10")))
-
-;;;; ___________________________________________________________________________
 ;;;; ---- Status sections ----
 
 (defun nomis/magit-insert-pushed-commits ()
@@ -96,7 +72,6 @@ Show the last `magit-log-section-commit-count' commits."
 
 (defun nomis/init-magit-mode ()
   (company-mode 0)
-  (nomis/set-magit-faces)
   (setq magit-log-margin
         ;; (INIT STYLE WIDTH AUTHOR AUTHOR-WIDTH)
         '(t "%Y-%m-%d %H:%M:%S" magit-log-margin-width t 18)) 

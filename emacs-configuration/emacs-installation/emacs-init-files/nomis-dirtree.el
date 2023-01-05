@@ -396,17 +396,6 @@ With prefix argument select `nomis/dirtree/buffer'"
 ;;;; Finally, the rest of my stuff.
 
 ;;;; ___________________________________________________________________________
-;;;; nomis/dirtree/fix-grey-out-unselected-buffers
-
-(defun nomis/dirtree/fix-grey-out-unselected-buffers ()
-  ;; A hack, because my `buffer-list-update-hook` hook appears not to
-  ;; be happening sometimes (or now `auto-dim-other-buffers`'s version of
-  ;; that hook).
-  (when (fboundp 'nomis/buffer-backgrounds/refresh)
-    ;; Seems we need to run this after the current command completes.
-    (run-with-timer 0 nil 'nomis/buffer-backgrounds/refresh)))
-
-;;;; ___________________________________________________________________________
 ;;;; Misc utilities
 
 (defun nomis/dirtree/filename-in-selected-window ()
@@ -803,8 +792,7 @@ With prefix argument select `nomis/dirtree/buffer'"
                        ;; that's OK as a compromise.
                        (not (nomis/dirtree/within-directory-to-keep-collapsed?
                              filename))))
-            (nomis/dirtree/goto-file/internal filename)
-            (nomis/dirtree/fix-grey-out-unselected-buffers)))
+            (nomis/dirtree/goto-file/internal filename)))
       (error
        ;; TODO Sometimes we expect errors. Make this reporting conditional on
        ;;      a debug toggle. Perhaps use `nomis/dirtree/debug-message`.
@@ -1123,8 +1111,7 @@ With prefix argument select `nomis/dirtree/buffer'"
   (save-selected-window
     (let* ((file (nomis/dirtree/selected-file)))
       (when file
-        (find-file-other-window file))))
-  (nomis/dirtree/fix-grey-out-unselected-buffers))
+        (find-file-other-window file)))))
 
 (cl-defmacro nomis/dirtree/define-command/with-and-without-and-display
     ;; TODO Can you make M-. work for the `name-for-and-display` function?

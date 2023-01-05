@@ -184,15 +184,12 @@
   "Face used to highlight other occurrences of the word at point."
   :group 'nomis/idle-highlight)
 
-(defconst nomis/ih/idle-highlight-muted-color "#eeee99")
-
 (defface nomis/idle-highlight-muted
   ;; c.f. tailoring of `lsp-face-highlight-textual`.
-  `((((min-colors 88) (background dark))
-     (:background ,nomis/ih/idle-highlight-muted-color :foreground "black"))
-    (((background dark)) (:background ,nomis/ih/idle-highlight-muted-color :foreground "black"))
-    (((min-colors 88)) (:background ,nomis/ih/idle-highlight-muted-color))
-    (t (:background ,nomis/ih/idle-highlight-muted-color)))
+  `((((background dark)) ,(list :foreground "black"
+                                :background "#bbbb66"))
+    (t ,(list :foreground "black"
+              :background "#eeee99")))
   "Default face for hi-lock mode."
   :group 'hi-lock-faces)
 

@@ -81,23 +81,14 @@
 
 (add-hook 'lsp-mode-hook 'nomis/lsp-init)
 
-(with-eval-after-load 'lsp-lens
-  (set-face-foreground 'lsp-lens-face "black")
-  (set-face-background 'lsp-lens-face "DarkSeaGreen2"))
-
 ;;;; ___________________________________________________________________________
 ;;;; Tailoring of faces, needed especially for light themes.
 
-(defconst nomis/lsp-symbol-highlight-color "#ffff00")
-
-(face-spec-set
+(face-spec-set ; TODO: Change all `face-spec-set` to use themes.
  'lsp-face-highlight-textual
  ;; c.f. tailoring of `nomis/idle-highlight-muted`.
- `((((min-colors 88) (background dark))
-    (:background ,nomis/lsp-symbol-highlight-color :foreground "black"))
-   (((background dark)) (:background ,nomis/lsp-symbol-highlight-color :foreground "black"))
-   (((min-colors 88)) (:background ,nomis/lsp-symbol-highlight-color))
-   (t (:background ,nomis/lsp-symbol-highlight-color))))
+ `((t ,(list :background "#eeee45"
+             :foreground "black"))))
 
 (face-spec-set
  'lsp-ui-sideline-code-action

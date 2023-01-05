@@ -145,8 +145,10 @@
                                (top . 0)
                                ;; (left . 140)
                                ;; (font . "4.System VIO")
+
+                               ;; If you ever re-instate the following,
+                               ;; use themes.
                                ;; (foreground-color . "Black")
-                               (background-color . "#f5f5f5")
                                ;;(cursor-color . "SkyBlue")
                                )))
 ;; (setq initial-frame-alist (append nomis/frame-prefs initial-frame-alist))

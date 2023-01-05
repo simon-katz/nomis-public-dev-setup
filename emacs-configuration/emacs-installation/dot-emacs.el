@@ -133,6 +133,8 @@
 (require 'nomis-very-general-stuff-new)
 (require 'nomis-message-window)
 
+(require 'nomis-themes)
+
 ;;;; ---- This is here because of a problem when it was later ----
 
 (require 'nomis-org) ; When this was later in the file my setting of
@@ -214,7 +216,7 @@
 (when (display-graphic-p)
   (require 'nomis-screens)
   (require 'nomis-frames))
-(require 'nomis-frame-style)
+(require 'nomis-window-backgrounds)
 (require 'nomis-windows)
 
 (require 'nomis-files)

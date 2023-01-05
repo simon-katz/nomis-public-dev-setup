@@ -49,22 +49,6 @@
                org-mode-hook))
     (add-hook h 'hl-line-mode)))
 
-(progn
-  (defvar nomis/hl-line/approach 0)
-  (apply #'set-face-attribute
-         'hl-line nil
-         :inherit nil
-         (-concat (cl-case nomis/hl-line/approach
-                    (0 `(:background "darkseagreen1"))
-                    (1 `(:background "palegoldenrod"))
-                    (2 nil))
-                  (cl-case nomis/hl-line/approach
-                    (0 nil)
-                    (1 nil)
-                    (2 `(:box ,(list :line-width -1
-                                     :color "grey25"
-                                     :style nil)))))))
-
 ;; (set-face-background 'hl-line "lightcyan")
 ;; (set-face-background 'hl-line "lightcyan1")
 ;; (set-face-background 'hl-line "azure2")
