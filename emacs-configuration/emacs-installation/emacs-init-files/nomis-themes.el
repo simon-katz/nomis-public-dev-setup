@@ -31,7 +31,8 @@
           '(("Nomis Standard Light" (nomis-extras-standard-light))
             ("Nomis deeper-blue"    (nomis-extras-deeper-blue deeper-blue))
             ("Standard Light"       nil)
-            ("Raw deeper-blue"      (deeper-blue))))
+            ("Raw deeper-blue"      (deeper-blue))
+            ("Raw zenburn"          (zenburn))))
          (response (ido-completing-read prompt
                                         completions
                                         nil
