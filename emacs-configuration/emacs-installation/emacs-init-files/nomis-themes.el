@@ -27,11 +27,11 @@
   (interactive)
   (let* ((prompt (format "Choose themes — currently %S: "
                          custom-enabled-themes))
-         (completions (-map (lambda (x) (list (format "%S" x) x))
-                            '((nomis deeper-blue)
-                              (nomis)
-                              (deeper-blue)
-                              ())))
+         (completions
+          '(("Nomis Standard Light" (nomis-extras-standard-light))
+            ("Nomis deeper-blue"    (nomis-extras-deeper-blue deeper-blue))
+            ("Standard Light"       nil)
+            ("Raw deeper-blue"      (deeper-blue))))
          (response (ido-completing-read prompt
                                         completions
                                         nil
