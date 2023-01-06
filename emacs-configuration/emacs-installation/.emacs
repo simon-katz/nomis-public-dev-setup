@@ -92,7 +92,8 @@
      which-key
      yafolding
      yaml-mode
-     yasnippet))
+     yasnippet
+     zenburn-theme))
  '(safe-local-variable-values
    '((cider-clojure-cli-aliases . "-A:test")
      (cider-font-lock-max-length . 1000)

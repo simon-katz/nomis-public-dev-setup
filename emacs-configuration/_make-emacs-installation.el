@@ -85,7 +85,8 @@
      which-key
      yafolding
      yaml-mode
-     yasnippet))
+     yasnippet
+     zenburn-theme))
 
 (dolist (p my-packages)
   (when (not (package-installed-p p))
