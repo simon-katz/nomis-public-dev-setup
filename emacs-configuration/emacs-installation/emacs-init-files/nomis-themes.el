@@ -14,8 +14,29 @@
 ;;;; - /eg/ Incorrect `hl-line` colours when you have custom dark themes.
 ;;;; - /eg/ `M-x` in the new frame giving wrong frame background colours.
 
+(defun nomis/themes/disable-and-set-custom-themes (themes)
+  "Disable all custom themes and then enable the supplied themes.
+A fix for custom themes not being set up properly.
+For new frames (that might be OK now) and when disabling and enabling themes."
+  (mapc #'disable-theme custom-enabled-themes)
+  (mapc #'(lambda (theme) (load-theme theme t)) (reverse themes)))
+
+;; Maybe this is an alternatove. You had this somwhere once.
+;; The following seems to no longer be needed.
+;; The above doesn't update the display properly. Using `redraw-display`
+;; doesn't fix things. Grrrr! This fixes things:
+;; (let* ((current-f (selected-frame)))
+;;   (dolist (f (frame-list))
+;;     (select-frame f)
+;;     (let* ((current-b (current-buffer)))
+;;       (dolist (b (buffer-list))
+;;         (when (get-buffer-window-list b)
+;;           (switch-to-buffer b)))
+;;       (switch-to-buffer current-b)))
+;;   (select-frame current-f))
+
 (defun -nomis/themes/disable-and-reload-custom-themes (_frame)
-  (nomis/window-backgrounds/disable-and-set-custom-themes custom-enabled-themes))
+  (nomis/themes/disable-and-set-custom-themes custom-enabled-themes))
 
 (add-hook 'after-make-frame-functions
           '-nomis/themes/disable-and-reload-custom-themes
@@ -23,27 +44,59 @@
 
 ;;;; ___________________________________________________________________________
 
+(defconst nomis/themes/standard-light              '())
+(defconst nomis/themes/standard-light+altbg1       '(nomis-alternative-background-001))
+(defconst nomis/themes/standard-light+altbg2       '(nomis-alternative-background-002))
+(defconst nomis/themes/standard-light+nomis        '(                                 nomis-extras-standard-light))
+(defconst nomis/themes/standard-light+nomis+altbg1 '(nomis-alternative-background-001 nomis-extras-standard-light))
+(defconst nomis/themes/standard-light+nomis+altbg2 '(nomis-alternative-background-002 nomis-extras-standard-light))
+(defconst nomis/themes/deeper-blue                 '(                                 deeper-blue))
+(defconst nomis/themes/deeper-blue+altbg1          '(nomis-alternative-background-001 deeper-blue))
+(defconst nomis/themes/deeper-blue+altbg2          '(nomis-alternative-background-002 deeper-blue))
+(defconst nomis/themes/deeper-blue+nomis           '(                                 nomis-extras-deeper-blue deeper-blue))
+(defconst nomis/themes/deeper-blue+nomis+altbg1    '(nomis-alternative-background-001 nomis-extras-deeper-blue deeper-blue))
+(defconst nomis/themes/deeper-blue+nomis+altbg2    '(nomis-alternative-background-002 nomis-extras-deeper-blue deeper-blue))
+(defconst nomis/themes/zenburn                     '(                                 zenburn))
+(defconst nomis/themes/zenburn+altbg1              '(nomis-alternative-background-001 zenburn))
+(defconst nomis/themes/zenburn+altbg2              '(nomis-alternative-background-002 zenburn))
+
+
 (defun nomis/themes/set-custom-themes ()
   (interactive)
-  (let* ((prompt (format "Choose themes — currently %S: "
-                         custom-enabled-themes))
-         (completions
-          '(("Nomis Standard Light" (nomis-extras-standard-light))
-            ("Nomis deeper-blue"    (nomis-extras-deeper-blue deeper-blue))
-            ("Standard Light"       nil)
-            ("Raw deeper-blue"      (deeper-blue))
-            ("Raw zenburn"          (zenburn))))
+  (let* ((completions
+          `(("Standard-Light                 " ,nomis/themes/standard-light)
+            ("Standard-Light         + AltBg1" ,nomis/themes/standard-light+altbg1)
+            ("Standard-Light         + AltBg2" ,nomis/themes/standard-light+altbg2)
+            ("______                         " ())
+            ("Standard-Light + Nomis         " ,nomis/themes/standard-light+nomis)
+            ("Standard-Light + Nomis + AltBg1" ,nomis/themes/standard-light+nomis+altbg1)
+            ("Standard-Light + Nomis + AltBg2" ,nomis/themes/standard-light+nomis+altbg2)
+            ("______                         " ())
+            ("Deeper-Blue                    " ,nomis/themes/deeper-blue)
+            ("Deeper-Blue            + AltBg1" ,nomis/themes/deeper-blue+altbg1)
+            ("Deeper-Blue            + AltBg2" ,nomis/themes/deeper-blue+altbg2)
+            ("______                         " ())
+            ("Deeper-Blue + Nomis            " ,nomis/themes/deeper-blue+nomis)
+            ("Deeper-Blue + Nomis    + AltBg1" ,nomis/themes/deeper-blue+nomis+altbg1)
+            ("Deeper-Blue + Nomis    + AltBg2" ,nomis/themes/deeper-blue+nomis+altbg2)
+            ("______                         " ())
+            ("Zenburn                        " ,nomis/themes/zenburn)
+            ("Zenburn                + AltBg1" ,nomis/themes/zenburn+altbg1)
+            ("Zenburn                + AltBg2" ,nomis/themes/zenburn+altbg2)
+            ("===============================" ())))
+         (prompt (format "Choose themes — currently %S: "
+                         (->> (rassoc (list custom-enabled-themes)
+                                      completions)
+                              car
+                              s-trim)))
          (response (ido-completing-read prompt
                                         completions
                                         nil
-                                        t))
-         (chosen-themes (cadr (assoc response completions)))
-         (existing-background-themes (intersection
-                                      custom-enabled-themes
-                                      nomis/window-backgrounds/themes))
-         (new-themes (-concat existing-background-themes
-                              chosen-themes)))
-    (nomis/window-backgrounds/disable-and-set-custom-themes new-themes)))
+                                        t
+                                        nil
+                                        'nomis/themes/set-custom-themes/prompt-history))
+         (chosen-themes (cadr (assoc response completions))))
+    (nomis/themes/disable-and-set-custom-themes chosen-themes)))
 
 ;;;; ___________________________________________________________________________
 
