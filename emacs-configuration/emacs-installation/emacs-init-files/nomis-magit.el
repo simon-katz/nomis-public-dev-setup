@@ -4,6 +4,7 @@
 
 (require 'nomis-magit-fixes)
 (require 'nomis-magit-non-lexical)
+(require 'nomis-magit-difftastic)
 
 ;;;; ___________________________________________________________________________
 
