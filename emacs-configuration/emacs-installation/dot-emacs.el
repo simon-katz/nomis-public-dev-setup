@@ -253,9 +253,6 @@
 (require 'nomis-java)
 (require 'nomis-javascript)
 (require 'nomis-json)
-
-(require 'nomis-magit-fixes)
-(require 'nomis-magit-non-lexical)
 (require 'nomis-magit)
 (require 'nomis-revert)
 (require 'nomis-diff-hl)

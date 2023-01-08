@@ -2,6 +2,11 @@
 
 ;;;; ___________________________________________________________________________
 
+(require 'nomis-magit-fixes)
+(require 'nomis-magit-non-lexical)
+
+;;;; ___________________________________________________________________________
+
 ;;;; See https://emacs.stackexchange.com/questions/35701/magit-sets-auto-revert-mode-annoying
 ;;;;
 ;;;; Don't globally set auto-revert-mode (that's very rude!).
