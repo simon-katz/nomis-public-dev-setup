@@ -10,8 +10,10 @@
   (defun th/magit--with-difftastic (buffer command)
     "Run COMMAND with GIT_EXTERNAL_DIFF=difft then show result in BUFFER."
     (let ((process-environment
-           (cons (concat "GIT_EXTERNAL_DIFF=difft --width="
-                         (number-to-string (frame-width)))
+           (cons (concat "GIT_EXTERNAL_DIFF=difft"
+                         " --width=" (number-to-string (frame-width))
+                         " --syntax-highlight=off"
+                         " --display side-by-side-show-both")
                  process-environment)))
       ;; Clear the result buffer (we might regenerate a diff, e.g., for
       ;; the current changes in our working directory).
