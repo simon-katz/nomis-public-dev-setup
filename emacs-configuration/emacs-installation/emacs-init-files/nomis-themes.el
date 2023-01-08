@@ -156,11 +156,14 @@
     ("Zenburn                + AltBg2" ,nomis/themes/zenburn+altbg2)
     ("===============================" ())))
 
-(defun nomis/themes/current-themes-as-string ()
-  (->> (rassoc (list custom-enabled-themes)
+(defun -nomis/themes/themes->string (themes)
+  (->> (rassoc (list themes)
                nomis/themes/pairs)
        car
        s-trim))
+
+(defun nomis/themes/current-themes-as-string ()
+  (-nomis/themes/themes->string custom-enabled-themes))
 
 (defun nomis/themes/set-custom-themes ()
   (interactive)
@@ -174,6 +177,29 @@
                                         'nomis/themes/set-custom-themes/prompt-history))
          (chosen-themes (cadr (assoc response nomis/themes/pairs))))
     (nomis/themes/disable-and-set-custom-themes chosen-themes)))
+
+;;;; ___________________________________________________________________________
+
+(defun nomis/themes/report-custom-themes ()
+  (interactive)
+  (let* ((inhibit-message t)
+         (themes*->string
+          (lambda (themes*)
+            (if (null themes*)
+                "                <empty>"
+              (s-join "\n"
+                      (->> themes*
+                           (-map #'-nomis/themes/themes->string)
+                           (-map (lambda (s)
+                                   (s-concat "                "
+                                             s)))))))))
+    (message "________________________________")
+    (message "\n-nomis/themes/history/prevs:\n%s"
+             (funcall themes*->string -nomis/themes/history/prevs))
+    (message "\n-nomis/themes/history/nexts:\n%s\n"
+             (funcall themes*->string -nomis/themes/history/nexts)))
+  (message "Current themes: %s\n(See *Messages* buffer for history list)"
+           (nomis/themes/current-themes-as-string)))
 
 ;;;; ___________________________________________________________________________
 
