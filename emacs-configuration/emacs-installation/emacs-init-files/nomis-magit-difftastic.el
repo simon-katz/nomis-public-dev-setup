@@ -1,6 +1,7 @@
 ;;;; Init stuff -- nomis-magit-difftastic  -*- lexical-binding: t; -*-
 
 ;;;; From https://tsdh.org/posts/2022-08-01-difftastic-diffing-with-magit.html
+;;;; (with changes).
 
 ;;;; ___________________________________________________________________________
 
@@ -106,9 +107,9 @@
      ("s" "Difftastic Show" th/magit-show-with-difftastic)])
 
   (transient-append-suffix 'magit-dispatch "!"
-    '("#" "My Magit Cmds" th/magit-aux-commands))
+    '("`" "My Magit Cmds" th/magit-aux-commands))
 
-  (define-key magit-status-mode-map (kbd "#") #'th/magit-aux-commands))
+  (define-key magit-status-mode-map (kbd "`") #'th/magit-aux-commands))
 
 ;;;; ___________________________________________________________________________
 
