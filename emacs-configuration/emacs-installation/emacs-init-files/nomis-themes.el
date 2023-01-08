@@ -12,15 +12,7 @@
 ;;;; ___________________________________________________________________________
 ;;;; ---- nomis/themes/disable-and-set-custom-themes ----
 
-(defun nomis/themes/disable-and-set-custom-themes (themes)
-  "Disable all custom themes and then enable the supplied themes."
-  ;; Disabling and (re-)enabling is a fix for custom themes not being set
-  ;; up properly in some situations.
-  ;; - When disabling and enabling themes.
-  ;; - When creating new frames.
-  ;;   - /eg/ Incorrect `hl-line` colours when you have custom dark themes.
-  ;;   - /eg/ `M-x` in the new frame giving wrong frame background colours
-  ;;     (which might be OK now).
+(defun nomis/themes/disable-and-set-custom-themes* (themes)
   ;; Maybe this is an alternative. You had this somewhere once.
   ;; doesn't fix things. Grrrr! This fixes things:
   ;; (let* ((current-f (selected-frame)))
@@ -35,15 +27,93 @@
   (mapc #'disable-theme custom-enabled-themes)
   (mapc #'(lambda (theme) (load-theme theme t)) (reverse themes)))
 
+(defun nomis/themes/disable-and-set-custom-themes (themes)
+  "Disable all custom themes and then enable the supplied themes."
+  ;; Disabling and (re-)enabling is a fix for custom themes not being set
+  ;; up properly in some situations.
+  ;; - When disabling and enabling themes.
+  ;; - When creating new frames.
+  ;;   - /eg/ Incorrect `hl-line` colours when you have custom dark themes.
+  ;;   - /eg/ `M-x` in the new frame giving wrong frame background colours
+  ;;     (which might be OK now).
+  ;; It's also useful so we have a place to record theme history. :-)
+  (unless (equal themes custom-enabled-themes)
+    (-nomis/themes/history/note-current-themes))
+  (nomis/themes/disable-and-set-custom-themes* themes))
+
 ;;;; ___________________________________________________________________________
 ;;;; ---- Fix problem with bad themes in new frames ----
 
 (defun -nomis/themes/disable-and-reload-custom-themes (_frame)
-  (nomis/themes/disable-and-set-custom-themes custom-enabled-themes))
+  (nomis/themes/disable-and-set-custom-themes* custom-enabled-themes))
 
 (add-hook 'after-make-frame-functions
           '-nomis/themes/disable-and-reload-custom-themes
           100)
+
+;;;; ___________________________________________________________________________
+;;;; ---- History ----
+
+(defvar -nomis/themes/history/prevs '())
+(defvar -nomis/themes/history/nexts '())
+
+(defun -nomis/themes/history/note-current-themes ()
+  (push custom-enabled-themes -nomis/themes/history/prevs))
+
+(defun nomis/themes/history/prev ()
+  (interactive)
+  (if (and (null -nomis/themes/history/prevs)
+           (null -nomis/themes/history/nexts))
+      (progn
+        (nomis/msg/grab-user-attention/high)
+        (error "Theme history is empty"))
+    (let* ((wrapped? nil))
+      (if (null -nomis/themes/history/prevs)
+          (let* ((nexts -nomis/themes/history/nexts))
+            (setq wrapped? t)
+            (setq -nomis/themes/history/prevs
+                  (-concat (reverse (butlast nexts))
+                           (list custom-enabled-themes)))
+            (setq -nomis/themes/history/nexts nil)
+            (nomis/themes/disable-and-set-custom-themes* (first (last nexts))))
+        (push custom-enabled-themes -nomis/themes/history/nexts)
+        (let* ((themes (pop -nomis/themes/history/prevs)))
+          (nomis/themes/disable-and-set-custom-themes* themes)))
+      (when wrapped?
+        (nomis/msg/grab-user-attention/low))
+      (message "%sThemes are now: %s"
+               (if wrapped? "(Wrapped) " "")
+               (nomis/themes/current-themes-as-string)))))
+
+(defun nomis/themes/history/next ()
+  (interactive)
+  (if (and (null -nomis/themes/history/prevs)
+           (null -nomis/themes/history/nexts))
+      (progn
+        (nomis/msg/grab-user-attention/high)
+        (error "Theme history is empty"))
+    (let* ((wrapped? nil))
+      (if (null -nomis/themes/history/nexts)
+          (let* ((prevs -nomis/themes/history/prevs))
+            (setq wrapped? t)
+            (setq -nomis/themes/history/nexts
+                  (-concat (reverse (butlast prevs))
+                           (list custom-enabled-themes)))
+            (setq -nomis/themes/history/prevs nil)
+            (nomis/themes/disable-and-set-custom-themes* (first (last prevs))))
+        (push custom-enabled-themes -nomis/themes/history/prevs)
+        (let* ((themes (pop -nomis/themes/history/nexts)))
+          (nomis/themes/disable-and-set-custom-themes* themes)))
+      (when wrapped?
+        (nomis/msg/grab-user-attention/low))
+      (message "%sThemes are now: %s"
+               (if wrapped? "(Wrapped) " "")
+               (nomis/themes/current-themes-as-string)))))
+
+(defun nomis/themes/history/clear ()
+  (interactive)
+  (setq -nomis/themes/history/prevs nil)
+  (setq -nomis/themes/history/nexts nil))
 
 ;;;; ___________________________________________________________________________
 ;;;; ---- nomis/themes/set-custom-themes ----
@@ -64,41 +134,45 @@
 (defconst nomis/themes/zenburn+altbg1              '(nomis-alternative-background-001 zenburn))
 (defconst nomis/themes/zenburn+altbg2              '(nomis-alternative-background-002 zenburn))
 
+(defconst nomis/themes/pairs
+  `(("Standard-Light                 " ,nomis/themes/standard-light)
+    ("Standard-Light         + AltBg1" ,nomis/themes/standard-light+altbg1)
+    ("Standard-Light         + AltBg2" ,nomis/themes/standard-light+altbg2)
+    ("______                         " ())
+    ("Standard-Light + Nomis         " ,nomis/themes/standard-light+nomis)
+    ("Standard-Light + Nomis + AltBg1" ,nomis/themes/standard-light+nomis+altbg1)
+    ("Standard-Light + Nomis + AltBg2" ,nomis/themes/standard-light+nomis+altbg2)
+    ("______                         " ())
+    ("Deeper-Blue                    " ,nomis/themes/deeper-blue)
+    ("Deeper-Blue            + AltBg1" ,nomis/themes/deeper-blue+altbg1)
+    ("Deeper-Blue            + AltBg2" ,nomis/themes/deeper-blue+altbg2)
+    ("______                         " ())
+    ("Deeper-Blue + Nomis            " ,nomis/themes/deeper-blue+nomis)
+    ("Deeper-Blue + Nomis    + AltBg1" ,nomis/themes/deeper-blue+nomis+altbg1)
+    ("Deeper-Blue + Nomis    + AltBg2" ,nomis/themes/deeper-blue+nomis+altbg2)
+    ("______                         " ())
+    ("Zenburn                        " ,nomis/themes/zenburn)
+    ("Zenburn                + AltBg1" ,nomis/themes/zenburn+altbg1)
+    ("Zenburn                + AltBg2" ,nomis/themes/zenburn+altbg2)
+    ("===============================" ())))
+
+(defun nomis/themes/current-themes-as-string ()
+  (->> (rassoc (list custom-enabled-themes)
+               nomis/themes/pairs)
+       car
+       s-trim))
+
 (defun nomis/themes/set-custom-themes ()
   (interactive)
-  (let* ((completions
-          `(("Standard-Light                 " ,nomis/themes/standard-light)
-            ("Standard-Light         + AltBg1" ,nomis/themes/standard-light+altbg1)
-            ("Standard-Light         + AltBg2" ,nomis/themes/standard-light+altbg2)
-            ("______                         " ())
-            ("Standard-Light + Nomis         " ,nomis/themes/standard-light+nomis)
-            ("Standard-Light + Nomis + AltBg1" ,nomis/themes/standard-light+nomis+altbg1)
-            ("Standard-Light + Nomis + AltBg2" ,nomis/themes/standard-light+nomis+altbg2)
-            ("______                         " ())
-            ("Deeper-Blue                    " ,nomis/themes/deeper-blue)
-            ("Deeper-Blue            + AltBg1" ,nomis/themes/deeper-blue+altbg1)
-            ("Deeper-Blue            + AltBg2" ,nomis/themes/deeper-blue+altbg2)
-            ("______                         " ())
-            ("Deeper-Blue + Nomis            " ,nomis/themes/deeper-blue+nomis)
-            ("Deeper-Blue + Nomis    + AltBg1" ,nomis/themes/deeper-blue+nomis+altbg1)
-            ("Deeper-Blue + Nomis    + AltBg2" ,nomis/themes/deeper-blue+nomis+altbg2)
-            ("______                         " ())
-            ("Zenburn                        " ,nomis/themes/zenburn)
-            ("Zenburn                + AltBg1" ,nomis/themes/zenburn+altbg1)
-            ("Zenburn                + AltBg2" ,nomis/themes/zenburn+altbg2)
-            ("===============================" ())))
-         (prompt (format "Choose themes — currently %S: "
-                         (->> (rassoc (list custom-enabled-themes)
-                                      completions)
-                              car
-                              s-trim)))
+  (let* ((prompt (format "Choose themes — currently %S: "
+                         (nomis/themes/current-themes-as-string)))
          (response (ido-completing-read prompt
-                                        completions
+                                        nomis/themes/pairs
                                         nil
                                         t
                                         nil
                                         'nomis/themes/set-custom-themes/prompt-history))
-         (chosen-themes (cadr (assoc response completions))))
+         (chosen-themes (cadr (assoc response nomis/themes/pairs))))
     (nomis/themes/disable-and-set-custom-themes chosen-themes)))
 
 ;;;; ___________________________________________________________________________
