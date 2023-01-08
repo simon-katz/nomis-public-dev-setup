@@ -10,30 +10,33 @@
       "/Users/simonkatz/development-100/repositories/nomis/dev-setup/nomis-public-dev-setup/emacs-configuration/emacs-installation/emacs-init-files/custom-themes")
 
 ;;;; ___________________________________________________________________________
-;;;; Fix for custom themes not being applied properly when creating new frames.
-;;;; - /eg/ Incorrect `hl-line` colours when you have custom dark themes.
-;;;; - /eg/ `M-x` in the new frame giving wrong frame background colours.
+;;;; ---- nomis/themes/disable-and-set-custom-themes ----
 
 (defun nomis/themes/disable-and-set-custom-themes (themes)
-  "Disable all custom themes and then enable the supplied themes.
-A fix for custom themes not being set up properly.
-For new frames (that might be OK now) and when disabling and enabling themes."
+  "Disable all custom themes and then enable the supplied themes."
+  ;; Disabling and (re-)enabling is a fix for custom themes not being set
+  ;; up properly in some situations.
+  ;; - When disabling and enabling themes.
+  ;; - When creating new frames.
+  ;;   - /eg/ Incorrect `hl-line` colours when you have custom dark themes.
+  ;;   - /eg/ `M-x` in the new frame giving wrong frame background colours
+  ;;     (which might be OK now).
+  ;; Maybe this is an alternative. You had this somewhere once.
+  ;; doesn't fix things. Grrrr! This fixes things:
+  ;; (let* ((current-f (selected-frame)))
+  ;;   (dolist (f (frame-list))
+  ;;     (select-frame f)
+  ;;     (let* ((current-b (current-buffer)))
+  ;;       (dolist (b (buffer-list))
+  ;;         (when (get-buffer-window-list b)
+  ;;           (switch-to-buffer b)))
+  ;;       (switch-to-buffer current-b)))
+  ;;   (select-frame current-f))
   (mapc #'disable-theme custom-enabled-themes)
   (mapc #'(lambda (theme) (load-theme theme t)) (reverse themes)))
 
-;; Maybe this is an alternatove. You had this somwhere once.
-;; The following seems to no longer be needed.
-;; The above doesn't update the display properly. Using `redraw-display`
-;; doesn't fix things. Grrrr! This fixes things:
-;; (let* ((current-f (selected-frame)))
-;;   (dolist (f (frame-list))
-;;     (select-frame f)
-;;     (let* ((current-b (current-buffer)))
-;;       (dolist (b (buffer-list))
-;;         (when (get-buffer-window-list b)
-;;           (switch-to-buffer b)))
-;;       (switch-to-buffer current-b)))
-;;   (select-frame current-f))
+;;;; ___________________________________________________________________________
+;;;; ---- Fix problem with bad themes in new frames ----
 
 (defun -nomis/themes/disable-and-reload-custom-themes (_frame)
   (nomis/themes/disable-and-set-custom-themes custom-enabled-themes))
@@ -43,6 +46,7 @@ For new frames (that might be OK now) and when disabling and enabling themes."
           100)
 
 ;;;; ___________________________________________________________________________
+;;;; ---- nomis/themes/set-custom-themes ----
 
 (defconst nomis/themes/standard-light              '())
 (defconst nomis/themes/standard-light+altbg1       '(nomis-alternative-background-001))
@@ -59,7 +63,6 @@ For new frames (that might be OK now) and when disabling and enabling themes."
 (defconst nomis/themes/zenburn                     '(                                 zenburn))
 (defconst nomis/themes/zenburn+altbg1              '(nomis-alternative-background-001 zenburn))
 (defconst nomis/themes/zenburn+altbg2              '(nomis-alternative-background-002 zenburn))
-
 
 (defun nomis/themes/set-custom-themes ()
   (interactive)
