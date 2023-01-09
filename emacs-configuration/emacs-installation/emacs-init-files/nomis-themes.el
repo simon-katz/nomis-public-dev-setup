@@ -60,55 +60,39 @@
 (defun -nomis/themes/history/note-current-themes ()
   (push custom-enabled-themes -nomis/themes/history/prevs))
 
-(defun nomis/themes/history/prev ()
-  (interactive)
-  (if (and (null -nomis/themes/history/prevs)
-           (null -nomis/themes/history/nexts))
+(defun -nomis/themes/history/prev-next-helper (sym-1 sym-2)
+  (if (and (null (symbol-value sym-1))
+           (null (symbol-value sym-2)))
       (progn
         (nomis/msg/grab-user-attention/high)
         (error "Theme history is empty"))
     (let* ((wrapped? nil))
-      (if (null -nomis/themes/history/prevs)
-          (let* ((nexts -nomis/themes/history/nexts))
+      (if (null (symbol-value sym-1))
+          (let* ((nexts (symbol-value sym-2)))
             (setq wrapped? t)
-            (setq -nomis/themes/history/prevs
-                  (-concat (reverse (butlast nexts))
-                           (list custom-enabled-themes)))
-            (setq -nomis/themes/history/nexts nil)
+            (setf (symbol-value sym-1) (-concat (reverse (butlast nexts))
+                                                (list custom-enabled-themes)))
+            (setf (symbol-value sym-2) nil)
             (nomis/themes/disable-and-set-custom-themes* (first (last nexts))))
-        (push custom-enabled-themes -nomis/themes/history/nexts)
-        (let* ((themes (pop -nomis/themes/history/prevs)))
-          (nomis/themes/disable-and-set-custom-themes* themes)))
+        (progn
+          (push custom-enabled-themes (symbol-value sym-2))
+          (let* ((themes (pop (symbol-value sym-1))))
+            (nomis/themes/disable-and-set-custom-themes* themes))))
       (when wrapped?
         (nomis/msg/grab-user-attention/low))
       (message "%sThemes are now: %s"
                (if wrapped? "(Wrapped) " "")
                (nomis/themes/current-themes-as-string)))))
 
+(defun nomis/themes/history/prev ()
+  (interactive)
+  (-nomis/themes/history/prev-next-helper '-nomis/themes/history/prevs
+                                          '-nomis/themes/history/nexts))
+
 (defun nomis/themes/history/next ()
   (interactive)
-  (if (and (null -nomis/themes/history/prevs)
-           (null -nomis/themes/history/nexts))
-      (progn
-        (nomis/msg/grab-user-attention/high)
-        (error "Theme history is empty"))
-    (let* ((wrapped? nil))
-      (if (null -nomis/themes/history/nexts)
-          (let* ((prevs -nomis/themes/history/prevs))
-            (setq wrapped? t)
-            (setq -nomis/themes/history/nexts
-                  (-concat (reverse (butlast prevs))
-                           (list custom-enabled-themes)))
-            (setq -nomis/themes/history/prevs nil)
-            (nomis/themes/disable-and-set-custom-themes* (first (last prevs))))
-        (push custom-enabled-themes -nomis/themes/history/prevs)
-        (let* ((themes (pop -nomis/themes/history/nexts)))
-          (nomis/themes/disable-and-set-custom-themes* themes)))
-      (when wrapped?
-        (nomis/msg/grab-user-attention/low))
-      (message "%sThemes are now: %s"
-               (if wrapped? "(Wrapped) " "")
-               (nomis/themes/current-themes-as-string)))))
+  (-nomis/themes/history/prev-next-helper '-nomis/themes/history/nexts
+                                          '-nomis/themes/history/prevs))
 
 (defun nomis/themes/history/clear ()
   (interactive)
