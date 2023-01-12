@@ -67,6 +67,12 @@
           regexp
           "\\)*"))
 
+(defun nomis/rx/opt (regexp)
+  "Return a non-capturing group that matches zero or more of `regexp`."
+  (concat "\\(?:"
+          regexp
+          "\\)?"))
+
 ;;;; ___________________________________________________________________________
 
 (provide 'nomis-rx)

@@ -27,7 +27,7 @@
   (s-concat "-n" -nomis/clojure-regexps/symbol-body-chars-except-dash-and-n))
 
 ;;;; ___________________________________________________________________________
-;;;; Regexps
+;;;; Regexps for characters
 
 (defconst nomis/clojure-regexps/symbol-body-char-except-dash-regexp
   (-> nomis/clojure-regexps/symbol-body-chars-except-dash
@@ -36,6 +36,16 @@
 (defconst nomis/clojure-regexps/symbol-body-char-regexp
   (-> nomis/clojure-regexps/symbol-body-chars
       nomis/rx/make-char-match-regexp/broken))
+
+(defconst nomis/clojure-regexps/symbol-body-char-but-not-slash-regexp
+  (s-replace "/" "" nomis/clojure-regexps/symbol-body-char-regexp))
+
+;;;; ___________________________________________________________________________
+;;;; Regexps for symbols
+
+(defconst nomis/clojure-regexps/symbol-without-slash-regexp
+  (s-concat nomis/clojure-regexps/symbol-body-char-but-not-slash-regexp
+            "+"))
 
 ;;;; ___________________________________________________________________________
 

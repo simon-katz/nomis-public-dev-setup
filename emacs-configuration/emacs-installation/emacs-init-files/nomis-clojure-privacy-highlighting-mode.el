@@ -55,45 +55,32 @@
   (s-concat -nomis/cph/whitespace-chars/regexp
             "+"))
 
-(defconst -nomis/cph/begin-def-regexp
-  (s-concat "\("
-            -nomis/cph/whitespace-regexp/optional))
+(defconst -nomis/cph/ns-qualifier-regexp
+  (s-concat nomis/clojure-regexps/symbol-without-slash-regexp
+            "/"))
 
-(defconst -nomis/cph/definer-symbol-regexp
-  (s-concat "def"
-            nomis/clojure-regexps/symbol-body-char-regexp
-            "*"))
+(defconst -nomis/cph/up-to-and-incl-definer-symbol-regexp
+  (s-concat "("
+            -nomis/cph/whitespace-regexp/optional
+            (nomis/rx/opt -nomis/cph/ns-qualifier-regexp)
+            "def"
+            (nomis/rx/opt nomis/clojure-regexps/symbol-without-slash-regexp)))
 
-(defconst -nomis/cph/definer-symbol-not-ending-in-dash-regexp
-  (nomis/rx/or
-   "def"
-   (s-concat -nomis/cph/definer-symbol-regexp
-             nomis/clojure-regexps/symbol-body-char-except-dash-regexp)))
-
-(defconst -nomis/cph/definer-symbol-ending-in-dash-regexp
-  (s-concat -nomis/cph/definer-symbol-regexp
-            "-"))
-
-(defconst -nomis/cph/whitespace-then-symbol-regexp
-  (s-concat -nomis/cph/whitespace-regexp/mandatory
-            nomis/clojure-regexps/symbol-body-char-regexp
-            "+"))
+(defconst -nomis/cph/private-declaration-regexp
+  (nomis/rx/or "-"
+               (s-concat -nomis/cph/whitespace-regexp/mandatory
+                         "\\^:private")))
 
 (defconst -nomis/cph/public-regexp
-  (s-concat -nomis/cph/begin-def-regexp
-            -nomis/cph/definer-symbol-not-ending-in-dash-regexp
-            -nomis/cph/whitespace-then-symbol-regexp))
+  (s-concat -nomis/cph/up-to-and-incl-definer-symbol-regexp
+            -nomis/cph/whitespace-regexp/mandatory
+            nomis/clojure-regexps/symbol-without-slash-regexp))
 
 (defconst -nomis/cph/private-regexp
-  (nomis/rx/or
-   (s-concat -nomis/cph/begin-def-regexp
-             -nomis/cph/definer-symbol-ending-in-dash-regexp
-             -nomis/cph/whitespace-then-symbol-regexp)
-   (s-concat -nomis/cph/begin-def-regexp
-             -nomis/cph/definer-symbol-regexp
-             -nomis/cph/whitespace-regexp/mandatory
-             "\\^:private"
-             -nomis/cph/whitespace-then-symbol-regexp)))
+  (s-concat -nomis/cph/up-to-and-incl-definer-symbol-regexp
+            -nomis/cph/private-declaration-regexp
+            -nomis/cph/whitespace-regexp/mandatory
+            nomis/clojure-regexps/symbol-without-slash-regexp))
 
 ;;;; ___________________________________________________________________________
 ;;;; Highlighting and unhighlighting

@@ -20,6 +20,10 @@
   ^:private
   xxxx-$&*<>+= [] 42)
 
+(xxxx/def ^:private xxxx-$&*<>+= 42)
+
+(    xxxx/def ^:private xxxx-$&*<>+= 42)
+
 ;;;; Use of `def...-`
 
 (def-  xxxx-$&*<>+= 42)
@@ -53,3 +57,7 @@
 
 ( def-whatever
   xxxx-$&*<>+= [] 42)
+
+(xxxx/def xxxx-$&*<>+= 42)
+
+(    xxxx/def xxxx-$&*<>+= 42)
