@@ -1,5 +1,33 @@
 ;;;; Init stuff -- Fix problems with Magit.  -*- lexical-binding: t; -*-
 
+;;;; +-------------------------------------------------------------------------+
+;;;; | I'm confused.                                                           |
+;;;; |                                                                         |
+;;;; | There are two Hacks below one for Emacs 27.1 and 28.1, and              |
+;;;; | another for Emacs 27.2. (And each of these covers the same Magit        |
+;;;; | versions.) There's some overlap between the two Hacks.                  |
+;;;; |                                                                         |
+;;;; | So we have:                                                             |
+;;;; | - Hack A for Emacs 27.1.                                                |
+;;;; | - Hack B for Emacs 27.2.                                                |
+;;;; | - Hack A for Emacs 28.1.                                                |
+;;;; |                                                                         |
+;;;; | There are two weird things:                                             |
+;;;; |                                                                         |
+;;;; | 1. According to https://github.com/magit/magit/discussions/4507         |
+;;;; |    (which the prompt for all this), there's no problem with Emacs       |
+;;;; |    27.2, so why do we have Hack B for Emacs 27.2? Was it ever needed?   |
+;;;; |                                                                         |
+;;;; | 2. I suspect we screwed up in commit 1ba923c3: I suspect that when we   |
+;;;; |    upgraded to Emacs 28.1 we incorporated Hack A rather than Hack B.    |
+;;;; |    (But everything worked.)                                             |
+;;;; |                                                                         |
+;;;; | Anyway, here we are today with Emacs 28.1 and Magit 20230107.2134, and  |
+;;;; | there's no need for either hack.                                        |
+;;;; |                                                                         |
+;;;; | -- Simon Katz, 2023-01-13                                               |
+;;;; +-------------------------------------------------------------------------+
+
 ;;;; ___________________________________________________________________________
 ;;;; ---- nomis/hack-magit-diff ----
 ;;;; Fix diffs when amending a pushed commit.
@@ -79,9 +107,13 @@
       (define-key git-commit-mode-map (kbd "C-c C-d") 'nomis/-toggle-magit-diff))
 
      (t
-      (message-box (s-join " "
-                           '("Revisit `nomis/hack-magit-diff`"
-                             "for this version of Magit.")))))))
+      (case 2
+        ;; See comments at top of file. It seems we don't need this any more.
+        ;; -- Simon Katz, 2023-01-13
+        (1 (message-box (s-join " "
+                                '("Revisit `nomis/hack-magit-diff`"
+                                  "for this version of Magit."))))
+        (2 nil))))))
 
 ;;;; ___________________________________________________________________________
 ;;;; ---- nomis/hack-magit-diff ----
