@@ -200,13 +200,13 @@ Return the position of the prompt beginning."
 ;;;; ...which says...
 ;;;;     inspired by http://bc.tech.coop/blog/070424.html
 
-(define-key cider-mode-map (kbd "H-a H-,")
+(define-key cider-mode-map (kbd "H-z H-,")
   'nomis/cider-send-to-repl-selection-or-form-around-point)
-(define-key cider-mode-map (kbd "H-a H-.")
+(define-key cider-mode-map (kbd "H-z H-.")
   'nomis/cider-send-to-repl-top-level-form)
-(define-key cider-mode-map (kbd "H-a H-/")
+(define-key cider-mode-map (kbd "H-z H-/")
   'nomis/cider-send-to-repl-after-forward-sexp)
-(define-key cider-mode-map (kbd "H-a <kp-enter>")
+(define-key cider-mode-map (kbd "H-z <kp-enter>")
   'nomis/cider-send-to-repl-return)
 
 (defun nomis/cider-send-to-repl-selection-or-form-around-point (arg)
