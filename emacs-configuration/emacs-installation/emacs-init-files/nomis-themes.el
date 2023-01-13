@@ -117,6 +117,9 @@
 (defconst nomis/themes/zenburn                     '(                                 zenburn))
 (defconst nomis/themes/zenburn+altbg1              '(nomis-alternative-background-001 zenburn))
 (defconst nomis/themes/zenburn+altbg2              '(nomis-alternative-background-002 zenburn))
+(defconst nomis/themes/zenburn+nomis               '(                                 nomis-extras-zenburn zenburn))
+(defconst nomis/themes/zenburn+nomis+altbg1        '(nomis-alternative-background-001 nomis-extras-zenburn zenburn))
+(defconst nomis/themes/zenburn+nomis+altbg2        '(nomis-alternative-background-002 nomis-extras-zenburn zenburn))
 (defconst nomis/themes/dark-laptop                 '(dark-laptop))
 
 (defconst nomis/themes/pairs
@@ -140,6 +143,9 @@
     ("Zenburn                + AltBg1" ,nomis/themes/zenburn+altbg1)
     ("Zenburn                + AltBg2" ,nomis/themes/zenburn+altbg2)
     ("______                         " ())
+    ("Zenburn + Nomis                " ,nomis/themes/zenburn+nomis)
+    ("Zenburn + Nomis        + AltBg1" ,nomis/themes/zenburn+nomis+altbg1)
+    ("Zenburn + Nomis        + AltBg2" ,nomis/themes/zenburn+nomis+altbg2)
     ("Dark Laptop                    " ,nomis/themes/dark-laptop)
     ("===============================" ())))
 
