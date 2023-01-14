@@ -22,7 +22,7 @@ Show the last `magit-log-section-commit-count' commits."
                                 (--remove (string-prefix-p "-n" it)
                                           magit-buffer-log-args)))))))
 
-(defun -nomis/-magic-init-sections ()
+(defun -nomis/-magit-add-status-sections ()
   ;; Change what's in Magit status buffers:
   ;; - By default, if there are unpushed commits Magit status doesn't show
   ;;   pushed commits.
@@ -86,7 +86,7 @@ Show the last `magit-log-section-commit-count' commits."
   ;; (setq git-commit-summary-max-length 999)
   (setq magit-display-buffer-function
         'magit-display-buffer-same-window-except-diff-v1)
-  (-nomis/-magic-init-sections)
+  (-nomis/-magit-add-status-sections)
   (-nomis/-magit-init-section-visibility))
 
 (add-hook 'magit-mode-hook '-nomis/init-magit-mode)
