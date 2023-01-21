@@ -131,7 +131,7 @@
            ;; `paredit-reindent-defun` in Clojure doesn't indent properly.
            ;; I think it does the cljfmt thing rather than the CIDER thing.
            ;; Instead, do something that gives proper indentation.
-           (prog-indent-sexp))
+           (nomis/prog-indent-sexp))
           (t
            (%do-indentation%)))))
 
