@@ -1,6 +1,9 @@
 (deftheme nomis-extras-deeper-blue
   "Created 2022-12-31.")
 
+(defconst nomis-extras-deeper-blue/default-background
+  "#181a26")
+
 (custom-theme-set-faces
  'nomis-extras-deeper-blue
 
@@ -36,7 +39,9 @@
 
  `(magit-diff-hunk-heading-highlight
    ((t ,(list :foreground "gray80"
-              :background "Blue1")))))
+              :background "Blue1"))))
 
+ `(org-hide
+   ((t ,(list :foreground nomis-extras-deeper-blue/default-background)))))
 
 (provide-theme 'nomis-extras-deeper-blue)
