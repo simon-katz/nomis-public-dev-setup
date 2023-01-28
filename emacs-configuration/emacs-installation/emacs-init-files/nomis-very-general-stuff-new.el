@@ -69,4 +69,8 @@ This allows you to temporarily modify read-only buffers too."
 
 ;;;; ___________________________________________________________________________
 
+(setq-default bidi-paragraph-direction 'left-to-right)
+
+;;;; ___________________________________________________________________________
+
 (provide 'nomis-very-general-stuff-new)
