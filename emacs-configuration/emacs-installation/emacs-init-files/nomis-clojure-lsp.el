@@ -9,12 +9,7 @@
 ;;;; ___________________________________________________________________________
 
 (add-hook 'clojure-mode-hook 'lsp)
-(add-hook 'clojurescript-mode-hook 'lsp)
-(add-hook 'clojurec-mode-hook 'lsp)
-
 (add-hook 'clojure-mode-hook 'nomis/clojure-privacy-highlighting-mode/turn-on)
-(add-hook 'clojurescript-mode-hook 'nomis/clojure-privacy-highlighting-mode/turn-on)
-(add-hook 'clojurec-mode-hook 'nomis/clojure-privacy-highlighting-mode/turn-on)
 
 ;;;; ___________________________________________________________________________
 
