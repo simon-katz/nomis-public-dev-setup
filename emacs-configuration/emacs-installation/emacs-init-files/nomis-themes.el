@@ -121,6 +121,7 @@
 (defconst nomis/themes/zenburn+nomis+altbg1        '(nomis-alternative-background-001 nomis-extras-zenburn zenburn))
 (defconst nomis/themes/zenburn+nomis+altbg2        '(nomis-alternative-background-002 nomis-extras-zenburn zenburn))
 (defconst nomis/themes/dark-laptop                 '(dark-laptop))
+(defconst nomis/themes/dark-laptop+nomis           '(nomis-extras-dark-laptop dark-laptop))
 
 (defconst nomis/themes/pairs
   `(("Standard-Light + Nomis         " ,nomis/themes/standard-light+nomis)
@@ -148,6 +149,7 @@
     ("Zenburn                + AltBg2" ,nomis/themes/zenburn+altbg2)
     ("______                         " ())
     ("Dark Laptop                    " ,nomis/themes/dark-laptop)
+    ("Dark Laptop    + Nomis         " ,nomis/themes/dark-laptop+nomis)
     ("===============================" ())))
 
 (defun -nomis/themes/themes->string (themes)
