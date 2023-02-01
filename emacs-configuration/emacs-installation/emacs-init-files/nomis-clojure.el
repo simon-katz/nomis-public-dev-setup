@@ -13,6 +13,12 @@
 (require 'nomis-clojure-portal)
 (require 'nomis-clojure-privacy-highlighting-mode)
 
+;;;; ___________________________________________________________________________
+
+(add-hook 'clojure-mode-hook 'nomis/clojure-privacy-highlighting-mode)
+
+;;;; ___________________________________________________________________________
+
 (define-key clojure-mode-map (kbd "RET") 'newline-and-indent)
 
 (setq clojure-use-metadata-for-privacy t)
