@@ -15,7 +15,22 @@
 
 ;;;; ___________________________________________________________________________
 
-(add-hook 'clojure-mode-hook 'nomis/clojure-privacy-highlighting-mode)
+(defvar -nomis/clojure-privacy-highlighting/default t)
+
+(defun -nomis/clojure-privacy-highlighting/maybe-turn-on ()
+  (when -nomis/clojure-privacy-highlighting/default
+    (nomis/clojure-privacy-highlighting-mode)))
+
+(add-hook 'clojure-mode-hook '-nomis/clojure-privacy-highlighting/maybe-turn-on)
+
+(defun nomis/clojure-privacy-highlighting/global-toggle ()
+  (interactive)
+  (let ((on? (not -nomis/clojure-privacy-highlighting/default)))
+   (setq -nomis/clojure-privacy-highlighting/default on?)
+   (dolist (b (buffer-list))
+     (with-current-buffer b
+       (when (derived-mode-p 'clojure-mode)
+         (nomis/clojure-privacy-highlighting-mode (if on? 1 0)))))))
 
 ;;;; ___________________________________________________________________________
 
