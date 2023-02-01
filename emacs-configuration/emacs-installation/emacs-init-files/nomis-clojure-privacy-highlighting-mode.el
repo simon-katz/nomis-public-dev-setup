@@ -128,9 +128,6 @@
                                      :repeat 'nomis/cph/highlight))))
     (nomis/cph/unhighlight)))
 
-(defun nomis/clojure-privacy-highlighting-mode/turn-on ()
-  (nomis/clojure-privacy-highlighting-mode 1))
-
 ;;;; ___________________________________________________________________________
 
 (provide 'nomis-clojure-privacy-highlighting-mode)
