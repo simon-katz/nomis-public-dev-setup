@@ -101,7 +101,6 @@
 (defvar nomis/dirtree/max-history-size 100)
 
 (defvar nomis/dirtree/dirs-at-top? nil)
-(defvar nomis/dirtree/hl-line-background "Grey90")
 (defvar nomis/dirtree/no-auto-refresh-bg "Grey80")
 (defvar nomis/dirtree/file-in-dirtree-fg-when-following "Blue")
 (defvar nomis/dirtree/file-in-dirtree-fg-when-following-but-no-auto "LightSteelBlue")
@@ -331,11 +330,7 @@ With prefix argument select `nomis/dirtree/buffer'"
 (define-derived-mode nomis/dirtree/mode tree-mode "Dir-Tree"
   "A mode to display tree of directory"
   (tree-widget-set-theme "folder")
-  (hl-line-mode)
-  (face-remap-add-relative 'hl-line
-                           (list
-                            (list :background nomis/dirtree/hl-line-background
-                                  :box nil))))
+  (hl-line-mode))
 
 (defconst nomis/dirtree/approach-to-children :new)
 
