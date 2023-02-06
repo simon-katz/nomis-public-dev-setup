@@ -118,22 +118,28 @@
   (%do-indentation%))
 
 (nomis/define-indent-command nomis/paredit-reindent-defun
-  (nomis/beginning-of-top-level-form)
-  (let* ((in-a-top-level-symbol-p (not
-                                   (nomis/looking-at-bracketed-sexp-start))))
-    (cond (in-a-top-level-symbol-p
-           ;; We are on a top-level symbol. `paredit-reindent-defun` would
-           ;; re-indent a nearby non-symbol top-level form; instead of that
-           ;; don't do anything.
-           (nomis/msg/beep))
-          ((or (bound-and-true-p cider-mode)
-               (eql major-mode 'cider-repl-mode))
-           ;; `paredit-reindent-defun` in Clojure doesn't indent properly.
-           ;; I think it does the cljfmt thing rather than the CIDER thing.
-           ;; Instead, do something that gives proper indentation.
-           (nomis/prog-indent-sexp))
-          (t
-           (%do-indentation%)))))
+  (let* ((in-comment? (nth 4 (syntax-ppss))))
+    (if in-comment?
+        ;; `paredit-reindent-defun` does special things when cursor is in
+        ;; a comment.
+        (%do-indentation%)
+      (nomis/beginning-of-top-level-form)
+      (let* ((in-a-top-level-symbol-p (not
+                                       (nomis/looking-at-bracketed-sexp-start))))
+        (cond (in-a-top-level-symbol-p
+               ;; We are on a top-level symbol. `paredit-reindent-defun` would
+               ;; re-indent a nearby non-symbol top-level form; instead of that
+               ;; don't do anything.
+               (message "Avoiding re-indenting when in a top-level symbol.")
+               (nomis/msg/beep))
+              ((or (bound-and-true-p cider-mode)
+                   (eql major-mode 'cider-repl-mode))
+               ;; `paredit-reindent-defun` in Clojure doesn't indent properly.
+               ;; I think it does the cljfmt thing rather than the CIDER thing.
+               ;; Instead, do something that gives proper indentation.
+               (nomis/prog-indent-sexp))
+              (t
+               (%do-indentation%)))))))
 
 ;;;; ___________________________________________________________________________
 
