@@ -179,13 +179,17 @@
 ;;;; Key bindings
 
 (defun nomis/-lsp-key (s)
-  (kbd (concat lsp-keymap-prefix " H-s " s)))
+  (kbd (concat lsp-keymap-prefix "H-s " s)))
 
 (defun nomis/lsp-add-key-bindings ()
   (define-key lsp-mode-map (nomis/-lsp-key "H-c")
     'nomis/lsp-toggle-lsp-ui-sideline-show-code-actions))
 
-(add-hook 'lsp-mode-hook 'nomis/lsp-add-key-bindings)
+;; For some weird reason, after removing a space from `" H-s "` above, in
+;; Clojure when loafing Kaocha we're getting: "Could not locate
+;; kaocha/repl__init.class, kaocha/repl.clj or kaocha/repl.cljc on classpath".
+;; So, for now, comment this out.
+;; (add-hook 'lsp-mode-hook 'nomis/lsp-add-key-bindings)
 
 ;;;; ___________________________________________________________________________
 
