@@ -38,13 +38,13 @@
 ;;;; ---- Support for flashing forms when indenting ----
 
 (defvar nomis/prog-indent-sexp-flash-duration 0.2)
-(defvar nomis/prog-indent-sexp-flash-colour "PeachPuff1")
 
 (defface nomis/prog-indent-sexp-flash-face
   ;; Copied from `eval-sexp-fu-flash`, and changed.
-  `((((class color)) ,(list :background nomis/prog-indent-sexp-flash-colour
-                            :foreground "black"
-                            :bold nil))
+  `((((background dark)) ,(list :background "DarkGreen"
+                                :extend t))
+    (((background light)) ,(list :background "PeachPuff1"
+                                 :extend t))
     (t (:inverse-video t)))
   "Face for highlighting sexps during indentation."
   :group 'eval-sexp-fu ; is this right?
