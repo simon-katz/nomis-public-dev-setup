@@ -1,6 +1,9 @@
 (deftheme nomis-extras-dark-laptop
   "Created 2023-02-01.")
 
+(defconst nomis-extras-dark-laptop/default-background
+  "Black")
+
 (custom-theme-set-faces
  'nomis-extras-dark-laptop
 
@@ -14,6 +17,9 @@
 
  `(eval-sexp-fu-flash
    ((t  ,(list :background "DodgerBlue3"
-               :extend     t)))))
+               :extend     t))))
+
+ `(org-hide
+   ((t ,(list :foreground nomis-extras-dark-laptop/default-background)))))
 
 (provide-theme 'nomis-extras-dark-laptop)
