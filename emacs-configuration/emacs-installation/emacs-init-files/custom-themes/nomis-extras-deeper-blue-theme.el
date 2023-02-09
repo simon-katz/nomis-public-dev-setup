@@ -27,6 +27,10 @@
  `(font-lock-comment-face
    ((t  ,(list :foreground "PaleVioletRed1"))))
 
+ `(eval-sexp-fu-flash
+   ((t  ,(list :background "DodgerBlue3"
+               :extend     t))))
+
  `(magit-diff-context-highlight
    ((t ,(list :background "#222240"))))
 

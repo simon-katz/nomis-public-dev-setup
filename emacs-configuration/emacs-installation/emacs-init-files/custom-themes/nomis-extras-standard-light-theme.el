@@ -28,6 +28,10 @@
               :background "DarkSeaGreen2"
               :height 0.8))))
 
+ `(eval-sexp-fu-flash
+   ((t  ,(list :background "DodgerBlue"
+               :extend     t))))
+
  `(magit-diff-context-highlight
    ((t ,(list :background "lavender"))))
 

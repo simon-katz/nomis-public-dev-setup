@@ -10,7 +10,10 @@
  `(hl-line ((t  ,(list :background "grey20"))))
 
  `(font-lock-comment-face
-   ((t  ,(list :foreground "PaleVioletRed1")))))
+   ((t  ,(list :foreground "PaleVioletRed1"))))
 
+ `(eval-sexp-fu-flash
+   ((t  ,(list :background "DodgerBlue3"
+               :extend     t)))))
 
 (provide-theme 'nomis-extras-dark-laptop)
