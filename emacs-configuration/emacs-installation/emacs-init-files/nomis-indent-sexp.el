@@ -41,7 +41,7 @@
 
 (defface nomis/prog-indent-sexp-flash-face
   ;; Copied from `eval-sexp-fu-flash`, and changed.
-  `((((background dark)) ,(list :background "DarkGreen"
+  `((((background dark)) ,(list :background "#004400"
                                 :extend t))
     (((background light)) ,(list :background "PeachPuff1"
                                  :extend t))
