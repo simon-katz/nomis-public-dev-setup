@@ -18,9 +18,10 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(custom-enabled-themes '(nomis-extras-standard-light))
+ '(custom-enabled-themes '(nomis-extras-dark-laptop dark-laptop))
  '(custom-safe-themes
-   '("6305deb77cf292b7bbc6f51f850bd66d2d344b823fc27538712311377a6b59c1"
+   '("5a0c2bad4081c7ba91ad8e8ab2e45a864035f86393f437a499297c941e3adc64"
+     "9ac11c78f208abf58e5b313a33147cbf209ad9dc9cb169bf82464b043b45ad7a"
      default))
  '(package-selected-packages
    '(aggressive-indent
