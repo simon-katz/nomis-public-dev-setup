@@ -133,12 +133,4 @@ object is a root list or dict."
 
 ;;;; ___________________________________________________________________________
 
-(setq cider-print-quota 10000)
-(setq cider-repl-buffer-size-limit 1000)
-
-(setq cider-print-fn 'pr)
-(setq cider-print-options '(("length" 50) ;("right-margin" 70)
-                            ))
-
-
 (provide 'nomis-cider-repl)
