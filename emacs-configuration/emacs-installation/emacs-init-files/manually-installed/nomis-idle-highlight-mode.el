@@ -186,8 +186,16 @@
 
 (defface nomis/idle-highlight-muted
   ;; c.f. tailoring of `lsp-face-highlight-textual`.
-  `((((background dark)) ,(list :foreground "black"
-                                :background "#bbbb66"))
+  `((((background dark)) ,(list :background (case 2
+                                              (1 "Purple") ; #942092
+                                              (2 "#801080")
+                                              (3 "DeepPink3")
+                                              (4 "tomato4")
+                                              (5 "tan3")
+                                              (6 "sienna3")
+                                              (7 "DeepSkyBlue4") ; #00688b
+                                              (8 "#007090")
+                                              (9 "IndianRed"))))
     (t ,(list :foreground "black"
               :background "#eeee99")))
   "Default face for hi-lock mode."

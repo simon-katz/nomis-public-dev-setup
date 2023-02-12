@@ -87,7 +87,18 @@
 (face-spec-set ; TODO: Change all `face-spec-set` to use themes.
  'lsp-face-highlight-textual
  ;; c.f. tailoring of `nomis/idle-highlight-muted`.
- `((t ,(list :background "#eeee45"
+ `((((background dark)) ,(list :background (case 3
+                                             (0 "Blue1")
+                                             (1 "Purple") ; #942092
+                                             (2 "#801080")
+                                             (3 "DeepPink3")
+                                             (4 "tomato4")
+                                             (5 "tan3")
+                                             (6 "sienna3")
+                                             (7 "DeepSkyBlue4") ; #00688b
+                                             (8 "#007090")
+                                             (9 "IndianRed"))))
+   (t ,(list :background "#eeee45"
              :foreground "black"))))
 
 (face-spec-set
