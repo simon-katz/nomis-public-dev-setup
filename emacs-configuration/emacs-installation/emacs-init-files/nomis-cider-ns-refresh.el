@@ -8,7 +8,8 @@
       (cider-make-popup-buffer cider-ns-refresh-log-buffer)))
 
 (defface nomis/cider-ns-refresh/-log-face
-  '((t (:foreground "blue3" :italic t)))
+  '((((background dark)) (:foreground "DeepSkyBlue1" :italic t))
+    (t (:foreground "blue3" :italic t)))
   "Face for `nomis/cider-ns-refresh/log`.")
 
 (defface nomis/cider-ns-refresh/-error-face
@@ -330,7 +331,8 @@
 ;;;; ___________________________________________________________________________
 
 (defface nomis/cider-ns-refresh/-reloading-face
-  '((t (:foreground "green4")))
+  '((((background dark)) (:foreground "Green2" :italic t))
+    (t (:foreground "Green4")))
   "Face for reloading messages.")
 
 (cond
