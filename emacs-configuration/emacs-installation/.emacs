@@ -20,9 +20,8 @@
  ;; If there is more than one, they won't work right.
  '(custom-enabled-themes '(nomis-extras-dark-laptop dark-laptop))
  '(custom-safe-themes
-   '("5a0c2bad4081c7ba91ad8e8ab2e45a864035f86393f437a499297c941e3adc64"
-     "9ac11c78f208abf58e5b313a33147cbf209ad9dc9cb169bf82464b043b45ad7a"
-     default))
+   '("89811183a256f3017a9302c7210d634ce338605fdf706b898e85b7e9566151b8"
+     "9ac11c78f208abf58e5b313a33147cbf209ad9dc9cb169bf82464b043b45ad7a"))
  '(package-selected-packages
    '(aggressive-indent
      auto-complete
