@@ -4,15 +4,18 @@
 (defconst nomis-extras-deeper-blue/default-background
   "#181a26")
 
+(defconst nomis-extras-deeper-blue/auto-dim-background
+  "Grey32")
+
 (custom-theme-set-faces
  'nomis-extras-deeper-blue
 
  `(auto-dim-other-buffers-face
-   ((t  ,(list :background "#303030"))))
+   ((t  ,(list :background nomis-extras-deeper-blue/auto-dim-background))))
 
  `(auto-dim-other-buffers-hide-face
-   ((t  ,(list :foreground "#303030"
-               :background "#303030"))))
+   ((t  ,(list :foreground nomis-extras-deeper-blue/auto-dim-background
+               :background nomis-extras-deeper-blue/auto-dim-background))))
 
  `(region  ((t  ,(list :foreground "white"
                        :background "DodgerBlue4"))))

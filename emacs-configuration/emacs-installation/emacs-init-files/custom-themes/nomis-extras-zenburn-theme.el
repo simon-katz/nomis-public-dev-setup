@@ -1,15 +1,18 @@
 (deftheme nomis-extras-zenburn
   "Created 2022-12-31.")
 
+(defconst nomis-extras-zenburn/auto-dim-background
+  "Grey45")
+
 (custom-theme-set-faces
  'nomis-extras-zenburn
 
  `(auto-dim-other-buffers-face
-   ((t  ,(list :background "#505050"))))
+   ((t  ,(list :background nomis-extras-zenburn/auto-dim-background))))
 
  `(auto-dim-other-buffers-hide-face
-   ((t  ,(list :foreground "#505050"
-               :background "#505050"))))
+   ((t  ,(list :foreground nomis-extras-zenburn/auto-dim-background
+               :background nomis-extras-zenburn/auto-dim-background))))
 
  `(region  ((t  ,(list :foreground "white"
                        :background "DodgerBlue4"))))
