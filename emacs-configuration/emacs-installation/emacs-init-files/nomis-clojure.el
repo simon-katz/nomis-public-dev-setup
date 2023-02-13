@@ -15,7 +15,7 @@
 
 ;;;; ___________________________________________________________________________
 
-(defvar -nomis/clojure-privacy-highlighting/default t)
+(defvar -nomis/clojure-privacy-highlighting/default nil)
 
 (defun -nomis/clojure-privacy-highlighting/maybe-turn-on ()
   (when -nomis/clojure-privacy-highlighting/default
