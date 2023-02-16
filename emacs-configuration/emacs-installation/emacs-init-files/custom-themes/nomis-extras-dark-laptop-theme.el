@@ -20,7 +20,7 @@
  `(region  ((t  ,(list :foreground "white"
                        :background "DodgerBlue4"))))
 
- `(hl-line ((t  ,(list :background "grey20"))))
+ `(hl-line ((t  ,(list :background "#306030"))))
 
  `(font-lock-comment-face
    ((t  ,(list :foreground "PaleVioletRed1"))))

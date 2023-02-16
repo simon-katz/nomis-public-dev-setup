@@ -17,7 +17,7 @@
  `(region  ((t  ,(list :foreground "white"
                        :background "DodgerBlue4"))))
 
- `(hl-line ((t  ,(list :background "grey20"))))
+ `(hl-line ((t  ,(list :background "#306030"))))
 
  `(lsp-lens-face
    ((t  ,(list :foreground "yellow"
