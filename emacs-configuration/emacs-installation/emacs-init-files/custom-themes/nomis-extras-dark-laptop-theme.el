@@ -17,8 +17,9 @@
    ((t  ,(list :foreground nomis-extras-dark-laptop/auto-dim-background
                :background nomis-extras-dark-laptop/auto-dim-background))))
 
- `(region  ((t  ,(list :foreground "white"
-                       :background "DodgerBlue4"))))
+ `(region  ((t  ,(list
+                  ;; :foreground "white"
+                  :background "DodgerBlue4"))))
 
  `(hl-line ((t  ,(list :background "#306030"))))
 
