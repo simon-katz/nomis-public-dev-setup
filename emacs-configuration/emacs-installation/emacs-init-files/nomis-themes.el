@@ -112,7 +112,7 @@
 (defconst nomis/themes/zenburn+nomis+altbg1        '(nomis-alternative-background-001 nomis-extras-zenburn        zenburn))
 
 (defconst nomis/themes/standard-light+nomis+altbg2 '(nomis-alternative-background-002 nomis-extras-standard-light))
-(defconst nomis/themes/deeper-blue+nomis+altbg2    '(nomis-alternative-background-002 nomis-extras-deeper-blue    adeeper-blue))
+(defconst nomis/themes/deeper-blue+nomis+altbg2    '(nomis-alternative-background-002 nomis-extras-deeper-blue    deeper-blue))
 (defconst nomis/themes/zenburn+nomis+altbg2        '(nomis-alternative-background-002 nomis-extras-zenburn        zenburn))
 
 (defconst nomis/themes/standard-light              '())
