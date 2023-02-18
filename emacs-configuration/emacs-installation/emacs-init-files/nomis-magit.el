@@ -12,7 +12,7 @@
 ;;;;
 ;;;; Don't globally set auto-revert-mode (that's very rude!).
 
-(magit-auto-revert-mode 0)
+;; (magit-auto-revert-mode 0)
 
 ;;;; ___________________________________________________________________________
 
