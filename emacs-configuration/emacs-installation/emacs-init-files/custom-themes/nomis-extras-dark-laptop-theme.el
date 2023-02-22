@@ -23,6 +23,8 @@
 
  `(hl-line ((t  ,(list :background "#306030"))))
 
+ `(magit-section-highlight ((t  ,(list :background "DodgerBlue4"))))
+
  `(font-lock-comment-face
    ((t  ,(list :foreground "PaleVioletRed1"))))
 
