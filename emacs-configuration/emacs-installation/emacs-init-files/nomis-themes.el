@@ -12,6 +12,8 @@
 ;;;; ___________________________________________________________________________
 ;;;; ---- nomis/themes/disable-and-set-custom-themes ----
 
+(defvar nomis/themes/theme-changed-hook ())
+
 (defun nomis/themes/disable-and-set-custom-themes* (themes)
   ;; Maybe this is an alternative. You had this somewhere once.
   ;; doesn't fix things. Grrrr! This fixes things:
@@ -25,7 +27,8 @@
   ;;       (switch-to-buffer current-b)))
   ;;   (select-frame current-f))
   (mapc #'disable-theme custom-enabled-themes)
-  (mapc #'(lambda (theme) (load-theme theme t)) (reverse themes)))
+  (mapc #'(lambda (theme) (load-theme theme t)) (reverse themes))
+  (run-hooks 'nomis/themes/theme-changed-hook))
 
 (defun nomis/themes/disable-and-set-custom-themes (themes)
   "Disable all custom themes and then enable the supplied themes."
@@ -207,8 +210,8 @@
 
 ;;;; ___________________________________________________________________________
 
-;; (defun nomis/dark-background-mode? ()
-;;   (eq (frame-parameter nil 'background-mode) 'dark))
+(defun nomis/dark-background-mode? ()
+  (eq (frame-parameter nil 'background-mode) 'dark))
 
 ;;;; ___________________________________________________________________________
 

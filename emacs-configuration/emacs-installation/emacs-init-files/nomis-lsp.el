@@ -1,5 +1,7 @@
 ;;; nomis-lsp.el --- LSP tailoring -*- lexical-binding: t; -*-
 
+(require 'lsp-diagnostics)
+
 ;;;; ___________________________________________________________________________
 ;;;; General setup.
 
@@ -118,15 +120,31 @@
     :foreground "black"
     :background "LemonChiffon1")))
 
-(with-eval-after-load 'lsp-diagnostics
+(defun nomis/lsp-set-funky-faces ()
   (setf (alist-get 'unnecessary lsp-diagnostics-attributes)
-        ;; '(:foreground "yellow")
         ;; was "gray"
-        (case 3
-          (1 '(:foreground "grey45"))
-          (2 `((((background dark)) ,(list :foreground "yellow"))
-               (t                   ,(list :foreground "grey45"))))
-          (3 '(:foreground "yellow")))))
+        `(:foreground ,(if (nomis/dark-background-mode?) "yellow" "grey45")))
+  ;; Recreate dynamic faces. Relies in our hacked version of
+  ;; `lsp-diagnostics--flycheck-level` to recalculate things such as:
+  ;; - `lsp-flycheck-warning-unnecessary`
+  ;; - `lsp-flycheck-info-unnecessary`.
+  ;; We do this by causing `lsp-diagnostics-mode` initialisation to re-run.
+  (let* ((a-lsp-diagnostics-mode-buffer (-find (lambda (b)
+                                                 (with-current-buffer b
+                                                   lsp-diagnostics-mode))
+                                               (buffer-list))))
+    (if a-lsp-diagnostics-mode-buffer
+        (with-current-buffer a-lsp-diagnostics-mode-buffer
+          (lsp-diagnostics-mode 0)
+          (lsp-diagnostics-mode 1))
+      (lsp-diagnostics-mode 1)
+      (lsp-diagnostics-mode 0))))
+
+(add-hook 'emacs-startup-hook
+          'nomis/lsp-set-funky-faces)
+
+(add-hook 'nomis/themes/theme-changed-hook
+          'nomis/lsp-set-funky-faces)
 
 ;;;; ___________________________________________________________________________
 ;;;; Hack echo area messages.

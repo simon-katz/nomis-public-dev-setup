@@ -118,7 +118,7 @@ g. `error', `warning') and list of LSP TAGS."
       (let ((name (format "lsp-flycheck-%s-%s"
                           flycheck-level
                           (mapconcat #'symbol-name tags "-"))))
-        (or (intern-soft name)
+        (or nil ; (intern-soft name) ; :nomis-hack for when changing themes
             (let* ((face (--doto (intern name) ; :nomis-hack for those stupid messages
                            (copy-face (-> flycheck-level
                                           (get 'flycheck-overlay-category)
