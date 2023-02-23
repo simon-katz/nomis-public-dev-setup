@@ -11,7 +11,13 @@
  `(lsp-ui-sideline-code-action
    ((t
      :foreground "gray95"
-     :background "springgreen4"))))
+     :background "springgreen4")))
+
+ `(lsp-face-highlight-textual
+   ;; c.f. tailoring of `nomis/idle-highlight-muted`.
+   ((t
+     :background "#eeee45"
+     :foreground "black"))))
 
 
 (provide-theme 'nomis-common-light)

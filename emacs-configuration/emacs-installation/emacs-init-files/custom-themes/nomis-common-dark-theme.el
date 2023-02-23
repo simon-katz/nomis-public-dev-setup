@@ -24,6 +24,22 @@
      :foreground "gray95"
      :background "springgreen4")))
 
+ `(lsp-face-highlight-textual
+   ;; c.f. tailoring of `nomis/idle-highlight-muted`.
+   ((t ,(list :background (case -1
+                            (-1 "Blue4")
+                            (0 "Blue1")
+                            (1 "Purple") ; #942092
+                            (2 "#801080")
+                            (3 "DeepPink3")
+                            (4 "tomato4")
+                            (5 "tan3")
+                            (6 "sienna3")
+                            (7 "DeepSkyBlue4") ; #00688b
+                            (8 "#007090")
+                            (9 "IndianRed"))
+              :underline t))))
+
  `(font-lock-comment-face
    ((t  ,(list :foreground "PaleVioletRed1"))))
 
