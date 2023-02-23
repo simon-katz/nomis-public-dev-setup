@@ -51,13 +51,10 @@
    ((t  ,(list :background "DodgerBlue3"
                :extend     t))))
 
- `(magit-section-highlight ((t  ,(list :background "DodgerBlue4"))))
+ `(magit-section-highlight ((t  ,(list :background "DarkCyan"))))
 
  `(magit-diff-context-highlight
    ((t ,(list :background "#222240"))))
-
- `(magit-section-highlight
-   ((t ,(list :background "#222244"))))
 
  `(magit-diff-hunk-heading
    ((t ,(list :foreground "gray80"
