@@ -15,6 +15,10 @@
                :background "blue4"
                :height 0.8))))
 
+ `(lsp-ui-sideline-global
+   ((t
+     :background "Red4")))
+
  `(font-lock-comment-face
    ((t  ,(list :foreground "PaleVioletRed1"))))
 

@@ -114,12 +114,6 @@
     :foreground "gray95"
     :background "springgreen4")))
 
-(face-spec-set
- 'lsp-ui-sideline-global
- '((t
-    :foreground "black"
-    :background "LemonChiffon1")))
-
 (defun nomis/lsp-set-funky-faces ()
   (setf (alist-get 'unnecessary lsp-diagnostics-attributes)
         ;; was "gray"
