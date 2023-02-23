@@ -26,7 +26,7 @@
 
  `(lsp-face-highlight-textual
    ;; c.f. tailoring of `nomis/idle-highlight-muted`.
-   ((t ,(list :background (case -1
+   ((t ,(list :background (cl-case -1
                             (-1 "Blue4")
                             (0 "Blue1")
                             (1 "Purple") ; #942092
