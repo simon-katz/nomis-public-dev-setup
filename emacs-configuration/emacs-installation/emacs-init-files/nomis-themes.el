@@ -105,31 +105,26 @@
 ;;;; ___________________________________________________________________________
 ;;;; ---- nomis/themes/set-custom-themes ----
 
-(defconst nomis/themes/standard-light+nomis        '(                                 nomis-extras-standard-light))
-(defconst nomis/themes/dark-laptop+nomis           '(                                 nomis-extras-dark-laptop    nomis-common-dark dark-laptop))
-(defconst nomis/themes/deeper-blue+nomis           '(                                 nomis-extras-deeper-blue    nomis-common-dark deeper-blue))
-(defconst nomis/themes/zenburn+nomis               '(                                 nomis-extras-zenburn        nomis-common-dark zenburn))
-
-(defconst nomis/themes/standard-light+nomis+altbg1 '(nomis-alternative-background-001 nomis-extras-standard-light))
-(defconst nomis/themes/deeper-blue+nomis+altbg1    '(nomis-alternative-background-001 nomis-extras-deeper-blue    nomis-common-dark deeper-blue))
-(defconst nomis/themes/zenburn+nomis+altbg1        '(nomis-alternative-background-001 nomis-extras-zenburn        nomis-common-dark zenburn))
-
-(defconst nomis/themes/standard-light+nomis+altbg2 '(nomis-alternative-background-002 nomis-extras-standard-light))
-(defconst nomis/themes/deeper-blue+nomis+altbg2    '(nomis-alternative-background-002 nomis-extras-deeper-blue    nomis-common-dark deeper-blue))
-(defconst nomis/themes/zenburn+nomis+altbg2        '(nomis-alternative-background-002 nomis-extras-zenburn        nomis-common-dark zenburn))
-
+(defconst nomis/themes/standard-light+nomis        '(                                 nomis-extras-standard-light nomis-common-light))
+(defconst nomis/themes/dark-laptop+nomis           '(                                 nomis-extras-dark-laptop    nomis-common-dark  dark-laptop))
+(defconst nomis/themes/deeper-blue+nomis           '(                                 nomis-extras-deeper-blue    nomis-common-dark  deeper-blue))
+(defconst nomis/themes/zenburn+nomis               '(                                 nomis-extras-zenburn        nomis-common-dark  zenburn))
+(defconst nomis/themes/standard-light+nomis+altbg1 '(nomis-alternative-background-001 nomis-extras-standard-light nomis-common-light))
+(defconst nomis/themes/deeper-blue+nomis+altbg1    '(nomis-alternative-background-001 nomis-extras-deeper-blue    nomis-common-dark  deeper-blue))
+(defconst nomis/themes/zenburn+nomis+altbg1        '(nomis-alternative-background-001 nomis-extras-zenburn        nomis-common-dark  zenburn))
+(defconst nomis/themes/standard-light+nomis+altbg2 '(nomis-alternative-background-002 nomis-extras-standard-light nomis-common-light))
+(defconst nomis/themes/deeper-blue+nomis+altbg2    '(nomis-alternative-background-002 nomis-extras-deeper-blue    nomis-common-dark  deeper-blue))
+(defconst nomis/themes/zenburn+nomis+altbg2        '(nomis-alternative-background-002 nomis-extras-zenburn        nomis-common-dark  zenburn))
 (defconst nomis/themes/standard-light              '())
-(defconst nomis/themes/dark-laptop                 '(                                                                               dark-laptop))
-(defconst nomis/themes/deeper-blue                 '(                                                                               deeper-blue))
-(defconst nomis/themes/zenburn                     '(                                                                               zenburn))
-
-(defconst nomis/themes/standard-light+altbg1       '(nomis-alternative-background-001))
-(defconst nomis/themes/deeper-blue+altbg1          '(nomis-alternative-background-001                             nomis-common-dark deeper-blue))
-(defconst nomis/themes/zenburn+altbg1              '(nomis-alternative-background-001                             nomis-common-dark zenburn))
-
-(defconst nomis/themes/standard-light+altbg2       '(nomis-alternative-background-002))
-(defconst nomis/themes/deeper-blue+altbg2          '(nomis-alternative-background-002                             nomis-common-dark deeper-blue))
-(defconst nomis/themes/zenburn+altbg2              '(nomis-alternative-background-002                             nomis-common-dark zenburn))
+(defconst nomis/themes/dark-laptop                 '(                                                                                dark-laptop))
+(defconst nomis/themes/deeper-blue                 '(                                                                                deeper-blue))
+(defconst nomis/themes/zenburn                     '(                                                                                zenburn))
+(defconst nomis/themes/standard-light+altbg1       '(nomis-alternative-background-001                             nomis-common-light))
+(defconst nomis/themes/deeper-blue+altbg1          '(nomis-alternative-background-001                             nomis-common-dark  deeper-blue))
+(defconst nomis/themes/zenburn+altbg1              '(nomis-alternative-background-001                             nomis-common-dark  zenburn))
+(defconst nomis/themes/standard-light+altbg2       '(nomis-alternative-background-002                             nomis-common-light))
+(defconst nomis/themes/deeper-blue+altbg2          '(nomis-alternative-background-002                             nomis-common-dark  deeper-blue))
+(defconst nomis/themes/zenburn+altbg2              '(nomis-alternative-background-002                             nomis-common-dark  zenburn))
 
 (defconst nomis/themes/pairs
   `(("Standard-Light + Nomis         " ,nomis/themes/standard-light+nomis)
