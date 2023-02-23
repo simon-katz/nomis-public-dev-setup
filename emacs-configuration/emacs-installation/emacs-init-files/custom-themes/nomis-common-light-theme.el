@@ -21,7 +21,11 @@
 
  `(hc-hard-space
    ((t
-     :background "grey60"))))
+     :background "grey60")))
+
+ `(terraform--resource-name-face
+   ((t
+     :foreground "Blue"))))
 
 
 (provide-theme 'nomis-common-light)
