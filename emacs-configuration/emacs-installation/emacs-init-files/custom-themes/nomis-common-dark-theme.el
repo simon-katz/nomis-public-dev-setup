@@ -19,6 +19,11 @@
    ((t
      :background "Red4")))
 
+ `(lsp-ui-sideline-code-action
+   ((t
+     :foreground "gray95"
+     :background "springgreen4")))
+
  `(font-lock-comment-face
    ((t  ,(list :foreground "PaleVioletRed1"))))
 

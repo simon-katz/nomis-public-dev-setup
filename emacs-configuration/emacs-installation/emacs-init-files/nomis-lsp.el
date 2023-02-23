@@ -105,12 +105,6 @@
    (t ,(list :background "#eeee45"
              :foreground "black"))))
 
-(face-spec-set ; TODO: Change all `face-spec-set` to use themes.
- 'lsp-ui-sideline-code-action
- '((t
-    :foreground "gray95"
-    :background "springgreen4")))
-
 (defun nomis/lsp-set-funky-faces ()
   ;; See https://github.com/emacs-lsp/lsp-mode/issues/2037
   (setf (alist-get 'unnecessary lsp-diagnostics-attributes)

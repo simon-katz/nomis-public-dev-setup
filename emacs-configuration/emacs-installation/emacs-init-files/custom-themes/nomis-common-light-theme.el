@@ -6,7 +6,12 @@
 
  `(lsp-ui-sideline-global
    ((t
-     :background "LemonChiffon1"))))
+     :background "LemonChiffon1")))
+
+ `(lsp-ui-sideline-code-action
+   ((t
+     :foreground "gray95"
+     :background "springgreen4"))))
 
 
 (provide-theme 'nomis-common-light)
