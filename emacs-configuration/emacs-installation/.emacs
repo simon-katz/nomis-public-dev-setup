@@ -20,7 +20,7 @@
  ;; If there is more than one, they won't work right.
  '(custom-enabled-themes '(nomis-extras-dark-laptop dark-laptop))
  '(custom-safe-themes
-   '("73dda11b8d288ee7f4c15c0713b1b58c89751fa1675e3a7f904966632f4dbd0f"
+   '("253addfd416774a251fa1555ec2c97cd7b95dcfacb16115ee1695dca335e0007"
      "9ac11c78f208abf58e5b313a33147cbf209ad9dc9cb169bf82464b043b45ad7a"))
  '(package-selected-packages
    '(aggressive-indent
