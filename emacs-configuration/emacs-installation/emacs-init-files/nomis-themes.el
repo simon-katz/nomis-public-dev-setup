@@ -119,9 +119,9 @@
 (defconst nomis/themes/zenburn+nomis+altbg2        '(nomis-alternative-background-002 nomis-extras-zenburn        nomis-common-dark zenburn))
 
 (defconst nomis/themes/standard-light              '())
-(defconst nomis/themes/dark-laptop                 '(                                                             nomis-common-dark dark-laptop))
-(defconst nomis/themes/deeper-blue                 '(                                                             nomis-common-dark deeper-blue))
-(defconst nomis/themes/zenburn                     '(                                                             nomis-common-dark zenburn))
+(defconst nomis/themes/dark-laptop                 '(                                                                               dark-laptop))
+(defconst nomis/themes/deeper-blue                 '(                                                                               deeper-blue))
+(defconst nomis/themes/zenburn                     '(                                                                               zenburn))
 
 (defconst nomis/themes/standard-light+altbg1       '(nomis-alternative-background-001))
 (defconst nomis/themes/deeper-blue+altbg1          '(nomis-alternative-background-001                             nomis-common-dark deeper-blue))
