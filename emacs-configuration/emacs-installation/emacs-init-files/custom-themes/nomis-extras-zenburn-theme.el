@@ -1,6 +1,9 @@
 (deftheme nomis-extras-zenburn
   "Created 2022-12-31.")
 
+(defconst nomis-extras-zenburn/default-background
+  "#3F3F3F")
+
 (defconst nomis-extras-zenburn/auto-dim-background
   "Grey45")
 
@@ -14,37 +17,8 @@
    ((t  ,(list :foreground nomis-extras-zenburn/auto-dim-background
                :background nomis-extras-zenburn/auto-dim-background))))
 
- `(region  ((t  ,(list
-                  ;; :foreground "white"
-                  :background "DodgerBlue4"))))
-
- `(hl-line ((t  ,(list :background "#306030"))))
-
- `(lsp-lens-face
-   ((t  ,(list :foreground "yellow"
-               :background "blue4"
-               :height 0.8))))
-
- `(font-lock-comment-face
-   ((t  ,(list :foreground "PaleVioletRed1"))))
-
- `(eval-sexp-fu-flash
-   ((t  ,(list :background "DodgerBlue3"
-               :extend     t))))
-
- `(magit-diff-context-highlight
-   ((t ,(list :background "#222240"))))
-
- `(magit-section-highlight
-   ((t ,(list :background "#222244"))))
-
- `(magit-diff-hunk-heading
-   ((t ,(list :foreground "gray80"
-              :background "Blue4"))))
-
- `(magit-diff-hunk-heading-highlight
-   ((t ,(list :foreground "gray80"
-              :background "Blue1")))))
+ `(org-hide
+   ((t ,(list :foreground nomis-extras-zenburn/default-background)))))
 
 
 (provide-theme 'nomis-extras-zenburn)

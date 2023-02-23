@@ -84,7 +84,10 @@
 ;;;; ___________________________________________________________________________
 ;;;; Tailoring of faces, needed especially for light themes.
 
-(face-spec-set ; TODO: Change all `face-spec-set` to use themes.
+(face-spec-set
+ ;; TODO: Change all `face-spec-set` to use themes.
+ ;;       Except some `lsp` faces are dynamically created.
+ ;;       See https://github.com/emacs-lsp/lsp-mode/issues/2037
  'lsp-face-highlight-textual
  ;; c.f. tailoring of `nomis/idle-highlight-muted`.
  `((((background dark)) ,(list :background (case -1
@@ -117,8 +120,13 @@
 
 (with-eval-after-load 'lsp-diagnostics
   (setf (alist-get 'unnecessary lsp-diagnostics-attributes)
-        '(:foreground "grey45") ; was "gray"
-        ))
+        ;; '(:foreground "yellow")
+        ;; was "gray"
+        (case 3
+          (1 '(:foreground "grey45"))
+          (2 `((((background dark)) ,(list :foreground "yellow"))
+               (t                   ,(list :foreground "grey45"))))
+          (3 '(:foreground "yellow")))))
 
 ;;;; ___________________________________________________________________________
 ;;;; Hack echo area messages.

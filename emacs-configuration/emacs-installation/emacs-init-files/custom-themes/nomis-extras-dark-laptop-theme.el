@@ -17,21 +17,6 @@
    ((t  ,(list :foreground nomis-extras-dark-laptop/auto-dim-background
                :background nomis-extras-dark-laptop/auto-dim-background))))
 
- `(region  ((t  ,(list
-                  ;; :foreground "white"
-                  :background "DodgerBlue4"))))
-
- `(hl-line ((t  ,(list :background "#306030"))))
-
- `(magit-section-highlight ((t  ,(list :background "DodgerBlue4"))))
-
- `(font-lock-comment-face
-   ((t  ,(list :foreground "PaleVioletRed1"))))
-
- `(eval-sexp-fu-flash
-   ((t  ,(list :background "DodgerBlue3"
-               :extend     t))))
-
  `(org-hide
    ((t ,(list :foreground nomis-extras-dark-laptop/default-background)))))
 
