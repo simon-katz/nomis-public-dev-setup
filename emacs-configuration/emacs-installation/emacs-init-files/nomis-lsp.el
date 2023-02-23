@@ -86,10 +86,7 @@
 ;;;; ___________________________________________________________________________
 ;;;; Tailoring of faces, needed especially for light themes.
 
-(face-spec-set
- ;; TODO: Change all `face-spec-set` to use themes.
- ;;       Except some `lsp` faces are dynamically created.
- ;;       See https://github.com/emacs-lsp/lsp-mode/issues/2037
+(face-spec-set ; TODO: Change all `face-spec-set` to use themes.
  'lsp-face-highlight-textual
  ;; c.f. tailoring of `nomis/idle-highlight-muted`.
  `((((background dark)) ,(list :background (case -1
@@ -108,13 +105,14 @@
    (t ,(list :background "#eeee45"
              :foreground "black"))))
 
-(face-spec-set
+(face-spec-set ; TODO: Change all `face-spec-set` to use themes.
  'lsp-ui-sideline-code-action
  '((t
     :foreground "gray95"
     :background "springgreen4")))
 
 (defun nomis/lsp-set-funky-faces ()
+  ;; See https://github.com/emacs-lsp/lsp-mode/issues/2037
   (setf (alist-get 'unnecessary lsp-diagnostics-attributes)
         ;; was "gray"
         `(:foreground ,(if (nomis/dark-background-mode?) "yellow" "grey45")))

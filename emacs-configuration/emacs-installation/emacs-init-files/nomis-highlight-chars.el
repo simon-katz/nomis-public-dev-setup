@@ -7,7 +7,7 @@
 
 ;;;; ___________________________________________________________________________
 
-(face-spec-set
+(face-spec-set ; TODO: Change all `face-spec-set` to use themes.
  'hc-hard-space
  '((t
     :background "grey80")))
