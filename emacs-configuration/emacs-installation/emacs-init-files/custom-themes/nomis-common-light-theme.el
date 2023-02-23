@@ -17,7 +17,11 @@
    ;; c.f. tailoring of `nomis/idle-highlight-muted`.
    ((t
      :background "#eeee45"
-     :foreground "black"))))
+     :foreground "black")))
+
+ `(hc-hard-space
+   ((t
+     :background "grey60"))))
 
 
 (provide-theme 'nomis-common-light)

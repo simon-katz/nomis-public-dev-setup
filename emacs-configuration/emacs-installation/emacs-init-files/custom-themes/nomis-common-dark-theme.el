@@ -40,6 +40,10 @@
                             (9 "IndianRed"))
               :underline t))))
 
+ `(hc-hard-space
+   ((t
+     :background "grey70")))
+
  `(font-lock-comment-face
    ((t  ,(list :foreground "PaleVioletRed1"))))
 

@@ -7,11 +7,6 @@
 
 ;;;; ___________________________________________________________________________
 
-(face-spec-set ; TODO: Change all `face-spec-set` to use themes.
- 'hc-hard-space
- '((t
-    :background "grey80")))
-
 ;; Not this: It breaks `list-colors-display` (and who knows what else).
 ;; (add-hook 'font-lock-mode-hook 'hc-highlight-hard-spaces)
 
