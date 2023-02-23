@@ -199,7 +199,7 @@
                                               (8 "#007090")
                                               (9 "IndianRed"))))
     (t ,(list :foreground "black"
-              :background "#eeee99")))
+              :background "#eeeea0")))
   "Default face for hi-lock mode."
   :group 'hi-lock-faces)
 

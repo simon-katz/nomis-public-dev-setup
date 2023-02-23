@@ -16,7 +16,7 @@
  `(lsp-face-highlight-textual
    ;; c.f. tailoring of `nomis/idle-highlight-muted`.
    ((t
-     :background "#eeee45"
+     :background "#ffff00"
      :foreground "black")))
 
  `(hc-hard-space
