@@ -26,7 +26,7 @@
 
  `(lsp-face-highlight-textual
    ;; c.f. tailoring of `nomis/idle-highlight-muted`.
-   ((t ,(list :background (cl-case -1
+   ((t ,(list :background (cl-case 3
                             (-1 "Blue4")
                             (0 "Blue1")
                             (1 "Purple") ; #942092
@@ -37,8 +37,8 @@
                             (6 "sienna3")
                             (7 "DeepSkyBlue4") ; #00688b
                             (8 "#007090")
-                            (9 "IndianRed"))
-              :underline t))))
+                            (9 "IndianRed")
+                            (10 "DodgerBlue3"))))))
 
  `(hc-hard-space
    ((t
