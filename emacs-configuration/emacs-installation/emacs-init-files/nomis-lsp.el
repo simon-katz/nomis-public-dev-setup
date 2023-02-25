@@ -89,8 +89,11 @@
 (defun nomis/lsp-set-funky-faces ()
   ;; See https://github.com/emacs-lsp/lsp-mode/issues/2037
   (setf (alist-get 'unnecessary lsp-diagnostics-attributes)
-        ;; was "gray"
-        `(:foreground ,(if (nomis/dark-background-mode?) "yellow" "grey45")))
+        ;; This was simply `:foreground "gray"` I think.
+        (if (nomis/dark-background-mode?)
+            (list :foreground "Black"
+                  :background "Grey70")
+          (list :foreground "Grey45")))
   ;; Recreate dynamic faces. Relies in our hacked version of
   ;; `lsp-diagnostics--flycheck-level` to recalculate things such as:
   ;; - `lsp-flycheck-warning-unnecessary`
