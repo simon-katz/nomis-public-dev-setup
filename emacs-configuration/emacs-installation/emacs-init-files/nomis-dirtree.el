@@ -787,14 +787,9 @@ With prefix argument select `nomis/dirtree/buffer'"
         (let* ((filename (nomis/dirtree/filename-in-selected-window)))
           (when (and filename
                      (nomis/dirtree/has-file? filename)
-                     (progn
-                       ;; This is broad-brush.
-                       ;; If the directory is already expanded then ideally
-                       ;; we should select `filename`, but we don't.
-                       ;; However, we do give different-coloured feedback so
-                       ;; that's OK as a compromise.
-                       (not (nomis/dirtree/within-directory-to-keep-collapsed?
-                             filename))))
+                     (or (nomis/dirtree/within-expanded-directory? filename)
+                         (not (nomis/dirtree/within-directory-to-keep-collapsed?
+                               filename))))
             (nomis/dirtree/goto-file/internal filename)))
       (error
        ;; TODO Sometimes we expect errors. Make this reporting conditional on
@@ -916,6 +911,12 @@ With prefix argument select `nomis/dirtree/buffer'"
           (string-match (concat "/" no-expand-name "/")
                         name))
         nomis/dirtree/dirs-to-keep-collapsed-unless-forced))
+
+(defun nomis/dirtree/within-expanded-directory? (name)
+  (some (lambda (dir)
+          (string-match (concat "^" dir "[^/]*$")
+                        name))
+        nomis/dirtree/expanded-directories))
 
 (defun nomis/dirtree/widget-file (widget)
   (widget-get widget :file))
