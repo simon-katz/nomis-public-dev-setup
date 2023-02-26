@@ -101,10 +101,19 @@
 (defvar nomis/dirtree/max-history-size 100)
 
 (defvar nomis/dirtree/dirs-at-top? nil)
-(defvar nomis/dirtree/no-auto-refresh-bg "Grey80")
-(defvar nomis/dirtree/file-in-dirtree-fg-when-following "Blue")
-(defvar nomis/dirtree/file-in-dirtree-fg-when-following-but-no-auto "LightSteelBlue")
-(defvar nomis/dirtree/file-not-in-dirtree-fg-when-following "VioletRed4")
+
+(defun nomis/dirtree/file-in-dirtree-fg-when-following ()
+  (if (nomis/dark-background-mode?)
+      "Cyan"
+      "Blue"))
+
+(defun nomis/dirtree/file-in-dirtree-fg-when-following-but-no-auto ()
+  "LightSteelBlue")
+
+(defun nomis/dirtree/file-not-in-dirtree-fg-when-following ()
+  (if (nomis/dark-background-mode?)
+      "VioletRed2"
+    "VioletRed4"))
 
 (defface nomis/dirtree/no-auto-expand
   '((t
@@ -644,10 +653,8 @@ With prefix argument select `nomis/dirtree/buffer'"
 ;;;; Buffer face
 
 (defun nomis/dirtree/make-face-kvs ()
-  (list :background
-        (if nomis/dirtree/auto-refresh?
-            'unspecified
-          nomis/dirtree/no-auto-refresh-bg)
+  (list :slant
+        (if nomis/dirtree/auto-refresh? 'normal 'italic)
         :foreground
         (if (not nomis/dirtree/follow-selected-buffer?)
             'unspecified
@@ -655,9 +662,9 @@ With prefix argument select `nomis/dirtree/buffer'"
             (if (and filename
                      (nomis/dirtree/has-file? filename))
                 (if (nomis/dirtree/within-directory-to-keep-collapsed? filename)
-                    nomis/dirtree/file-in-dirtree-fg-when-following-but-no-auto
-                  nomis/dirtree/file-in-dirtree-fg-when-following)
-              nomis/dirtree/file-not-in-dirtree-fg-when-following)))))
+                    (nomis/dirtree/file-in-dirtree-fg-when-following-but-no-auto)
+                  (nomis/dirtree/file-in-dirtree-fg-when-following))
+              (nomis/dirtree/file-not-in-dirtree-fg-when-following))))))
 
 (defvar nomis/dirtree/face-cookie nil)
 (defvar nomis/dirtree/previous-face-kvs nil)
