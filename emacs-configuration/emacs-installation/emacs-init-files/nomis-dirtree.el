@@ -545,18 +545,19 @@ With prefix argument select `nomis/dirtree/buffer'"
 
 (defun nomis/dirtree/with-run-in-dirtree-window-or-buffer-fun (fun)
   (cl-assert (get-buffer nomis/dirtree/buffer))
-  (cl-flet ((do-it () (funcall fun)))
-    (save-selected-window
-      (let* ((w (nomis/find-window-in-any-frame-pref-this-one
-                 nomis/dirtree/buffer)))
-        (if w
-            (progn
-              (nomis/dirtree/debug-message "Running in window -- %S" w)
-              (select-window w)
-              (do-it))
-          (nomis/dirtree/debug-message "Not running in a window")
-          (with-current-buffer nomis/dirtree/buffer
-            (do-it)))))))
+  (nomis/auto-dim/with-turn-off-and-restore
+    (cl-flet ((do-it () (funcall fun)))
+      (save-selected-window
+        (let* ((w (nomis/find-window-in-any-frame-pref-this-one
+                   nomis/dirtree/buffer)))
+          (if w
+              (progn
+                (nomis/dirtree/debug-message "Running in window -- %S" w)
+                (select-window w)
+                (do-it))
+            (nomis/dirtree/debug-message "Not running in a window")
+            (with-current-buffer nomis/dirtree/buffer
+              (do-it))))))))
 
 (defmacro nomis/dirtree/with-run-in-dirtree-window-or-buffer (&rest body)
   (declare (indent 0))
