@@ -1150,8 +1150,9 @@ Then display contents of file under point in other window.")
      (nomis/dirtree/goto-filename filename :force? force?)
      (nomis/dirtree/note-selection :force? t))
     (when (bound-and-true-p hl-line-mode)
-      ;; Workaround for bug.
-      ;; Without this we don't have the highlighting.
+      ;; Turn off highlighting of previously-current line and turn on
+      ;; highlighting of newly-current line.
+      (hl-line-mode 0)
       (hl-line-mode 1))))
 
 (defun nomis/dirtree/filename->dir (filename)
