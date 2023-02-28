@@ -186,7 +186,8 @@
 
 (defface nomis/idle-highlight-muted
   ;; c.f. tailoring of `lsp-face-highlight-textual`.
-  `((((background dark)) ,(list :background (cl-case 10
+  `((((background dark)) ,(list :foreground "White"
+                                :background (cl-case 10
                                               (-1 "Blue4")
                                               (0 "Blue1")
                                               (1 "Purple") ; #942092
