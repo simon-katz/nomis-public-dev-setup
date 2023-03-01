@@ -42,47 +42,39 @@
                   nomis/ww/regexps/high-priority)))
 
 (defface nomis/ww/face/no-priority
-  `((t (:foreground "DodgerBlue3"
-                    :bold t
-                    :italic t)))
+  `((((background dark)) ,(list :foreground "DodgerBlue"
+                                :bold t
+                                :italic t))
+    (t ,(list :foreground "DodgerBlue3"
+              :bold t
+              :italic t)))
   "Face for no-priority watch regexps.")
 
 (defface nomis/ww/face/standout
-  (let* ((fg (cl-case 9
-               (1 "DarkBlue")
-               (2 "RoyalBlue3")
-               (3 "purple4")
-               (4 "SlateBlue4")
-               (5 "DodgerBlue4")
-               (6 "DarkCyan")
-               (7 "SeaGreen")
-               (8 "DarkOliveGreen")
-               (9 "DarkGreen")
-               (10 "DarkSlateGrey")
-               (11 "Navy")
-               (12 "MidnightBlue"))))
-    `((t ,(list
-           ;; :foreground fg
-           ;; :inverse-video t
-           ;; :overline t
-           ;; :underline t
-           ;; :box '(:line-width -1)
-           :bold t
-           :slant 'italic
-           ))))
+  `((((background dark)) ,(list :bold t
+                                :slant 'italic))
+    (t ,(list :bold t
+              :slant 'italic)))
   "Face for standout watch regexps.")
 
 (defface nomis/ww/face/operator
-  `((t (:foreground "gray10"
-                    :bold t
-                    :italic t)))
+  `((((background dark)) ,(list :foreground "gray85"
+                                :bold t
+                                :italic t))
+    (t ,(list :foreground "gray10"
+              :bold t
+              :italic t)))
   "Face for operator watch regexps.")
 
 (defface nomis/ww/face/low-priority
-  '((t (:foreground "White"
-                    :background "Pink4"
-                    :bold t
-                    :italic t)))
+  `((((background dark)) ,(list :foreground "Black"
+                                :background "Pink2"
+                                :bold t
+                                :italic t))
+    (t ,(list :foreground "White"
+              :background "Pink4"
+              :bold t
+              :italic t)))
   "Face for low-priority watch regexps.")
 
 (defun nomis/ww/check-start-of-symbol? (regexp)
