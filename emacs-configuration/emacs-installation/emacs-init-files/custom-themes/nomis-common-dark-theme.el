@@ -6,9 +6,9 @@
 
  `(region  ((t  ,(list
                   ;; :foreground "white"
-                  :background "DodgerBlue4"))))
+                  :background "Red4"))))
 
- `(hl-line ((t  ,(list :background "#306030"))))
+ `(hl-line ((t  ,(list :background "#205020"))))
 
  `(lsp-lens-face
    ((t  ,(list :foreground "yellow"
@@ -27,7 +27,7 @@
  `(lsp-face-highlight-textual
    ;; c.f. tailoring of `nomis/idle-highlight-muted`.
    ((t ,(list :foreground "White"
-              :background (cl-case 0
+              :background (cl-case 11
                             (-1 "Blue4")
                             (0 "Blue1")
                             (1 "Purple") ; #942092
@@ -39,14 +39,15 @@
                             (7 "DeepSkyBlue4") ; #00688b
                             (8 "#007090")
                             (9 "IndianRed")
-                            (10 "DodgerBlue3"))))))
+                            (10 "DodgerBlue3")
+                            (11 "Blue3"))))))
 
  `(hc-hard-space
    ((t
      :background "grey70")))
 
  `(font-lock-comment-face
-   ((t  ,(list :foreground "PaleVioletRed1"))))
+   ((t  ,(list :foreground "#d0b0ff"))))
 
  `(eval-sexp-fu-flash
    ((t  ,(list :background "DodgerBlue3"

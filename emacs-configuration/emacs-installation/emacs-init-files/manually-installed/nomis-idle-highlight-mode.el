@@ -199,7 +199,8 @@
                                               (7 "DeepSkyBlue4") ; #00688b
                                               (8 "#007090")
                                               (9 "IndianRed")
-                                              (10 "DodgerBlue3"))))
+                                              (10 "DodgerBlue3")
+                                              (11 "Blue3"))))
     (t ,(list :foreground "black"
               :background "#eeeea0")))
   "Default face for hi-lock mode."
