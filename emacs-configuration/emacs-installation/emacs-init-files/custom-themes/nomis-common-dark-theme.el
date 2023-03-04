@@ -8,7 +8,7 @@
                   ;; :foreground "white"
                   :background "Red4"))))
 
- `(hl-line ((t  ,(list :background "#205020"))))
+ `(hl-line ((t  ,(list :background "#407040"))))
 
  `(lsp-lens-face
    ((t  ,(list :foreground "yellow"
