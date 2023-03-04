@@ -72,6 +72,7 @@
      magit
      markdown-mode
      multiple-cursors
+     nav-flash
      org
      org-bullets
      paredit
