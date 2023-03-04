@@ -1,6 +1,10 @@
 ;;;; Init stuff -- Misc highlighting.
 
 ;;;; ___________________________________________________________________________
+
+(require 'nav-flash)
+
+;;;; ___________________________________________________________________________
 ;;;; Mode line
 
 ;;; Defaults:
@@ -60,6 +64,37 @@
 ;; (set-face-background 'hl-line "RGB:9999/9999/9999")
 ;; (set-face-background 'hl-line "lightyellow")
 ;; (set-face-background 'hl-line "LightGoldenrodYellow")
+
+;;;; ___________________________________________________________________________
+;;;; Highlighting of the current line -- Fix `next-error` and `prev-error`.
+
+;;;; Without this `hl-line-mode` hack, I have this problem:
+;;;; - I use `next-error` and `prev-error` in a grep buffer to navigate to the
+;;;;   next/prev hit.
+;;;; - The hit is in a not-yet-opened file.
+;;;; - If the newly-created buffer has `hl-line-mode` enabled, I don't get
+;;;;   `hl-line-mode` highlighting.
+;;;; (Moving the cursor or doing other things causes the highlighting to be
+;;;; shown, but that's not good enough.)
+
+;;;; Also use `nav-flash-show`, because:
+;;;; - The built-in flashing of the hit appears to be unreliable.
+;;;; - Sometimes, even when it works, the built-in flashing can be hard
+;;;;   to notice.
+
+(advice-add 'next-error
+            :after
+            (lambda (&rest args)
+              (run-at-time 0.1
+                           nil
+                           (lambda ()
+                             (when (bound-and-true-p hl-line-mode)
+                               (hl-line-mode 0)
+                               (hl-line-mode 1))
+                             (nav-flash-show nil nil 'region))))
+            '((name . nomis/hl-line/next-error-error-extras)))
+
+;; (advice-remove 'next-error 'nomis/hl-line/next-error-error-extras)
 
 ;;;; ___________________________________________________________________________
 ;;;; Highlighting of text (usually symbol names) like `xxxx` and `xxxx'.
