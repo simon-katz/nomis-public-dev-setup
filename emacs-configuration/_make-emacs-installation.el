@@ -19,6 +19,7 @@
   ' (aggressive-indent
      auto-complete
      auto-dim-other-buffers
+     beacon
      cider
      cider-eval-sexp-fu
      cl-format
