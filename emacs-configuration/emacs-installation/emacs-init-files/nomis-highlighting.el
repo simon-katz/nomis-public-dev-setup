@@ -91,10 +91,12 @@
                              (when (bound-and-true-p hl-line-mode)
                                (hl-line-mode 0)
                                (hl-line-mode 1))
-                             (nav-flash-show nil nil 'region))))
+                             (nav-flash-show nil nil 'region)
+                             (beacon-blink))))
             '((name . nomis/hl-line/next-error-error-extras)))
 
 ;; (advice-remove 'next-error 'nomis/hl-line/next-error-error-extras)
+
 
 ;;;; ___________________________________________________________________________
 ;;;; Highlighting of text (usually symbol names) like `xxxx` and `xxxx'.
