@@ -93,9 +93,9 @@
                                (hl-line-mode 1))
                              (nav-flash-show nil nil 'region)
                              (beacon-blink))))
-            '((name . nomis/hl-line/next-error-error-extras)))
+            '((name . nomis/hl-line/next-error-extras)))
 
-;; (advice-remove 'next-error 'nomis/hl-line/next-error-error-extras)
+;; (advice-remove 'next-error 'nomis/hl-line/next-error-extras)
 
 
 ;;;; ___________________________________________________________________________
