@@ -29,7 +29,8 @@
     "R\\EFACTOR"
     "N\\OCOMMIT"
     "Q\\UESTION/ACTION"
-    "L\\EARNING-NOW"))
+    "L\\EARNING-NOW"
+    "S\\K-COMMENT"))
 
 (defconst nomis/ww/low-priority-regexp-prefix "x")
 
