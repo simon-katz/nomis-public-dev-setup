@@ -10,6 +10,9 @@
 
  `(hl-line ((t  ,(list :background "#407040"))))
 
+ `(font-lock-warning-face ((t ,(list :bold t
+                                     :foreground "Red2"))))
+
  `(lsp-lens-face
    ((t  ,(list :foreground "yellow"
                :background "blue4"

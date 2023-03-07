@@ -21,7 +21,7 @@
  '(custom-enabled-themes '(nomis-extras-dark-laptop nomis-common-dark dark-laptop))
  '(custom-safe-themes
    '("a3967ce28e93afbc828e8698c01ec6d675a1744fe12ad2ae47558875a3893c12"
-     "4df489ffc6b3ea7ef64c85a25a15f9bb72b16b7807501e997763c94a02369758"
+     "f000be65e4859fb388efdf75b9e5bb754a251778ef0fe9a99add21c88284f72d"
      "9ac11c78f208abf58e5b313a33147cbf209ad9dc9cb169bf82464b043b45ad7a"))
  '(package-selected-packages
    '(aggressive-indent
