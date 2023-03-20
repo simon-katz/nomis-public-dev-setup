@@ -27,6 +27,7 @@
         mark-sexp
         markdown-exdent-or-delete
         markdown-outdent-or-delete
+        nomis/clojure/insert-reader-comment
         nomis/meta-w
         nomis/meta-x
         norg/cycle
