@@ -6,7 +6,7 @@
 
 (with-eval-after-load 'vterm
 
-  (setq vterm-max-scrollback 10000)
+  (setq vterm-max-scrollback 100000)
   (setq vterm-clear-scrollback-when-clearing t)
 
   (define-key vterm-mode-map (kbd "M-k") 'vterm-clear))
