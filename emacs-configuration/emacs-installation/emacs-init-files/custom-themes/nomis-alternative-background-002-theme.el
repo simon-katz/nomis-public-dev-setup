@@ -1,39 +1,30 @@
 (deftheme nomis-alternative-background-002
   "Created 2023-01-03.")
 
-(defconst nomis-alternative-background-002/light-default-background
-  "MistyRose")
+(let* ((light-default-bg         "MistyRose")
+       (dark-default-bg          "#603020")
+       (autodim-light-default-bg "MistyRose2")
+       (autodim-dark-default-bg  "#805040"))
 
-(defconst nomis-alternative-background-002/dark-default-background
-  "#603020")
+  (custom-theme-set-faces
+   'nomis-alternative-background-002
 
-(custom-theme-set-faces
- 'nomis-alternative-background-002
+   `(default
+      ((((background light)) ,(list :background light-default-bg))
+       (((background dark))  ,(list :background dark-default-bg))))
 
- `(default
-    ((((background light))
-      ,(list :background
-             nomis-alternative-background-002/light-default-background))
-     (((background dark))
-      ,(list :background
-             nomis-alternative-background-002/dark-default-background))))
+   `(auto-dim-other-buffers-face
+     ((((background light)) ,(list :background autodim-light-default-bg))
+      (((background dark))  ,(list :background autodim-dark-default-bg))))
 
- `(auto-dim-other-buffers-face
-   ((((background light)) ,(list :background "MistyRose2"))
-    (((background dark))  ,(list :background "#805040"))))
+   `(auto-dim-other-buffers-hide-face
+     ((((background light)) ,(list :foreground autodim-light-default-bg
+                                   :background autodim-light-default-bg))
+      (((background dark))  ,(list :foreground autodim-dark-default-bg
+                                   :background autodim-dark-default-bg))))
 
- `(auto-dim-other-buffers-hide-face
-   ((((background light)) ,(list :foreground "MistyRose2"
-                                 :background "MistyRose2"))
-    (((background dark))  ,(list :foreground "#805040"
-                                 :background "#805040"))))
-
- `(org-hide
-   ((((background light))
-     ,(list :foreground
-            nomis-alternative-background-002/light-default-background))
-    (((background dark))
-     ,(list :foreground
-            nomis-alternative-background-002/dark-default-background)))))
+   `(org-hide
+     ((((background light)) ,(list :foreground light-default-bg))
+      (((background dark))  ,(list :foreground dark-default-bg))))))
 
 (provide-theme 'nomis-alternative-background-002)
