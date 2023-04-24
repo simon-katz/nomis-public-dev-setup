@@ -89,6 +89,7 @@
      smex
      spinner
      terraform-mode
+     tldr
      treepy
      undo-tree
      vterm
