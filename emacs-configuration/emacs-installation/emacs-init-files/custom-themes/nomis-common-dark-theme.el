@@ -67,7 +67,20 @@
 
  `(magit-diff-hunk-heading-highlight
    ((t ,(list :foreground "gray80"
-              :background "Blue1")))))
+              :background "Blue1"))))
+
+ `(tldr-title
+   ((t ,(list :foreground "Grey90" :height 1.4))))
+ `(tldr-introduction
+   ((t ,(list :foreground "Grey90"))))
+ `(tldr-description
+   ((t ,(list :foreground "Grey90"))))
+ `(tldr-command-itself
+   ((t ,(list :foreground "Black" :background "Green" :weight 'semi-bold))))
+ `(tldr-code-block
+   ((t ,(list :foreground "Green" :background "Black"))))
+ `(tldr-command-argument
+   ((t ,(list :foreground "Yellow" :background "Black")))))
 
 
 (provide-theme 'nomis-common-dark)
