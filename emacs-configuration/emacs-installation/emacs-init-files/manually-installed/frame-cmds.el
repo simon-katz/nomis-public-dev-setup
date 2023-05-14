@@ -1272,6 +1272,12 @@ In Lisp code:
                        'both)))
   (unless frame (setq frame  (selected-frame)))
   (unless direction (setq direction  'both))
+  (when (memq direction '(vertical both))
+    ;; This fixes a bug where:
+    ;; - Vertically maximizing an already-vertically-maximized frame causes the
+    ;;   frame to be taller than the (available part of the) display.
+    ;; - Emacs will seemingly-randomly crash when a frame is in that state.
+    (set-frame-height frame 20 t))
   (let (;; Size of a frame that uses all of the available screen area,
         ;; but leaving room for a minibuffer frame at bottom of display.
         (fr-pixel-width   (frcmds-available-screen-pixel-width))
