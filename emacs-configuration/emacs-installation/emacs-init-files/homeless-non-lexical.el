@@ -147,7 +147,12 @@
     (unless prefix
       (cider-jack-in-clj nil))
     (double-h-max-w)
-    (nomis/move-frame-to-screen-right 0)
+    (let* ((main-monitor-width (nomis/main-monitor-width)))
+      (case main-monitor-width
+        (2560 (modify-frame-parameters
+               (selected-frame)
+               `((left . 700))))
+        (t (nomis/move-frame-to-screen-right 0))))
     (split-window-horizontally)
     (nomis/dirtree/goto-file/return-to-window)
     (when (fboundp 'flop-frame) (flop-frame)) ; I don't know why this is needed
