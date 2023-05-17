@@ -22,7 +22,7 @@
      (provided 0)
      (for-all 2)
      ;; core.match
-     (match 1)
+     ;; (match 1)
      ;; Om & Fulcro
      (dom/a        1)
      (dom/button   1)
