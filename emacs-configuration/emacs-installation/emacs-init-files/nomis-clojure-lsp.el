@@ -66,6 +66,11 @@
                        clojurescript-mode-map))
         (define-key m (kbd "M-.") 'nomis/clojure-lsp-and-cider/find-definition)))
 
+     ((version-list-<= '(20230518 55)
+                       (pkg-info-package-version 'cider))
+      ;; Works now (it finds a Clojure Spec keyword).
+      )
+
      (t
       (message-box
        "You need to fix `nomis/clojure-lsp-and-cider/find-definition` for this version of CIDER and LSP.")))))

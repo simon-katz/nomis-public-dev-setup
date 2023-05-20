@@ -8,7 +8,8 @@
  ((member (pkg-info-version-info 'cider)
           '("1.2.0snapshot (package: 20211105.708)"
             "1.3.0 (package: 20220405.1216)"
-            "1.5.0 (package: 20220830.500)"))
+            "1.5.0 (package: 20220830.500)"
+            "1.7.0 (package: 20230518.550)"))
 
   (with-eval-after-load 'cider-repl
     ;; The original is in `cider-repl`.
@@ -81,7 +82,8 @@ If REGEXP is non-nil, only lines matching REGEXP are considered."
  ((member (pkg-info-version-info 'cider)
           '("1.2.0snapshot (package: 20211105.708)"
             "1.3.0 (package: 20220405.1216)"
-            "1.5.0 (package: 20220830.500)"))
+            "1.5.0 (package: 20220830.500)"
+            "1.7.0 (package: 20230518.550)"))
 
   (defun nomis/-cider-repl-history-maybe-warn ()
     (when (and cider-repl-history-file
@@ -194,6 +196,7 @@ utf-8-unix."
                 "1.2.0snapshot (package: 20211105.708)"
                 "1.3.0 (package: 20220405.1216)"
                 "1.5.0 (package: 20220830.500)"
+                "1.7.0 (package: 20230518.550)"
 
                 ;; Don't really need to add new versions here if we are right
                 ;; that this problem has gone away now that we are using

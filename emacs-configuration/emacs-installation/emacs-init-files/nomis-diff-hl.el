@@ -39,7 +39,10 @@
     (make-string (length nomis/diff-hl/-scroll-indicator-for-footer)
                  ?\s))
 
-  (defconst nomis/diff-hl/-header-footer-colour "blue3")
+  ;; TODO: Define faces for this, different for light and dark themes.
+  (defconst nomis/diff-hl/-header-footer-colour (case 2
+                                                  (1 "blue3")
+                                                  (2 "yellow")))
 
   (defconst nomis/diff-hl/-header-footer-style/normal
     (list :underline  t
@@ -57,7 +60,8 @@
   (cond
    ((member (pkg-info-package-version 'diff-hl)
             '((20210909 207)
-              (20211105 145)))
+              (20211105 145)
+              (20230423 1837)))
 
     (defun diff-hl-inline-popup--compute-header (width &optional header)
       ;; The original `diff-hl-inline-popup--compute-header` is in

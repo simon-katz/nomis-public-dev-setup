@@ -5,7 +5,8 @@
 (cond
  ((member (pkg-info-package-version 'vterm)
           '((20210804 405)
-            (20210908 640)))
+            (20210908 640)
+            (20230417 424)))
 
   ;; Special behaviour for `vterm--internal` when arg is null:
   ;; - Always create a new buffer.

@@ -18,7 +18,20 @@
   (dolist (hook-fun nomis/lisp-and-ielm-mode-hook-functions)
     (add-hook hook hook-fun)))
 
-(define-key emacs-lisp-mode-map (kbd "RET") 'newline-and-indent)
+(with-eval-after-load 'paredit
+  ;; As of me upgrading
+  ;;   from Emacs 28.1.3 to 28.2
+  ;;   from Paredit 20191121.2328 to 20221127.1452
+  ;; there's a conflict between Paredit and ielm: Pressing RETURN in an ielm
+  ;; buffer invokes `paredit-RET`, which inserts a newline and does not
+  ;; evaluate. There's no way to invoke `ielm-return` from the keyboard.
+  ;;
+  ;; Maybe take a look at `cider-repl-setup-paredit` for other ideas, but this
+  ;; seems to fix things:
+  (define-key paredit-mode-map (kbd "RET") nil)
+  (define-key paredit-mode-map (kbd "C-j") 'paredit-newline)
+  (with-eval-after-load 'ielm
+    (define-key ielm-map (kbd "RET") 'ielm-return)))
 
 ;;;; ___________________________________________________________________________
 

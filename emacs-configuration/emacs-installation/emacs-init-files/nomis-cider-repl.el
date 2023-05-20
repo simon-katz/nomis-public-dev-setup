@@ -4,13 +4,14 @@
 
 (cond
  ((member (pkg-info-package-version 'cider)
-          '((20220830 500)))
+          '((20220830 500)
+            (20230518 550)))
 
   ;; From https://github.com/dakra/cider/commit/93c9a22db864abb81a119e4d807268434b3576b2
 
   ;; See https://clojurians.slack.com/archives/C0617A8PQ/p1672395486556439?thread_ts=1672319263.233099&cid=C0617A8PQ
 
-  (defun cider-repl--interpret-crlf (string) ; original is in cider-repl.el
+  (defun cider-repl--interpret-crlf (string) ; new for this hack
     "Change STRING in the same way as it would be displayed in a shell.
 I.e. \r will jump to the beginning of the line and the characters
 after will overwrite what's already written on this line.
@@ -48,14 +49,16 @@ Before inserting, run `cider-repl-preoutput-hook' on STRING."
                    (not (bolp)))
           (insert-before-markers "\n")
           (set-marker cider-repl-output-end (1- (point))))))
-    (when-let* ((window (get-buffer-window buffer t)))
-      ;; If the prompt is on the first line of the window, then scroll the window
-      ;; down by a single line to make the emitted output visible.
-      (when (and (pos-visible-in-window-p cider-repl-prompt-start-mark window)
-                 (< 1 cider-repl-prompt-start-mark)
-                 (not (pos-visible-in-window-p (1- cider-repl-prompt-start-mark) window)))
-        (with-selected-window window
-          (scroll-down 1)))))
+    (when cider-repl-display-output-before-window-boundaries
+      ;; FIXME: The code below is super slow, that's why it's disabled by default.
+      (when-let* ((window (get-buffer-window buffer t)))
+        ;; If the prompt is on the first line of the window, then scroll the window
+        ;; down by a single line to make the emitted output visible.
+        (when (and (pos-visible-in-window-p cider-repl-prompt-start-mark window)
+                   (< 1 cider-repl-prompt-start-mark)
+                   (not (pos-visible-in-window-p (1- cider-repl-prompt-start-mark) window)))
+          (with-selected-window window
+            (scroll-down 1))))))
 
   (defun nrepl--bdecode-1 (&optional stack) ; original is in nrepl-client
     "Decode one elementary bencode object starting at point.

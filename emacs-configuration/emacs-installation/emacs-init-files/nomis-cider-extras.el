@@ -72,7 +72,8 @@
                   "1.2.0snapshot (package: 20210929.1032)"
                   "1.2.0snapshot (package: 20211105.708)"
                   "1.3.0 (package: 20220405.1216)"
-                  "1.5.0 (package: 20220830.500)")))
+                  "1.5.0 (package: 20220830.500)"
+                  "1.7.0 (package: 20230518.550)")))
     (advice-add
      'cider-eldoc-format-function
      :around
@@ -96,7 +97,8 @@
 
 (cond
  ((member (pkg-info-version-info 'cider)
-          '("1.5.0 (package: 20220830.500)"))
+          '("1.5.0 (package: 20220830.500)"
+            "1.7.0 (package: 20230518.550)"))
 
   (defun nomis/cider-browse-ns-all-from-browse-single ()
     (interactive)
@@ -118,7 +120,8 @@
 
 (cond
  ((member (pkg-info-version-info 'cider)
-          '("1.5.0 (package: 20220830.500)"))
+          '("1.5.0 (package: 20220830.500)"
+            "1.7.0 (package: 20230518.550)"))
 
   (defun nomis/cider-browse-ns ()
     "Like `cider-browse-ns`, but uses the current namespace instead of prompting."

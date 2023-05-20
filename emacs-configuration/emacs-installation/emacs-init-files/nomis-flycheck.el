@@ -16,7 +16,8 @@
             '("31"
               "32snapshot (package: 20191126.2142)"
               "32snapshot (package: 20210708.1337)"
-              "32snapshot (package: 20210825.1804)"))
+              "32snapshot (package: 20210825.1804)"
+              "33snapshot (package: 20230306.414)"))
     (defvar *-nomis/add-checker-name-to-flycheck-message?* nil)
     (advice-add 'flycheck-display-error-messages
                 :around
@@ -36,7 +37,9 @@
                           (put-text-property 0
                                              (length error-checker-info)
                                              'face
-                                             '(foreground-color . "blue")
+                                             `(foreground-color . ,(case 2
+                                                                     (1 "blue")
+                                                                     (2 "yellow")))
                                              error-checker-info)
                           (concat error-checker-info
                                   " "

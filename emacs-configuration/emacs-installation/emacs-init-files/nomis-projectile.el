@@ -78,7 +78,8 @@
   (cond
    ((member (pkg-info-version-info 'projectile)
             '("20210811.435"
-              "20211103.2050"))
+              "20211103.2050"
+              "20230317.1101"))
 
     (defvar *nomis/in-projectile-grep?* nil)
     (defvar *nomis/projectile-grep-regexp* nil)
