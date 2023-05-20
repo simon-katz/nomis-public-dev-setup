@@ -728,6 +728,9 @@ With numerical argument N, show content up to level N."
              (while (re-search-backward regexp nil t)
                (org-flag-region (line-end-position) last t 'outline)
                (setq last (line-end-position 0)))))))
+      ((version<= "9.5.5" org-version)
+       ;; It's fixed now.
+       )
       (t
        (message-box "You need to fix `org-content` for this version of org mode.")))
 

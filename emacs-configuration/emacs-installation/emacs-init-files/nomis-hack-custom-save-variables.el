@@ -99,7 +99,8 @@
              (princ "\n"))))))
 
     ((member emacs-version
-             '("28.1"))
+             '("28.1"
+               "28.2"))
      ;; The original `custom-save-variables` is defined in `cus-edit`.
      (defun custom-save-variables ()
        "Save all customized variables in `custom-file'."
