@@ -1,4 +1,4 @@
-;;; extmap-autoloads.el --- automatically extracted autoloads
+;;; extmap-autoloads.el --- automatically extracted autoloads  -*- lexical-binding: t -*-
 ;;
 ;;; Code:
 
@@ -9,7 +9,7 @@
 ;;;### (autoloads nil "extmap" "extmap.el" (0 0 0 0))
 ;;; Generated autoloads from extmap.el
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "extmap" '("extmap-")))
+(register-definition-prefixes "extmap" '("extmap-"))
 
 ;;;***
 

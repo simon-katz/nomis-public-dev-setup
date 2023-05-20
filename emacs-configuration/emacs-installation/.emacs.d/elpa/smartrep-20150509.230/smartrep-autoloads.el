@@ -1,4 +1,4 @@
-;;; smartrep-autoloads.el --- automatically extracted autoloads
+;;; smartrep-autoloads.el --- automatically extracted autoloads  -*- lexical-binding: t -*-
 ;;
 ;;; Code:
 
@@ -9,7 +9,7 @@
 ;;;### (autoloads nil "smartrep" "smartrep.el" (0 0 0 0))
 ;;; Generated autoloads from smartrep.el
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "smartrep" '("smartrep-")))
+(register-definition-prefixes "smartrep" '("smartrep-"))
 
 ;;;***
 

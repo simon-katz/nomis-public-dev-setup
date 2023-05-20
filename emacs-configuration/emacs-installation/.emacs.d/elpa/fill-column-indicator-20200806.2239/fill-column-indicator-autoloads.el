@@ -1,4 +1,4 @@
-;;; fill-column-indicator-autoloads.el --- automatically extracted autoloads
+;;; fill-column-indicator-autoloads.el --- automatically extracted autoloads  -*- lexical-binding: t -*-
 ;;
 ;;; Code:
 
@@ -29,7 +29,7 @@ on troubleshooting.)
 (autoload 'turn-on-fci-mode "fill-column-indicator" "\
 Turn on fci-mode unconditionally." t nil)
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "fill-column-indicator" '("fci-" "turn-off-fci-mode")))
+(register-definition-prefixes "fill-column-indicator" '("fci-" "turn-off-fci-mode"))
 
 ;;;***
 

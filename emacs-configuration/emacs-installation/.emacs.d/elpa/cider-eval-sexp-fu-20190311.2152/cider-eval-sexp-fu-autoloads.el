@@ -1,4 +1,4 @@
-;;; cider-eval-sexp-fu-autoloads.el --- automatically extracted autoloads
+;;; cider-eval-sexp-fu-autoloads.el --- automatically extracted autoloads  -*- lexical-binding: t -*-
 ;;
 ;;; Code:
 
@@ -10,7 +10,7 @@
 ;;;;;;  (0 0 0 0))
 ;;; Generated autoloads from cider-eval-sexp-fu.el
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "cider-eval-sexp-fu" '("cider-esf--")))
+(register-definition-prefixes "cider-eval-sexp-fu" '("cider-esf--"))
 
 ;;;***
 

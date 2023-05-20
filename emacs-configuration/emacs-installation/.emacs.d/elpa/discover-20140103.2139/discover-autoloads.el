@@ -1,4 +1,4 @@
-;;; discover-autoloads.el --- automatically extracted autoloads
+;;; discover-autoloads.el --- automatically extracted autoloads  -*- lexical-binding: t -*-
 ;;
 ;;; Code:
 
@@ -83,10 +83,19 @@ with the symbol name of the context menu..
 (autoload 'discover-mode "discover" "\
 Helps you discover Emacs with interactive context menus.
 
-If called interactively, enable Discover mode if ARG is positive,
-and disable it if ARG is zero or negative.  If called from Lisp,
-also enable the mode if ARG is omitted or nil, and toggle it if
-ARG is `toggle'; disable the mode otherwise.
+This is a minor mode.  If called interactively, toggle the
+`Discover mode' mode.  If the prefix argument is positive, enable
+the mode, and if it is zero or negative, disable the mode.
+
+If called from Lisp, toggle the mode if ARG is `toggle'.  Enable
+the mode if ARG is nil, omitted, or is a positive number.
+Disable the mode if ARG is a negative number.
+
+To check whether the minor mode is enabled in the current buffer,
+evaluate `discover-mode'.
+
+The mode's hook is called both when the mode is enabled and when
+it is disabled.
 
 Key bindings:
 \\{discover-map}
@@ -108,16 +117,20 @@ or call the function `global-discover-mode'.")
 (autoload 'global-discover-mode "discover" "\
 Toggle Discover mode in all buffers.
 With prefix ARG, enable Global Discover mode if ARG is positive;
-otherwise, disable it.  If called from Lisp, enable the mode if
-ARG is omitted or nil.
+otherwise, disable it.
 
-Discover mode is enabled in all buffers where
-`discover-mode-turn-on' would do it.
+If called from Lisp, toggle the mode if ARG is `toggle'.
+Enable the mode if ARG is nil, omitted, or is a positive number.
+Disable the mode if ARG is a negative number.
+
+Discover mode is enabled in all buffers where `discover-mode-turn-on'
+would do it.
+
 See `discover-mode' for more information on Discover mode.
 
 \(fn &optional ARG)" t nil)
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "discover" '("discover-")))
+(register-definition-prefixes "discover" '("discover-"))
 
 ;;;***
 

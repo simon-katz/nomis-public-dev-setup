@@ -1,4 +1,4 @@
-;;; inflections-autoloads.el --- automatically extracted autoloads
+;;; inflections-autoloads.el --- automatically extracted autoloads  -*- lexical-binding: t -*-
 ;;
 ;;; Code:
 
@@ -23,7 +23,7 @@ Return the pluralized version of STR.
 
 (define-obsolete-function-alias 'pluralize-string 'inflection-pluralize-string "2.6")
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "inflections" '("define-inflectors" "inflection-")))
+(register-definition-prefixes "inflections" '("define-inflectors" "inflection-"))
 
 ;;;***
 

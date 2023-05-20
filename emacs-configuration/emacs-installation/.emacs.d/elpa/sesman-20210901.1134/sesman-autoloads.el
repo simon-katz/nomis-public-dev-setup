@@ -1,4 +1,4 @@
-;;; sesman-autoloads.el --- automatically extracted autoloads
+;;; sesman-autoloads.el --- automatically extracted autoloads  -*- lexical-binding: t -*-
 ;;
 ;;; Code:
 
@@ -75,7 +75,7 @@ links.
 \(fn &optional LINKS)" t nil)
  (autoload 'sesman-map "sesman" "Session management prefix keymap." t 'keymap)
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "sesman" '("sesman-")))
+(register-definition-prefixes "sesman" '("sesman-"))
 
 ;;;***
 
@@ -87,7 +87,7 @@ links.
 Display an interactive session browser.
 See `sesman-browser-mode' for more details." t nil)
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "sesman-browser" '("sesman-")))
+(register-definition-prefixes "sesman-browser" '("sesman-"))
 
 ;;;***
 

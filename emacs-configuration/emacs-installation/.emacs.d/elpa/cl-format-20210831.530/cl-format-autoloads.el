@@ -1,4 +1,4 @@
-;;; cl-format-autoloads.el --- automatically extracted autoloads
+;;; cl-format-autoloads.el --- automatically extracted autoloads  -*- lexical-binding: t -*-
 ;;
 ;;; Code:
 
@@ -38,14 +38,24 @@ Like `error', but use CL format strings.
 (autoload 'cl-format-font-lock-mode "cl-format" "\
 Adds font-lock support for cl format strings.
 
-If called interactively, enable Cl-Format-Font-Lock mode if ARG
-is positive, and disable it if ARG is zero or negative.  If
-called from Lisp, also enable the mode if ARG is omitted or nil,
-and toggle it if ARG is `toggle'; disable the mode otherwise.
+This is a minor mode.  If called interactively, toggle the
+`Cl-Format-Font-Lock mode' mode.  If the prefix argument is
+positive, enable the mode, and if it is zero or negative, disable
+the mode.
+
+If called from Lisp, toggle the mode if ARG is `toggle'.  Enable
+the mode if ARG is nil, omitted, or is a positive number.
+Disable the mode if ARG is a negative number.
+
+To check whether the minor mode is enabled in the current buffer,
+evaluate `cl-format-font-lock-mode'.
+
+The mode's hook is called both when the mode is enabled and when
+it is disabled.
 
 \(fn &optional ARG)" t nil)
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "cl-format" '("cl-format-")))
+(register-definition-prefixes "cl-format" '("cl-format-"))
 
 ;;;***
 
@@ -53,21 +63,21 @@ and toggle it if ARG is `toggle'; disable the mode otherwise.
 ;;;;;;  (0 0 0 0))
 ;;; Generated autoloads from cl-format-builtins.el
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "cl-format-builtins" '("?$" "?%" "?&" "?*" "?/" "?<" "??" "?\\[" "?^" "?_" "?a" "?b" "?c" "?d" "?e" "?f" "?g" "?i" "?o" "?p" "?r" "?s" "?t" "?w" "?x" "?{" "?~" "cl-format-" "single-key-description-forthcoming")))
+(register-definition-prefixes "cl-format-builtins" '("?$" "?%" "?&" "?*" "?/" "?<" "??" "?\\[" "?^" "?_" "?a" "?b" "?c" "?d" "?e" "?f" "?g" "?i" "?o" "?p" "?r" "?s" "?t" "?w" "?x" "?{" "?~" "cl-format-" "single-key-description-forthcoming"))
 
 ;;;***
 
 ;;;### (autoloads nil "cl-format-def" "cl-format-def.el" (0 0 0 0))
 ;;; Generated autoloads from cl-format-def.el
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "cl-format-def" '("cl-" "define-cl-format-directive")))
+(register-definition-prefixes "cl-format-def" '("cl-" "define-cl-format-directive"))
 
 ;;;***
 
 ;;;### (autoloads nil "clisp-format" "clisp-format.el" (0 0 0 0))
 ;;; Generated autoloads from clisp-format.el
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "clisp-format" '("clisp-")))
+(register-definition-prefixes "clisp-format" '("clisp-"))
 
 ;;;***
 

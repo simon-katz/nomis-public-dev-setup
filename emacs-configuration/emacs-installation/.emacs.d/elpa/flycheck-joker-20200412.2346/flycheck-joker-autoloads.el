@@ -1,4 +1,4 @@
-;;; flycheck-joker-autoloads.el --- automatically extracted autoloads
+;;; flycheck-joker-autoloads.el --- automatically extracted autoloads  -*- lexical-binding: t -*-
 ;;
 ;;; Code:
 

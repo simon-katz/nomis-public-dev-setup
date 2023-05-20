@@ -1,4 +1,4 @@
-;;; edn-autoloads.el --- automatically extracted autoloads
+;;; edn-autoloads.el --- automatically extracted autoloads  -*- lexical-binding: t -*-
 ;;
 ;;; Code:
 
@@ -84,7 +84,7 @@ your own tagged data.
 
 \(fn DATUM)" nil nil)
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "edn" '("edn--" "hash-table-")))
+(register-definition-prefixes "edn" '("edn--" "hash-table-"))
 
 ;;;***
 

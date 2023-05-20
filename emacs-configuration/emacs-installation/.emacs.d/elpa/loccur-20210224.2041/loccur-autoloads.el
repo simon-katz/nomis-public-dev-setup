@@ -1,4 +1,4 @@
-;;; loccur-autoloads.el --- automatically extracted autoloads
+;;; loccur-autoloads.el --- automatically extracted autoloads  -*- lexical-binding: t -*-
 ;;
 ;;; Code:
 
@@ -38,7 +38,7 @@ default value is used.
 
 \(fn &optional MODE)" t nil)
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "loccur" '("loccur-")))
+(register-definition-prefixes "loccur" '("loccur-"))
 
 ;;;***
 

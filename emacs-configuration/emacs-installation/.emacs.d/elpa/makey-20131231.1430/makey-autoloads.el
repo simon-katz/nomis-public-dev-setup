@@ -1,4 +1,4 @@
-;;; makey-autoloads.el --- automatically extracted autoloads
+;;; makey-autoloads.el --- automatically extracted autoloads  -*- lexical-binding: t -*-
 ;;
 ;;; Code:
 
@@ -14,7 +14,7 @@ Initializes KEY-GROUP and creates all the relevant interactive commands.
 
 \(fn KEY-GROUP)" nil nil)
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "makey" '("makey-")))
+(register-definition-prefixes "makey" '("makey-"))
 
 ;;;***
 

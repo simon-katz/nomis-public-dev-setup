@@ -1,2 +1,0 @@
-;;; Generated package description from kaocha-runner.el  -*- no-byte-compile: t -*-
-(define-package "kaocha-runner" "20190904.1950" "A package for running Kaocha tests via CIDER." '((emacs "26") (s "1.4.0") (cider "0.21.0") (parseedn "0.1.0")) :commit "755b0dfb3bd676c769c4b4aeb81c2cd5828bd207" :authors '(("Magnar Sveen" . "magnars@gmail.com")) :maintainer '("Magnar Sveen" . "magnars@gmail.com") :url "https://github.com/magnars/kaocha-runner.el")

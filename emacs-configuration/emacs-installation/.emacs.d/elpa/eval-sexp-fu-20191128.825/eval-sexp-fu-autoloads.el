@@ -1,4 +1,4 @@
-;;; eval-sexp-fu-autoloads.el --- automatically extracted autoloads
+;;; eval-sexp-fu-autoloads.el --- automatically extracted autoloads  -*- lexical-binding: t -*-
 ;;
 ;;; Code:
 
@@ -9,7 +9,7 @@
 ;;;### (autoloads nil "eval-sexp-fu" "eval-sexp-fu.el" (0 0 0 0))
 ;;; Generated autoloads from eval-sexp-fu.el
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "eval-sexp-fu" '("define-e" "esf-" "eval-sexp-fu-" "geiser-bounds-of-" "turn-on-eval-sexp-fu-flash-mode")))
+(register-definition-prefixes "eval-sexp-fu" '("define-e" "esf-" "eval-sexp-fu-" "geiser-bounds-of-" "turn-on-eval-sexp-fu-flash-mode"))
 
 ;;;***
 
