@@ -40,22 +40,23 @@
                  ?\s))
 
   ;; TODO: Define faces for this, different for light and dark themes.
-  (defconst nomis/diff-hl/-header-footer-colour (case 2
-                                                  (1 "blue3")
-                                                  (2 "yellow")))
+  (defun nomis/diff-hl/-header-footer-colour ()
+    (if (nomis/dark-background-mode?)
+        "orange"
+      "blue"))
 
-  (defconst nomis/diff-hl/-header-footer-style/normal
+  (defun nomis/diff-hl/-header-footer-style/normal ()
     (list :underline  t
           :overline   t
-          :foreground nomis/diff-hl/-header-footer-colour))
+          :foreground (nomis/diff-hl/-header-footer-colour)))
 
-  (defconst nomis/diff-hl/-header-style/showing-scroll-arrows
+  (defun nomis/diff-hl/-header-style/showing-scroll-arrows ()
     (list :overline   t
-          :foreground nomis/diff-hl/-header-footer-colour))
+          :foreground (nomis/diff-hl/-header-footer-colour)))
 
-  (defconst nomis/diff-hl/-footer-style/showing-scroll-arrows
+  (defun nomis/diff-hl/-footer-style/showing-scroll-arrows ()
     (list :underline t
-          :foreground nomis/diff-hl/-header-footer-colour))
+          :foreground (nomis/diff-hl/-header-footer-colour)))
 
   (cond
    ((member (pkg-info-package-version 'diff-hl)
@@ -82,12 +83,12 @@
                (propertize
                 (concat (diff-hl-inline-popup--separator new-width)
                         header)
-                'face nomis/diff-hl/-header-footer-style/normal)
+                'face (nomis/diff-hl/-header-footer-style/normal))
                (propertize
                 scroll-indicator
                 'face (if show-scroll-arrows?
-                          nomis/diff-hl/-header-style/showing-scroll-arrows
-                        nomis/diff-hl/-header-footer-style/normal)))))
+                          (nomis/diff-hl/-header-style/showing-scroll-arrows)
+                        (nomis/diff-hl/-header-footer-style/normal))))))
         (concat line "\n") ))
 
     (defun diff-hl-inline-popup--compute-footer (width &optional footer)
@@ -114,12 +115,12 @@
                     (propertize
                      (concat (diff-hl-inline-popup--separator new-width)
                              footer)
-                     'face nomis/diff-hl/-header-footer-style/normal)
+                     'face (nomis/diff-hl/-header-footer-style/normal))
                     (propertize
                      scroll-indicator
                      'face (if show-scroll-arrows?
-                               nomis/diff-hl/-footer-style/showing-scroll-arrows
-                             nomis/diff-hl/-header-footer-style/normal)))))
+                               (nomis/diff-hl/-footer-style/showing-scroll-arrows)
+                             (nomis/diff-hl/-header-footer-style/normal))))))
         (concat blank-line "\n" line))))
 
    (t
