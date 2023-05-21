@@ -37,9 +37,11 @@
                           (put-text-property 0
                                              (length error-checker-info)
                                              'face
-                                             `(foreground-color . ,(case 2
-                                                                     (1 "blue")
-                                                                     (2 "yellow")))
+                                             `(foreground-color
+                                               .
+                                               ,(if (nomis/dark-background-mode?)
+                                                    "orange"
+                                                  "blue"))
                                              error-checker-info)
                           (concat error-checker-info
                                   " "
