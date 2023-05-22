@@ -5,7 +5,9 @@
 
 ;;;; This also fixes auto-dim behaving badly.
 
-(when (equal emacs-version "28.2")
+(when (member emacs-version
+              '("28.1"
+                "28.2"))
   (add-to-list 'image-types 'svg))
 
 (provide 'nomis-fix-28-2-svg-error)
