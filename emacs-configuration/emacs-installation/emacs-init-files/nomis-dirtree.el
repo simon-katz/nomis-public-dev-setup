@@ -1110,12 +1110,19 @@ With prefix argument select `nomis/dirtree/buffer'"
 ;;;; ___________________________________________________________________________
 ;;;; User-visible commands.
 
-(defun nomis/dirtree/display-file* ()
-  "Display contents of file under point in other window."
-  (save-selected-window
-    (let* ((file (nomis/dirtree/selected-file)))
-      (when file
-        (find-file-other-window file)))))
+(defun nomis/dirtree/display-file* (&optional select-window?)
+  "Display contents of file under point in other window. If SELECT-WINDOW?
+is non-nil, select that window."
+  (let* ((file (nomis/dirtree/selected-file)))
+    (if (null file)
+        (error "Dirtree has no selected file")
+      (let ((buffer (or (-first (lambda (b)
+                                  (equal file (buffer-file-name b)))
+                                (buffer-list))
+                        (find-file-noselect file))))
+        (cond ((null buffer) (error "Failed to open file: %S" file))
+              (select-window? (pop-to-buffer buffer))
+              (t              (display-buffer buffer)))))))
 
 (cl-defmacro nomis/dirtree/define-command/with-and-without-and-display
     ;; TODO Can you make M-. work for the `name-for-and-display` function?
@@ -1300,10 +1307,7 @@ Then display contents of file under point in other window.")
   "Display contents of file under point in other window."
   (interactive)
   (nomis/dirtree/note-selection)
-  (let* ((file (nomis/dirtree/selected-file)))
-    (when file
-      (nomis/dirtree/display-file)
-      (find-file-other-window file))))
+  (nomis/dirtree/display-file* t))
 
 (defun nomis/dirtree/display-file-in-new-frame ()
   "Display contents of file under point in other window."
