@@ -2,6 +2,8 @@
 
 ;;;; ___________________________________________________________________________
 
+(require 'nomis-find-file-noselect-without-confusing-messages)
+
 (setq large-file-warning-threshold (ceiling (* 1024 1024))) ; 1 MB
 
 ;;;; ___________________________________________________________________________
