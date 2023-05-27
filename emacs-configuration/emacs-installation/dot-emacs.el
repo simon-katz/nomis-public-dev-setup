@@ -301,6 +301,8 @@
 
 (require 'nomis-beacon)
 
+(require 'nomis-very-large-files)
+
 ;; (eval-after-load "isearch" '(require 'isearch+))
 ;; Is this the cause of problems with Magit when trying to commit?...
 ;; -- *ERROR*: ‘recenter’ing a window that does not display current-buffer.
