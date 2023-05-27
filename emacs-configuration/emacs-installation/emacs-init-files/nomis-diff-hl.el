@@ -23,6 +23,13 @@
         (:default 'diff-hl-show-hunk-inline-popup)
         (:other   'diff-hl-show-hunk-posframe)))
 
+(defun nomis/turn-off-diff-hl-for-large-files ()
+  (let* ((size (buffer-size)))
+    (when (> size (* 1024 1024 0.5))
+      (diff-hl-mode -1))))
+
+(add-hook 'find-file-hook 'nomis/turn-off-diff-hl-for-large-files)
+
 (with-eval-after-load 'diff-hl-inline-popup
 
   (defconst nomis/diff-hl/-scroll-indicator-for-header
