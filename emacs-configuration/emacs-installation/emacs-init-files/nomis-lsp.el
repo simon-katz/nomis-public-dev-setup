@@ -3,6 +3,27 @@
 (require 'lsp-diagnostics)
 
 ;;;; ___________________________________________________________________________
+;;;; Don't start lsp for large files
+
+;; You have a bit of belt-and-braces at the moment:
+;; - See `{:paths-ignore-regex [".*/test/resources/matches/.*edn"]}`
+;;   in `neo-riche/.lsp/config.edn`.
+;; - See `bug-report-clojure-lsp-ignored-edn-high-cpu` repo and any
+;;   follow-up support stuff.
+;; - See this hack here.
+
+(advice-add 'lsp
+            :around
+            (lambda (orig-fun &rest args)
+              (let* ((size (buffer-size)))
+                (if (> size (* 1024 1024 0.5))
+                    (progn
+                      (nomis/msg/grab-user-attention/high)
+                      (message "Not starting lsp -- file is too large"))
+                  (apply orig-fun args))))
+            '((name . nomis/no-lsp-for-large-files)))
+
+;;;; ___________________________________________________________________________
 ;;;; General setup.
 
 (setq lsp-keymap-prefix "H-q H-s")
