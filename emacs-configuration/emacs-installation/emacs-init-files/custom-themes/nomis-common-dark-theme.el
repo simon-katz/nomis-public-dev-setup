@@ -80,7 +80,10 @@
  `(tldr-code-block
    ((t ,(list :foreground "Green" :background "Black"))))
  `(tldr-command-argument
-   ((t ,(list :foreground "Yellow" :background "Black")))))
+   ((t ,(list :foreground "Yellow" :background "Black"))))
+
+ `(cider-fringe-good-face
+   ((t ,(list :foreground "DarkGreen" :background "White")))))
 
 
 (provide-theme 'nomis-common-dark)
