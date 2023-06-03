@@ -15,7 +15,7 @@
 (defface nomis/cph/public-face
   `((((background dark)) ,(list :foreground "grey95"
                                 :background "#0000FF"))
-    (t ,(list :background (case 3
+    (t ,(list :background (cl-case 3
                             (1 "#b3d7ff")
                             (2 "#c0f0ff")
                             (3 "#aaeeee"))

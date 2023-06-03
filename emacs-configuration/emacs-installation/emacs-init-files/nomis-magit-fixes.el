@@ -107,7 +107,7 @@
       (define-key git-commit-mode-map (kbd "C-c C-d") 'nomis/-toggle-magit-diff))
 
      (t
-      (case 2
+      (cl-case 2
         ;; See comments at top of file. It seems we don't need this any more.
         ;; -- Simon Katz, 2023-01-13
         (1 (message-box (s-join " "

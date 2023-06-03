@@ -148,7 +148,7 @@
       (cider-jack-in-clj nil))
     (double-h-max-w)
     (let* ((main-monitor-width (nomis/main-monitor-width)))
-      (case main-monitor-width
+      (cl-case main-monitor-width
         (2560 (modify-frame-parameters
                (selected-frame)
                `((left . 700))))

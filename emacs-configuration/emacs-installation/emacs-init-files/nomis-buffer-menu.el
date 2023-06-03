@@ -11,9 +11,9 @@
                (max 19
                     ;; This gives 19 on an 80 column window, and take up
                     ;; proportionally more space as the window widens.
-                    (min (truncate (/ (window-width) (case :nomis-hack
-                                                         (:original 4.2)
-                                                         (:nomis-hack 1.2))))
+                    (min (truncate (/ (window-width) (cl-case :nomis-hack
+                                                       (:original 4.2)
+                                                       (:nomis-hack 1.2))))
                          (apply #'max 0 (mapcar (lambda (b)
                                                   (length (buffer-name b)))
                                                 buffers))))
