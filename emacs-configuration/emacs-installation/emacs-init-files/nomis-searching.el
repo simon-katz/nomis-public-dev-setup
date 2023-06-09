@@ -7,6 +7,13 @@
 
 ;;;; ___________________________________________________________________________
 
+(defun nomis/init-grep-mode ()
+  (setq truncate-lines t))
+
+(add-hook 'grep-mode-hook 'nomis/init-grep-mode)
+
+;;;; ___________________________________________________________________________
+
 (progn
   ;; M-> and M-< are by default bound to end-of-buffer and
   ;; beginning-of-buffer, which are also bound to C-end and C-home.
