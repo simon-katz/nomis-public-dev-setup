@@ -19,10 +19,6 @@
      :background "#ffff00"
      :foreground "black")))
 
- `(hc-hard-space
-   ((t
-     :background "grey60")))
-
  `(terraform--resource-name-face
    ((t
      :foreground "Blue"))))

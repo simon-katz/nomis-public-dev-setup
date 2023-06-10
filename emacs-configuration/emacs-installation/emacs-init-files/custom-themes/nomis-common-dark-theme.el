@@ -45,10 +45,6 @@
                             (10 "DodgerBlue3")
                             (11 "Blue3"))))))
 
- `(hc-hard-space
-   ((t
-     :background "Black")))
-
  `(font-lock-comment-face
    ((t  ,(list :foreground "#d0b0ff"))))
 
