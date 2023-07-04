@@ -69,4 +69,7 @@ This allows you to temporarily modify read-only buffers too."
 
 ;;;; ___________________________________________________________________________
 
+(remove-hook 'xref-after-jump-hook
+             'recenter)
+
 (provide 'nomis-very-general-stuff-new)
