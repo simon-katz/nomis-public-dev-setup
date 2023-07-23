@@ -135,6 +135,7 @@
      (nomis/cider-cljs-offer-to-open-app-in-browser\?)
      (nomis/cider-forbid-refresh\? . t)
      (nomis/cider-forbid-refresh-all\? . t)
+     (nomis/cider-use-centralised-repl-history-location\? . t)
      (nomis/cider/cljs-dev-host . "localhost")
      (nomis/cider/cljs-dev-port . 3333)
      (nomis/cider/cljs-dev-port . 9000)

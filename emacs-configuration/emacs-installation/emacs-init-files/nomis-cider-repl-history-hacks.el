@@ -75,6 +75,9 @@ If REGEXP is non-nil, only lines matching REGEXP are considered."
 (defconst nomis/-cider-repl-history-filename-clj  ".cider-repl-history-clj")
 (defconst nomis/-cider-repl-history-filename-cljs ".cider-repl-history-cljs")
 
+(defvar nomis/cider-use-centralised-repl-history-location? nil
+  "For now, at least, set to `t` using dir-locals.")
+
 (defvar-local nomis/-cider-repl-history-loaded? nil)
 (defvar-local nomis/-cider-repl-history-warning-issued? nil)
 
@@ -97,13 +100,53 @@ If REGEXP is non-nil, only lines matching REGEXP are considered."
   (add-hook 'cider-repl-mode-hook
             'nomis/-cider-repl-history-maybe-warn)
 
-  (defun nomis/-cider-repl-history-file ()
+  (defun nomis/-cider-repl-history-file* ()
     (if cider-repl-history-file
         nil
       (let* ((repl-type (cider-repl-type (current-buffer))))
         (cl-case repl-type
           ('clj  nomis/-cider-repl-history-filename-clj)
           ('cljs nomis/-cider-repl-history-filename-cljs)))))
+
+  (defun nomis/-cider-hacked-project-root (project-root)
+    (let* ((prefix "/Users/simonkatz/development-100/repositories/"))
+      (when (s-starts-with? prefix project-root)
+        (s-chop-prefix prefix project-root))))
+
+  (defun nomis/-cider-repl-history-file ()
+    (let* ((project-root (projectile-project-root))
+           (hacked-project-root (nomis/-cider-hacked-project-root project-root))
+           (history-filename (nomis/-cider-repl-history-file*)))
+      (if (not (and nomis/cider-use-centralised-repl-history-location?
+                    hacked-project-root))
+          (progn
+            (message "nomis/-cider-repl-history-file -- Using project dir for history file")
+            history-filename)
+        (let* ((centralised-dir (concat "/Users/simonkatz/jsk-settings/cider-repl-history-files/"
+                                        hacked-project-root))
+               (centralised-filepath (concat centralised-dir
+                                             (s-chop-prefix "."
+                                                            ;; better name, and
+                                                            ;; avoid global git
+                                                            ;; ignore
+                                                            history-filename))))
+          (if (file-exists-p centralised-filepath)
+              (if (file-exists-p history-filename)
+                  (warn "nomis/-cider-repl-history-file -- Ignoring %s because centralised file exists"
+                        (concat project-root "/" history-filename))
+                (message "nomis/-cider-repl-history-file -- Using existing file in centralised location"))
+            (if (file-exists-p history-filename)
+                (progn
+                  (message "nomis/-cider-repl-history-file -- Moving history file from %s to %s"
+                           history-filename
+                           centralised-filepath)
+                  (make-directory centralised-dir t)
+                  (rename-file history-filename centralised-filepath))
+              (progn
+                (message "nomis/-cider-repl-history-file -- Creating new history file at %s"
+                         centralised-filepath)
+                (make-directory centralised-dir t))))
+          centralised-filepath))))
 
   (defun nomis/-cider-repl-history-maybe-load ()
     (unless nomis/-cider-repl-history-loaded?
