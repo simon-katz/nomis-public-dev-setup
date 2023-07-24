@@ -114,7 +114,7 @@ If REGEXP is non-nil, only lines matching REGEXP are considered."
         (s-chop-prefix prefix project-root))))
 
   (defun nomis/-cider-repl-history-file ()
-    (let* ((project-root (projectile-project-root))
+    (let* ((project-root (expand-file-name default-directory)) ; We are in the REPL buffer, so this is what we want, even for repos that have multiple projects.
            (hacked-project-root (nomis/-cider-hacked-project-root project-root))
            (history-filename (nomis/-cider-repl-history-file*)))
       (if (not (and nomis/cider-use-centralised-repl-history-location?
