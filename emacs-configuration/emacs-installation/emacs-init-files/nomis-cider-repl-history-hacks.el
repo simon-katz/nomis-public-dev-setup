@@ -75,8 +75,8 @@ If REGEXP is non-nil, only lines matching REGEXP are considered."
 (defconst nomis/-cider-repl-history-filename-clj  ".cider-repl-history-clj")
 (defconst nomis/-cider-repl-history-filename-cljs ".cider-repl-history-cljs")
 
-(defvar nomis/cider-use-centralised-repl-history-location? nil
-  "For now, at least, set to `t` using dir-locals.")
+(defvar nomis/cider-use-centralised-repl-history-location? t
+  "For now, at least, set to `nil` using dir-locals.")
 
 (defvar-local nomis/-cider-repl-history-loaded? nil)
 (defvar-local nomis/-cider-repl-history-warning-issued? nil)
