@@ -133,7 +133,7 @@ If REGEXP is non-nil, only lines matching REGEXP are considered."
           (if (file-exists-p centralised-filepath)
               (if (file-exists-p history-filename)
                   (warn "nomis/-cider-repl-history-file -- Ignoring %s because centralised file exists"
-                        (concat project-root "/" history-filename))
+                        (concat project-root history-filename))
                 (message "nomis/-cider-repl-history-file -- Using existing file in centralised location"))
             (if (file-exists-p history-filename)
                 (progn
