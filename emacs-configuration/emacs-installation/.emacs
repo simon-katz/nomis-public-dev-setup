@@ -132,6 +132,7 @@
       (thread-first . 1)
       (thread-last . 1))
      (eval add-to-list 'cider-jack-in-nrepl-middlewares "shadow.cljs.devtools.server.nrepl/middleware" t)
+     (eval add-to-list 'grep-find-ignored-files "main.js")
      (eval org-content 999)
      (nomis/cider-cljs-offer-to-open-app-in-browser\?)
      (nomis/cider-forbid-refresh\? . t)
