@@ -77,6 +77,7 @@
      rainbow-delimiters
      rainbow-blocks
      saveplace
+     sidecar-locals
      smartrep
      smex
      spinner
