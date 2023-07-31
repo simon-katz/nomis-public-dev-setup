@@ -130,6 +130,8 @@
 (require 'nomis-fix-post-command-hook-slow-with-m-x-commands)
 (require 'nomis-fix-28-2-svg-error)
 
+(require 'nomis-sidecar-locals)
+
 (require 'nomis-core-utils)
 (require 'nomis-very-general-stuff-new)
 (require 'nomis-message-window)
