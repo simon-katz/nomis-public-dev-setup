@@ -137,4 +137,6 @@ function scan {
 
 echo -e "${HIGHLIGHT}$(readable_local_date_time)"
 echo -e "${HIGHLIGHT}Scanning ${PWD}${NORMAL}"
+
+shopt -s dotglob # So that we look in dirs beginning with "." (eg .sidecar-locals).
 scan .
