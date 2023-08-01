@@ -120,7 +120,8 @@ If REGEXP is non-nil, only lines matching REGEXP are considered."
       (if (not (and nomis/cider-use-centralised-repl-history-location?
                     hacked-project-root))
           (progn
-            (message "nomis/-cider-repl-history-file -- Using project dir for history file")
+            (let ((inhibit-message t))
+              (message "nomis/-cider-repl-history-file -- Using project dir for history file"))
             history-filename)
         (let* ((centralised-dir (concat "/Users/simonkatz/jsk-settings/cider-repl-history-files/"
                                         hacked-project-root))
@@ -134,17 +135,20 @@ If REGEXP is non-nil, only lines matching REGEXP are considered."
               (if (file-exists-p history-filename)
                   (warn "nomis/-cider-repl-history-file -- Ignoring %s because centralised file exists"
                         (concat project-root history-filename))
-                (message "nomis/-cider-repl-history-file -- Using existing file in centralised location"))
+                (let ((inhibit-message t))
+                  (message "nomis/-cider-repl-history-file -- Using existing file in centralised location")))
             (if (file-exists-p history-filename)
                 (progn
-                  (message "nomis/-cider-repl-history-file -- Moving history file from %s to %s"
-                           history-filename
-                           centralised-filepath)
+                  (let ((inhibit-message t))
+                    (message "nomis/-cider-repl-history-file -- Moving history file from %s to %s"
+                             history-filename
+                             centralised-filepath))
                   (make-directory centralised-dir t)
                   (rename-file history-filename centralised-filepath))
               (progn
-                (message "nomis/-cider-repl-history-file -- Creating new history file at %s"
-                         centralised-filepath)
+                (let ((inhibit-message t))
+                  (message "nomis/-cider-repl-history-file -- Creating new history file at %s"
+                           centralised-filepath))
                 (make-directory centralised-dir t))))
           centralised-filepath))))
 
