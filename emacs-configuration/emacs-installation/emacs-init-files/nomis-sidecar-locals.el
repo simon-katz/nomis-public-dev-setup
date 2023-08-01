@@ -5,7 +5,7 @@
 (sidecar-locals-mode)
 
 (setq sidecar-locals-paths-allow
-      '("/Users/simonkatz/development-100/"))
+      '("/Users/simonkatz/development-100/repositories/"))
 
 ;;;; ___________________________________________________________________________
 
