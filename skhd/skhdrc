@@ -57,6 +57,7 @@ fn         + ctrl + alt + cmd - w        : ~/bin-private/hs -c "nomisHelloWorld(
 ### NotalSpaces
 
              # This chunk is being handled by TotalSpaces.
+
              # ctrl + alt + cmd - left     : ~/.config/notal-spaces/bin/notal_spaces.clj left
              # ctrl + alt + cmd - right    : ~/.config/notal-spaces/bin/notal_spaces.clj right
              # ctrl + alt + cmd - up       : ~/.config/notal-spaces/bin/notal_spaces.clj up
@@ -79,6 +80,8 @@ fn         + ctrl + alt + cmd - w        : ~/bin-private/hs -c "nomisHelloWorld(
              # ctrl + alt + cmd - 0x2C     : ~/.config/notal-spaces/bin/notal_spaces.clj goto-space 16 # 0x2C is /
              # ctrl + alt + cmd - 0x31     : ~/.config/notal-spaces/bin/notal_spaces.clj report-current-space # 0x31 is space
 
+             # 2023-08-04 If this isn't working, see the comment in notal-spaces
+             #            in the function `make-space-current`.
              ctrl + alt + cmd - home     : ~/.config/notal-spaces/bin/notal_spaces.clj left  move-window
              ctrl + alt + cmd - end      : ~/.config/notal-spaces/bin/notal_spaces.clj right move-window
              ctrl + alt + cmd - pageup   : ~/.config/notal-spaces/bin/notal_spaces.clj up    move-window
