@@ -33,5 +33,12 @@ https://emacs.stackexchange.com/questions/54402/how-to-impliment-a-with-undo-col
 
 ;;;; ___________________________________________________________________________
 
+(defun nomis/reset-buffer-undo-history ()
+  (interactive)
+  (setq buffer-undo-list nil))
+
+;;;; ___________________________________________________________________________
+
 (provide 'nomis-undo)
+
 ;;; nomis-undo.el ends here
