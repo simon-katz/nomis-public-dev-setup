@@ -28,7 +28,7 @@
 
 
   ;; HACKY WIP:
-  
+
   (defface nomis/sql-separator-face
     '((((background dark)) (:foreground "Green2" :italic t))
       (t (:foreground "Green4")))
