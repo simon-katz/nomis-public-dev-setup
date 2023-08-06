@@ -22,6 +22,10 @@
   (define-key sql-mode-map (kbd "M-RET") 'sql-send-paragraph)
 
 
+  (add-hook 'sql-interactive-mode-hook
+            (lambda ()
+              (toggle-truncate-lines t)))
+
 
   ;; HACKY WIP:
   
