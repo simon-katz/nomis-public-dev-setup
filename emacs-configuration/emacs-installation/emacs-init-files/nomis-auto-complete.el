@@ -46,7 +46,8 @@
   (advice-add 'company-calculate-candidates
               :around
               (lambda (orig-fun &rest args)
-                (if (equal (first args) "")
+                (if (and (equal (first args) "")
+                         (not (member major-mode '(sql-mode))))
                     (progn
                       (nomis/msg/beep)
                       (error "Not doing completion when there's nothing to complete"))
