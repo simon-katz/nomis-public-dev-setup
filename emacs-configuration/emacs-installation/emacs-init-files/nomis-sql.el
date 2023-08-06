@@ -2,6 +2,8 @@
 
 ;;;; ___________________________________________________________________________
 
+(add-hook 'sql-mode-hook 'lsp)
+
 (with-eval-after-load 'sql
 
   (defun sql-send-buffer ()
