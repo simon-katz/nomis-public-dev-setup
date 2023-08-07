@@ -78,4 +78,12 @@
 
 ;;;; ___________________________________________________________________________
 
+(defun nomis/initialize-sql-interactive-mode ()
+  (define-key sql-interactive-mode-map (kbd "M-k") 'comint-clear-buffer))
+
+(add-hook 'sql-interactive-mode-hook
+          'nomis/initialize-sql-interactive-mode)
+
+;;;; ___________________________________________________________________________
+
 (provide 'nomis-sql)
