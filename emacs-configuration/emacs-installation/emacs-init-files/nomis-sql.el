@@ -55,7 +55,7 @@
                 (when sql-debug-send
                   (message ">>SQL> %S" s))
                 ;; :nomis-hack Insert query.
-                (insert "\n________________________________________\n")
+                (insert "\n\n\n________________________________________\n")
                 (insert "Query:")
                 (insert s)
                 (insert "\n\nResult:\n")
