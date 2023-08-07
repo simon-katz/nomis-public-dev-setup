@@ -48,8 +48,13 @@
             (save-excursion
               ;; Set product context
               (with-current-buffer sql-buffer
+                ;; :nomis-hack Move to end of buffer.
+                (goto-char (point-max))
+                (dolist (w (get-buffer-window-list (current-buffer)))
+                  (set-window-point w (point-max)))
                 (when sql-debug-send
                   (message ">>SQL> %S" s))
+                ;; :nomis-hack Insert query.
                 (insert "\n________________________________________\n")
                 (insert "Query:")
                 (insert s)
