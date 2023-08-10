@@ -9,6 +9,12 @@
 
 ;; (global-set-key (kbd "C-c u") 'sqlup-capitalize-keywords-in-region)
 
+(defun nomis/initialize-sql-interactive-mode ()
+  (define-key sql-interactive-mode-map (kbd "M-k") 'comint-clear-buffer))
+
+(add-hook 'sql-interactive-mode-hook
+          'nomis/initialize-sql-interactive-mode)
+
 ;;;; ___________________________________________________________________________
 
 (with-eval-after-load 'sql
@@ -82,14 +88,6 @@
 
         ;; We don't have no stinkin' sql
         (user-error "No SQL process started")))))
-
-;;;; ___________________________________________________________________________
-
-(defun nomis/initialize-sql-interactive-mode ()
-  (define-key sql-interactive-mode-map (kbd "M-k") 'comint-clear-buffer))
-
-(add-hook 'sql-interactive-mode-hook
-          'nomis/initialize-sql-interactive-mode)
 
 ;;;; ___________________________________________________________________________
 
