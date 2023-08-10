@@ -9,6 +9,8 @@
 
 ;; (global-set-key (kbd "C-c u") 'sqlup-capitalize-keywords-in-region)
 
+(add-hook 'sql-mode-hook 'sqlind-minor-mode)
+
 (defun nomis/initialize-sql-interactive-mode ()
   (define-key sql-interactive-mode-map (kbd "M-k") 'comint-clear-buffer))
 
