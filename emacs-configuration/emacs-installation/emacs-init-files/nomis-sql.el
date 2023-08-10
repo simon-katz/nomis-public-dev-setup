@@ -4,6 +4,13 @@
 
 (add-hook 'sql-mode-hook 'lsp)
 
+(add-hook 'sql-mode-hook 'sqlup-mode)
+(add-hook 'sql-interactive-mode-hook 'sqlup-mode)
+
+;; (global-set-key (kbd "C-c u") 'sqlup-capitalize-keywords-in-region)
+
+;;;; ___________________________________________________________________________
+
 (with-eval-after-load 'sql
 
   (defun sql-send-buffer ()
