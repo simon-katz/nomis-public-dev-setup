@@ -89,6 +89,7 @@
      smartrep
      smex
      spinner
+     sqlup-mode
      terraform-mode
      tldr
      treepy
