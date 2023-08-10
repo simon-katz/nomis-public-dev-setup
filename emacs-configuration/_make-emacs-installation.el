@@ -81,6 +81,7 @@
      smartrep
      smex
      spinner
+     sql-indent
      sqlup-mode
      terraform-mode
      tldr
