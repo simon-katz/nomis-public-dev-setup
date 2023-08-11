@@ -51,6 +51,11 @@
       (t (:foreground "Green4")))
     "Face for reloading messages.")
 
+  (defun nomis/sql/goto-eob-in-all-buffer-windows ()
+    (goto-char (point-max))
+    (dolist (w (get-buffer-window-list (current-buffer)))
+      (set-window-point w (point-max))))
+
   (defun sql-send-string (str)
     "Send the string STR to the SQL process."
     (interactive "sSQL Text: ")
@@ -64,9 +69,7 @@
               ;; Set product context
               (with-current-buffer sql-buffer
                 ;; :nomis-hack Move to end of buffer.
-                (goto-char (point-max))
-                (dolist (w (get-buffer-window-list (current-buffer)))
-                  (set-window-point w (point-max)))
+                (nomis/sql/goto-eob-in-all-buffer-windows)
                 (when sql-debug-send
                   (message ">>SQL> %S" s))
                 ;; :nomis-hack Insert query.
@@ -83,7 +86,8 @@
                 (sql-send-magic-terminator sql-buffer s sql-send-terminator)
 
                 (when sql-pop-to-buffer-after-send-region
-                  (message "Sent string to buffer %s" sql-buffer))))
+                  (message "Sent string to buffer %s" sql-buffer))
+                (nomis/sql/goto-eob-in-all-buffer-windows)))
 
             ;; Display the sql buffer
             (sql-display-buffer sql-buffer))
