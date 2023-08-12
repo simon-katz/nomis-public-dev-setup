@@ -28,6 +28,7 @@
      auto-complete
      auto-dim-other-buffers
      beacon
+     bind-key
      cider
      cider-eval-sexp-fu
      cl-format
