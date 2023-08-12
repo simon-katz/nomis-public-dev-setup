@@ -134,20 +134,6 @@
       (with-parsed-tramp-file-name . 2)
       (thread-first . 1)
       (thread-last . 1))
-     (eval let*
-           ((new-aliases "project/dev:user/dev"))
-           (unless
-               (or
-                (equal new-aliases cider-clojure-cli-aliases)
-                (s-contains\? new-aliases
-                              (s-concat ":" cider-clojure-cli-aliases))
-                (s-contains\? new-aliases
-                              (s-concat cider-clojure-cli-aliases ":")))
-             (setq cider-clojure-cli-aliases
-                   (if
-                       (null cider-clojure-cli-aliases)
-                       new-aliases
-                     (concat cider-clojure-cli-aliases ":" new-aliases)))))
      (eval nomis/add-to-list-local 'cider-jack-in-nrepl-middlewares "shadow.cljs.devtools.server.nrepl/middleware" t)
      (eval nomis/add-to-list-local 'grep-find-ignored-files "main.js")
      (eval org-content 999)
