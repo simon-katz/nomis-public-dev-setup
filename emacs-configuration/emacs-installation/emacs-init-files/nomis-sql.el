@@ -12,7 +12,8 @@
 (add-hook 'sql-mode-hook 'sqlind-minor-mode)
 
 (defun nomis/initialize-sql-interactive-mode ()
-  (define-key sql-interactive-mode-map (kbd "M-k") 'comint-clear-buffer))
+  (define-key sql-interactive-mode-map (kbd "M-k") 'comint-clear-buffer)
+  (toggle-truncate-lines t))
 
 (add-hook 'sql-interactive-mode-hook
           'nomis/initialize-sql-interactive-mode)
@@ -37,11 +38,6 @@
 
   ;; I'm used to this key binding in TablePlus:
   (define-key sql-mode-map (kbd "M-RET") 'sql-send-paragraph)
-
-
-  (add-hook 'sql-interactive-mode-hook
-            (lambda ()
-              (toggle-truncate-lines t)))
 
 
   ;; HACKY WIP:
