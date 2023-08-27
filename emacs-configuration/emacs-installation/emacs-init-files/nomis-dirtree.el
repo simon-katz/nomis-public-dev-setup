@@ -412,7 +412,8 @@ With prefix argument select `nomis/dirtree/buffer'"
 
 (defun nomis/dirtree/vc-root-dir ()
   (let* ((filename (ignore-errors (or (vc-root-dir)
-                                      (magit-toplevel)))))
+                                      (progn (require 'magit)
+                                             (magit-toplevel))))))
     (when filename
       (expand-file-name filename))))
 
