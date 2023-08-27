@@ -105,11 +105,13 @@
  '(safe-local-variable-values
    '((cider-clojure-cli-aliases . "-A:test")
      (cider-font-lock-max-length . 1000)
+     (cider-ns-refresh-after-fn . "dev/cider-refresh--start!")
      (cider-ns-refresh-after-fn . "dev/go")
      (cider-ns-refresh-after-fn . "integrant.repl/resume")
      (cider-ns-refresh-after-fn . "user/cider-refresh--start!")
      (cider-ns-refresh-after-fn . "user/go")
      (cider-ns-refresh-after-fn . "user/start")
+     (cider-ns-refresh-before-fn . "dev/cider-refresh--stop!")
      (cider-ns-refresh-before-fn . "dev/stop")
      (cider-ns-refresh-before-fn . "integrant.repl/suspend")
      (cider-ns-refresh-before-fn . "user/cider-refresh--stop!")
