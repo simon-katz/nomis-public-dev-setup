@@ -40,8 +40,10 @@
 ;; 2021-08-20 Suddenly this isn't needed. (Why?)
 ;; 2021-12-17 Hmmm, it /is/ needed. Maybe not initially, but during a session
 ;;            things can change so that CIDER signatures get blatted.
-;;            Ah! It seems that doing `lsp-restart-workspace` causes the change.
-(defun nomis/lsp-eldoc ()
+;;            Ah! It seems that doing `lsp-workspace-restart` causes the change.
+;; 2023-09-03 It's changed. `lsp-hover` doesn't exist. Revamped to add
+;;            to `lsp-after-initialize-hook`.
+(defun nomis/lsp-eldoc (&rest args)
   ;; Don't blat signatures from CIDER.
   ;; I prefer CIDER signatures to LSP signatures for these reasons:
   ;; - CIDER gives better doc for `def` and `defn`. (Maybe LSP doesn't do
@@ -63,8 +65,22 @@
   ;;   https://github.com/clojure-lsp/clojure-lsp/issues/569
   ;;   https://github.com/emacs-lsp/lsp-mode/pull/3106
   ;;
-  (unless (ignore-errors (cider-repls))
-    (lsp-hover)))
+
+  ;; (unless (ignore-errors (cider-repls))
+  ;;   (lsp-hover))
+  )
+
+(defun nomis/make-cider-first-in-eldoc-documentation-functions ()
+  (dolist (b (buffer-list))
+    (with-current-buffer b
+      (when (member 'cider-eldoc eldoc-documentation-functions)
+        (setq eldoc-documentation-functions
+              (->> eldoc-documentation-functions
+                   (-remove-item 'cider-eldoc)
+                   (cons 'cider-eldoc)))))))
+
+(add-hook 'lsp-after-initialize-hook
+          'nomis/make-cider-first-in-eldoc-documentation-functions)
 
 ;; Stuff to maybe consider:
 ;; - 2021-10-20 Number of workspaces increases as time goes by.
@@ -85,7 +101,7 @@
   (setq lsp-lens-enable                   t)
   (setq lsp-enable-symbol-highlighting    t)
   (setq lsp-ui-doc-enable                 nil) ; Don't show big grey boxes.
-  (setq lsp-eldoc-hook                    '(nomis/lsp-eldoc))
+  ;; (setq lsp-eldoc-hook                    '(nomis/lsp-eldoc))
   (setq lsp-enable-indentation            nil) ; Use CIDER indentation.
   (setq lsp-ui-sideline-show-code-actions nil) ; Don't show clutter! But see `nomis/lsp-toggle-lsp-ui-sideline-show-code-actions`.
 
@@ -163,7 +179,8 @@
 (cond
  ((member (pkg-info-package-version 'lsp-ui)
           '((20210820 1331)
-            (20211101 131)))
+            (20211101 131)
+            (20230811 552)))
   (advice-add
    'lsp-ui-sideline-mode
    :after
@@ -171,6 +188,7 @@
      (when lsp-ui-sideline-mode
        (kill-local-variable 'flycheck-display-errors-function)))
    '((name . nomis/show-flycheck-info))))
+
  (t
   (message-box
    "You need to fix `nomis/show-flycheck-info` for this version of `lsp-ui`.")))
@@ -180,7 +198,8 @@
   (cond
    ((member (pkg-info-package-version 'lsp-mode)
             '((20210821 1359)
-              (20211103 1331)))
+              (20211103 1331)
+              (20230823 446)))
     (advice-add
      'flycheck-display-error-messages
      :around
@@ -193,6 +212,7 @@
                    (message "%s\n%s" message-1 message-2)
                  (message "%s" message-1)))))))
      '((name . nomis/show-lsp-errors-elsewhere))))
+
    (t
     (message-box
      "You need to fix `nomis/show-lsp-errors-elsewhere` for this version of `lsp`."))))

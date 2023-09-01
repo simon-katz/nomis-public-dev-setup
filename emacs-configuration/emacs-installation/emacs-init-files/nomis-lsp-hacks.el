@@ -89,6 +89,11 @@ Push sideline overlays on `lsp-ui-sideline--ovs'."
                   (overlay-put ov 'position (car pos-ov))
                   (push ov lsp-ui-sideline--ovs)))))))))
 
+   ((version-list-<= '(20230811 552)
+                     (pkg-info-package-version 'lsp-ui))
+    ;; Looks like this problem has been fixed.
+    )
+
    (t
     (message-box
      "You need to fix `lsp-ui-sideline--diagnostics` for this version of `lsp-ui`."))))
@@ -143,6 +148,39 @@ g. `error', `warning') and list of LSP TAGS."
                 :error-list-face face)
               new-level)))))
 
+   ((member (pkg-info-package-version 'lsp-mode)
+            '((20230823 446)))
+    (defun lsp-diagnostics--flycheck-level (flycheck-level tags)
+      "Generate flycheck level from the original FLYCHECK-LEVEL (e.
+g. `error', `warning') and list of LSP TAGS."
+      (let ((name (format "lsp-flycheck-%s-%s"
+                          flycheck-level
+                          (mapconcat #'symbol-name tags "-"))))
+        (or (intern-soft name)
+            (let* ((face (--doto (intern name) ; :nomis-hack for those stupid messages
+                           (copy-face (-> flycheck-level
+                                          (get 'flycheck-overlay-category)
+                                          (get 'face))
+                                      it)
+                           (mapc (lambda (tag)
+                                   (apply #'set-face-attribute it nil
+                                          (cl-rest (assoc tag lsp-diagnostics-attributes))))
+                                 tags)))
+                   (category (--doto (intern (format "%s-category" name))
+                               (setf (get it 'face) face
+                                     (get it 'priority) 100)))
+                   (new-level (intern name))
+                   (bitmap (or (get flycheck-level 'flycheck-fringe-bitmaps)
+                               (get flycheck-level 'flycheck-fringe-bitmap-double-arrow))))
+              (flycheck-define-error-level new-level
+                :severity (get flycheck-level 'flycheck-error-severity)
+                :compilation-level (get flycheck-level 'flycheck-compilation-level)
+                :overlay-category category
+                :fringe-bitmap bitmap
+                :fringe-face (get flycheck-level 'flycheck-fringe-face)
+                :error-list-face face)
+              new-level)))))
+
    (t
     (message-box
      "You need to fix `lsp-diagnostics--flycheck-level` for this version of `lsp-mode`."))))
@@ -176,6 +214,20 @@ g. `error', `warning') and list of LSP TAGS."
                        (concat nomis/-lsp-eldoc-message-prefix
                                msg))))
            (funcall orig-fun msg))))
+     '((name . nomis/add-lsp-prefix))))
+
+   ((member (pkg-info-package-version 'lsp-mode)
+            '((20230823 446)))
+    (advice-add
+     'lsp--render-on-hover-content
+     :around
+     (lambda (orig-fun &rest args)
+       (let* ((res (apply orig-fun args)))
+         (if (or (null res)
+                 (not (stringp res)))
+             res
+           (concat nomis/-lsp-eldoc-message-prefix
+                   res))))
      '((name . nomis/add-lsp-prefix))))
 
    (t
