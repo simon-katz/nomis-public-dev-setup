@@ -28,34 +28,36 @@
 ;;;; complete (eg when hitting tab on an open-parenthesis to indent, and when
 ;;;; indentation is ok).
 
-(cond
- ((member (company-version)
-          '("0.9.6"))
-  (advice-add 'company-calculate-candidates
-              :around
-              (lambda (orig-fun &rest args)
-                (if (equal args '(""))
-                    (progn
-                      (nomis/msg/beep)
-                      (error "Not doing completion when there's nothing to complete"))
-                  (apply orig-fun args)))
-              `((name . if-no-prefix-do-nothing))))
- ((member (company-version)
-          '("0.9.12"
-            "0.9.13"))
-  (advice-add 'company-calculate-candidates
-              :around
-              (lambda (orig-fun &rest args)
-                (if (and (equal (first args) "")
-                         (not (member major-mode '(sql-mode))))
-                    (progn
-                      (nomis/msg/beep)
-                      (error "Not doing completion when there's nothing to complete"))
-                  (apply orig-fun args)))
-              `((name . if-no-prefix-do-nothing))))
- (t
-  (message-box
-   "You need to fix `if-no-prefix-do-nothing` advice on `company-calculate-candidates` for this version of Company.")))
+;; Try turning this off for now.
+
+;; (cond
+;;  ((member (company-version)
+;;           '("0.9.6"))
+;;   (advice-add 'company-calculate-candidates
+;;               :around
+;;               (lambda (orig-fun &rest args)
+;;                 (if (equal args '(""))
+;;                     (progn
+;;                       (nomis/msg/beep)
+;;                       (error "Not doing completion when there's nothing to complete"))
+;;                   (apply orig-fun args)))
+;;               `((name . if-no-prefix-do-nothing))))
+;;  ((member (company-version)
+;;           '("0.9.12"
+;;             "0.9.13"))
+;;   (advice-add 'company-calculate-candidates
+;;               :around
+;;               (lambda (orig-fun &rest args)
+;;                 (if (and (equal (first args) "")
+;;                          (not (member major-mode '(sql-mode))))
+;;                     (progn
+;;                       (nomis/msg/beep)
+;;                       (error "Not doing completion when there's nothing to complete"))
+;;                   (apply orig-fun args)))
+;;               `((name . if-no-prefix-do-nothing))))
+;;  (t
+;;   (message-box
+;;    "You need to fix `if-no-prefix-do-nothing` advice on `company-calculate-candidates` for this version of Company.")))
 
 ;;;; ___________________________________________________________________________
 ;;;; Make right arrow cycle through things in `company-active-map`.
