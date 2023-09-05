@@ -16,6 +16,29 @@
 (setq auto-revert-interval 2)
 
 ;;;; ___________________________________________________________________________
+;;;; ---- Use `inhibit-message` for "Reverting buffer" messages ----
+
+(defvar *nomis/dirtree/in-auto-revert-handler?* nil)
+
+(let* ((advice-name '-nomis/auto-revert/inhibit-message))
+  (advice-add 'auto-revert-handler
+              :around
+              (lambda (orig-fun &rest args)
+                (let* ((*nomis/dirtree/in-auto-revert-handler?* t))
+                  (apply orig-fun args)))
+              `((name . ,advice-name)))
+  (advice-add 'message
+              :around
+              (lambda (orig-fun format-string &rest args)
+                (if (and *nomis/dirtree/in-auto-revert-handler?*
+                         (s-starts-with? "Reverting buffer"
+                                         format-string))
+                    (let* ((inhibit-message t))
+                      (apply orig-fun format-string args))
+                  (apply orig-fun format-string args)))
+              `((name . ,advice-name))))
+
+;;;; ___________________________________________________________________________
 ;;;; ---- Extra behaviour when new content is added ----
 ;;;;
 ;;;; When at eob:
