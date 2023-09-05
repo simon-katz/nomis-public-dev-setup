@@ -203,7 +203,6 @@ If POS is nil, use `point' instead."
          (overlay (apply #'-make-nomis-popup-overlay
                          start-pos
                          end-pos
-                         'face '-nomis/auto-revert/highlight-face
                          :nomis/id ov-id
                          props))
          (buffer (current-buffer)))
