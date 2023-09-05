@@ -6,6 +6,8 @@
 ;;;; ___________________________________________________________________________
 ;;;; ---- Standard tailoring ----
 
+(global-auto-revert-mode)
+
 (setq auto-revert-verbose nil)
 
 ;;;; Make things more responsive when you cause a log file to update more than
