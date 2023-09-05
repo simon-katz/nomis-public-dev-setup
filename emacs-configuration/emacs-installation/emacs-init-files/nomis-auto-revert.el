@@ -10,7 +10,7 @@
 
 ;;;; Make things more responsive when you cause a log file to update more than
 ;;;; once in quick succession.
-(setq auto-revert-use-notify nil)
+(setq auto-revert-use-notify nil) ; I tried getting rid of this, but I get a "file-notify--call-handler: Symbol’s function definition is void: nil" error when a file is modified. -- 2023-09-05
 (setq auto-revert-interval 2)
 
 ;;;; ___________________________________________________________________________
