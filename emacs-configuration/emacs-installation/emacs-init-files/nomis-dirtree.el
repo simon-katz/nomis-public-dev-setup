@@ -282,7 +282,8 @@ See `windata-display-buffer' for setup the arguments."
             (setq tree atree)))
       (or tree
           (setq tree (tree-mode-insert
-                      (nomis/dirtree/make-root-widget root)))))
+                      (nomis/dirtree/make-root-widget root))))
+      (setq-local default-directory root))
     ;; (setq win (get-buffer-window nomis/dirtree/buffer))
     (unless win
       ;;(setq win (get-buffer-window nomis/dirtree/buffer))
