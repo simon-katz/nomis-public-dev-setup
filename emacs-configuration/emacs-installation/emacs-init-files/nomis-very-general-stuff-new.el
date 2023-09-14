@@ -14,12 +14,12 @@
 - does not evaluate the first arg;
 - uses `setq-local`.
 Useful in .dir-locals.el, where `add-to-list` would be wrong."
-  (assert (and (listp list-var)
-               (eql 'quote (first list-var))
-               (symbolp (second list-var))
-               (= 2 (length list-var)))
-          t
-          "First arg must be a quoted symbol")
+  (cl-assert (and (listp list-var)
+                  (eql 'quote (first list-var))
+                  (symbolp (second list-var))
+                  (= 2 (length list-var)))
+             t
+             "First arg must be a quoted symbol")
   (let ((sym (second list-var)))
     `(let ((vs ,sym)
            (v ,element)
