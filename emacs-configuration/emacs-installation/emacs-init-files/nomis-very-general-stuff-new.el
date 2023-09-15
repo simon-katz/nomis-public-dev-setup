@@ -9,7 +9,7 @@
 
 ;;;; ___________________________________________________________________________
 
-(cl-defmacro nomis/add-to-list-local (list-var element &optional append?)
+(cl-defmacro nomis/add-to-list-local (list-var new-item &optional append?)
   "Like `add-to-list`, but:
 - does not evaluate the first arg;
 - uses `setq-local`.
@@ -21,14 +21,14 @@ Useful in .dir-locals.el, where `add-to-list` would be wrong."
              t
              "First arg must be a quoted symbol")
   (let ((sym (second list-var)))
-    `(let ((vs ,sym)
-           (v ,element)
-           (append? ,append?))
-       (when (not (member v vs))
-         (setq-local ,sym
-                     (if append?
-                         (append vs (list v))
-                       (cons v vs)))))))
+    (mmt-once-only (new-item
+                    append?)
+      `(let ((old-value ,sym))
+         (when (not (member ,new-item old-value))
+           (setq-local ,sym
+                       (if ,append?
+                           (append old-value (list ,new-item))
+                         (cons ,new-item old-value))))))))
 
 ;;;; ___________________________________________________________________________
 
