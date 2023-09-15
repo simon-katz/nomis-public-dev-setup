@@ -32,6 +32,46 @@ Useful in .dir-locals.el, where `add-to-list` would be wrong."
 
 ;;;; ___________________________________________________________________________
 
+(defun nomis/-add-to-colon-separated-string* (old-value new-item append?)
+  (let* ((old-value (if (null old-value) "" old-value)))
+    (assert (stringp old-value))
+    (assert (stringp new-item))
+    (let* ((old-items (if (equal old-value "") '() (s-split ":" old-value)))
+           (new-items (cond ((member new-item old-items)
+                             old-items)
+                            (append?
+                             (append old-items (list new-item)))
+                            (t
+                             (cons new-item old-items)))))
+      (s-join ":" new-items))))
+
+(defmacro nomis/add-to-colon-separated-string-local (string-var
+                                                     new-item
+                                                     &optional
+                                                     append?)
+  (cl-assert (and (listp string-var)
+                  (eql 'quote (first string-var))
+                  (symbolp (second string-var))
+                  (= 2 (length string-var)))
+             t
+             "First arg must be a quoted symbol")
+  (let* ((sym (second string-var)))
+    `(let* ((old-value  (if (boundp ',sym) ,sym "")))
+       (setq-local ,sym (nomis/-add-to-colon-separated-string* old-value
+                                                               ,new-item
+                                                               ,append?)))))
+
+;; Test:
+(progn
+  (makunbound 'nomis/xyz-123)
+  ;; (setq nomis/xyz-123 "")
+  (nomis/add-to-colon-separated-string-local 'nomis/xyz-123 "y")
+  (nomis/add-to-colon-separated-string-local 'nomis/xyz-123 "x")
+  (nomis/add-to-colon-separated-string-local 'nomis/xyz-123 "z" t)
+  nomis/xyz-123)
+
+;;;; ___________________________________________________________________________
+
 (cl-defmacro nomis/with-temporary-invisible-changes (() &rest forms)
   ;; Copied from https://www.emacswiki.org/emacs/UndoCommands, and changed.
   "Executes FORMS with a temporary buffer-undo-list, undoing on return.
