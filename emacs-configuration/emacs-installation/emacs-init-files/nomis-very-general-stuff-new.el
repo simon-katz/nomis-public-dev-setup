@@ -30,10 +30,24 @@ Useful in .dir-locals.el, where `add-to-list` would be wrong."
                            (append old-value (list ,new-item))
                          (cons ,new-item old-value))))))))
 
+;; Test:
+
+(progn
+  (setq nomis/xyz-123 '())
+  (nomis/add-to-list-local 'nomis/xyz-123 "y")
+  (nomis/add-to-list-local 'nomis/xyz-123 "x")
+  (nomis/add-to-list-local 'nomis/xyz-123 "z" t)
+  nomis/xyz-123)
+
 ;;;; ___________________________________________________________________________
 
-(defun nomis/-add-to-colon-separated-string* (old-value new-item append?)
-  (let* ((old-value (if (null old-value) "" old-value)))
+(defun nomis/-add-to-colon-separated-string* (old-value new-item append? preceding-colon?)
+  (let* ((old-value (cond ((null old-value)
+                           "")
+                          ((s-starts-with? ":" old-value)
+                           (s-chop-left 1 old-value))
+                          (t
+                           old-value))))
     (assert (stringp old-value))
     (assert (stringp new-item))
     (let* ((old-items (if (equal old-value "") '() (s-split ":" old-value)))
@@ -42,13 +56,18 @@ Useful in .dir-locals.el, where `add-to-list` would be wrong."
                             (append?
                              (append old-items (list new-item)))
                             (t
-                             (cons new-item old-items)))))
-      (s-join ":" new-items))))
+                             (cons new-item old-items))))
+           (string (s-join ":" new-items)))
+      (if (and preceding-colon?
+               (not (s-starts-with? ":" string)))
+          (s-concat ":" string)
+        string))))
 
 (defmacro nomis/add-to-colon-separated-string-local (string-var
                                                      new-item
                                                      &optional
-                                                     append?)
+                                                     append?
+                                                     preceding-colon?)
   (cl-assert (and (listp string-var)
                   (eql 'quote (first string-var))
                   (symbolp (second string-var))
@@ -59,15 +78,25 @@ Useful in .dir-locals.el, where `add-to-list` would be wrong."
     `(let* ((old-value  (if (boundp ',sym) ,sym "")))
        (setq-local ,sym (nomis/-add-to-colon-separated-string* old-value
                                                                ,new-item
-                                                               ,append?)))))
+                                                               ,append?
+                                                               ,preceding-colon?)))))
 
-;; Test:
+;; Tests:
+
 (progn
   (makunbound 'nomis/xyz-123)
   ;; (setq nomis/xyz-123 "")
   (nomis/add-to-colon-separated-string-local 'nomis/xyz-123 "y")
   (nomis/add-to-colon-separated-string-local 'nomis/xyz-123 "x")
   (nomis/add-to-colon-separated-string-local 'nomis/xyz-123 "z" t)
+  nomis/xyz-123)
+
+(progn
+  (makunbound 'nomis/xyz-123)
+  ;; (setq nomis/xyz-123 "")
+  (nomis/add-to-colon-separated-string-local 'nomis/xyz-123 "y" nil t)
+  (nomis/add-to-colon-separated-string-local 'nomis/xyz-123 "x" nil t)
+  (nomis/add-to-colon-separated-string-local 'nomis/xyz-123 "z" t   t)
   nomis/xyz-123)
 
 ;;;; ___________________________________________________________________________
