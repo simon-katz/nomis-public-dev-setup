@@ -14,7 +14,8 @@
     ))
 
 (dolist (hook '(emacs-lisp-mode-hook
-                ielm-mode-hook))
+                ielm-mode-hook
+                lisp-data-mode-hook))
   (dolist (hook-fun nomis/lisp-and-ielm-mode-hook-functions)
     (add-hook hook hook-fun)))
 
