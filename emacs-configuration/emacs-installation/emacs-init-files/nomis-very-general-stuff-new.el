@@ -42,14 +42,15 @@ Useful in .dir-locals.el, where `add-to-list` would be wrong."
 ;;;; ___________________________________________________________________________
 
 (defun nomis/-add-to-colon-separated-string* (old-value new-item append? preceding-colon?)
+  (assert (or (null old-value)
+              (stringp old-value)))
+  (assert (stringp new-item))
   (let* ((old-value (cond ((null old-value)
                            "")
                           ((s-starts-with? ":" old-value)
                            (s-chop-left 1 old-value))
                           (t
                            old-value))))
-    (assert (stringp old-value))
-    (assert (stringp new-item))
     (let* ((old-items (if (equal old-value "") '() (s-split ":" old-value)))
            (new-items (cond ((member new-item old-items)
                              old-items)
