@@ -59,8 +59,7 @@ Useful in .dir-locals.el, where `add-to-list` would be wrong."
                             (t
                              (cons new-item old-items))))
            (string (s-join ":" new-items)))
-      (if (and preceding-colon?
-               (not (s-starts-with? ":" string)))
+      (if preceding-colon?
           (s-concat ":" string)
         string))))
 
