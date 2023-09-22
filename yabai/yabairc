@@ -1,9 +1,10 @@
 #!/usr/bin/env sh
 # The above shebang is just to get editors to use an appropriate mode.
 
-# Load scripting addition. See https://github.com/koekeishiya/yabai/wiki/Installing-yabai-(latest-release)#macos-big-sur-and-monterey---automatically-load-scripting-addition-on-startup
-sudo yabai --load-sa
+# Load scripting addition. See https://github.com/koekeishiya/yabai/wiki/Installing-yabai-(latest-release)#configure-scripting-addition
 yabai -m signal --add event=dock_did_restart action="sudo yabai --load-sa"
+sudo yabai --load-sa
+
 
 # Disable window management.
 yabai -m config layout float
