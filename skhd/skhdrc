@@ -127,3 +127,9 @@ fn         + ctrl + alt + cmd - 0x2A     : ~/bin-private/hs -c "nomisWindowMoveT
      shift        + alt + cmd - right    : ~/bin-private/hs -c "nomisWindowIncWidth()"
      shift        + alt + cmd - up       : ~/bin-private/hs -c "nomisWindowDecHeight()"
      shift        + alt + cmd - down     : ~/bin-private/hs -c "nomisWindowIncHeight()"
+
+
+### Window cycling (macOS's built-in version is broken in Ventura)
+### - 0x32 is backtick/backquote.
+                          cmd - 0x32     : ~/bin-private/hs -c "nomisCycleAppWindows()"
+     shift              + cmd - 0x32     : ~/bin-private/hs -c "nomisCycleAppWindowsBackwards()"
