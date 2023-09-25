@@ -65,7 +65,9 @@
   auto-tailing has changed things.")
 
 (defface -nomis/auto-revert/new-text-highlight-face
-  `((t (:background "PaleGreen1")))
+  `((((background dark)) ,(list :foreground "White"
+                                :background "Green4"))
+    (t ,(list :background "PaleGreen1")))
   "Face used for highlighting new text.")
 
 ;;;; _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
