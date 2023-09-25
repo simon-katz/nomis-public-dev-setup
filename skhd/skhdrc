@@ -131,5 +131,8 @@ fn         + ctrl + alt + cmd - 0x2A     : ~/bin-private/hs -c "nomisWindowMoveT
 
 ### Window cycling (macOS's built-in version is broken in Ventura)
 ### - 0x32 is backtick/backquote.
-                          cmd - 0x32     : ~/bin-private/hs -c "nomisCycleAppWindows()"
-     shift              + cmd - 0x32     : ~/bin-private/hs -c "nomisCycleAppWindowsBackwards()"
+     #                      cmd - 0x32     : ~/bin-private/hs -c "nomisCycleAppWindows()"
+     # shift              + cmd - 0x32     : ~/bin-private/hs -c "nomisCycleAppWindowsBackwards()"
+
+
+             ctrl + alt + cmd - f        : ~/bin-private/hs -c "nomisCycleAppWindows()"
