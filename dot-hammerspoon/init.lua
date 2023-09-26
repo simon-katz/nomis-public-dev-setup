@@ -62,6 +62,7 @@ autoReloadWatcher:start()
 --------------------------------------------------------------------------------
 
 require("hs.ipc")
+require("nomis/utils")
 require("nomis/bits_and_bobs")
 require("nomis/totalspaces3")
 -- require("nomis/z_obsolete/window_manipulation_using_hs_grid")
