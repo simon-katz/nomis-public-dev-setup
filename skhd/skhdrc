@@ -37,6 +37,7 @@ fn         + ctrl + alt + cmd - w        : ~/bin-private/hs -c "nomisHelloWorld(
 fn         + ctrl + alt + cmd - r        : ~/bin-private/hs -c 'hs.reload()'
              ctrl + alt + cmd - r        : ~/bin-private/hs -c 'nomisMessage("Reloading skhd")' ; skhd --reload
              ctrl + alt + cmd - y        : ~/bin-private/hs -c 'nomisMessage("Restarting yabai")' ; yabai --restart-service
+             ctrl + alt + cmd - t        : ~/bin-private/hs -c "nomisRestartTotalSpaces()"
 
 
 ### Disable some keybindings
@@ -48,11 +49,6 @@ fn         + ctrl + alt + cmd - r        : ~/bin-private/hs -c 'hs.reload()'
 ### Mission Control
 
              ctrl + alt + cmd - 0x27     : /opt/homebrew/bin/yabai -m space --toggle mission-control # 0x27 is '
-
-
-### TotalSpaces
-
-             ctrl + alt + cmd - t        : ~/bin-private/hs -c "nomisRestartTotalSpaces()"
 
 
 ### NotalSpaces
