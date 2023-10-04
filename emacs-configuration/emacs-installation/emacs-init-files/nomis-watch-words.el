@@ -43,7 +43,7 @@
                   nomis/ww/regexps/high-priority)))
 
 (defface nomis/ww/face/no-priority
-  `((((background dark)) ,(list :foreground "DodgerBlue"
+  `((((background dark)) ,(list :foreground "Yellow"
                                 :bold t
                                 :italic t))
     (t ,(list :foreground "DodgerBlue3"
