@@ -139,14 +139,16 @@
 ;;;; ___________________________________________________________________________
 ;;;; nomis/set-up-devvy-windows-for-clj-and-jack-in
 
+(defun -nomis/double-h-max-w ()
+  (nomis/w-double)
+  (maximize-frame-vertically))
+
 (defun nomis/set-up-devvy-windows-for-clj-and-jack-in (&optional prefix)
   (interactive "P")
-  (cl-flet ((double-h-max-w ()
-                            (nomis/w-double)
-                            (maximize-frame-vertically)))
+  (progn
     (unless prefix
       (cider-jack-in-clj nil))
-    (double-h-max-w)
+    (-nomis/double-h-max-w)
     (let* ((main-monitor-width (nomis/main-monitor-width)))
       (cl-case main-monitor-width
         (2560 (modify-frame-parameters
@@ -156,17 +158,25 @@
     (split-window-horizontally)
     (nomis/dirtree/goto-file/return-to-window)
     (when (fboundp 'flop-frame) (flop-frame)) ; I don't know why this is needed
-    (make-frame-command)
-    (double-h-max-w)
-    (switch-to-buffer (messages-buffer))
-    (split-window-vertically)
-    (other-window 1)
-    (let* ((nrepl-server-buffer (-find (lambda (b) (s-starts-with? "*nrepl-server"
-                                                                   (buffer-name b)))
-                                       (buffer-list))))
-      (if nrepl-server-buffer
-          (switch-to-buffer nrepl-server-buffer)
-        (message "Didn't find nrepl-server-buffer")))))
+    ;; Suddenly `(make-frame-command)` is causing a crash. Perhaps it happened
+    ;; when I upgraded to macOS Ventura. Fix with `run-at-time`.
+    ;; - SK 2023-10-08
+    (run-at-time
+     0.1
+     nil
+     (lambda ()
+       (cl-flet ()
+         (make-frame-command)
+         (-nomis/double-h-max-w)
+         (switch-to-buffer (messages-buffer))
+         (split-window-vertically)
+         (other-window 1)
+         (let* ((nrepl-server-buffer (-find (lambda (b) (s-starts-with? "*nrepl-server"
+                                                                        (buffer-name b)))
+                                            (buffer-list))))
+           (if nrepl-server-buffer
+               (switch-to-buffer nrepl-server-buffer)
+             (message "Didn't find nrepl-server-buffer"))))))))
 
 ;;;; ___________________________________________________________________________
 
