@@ -4,7 +4,7 @@
 (require 'color)
 
 (let* ((dark-default-bg         "Black") ; the value in `dark-laptop-theme`
-       (autodim-dark-default-bg "Grey32"))
+       (autodim-dark-default-bg "Grey22"))
 
   (custom-theme-set-faces
    'nomis-extras-dark-laptop
