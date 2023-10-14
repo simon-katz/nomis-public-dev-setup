@@ -52,6 +52,7 @@
      fuzzy
      gnu-elpa-keyring-update
      helm
+     hide-lines
      highlight-indentation
      ht
      hydra
