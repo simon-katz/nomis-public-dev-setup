@@ -68,7 +68,7 @@ NORMAL=${RESET}
 #### Utils
 
 function readable_local_date_time {
-    date +"%Y-%m-%d %H:%M:%S"
+    date +"%a %Y-%m-%d %H:%M:%S"
 }
 
 
