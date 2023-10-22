@@ -278,6 +278,31 @@
   "Timer to trigger highlighting.")
 
 ;;;; ___________________________________________________________________________
+;;;; Something very hacky to let me highlight weird Lispy code symbols in
+;;;; org-mode buffers. This could no doubt be done much better.
+
+(defvar nomis/idle-highlight/hack/special-strings
+  ;; A hack.
+  '(":>"
+    "<<sources"
+    "source>"))
+
+(defun nomis/idle-highlight/hack/current-special-string ()
+  (-find (lambda (s)
+           (cl-loop for i from 0 to (length s)
+                    thereis (save-excursion
+                              (ignore-errors (backward-char i)
+                                             (looking-at-p s)))))
+         nomis/idle-highlight/hack/special-strings))
+
+;; :> plop
+;; `:>` plop
+;; <<sources plop
+;; `<<sources` plop
+;; source> plop
+;; `source>` plop
+
+;;;; ___________________________________________________________________________
 
 (defun nomis/clojure-like-mode? (m)
   (member m
@@ -581,57 +606,58 @@
   (replace-regexp-in-string "\\.\\'" "" s))
 
 (defun nomis/idle-highlight-thing ()
-  (let* ((prefix-regexp (nomis/symbol-prefix-char-regexp))
-         (body-regexp   (nomis/symbol-body-char-regexp)))
-    (cl-labels
-        ((looking-at-symbol-prefix? () (looking-at-p prefix-regexp))
-         (looking-at-symbol-body?   () (looking-at-p body-regexp))
-         (looking-at-symbol-p-or-b? () (or (looking-at-symbol-prefix?)
-                                           (looking-at-symbol-body?)))
-         (looking-at-symbol-p-or-b-or-just-after?
-          ()
-          (or (looking-at-symbol-p-or-b?)
+  (or (nomis/idle-highlight/hack/current-special-string)
+      (let* ((prefix-regexp (nomis/symbol-prefix-char-regexp))
+             (body-regexp   (nomis/symbol-body-char-regexp)))
+        (cl-labels
+            ((looking-at-symbol-prefix? () (looking-at-p prefix-regexp))
+             (looking-at-symbol-body?   () (looking-at-p body-regexp))
+             (looking-at-symbol-p-or-b? () (or (looking-at-symbol-prefix?)
+                                               (looking-at-symbol-body?)))
+             (looking-at-symbol-p-or-b-or-just-after?
+              ()
+              (or (looking-at-symbol-p-or-b?)
+                  (unless (nomis/ih/start-of-buffer?)
+                    (save-excursion
+                      (backward-char)
+                      (looking-at-symbol-p-or-b?)))))
+             (skip-forward-prefix   () (nomis/skip-chars-forward prefix-regexp))
+             (skip-forward-body     () (nomis/skip-chars-forward body-regexp))
+             (skip-backward-p-and-b () (nomis/skip-chars-backward prefix-regexp
+                                                                  body-regexp))
+             (go-to-before-symbol-or-start-of-buffer
+              ()
               (unless (nomis/ih/start-of-buffer?)
-                (save-excursion
-                  (backward-char)
-                  (looking-at-symbol-p-or-b?)))))
-         (skip-forward-prefix   () (nomis/skip-chars-forward prefix-regexp))
-         (skip-forward-body     () (nomis/skip-chars-forward body-regexp))
-         (skip-backward-p-and-b () (nomis/skip-chars-backward prefix-regexp
-                                                              body-regexp))
-         (go-to-before-symbol-or-start-of-buffer
-          ()
-          (unless (nomis/ih/start-of-buffer?)
-            (backward-char))
-          (skip-backward-p-and-b))
-         (go-to-beginning-of-symbol
-          ()
-          (let* ((pos-info (go-to-before-symbol-or-start-of-buffer)))
-            (unless (eql pos-info :cannot-move-further)
-              (forward-char))))
-         (grab-symbol-name
-          ()
-          (save-excursion
-            (nomis/report-char-at-point "1 before")
-            (go-to-beginning-of-symbol)
-            (nomis/report-char-at-point "2 after go back")
-            (skip-forward-prefix)
-            (nomis/report-char-at-point "3 after skip prefix")
-            (let* ((beg (point))
-                   (end (progn
-                          (skip-forward-body)
-                          (point))))
-              (when (< beg end)
-                (let* ((text (buffer-substring beg end)))
-                  (set-text-properties 0 (length text) nil text)
-                  text))))))
-      (if (looking-at-symbol-p-or-b-or-just-after?)
-          (let* ((symbol-name (grab-symbol-name)))
-            ;; For full stops and Clojure `Foo.`-style instance creation:
-            (nomis/remove-trailing-dot symbol-name))
-        (progn
-          (nomis/report-char-at-point "boring char -- not highlighting")
-          nil)))))
+                (backward-char))
+              (skip-backward-p-and-b))
+             (go-to-beginning-of-symbol
+              ()
+              (let* ((pos-info (go-to-before-symbol-or-start-of-buffer)))
+                (unless (eql pos-info :cannot-move-further)
+                  (forward-char))))
+             (grab-symbol-name
+              ()
+              (save-excursion
+                (nomis/report-char-at-point "1 before")
+                (go-to-beginning-of-symbol)
+                (nomis/report-char-at-point "2 after go back")
+                (skip-forward-prefix)
+                (nomis/report-char-at-point "3 after skip prefix")
+                (let* ((beg (point))
+                       (end (progn
+                              (skip-forward-body)
+                              (point))))
+                  (when (< beg end)
+                    (let* ((text (buffer-substring beg end)))
+                      (set-text-properties 0 (length text) nil text)
+                      text))))))
+          (if (looking-at-symbol-p-or-b-or-just-after?)
+              (let* ((symbol-name (grab-symbol-name)))
+                ;; For full stops and Clojure `Foo.`-style instance creation:
+                (nomis/remove-trailing-dot symbol-name))
+            (progn
+              (nomis/report-char-at-point "boring char -- not highlighting")
+              nil))))))
 
 (defun nomis/idle-highlight-word-at-point** ()
   (interactive)
