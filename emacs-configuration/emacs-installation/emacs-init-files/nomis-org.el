@@ -488,6 +488,37 @@
         (not nomis/org-blog-stuff-on-p)))
 
 ;;;; ___________________________________________________________________________
+;;;; ____ * Display -- Alternative heading faces
+
+;;;; A set of colours that avoids clashes with my `xxxx` highlighting.
+
+(defvar nomis/org-alternative-heading-faces
+  '((outline-1 . (:inherit font-lock-function-name-face))
+    (outline-2 . (:inherit font-lock-variable-name-face))
+    (outline-3 . (:inherit font-lock-keyword-face))
+    (outline-4 . (:inherit font-lock-comment-face))
+    (outline-5 . (:foreground "Goldenrod1")) ; default is (:inherit font-lock-type-face)
+    (outline-6 . (:foreground "Cyan1")) ; default is (:inherit font-lock-constant-face)
+    (outline-7 . (:inherit font-lock-builtin-face))
+    (outline-8 . (:inherit font-lock-string-face))))
+
+(defvar nomis/org-alternative-heading-stuff-on-p nil)
+
+(defun nomis/toggle-org-alternative-heading-stuff ()
+  (interactive)
+  (make-local-variable 'nomis/org-alternative-heading-stuff-on-p)
+  (make-local-variable 'face-remapping-alist)
+  (setq face-remapping-alist
+        (if nomis/org-alternative-heading-stuff-on-p
+            (let* ((org-alternative-heading-faces-keys (-map 'car nomis/org-alternative-heading-faces)))
+              (-remove (lambda (x) (memq (car x) org-alternative-heading-faces-keys))
+                       face-remapping-alist))
+          (append nomis/org-alternative-heading-faces
+                  face-remapping-alist)))
+  (setq nomis/org-alternative-heading-stuff-on-p
+        (not nomis/org-alternative-heading-stuff-on-p)))
+
+;;;; ___________________________________________________________________________
 ;;;; ____ * Export1
 
 (defun get-string-from-file (path)
