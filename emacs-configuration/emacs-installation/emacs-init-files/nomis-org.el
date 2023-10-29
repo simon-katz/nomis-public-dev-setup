@@ -457,6 +457,7 @@
 ;;;; ___________________________________________________________________________
 ;;;; ____ * Display -- faces
 
+(set-face-attribute 'org-meta-line nil :height 0.75) ; But maybe try https://github.com/minad/org-modern
 
 ;;;; ___________________________________________________________________________
 ;;;; ____ * Display -- blog faces
