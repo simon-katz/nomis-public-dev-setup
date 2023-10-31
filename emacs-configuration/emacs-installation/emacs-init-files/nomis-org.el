@@ -518,6 +518,8 @@
   (setq nomis/org-alternative-heading-stuff-on-p
         (not nomis/org-alternative-heading-stuff-on-p)))
 
+(add-hook 'org-mode-hook 'nomis/toggle-org-alternative-heading-stuff)
+
 ;;;; ___________________________________________________________________________
 ;;;; ____ * Export1
 
