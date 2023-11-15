@@ -164,4 +164,10 @@ This allows you to temporarily modify read-only buffers too."
 (remove-hook 'xref-after-jump-hook
              'recenter)
 
+;;;; ___________________________________________________________________________
+
+(global-set-key (kbd "C-c C-4") 'toggle-truncate-lines)
+
+;;;; ___________________________________________________________________________
+
 (provide 'nomis-very-general-stuff-new)
