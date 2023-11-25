@@ -9,8 +9,16 @@ sudo yabai --load-sa
 # Disable window management.
 yabai -m config layout float
 
-# Enable window borders.
-yabai -m config window_border on
-yabai -m config window_border_width 6
-yabai -m config active_window_border_color 0xFF0000FF # - was 0XFF50FA7B
-yabai -m config normal_window_border_color 0xff494d64 # transparent - was 0xFFBD93F9
+# Enable window borders
+
+## Recent yabai no longer supports boders
+
+# yabai -m config window_border on
+# yabai -m config window_border_width 6
+# yabai -m config active_window_border_color 0xFF0000FF   # - was 0XFF50FA7B
+# yabai -m config normal_window_border_color 0x00112233 # transparent - was 0xFFBD93F9
+
+## Use JankyBorders instead
+
+# borders active_color=0xff0000ff inactive_color=0x00112233 width=10.0
+borders active_color=0xff0000ff inactive_color=0xff494d64 width=10.0
