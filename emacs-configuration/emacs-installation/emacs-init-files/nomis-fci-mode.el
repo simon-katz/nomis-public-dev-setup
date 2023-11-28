@@ -39,7 +39,7 @@ The issues:
 
 (require 'nomis-right-margin-column)
 
-(setq-default fill-column nomis/right-margin-column)
+;; (setq-default fill-column nomis/right-margin-column)
 
 (setq fci-rule-color "#cc99cc")
 
