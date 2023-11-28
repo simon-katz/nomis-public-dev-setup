@@ -24,9 +24,9 @@
           ((and (not f?)      c?)  2)
           (t                       3))))
 
-(defun nomis/set-80-column-stuff (n)
-  (interactive "p")
-  (message "nomis/set-80-column-stuff setting approach to %s" n)
+(defun nomis/set-80-column-stuff (n &optional print-message?)
+  (when print-message?
+    (message "nomis/set-80-column-stuff setting approach to %s" n))
   (cl-flet ((f-off () (fci-mode 0))
             (f-on  () (fci-mode 1))
             (c-off () (column-marker-1 '(4)))
@@ -37,26 +37,27 @@
       (2 (f-off) (c-on))
       (3 (f-on)  (c-on)))))
 
-(defun nomis/set-80-column-stuff-0 ()
-  (interactive)
-  (nomis/set-80-column-stuff 0))
+(defun nomis/set-80-column-stuff-0 (&optional print-message?)
+  (interactive "p")
+  (nomis/set-80-column-stuff 0 print-message?))
 
-(defun nomis/set-80-column-stuff-1 ()
-  (interactive)
-  (nomis/set-80-column-stuff 1))
+(defun nomis/set-80-column-stuff-1 (&optional print-message?)
+  (interactive "p")
+  (nomis/set-80-column-stuff 1 print-message?))
 
-(defun nomis/set-80-column-stuff-2 ()
-  (interactive)
-  (nomis/set-80-column-stuff 2))
+(defun nomis/set-80-column-stuff-2 (&optional print-message?)
+  (interactive "p")
+  (nomis/set-80-column-stuff 2 print-message?))
 
-(defun nomis/set-80-column-stuff-3 ()
-  (interactive)
-  (nomis/set-80-column-stuff 3))
+(defun nomis/set-80-column-stuff-3 (&optional print-message?)
+  (interactive "p")
+  (nomis/set-80-column-stuff 3 print-message?))
 
-(defun nomis/cycle-80-column-stuff ()
-  (interactive)
+(defun nomis/cycle-80-column-stuff (&optional print-message?)
+  (interactive "p")
   (nomis/set-80-column-stuff (mod (1+ (nomis/get-80-column-stuff))
-                                  4)))
+                                  4)
+                             print-message?))
 
 ;;;; ___________________________________________________________________________
 
