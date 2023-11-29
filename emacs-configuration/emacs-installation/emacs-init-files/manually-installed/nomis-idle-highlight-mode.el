@@ -356,10 +356,10 @@
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-(defmethod nomis/symbol-prefix-chars ((major-mode (eql emacs-lisp-mode)))
+(cl-defmethod nomis/symbol-prefix-chars ((major-mode (eql emacs-lisp-mode)))
   nomis/symbol-prefix-chars/emacs-lisp)
 
-(defmethod nomis/symbol-body-chars ((major-mode (eql emacs-lisp-mode)))
+(cl-defmethod nomis/symbol-body-chars ((major-mode (eql emacs-lisp-mode)))
   ;; Note the position of the "-" at the beginning. So when augmenting this,
   ;; you must add at the end (otherwise you will introduce a range when creating
   ;; regexps using `nomis/rx/make-char-match-regexp/broken`).
@@ -368,10 +368,10 @@
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-(defmethod nomis/symbol-prefix-chars ((major-mode (eql inferior-emacs-lisp-mode)))
+(cl-defmethod nomis/symbol-prefix-chars ((major-mode (eql inferior-emacs-lisp-mode)))
   nomis/symbol-prefix-chars/emacs-lisp)
 
-(defmethod nomis/symbol-body-chars ((major-mode (eql inferior-emacs-lisp-mode)))
+(cl-defmethod nomis/symbol-body-chars ((major-mode (eql inferior-emacs-lisp-mode)))
   ;; Note the position of the "-" at the beginning. So when augmenting this,
   ;; you must add at the end (otherwise you will introduce a range when creating
   ;; regexps using `nomis/rx/make-char-match-regexp/broken`).
@@ -380,34 +380,34 @@
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-(defmethod nomis/symbol-prefix-chars ((major-mode (eql clojure-mode)))
+(cl-defmethod nomis/symbol-prefix-chars ((major-mode (eql clojure-mode)))
   "'`#@~^")
 
-(defmethod nomis/symbol-body-chars ((major-mode (eql clojure-mode)))
+(cl-defmethod nomis/symbol-body-chars ((major-mode (eql clojure-mode)))
   nomis/clojure-regexps/symbol-body-chars)
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-(defmethod nomis/symbol-prefix-chars ((major-mode (eql clojurescript-mode)))
+(cl-defmethod nomis/symbol-prefix-chars ((major-mode (eql clojurescript-mode)))
   (nomis/symbol-prefix-chars 'clojure-mode))
 
-(defmethod nomis/symbol-body-chars ((major-mode (eql clojurescript-mode)))
+(cl-defmethod nomis/symbol-body-chars ((major-mode (eql clojurescript-mode)))
   (nomis/symbol-body-chars 'clojure-mode))
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-(defmethod nomis/symbol-prefix-chars ((major-mode (eql clojurec-mode)))
+(cl-defmethod nomis/symbol-prefix-chars ((major-mode (eql clojurec-mode)))
   (nomis/symbol-prefix-chars 'clojure-mode))
 
-(defmethod nomis/symbol-body-chars ((major-mode (eql clojurec-mode)))
+(cl-defmethod nomis/symbol-body-chars ((major-mode (eql clojurec-mode)))
   (nomis/symbol-body-chars 'clojure-mode))
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-(defmethod nomis/symbol-prefix-chars ((major-mode (eql yaml-mode)))
+(cl-defmethod nomis/symbol-prefix-chars ((major-mode (eql yaml-mode)))
   "&*")
 
-(defmethod nomis/symbol-body-chars ((major-mode (eql yaml-mode)))
+(cl-defmethod nomis/symbol-body-chars ((major-mode (eql yaml-mode)))
   ;; Note the position of the "-" at the beginning. So when augmenting this,
   ;; you must add at the end (otherwise you will introduce a range when creating
   ;; regexps using `nomis/rx/make-char-match-regexp/broken`).
