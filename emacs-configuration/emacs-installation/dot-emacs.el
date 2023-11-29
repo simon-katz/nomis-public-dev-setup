@@ -1,4 +1,13 @@
 ;;;; ___________________________________________________________________________
+;;;; ---- Raise frame ----
+
+;;;; After upgrading to macOS Sonoma, when starting Emacs the frame is
+;;;; not always on top and does not always have input focus.
+
+(when window-system
+  (select-frame-set-input-focus (selected-frame)))
+
+;;;; ___________________________________________________________________________
 ;;;; ---- Duh ----
 
 ;; Now using exec-path-from-shell
