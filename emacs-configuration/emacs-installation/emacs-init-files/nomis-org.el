@@ -768,6 +768,21 @@ With numerical argument N, show content up to level N."
        (message-box "You need to fix `org-content` for this version of org mode.")))
 
 ;;;; ___________________________________________________________________________
+;;;; * Fix `org-move-subtree-down` -- don't move cursor when there's an error
+
+(cond ((member org-version
+               '("9.5.5"))
+       (advice-add 'org-move-subtree-down
+                   :around
+                   (lambda (orig-fun &rest args)
+                     (let* ((col (current-column)))
+                       (unwind-protect (apply orig-fun args)
+                         (move-to-column col))))
+                   '((name . nomis/if-error-do-not-move-cursor))))
+      (t
+       (message-box "You need to fix `org-move-subtree-down` for this version of org mode.")))
+
+;;;; ___________________________________________________________________________
 ;;;; * Key bindings
 
 (require 'nomis-org-key-bindings)
