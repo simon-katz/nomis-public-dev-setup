@@ -139,5 +139,49 @@
               (-replace-at 1 proxy-buffer-name form)))))))
 
 ;;;; ___________________________________________________________________________
+;;;; Restore just-closed frame
+
+(defvar nomis/wc/just-closed-frame-info-list '())
+
+(add-hook 'delete-frame-functions 'nomis/wc/note-deleted-frame)
+
+(defun nomis/wc/note-deleted-frame (frame)
+  (cl-labels ((do-it
+               ()
+               (let ((info   (make-hash-table))
+                     (left   (frame-parameter frame 'left))
+                     (top    (frame-parameter frame 'top))
+                     (width  (frame-parameter frame 'width))
+                     (height (frame-parameter frame 'height))
+                     (state  (window-state-get (frame-root-window frame) t)))
+                 (puthash :left   left   info)
+                 (puthash :top    top    info)
+                 (puthash :width  width  info)
+                 (puthash :height height info)
+                 (puthash :state  state  info)
+                 (push info nomis/wc/just-closed-frame-info-list))))
+    (condition-case e
+        (do-it)
+        ('error (message (format "Caught exception: [%s]" e))))))
+
+(defun nomis/wc/restore-deleted-frame ()
+  (interactive)
+  (if (null nomis/wc/just-closed-frame-info-list)
+      (user-error "There is no deleted frame to restore")
+    (let* ((frame  (make-frame))
+           (info (pop nomis/wc/just-closed-frame-info-list))
+           (left   (gethash :left   info))
+           (top    (gethash :top    info))
+           (width  (gethash :width  info))
+           (height (gethash :height info))
+           (state  (gethash :state  info)))
+      (set-frame-parameter frame 'left   left)
+      (set-frame-parameter frame 'top    top)
+      (set-frame-parameter frame 'width  width)
+      (set-frame-parameter frame 'height height)
+      (window-state-put (-nomis/wc/window-state/replace-unknown-buffers state)
+                        (frame-root-window frame)))))
+
+;;;; ___________________________________________________________________________
 
 (provide 'nomis-window-config)
