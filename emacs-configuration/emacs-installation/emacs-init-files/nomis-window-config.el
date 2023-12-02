@@ -15,44 +15,6 @@
 
 (defvar nomis/wc/root-dir-for-searches nil)
 
-;;;; _______________ Public functions etc ______________________________________
-
-(defun nomis/wc/save (wc-name)
-  (interactive (list (-nomis/wc/interactive-wc-name-stuff :save)))
-  (make-directory nomis/wc/directory t)
-  (nomis/save-to-file (-nomis/wc/wc-name->filename wc-name)
-                      (window-state-get nil t)
-                      :pretty? t)
-  (message "Saved window config: %s" wc-name))
-
-(defun nomis/wc/restore (wc-name)
-  (interactive (list (-nomis/wc/interactive-wc-name-stuff :restore)))
-  (let* ((filename (-nomis/wc/wc-name->filename wc-name))
-         (window-state (nomis/read-from-file filename))
-         (hacked-window-state (-nomis/wc/window-state/replace-unknown-buffers
-                               window-state)))
-    (window-state-put hacked-window-state
-                      (frame-root-window))
-    (message "Restored window config: %s"
-             wc-name)))
-
-(defun nomis/wc/search-for-file ()
-  (interactive)
-  (let* ((filename (-nomis/wc/proxy-buffer-name->filename (buffer-name)))
-         (root-directory (read-directory-name
-                          (format "Search for %s\nRoot of search: "
-                                  filename)
-                          nomis/wc/root-dir-for-searches
-                          nil
-                          t)))
-    (find-name-dired root-directory
-                     filename)))
-
-(prog1 (define-prefix-command 'nomis/wc/keymap)
-  (define-key nomis/wc/keymap (kbd "s") 'nomis/wc/save)
-  (define-key nomis/wc/keymap (kbd "r") 'nomis/wc/restore)
-  (define-key nomis/wc/keymap (kbd "/") 'nomis/wc/search-for-file))
-
 ;;;; _______________ Private things ____________________________________________
 
 (defconst -nomis/wc/file-suffix
@@ -137,6 +99,44 @@
                                        buffer-name)))
               (-nomis/wc/get-or-create-buffer-for-no-such-buffer buffer-name)
               (-replace-at 1 proxy-buffer-name form)))))))
+
+;;;; _______________ Public functions etc ______________________________________
+
+(defun nomis/wc/save (wc-name)
+  (interactive (list (-nomis/wc/interactive-wc-name-stuff :save)))
+  (make-directory nomis/wc/directory t)
+  (nomis/save-to-file (-nomis/wc/wc-name->filename wc-name)
+                      (window-state-get nil t)
+                      :pretty? t)
+  (message "Saved window config: %s" wc-name))
+
+(defun nomis/wc/restore (wc-name)
+  (interactive (list (-nomis/wc/interactive-wc-name-stuff :restore)))
+  (let* ((filename (-nomis/wc/wc-name->filename wc-name))
+         (window-state (nomis/read-from-file filename))
+         (hacked-window-state (-nomis/wc/window-state/replace-unknown-buffers
+                               window-state)))
+    (window-state-put hacked-window-state
+                      (frame-root-window))
+    (message "Restored window config: %s"
+             wc-name)))
+
+(defun nomis/wc/search-for-file ()
+  (interactive)
+  (let* ((filename (-nomis/wc/proxy-buffer-name->filename (buffer-name)))
+         (root-directory (read-directory-name
+                          (format "Search for %s\nRoot of search: "
+                                  filename)
+                          nomis/wc/root-dir-for-searches
+                          nil
+                          t)))
+    (find-name-dired root-directory
+                     filename)))
+
+(prog1 (define-prefix-command 'nomis/wc/keymap)
+  (define-key nomis/wc/keymap (kbd "s") 'nomis/wc/save)
+  (define-key nomis/wc/keymap (kbd "r") 'nomis/wc/restore)
+  (define-key nomis/wc/keymap (kbd "/") 'nomis/wc/search-for-file))
 
 ;;;; ___________________________________________________________________________
 ;;;; Restore just-closed frame
