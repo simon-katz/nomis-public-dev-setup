@@ -10,31 +10,32 @@
 
 ;;;; _______________ Customizable variables ____________________________________
 
-(defvar nomis/wc/directory
+(defconst nomis/wc/directory
   "~/.emacs-nomis-frame-window-config/")
 
 (defvar nomis/wc/root-dir-for-searches nil)
 
 ;;;; _______________ Private things ____________________________________________
 
-(defconst -nomis/wc/file-suffix
+(defconst -nomis/wc/old-file-suffix
   ".window-config")
 
-(defun -nomis/wc/wc-name->filename (wc-name)
-  (concat nomis/wc/directory wc-name -nomis/wc/file-suffix))
+(defun -nomis/wc/wc-name->filename (wc-name directory file-suffix)
+  (concat directory wc-name file-suffix))
 
-(defun -nomis/wc/interactive-wc-name-stuff (save-or-restore)
-  (let* ((wc-names (->> (directory-files nomis/wc/directory)
-                        (-remove (lambda (filename)
-                                   (member filename
-                                           (list "." ".."))))
-                        (-filter (lambda (filename)
-                                   (s-ends-with? -nomis/wc/file-suffix
-                                                 filename)))
-                        (-map (lambda (filename)
-                                (s-replace -nomis/wc/file-suffix
-                                           ""
-                                           filename))))))
+(defun -nomis/wc/interactive-wc-name-stuff (save-or-restore directory file-suffix)
+  (let* ((wc-names (when (file-directory-p directory)
+                     (->> (directory-files directory)
+                          (-remove (lambda (filename)
+                                     (member filename
+                                             (list "." ".."))))
+                          (-filter (lambda (filename)
+                                     (s-ends-with? file-suffix
+                                                   filename)))
+                          (-map (lambda (filename)
+                                  (s-replace file-suffix
+                                             ""
+                                             filename)))))))
     (when (and (null wc-names)
                (eq save-or-restore :restore))
       (error "No saved configurations"))
@@ -133,17 +134,28 @@
 
 ;;;; _______________ Public functions etc ______________________________________
 
-(defun nomis/wc/save (wc-name)
-  (interactive (list (-nomis/wc/interactive-wc-name-stuff :save)))
-  (make-directory nomis/wc/directory t)
-  (nomis/save-to-file (-nomis/wc/wc-name->filename wc-name)
+;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+;;;; Old approach -- save current frame (windows only, not size and
+;;;; position), and restore to current frame.
+
+(defun nomis/wc/old-save-selected-frame (wc-name)
+  (interactive (list (-nomis/wc/interactive-wc-name-stuff :save
+                                                          nomis/wc/directory
+                                                          -nomis/wc/old-file-suffix)))
+  (nomis/save-to-file (-nomis/wc/wc-name->filename wc-name
+                                                   nomis/wc/directory
+                                                   -nomis/wc/old-file-suffix)
                       (window-state-get nil t)
                       :pretty? t)
   (message "Saved window config: %s" wc-name))
 
-(defun nomis/wc/restore (wc-name)
-  (interactive (list (-nomis/wc/interactive-wc-name-stuff :restore)))
-  (let* ((filename (-nomis/wc/wc-name->filename wc-name))
+(defun nomis/wc/old-restore-single-frame-to-selected-frame (wc-name)
+  (interactive (list (-nomis/wc/interactive-wc-name-stuff :restore
+                                                          nomis/wc/directory
+                                                          -nomis/wc/old-file-suffix)))
+  (let* ((filename (-nomis/wc/wc-name->filename wc-name
+                                                nomis/wc/directory
+                                                -nomis/wc/old-file-suffix))
          (window-state (nomis/read-from-file filename))
          (hacked-window-state (-nomis/wc/window-state/replace-unknown-buffers
                                window-state)))
@@ -165,11 +177,11 @@
                      filename)))
 
 (prog1 (define-prefix-command 'nomis/wc/keymap)
-  (define-key nomis/wc/keymap (kbd "s") 'nomis/wc/save)
-  (define-key nomis/wc/keymap (kbd "r") 'nomis/wc/restore)
+  (define-key nomis/wc/keymap (kbd "s") 'nomis/wc/old-save-selected-frame)
+  (define-key nomis/wc/keymap (kbd "r") 'nomis/wc/old-restore-single-frame-to-selected-frame)
   (define-key nomis/wc/keymap (kbd "/") 'nomis/wc/search-for-file))
 
-;;;; ___________________________________________________________________________
+;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ;;;; Restore just-closed frame
 
 (defvar nomis/wc/just-closed-frame-info-list '())

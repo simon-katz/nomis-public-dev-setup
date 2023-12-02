@@ -3,6 +3,8 @@
 ;;;; ___________________________________________________________________________
 
 (cl-defun nomis/save-to-file (filename data &key pretty?)
+  (make-directory (file-name-directory filename)
+                  t)
   (with-temp-file filename
     (if pretty?
         (insert (with-output-to-string (pp data)))
