@@ -159,7 +159,7 @@
     (puthash :state  state  info)
     (push info nomis/wc/just-closed-frame-info-list)))
 
-(defun nomis/wc/restore-deleted-frame ()
+(defun nomis/wc/restore-just-deleted-frame ()
   (interactive)
   (if (null nomis/wc/just-closed-frame-info-list)
       (user-error "There is no deleted frame to restore")
