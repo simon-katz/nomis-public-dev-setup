@@ -13,12 +13,18 @@
 (defconst nomis/wc/directory/old-selected-frame
   "~/.emacs-nomis-frame-window-config/old-selected-frame/")
 
+(defconst nomis/wc/directory/single-frame
+  "~/.emacs-nomis-frame-window-config/single-frame/")
+
 (defvar nomis/wc/root-dir-for-searches nil)
 
 ;;;; _______________ Private things ____________________________________________
 
 (defconst -nomis/wc/old-file-suffix
   ".window-config")
+
+(defconst -nomis/wc/single-frame-file-suffix
+  ".frame-config")
 
 (defun -nomis/wc/wc-name->filename (wc-name directory file-suffix)
   (concat directory wc-name file-suffix))
@@ -168,6 +174,37 @@
     (window-state-put hacked-window-state
                       (frame-root-window))
     (message "Restored window config: %s"
+             wc-name)))
+
+;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+;;;; Save current frame (windows, size and position), and restore to
+;;;; a new frame
+
+(defun nomis/wc/save-selected-frame (wc-name)
+  (interactive (list (-nomis/wc/interactive-wc-name-stuff
+                      :save
+                      nomis/wc/directory/single-frame
+                      -nomis/wc/single-frame-file-suffix)))
+  (nomis/save-to-file (-nomis/wc/wc-name->filename
+                       wc-name
+                       nomis/wc/directory/single-frame
+                       -nomis/wc/single-frame-file-suffix)
+                      (-nomis/wc/frame->frame-info (selected-frame))
+                      :pretty? t)
+  (message "Saved selected frame config: %s" wc-name))
+
+(defun nomis/wc/restore-single-frame (wc-name)
+  (interactive (list (-nomis/wc/interactive-wc-name-stuff
+                      :restore
+                      nomis/wc/directory/single-frame
+                      -nomis/wc/single-frame-file-suffix)))
+  (let* ((filename (-nomis/wc/wc-name->filename
+                    wc-name
+                    nomis/wc/directory/single-frame
+                    -nomis/wc/single-frame-file-suffix))
+         (info (nomis/read-from-file filename)))
+    (-nomis/wc/window-state/make-frame-using-frame-info info)
+    (message "Restored single frame config: %s"
              wc-name)))
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
