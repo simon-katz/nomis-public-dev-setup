@@ -164,18 +164,6 @@
     (message "Restored window config: %s"
              wc-name)))
 
-(defun nomis/wc/search-for-file ()
-  (interactive)
-  (let* ((filename (-nomis/wc/proxy-buffer-name->filename (buffer-name)))
-         (root-directory (read-directory-name
-                          (format "Search for %s\nRoot of search: "
-                                  filename)
-                          nomis/wc/root-dir-for-searches
-                          nil
-                          t)))
-    (find-name-dired root-directory
-                     filename)))
-
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ;;;; Restore just-closed frame
 
@@ -193,6 +181,21 @@
       (user-error "There is no deleted frame to restore")
     (let* ((info (pop nomis/wc/just-closed-frame-info-list)))
       (-nomis/wc/window-state/make-frame-using-frame-info info))))
+
+;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+;;;; nomis/wc/search-for-file
+
+(defun nomis/wc/search-for-file ()
+  (interactive)
+  (let* ((filename (-nomis/wc/proxy-buffer-name->filename (buffer-name)))
+         (root-directory (read-directory-name
+                          (format "Search for %s\nRoot of search: "
+                                  filename)
+                          nomis/wc/root-dir-for-searches
+                          nil
+                          t)))
+    (find-name-dired root-directory
+                     filename)))
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ;;;; keymap
