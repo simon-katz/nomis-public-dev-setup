@@ -10,8 +10,8 @@
 
 ;;;; _______________ Customizable variables ____________________________________
 
-(defconst nomis/wc/directory
-  "~/.emacs-nomis-frame-window-config/")
+(defconst nomis/wc/directory/old-selected-frame
+  "~/.emacs-nomis-frame-window-config/old-selected-frame/")
 
 (defvar nomis/wc/root-dir-for-searches nil)
 
@@ -140,10 +140,10 @@
 
 (defun nomis/wc/old-save-selected-frame (wc-name)
   (interactive (list (-nomis/wc/interactive-wc-name-stuff :save
-                                                          nomis/wc/directory
+                                                          nomis/wc/directory/old-selected-frame
                                                           -nomis/wc/old-file-suffix)))
   (nomis/save-to-file (-nomis/wc/wc-name->filename wc-name
-                                                   nomis/wc/directory
+                                                   nomis/wc/directory/old-selected-frame
                                                    -nomis/wc/old-file-suffix)
                       (window-state-get nil t)
                       :pretty? t)
@@ -151,10 +151,10 @@
 
 (defun nomis/wc/old-restore-single-frame-to-selected-frame (wc-name)
   (interactive (list (-nomis/wc/interactive-wc-name-stuff :restore
-                                                          nomis/wc/directory
+                                                          nomis/wc/directory/old-selected-frame
                                                           -nomis/wc/old-file-suffix)))
   (let* ((filename (-nomis/wc/wc-name->filename wc-name
-                                                nomis/wc/directory
+                                                nomis/wc/directory/old-selected-frame
                                                 -nomis/wc/old-file-suffix))
          (window-state (nomis/read-from-file filename))
          (hacked-window-state (-nomis/wc/window-state/replace-unknown-buffers
