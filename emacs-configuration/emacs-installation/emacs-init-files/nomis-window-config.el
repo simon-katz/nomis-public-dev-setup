@@ -4,6 +4,7 @@
 
 ;;;; _______________ Requires __________________________________________________
 
+(require 'dash)
 (require 'nomis-save-and-read-data)
 (require 'treepy)
 (require 'cl-format)
@@ -16,6 +17,9 @@
 (defconst nomis/wc/directory/single-frame
   "~/.emacs-nomis-frame-window-config/single-frame/")
 
+(defconst nomis/wc/directory/all-frames
+  "~/.emacs-nomis-frame-window-config/all-frames/")
+
 (defvar nomis/wc/root-dir-for-searches nil)
 
 ;;;; _______________ Private things ____________________________________________
@@ -25,6 +29,9 @@
 
 (defconst -nomis/wc/single-frame-file-suffix
   ".frame-config")
+
+(defconst -nomis/wc/all-frames-file-suffix
+  ".all-frames-config")
 
 (defun -nomis/wc/wc-name->filename (wc-name directory file-suffix)
   (concat directory wc-name file-suffix))
@@ -205,6 +212,43 @@
          (info (nomis/read-from-file filename)))
     (-nomis/wc/window-state/make-frame-using-frame-info info)
     (message "Restored single frame config: %s"
+             wc-name)))
+
+;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+;;;; Save current frame (windows, size and position), and restore to
+;;;; a new frame
+
+(defun nomis/wc/save-all-frames (wc-name)
+  (interactive (list (-nomis/wc/interactive-wc-name-stuff
+                      :save
+                      nomis/wc/directory/all-frames
+                      -nomis/wc/all-frames-file-suffix)))
+  (nomis/save-to-file (-nomis/wc/wc-name->filename
+                       wc-name
+                       nomis/wc/directory/all-frames
+                       -nomis/wc/all-frames-file-suffix)
+                      (-map #'-nomis/wc/frame->frame-info
+                            (frame-list))
+                      :pretty? t)
+  (message "Saved all-frames config: %s" wc-name))
+
+(defun nomis/wc/restore-multiple-frames (wc-name)
+  (interactive (list (-nomis/wc/interactive-wc-name-stuff
+                      :restore
+                      nomis/wc/directory/all-frames
+                      -nomis/wc/all-frames-file-suffix)))
+  (let* ((frames-to-delete (when (y-or-n-p "Delete existing frames?")
+                             (frame-list)))
+         (filename (-nomis/wc/wc-name->filename
+                    wc-name
+                    nomis/wc/directory/all-frames
+                    -nomis/wc/all-frames-file-suffix))
+         (infos (nomis/read-from-file filename)))
+    (dolist (info infos)
+      (-nomis/wc/window-state/make-frame-using-frame-info info))
+    (dolist (frame frames-to-delete)
+      (delete-frame frame))
+    (message "Restored all-frames config: %s"
              wc-name)))
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
