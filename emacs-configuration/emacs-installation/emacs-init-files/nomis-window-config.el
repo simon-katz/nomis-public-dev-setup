@@ -176,11 +176,6 @@
     (find-name-dired root-directory
                      filename)))
 
-(prog1 (define-prefix-command 'nomis/wc/keymap)
-  (define-key nomis/wc/keymap (kbd "s") 'nomis/wc/old-save-selected-frame)
-  (define-key nomis/wc/keymap (kbd "r") 'nomis/wc/old-restore-single-frame-to-selected-frame)
-  (define-key nomis/wc/keymap (kbd "/") 'nomis/wc/search-for-file))
-
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ;;;; Restore just-closed frame
 
@@ -198,6 +193,14 @@
       (user-error "There is no deleted frame to restore")
     (let* ((info (pop nomis/wc/just-closed-frame-info-list)))
       (-nomis/wc/window-state/make-frame-using-frame-info info))))
+
+;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+;;;; keymap
+
+(prog1 (define-prefix-command 'nomis/wc/keymap)
+  (define-key nomis/wc/keymap (kbd "s") 'nomis/wc/old-save-selected-frame)
+  (define-key nomis/wc/keymap (kbd "r") 'nomis/wc/old-restore-single-frame-to-selected-frame)
+  (define-key nomis/wc/keymap (kbd "/") 'nomis/wc/search-for-file))
 
 ;;;; ___________________________________________________________________________
 
