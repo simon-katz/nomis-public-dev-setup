@@ -179,9 +179,45 @@
       (window-state-put (-nomis/wc/window-state/replace-unknown-buffers state)
                         (frame-root-window frame)))))
 
-(defun -nomis/wc/window-state/make-frame-using-frame-info (info)
-  (-nomis/wc/apply-frame-info-to-frame (make-frame-on-current-monitor)
-                                       info))
+(defun -nomis/wc/make-restore-error-buffer (kind wc-name err)
+  (let* ((title (format "Failed to restore %s %s" kind wc-name))
+         (text (format "%s\n\n%s" title err))
+         (buffer (generate-new-buffer title)))
+    (with-current-buffer buffer
+      (insert text)
+      (read-only-mode 1))
+    buffer))
+
+(defun -nomis/wc/window-state/make-frame-using-frame-info (kind wc-name info)
+  ;; Returns nil for success, otherwise an error.
+  (let* ((frame (make-frame-on-current-monitor)))
+    (condition-case err
+        (progn
+          (-nomis/wc/apply-frame-info-to-frame frame info)
+          nil ; no error
+          )
+      (error
+       ;; First do our best to make sure the new frame is entirely
+       ;; on screen.
+       (cl-multiple-value-bind (monitor-left-px
+                                monitor-top-px
+                                _monitor-width-px
+                                _monitor-height-px)
+           (cdr (assoc 'geometry (frame-monitor-attributes frame)))
+         (set-frame-parameter frame 'left monitor-left-px)
+         (set-frame-parameter frame 'top  monitor-top-px))
+       ;; Display error buffer.
+       (let* ((buffer (-nomis/wc/make-restore-error-buffer kind wc-name err)))
+         (switch-to-buffer buffer))
+       ;; Now deal with the error.
+       (message "Failed to restore frame: %s" err)
+       ;; The following often causes a crash, so comment out.
+       ;; (when (nomis/y-or-n-p-with-quit->nil
+       ;;        (format "Failed to restore frame. Delete the new frame? (Got: %s)"
+       ;;                err))
+       ;;   (let* ((*nomis/wc/no-note-deleted-frames?* t))
+       ;;     (delete-frame frame)))
+       err))))
 
 ;;;; _______________ Public functions etc ______________________________________
 
@@ -245,9 +281,14 @@
                     wc-name
                     nomis/wc/directory/single-frame
                     -nomis/wc/single-frame-file-suffix))
-         (info (nomis/read-from-file filename)))
-    (-nomis/wc/window-state/make-frame-using-frame-info info)
-    (message "Restored single frame config: %s"
+         (info (nomis/read-from-file filename))
+         (err (-nomis/wc/window-state/make-frame-using-frame-info
+               'single
+               wc-name
+               info)))
+    (message (if err
+                 "Failed to restore single frame config: %s"
+               "Restored single frame config: %s")
              wc-name)))
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -279,13 +320,19 @@
                     wc-name
                     nomis/wc/directory/all-frames
                     -nomis/wc/all-frames-file-suffix))
-         (infos (nomis/read-from-file filename)))
+         (infos (nomis/read-from-file filename))
+         (errors? nil))
     (dolist (info infos)
-      (-nomis/wc/window-state/make-frame-using-frame-info info))
+      (let* ((err (-nomis/wc/window-state/make-frame-using-frame-info
+                   'multiple
+                   wc-name
+                   info)))
+        (when err (setq errors? t))))
     (dolist (frame frames-to-delete)
       (delete-frame frame))
-    (message "Restored all-frames config: %s"
-             wc-name)))
+    (message "Restored all-frames config: %s%s"
+             wc-name
+             (if errors? " with errors" ""))))
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ;;;; Restore just-closed frame
@@ -306,20 +353,14 @@
   (if (null nomis/wc/just-closed-frame-info-list)
       (user-error "There is no deleted frame to restore")
     (let* ((info (first nomis/wc/just-closed-frame-info-list))
-           (frame (make-frame-on-current-monitor)))
-      (condition-case err
-          (progn
-            (-nomis/wc/apply-frame-info-to-frame frame info)
-            ;; We don't do this pop if we fail to restore state (/eg/
-            ;; because frame is too small).
-            (pop nomis/wc/just-closed-frame-info-list))
-        (error (message "Failed to restore frame: %s" err)
-               (when (nomis/y-or-n-p-with-quit->nil
-                      (format "Failed to restore frame. Delete the new frame? (Got: %s)"
-                              err))
-                 (let* ((*nomis/wc/no-note-deleted-frames?* t))
-                   (delete-frame frame)))
-               nil)))))
+           (err (-nomis/wc/window-state/make-frame-using-frame-info
+                 "just-deleted-frame"
+                 "(just-deleted-frame)"
+                 info)))
+      (unless err
+        ;; We don't do this pop if we fail to restore state (/eg/
+        ;; because frame is too small).
+        (pop nomis/wc/just-closed-frame-info-list)))))
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ;;;; nomis/wc/search-for-file
