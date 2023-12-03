@@ -292,18 +292,34 @@
 
 (defvar nomis/wc/just-closed-frame-info-list '())
 
+(defvar *nomis/wc/no-note-deleted-frames?* nil)
+
 (add-hook 'delete-frame-functions 'nomis/wc/note-deleted-frame)
 
 (defun nomis/wc/note-deleted-frame (frame)
-  (push (-nomis/wc/frame->frame-info frame)
-        nomis/wc/just-closed-frame-info-list))
+  (unless *nomis/wc/no-note-deleted-frames?*
+    (push (-nomis/wc/frame->frame-info frame)
+          nomis/wc/just-closed-frame-info-list)))
 
 (defun nomis/wc/restore-just-deleted-frame ()
   (interactive)
   (if (null nomis/wc/just-closed-frame-info-list)
       (user-error "There is no deleted frame to restore")
-    (let* ((info (pop nomis/wc/just-closed-frame-info-list)))
-      (-nomis/wc/window-state/make-frame-using-frame-info info))))
+    (let* ((info (first nomis/wc/just-closed-frame-info-list))
+           (frame (make-frame-on-current-monitor)))
+      (condition-case err
+          (progn
+            (-nomis/wc/apply-frame-info-to-frame frame info)
+            ;; We don't do this pop if we fail to restore state (/eg/
+            ;; because frame is too small).
+            (pop nomis/wc/just-closed-frame-info-list))
+        (error (message "Failed to restore frame: %s" err)
+               (when (nomis/y-or-n-p-with-quit->nil
+                      (format "Failed to restore frame. Delete the new frame? (Got: %s)"
+                              err))
+                 (let* ((*nomis/wc/no-note-deleted-frames?* t))
+                   (delete-frame frame)))
+               nil)))))
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ;;;; nomis/wc/search-for-file
