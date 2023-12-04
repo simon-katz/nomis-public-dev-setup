@@ -198,15 +198,20 @@
           nil ; no error
           )
       (error
-       ;; First do our best to make sure the new frame is entirely
-       ;; on screen.
+       ;; First make sure the new frame is entirely on screen.
        (cl-multiple-value-bind (monitor-left-px
                                 monitor-top-px
-                                _monitor-width-px
-                                _monitor-height-px)
+                                monitor-width-px
+                                monitor-height-px)
            (cdr (assoc 'geometry (frame-monitor-attributes frame)))
          (set-frame-parameter frame 'left monitor-left-px)
-         (set-frame-parameter frame 'top  monitor-top-px))
+         (set-frame-parameter frame 'top  monitor-top-px)
+         (set-frame-parameter frame 'width (floor (/ monitor-width-px
+                                                     2.0
+                                                     (frame-char-width frame))))
+         (set-frame-parameter frame 'height (floor (/ monitor-height-px
+                                                      2.0
+                                                      (frame-char-height frame)))))
        ;; Display error buffer.
        (let* ((buffer (-nomis/wc/make-restore-error-buffer kind wc-name err)))
          (switch-to-buffer buffer))
