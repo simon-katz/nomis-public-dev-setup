@@ -192,6 +192,10 @@
 (defun -nomis/wc/window-state/make-frame-using-frame-info (kind wc-name info)
   ;; Returns nil for success, otherwise an error.
   (let* ((frame (make-frame-on-current-monitor)))
+    ;; Switch to "*GNU Emacs*" buffer, because some error messages
+    ;; mention the current buffer, and this buffer name won't lead to
+    ;; confusing error messages.
+    (switch-to-buffer (get-buffer-create "*Window-Config-Restore-Temp*"))
     (condition-case err
         (progn
           (-nomis/wc/apply-frame-info-to-frame frame info)
