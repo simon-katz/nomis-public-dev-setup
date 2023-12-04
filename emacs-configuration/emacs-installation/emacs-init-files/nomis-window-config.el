@@ -217,8 +217,8 @@
                                                       2.0
                                                       (frame-char-height frame)))))
        ;; Display error buffer.
-       (let* ((buffer (-nomis/wc/make-restore-error-buffer kind wc-name err)))
-         (switch-to-buffer buffer))
+       (switch-to-buffer
+        (-nomis/wc/make-restore-error-buffer kind wc-name err))
        ;; Now deal with the error.
        (message "Failed to restore frame: %s" err)
        ;; The following often causes a crash, so comment out.
