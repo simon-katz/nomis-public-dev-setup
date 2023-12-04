@@ -5,6 +5,7 @@
 ;;;; _______________ Requires __________________________________________________
 
 (require 'dash)
+(require 's)
 (require 'nomis-save-and-read-data)
 (require 'treepy)
 (require 'cl-format)
@@ -376,6 +377,16 @@
                           t)))
     (find-name-dired root-directory
                      filename)))
+
+;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+;;;; Auto-save on exit
+
+(defun -nomis/wc/auto-save-all-frames ()
+  (nomis/wc/save-all-frames (s-concat "no-commit-on-exit-"
+                                      (nomis/timestamp-yyyy-mm-dd--hh-mm-ss))))
+
+(add-hook 'kill-emacs-hook
+          '-nomis/wc/auto-save-all-frames)
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ;;;; keymap

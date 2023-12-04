@@ -103,6 +103,9 @@
 
 ;;;; ___________________________________________________________________________
 
+(defun nomis/timestamp-yyyy-mm-dd--hh-mm-ss ()
+  (format-time-string "%Y-%m-%d--%H-%M-%S"))
+
 (defun nomis/timestamp (kind)
   (cl-case kind
     (:date
