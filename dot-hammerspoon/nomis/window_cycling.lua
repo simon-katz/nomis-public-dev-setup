@@ -19,7 +19,8 @@
 local namesOfBrokenapps = {"Google Chrome",
                            "iTerm2"}
 
-local function nomisCycleAppWindowsImpl(isForward, currentWindow, currentApp)
+local function nomisCycleAppWindowsImpl(isForward, currentApp)
+   local currentWindow = hs.window.focusedWindow()
    if currentWindow == nil then
       nomisMessage("No current window")
    else
@@ -45,13 +46,12 @@ local function nomisCycleAppWindowsImpl(isForward, currentWindow, currentApp)
 end
 
 local function nomisCycleAppWindowsHelper(isForward)
-   local currentWindow = hs.window.focusedWindow()
-   local currentApp = currentWindow:application()
+   local currentApp = hs.application.frontmostApplication()
    local currentAppName = currentApp:name()
    local useHammerspoon = nomisContains(namesOfBrokenapps, currentAppName)
    if useHammerspoon then
       nomisLog("nomisCycleAppWindowsHelper: Using Hammerspoon for " .. currentAppName)
-      nomisCycleAppWindowsImpl(isForward, currentWindow, currentApp)
+      nomisCycleAppWindowsImpl(isForward, currentApp)
    else
       nomisLog("nomisCycleAppWindowsHelper: Using Command-backtick for " .. currentAppName)
       local modifiers = isForward and {"cmd"} or {"shift", "cmd"}
