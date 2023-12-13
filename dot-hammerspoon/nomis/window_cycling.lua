@@ -55,8 +55,9 @@ local function nomisCycleAppWindowsHelper(isForward)
    else
       nomisLog("nomisCycleAppWindowsHelper: Using Command-backtick for " .. currentAppName)
       local modifiers = isForward and {"cmd"} or {"shift", "cmd"}
-      -- Send the keystroke directly to the app. If we don't do that, perhaps we'd
-      -- reinvoke skhd and then this function, and so get into an infinite recursion.
+      -- Send the keystroke directly to the app. If we don't do that,
+      -- perhaps we'd reinvoke skhd and then this function, and so get
+      -- into an infinite recursion.
       hs.eventtap.keyStroke(modifiers, "`", nil, currentApp)
    end
 end
