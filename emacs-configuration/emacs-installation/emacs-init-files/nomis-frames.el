@@ -86,11 +86,14 @@
 (define-key global-map (kbd "M-`") 'other-frame)
 (define-key global-map (kbd "M-~") 'other-frame-backwards)
 
-;; M-` doesn't get through to Emacs when you make Emacs active using
-;; the Witch application chooser thing and the current space has no
-;; window from that instance of Emacs. But C-M-` does, so have that as
-;; well:
-(define-key global-map (kbd "C-M-`") 'other-frame)
+;; This problem was due to a bug in your Hammerspoon config, which
+;; you've fixed. But keep this for the moment at least, commented out.
+;;
+;; ;; M-` doesn't get through to Emacs when you make Emacs active using
+;; ;; the Witch application chooser thing and the current space has no
+;; ;; window from that instance of Emacs. But C-M-` does, so have that as
+;; ;; well:
+;; (define-key global-map (kbd "C-M-`") 'other-frame)
 
 ;;;; ___________________________________________________________________________
 ;;;; ---- Default frame size ----
