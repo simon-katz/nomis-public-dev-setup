@@ -20,6 +20,8 @@ local namesOfBrokenapps = {"Google Chrome",
                            "iTerm2"}
 
 local function nomisCycleAppWindowsImpl(isForward, currentApp)
+   -- This has become very slow recently, maybe since upgrading to
+   -- macOS Sonoma, maybe before that.
    local currentWindow = hs.window.focusedWindow()
    if currentWindow == nil then
       nomisMessage("No current window")
@@ -32,7 +34,7 @@ local function nomisCycleAppWindowsImpl(isForward, currentApp)
       end)
       local windows = wf:getWindows(hs.window.filter.sortByCreatedLast)
       if #windows == 0 then
-         nomisMessage("ERROR: nomisCycleAppWindowsHelper: Found zero windows")
+         nomisMessage("ERROR: nomisCycleAppWindows: Found zero windows")
       elseif #windows == 1 then
          nomisMessage("There are no other windows")
       else
