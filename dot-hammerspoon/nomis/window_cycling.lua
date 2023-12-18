@@ -16,8 +16,13 @@
 -- TODO: Maybe reply at the above link giving this improved implementation.
 --       (and remember you have `nomisIndexof` and `nomisContains`).
 
-local namesOfBrokenapps = {"Google Chrome",
-                           "iTerm2"}
+local namesOfBrokenapps = {
+   -- The Command-` bug that this fixes has been fixed, so this is no
+   -- longer needed.
+   -- Was:
+   -- "Google Chrome",
+   -- "iTerm2"
+}
 
 local function nomisCycleAppWindowsImpl(isForward, currentApp)
    -- This has become very slow recently, maybe since upgrading to
