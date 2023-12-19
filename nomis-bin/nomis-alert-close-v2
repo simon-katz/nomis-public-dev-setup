@@ -23,9 +23,11 @@
 # Copied-and-changed from https://gist.github.com/lancethomps/a5ac103f334b171f70ce2ff983220b4f?permalink_comment_id=4534126#gistcomment-4534126
 
 osascript -e 'tell application "System Events"
-    try
-        click menu bar item 1 of menu bar 1 of application process "Control Center"
-    end try
+    # This was doing nothing except taking up several seconds.
+    # try
+    #     click menu bar item 1 of menu bar 1 of application process "Control Center"
+    # end try
+    display dialog "Dismissing notifications" buttons {"OK"}
     try
         set _groups to groups of UI element 1 of scroll area 1 of group 1 of window "Notification Center" of application process "NotificationCenter"
         repeat with _group in _groups
@@ -33,9 +35,13 @@ osascript -e 'tell application "System Events"
             repeat with _action in _actions
                 if description of _action is in {"Schlie§en", "Alle entfernen", "Close", "Clear All"} then
                     perform _action
+                    display dialog "That was once around the inner loop" buttons {"OK"}
                 end if
             end repeat
+            display dialog "That was once around the outer loop" buttons {"OK"}
         end repeat
+        display dialog "Done loops" buttons {"OK"}
     end try
+    display dialog "Done" buttons {"OK"}
     -- key code 53 # Escape Key
 end tell'
