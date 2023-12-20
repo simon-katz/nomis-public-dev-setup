@@ -69,18 +69,3 @@ require("nomis/totalspaces3")
 -- require("nomis/z_obsolete/window_manipulation_using_applescripts")
 require("nomis/window_manipulation")
 require("nomis/window_cycling")
-
-
--- TEMP
-
--- Close all visible notifications in Notification Center.
--- hs.hotkey.bind({"ctrl", "option", "cmd"}, "-", function()
---       nomisMessage("In Hammerspoon ctrl-option-cmd--")
---       hs.task
---          .new("/usr/bin/osascript", nil, {
---                  "-l",
---                  "JavaScript",
---                  os.getenv("HOME") .. "/development-100/repositories/nomis/dev-setup/nomis-public-dev-setup/nomis-bin/jxa/close_notifications.js",
---              })
---          :start()
--- end)
