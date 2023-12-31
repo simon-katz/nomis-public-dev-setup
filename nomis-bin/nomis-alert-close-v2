@@ -1,3 +1,0 @@
-#!/bin/bash
-
-osascript /Users/simonkatz/development-100/repositories/nomis/dev-setup/nomis-public-dev-setup/nomis-bin/nomis-alert-close-v2.applescript

@@ -135,5 +135,5 @@ fn         + ctrl + alt + cmd - 0x2A     : ~/bin-private/hs -c "nomisWindowMoveT
 
 ### Notifications / alerts
 
-             ctrl + alt  + cmd - 0x1B     : ~/nomis-bin/nomis-alert-close-v2          # 0x1B is -
+     shift + ctrl + alt  + cmd - 0x1B     : ~/nomis-bin/nomis-alert-close-all         # 0x1B is -
              ctrl + alt        - 0x1B     : ~/nomis-bin/nomis-alert-create-test-items # 0x1B is -
