@@ -37,5 +37,4 @@ tell application "System Events"
             end repeat
         end repeat
     end try
-    -- key code 53 # Escape Key
 end tell
