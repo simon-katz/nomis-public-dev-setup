@@ -1,0 +1,5 @@
+#!/bin/bash
+
+osascript -e 'display notification "(1) Lorem ipsum dolor sit amet" with title "Title 300"'
+osascript -e 'display notification "(2) Lorem ipsum dolor sit amet" with title "Title 300"'
+osascript -e 'display notification "(3) Lorem ipsum dolor sit amet" with title "Title 300"'
