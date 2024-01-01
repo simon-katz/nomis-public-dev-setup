@@ -146,4 +146,5 @@ fn                             - 0x1B     : ~/nomis-bin/nomis-alerts-expand-or-d
 fn                + alt        - 0x1B     : ~/nomis-bin/nomis-alerts-expand-or-dismiss        # 0x1B is -
 fn + shift                     - 0x1B     : ~/nomis-bin/nomis-alert-close-all                 # 0x1B is -
 fn         + ctrl              - 0x1B     : ~/nomis-bin/nomis-alert-create-test-notification  # 0x1B is -
+fn                             - 0x18     : ~/nomis-bin/nomis-alerts-describe                 # 0x18 is =, with shift it's +
 # fn                             - 0x18     : ~/nomis-bin/nomis-alert-expand-items            # 0x18 is =, with shift it's +
