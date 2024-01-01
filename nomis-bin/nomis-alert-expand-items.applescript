@@ -19,8 +19,7 @@ set _msg_for_normal_action     to "Expanding notifications"
 set _msg_when_no_notifications to "There are no notifications to expand"
 set _msg_for_not_needed_descs  to "Notifications are already expanded (or there is a single notification)"
 set _actions_of_interest       to {"press"}
-set _work_on_oldest_notitication_p to false
-set _needed_descs to " / AXScrollToVisible / press / Show Details / Show / Clear All"
+set _needed_descs to " / AXScrollToVisible / press / Show Details"
 
 to actionWhenNoActionToPerform()
     logInfo("Expand: This cannot happen")
@@ -52,14 +51,12 @@ tell application "System Events"
                         set _desc to description of _action
                         set _descs to _descs & " / " & _desc
                         if _desc is in _actions_of_interest then
-                            if _action_to_perform = null or _work_on_oldest_notitication_p then
-                                set _action_to_perform to _action
-                            end if
+                            set _action_to_perform to _action
                         end if
                     end repeat
                 end repeat
             end repeat
-            if _needed_descs = null or _descs = _needed_descs then
+            if _needed_descs = null or _descs starts with _needed_descs then
                 if _action_to_perform = null then
                     tell me to actionWhenNoActionToPerform()
                 else
