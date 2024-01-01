@@ -21,6 +21,29 @@
 -- Ventura:
 -- Copied-and-changed from https://gist.github.com/lancethomps/a5ac103f334b171f70ce2ff983220b4f?permalink_comment_id=4534126#gistcomment-4534126
 
+global _debugP
+set _debugP to false
+
+to displayMessage(msg)
+    do shell script "~/bin-private/hs -c 'nomisMessage(\"" & msg & "\")'"
+end
+
+to logInfo(msg)
+    displayMessage(msg)
+end
+
+to logDebug(msg)
+    if _debugP then
+        displayMessage(msg)
+    end if
+end
+
+logDebug("BEGIN _________________________________")
+
+logDebug("In nomis-alert-close-all.applescript")
+
+logInfo("Dismissing all notifications (may not dismiss all when expanded)")
+
 tell application "System Events"
     -- This was doing nothing except taking up several seconds.
     -- try
@@ -38,3 +61,5 @@ tell application "System Events"
         end repeat
     end try
 end tell
+
+logDebug("END _________________________________")
