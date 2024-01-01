@@ -135,5 +135,15 @@ fn         + ctrl + alt + cmd - 0x2A     : ~/bin-private/hs -c "nomisWindowMoveT
 
 ### Notifications / alerts
 
-     shift + ctrl + alt  + cmd - 0x1B     : ~/nomis-bin/nomis-alert-close-all         # 0x1B is -
-             ctrl + alt        - 0x1B     : ~/nomis-bin/nomis-alert-create-test-items # 0x1B is -
+# When the Option key is down, all notifications are dismissed. (That's
+# how the AppleScript in `nomis-alerts-expand-or-dismiss` works.)
+# So:
+# - Use a keyboard shortcut that doesn't have the Option to dismiss
+#   a single notification.
+# - Use the Option key to Dismiss all notifications.
+
+fn                             - 0x1B     : ~/nomis-bin/nomis-alerts-expand-or-dismiss # 0x1B is -
+fn                + alt        - 0x1B     : ~/nomis-bin/nomis-alerts-expand-or-dismiss # 0x1B is -
+fn + shift                     - 0x1B     : ~/nomis-bin/nomis-alert-close-all          # 0x1B is -
+fn         + ctrl              - 0x1B     : ~/nomis-bin/nomis-alert-create-test-items  # 0x1B is -
+# fn                             - 0x18     : ~/nomis-bin/nomis-alert-expand-items       # 0x18 is =, with shift it's +
