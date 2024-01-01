@@ -2,6 +2,21 @@
 
 # See also https://www.bennish.net/web-notifications.html
 
-osascript -e 'display notification "(1) Lorem ipsum dolor sit amet" with title "Title 300"'
-osascript -e 'display notification "(2) Lorem ipsum dolor sit amet" with title "Title 300"'
-osascript -e 'display notification "(3) Lorem ipsum dolor sit amet" with title "Title 300"'
+counter_file=/tmp/nomis-test-notification-count.txt
+
+if ! test -f ${counter_file}; then
+  echo "0" > ${counter_file}
+fi
+
+inc_count_in_file () {
+  awk -F, '{$1=$1+1}1' OFS=, /tmp/nomis-test-notification-count.txt > /tmp/nomis-test-notification-count-temp.txt && mv /tmp/nomis-test-notification-count-temp.txt /tmp/nomis-test-notification-count.txt
+
+}
+
+create_notification () {
+    inc_count_in_file
+    local cnt=$(<${counter_file})
+    osascript -e "display notification \"#${cnt} Lorem ipsum dolor sit amet\" with title \"Title #${cnt}\""
+}
+
+create_notification
