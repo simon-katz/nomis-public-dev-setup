@@ -30,23 +30,26 @@ tell application "System Events"
     on error errMsg number errNum
         tell me to logInfo(_msg_when_no_notifications)
     end try
-    if not _w = null
+    if _w is not null
         try
             repeat with _group1 in groups of _w
-                tell me to logInfo("1 " & description of _group1)
-                repeat with _group2 ¬
+                tell me to logInfo("1-top-level " & description of _group1)
+                repeat with _item_group ¬
                        in groups of UI element 1 of scroll area 1 of _group1
-                    tell me to logInfo("  2 " & description of _group2)
-                    local _descs
-                    set _descs to ""
-                    set _actions to actions of _group2
+                    tell me to logInfo("  --------")
+                    tell me to logInfo("  2-item: " & description of _item_group)
+                    local _app_item_descs_as_string
+                    set _app_item_descs_as_string to ""
+                    set _actions to actions of _item_group
                     repeat with _action in _actions
-                        set _desc to description of _action
-                        tell me to logInfo("    3 " & _desc)
-                        set _descs to _descs & " / " & _desc
+                        local _item_desc
+                        set _item_desc to description of _action
+                        tell me to logInfo("    3-action: " & _item_desc)
+                        set _app_item_descs_as_string to _app_item_descs_as_string & " / " & _item_desc
                     end repeat
-                    tell me to logInfo("  2 _descs = `" & _descs & "`")
+                    tell me to logInfo("  2-item: _app_item_descs_as_string = `" & _app_item_descs_as_string & "`")
                 end repeat
+                tell me to logInfo("  --------")
             end repeat
         on error errMsg number errNum
             display dialog errMsg buttons {"OK"}
