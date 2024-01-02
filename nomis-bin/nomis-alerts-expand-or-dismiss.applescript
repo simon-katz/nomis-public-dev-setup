@@ -67,9 +67,9 @@ end
 -- Messages
 
 set _msg_when_no_notifications to "There are no notifications"
-set _expand_msg                to "Expanding notifications"
-set _dismiss_msg               to "Dismissing notification"
-set _dismiss_all_for_app_msg   to "Dismissing all notifications for app"
+set _expand_msg                to "Expanded notifications"
+set _dismiss_msg               to "Dismissed notification"
+set _dismiss_all_for_app_msg   to "Dismissed all notifications for app"
 
 --------------------------------------------------------------------------------
 -- Main
@@ -77,6 +77,9 @@ set _dismiss_all_for_app_msg   to "Dismissing all notifications for app"
 logDebug("BEGIN _________________________________")
 
 logDebug("In nomis-alerts-expand-or-describe.applescript")
+
+set _press_desc to "press"
+set _close_desc to "Close"
 
 tell application "System Events"
     local _w
@@ -87,45 +90,53 @@ tell application "System Events"
     on error errMsg number errNum
         tell me to logInfo(_msg_when_no_notifications)
     end try
-    if not _w = null
+    if _w is not null
         try
-            local _action_to_perform
-            set _action_to_perform to null
+
+            -- See what we've got,
+            -- saving to `_close_action_for_all`
+            -- and       `_press_action_for_all`.
+            local _close_action_for_all
+            local _press_action_for_all
+            set _close_action_for_all to null
+            set _press_action_for_all to null
             repeat with _group1 in groups of _w
                 tell me to logDebug("1-top-level " & description of _group1)
-                repeat with _group_for_app ¬
+                repeat with _item_group ¬
                        in groups of UI element 1 of scroll area 1 of _group1
+
+                    -- See what we've got for the app,
+                    -- saving to `_close_action_for_app`
+                    -- and       `_press_action_for_app`.
                     tell me to logDebug("  --------")
-                    tell me to logDebug("  2-app: " & description of _group_for_app)
-                    local _app_item_descs
+                    tell me to logDebug("  2-item: " & description of _item_group)
                     local _app_item_descs_as_string
-                    local _close_action, _maybe_expand_action
-                    set _app_item_descs to {}
+                    local _close_action_for_app
+                    local _press_action_for_app
                     set _app_item_descs_as_string to ""
-                    set _close_action to null
-                    set _maybe_expand_action to null
-                    set _actions to actions of _group_for_app
+                    set _close_action_for_app to null
+                    set _press_action_for_app to null
+                    set _actions to actions of _item_group
                     repeat with _action in _actions
+                        local _item_desc
                         set _item_desc to description of _action
-                        tell me to logDebug("    3-item: " & _item_desc)
-                        set end of _app_item_descs to _item_desc
+                        tell me to logDebug("    3-action: " & _item_desc)
                         set _app_item_descs_as_string to _app_item_descs_as_string & " / " & _item_desc
-                        if _item_desc = "Press" then
-                            set _maybe_expand_action to _action
-                        else if _item_desc = "Close" then
-                            set _close_action to _action
+                        if _item_desc = _press_desc then
+                            set _press_action_for_app to _action
+                        else if _item_desc = _close_desc then
+                            set _close_action_for_app to _action
                         end if
                     end repeat
-                    tell me to logDebug("  2-app: _app_item_descs_as_string = `" & _app_item_descs_as_string & "`")
-                    if "Close" is in _app_item_descs then
-                        tell me to logDebug("  2-app: for closing")
-                        tell me to logDebug("  2-app: " & description of _close_action)
-                        set _action_to_perform to _close_action
-                    else if "press" is in _app_item_descs then
-                        tell me to logDebug("  2-app: for expanding")
-                        tell me to logDebug("  2-app: " & description of _maybe_expand_action)
-                        if _action_to_perform = null then
-                            set _action_to_perform to _maybe_expand_action
+                    tell me to logDebug("  2-item: _app_item_descs_as_string = `" & _app_item_descs_as_string & "`")
+
+                    -- Update `_close_action_for_all`
+                    -- and    `_press_action_for_all`.
+                    if _close_action_for_app is not null then
+                        set _close_action_for_all to _close_action_for_app
+                    else if _press_action_for_app is not null then
+                        if _press_action_for_all = null then
+                            set _press_action_for_all to _press_action_for_app
                         end if
                     else
                         tell me to logInfo("SHOULD NOT GET HERE")
@@ -133,17 +144,28 @@ tell application "System Events"
                 end repeat
                 tell me to logDebug("  --------")
             end repeat
+
+            -- Decide what to do, choosing a `Close` in preference to a `press`.
+            local _action_to_perform
+            if _close_action_for_all is not null then
+                set _action_to_perform to _close_action_for_all
+            else if _press_action_for_all is not null then
+                set _action_to_perform to _press_action_for_all
+            end
+
+            -- Do what we've decided to do.
             if _action_to_perform = null then
                 tell me to logInfo("COULD NOT WORK OUT WHAT TO DO")
             else
+                perform _action_to_perform
                 -- I tried extracting this to a function, but I couldn't
                 -- manage it.
                 -- BEGIN Want this as a separate `messageForAction` function
                 local _desc, _msg
                 set _desc to description of _action_to_perform
-                if _desc = "press" then
+                if _desc = _press_desc then
                     set _msg to _expand_msg
-                else if _desc = "Close" then
+                else if _desc = _close_desc then
                     local _modifier_keys
                     tell me to set _modifier_keys to getModifierKeys()
                     if option_down of _modifier_keys then
@@ -156,7 +178,6 @@ tell application "System Events"
                 end if
                 -- END Want this as a separate `messageForAction` function
                 tell me to logInfo(_msg)
-                perform _action_to_perform
             end if
         on error errMsg number errNum
             display dialog errMsg buttons {"OK"}
