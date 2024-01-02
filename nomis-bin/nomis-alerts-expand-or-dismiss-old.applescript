@@ -16,18 +16,18 @@ to logDebug(msg)
 end
 
 set _msg_when_no_notifications to "There are no notifications"
-set _expand_msg                to "Expanding notifications"
-set _msg_for_not_needed_descs  to "Notifications are already expanded (or there is a single notification)"
-set _actions_of_interest       to {"press"}
-set _needed_descs to " / AXScrollToVisible / press / Show Details"
+set _dismiss_msg               to "Dismissing notification(s)"
+set _msg_for_not_needed_descs  to "Close: This cannot happen"
+set _actions_of_interest       to {"Close"}
+set _needed_descs to null -- anything
 
 to actionWhenNoActionToPerform()
-    logInfo("Expand: This cannot happen")
+    do shell script "nomis-alert-expand-items"
 end
 
 logDebug("BEGIN _________________________________")
 
-logDebug("In nomis-alert-expand-items.applescript")
+logDebug("In nomis-alerts-expand-or-dismiss.applescript")
 
 tell application "System Events"
     local _w
@@ -44,9 +44,9 @@ tell application "System Events"
             set _action_to_perform to null
             set _descs to ""
             repeat with _group1 in groups of _w
-                repeat with _group2 ¬
+                repeat with _group_for_app ¬
                        in groups of UI element 1 of scroll area 1 of _group1
-                    set _actions to actions of _group2
+                    set _actions to actions of _group_for_app
                     repeat with _action in _actions
                         set _desc to description of _action
                         set _descs to _descs & " / " & _desc
@@ -56,11 +56,11 @@ tell application "System Events"
                     end repeat
                 end repeat
             end repeat
-            if _needed_descs = null or _descs starts with _needed_descs then
+            if _needed_descs = null or _descs = _needed_descs then
                 if _action_to_perform = null then
                     tell me to actionWhenNoActionToPerform()
                 else
-                    tell me to logInfo(_expand_msg)
+                    tell me to logInfo(_dismiss_msg)
                     perform _action_to_perform
                 end if
             else
