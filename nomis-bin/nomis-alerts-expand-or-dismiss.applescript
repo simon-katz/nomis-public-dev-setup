@@ -132,7 +132,8 @@ tell application "System Events"
 
                     -- Update `_close_action_for_all`
                     -- and    `_press_action_for_all`.
-                    if _close_action_for_app is not null then
+                    if _close_action_for_app is not null ¬
+                    and _close_action_for_all is null then
                         set _close_action_for_all to _close_action_for_app
                     else if _press_action_for_app is not null then
                         if _press_action_for_all = null then
