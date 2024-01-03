@@ -37,7 +37,12 @@ tell application "System Events"
                 repeat with _item_group ¬
                        in groups of UI element 1 of scroll area 1 of _group1
                     tell me to logInfo("  --------")
-                    tell me to logInfo("  2-item: " & description of _item_group)
+                    tell me to logInfo("  2-item: " ¬
+                                   & description of _item_group ¬
+                                   & " " ¬
+                                   & the value of static text 1 of _item_group ¬
+                                   & " " ¬
+                                   & the value of static text 2 of _item_group)
                     local _app_item_descs_as_string
                     set _app_item_descs_as_string to ""
                     set _actions to actions of _item_group

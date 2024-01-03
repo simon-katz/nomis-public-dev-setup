@@ -109,7 +109,12 @@ tell application "System Events"
                     -- saving to `_close_action_for_app`
                     -- and       `_press_action_for_app`.
                     tell me to logDebug("  --------")
-                    tell me to logDebug("  2-item: " & description of _item_group)
+                    tell me to logDebug("  2-item: " ¬
+                                   & description of _item_group ¬
+                                   & " " ¬
+                                   & the value of static text 1 of _item_group ¬
+                                   & " " ¬
+                                   & the value of static text 2 of _item_group)
                     local _app_item_descs_as_string
                     local _close_action_for_app
                     local _press_action_for_app
