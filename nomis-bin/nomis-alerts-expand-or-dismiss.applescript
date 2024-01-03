@@ -138,14 +138,27 @@ tell application "System Events"
                     -- Update `_close_action_for_all`
                     -- and    `_press_action_for_all`.
                     if _close_action_for_app is not null then
-                        -- TODO: This is good when an app has multiple
-                        --       notifications -- it dismisses the top-most
-                        --       (most recent) one.
-                        --       But when multiple apps have notifications,
-                        --       it dismisses the bottom-most one.
-                        --       And I don't know how we can distinguish
-                        --       between those situations.
-                        --       Maybe just User Be Aware.
+                        -- This is good when an app has multiple notifications
+                        -- (it dismisses the top-most (most recent) one).
+                        --
+                        -- But when multiple apps have notifications, it
+                        -- dismisses the bottom-most one. And I don't know how
+                        -- we can distinguish between those situations.
+                        -- Maybe just User Be Aware.
+                        --
+                        -- You can see /eg/:
+                        --   BEGIN _________________________________
+                        --   In nomis-alerts-expand-or-describe.applescript
+                        --   1-top-level group
+                        --     2-item: Title #371 #371 Lorem ipsum dolor sit amet
+                        --     2-item: Notification #331 www.bennish.net
+                        --     2-item: Title #376 #376 Lorem ipsum dolor sit amet
+                        --     2-item: Notification #334 www.bennish.net
+                        --   END _________________________________
+                        --
+                        -- The Notification Centre groups notifications by application,
+                        -- but I don't know how to do that. The structure we are
+                        -- navigating does not have the notion of applications.
                         set _close_action_for_all to _close_action_for_app
                     else if _press_action_for_app is not null then
                         if _press_action_for_all = null then
