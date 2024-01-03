@@ -180,10 +180,11 @@ tell application "System Events"
                 tell me to logInfo(_msg)
             end if
         on error errMsg number errNum
-            display dialog errMsg buttons {"OK"}
+            display dialog errMsg buttons {"OK"} -- Do this first because the following is flakey.
             tell me to logInfo("ERROR: Details follow...")
-            set _msg to "ERROR: " & errMsg
-            tell me to logInfo(_msg)
+            local _msg
+            set _msg to do shell script "echo " & quoted form of errMsg & " | nomis-remove-quotes-and-newlines"
+            tell me to logInfo("ERROR: " & _msg)
         end try
     end if
 end tell
