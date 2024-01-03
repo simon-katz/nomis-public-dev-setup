@@ -132,8 +132,15 @@ tell application "System Events"
 
                     -- Update `_close_action_for_all`
                     -- and    `_press_action_for_all`.
-                    if _close_action_for_app is not null ¬
-                    and _close_action_for_all is null then
+                    if _close_action_for_app is not null then
+                        -- TODO: This is good when an app has multiple
+                        --       notifications -- it dismisses the top-most
+                        --       (most recent) one.
+                        --       But when multiple apps have notifications,
+                        --       it dismisses the bottom-most one.
+                        --       And I don't know how we can distinguish
+                        --       between those situations.
+                        --       Maybe just User Be Aware.
                         set _close_action_for_all to _close_action_for_app
                     else if _press_action_for_app is not null then
                         if _press_action_for_all = null then
