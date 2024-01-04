@@ -72,6 +72,28 @@ set _dismiss_msg               to "Dismissed notification"
 set _dismiss_all_for_app_msg   to "Dismissed all notifications for app"
 
 --------------------------------------------------------------------------------
+-- messageForAction
+
+set _press_desc to "press"
+set _close_desc to "Close"
+
+to messageForAction(_desc_of_action)
+    if _desc_of_action = my _press_desc then
+        set _msg to my _expand_msg
+    else if _desc_of_action = my _close_desc then
+        tell me to set _modifier_keys to getModifierKeys()
+        if option_down of _modifier_keys then
+            set _msg to my _dismiss_all_for_app_msg
+        else
+            set _msg to my _dismiss_msg
+        end if
+    else
+        set _msg to "SHOULD NOT GET HERE"
+    end if
+    return _msg
+end messageForAction
+
+--------------------------------------------------------------------------------
 -- Main
 
 -- The approach:
@@ -85,9 +107,6 @@ set _dismiss_all_for_app_msg   to "Dismissed all notifications for app"
 logDebug("BEGIN _________________________________")
 
 logDebug("In nomis-alerts-expand-or-describe.applescript")
-
-set _press_desc to "press"
-set _close_desc to "Close"
 
 tell application "System Events"
     set _w to null
@@ -162,23 +181,10 @@ tell application "System Events"
                 tell me to logInfo("COULD NOT WORK OUT WHAT TO DO")
             else
                 perform _action_to_perform
-                -- I tried extracting this to a function, but I couldn't
-                -- manage it.
-                -- BEGIN Want this as a separate `messageForAction` function
+                -- Passing `_action_to_perform` as a parameter causes a weird
+                -- error, so grab its description and pass that -- that works.
                 set _desc to description of _action_to_perform
-                if _desc = _press_desc then
-                    set _msg to _expand_msg
-                else if _desc = _close_desc then
-                    tell me to set _modifier_keys to getModifierKeys()
-                    if option_down of _modifier_keys then
-                        set _msg to _dismiss_all_for_app_msg
-                    else
-                        set _msg to _dismiss_msg
-                    end if
-                else
-                    set _msg to "SHOULD NOT GET HERE"
-                end if
-                -- END Want this as a separate `messageForAction` function
+                tell me to set _msg to messageForAction(_desc)
                 tell me to logInfo(_msg)
             end if
         on error errMsg number errNum
