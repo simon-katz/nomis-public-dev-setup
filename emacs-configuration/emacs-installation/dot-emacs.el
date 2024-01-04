@@ -279,6 +279,7 @@
 
 (require 'nomis-yafolding)
 (require 'nomis-yaml)
+(require 'nomis-applescript)
 
 (require 'homeless-non-lexical)
 
