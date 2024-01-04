@@ -1,7 +1,6 @@
 --------------------------------------------------------------------------------
 -- Logging using Hammerspoon
 
-global _debugP
 set _debugP to false
 
 to displayMessage(msg)
@@ -13,7 +12,7 @@ to logInfo(msg)
 end logInfo
 
 to logDebug(msg)
-    if _debugP then
+    if my _debugP then
         displayMessage(msg)
     end if
 end logDebug
