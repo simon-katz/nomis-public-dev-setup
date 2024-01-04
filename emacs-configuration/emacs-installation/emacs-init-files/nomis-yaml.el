@@ -1,4 +1,4 @@
-;;;; nomis-dirtree.el --- nomis yaml-mode tailoring ---  -*- lexical-binding: t -*-
+;;;; nomis-yaml.el --- nomis yaml-mode tailoring ---  -*- lexical-binding: t -*-
 
 (require 'yaml-mode)
 (require 'nomis-highlight-indentation)
