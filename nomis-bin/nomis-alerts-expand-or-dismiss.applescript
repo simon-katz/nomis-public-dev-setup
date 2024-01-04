@@ -74,17 +74,20 @@ set _dismiss_all_for_app_msg   to "Dismissed all notifications for app"
 --------------------------------------------------------------------------------
 -- Main
 
+-- The approach:
+--   - Find the top-most item (using y coordinate).
+--   - If it has "press" and not "Close", we have a collection
+--     of notifications. Do "press" to expand it.
+--   - If it has "Close", we have a single notification. Do "Close" to close
+--     it.
+--   - Otherwise, that's unexpected.
+
 logDebug("BEGIN _________________________________")
 
 logDebug("In nomis-alerts-expand-or-describe.applescript")
 
 set _press_desc to "press"
 set _close_desc to "Close"
-
--- TODO: New idea: Find the top-most item (using y coordinate).
---                 If it has "press" and not "Close", do "press".
---                 If it gas "Close", do "Close"
---                 Otherwise, that's unexpected.
 
 tell application "System Events"
     local _w
@@ -98,22 +101,16 @@ tell application "System Events"
     if _w is not null
         try
 
-            -- See what we've got,
-            -- saving to `_close_action_for_all`
-            -- and       `_press_action_for_all`.
-            local _close_action_for_all
-            local _press_action_for_all
-            set _close_action_for_all to null
-            set _press_action_for_all to null
+            -- Find the topmost item.
+            local _topmost_y_so_far
+            local _topmost_item_group_so_far
+            set _topmost_y_so_far          to null
+            set _topmost_item_group_so_far to null
             repeat with _group1 in groups of _w
                 tell me to logDebug("1-top-level " & description of _group1)
                 repeat with _item_group ¬
-                       in groups of UI element 1 of scroll area 1 of _group1
-
-                    -- See what we've got for the app,
-                    -- saving to `_close_action_for_app`
-                    -- and       `_press_action_for_app`.
-                    tell me to logDebug("  --------")
+                in groups of UI element 1 of scroll area 1 of _group1
+                    local _x, _y
                     set [_x, _y] to position of _item_group
                     tell me to logDebug("  2-item: " ¬
                                    & "y = " & _y & " " ¬
@@ -122,68 +119,54 @@ tell application "System Events"
                                    & the value of static text 1 of _item_group ¬
                                    & " " ¬
                                    & the value of static text 2 of _item_group)
-                    local _app_item_descs_as_string
-                    local _close_action_for_app
-                    local _press_action_for_app
-                    set _app_item_descs_as_string to ""
-                    set _close_action_for_app to null
-                    set _press_action_for_app to null
-                    set _actions to actions of _item_group
-                    repeat with _action in _actions
-                        local _item_desc
-                        set _item_desc to description of _action
-                        tell me to logDebug("    3-action: " & _item_desc)
-                        set _app_item_descs_as_string to _app_item_descs_as_string & " / " & _item_desc
-                        if _item_desc = _press_desc then
-                            set _press_action_for_app to _action
-                        else if _item_desc = _close_desc then
-                            set _close_action_for_app to _action
-                        end if
-                    end repeat
-                    tell me to logDebug("  2-item: _app_item_descs_as_string = `" & _app_item_descs_as_string & "`")
+                    if _topmost_y_so_far = null ¬
+                    or _y < _topmost_y_so_far then
+                        set _topmost_y_so_far to _y
+                        set _topmost_item_group_so_far to _item_group
+                    end
 
-                    -- Update `_close_action_for_all`
-                    -- and    `_press_action_for_all`.
-                    if _close_action_for_app is not null then
-                        -- This is good when an app has multiple notifications
-                        -- (it dismisses the top-most (most recent) one).
-                        --
-                        -- But when multiple apps have notifications, it
-                        -- dismisses the bottom-most one. And I don't know how
-                        -- we can distinguish between those situations.
-                        -- Maybe just User Be Aware.
-                        --
-                        -- You can see /eg/:
-                        --   BEGIN _________________________________
-                        --   In nomis-alerts-expand-or-describe.applescript
-                        --   1-top-level group
-                        --     2-item: Title #371 #371 Lorem ipsum dolor sit amet
-                        --     2-item: Notification #331 www.bennish.net
-                        --     2-item: Title #376 #376 Lorem ipsum dolor sit amet
-                        --     2-item: Notification #334 www.bennish.net
-                        --   END _________________________________
-                        --
-                        -- The Notification Centre groups notifications by application,
-                        -- but I don't know how to do that. The structure we are
-                        -- navigating does not have the notion of applications.
-                        set _close_action_for_all to _close_action_for_app
-                    else if _press_action_for_app is not null then
-                        if _press_action_for_all = null then
-                            set _press_action_for_all to _press_action_for_app
-                        end if
-                    else
-                        tell me to logInfo("SHOULD NOT GET HERE")
-                    end if
                 end repeat
-                tell me to logDebug("  --------")
+            end repeat
+
+            -- Log details of topmost item.
+            tell me to logDebug("  --------")
+            local _item_group
+            set _item_group to _topmost_item_group_so_far
+            local _x, _y
+            set [_x, _y] to position of _item_group
+            tell me to logDebug("  2-topmost-item: " ¬
+                           & "y = " & _y & " " ¬
+                           & description of _item_group ¬
+                           & " " ¬
+                           & the value of static text 1 of _item_group ¬
+                           & " " ¬
+                           & the value of static text 2 of _item_group)
+
+            -- Find the relevant actions of the topmost item.
+            local _actions
+            local _press_action
+            local _close_action
+            set _actions to actions of _topmost_item_group_so_far
+            set _close_action to null
+            set _press_action to null
+            repeat with _action in _actions
+                local _item_desc
+                set _item_desc to description of _action
+                tell me to logDebug("    3-action: " & _item_desc)
+                if _item_desc = _press_desc then
+                    set _press_action to _action
+                else if _item_desc = _close_desc then
+                    set _close_action to _action
+                end if
             end repeat
 
             -- Decide what to do, choosing a `Close` in preference to a `press`.
             local _action_to_perform
-            if _close_action_for_all is not null then
-                set _action_to_perform to _close_action_for_all
-            else if _press_action_for_all is not null then
-                set _action_to_perform to _press_action_for_all
+            set _action_to_perform to null
+            if _press_action is not null and _close_action is null then
+                set _action_to_perform to _press_action
+            else if _close_action is not null then
+                set _action_to_perform to _close_action
             end
 
             -- Do what we've decided to do.
