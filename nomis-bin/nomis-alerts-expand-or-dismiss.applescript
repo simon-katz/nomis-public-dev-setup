@@ -25,42 +25,42 @@ use scripting additions
 use framework "Cocoa"
 
 on getModifierKeys() -- from https://gist.github.com/Grayson/1154126?permalink_comment_id=2345023#gistcomment-2345023
-	set modifierKeysDOWN to {command_down:false, option_down:false, control_down:false, shift_down:false, fn_down:false, capslock_down:false}
-	set modifierBits to current application's NSEvent's |modifierFlags|()
-	set modifierBits to modifierBits * 1
-	if (modifierBits > 0) then
-		if (modifierBits > 8388607) then
-			-- fn key is pressed, subtract it away
-			set modifierBits to modifierBits - 8388608
-			set fn_down of modifierKeysDOWN to true
-		end if
-		if (modifierBits > 1048575) then
-			-- command key is pressed, subtract it away
-			set modifierBits to modifierBits - 1048576
-			set command_down of modifierKeysDOWN to true
-		end if
-		if (modifierBits > 524287) then
-			-- option key is pressed, subtract it away
-			set modifierBits to modifierBits - 524288
-			set option_down of modifierKeysDOWN to true
-		end if
-		if (modifierBits > 262143) then
-			-- ctrl key is pressed, subtract it away
-			set modifierBits to modifierBits - 262144
-			set control_down of modifierKeysDOWN to true
-		end if
-		if (modifierBits > 131071) then
-			-- shift key is pressed, subtract it away
-			set modifierBits to modifierBits - 131072
-			set shift_down of modifierKeysDOWN to true
-		end if
-		if (modifierBits > 65535) then
-			-- capslock key is pressed, subtract it away
-			set modifierBits to modifierBits - 65536
-			set capslock_down of modifierKeysDOWN to true
-		end if
-	end if
-	return modifierKeysDOWN
+    set modifierKeysDOWN to {command_down:false, option_down:false, control_down:false, shift_down:false, fn_down:false, capslock_down:false}
+    set modifierBits to current application's NSEvent's |modifierFlags|()
+    set modifierBits to modifierBits * 1
+    if (modifierBits > 0) then
+        if (modifierBits > 8388607) then
+            -- fn key is pressed, subtract it away
+            set modifierBits to modifierBits - 8388608
+            set fn_down of modifierKeysDOWN to true
+        end if
+        if (modifierBits > 1048575) then
+            -- command key is pressed, subtract it away
+            set modifierBits to modifierBits - 1048576
+            set command_down of modifierKeysDOWN to true
+        end if
+        if (modifierBits > 524287) then
+            -- option key is pressed, subtract it away
+            set modifierBits to modifierBits - 524288
+            set option_down of modifierKeysDOWN to true
+        end if
+        if (modifierBits > 262143) then
+            -- ctrl key is pressed, subtract it away
+            set modifierBits to modifierBits - 262144
+            set control_down of modifierKeysDOWN to true
+        end if
+        if (modifierBits > 131071) then
+            -- shift key is pressed, subtract it away
+            set modifierBits to modifierBits - 131072
+            set shift_down of modifierKeysDOWN to true
+        end if
+        if (modifierBits > 65535) then
+            -- capslock key is pressed, subtract it away
+            set modifierBits to modifierBits - 65536
+            set capslock_down of modifierKeysDOWN to true
+        end if
+    end if
+    return modifierKeysDOWN
 end
 
 --------------------------------------------------------------------------------
