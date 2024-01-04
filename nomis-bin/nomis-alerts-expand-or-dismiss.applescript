@@ -90,7 +90,6 @@ set _press_desc to "press"
 set _close_desc to "Close"
 
 tell application "System Events"
-    local _w
     set _w to null
     try
         set _w to window "Notification Center" ¬
@@ -102,15 +101,12 @@ tell application "System Events"
         try
 
             -- Find the topmost item.
-            local _topmost_y_so_far
-            local _topmost_item_group_so_far
             set _topmost_y_so_far          to null
             set _topmost_item_group_so_far to null
             repeat with _group1 in groups of _w
                 tell me to logDebug("1-top-level " & description of _group1)
                 repeat with _item_group ¬
                 in groups of UI element 1 of scroll area 1 of _group1
-                    local _x, _y
                     set [_x, _y] to position of _item_group
                     tell me to logDebug("  2-item: " ¬
                                    & "y = " & _y & " " ¬
@@ -129,9 +125,7 @@ tell application "System Events"
 
             -- Log details of topmost item.
             tell me to logDebug("  --------")
-            local _item_group
             set _item_group to _topmost_item_group_so_far
-            local _x, _y
             set [_x, _y] to position of _item_group
             tell me to logDebug("  2-topmost-item: " ¬
                            & "y = " & _y & " " ¬
@@ -142,14 +136,10 @@ tell application "System Events"
                            & the value of static text 2 of _item_group)
 
             -- Find the relevant actions of the topmost item.
-            local _actions
-            local _press_action
-            local _close_action
             set _actions to actions of _topmost_item_group_so_far
             set _close_action to null
             set _press_action to null
             repeat with _action in _actions
-                local _item_desc
                 set _item_desc to description of _action
                 tell me to logDebug("    3-action: " & _item_desc)
                 if _item_desc = _press_desc then
@@ -160,7 +150,6 @@ tell application "System Events"
             end repeat
 
             -- Decide what to do, choosing a `Close` in preference to a `press`.
-            local _action_to_perform
             set _action_to_perform to null
             if _press_action is not null and _close_action is null then
                 set _action_to_perform to _press_action
@@ -176,12 +165,10 @@ tell application "System Events"
                 -- I tried extracting this to a function, but I couldn't
                 -- manage it.
                 -- BEGIN Want this as a separate `messageForAction` function
-                local _desc, _msg
                 set _desc to description of _action_to_perform
                 if _desc = _press_desc then
                     set _msg to _expand_msg
                 else if _desc = _close_desc then
-                    local _modifier_keys
                     tell me to set _modifier_keys to getModifierKeys()
                     if option_down of _modifier_keys then
                         set _msg to _dismiss_all_for_app_msg
@@ -197,7 +184,6 @@ tell application "System Events"
         on error errMsg number errNum
             display dialog errMsg buttons {"OK"} -- Do this first because the following is flakey.
             tell me to logInfo("ERROR: Details follow...")
-            local _msg
             set _msg to do shell script "echo " & quoted form of errMsg & " | nomis-remove-quotes-and-newlines"
             tell me to logInfo("ERROR: " & _msg)
         end try

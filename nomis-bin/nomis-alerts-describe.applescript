@@ -22,7 +22,6 @@ logInfo("BEGIN _________________________________")
 logInfo("In nomis-alerts-expand-or-describe.applescript")
 
 tell application "System Events"
-    local _w
     set _w to null
     try
         set _w to window "Notification Center" ¬
@@ -45,11 +44,9 @@ tell application "System Events"
                                    & the value of static text 1 of _item_group ¬
                                    & " " ¬
                                    & the value of static text 2 of _item_group)
-                    local _app_item_descs_as_string
                     set _app_item_descs_as_string to ""
                     set _actions to actions of _item_group
                     repeat with _action in _actions
-                        local _item_desc
                         set _item_desc to description of _action
                         tell me to logInfo("    3-action: " & _item_desc)
                         set _app_item_descs_as_string to _app_item_descs_as_string & " / " & _item_desc
