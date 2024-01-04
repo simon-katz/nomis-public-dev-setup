@@ -81,6 +81,11 @@ logDebug("In nomis-alerts-expand-or-describe.applescript")
 set _press_desc to "press"
 set _close_desc to "Close"
 
+-- TODO: New idea: Find the top-most item (using y coordinate).
+--                 If it has "press" and not "Close", do "press".
+--                 If it gas "Close", do "Close"
+--                 Otherwise, that's unexpected.
+
 tell application "System Events"
     local _w
     set _w to null
@@ -109,7 +114,9 @@ tell application "System Events"
                     -- saving to `_close_action_for_app`
                     -- and       `_press_action_for_app`.
                     tell me to logDebug("  --------")
+                    set [_x, _y] to position of _item_group
                     tell me to logDebug("  2-item: " ¬
+                                   & "y = " & _y & " " ¬
                                    & description of _item_group ¬
                                    & " " ¬
                                    & the value of static text 1 of _item_group ¬

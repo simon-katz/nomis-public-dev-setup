@@ -109,7 +109,9 @@ tell application "System Events"
                     -- saving to `_close_action_for_app`
                     -- and       `_press_action_for_app`.
                     tell me to logDebug("  --------")
+                    set [_x, _y] to position of _item_group
                     tell me to logDebug("  2-item: " ¬
+                                   & "y = " & _y & " " ¬
                                    & description of _item_group ¬
                                    & " " ¬
                                    & the value of static text 1 of _item_group ¬

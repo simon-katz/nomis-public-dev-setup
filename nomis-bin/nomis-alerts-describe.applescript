@@ -37,7 +37,9 @@ tell application "System Events"
                 repeat with _item_group ¬
                        in groups of UI element 1 of scroll area 1 of _group1
                     tell me to logInfo("  --------")
+                    set [_x, _y] to position of _item_group
                     tell me to logInfo("  2-item: " ¬
+                                   & "y = " & _y & " " ¬
                                    & description of _item_group ¬
                                    & " " ¬
                                    & the value of static text 1 of _item_group ¬
