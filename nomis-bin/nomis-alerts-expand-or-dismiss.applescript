@@ -6,17 +6,17 @@ set _debugP to false
 
 to displayMessage(msg)
     do shell script "~/bin-private/hs -c 'nomisMessage(\"" & msg & "\")'"
-end
+end displayMessage
 
 to logInfo(msg)
     displayMessage(msg)
-end
+end logInfo
 
 to logDebug(msg)
     if _debugP then
         displayMessage(msg)
     end if
-end
+end logDebug
 
 --------------------------------------------------------------------------------
 -- getModifierKeys
@@ -61,7 +61,7 @@ on getModifierKeys() -- from https://gist.github.com/Grayson/1154126?permalink_c
         end if
     end if
     return modifierKeysDOWN
-end
+end getModifierKeys
 
 --------------------------------------------------------------------------------
 -- Messages
@@ -123,8 +123,7 @@ tell application "System Events"
                     or _y < _topmost_y_so_far then
                         set _topmost_y_so_far to _y
                         set _topmost_item_group_so_far to _item_group
-                    end
-
+                    end if
                 end repeat
             end repeat
 
@@ -167,7 +166,7 @@ tell application "System Events"
                 set _action_to_perform to _press_action
             else if _close_action is not null then
                 set _action_to_perform to _close_action
-            end
+            end if
 
             -- Do what we've decided to do.
             if _action_to_perform = null then
