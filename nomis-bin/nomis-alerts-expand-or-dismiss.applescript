@@ -24,7 +24,7 @@ end logDebug
 use scripting additions
 use framework "Cocoa"
 
-on getModifierKeys() -- from https://gist.github.com/Grayson/1154126?permalink_comment_id=2345023#gistcomment-2345023
+to getModifierKeys() -- from https://gist.github.com/Grayson/1154126?permalink_comment_id=2345023#gistcomment-2345023
     set modifierKeysDOWN to {command_down:false, option_down:false, control_down:false, shift_down:false, fn_down:false, capslock_down:false}
     set modifierBits to current application's NSEvent's |modifierFlags|()
     set modifierBits to modifierBits * 1
