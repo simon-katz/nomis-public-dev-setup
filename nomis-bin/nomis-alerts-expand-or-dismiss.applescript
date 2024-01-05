@@ -24,7 +24,12 @@ use scripting additions
 use framework "Cocoa"
 
 to getModifierKeys() -- from https://gist.github.com/Grayson/1154126?permalink_comment_id=2345023#gistcomment-2345023
-    set modifierKeysDOWN to {command_down:false, option_down:false, control_down:false, shift_down:false, fn_down:false, capslock_down:false}
+    set modifierKeysDOWN to {command_down:false, ¬
+                             option_down:false, ¬
+                             control_down:false, ¬
+                             shift_down:false, ¬
+                             fn_down:false, ¬
+                             capslock_down:false}
     set modifierBits to current application's NSEvent's |modifierFlags|()
     set modifierBits to modifierBits * 1
     if (modifierBits > 0) then
@@ -189,7 +194,9 @@ tell application "System Events"
         on error errMsg number errNum
             display dialog errMsg buttons {"OK"} -- Do this first because the following is flakey.
             tell me to logInfo("ERROR: Details follow...")
-            set _msg to do shell script "echo " & quoted form of errMsg & " | nomis-remove-quotes-and-newlines"
+            set _msg to do shell script ¬
+                "echo " & quoted form of errMsg & ¬
+                " | nomis-remove-quotes-and-newlines"
             tell me to logInfo("ERROR: " & _msg)
         end try
     end if
