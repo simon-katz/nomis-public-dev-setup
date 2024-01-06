@@ -74,22 +74,26 @@ set _msg_when_no_notifications to "There are no notifications"
 set _expand_msg                to "Expanded notifications"
 set _dismiss_msg               to "Dismissed notification"
 set _dismiss_all_for_app_msg   to "Dismissed all notifications for app"
+set _dismiss_all_for_app_2_msg to "Dismissed all notifications for app (even though collapsed)"
 
 --------------------------------------------------------------------------------
 -- messageForAction
 
 set _press_desc to "press"
 set _close_desc to "Close"
+set _clear_all_desc to "Clear All"
 
 to messageForAction(_desc_of_action, _option_down_p)
     if _desc_of_action = my _press_desc then
         set _msg to my _expand_msg
     else if _desc_of_action = my _close_desc then
-        if _option_down_p then
+        if _option_down_p then -- Using Option on Close does a Close All
             set _msg to my _dismiss_all_for_app_msg
         else
             set _msg to my _dismiss_msg
         end if
+    else if _desc_of_action = my _clear_all_desc then
+        set _msg to my _dismiss_all_for_app_2_msg
     else
         set _msg to "SHOULD NOT GET HERE"
     end if
@@ -161,6 +165,7 @@ tell application "System Events"
             set _actions to actions of _topmost_item_group_so_far
             set _close_action to null
             set _press_action to null
+            set _clear_all_action to null
             repeat with _action in _actions
                 set _item_desc to description of _action
                 tell me to logDebug("    3-action: " & _item_desc)
@@ -168,13 +173,17 @@ tell application "System Events"
                     set _press_action to _action
                 else if _item_desc = _close_desc then
                     set _close_action to _action
+                else if _item_desc = _clear_all_desc then
+                    set _clear_all_action to _action
                 end if
             end repeat
 
             -- Decide what to do, choosing a `Close` in preference to a `press`.
             set _option_down_p to option_down of my getModifierKeys()
             set _action_to_perform to null
-            if _press_action is not null and _close_action is null then
+            if _clear_all_action is not null and _option_down_p then
+                set _action_to_perform to _clear_all_action
+            else if _press_action is not null and _close_action is null then
                 set _action_to_perform to _press_action
             else if _close_action is not null then
                 set _action_to_perform to _close_action
