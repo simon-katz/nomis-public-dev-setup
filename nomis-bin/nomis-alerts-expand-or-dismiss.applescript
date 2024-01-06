@@ -81,12 +81,11 @@ set _dismiss_all_for_app_msg   to "Dismissed all notifications for app"
 set _press_desc to "press"
 set _close_desc to "Close"
 
-to messageForAction(_desc_of_action)
+to messageForAction(_desc_of_action, _option_down_p)
     if _desc_of_action = my _press_desc then
         set _msg to my _expand_msg
     else if _desc_of_action = my _close_desc then
-        tell me to set _modifier_keys to getModifierKeys()
-        if option_down of _modifier_keys then
+        if _option_down_p then
             set _msg to my _dismiss_all_for_app_msg
         else
             set _msg to my _dismiss_msg
@@ -173,6 +172,7 @@ tell application "System Events"
             end repeat
 
             -- Decide what to do, choosing a `Close` in preference to a `press`.
+            set _option_down_p to option_down of my getModifierKeys()
             set _action_to_perform to null
             if _press_action is not null and _close_action is null then
                 set _action_to_perform to _press_action
@@ -188,7 +188,7 @@ tell application "System Events"
                 -- Passing `_action_to_perform` as a parameter causes a weird
                 -- error, so grab its description and pass that -- that works.
                 set _desc to description of _action_to_perform
-                tell me to set _msg to messageForAction(_desc)
+                tell me to set _msg to messageForAction(_desc, _option_down_p)
                 tell me to logInfo(_msg)
             end if
         on error errMsg number errNum
