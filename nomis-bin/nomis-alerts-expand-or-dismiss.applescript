@@ -183,10 +183,10 @@ tell application "System Events"
             set _action_to_perform to null
             if _clear_all_action is not null and _option_down_p then
                 set _action_to_perform to _clear_all_action
-            else if _press_action is not null and _close_action is null then
-                set _action_to_perform to _press_action
             else if _close_action is not null then
                 set _action_to_perform to _close_action
+            else if _press_action is not null then
+                set _action_to_perform to _press_action
             end if
 
             -- Do what we've decided to do.
