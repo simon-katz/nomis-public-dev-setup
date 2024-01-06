@@ -190,9 +190,9 @@
 ;;;; ___________________________________________________________________________
 ;;;; ____ * Priorities
 
-(setq org-highest-priority ?1)
-(setq org-lowest-priority  ?9)
-(setq org-default-priority ?2)
+(setq org-highest-priority 1)
+(setq org-lowest-priority  9)
+(setq org-default-priority 2)
 
 ;;;; ___________________________________________________________________________
 ;;;; ____ * Org mode hook function
