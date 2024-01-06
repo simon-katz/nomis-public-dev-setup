@@ -197,7 +197,7 @@ tell application "System Events"
                 -- Passing `_action_to_perform` as a parameter causes a weird
                 -- error, so grab its description and pass that -- that works.
                 set _desc to description of _action_to_perform
-                tell me to set _msg to messageForAction(_desc, _option_down_p)
+                set _msg to my messageForAction(_desc, _option_down_p)
                 tell me to logInfo(_msg)
             end if
         on error errMsg number errNum
