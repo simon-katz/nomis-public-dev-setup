@@ -123,7 +123,7 @@ tell application "System Events"
     on error errMsg number errNum
         tell me to logInfo(_msg_when_no_notifications)
     end try
-    if _w is not null
+    if _w is not null then
         try
 
             -- Find the topmost item.
