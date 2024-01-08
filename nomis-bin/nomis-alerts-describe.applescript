@@ -44,14 +44,14 @@ tell application "System Events"
                                    & the value of static text 1 of _item_group ¬
                                    & " " ¬
                                    & the value of static text 2 of _item_group)
-                    set _app_item_descs_as_string to ""
+                    set _item_descs_as_string to ""
                     set _actions to actions of _item_group
                     repeat with _action in _actions
                         set _item_desc to description of _action
                         tell me to logInfo("    3-action: " & _item_desc)
-                        set _app_item_descs_as_string to _app_item_descs_as_string & " / " & _item_desc
+                        set _item_descs_as_string to _item_descs_as_string & " / " & _item_desc
                     end repeat
-                    tell me to logInfo("  2-item: _app_item_descs_as_string = `" & _app_item_descs_as_string & "`")
+                    tell me to logInfo("  2-item: _item_descs_as_string = `" & _item_descs_as_string & "`")
                 end repeat
                 tell me to logInfo("  --------")
             end repeat
