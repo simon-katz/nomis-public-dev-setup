@@ -101,6 +101,11 @@ to messageForAction(_desc_of_action, _option_down_p)
 end messageForAction
 
 --------------------------------------------------------------------------------
+-- Action item descriptions
+
+set _item_descriptions_for_slack_collapsed to {"AXScrollToVisible", "press", "Show Details", "Close", "Reply", "Clear All"}
+
+--------------------------------------------------------------------------------
 -- Main
 
 -- The approach:
@@ -162,12 +167,14 @@ tell application "System Events"
                            & the value of static text 2 of _item_group)
 
             -- Find the relevant actions of the topmost item.
+            set _item_descs to {}
             set _actions to actions of _topmost_item_group_so_far
             set _close_action to null
             set _press_action to null
             set _clear_all_action to null
             repeat with _action in _actions
                 set _item_desc to description of _action
+                set end of _item_descs to _item_desc
                 tell me to logDebug("    3-action: " & _item_desc)
                 if _item_desc = _press_desc then
                     set _press_action to _action
@@ -178,10 +185,16 @@ tell application "System Events"
                 end if
             end repeat
 
-            -- Decide what to do, choosing a `Close` in preference to a `press`.
+            -- Decide what to do.
             set _option_down_p to option_down of my getModifierKeys()
             set _action_to_perform to null
-            if _clear_all_action is not null and _option_down_p then
+            if _item_descs = _item_descriptions_for_slack_collapsed then
+                if _option_down_p then
+                    set _action_to_perform to _clear_all_action
+                else
+                    set _action_to_perform to _press_action
+                end if
+            else if _clear_all_action is not null and _option_down_p then
                 set _action_to_perform to _clear_all_action
             else if _close_action is not null then
                 set _action_to_perform to _close_action
