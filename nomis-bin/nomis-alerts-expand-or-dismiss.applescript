@@ -117,10 +117,22 @@ end messageForAction
 --------------------------------------------------------------------------------
 -- Action item descriptions
 
-set _item_descriptions_for_slack_collapsed to {"AXScrollToVisible", "press", "Show Details", "Close", "Reply", "Clear All"}
+-- Script Editor and Safari
+set _item_descs_for_collapsed_001 to ¬
+{"AXScrollToVisible", "press", "Show Details", "Show", "Clear All"}
+
+-- Chrome and Vivaldi
+set _item_descs_for_collapsed_002 to ¬
+{"AXScrollToVisible", "press", "Show Details", "Settings", "Clear All"}
+
+-- Slack
+set _item_descs_for_collapsed_003 to ¬
+{"AXScrollToVisible", "press", "Show Details", "Close", "Reply", "Clear All"}
 
 set _item_descs_s_for_collapsed_apps to ¬
-{_item_descriptions_for_slack_collapsed}
+{_item_descs_for_collapsed_001, ¬
+ _item_descs_for_collapsed_002, ¬
+ _item_descs_for_collapsed_003}
 
 --------------------------------------------------------------------------------
 -- Main
@@ -211,12 +223,8 @@ tell application "System Events"
                 else
                     set _action_to_perform to _press_action
                 end if
-            else if _clear_all_action is not null and _option_down_p then
-                set _action_to_perform to _clear_all_action
             else if _close_action is not null then
                 set _action_to_perform to _close_action
-            else if _press_action is not null then
-                set _action_to_perform to _press_action
             end if
 
             -- Do what we've decided to do.
