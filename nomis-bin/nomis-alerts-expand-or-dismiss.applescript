@@ -18,6 +18,20 @@ to logDebug(msg)
 end logDebug
 
 --------------------------------------------------------------------------------
+-- isIn
+-- An `is in` that works for a list being in a list of lists.
+
+to isIn(_item, _list)
+    repeat with _list_item in _list
+        set _equal to (_item = contents of _list_item)
+        if _equal then
+            return true
+        end if
+    end repeat
+    return false
+end isIn
+
+--------------------------------------------------------------------------------
 -- getModifierKeys
 
 use scripting additions
@@ -105,6 +119,9 @@ end messageForAction
 
 set _item_descriptions_for_slack_collapsed to {"AXScrollToVisible", "press", "Show Details", "Close", "Reply", "Clear All"}
 
+set _item_descs_s_for_collapsed_apps to ¬
+{_item_descriptions_for_slack_collapsed}
+
 --------------------------------------------------------------------------------
 -- Main
 
@@ -188,7 +205,7 @@ tell application "System Events"
             -- Decide what to do.
             set _option_down_p to option_down of my getModifierKeys()
             set _action_to_perform to null
-            if _item_descs = _item_descriptions_for_slack_collapsed then
+            if my isIn(_item_descs, _item_descs_s_for_collapsed_apps) then
                 if _option_down_p then
                     set _action_to_perform to _clear_all_action
                 else
