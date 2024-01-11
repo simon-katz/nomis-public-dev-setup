@@ -42,6 +42,7 @@ Useful in .dir-locals.el, where `add-to-list` would be wrong."
 ;;;; ___________________________________________________________________________
 
 (defun nomis/-add-to-colon-separated-string* (old-value new-item append? preceding-colon?)
+  (assert nil nil "nomis/-add-to-colon-separated-string* -- NO LONGER USED")
   (assert (or (null old-value)
               (stringp old-value)))
   (assert (stringp new-item))
@@ -83,21 +84,21 @@ Useful in .dir-locals.el, where `add-to-list` would be wrong."
 
 ;; Tests:
 
-(progn
-  (makunbound 'nomis/xyz-123)
-  ;; (setq nomis/xyz-123 "")
-  (nomis/add-to-colon-separated-string-local 'nomis/xyz-123 "y")
-  (nomis/add-to-colon-separated-string-local 'nomis/xyz-123 "x")
-  (nomis/add-to-colon-separated-string-local 'nomis/xyz-123 "z" t)
-  nomis/xyz-123)
+;; (progn
+;;   (makunbound 'nomis/xyz-123)
+;;   ;; (setq nomis/xyz-123 "")
+;;   (nomis/add-to-colon-separated-string-local 'nomis/xyz-123 "y")
+;;   (nomis/add-to-colon-separated-string-local 'nomis/xyz-123 "x")
+;;   (nomis/add-to-colon-separated-string-local 'nomis/xyz-123 "z" t)
+;;   nomis/xyz-123)
 
-(progn
-  (makunbound 'nomis/xyz-123)
-  ;; (setq nomis/xyz-123 "")
-  (nomis/add-to-colon-separated-string-local 'nomis/xyz-123 "y" nil t)
-  (nomis/add-to-colon-separated-string-local 'nomis/xyz-123 "x" nil t)
-  (nomis/add-to-colon-separated-string-local 'nomis/xyz-123 "z" t   t)
-  nomis/xyz-123)
+;; (progn
+;;   (makunbound 'nomis/xyz-123)
+;;   ;; (setq nomis/xyz-123 "")
+;;   (nomis/add-to-colon-separated-string-local 'nomis/xyz-123 "y" nil t)
+;;   (nomis/add-to-colon-separated-string-local 'nomis/xyz-123 "x" nil t)
+;;   (nomis/add-to-colon-separated-string-local 'nomis/xyz-123 "z" t   t)
+;;   nomis/xyz-123)
 
 ;;;; ___________________________________________________________________________
 
