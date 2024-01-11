@@ -20,10 +20,7 @@ that are showing the buffer."
               '((name . goto-end-of-messages-buffer))))
 
 (defun nomis/fix-broken-messages-window/undo ()
-  "Sometimes the *Messages* buffer stops tailing. When that happens, call
-this for a bit of a fix.
-This simply moves window-point to the end of the buffer in all windows
-that are showing the buffer."
+  "Undo the effect of `nomis/fix-broken-messages-window`."
   (interactive)
   (advice-remove 'message
                  'goto-end-of-messages-buffer))
