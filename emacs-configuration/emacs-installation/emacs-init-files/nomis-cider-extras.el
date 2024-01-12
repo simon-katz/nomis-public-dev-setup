@@ -147,6 +147,9 @@
 ;;;; ___________________________________________________________________________
 ;;;; `nomis/add-cider-clojure-cli-alias`
 
+;;;; TODO: Maybe change this so that an existing alias is first removed, and
+;;;;       added again according to `prepend?`.
+
 (defun -nomis/new-cider-clojure-cli-aliases-value (new-alias prepend?)
   (assert (or (null cider-clojure-cli-aliases)
               (stringp cider-clojure-cli-aliases)))
