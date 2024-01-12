@@ -157,10 +157,10 @@
                             (s-starts-with? ":" cider-clojure-cli-aliases))
                         cider-clojure-cli-aliases
                       (s-concat ":" cider-clojure-cli-aliases)))
-         (old-items (if (null old-value)
-                        '()
-                      (s-split ":" (s-chop-left 1 old-value)))))
-    (cond ((member new-alias old-items)
+         (old-aliases (if (null old-value)
+                          '()
+                        (s-split ":" (s-chop-left 1 old-value)))))
+    (cond ((member new-alias old-aliases)
            old-value)
           (prepend?
            (s-concat ":" new-alias old-value))
