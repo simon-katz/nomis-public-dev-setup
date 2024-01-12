@@ -147,16 +147,16 @@
 ;;;; ___________________________________________________________________________
 ;;;; `nomis/add-cider-clojure-cli-alias`
 
-(defun -nomis/new-cider-clojure-cli-aliases-value (new-alias prepend?)
-  (assert (or (null cider-clojure-cli-aliases)
-              (stringp cider-clojure-cli-aliases)))
-  (let* ((old-value (if (or (null cider-clojure-cli-aliases)
-                            (s-starts-with? ":" cider-clojure-cli-aliases))
-                        cider-clojure-cli-aliases
-                      (s-concat ":" cider-clojure-cli-aliases)))
-         (old-aliases (if (null old-value)
+(defun -nomis/new-cider-clojure-cli-aliases-value (old-value new-alias prepend?)
+  (assert (or (null old-value)
+              (stringp old-value)))
+  (let* ((canonicalised-old-value (if (or (null old-value)
+                                          (s-starts-with? ":" old-value))
+                                      old-value
+                                    (s-concat ":" old-value)))
+         (old-aliases (if (null canonicalised-old-value)
                           '()
-                        (s-split ":" (s-chop-left 1 old-value))))
+                        (s-split ":" (s-chop-left 1 canonicalised-old-value))))
          (old-aliases-sans-new-alias (remove new-alias old-aliases))
          (new-aliases (if prepend?
                           (cons new-alias old-aliases-sans-new-alias)
@@ -169,8 +169,10 @@ By default add at the end, but if PREPEND? is non-nil add at the beginning.
 If NEW-ALIAS is already in CIDER-CLOJURE-CLI-ALIASES, remove it first so that
 NEW-ALIAS is always at the end (or at the beginning if PREPEND? is non-nil)."
   `(setq-local cider-clojure-cli-aliases
-               (-nomis/new-cider-clojure-cli-aliases-value ,new-alias
-                                                           ,prepend?)))
+               (-nomis/new-cider-clojure-cli-aliases-value
+                cider-clojure-cli-aliases
+                ,new-alias
+                ,prepend?)))
 
 ;; Testing -- all buffer-local so no problems with blatting stuff.
 
