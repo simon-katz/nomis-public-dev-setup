@@ -147,9 +147,6 @@
 ;;;; ___________________________________________________________________________
 ;;;; `nomis/add-cider-clojure-cli-alias`
 
-;;;; TODO: Maybe change this so that an existing alias is first removed, and
-;;;;       added again according to `prepend?`.
-
 (defun -nomis/new-cider-clojure-cli-aliases-value (new-alias prepend?)
   (assert (or (null cider-clojure-cli-aliases)
               (stringp cider-clojure-cli-aliases)))
@@ -159,17 +156,18 @@
                       (s-concat ":" cider-clojure-cli-aliases)))
          (old-aliases (if (null old-value)
                           '()
-                        (s-split ":" (s-chop-left 1 old-value)))))
-    (cond ((member new-alias old-aliases)
-           old-value)
-          (prepend?
-           (s-concat ":" new-alias old-value))
-          (t
-           (s-concat old-value ":" new-alias)))))
+                        (s-split ":" (s-chop-left 1 old-value))))
+         (old-aliases-sans-new-alias (remove new-alias old-aliases))
+         (new-aliases (if prepend?
+                          (cons new-alias old-aliases-sans-new-alias)
+                        (-snoc old-aliases-sans-new-alias new-alias))))
+    (s-concat ":" (s-join ":" new-aliases))))
 
 (cl-defmacro nomis/add-cider-clojure-cli-alias (new-alias &key prepend?)
-  "If NEW-ALIAS is not already in CIDER-CLOJURE-CLI-ALIASES, add it.
-By default add at the end, but if PREPEND? is non-nil add at the beginning."
+  "Add NEW-ALIAS to CIDER-CLOJURE-CLI-ALIASES.
+By default add at the end, but if PREPEND? is non-nil add at the beginning.
+If NEW-ALIAS is already in CIDER-CLOJURE-CLI-ALIASES, remove it first so that
+NEW-ALIAS is always at the end (or at the beginning if PREPEND? is non-nil)."
   `(setq-local cider-clojure-cli-aliases
                (-nomis/new-cider-clojure-cli-aliases-value ,new-alias
                                                            ,prepend?)))
