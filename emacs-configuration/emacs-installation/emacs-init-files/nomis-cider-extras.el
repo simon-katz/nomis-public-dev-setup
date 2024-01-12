@@ -173,10 +173,7 @@ NEW-ALIAS is always at the end (or at the beginning if PREPEND? is non-nil)."
                                                            ,prepend?)))
 
 ;; Testing -- all buffer-local so no problems with blatting stuff.
-(assert (equal ":a"
-               (progn
-                 (setq-local cider-clojure-cli-aliases nil)
-                 (nomis/add-cider-clojure-cli-alias "a" :prepend? t))))
+
 (assert (equal ":a"
                (progn
                  (setq-local cider-clojure-cli-aliases nil)
@@ -187,12 +184,6 @@ NEW-ALIAS is always at the end (or at the beginning if PREPEND? is non-nil)."
                  (nomis/add-cider-clojure-cli-alias "a")
                  (nomis/add-cider-clojure-cli-alias "b")
                  (nomis/add-cider-clojure-cli-alias "c"))))
-(assert (equal ":c:b:a"
-               (progn
-                 (setq-local cider-clojure-cli-aliases nil)
-                 (nomis/add-cider-clojure-cli-alias "a")
-                 (nomis/add-cider-clojure-cli-alias "b" :prepend? t)
-                 (nomis/add-cider-clojure-cli-alias "c" :prepend? t))))
 (assert (equal ":a:b:c"
                (progn
                  (setq-local cider-clojure-cli-aliases nil)
@@ -200,7 +191,43 @@ NEW-ALIAS is always at the end (or at the beginning if PREPEND? is non-nil)."
                  (nomis/add-cider-clojure-cli-alias "b")
                  (nomis/add-cider-clojure-cli-alias "c")
                  (nomis/add-cider-clojure-cli-alias "a")
-                 (nomis/add-cider-clojure-cli-alias "b" :prepend? t))))
+                 (nomis/add-cider-clojure-cli-alias "b")
+                 (nomis/add-cider-clojure-cli-alias "c"))))
+(assert (equal ":b:c:a"
+               (progn
+                 (setq-local cider-clojure-cli-aliases nil)
+                 (nomis/add-cider-clojure-cli-alias "a")
+                 (nomis/add-cider-clojure-cli-alias "b")
+                 (nomis/add-cider-clojure-cli-alias "c")
+                 (nomis/add-cider-clojure-cli-alias "a"))))
+
+(assert (equal ":a"
+               (progn
+                 (setq-local cider-clojure-cli-aliases nil)
+                 (nomis/add-cider-clojure-cli-alias "a" :prepend? t))))
+(assert (equal ":c:b:a"
+               (progn
+                 (setq-local cider-clojure-cli-aliases nil)
+                 (nomis/add-cider-clojure-cli-alias "a" :prepend? t)
+                 (nomis/add-cider-clojure-cli-alias "b" :prepend? t)
+                 (nomis/add-cider-clojure-cli-alias "c" :prepend? t))))
+(assert (equal ":c:b:a"
+               (progn
+                 (setq-local cider-clojure-cli-aliases nil)
+                 (nomis/add-cider-clojure-cli-alias "a")
+                 (nomis/add-cider-clojure-cli-alias "b" :prepend? t)
+                 (nomis/add-cider-clojure-cli-alias "c" :prepend? t)
+                 (nomis/add-cider-clojure-cli-alias "a" :prepend? t)
+                 (nomis/add-cider-clojure-cli-alias "b" :prepend? t)
+                 (nomis/add-cider-clojure-cli-alias "c" :prepend? t))))
+(assert (equal ":a:c:b"
+               (progn
+                 (setq-local cider-clojure-cli-aliases nil)
+                 (nomis/add-cider-clojure-cli-alias "a")
+                 (nomis/add-cider-clojure-cli-alias "b" :prepend? t)
+                 (nomis/add-cider-clojure-cli-alias "c" :prepend? t)
+                 (nomis/add-cider-clojure-cli-alias "a" :prepend? t))))
+
 (assert (equal ":a:b:c"
                (progn
                  (setq-local cider-clojure-cli-aliases "a:b")
