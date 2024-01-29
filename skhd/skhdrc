@@ -113,7 +113,7 @@ fn         + ctrl + alt + cmd - 0x2A     : ~/bin-private/hs -c "nomisWindowMoveT
 
              ctrl + alt + cmd - w        : ~/bin-private/hs -c "nomisWindowLogWindowAndScreenInfo()"
 
-     shift        + alt       - 0x2C     : ~/bin-private/hs -c "nomisWindowDisplayBounds()" # 0x2C is /
+     shift        + alt + cmd - 0x2C     : ~/bin-private/hs -c "nomisWindowDisplayBounds()" # 0x2C is /
 
      shift        + alt       - left     : ~/bin-private/hs -c "nomisWindowMoveLeft()"
      shift        + alt       - right    : ~/bin-private/hs -c "nomisWindowMoveRight()"
