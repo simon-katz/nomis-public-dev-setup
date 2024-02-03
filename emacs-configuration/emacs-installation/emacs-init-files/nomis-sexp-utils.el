@@ -112,6 +112,14 @@
         (progn (paredit-backward-up) nil)
       (error t))))
 
+(defun nomis/nesting-level ()
+  (save-excursion
+    (let* ((cnt 1))
+      (while (not (nomis/at-top-level?))
+        (incf cnt)
+        (paredit-backward-up))
+      cnt)))
+
 (defun nomis/can-forward-sexp? ()
   ;; This is complicated, because `forward-sexp` behaves differently at end
   ;; of file and inside-and-at-end-of a `(...)` form.
