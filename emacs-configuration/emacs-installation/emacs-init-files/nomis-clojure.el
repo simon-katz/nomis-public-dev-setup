@@ -12,6 +12,7 @@
 (require 'nomis-kaocha-runner)
 (require 'nomis-clojure-portal)
 (require 'nomis-clojure-privacy-highlighting-mode)
+(require 'nomis-electric-clojure)
 
 ;;;; ___________________________________________________________________________
 

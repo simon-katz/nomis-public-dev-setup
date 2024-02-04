@@ -1,0 +1,51 @@
+;;; hf-electric.el --- Hyperfiddle Electric minor mode -*- lexical-binding: t; -*-
+;;
+;; Copyright (C) 2023 Peter Nagy
+;;
+;; Author: xificurC
+;; Maintainer: xificurC
+;; Created: February 11, 2023
+;; Modified: February 11, 2023
+;; Version: 0.0.1
+;; Keywords: languages matching outlines
+;; Homepage: https://gitlab.com/xificurC/hf-electric
+;; Package-Requires: ((emacs "25.1"))
+;;
+;; This file is not part of GNU Emacs.
+;;
+;;; Commentary:
+;;
+;;  Hyperfiddle Electric minor mode
+;;
+;;; Code:
+(require 'cl-lib)
+(defun hf-electric-not-a-real-paren (p)
+  (let ((parse-state (syntax-ppss p)))
+    ;;   string?             comment?            escaped?
+    (or (nth 3 parse-state) (nth 4 parse-state) (eq (char-before p)?\\))))
+(defun hf-electric-same-overlay-checker (beg face)
+  (lambda (o)
+    (and (eq 'hf-electric (overlay-get o 'category)) (eq face (overlay-get o 'face)) (eq beg (overlay-start o)))))
+(defun hf-electric-apply-overlay (face beg)
+  (let ((end (save-excursion (goto-char beg) (forward-sexp) (point))))
+    (if-let ((existing (cl-find-if (hf-electric-same-overlay-checker beg face) (overlays-at beg))))
+        (progn (move-overlay existing beg end) (overlay-put existing 'face face))
+      (let ((new (make-overlay beg end))) (overlay-put new 'category 'hf-electric) (overlay-put new 'face face)))))
+(defun hf-electric-?apply-overlay (p)
+  (cond ((looking-at "(e/client") (hf-electric-apply-overlay '(:background "#470109") p))
+        ((looking-at "(e/server") (hf-electric-apply-overlay '(:background "#044412") p))))
+(defun hf-electric-overlay-region (_beg end)
+  (save-excursion
+    (beginning-of-defun)
+    (while (and (< (point) end) (re-search-forward "(" end 'noerror))
+      (backward-char)
+      (unless (hf-electric-not-a-real-paren (point)) (hf-electric-?apply-overlay (point)))
+      (forward-char))))
+;;;###autoload
+(define-minor-mode hf-electric-mode
+  "Highlight electric client/server code"
+  :init-value nil
+  (when hf-electric-mode
+    (jit-lock-register 'hf-electric-overlay-region t)))
+(provide 'hf-electric)
+;;; hf-electric.el ends here
