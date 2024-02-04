@@ -67,8 +67,9 @@
                   (re-search-forward "(" end-2 'noerror))
         (backward-char)
         (unless (nomis/ec-not-a-real-paren (point))
-          (when-let ((client-or-server (cond ((looking-at "(e/client") :client)
-                                             ((looking-at "(e/server") :server))))
+          (when-let ((client-or-server
+                      (cond ((looking-at "(e/client\\_>") :client)
+                            ((looking-at "(e/server\\_>") :server))))
             (nomis/ec-apply-overlays client-or-server (point))))
         (forward-char))
       `(jit-lock-bounds ,start-2 . ,end-2))))
