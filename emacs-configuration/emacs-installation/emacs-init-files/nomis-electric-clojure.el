@@ -81,8 +81,6 @@
       (jit-lock-register 'nomis/ec-overlay-region t)
     (remove-overlays nil nil 'category 'nomis/ec-overlay)))
 
-(define-key clojure-mode-map (kbd "M-E") 'nomis-electric-clojure-mode)
-
 ;;;; ___________________________________________________________________________
 
 (defun nomis/ec-toggle-highlight-initial-whitespace? ()
@@ -93,9 +91,6 @@
       (setq nomis/ec-highlight-initial-whitespace?
             (not nomis/ec-highlight-initial-whitespace?))
       (nomis/ec-overlay-region (point-min) (point-max)))))
-
-(define-key clojure-mode-map (kbd "C-M-E")
-  'nomis/ec-toggle-highlight-initial-whitespace?)
 
 ;;;; ___________________________________________________________________________
 ;;;; ---- nomis/ec-report-overlays ----
@@ -109,6 +104,14 @@
     (message "----------------")
     (dolist (ov ovs)
       (message "%s" ov))))
+
+;;;; ___________________________________________________________________________
+;;;; ---- Key bindings ----
+
+(define-key clojure-mode-map (kbd "M-E") 'nomis-electric-clojure-mode)
+
+(define-key clojure-mode-map (kbd "C-M-E")
+  'nomis/ec-toggle-highlight-initial-whitespace?)
 
 ;;;; ___________________________________________________________________________
 
