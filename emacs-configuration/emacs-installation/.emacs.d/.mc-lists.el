@@ -77,6 +77,7 @@
         nomis/cljr--hydra/code-menu/cljr-introduce-let-and-exit
         nomis/cljr--hydra/code-menu/cljr-move-to-let-and-exit
         nomis/indent-buffer
+        nomis/magit/status
         nomis/paredit-reindent-defun
         nomis/scroll-down-line-in-place
         nomis/scroll-up-line-in-place
