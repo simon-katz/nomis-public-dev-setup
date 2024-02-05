@@ -11,6 +11,8 @@
 
 (defvar nomis/ec-highlight-initial-whitespace? nil)
 
+(defvar nomis/ec-give-feedback-flash? nil)
+
 (defface nomis/ec-client-face
   `((((background dark)) ,(list :background "DarkGreen"))
     (t ,(list :background "DarkSeaGreen1")))
@@ -20,6 +22,14 @@
   `((((background dark)) ,(list :background "IndianRed4"))
     (t ,(list :background "#ffc5c5")))
   "Face for Electric Clojure server code.")
+
+(defface nomis/ec-flash-update-region-face-1
+  `((t ,(list :background "red3")))
+  "Face for Electric Clojure flashing of provided region.")
+
+(defface nomis/ec-flash-update-region-face-2
+  `((t ,(list :background "yellow")))
+  "Face for Electric Clojure flashing of extended region.")
 
 (defun nomis/ec-not-a-real-paren (p)
   (let* ((parse-state (syntax-ppss p)))
@@ -56,6 +66,28 @@
             (when (bolp)
               (back-to-indentation))))))))
 
+(defun nomis/ec-feedback-flash (start end start-2 end-2)
+  (when nomis/ec-give-feedback-flash?
+    (let* ((flash-overlay-1
+            (let* ((ov (make-overlay start end nil t nil)))
+              (overlay-put ov 'category 'nomis/ec-overlay)
+              (overlay-put ov 'face 'nomis/ec-flash-update-region-face-1)
+              (overlay-put ov 'evaporate t)
+              (overlay-put ov 'priority 999999)
+              ov))
+           (flash-overlay-2
+            (let* ((ov (make-overlay start-2 end-2 nil t nil)))
+              (overlay-put ov 'category 'nomis/ec-overlay)
+              (overlay-put ov 'face 'nomis/ec-flash-update-region-face-2)
+              (overlay-put ov 'evaporate t)
+              (overlay-put ov 'priority 999999)
+              ov)))
+      (run-at-time 0.2
+                   nil
+                   (lambda ()
+                     (delete-overlay flash-overlay-1)
+                     (delete-overlay flash-overlay-2))))))
+
 (defun nomis/ec-overlay-region (start end)
   (save-excursion
     (goto-char start)
@@ -74,6 +106,7 @@
                             ((looking-at "(e/server\\_>") :server))))
             (nomis/ec-apply-overlays client-or-server (point))))
         (forward-char))
+      (nomis/ec-feedback-flash start end start-2 end-2)
       `(jit-lock-bounds ,start-2 . ,end-2))))
 
 (define-minor-mode nomis-electric-clojure-mode
