@@ -14,12 +14,12 @@
 (defface nomis/ec-client-face
   `((((background dark)) ,(list :background "DarkGreen"))
     (t ,(list :background "DarkSeaGreen1")))
-  "Default face for Electric Clojure client code.")
+  "Face for Electric Clojure client code.")
 
 (defface nomis/ec-server-face
   `((((background dark)) ,(list :background "IndianRed4"))
     (t ,(list :background "#ffc5c5")))
-  "Default face for Electric Clojure server code.")
+  "Face for Electric Clojure server code.")
 
 (defun nomis/ec-not-a-real-paren (p)
   (let* ((parse-state (syntax-ppss p)))
