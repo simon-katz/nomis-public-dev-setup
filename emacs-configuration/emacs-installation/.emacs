@@ -139,6 +139,8 @@
       (with-parsed-tramp-file-name . 2)
       (thread-first . 1)
       (thread-last . 1))
+     (eval define-clojure-indent
+           (for-all 1))
      (eval nomis/add-to-list-local 'cider-jack-in-nrepl-middlewares "shadow.cljs.devtools.server.nrepl/middleware" t)
      (eval nomis/add-to-list-local 'grep-find-ignored-files "main.js")
      (eval org-content 999)
