@@ -124,8 +124,9 @@
         ;; a comment.
         (%do-indentation%)
       (nomis/beginning-of-top-level-form)
-      (let* ((in-a-top-level-symbol-p (not
-                                       (nomis/looking-at-bracketed-sexp-start))))
+      (let* ((in-a-top-level-symbol-p (and (not
+                                            (nomis/looking-at-bracketed-sexp-start))
+                                           (not (looking-at-p "#?")))))
         (cond (in-a-top-level-symbol-p
                ;; We are on a top-level symbol. `paredit-reindent-defun` would
                ;; re-indent a nearby non-symbol top-level form; instead of that
