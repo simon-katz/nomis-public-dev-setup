@@ -21,7 +21,7 @@
 ;;      (fact-group 'defun)
 ;;      (against-background 'defun)
 ;;      (provided 0)
-;;      (for-all 2)
+;;      (for-all 1)
 ;;      ;; core.match
 ;;      ;; (match 1)
 ;;      ;; Om & Fulcro
