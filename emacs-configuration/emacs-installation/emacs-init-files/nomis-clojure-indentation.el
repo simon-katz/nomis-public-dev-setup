@@ -2,40 +2,41 @@
 
 ;; (setq clojure-defun-style-default-indent t) ; TODO: Do you like this? No.
 
-(eval-after-load 'clojure-mode
-  '(define-clojure-indent
-     ;; Ring and Compojure
-     ;; From https://github.com/weavejester/compojure/wiki/Emacs-indentation.
-     (defroutes 'defun)
-     (GET 2)
-     (POST 2)
-     (PUT 2)
-     (DELETE 2)
-     (HEAD 2)
-     (ANY 2)
-     (context 2)
-     ;; Midje
-     (fact 'defun)
-     (facts 'defun)
-     (fact-group 'defun)
-     (against-background 'defun)
-     (provided 0)
-     (for-all 2)
-     ;; core.match
-     ;; (match 1)
-     ;; Om & Fulcro
-     (dom/a        1)
-     (dom/button   1)
-     (dom/div      1)
-     (dom/form     1)
-     (dom/h1       1)
-     (dom/h2       1)
-     (dom/h3       1)
-     (dom/input    1)
-     (dom/label    1)
-     (dom/li       1)
-     (dom/textarea 1)
-     (dom/ul       1)))
+;; If you want this for particular projects, put it in a `.dir-locals.el` file.
+;; (eval-after-load 'clojure-mode
+;;   '(define-clojure-indent
+;;      ;; Ring and Compojure
+;;      ;; From https://github.com/weavejester/compojure/wiki/Emacs-indentation.
+;;      (defroutes 'defun)
+;;      (GET 2)
+;;      (POST 2)
+;;      (PUT 2)
+;;      (DELETE 2)
+;;      (HEAD 2)
+;;      (ANY 2)
+;;      (context 2)
+;;      ;; Midje
+;;      (fact 'defun)
+;;      (facts 'defun)
+;;      (fact-group 'defun)
+;;      (against-background 'defun)
+;;      (provided 0)
+;;      (for-all 2)
+;;      ;; core.match
+;;      ;; (match 1)
+;;      ;; Om & Fulcro
+;;      (dom/a        1)
+;;      (dom/button   1)
+;;      (dom/div      1)
+;;      (dom/form     1)
+;;      (dom/h1       1)
+;;      (dom/h2       1)
+;;      (dom/h3       1)
+;;      (dom/input    1)
+;;      (dom/label    1)
+;;      (dom/li       1)
+;;      (dom/textarea 1)
+;;      (dom/ul       1)))
 
 ;; (defvar nomis/clojure-indent-method-1-function-prefixes
 ;;   '("dom/"))
