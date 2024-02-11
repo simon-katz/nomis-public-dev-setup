@@ -114,7 +114,9 @@
   :init-value nil
   (if nomis-electric-clojure-mode
       (jit-lock-register 'nomis/ec-overlay-region t)
-    (remove-overlays nil nil 'category 'nomis/ec-overlay)))
+    (progn
+      (jit-lock-unregister 'nomis/ec-overlay-region)
+      (remove-overlays nil nil 'category 'nomis/ec-overlay))))
 
 ;;;; ___________________________________________________________________________
 
