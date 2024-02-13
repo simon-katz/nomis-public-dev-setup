@@ -76,13 +76,19 @@
     (dolist (filename filenames)
       (message "Indenting %s" filename)
       (let* ((existing-buffer? (find-buffer-visiting filename))
-             (buffer (find-file-noselect filename)))
-        (with-current-buffer buffer
-          (let* ((inhibit-message t))
-            (nomis/indent-buffer))
-          (save-buffer))
-        (unless existing-buffer?
-          (kill-buffer buffer)))))
+             (buffer (condition-case err
+                         (find-file-noselect filename)
+                       (error
+                        ;; We get here if user chooses not to open a large file.
+                        (message "...actually, not indenting %s" filename)
+                        nil))))
+        (when buffer
+          (with-current-buffer buffer
+            (let* ((inhibit-message t))
+              (nomis/indent-buffer))
+            (save-buffer))
+          (unless existing-buffer?
+            (kill-buffer buffer))))))
   (when (featurep 'magit) (magit-refresh))
   (message "Finished indenting all clj files in project."))
 
