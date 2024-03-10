@@ -50,6 +50,7 @@
      flycheck-clj-kondo
      flycheck-joker
      flycheck-kotlin
+     flycheck-projectile
      fuzzy
      gnu-elpa-keyring-update
      helm
