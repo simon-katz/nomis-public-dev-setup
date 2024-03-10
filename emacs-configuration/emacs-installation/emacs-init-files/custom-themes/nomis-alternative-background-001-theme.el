@@ -2,9 +2,9 @@
   "Created 2023-01-03.")
 
 (let* ((light-default-bg         "BlanchedAlmond")
-       (dark-default-bg          "#654020")
+       (dark-default-bg          "#000035")
        (autodim-light-default-bg "NavajoWhite1")
-       (autodim-dark-default-bg  "#805737"))
+       (autodim-dark-default-bg  "#202035"))
 
   (custom-theme-set-faces
    'nomis-alternative-background-001

@@ -2,9 +2,9 @@
   "Created 2023-01-03.")
 
 (let* ((light-default-bg         "MistyRose")
-       (dark-default-bg          "#603020")
+       (dark-default-bg          "#400000")
        (autodim-light-default-bg "MistyRose2")
-       (autodim-dark-default-bg  "#805040"))
+       (autodim-dark-default-bg  "#300000"))
 
   (custom-theme-set-faces
    'nomis-alternative-background-002
