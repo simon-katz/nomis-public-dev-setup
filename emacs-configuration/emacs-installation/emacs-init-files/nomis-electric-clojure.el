@@ -23,6 +23,11 @@
     (t ,(list :background "#ffc5c5")))
   "Face for Electric Clojure server code.")
 
+(defface nomis/ec-either-client-or-server-face
+  `((t ,(list :background "what-should-this-be?" ; TODO: What should this be?
+              )))
+  "Face for Electric Clojure either client or server code.")
+
 (defface nomis/ec-flash-update-region-face-1
   `((t ,(list :background "red3")))
   "Face for Electric Clojure flashing of provided region.")
@@ -50,7 +55,8 @@
 (defun nomis/ec-apply-overlays (client-or-server start)
   (let* ((face (case client-or-server
                  (:client 'nomis/ec-client-face)
-                 (:server 'nomis/ec-server-face)))
+                 (:server 'nomis/ec-server-face)
+                 (:either 'nomis/ec-either-client-or-server-face)))
          (nesting-level (nomis/nesting-level))
          (end (save-excursion (goto-char start) (forward-sexp) (point))))
     (if nomis/ec-highlight-initial-whitespace?
@@ -103,7 +109,8 @@
         (unless (nomis/ec-not-a-real-paren (point))
           (when-let ((client-or-server
                       (cond ((looking-at "(e/client\\_>") :client)
-                            ((looking-at "(e/server\\_>") :server))))
+                            ((looking-at "(e/server\\_>") :server)
+                            ((looking-at "(e/fn\\_>")     :either))))
             (nomis/ec-apply-overlays client-or-server (point))))
         (forward-char))
       (nomis/ec-feedback-flash start end start-2 end-2)
