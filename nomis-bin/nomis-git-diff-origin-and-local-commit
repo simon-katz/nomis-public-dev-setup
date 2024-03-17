@@ -3,4 +3,4 @@ set -e
 
 branch="$(git branch --show-current)"
 
-(set -x; git diff origin/${branch} ${branch})
+(set -x; git diff "$@" origin/${branch} ${branch})
