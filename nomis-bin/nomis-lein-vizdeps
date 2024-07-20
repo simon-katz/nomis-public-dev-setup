@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-mkdir -p _analysis
+mkdir -p _no-commit_/_analysis
 
 lein-2-7-1 vizdeps \
            --vertical \
            --no-view \
-           --output-file _analysis/vizdeps.png
+           --output-file _no-commit_/_analysis/vizdeps.png

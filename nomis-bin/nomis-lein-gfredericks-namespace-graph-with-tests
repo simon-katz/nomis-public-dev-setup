@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-mkdir -p _analysis
+mkdir -p _no-commit_/_analysis
 
 find dev src test -name "*.clj" \
     | xargs lein with-profile +clj-usage-graph \
             run -m com.gfredericks.clj-usage-graph/namespace-graph \
-    | dot -Tpng -o _analysis/gfredericks-namespace-graph-with-tests.png
+    | dot -Tpng -o _no-commit_/_analysis/gfredericks-namespace-graph-with-tests.png

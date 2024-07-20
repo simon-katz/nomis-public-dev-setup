@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-mkdir -p _analysis
+mkdir -p _no-commit_/_analysis
 
 lein nomis-ns-graph \
      :platform cljs \
-     :filename _analysis/nomis-deps-graph-global-cljs \
+     :filename _no-commit_/_analysis/nomis-deps-graph-global-cljs \
      :exclusions dev
