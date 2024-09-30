@@ -30,6 +30,7 @@
         nomis/clojure/insert-reader-comment
         nomis/meta-w
         nomis/meta-x
+        nomis/paxedit-transpose-backward
         norg/cycle
         norg/shifttab
         org-beginning-of-line
@@ -61,6 +62,7 @@
         paredit-raise-sexp
         paredit-semicolon
         paredit-splice-sexp-killing-backward
+        paxedit-transpose-forward
         sh-assignment
         transpose-sexps
         wdired--self-insert
