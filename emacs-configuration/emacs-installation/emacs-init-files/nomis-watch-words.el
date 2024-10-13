@@ -14,6 +14,7 @@
   ;; Use \\ in the strings below so you don't get the highlighting here.
   '("--O\\R--"
     "--A\\ND--"
+    "--AND/O\\R--"
     "--N\\OT--"))
 
 (defconst nomis/ww/regexps/high-priority
@@ -198,6 +199,8 @@
 ;;;; - aaa--OR--aaa
 ;;;; - aaa[--AND--]aaa
 ;;;; - aaa--AND--aaa
+;;;; - aaa[--AND/OR--]aaa
+;;;; - aaa--AND/OR--aaa
 ;;;; - aaa[--NOT--]aaa
 ;;;; - aaa--NOT--aaa
 
