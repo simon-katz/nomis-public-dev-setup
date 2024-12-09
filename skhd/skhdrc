@@ -32,6 +32,11 @@ fn         + ctrl + alt + cmd - w        : ~/bin-private/hs -c "nomisHelloWorld(
              ctrl + alt + cmd - q        : osascript -e "display dialog \"Path is:\n\n$(echo $PATH | tr ':' '\n')\" buttons {\"OK\"} with title \"skhd PATH\""
 
 
+### Restart Dock
+
+             ctrl + alt + cmd - d        : ~/bin-private/hs -c 'nomisMessage("Restarting Dock")' ;  killall Dock
+
+
 ### Reload config (skhd, Hammerspoon, maybe more)
 
 fn         + ctrl + alt + cmd - r        : ~/bin-private/hs -c 'hs.reload()'
