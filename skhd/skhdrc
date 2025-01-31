@@ -83,7 +83,9 @@ fn         + ctrl + alt + cmd - r        : ~/bin-private/hs -c 'hs.reload()'
              # ctrl + alt + cmd - 0x31     : ~/.config/notal-spaces/bin/notal_spaces.clj report-current-space # 0x31 is space
 
              # 2023-08-04 If this isn't working, see the comment in notal-spaces
-             #            in the function `make-space-current`.
+             #            in the function `make-space-current` -- which says
+             #            "Locking the screen and unlocking seemed to fix
+             #            things. Weird."
              ctrl + alt + cmd - home     : ~/.config/notal-spaces/bin/notal_spaces.clj left  move-window
              ctrl + alt + cmd - end      : ~/.config/notal-spaces/bin/notal_spaces.clj right move-window
              ctrl + alt + cmd - pageup   : ~/.config/notal-spaces/bin/notal_spaces.clj up    move-window
