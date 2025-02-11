@@ -121,6 +121,7 @@
      (cider-ns-refresh-before-fn . "user/halt")
      (cider-ns-refresh-before-fn . "user/stop")
      (cider-show-eval-spinner)
+     (cider-test-default-exclude-selectors "e2e")
      (cider-test-default-exclude-selectors "with-test-containers" "needs-internet-connection")
      (checkdoc-package-keywords-flag)
      (elisp-lint-indent-specs
