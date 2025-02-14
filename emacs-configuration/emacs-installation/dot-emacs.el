@@ -97,7 +97,8 @@
          :defoe)
         ((member (system-name)
                  (list "keane.local"
-                       "keane.home"))
+                       "keane.home"
+                       "HUD040197"))
          :keane)
         ((member (system-name)
                  ;; My Wefarm Mac
