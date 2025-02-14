@@ -13,6 +13,7 @@
 
 (with-eval-after-load 'vterm
 
+  (setq vterm-shell "/opt/homebrew/bin/bash")
   (setq vterm-max-scrollback 100000)
   (setq vterm-clear-scrollback-when-clearing t)
   (setq vterm-copy-mode-remove-fake-newlines t)
