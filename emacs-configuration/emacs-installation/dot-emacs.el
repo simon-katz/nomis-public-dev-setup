@@ -359,8 +359,10 @@
 ;;;; ___________________________________________________________________________
 ;;;; ---- Local ----
 
-;;;; TODO: refactor-bash-and-emacs-env-vars-etc
+(let* ((local-extras-file "~/development-100/repositories/nomis/dev-setup/jsk-settings-private/_no-commit_/dot-emacs-extras.el"))
+  (when (file-exists-p local-extras-file)
+    (load local-extras-file)))
 
-(let* ((local-extras-file "~/development-100/repositories/local/sk-local-settings/dot-emacs-extras.el"))
+(let* ((local-extras-file "~/development-100/repositories/nomis/dev-setup/jsk-settings-private/_no-commit_/_nomis-no-sync_/dot-emacs-extras.el"))
   (when (file-exists-p local-extras-file)
     (load local-extras-file)))
