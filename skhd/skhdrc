@@ -118,7 +118,8 @@ fn         + ctrl + alt + cmd - 0x2A     : ~/bin-private/hs -c "nomisWindowMoveT
              ctrl       + cmd - up       : ~/bin-private/hs -c "nomisWindowMaximize()"
              ctrl       + cmd - down     : ~/bin-private/hs -c "nomisWindowRestoreOldSize()"
 
-             ctrl + alt + cmd - w        : ~/bin-private/hs -c "nomisWindowLogWindowAndScreenInfo()"
+#            ctrl + alt + cmd - w        : ~/bin-private/hs -c "nomisWindowLogWindowAndScreenInfo()"
+             ctrl + alt + cmd - w        : ~/bin-private/hs -c "nomisNoteWindowsSpaces()"
 
      shift        + alt + cmd - 0x2C     : ~/bin-private/hs -c "nomisWindowDisplayBounds()" # 0x2C is /
 
