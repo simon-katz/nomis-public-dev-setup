@@ -1,13 +1,15 @@
 #!/bin/bash
 
-sequoia_base_ver=15.0.0
-ver=$(sw_vers -productVersion)
-if [ $(echo -e $sequoia_base_ver"\n"$ver | sort -V | tail -1) == "$sequoia_base_ver" ]
-then
-    # Pre-Sequoia
-    osascript /Users/simonkatz/development-100/repositories/nomis/dev-setup/nomis-public-dev-setup/nomis-bin/nomis-alert-close-all.applescript
+# sequoia_base_ver=15.0.0
+# ver=$(sw_vers -productVersion)
+# if [ $(echo -e $sequoia_base_ver"\n"$ver | sort -V | tail -1) == "$sequoia_base_ver" ]
+# then
+#     # Pre-Sequoia
+#     osascript /Users/simonkatz/development-100/repositories/nomis/dev-setup/nomis-public-dev-setup/nomis-bin/nomis-alert-close-all.applescript
+# else
+#     # Sequoia or later
+#     osascript /Users/simonkatz/development-100/repositories/nomis/dev-setup/nomis-public-dev-setup/nomis-bin/nomis-alert-close-all.js
+# fi
 
-else
-    # Sequoia or later
-    osascript /Users/simonkatz/development-100/repositories/nomis/dev-setup/nomis-public-dev-setup/nomis-bin/nomis-alert-close-all.js
-fi
+# Just use the new approach:
+osascript /Users/simonkatz/development-100/repositories/nomis/dev-setup/nomis-public-dev-setup/nomis-bin/nomis-alert-close-all.js
