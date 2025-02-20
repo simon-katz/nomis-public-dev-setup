@@ -56,7 +56,7 @@
 
 ;;;; ___________________________________________________________________________
 
-(pushnew "deftest-msg" cider-test-defining-forms) ; a Wefarm Nabu thing
+;; (pushnew "deftest-msg" cider-test-defining-forms) ; a Wefarm Nabu thing
 
 ;;;; ___________________________________________________________________________
 ;;;; Add a prefix to CIDER eldoc info

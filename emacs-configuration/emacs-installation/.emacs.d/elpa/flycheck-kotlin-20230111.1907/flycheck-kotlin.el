@@ -4,9 +4,8 @@
 ;;
 ;; Author: Elric Milon <whirm_REMOVETHIS__@gmx.com>
 ;; Created: 20 January 2017
-;; Version: 0.1
 ;; Package-Version: 20230111.1907
-;; Package-Commit: a2a6abb9a7f85c6fb15ce327459ec3c8ff780188
+;; Package-Revision: a2a6abb9a7f8
 ;; Package-Requires: ((flycheck "0.20"))
 
 ;;; Commentary:

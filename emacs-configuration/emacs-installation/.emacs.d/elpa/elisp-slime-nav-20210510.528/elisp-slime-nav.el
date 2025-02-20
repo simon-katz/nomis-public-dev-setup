@@ -4,10 +4,9 @@
 
 ;; Author: Steve Purcell <steve@sanityinc.com>
 ;; Keywords: languages navigation slime elisp emacs-lisp
-;; Package-Commit: 8588d80d414aee1fafce5b9da0e913612ee0bcdd
 ;; URL: https://github.com/purcell/elisp-slime-nav
 ;; Package-Version: 20210510.528
-;; Package-X-Original-Version: 0
+;; Package-Revision: 8588d80d414a
 ;; Package-Requires: ((emacs "24.1") (cl-lib "0.2"))
 
 ;; This program is free software; you can redistribute it and/or modify

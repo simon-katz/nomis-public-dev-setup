@@ -5,8 +5,7 @@
 ;; Author: Mickey Petersen <mickey@fyeah.org>
 ;; Keywords:
 ;; Package-Version: 20140103.2139
-;; Package-Commit: bbfda2b4e429985a8fa7971d264c942767cfa816
-;; Version: 0.2
+;; Package-Revision: bbfda2b4e429
 ;; Package-Requires: ((makey "0.3"))
 
 ;; This program is free software; you can redistribute it and/or modify

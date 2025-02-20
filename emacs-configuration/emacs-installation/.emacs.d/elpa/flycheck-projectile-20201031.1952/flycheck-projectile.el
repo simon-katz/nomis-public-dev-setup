@@ -18,7 +18,8 @@
 ;; Author: Nikita Bloshchanevich <nikblos@outlook.com>
 ;; URL: https://github.com/nbfalcon/flycheck-projectile
 ;; Package-Requires: ((emacs "25.1") (flycheck "31") (projectile "2.2"))
-;; Version: 0.2.0
+;; Package-Version: 20201031.1952
+;; Package-Revision: ce6e9e8793a5
 
 ;;; Commentary:
 

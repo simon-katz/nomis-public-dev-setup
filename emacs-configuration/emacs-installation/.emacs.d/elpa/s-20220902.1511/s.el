@@ -4,9 +4,8 @@
 
 ;; Author: Magnar Sveen <magnars@gmail.com>
 ;; Maintainer: Jason Milkins <jasonm23@gmail.com>
-;; Version: 1.13.1
 ;; Package-Version: 20220902.1511
-;; Package-Commit: b4b8c03fcef316a27f75633fe4bb990aeff6e705
+;; Package-Revision: b4b8c03fcef3
 ;; Keywords: strings
 
 ;; This program is free software; you can redistribute it and/or modify

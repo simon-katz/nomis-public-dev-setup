@@ -5,8 +5,7 @@
 ;; Author: istib
 ;; URL: https://github.com/istib/rainbow-blocks
 ;; Package-Version: 20210715.1518
-;; Package-Commit: 83c4d6e77a1e25d3d2d124a4e90d5b084f3e15a5
-;; Version: 0.1
+;; Package-Revision: 83c4d6e77a1e
 ;; Package-Requires:
 ;; Keywords:
 

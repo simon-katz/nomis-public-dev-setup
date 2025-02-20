@@ -4,10 +4,9 @@
 
 ;; Author: Dmitry Galinsky, Howard Yeh
 ;; URL: https://github.com/eschulte/jump.el
-;; Package-Version: 20210110.2237
-;; Package-Commit: 55caa66a7cc6e0b1a76143fd40eff38416928941
 ;; Package-Requires: ((cl-lib "0.5") (emacs "24"))
-;; Version: 1.1
+;; Package-Version: 20210110.2237
+;; Package-Revision: 55caa66a7cc6
 ;; Created: 2007-11-02
 ;; Keywords: languages, tools, wp
 

@@ -2,11 +2,10 @@
 
 ;; Author: Ono Hiroko <azazabc123@gmail.com>
 ;; Keywords: tools, docs
-;; Package-Version: 20230301.136
-;; Package-Commit: 1b09d2032491d3904bd7ee9bf5ba7c7503db6593
 ;; Package-Requires: ((emacs "24.3"))
 ;; X-URL: https://github.com/kuanyui/tldr.el
-;; Version: {{VERSION}}
+;; Package-Version: 20230301.136
+;; Package-Revision: 1b09d2032491
 
 ;; WTFPL 2.0
 ;; Ono Hiroko (@kuanyui) (ɔ) Copyleft 2016-2017

@@ -83,6 +83,7 @@
      paredit
      parseedn
      paxedit
+     pkg-info
      pos-tip
      projectile
      queue

@@ -6,8 +6,7 @@
 ;; Author: Mickey Petersen <mickey@masteringemacs.org>
 ;; Keywords:
 ;; Package-Version: 20131231.1430
-;; Package-Commit: a61781e69d3b451551e269446e1c5f624ab81137
-;; Version: 0.3
+;; Package-Revision: a61781e69d3b
 ;; Package-Requires: ((cl-lib "0.2"))
 
 ;; This program is free software; you can redistribute it and/or modify

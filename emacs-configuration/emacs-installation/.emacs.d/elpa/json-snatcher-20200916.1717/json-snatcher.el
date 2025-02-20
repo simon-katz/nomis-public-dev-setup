@@ -5,8 +5,7 @@
 ;; Author: Sterling Graham <sterlingrgraham@gmail.com>
 ;; URL: http://github.com/sterlingg/json-snatcher
 ;; Package-Version: 20200916.1717
-;; Package-Commit: b28d1c0670636da6db508d03872d96ffddbc10f2
-;; Version: 1.0
+;; Package-Revision: b28d1c067063
 ;; Package-Requires: ((emacs "24"))
 
 ;; This file is not part of GNU Emacs.

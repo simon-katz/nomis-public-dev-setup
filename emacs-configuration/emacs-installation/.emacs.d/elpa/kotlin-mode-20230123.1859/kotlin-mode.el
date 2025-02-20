@@ -3,7 +3,8 @@
 ;; Copyright © 2015 Shodai Yokoyama
 
 ;; Author: Shodai Yokoyama (quantumcars@gmail.com)
-;; Version: 2.0.0
+;; Package-Version: 20230123.1859
+;; Package-Revision: fddd747e5b47
 ;; Keywords: languages
 ;; Package-Requires: ((emacs "24.3"))
 ;; URL: https://github.com/Emacs-Kotlin-Mode-Maintainers/kotlin-mode

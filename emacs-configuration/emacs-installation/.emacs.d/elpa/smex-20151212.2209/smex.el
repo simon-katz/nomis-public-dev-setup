@@ -4,10 +4,9 @@
 ;;
 ;; Author: Cornelius Mika <cornelius.mika@gmail.com> and contributors
 ;; URL: http://github.com/nonsequitur/smex/
-;; Package-Version: 20151212.2209
-;; Package-Commit: 55aaebe3d793c2c990b39a302eb26c184281c42c
 ;; Package-Requires: ((emacs "24"))
-;; Version: 3.0
+;; Package-Version: 20151212.2209
+;; Package-Revision: 55aaebe3d793
 ;; Keywords: convenience, usability
 
 ;; This file is not part of GNU Emacs.
