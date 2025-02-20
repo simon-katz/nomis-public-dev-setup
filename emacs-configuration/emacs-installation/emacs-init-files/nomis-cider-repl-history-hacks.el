@@ -105,8 +105,8 @@ If REGEXP is non-nil, only lines matching REGEXP are considered."
         nil
       (let* ((repl-type (cider-repl-type (current-buffer))))
         (cl-case repl-type
-          ('clj  nomis/-cider-repl-history-filename-clj)
-          ('cljs nomis/-cider-repl-history-filename-cljs)))))
+          (clj  nomis/-cider-repl-history-filename-clj)
+          (cljs nomis/-cider-repl-history-filename-cljs)))))
 
   (defun nomis/-cider-hacked-project-root (project-root)
     (let* ((prefix "/Users/simonkatz/development-100/repositories/"))

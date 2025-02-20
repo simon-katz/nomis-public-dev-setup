@@ -116,7 +116,7 @@
   (save-excursion
     (let* ((cnt 1))
       (while (not (nomis/at-top-level?))
-        (incf cnt)
+        (cl-incf cnt)
         (paredit-backward-up))
       cnt)))
 

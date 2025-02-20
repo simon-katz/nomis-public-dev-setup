@@ -201,7 +201,10 @@
 
 (defun nomis/org-mode ()
   ;; Layout
-  (linum-mode 0) ; see "Linum-mode + org-indent-mode gives strange graphical refresh bugs" at http://orgmode.org/worg/org-issues.html
+  (when (version< emacs-version "29")
+    ;; See "Linum-mode + org-indent-mode gives strange graphical refresh bugs"
+    ;; at http://orgmode.org/worg/org-issues.html
+    (linum-mode 0))
   ;; (setq org-indent-fix-section-after-idle-time nil)
   ;; (setq org-indent-indentation-per-level 3) ; the default of 2 is too small; 4 screws up auto indentation in large files
   ;; (setq org-indent-max 60)
@@ -771,7 +774,8 @@ With numerical argument N, show content up to level N."
 ;;;; * Fix `org-move-subtree-down` -- don't move cursor when there's an error
 
 (cond ((member org-version
-               '("9.5.5"))
+               '("9.5.5"
+                 "9.6.15"))
        (advice-add 'org-move-subtree-down
                    :around
                    (lambda (orig-fun &rest args)

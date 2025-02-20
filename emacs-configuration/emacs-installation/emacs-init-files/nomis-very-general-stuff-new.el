@@ -42,10 +42,10 @@ Useful in .dir-locals.el, where `add-to-list` would be wrong."
 ;;;; ___________________________________________________________________________
 
 (defun nomis/-add-to-colon-separated-string* (old-value new-item append? preceding-colon?)
-  (assert nil nil "nomis/-add-to-colon-separated-string* -- NO LONGER USED")
-  (assert (or (null old-value)
-              (stringp old-value)))
-  (assert (stringp new-item))
+  (cl-assert nil nil "nomis/-add-to-colon-separated-string* -- NO LONGER USED")
+  (cl-assert (or (null old-value)
+                 (stringp old-value)))
+  (cl-assert (stringp new-item))
   (let* ((old-value (cond ((null old-value)
                            "")
                           ((s-starts-with? ":" old-value)

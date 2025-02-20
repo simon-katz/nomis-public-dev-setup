@@ -4,7 +4,8 @@
 
 (cond ((member emacs-version
                '("28.1"
-                 "28.2"))
+                 "28.2"
+                 "29.4"))
        (setq Buffer-menu-name-width
              (lambda (buffers)
                ;; Code taken from `Buffer-menu--dynamic-name-width` and hacked.
@@ -16,9 +17,7 @@
                                                        (:nomis-hack 1.2))))
                          (apply #'max 0 (mapcar (lambda (b)
                                                   (length (buffer-name b)))
-                                                buffers))))
-               )))
-
+                                                buffers)))))))
       (t
        (message-box
         "You need to check `buffer-menu--dynamic-name-width` for this version of Emacs.")))

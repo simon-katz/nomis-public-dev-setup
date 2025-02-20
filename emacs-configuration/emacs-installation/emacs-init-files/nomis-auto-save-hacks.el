@@ -36,7 +36,8 @@
 (cond
  ((member emacs-version
           '("28.1"
-            "28.2"))
+            "28.2"
+            "29.4"))
   (advice-add 'make-auto-save-file-name
               :around
               (lambda (orig-fun &rest args)

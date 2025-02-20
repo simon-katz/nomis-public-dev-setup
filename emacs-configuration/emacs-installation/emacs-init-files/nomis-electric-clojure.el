@@ -53,7 +53,7 @@
     ov))
 
 (defun nomis/ec-apply-overlays (client-or-server start)
-  (let* ((face (case client-or-server
+  (let* ((face (cl-case client-or-server
                  (:client 'nomis/ec-client-face)
                  (:server 'nomis/ec-server-face)
                  (:either 'nomis/ec-either-client-or-server-face)))

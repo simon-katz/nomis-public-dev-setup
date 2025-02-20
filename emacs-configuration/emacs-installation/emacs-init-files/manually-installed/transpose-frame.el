@@ -144,7 +144,7 @@
 	      (window-margins tree)
 	      (window-fringes tree)
 	      (window-dedicated-p tree)
-	      (window-redisplay-end-trigger tree)
+	      ;; (window-redisplay-end-trigger tree)
 	      tree
 	      (eq tree (frame-selected-window frame)))
       (let* ((vertical (car tree))
@@ -179,7 +179,7 @@
 	  (set-window-margins window (caar config) (cdr (pop config)))
 	  (apply 'set-window-fringes window (pop config))
 	  (set-window-dedicated-p window (pop config))
-	  (set-window-redisplay-end-trigger window (pop config))
+	  ;; (set-window-redisplay-end-trigger window (pop config))
 	  (let ((orig-window (pop config))
 		(ol-func (lambda (ol)
 			   (if (eq (overlay-get ol 'window) orig-window)
