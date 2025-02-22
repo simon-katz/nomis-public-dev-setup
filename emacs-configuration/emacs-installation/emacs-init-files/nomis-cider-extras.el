@@ -146,7 +146,8 @@
 (cond
  ((member (pkg-info-version-info 'cider)
           '("1.5.0 (package: 20220830.500)"
-            "1.7.0 (package: 20230518.550)"))
+            "1.7.0 (package: 20230518.550)"
+            "20250217.1433"))
 
   (defun nomis/cider-browse-ns ()
     "Like `cider-browse-ns`, but uses the current namespace instead of prompting."
