@@ -209,7 +209,7 @@
            (let* ((message-2 (current-message)))
              (when message-1
                (if message-2
-                   (message "%s\n%s" message-1 message-2)
+                   (message "  %s\n& %s" message-1 message-2)
                  (message "%s" message-1)))))))
      '((name . nomis/show-lsp-errors-elsewhere))))
 
