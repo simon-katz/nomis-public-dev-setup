@@ -51,7 +51,8 @@ the need to save files so that a file-watcher can spot changes).")
                 "1.2.0snapshot (package: 20211105.708)"
                 "1.3.0 (package: 20220405.1216)"
                 "1.5.0 (package: 20220830.500)"
-                "1.7.0 (package: 20230518.550)")))
+                "1.7.0 (package: 20230518.550)"
+                "20250217.1433")))
 
   (cl-flet*
       ((check-current-buffer
