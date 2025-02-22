@@ -69,7 +69,8 @@
    ((member (pkg-info-package-version 'diff-hl)
             '((20210909 207)
               (20211105 145)
-              (20230423 1837)))
+              (20230423 1837)
+              (20241205 2338)))
 
     (defun diff-hl-inline-popup--compute-header (width &optional header)
       ;; The original `diff-hl-inline-popup--compute-header` is in
