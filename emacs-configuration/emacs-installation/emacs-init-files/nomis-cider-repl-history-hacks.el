@@ -9,7 +9,8 @@
           '("1.2.0snapshot (package: 20211105.708)"
             "1.3.0 (package: 20220405.1216)"
             "1.5.0 (package: 20220830.500)"
-            "1.7.0 (package: 20230518.550)"))
+            "1.7.0 (package: 20230518.550)"
+            "20250217.1433"))
 
   (with-eval-after-load 'cider-repl
     ;; The original is in `cider-repl`.
@@ -86,7 +87,8 @@ If REGEXP is non-nil, only lines matching REGEXP are considered."
           '("1.2.0snapshot (package: 20211105.708)"
             "1.3.0 (package: 20220405.1216)"
             "1.5.0 (package: 20220830.500)"
-            "1.7.0 (package: 20230518.550)"))
+            "1.7.0 (package: 20230518.550)"
+            "20250217.1433"))
 
   (defun nomis/-cider-repl-history-maybe-warn ()
     (when (and cider-repl-history-file
@@ -101,12 +103,10 @@ If REGEXP is non-nil, only lines matching REGEXP are considered."
             'nomis/-cider-repl-history-maybe-warn)
 
   (defun nomis/-cider-repl-history-file* ()
-    (if cider-repl-history-file
-        nil
-      (let* ((repl-type (cider-repl-type (current-buffer))))
-        (cl-case repl-type
-          (clj  nomis/-cider-repl-history-filename-clj)
-          (cljs nomis/-cider-repl-history-filename-cljs)))))
+    (let* ((repl-type (cider-repl-type (current-buffer))))
+      (cl-case repl-type
+        (clj  nomis/-cider-repl-history-filename-clj)
+        (cljs nomis/-cider-repl-history-filename-cljs))))
 
   (defun nomis/-cider-hacked-project-root (project-root)
     (let* ((prefix "/Users/simonkatz/development-100/repositories/"))
@@ -132,12 +132,14 @@ If REGEXP is non-nil, only lines matching REGEXP are considered."
                                                             ;; ignore
                                                             history-filename))))
           (if (file-exists-p centralised-filepath)
-              (if (file-exists-p history-filename)
+              (if (and history-filename
+                       (file-exists-p history-filename))
                   (warn "nomis/-cider-repl-history-file -- Ignoring %s because centralised file exists"
                         (concat project-root history-filename))
                 (let ((inhibit-message t))
                   (message "nomis/-cider-repl-history-file -- Using existing file in centralised location")))
-            (if (file-exists-p history-filename)
+            (if (and history-filename
+                     (file-exists-p history-filename))
                 (progn
                   (let ((inhibit-message t))
                     (message "nomis/-cider-repl-history-file -- Moving history file from %s to %s"
@@ -157,7 +159,13 @@ If REGEXP is non-nil, only lines matching REGEXP are considered."
       (setq nomis/-cider-repl-history-loaded? t)
       (let* ((filename (nomis/-cider-repl-history-file)))
         (when filename
-          (cider-repl-history-load filename)))))
+          (when cider-repl-history-file
+            (message "cider-repl-history-file is unexpectedly non-nil: %s"
+                     cider-repl-history-file))
+          (cider-repl-history-load filename)
+          (when nomis/-write-cider-repl-history-file-immediately
+            ;; CIDER sets this, but we don't want it.
+            (setq cider-repl-history-file nil))))))
 
   (defun nomis/cider-repl--history-write-most-recent-item (filename)
     "Write history to FILENAME.
@@ -202,14 +210,17 @@ utf-8-unix."
     (advice-add
      command
      :before
-     (lambda (&rest _args) (nomis/-cider-repl-history-maybe-load))
+     (lambda (&rest _args)
+       (when (null cider-repl-history-file)
+         (nomis/-cider-repl-history-maybe-load)))
      '((name . nomis/-write-cider-repl-history-file-immediately/load))))
 
   (advice-add
    'cider-repl--add-to-input-history
    :after
    (lambda (&rest _args)
-     (nomis/-cider-repl-history-maybe-write-most-recent-item))
+     (when (null cider-repl-history-file)
+       (nomis/-cider-repl-history-maybe-write-most-recent-item)))
    '((name . nomis/-write-cider-repl-history-file-immediately/write))))
 
  (t
@@ -217,6 +228,17 @@ utf-8-unix."
   (setq cider-repl-history-file nomis/-cider-repl-history-filename-clj)
   (message-box
    "You need to fix `nomis/-write-cider-repl-history-file-immediately` for this version of CIDER.")))
+
+(cond
+ ((member (pkg-info-version-info 'cider)
+          '("20250217.1433"))
+  ;; CIDER does do this but we need it earlier, otherwise /eg/ CLJ and CLJS
+  ;; histories can get muddled.
+  (make-variable-buffer-local 'cider-repl-input-history))
+
+ (t
+  (message-box
+   "You need to fix making `cider-repl-input-history` buffer local for this version of CIDER.")))
 
 ;;;; ___________________________________________________________________________
 ;;;; ---- nomis/hack-check-cider-repl-history-file ----
@@ -261,6 +283,16 @@ utf-8-unix."
          (message-box "I think this is a situation where we have created a random CIDER history file. current-buffer = %s"
                       (current-buffer)))))
    '((name . nomis/-note-random-history-files))))
+
+ ((member (pkg-info-version-info 'cider)
+          '("20250217.1433"
+            ;; With CIDER "20250217.1433", this is called when quitting a REPL
+            ;; and when quitting Emacs even when `cider-repl-history-file` is
+            ;; nil.
+            ))
+  ;; Do nothing.
+  )
+
  (t
   (message-box
    "You need to fix `nomis/-note-random-history-files` for this version of CIDER.")))
