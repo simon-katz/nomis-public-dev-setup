@@ -17,7 +17,8 @@
               "32snapshot (package: 20191126.2142)"
               "32snapshot (package: 20210708.1337)"
               "32snapshot (package: 20210825.1804)"
-              "33snapshot (package: 20230306.414)"))
+              "33snapshot (package: 20230306.414)"
+              "20250201.759"))
     (defvar *-nomis/add-checker-name-to-flycheck-message?* nil)
     (advice-add 'flycheck-display-error-messages
                 :around
