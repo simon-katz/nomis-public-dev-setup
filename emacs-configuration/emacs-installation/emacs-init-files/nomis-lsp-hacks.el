@@ -149,7 +149,8 @@ g. `error', `warning') and list of LSP TAGS."
               new-level)))))
 
    ((member (pkg-info-package-version 'lsp-mode)
-            '((20230823 446)))
+            '((20230823 446)
+              (20250214 818)))
     (defun lsp-diagnostics--flycheck-level (flycheck-level tags)
       "Generate flycheck level from the original FLYCHECK-LEVEL (e.
 g. `error', `warning') and list of LSP TAGS."
