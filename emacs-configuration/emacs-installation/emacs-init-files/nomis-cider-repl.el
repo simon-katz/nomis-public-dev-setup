@@ -5,7 +5,8 @@
 (cond
  ((member (pkg-info-package-version 'cider)
           '((20220830 500)
-            (20230518 550)))
+            (20230518 550)
+            (20250217 1433)))
 
   ;; From https://github.com/dakra/cider/commit/93c9a22db864abb81a119e4d807268434b3576b2
 
@@ -130,7 +131,7 @@ object is a root list or dict."
 
  (t
   (message-box
-   "You need to fix `nomis/-delete-duplicate-kaocha-autotest-lines`` for this version of vterm.")))
+   "You need to fix `nomis/-delete-duplicate-kaocha-autotest-lines` for this version of vterm.")))
 
 ;; (advice-remove 'cider-repl--emit-output 'nomis/-delete-duplicate-kaocha-autotest-lines)
 
