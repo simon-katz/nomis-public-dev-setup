@@ -56,80 +56,80 @@ the need to save files so that a file-watcher can spot changes).")
 
   (cl-flet*
       ((check-current-buffer
-        (buffer)
-        (cl-assert (eql buffer (current-buffer))
-                nil
-                "Unexpected change of buffer"))
+         (buffer)
+         (cl-assert (eql buffer (current-buffer))
+                    nil
+                    "Unexpected change of buffer"))
 
        (running-message
-        (form repl-buffer)
-        (let ((inhibit-message t))
-          (cl-case :do-not-do-this
-            (1 (message "nomis/cider/post-interactive-eval Running %S in buffer %S"
-                        form (buffer-name repl-buffer)))
-            (2 (message "Doing %s post-interactive-eval work"
-                        (cider-repl-type repl-buffer))))))
+         (form repl-buffer)
+         (let ((inhibit-message t))
+           (cl-case :do-not-do-this
+             (1 (message "nomis/cider/post-interactive-eval Running %S in buffer %S"
+                         form (buffer-name repl-buffer)))
+             (2 (message "Doing %s post-interactive-eval work"
+                         (cider-repl-type repl-buffer))))))
 
        (dup-tried-form-message
-        (form)
-        (message "nomis/cider/post-interactive-eval DUP TRIED FORM: %s"
-                 form))
+         (form)
+         (message "nomis/cider/post-interactive-eval DUP TRIED FORM: %s"
+                  form))
 
        (repl-buffer->form-string
-        (repl-buffer)
-        (let* ((form-symbol
-                (cl-case (cider-repl-type repl-buffer)
-                  (clj  'nomis/cider/post-interactive-eval/clj-function-name)
-                  (cljs 'nomis/cider/post-interactive-eval/cljs-function-name)))
-               (form-symbol-value (eval form-symbol)))
-          (when form-symbol-value
-            (format "(try (let [f (resolve '%s)]
+         (repl-buffer)
+         (let* ((form-symbol
+                 (cl-case (cider-repl-type repl-buffer)
+                   (clj  'nomis/cider/post-interactive-eval/clj-function-name)
+                   (cljs 'nomis/cider/post-interactive-eval/cljs-function-name)))
+                (form-symbol-value (eval form-symbol)))
+           (when form-symbol-value
+             (format "(try (let [f (resolve '%s)]
                             (f))
                           (catch #?(:clj Exception :cljs js/Error)
                               e
                             (let [message (str \"Have you set up `%s` and the function it refers to (`%s`) properly?  -- Error when evaluating `\" '%s \"` for `nomis/cider/post-interactive-eval`: \" e)]
                               (throw #?(:clj (Error. message)
                                         :cljs (js/Error. message))))))"
-                    form-symbol-value
-                    form-symbol
-                    form-symbol-value
-                    form-symbol-value))))
+                     form-symbol-value
+                     form-symbol
+                     form-symbol-value
+                     form-symbol-value))))
 
        (run-post-form
-        (form repl-buffer)
-        (let ((*-nomis/cider/post-interactive-eval/do-advice?* nil))
-          (let ((c
-                 ;; Don't overwrite the result in the minibuffer (or is it the
-                 ;; echo area?). For CLJS, errors are reported in eg the browser
-                 ;; console.
-                 (cider-stdin-handler)))
-            (check-current-buffer repl-buffer)
-            (running-message form repl-buffer)
-            (cider-interactive-eval form c))))
+         (form repl-buffer)
+         (let ((*-nomis/cider/post-interactive-eval/do-advice?* nil))
+           (let ((c
+                  ;; Don't overwrite the result in the minibuffer (or is it the
+                  ;; echo area?). For CLJS, errors are reported in eg the browser
+                  ;; console.
+                  (cider-stdin-handler)))
+             (check-current-buffer repl-buffer)
+             (running-message form repl-buffer)
+             (cider-interactive-eval form c))))
 
        (wrap-update-ui
-        (callback)
-        (let ((do-post-stuff
-               (let ((tried-form-strings '()))
-                 (nomis/memoize
-                  ;; Memoize because the callback is called multiple times for
-                  ;; each REPL, but we only want to do the post-processing once
-                  ;; per REPL.
-                  (lambda (repl-buffer)
-                    (let ((form-string (repl-buffer->form-string repl-buffer)))
-                      (when form-string
-                        (if (member form-string tried-form-strings)
-                            ;; Sometimes we get here. I've only seen that just
-                            ;; after starting Emacs.
-                            (dup-tried-form-message form-string)
-                          (progn
-                            (push form-string tried-form-strings)
-                            (run-post-form form-string repl-buffer))))))))))
-          (lambda (response)
-            (prog1
-                (funcall callback response)
-              ;; In this callback, the current buffer is a REPL buffer.
-              (funcall do-post-stuff (current-buffer)))))))
+         (callback)
+         (let ((do-post-stuff
+                (let ((tried-form-strings '()))
+                  (nomis/memoize
+                   ;; Memoize because the callback is called multiple times for
+                   ;; each REPL, but we only want to do the post-processing once
+                   ;; per REPL.
+                   (lambda (repl-buffer)
+                     (let ((form-string (repl-buffer->form-string repl-buffer)))
+                       (when form-string
+                         (if (member form-string tried-form-strings)
+                             ;; Sometimes we get here. I've only seen that just
+                             ;; after starting Emacs.
+                             (dup-tried-form-message form-string)
+                           (progn
+                             (push form-string tried-form-strings)
+                             (run-post-form form-string repl-buffer))))))))))
+           (lambda (response)
+             (prog1
+                 (funcall callback response)
+               ;; In this callback, the current buffer is a REPL buffer.
+               (funcall do-post-stuff (current-buffer)))))))
 
     (advice-add
      'cider-interactive-eval
@@ -138,8 +138,8 @@ the need to save files so that a file-watcher can spot changes).")
        (let* ((buffer (current-buffer)))
          (cl-flet
              ((do-it
-               (maybe-hacked-callback)
-               (funcall orig-fun form maybe-hacked-callback bounds additional-params)))
+                (maybe-hacked-callback)
+                (funcall orig-fun form maybe-hacked-callback bounds additional-params)))
            (do-it (if (not *-nomis/cider/post-interactive-eval/do-advice?*)
                       callback
                     (-> (or callback
@@ -154,8 +154,8 @@ the need to save files so that a file-watcher can spot changes).")
      :around
      (lambda (orig-fun &optional buffer callback _undef-all)
        (cl-flet ((do-it
-                  (hacked-callback)
-                  (funcall orig-fun buffer hacked-callback)))
+                   (hacked-callback)
+                   (funcall orig-fun buffer hacked-callback)))
          (do-it (if (not *-nomis/cider/post-interactive-eval/do-advice?*)
                     callback
                   (-> (or callback
