@@ -180,7 +180,8 @@
  ((member (pkg-info-package-version 'lsp-ui)
           '((20210820 1331)
             (20211101 131)
-            (20230811 552)))
+            (20230811 552)
+            (20241204 1808)))
   (advice-add
    'lsp-ui-sideline-mode
    :after
@@ -199,7 +200,8 @@
    ((member (pkg-info-package-version 'lsp-mode)
             '((20210821 1359)
               (20211103 1331)
-              (20230823 446)))
+              (20230823 446)
+              (20250214 818)))
     (advice-add
      'flycheck-display-error-messages
      :around
