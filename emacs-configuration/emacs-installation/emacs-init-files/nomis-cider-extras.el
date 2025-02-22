@@ -80,11 +80,35 @@
      (lambda (orig-fun &rest args)
        (concat nomis/-cider-eldoc-message-prefix
                (apply orig-fun args)))
-     '((name . nomis/add-lsp-prefix))))
+     '((name . nomis/add-cider-prefix))))
+
+   ((member (pkg-info-version-info 'cider)
+            '("20250217.1433"))
+    (advice-add
+     'cider-eldoc-format-variable
+     :around
+     (lambda (orig-fun &rest args)
+       (concat nomis/-cider-eldoc-message-prefix
+               (apply orig-fun args)))
+     '((name . nomis/add-cider-prefix)))
+    (advice-add
+     'cider-eldoc-format-special-form
+     :around
+     (lambda (orig-fun &rest args)
+       (concat nomis/-cider-eldoc-message-prefix
+               (apply orig-fun args)))
+     '((name . nomis/add-cider-prefix)))
+    (advice-add
+     'cider-eldoc-format-function
+     :around
+     (lambda (orig-fun &rest args)
+       (concat nomis/-cider-eldoc-message-prefix
+               (apply orig-fun args)))
+     '((name . nomis/add-cider-prefix))))
 
    (t
     (message-box
-     "You need to fix `cider-eldoc-format-function` for this version of `CIDER`."))))
+     "You need to fix `nomis/add-cider-prefix` for this version of `CIDER`."))))
 
 ;;;; ___________________________________________________________________________
 ;;;; Fix annoying navigating back from single ns browser to all ns browser,
