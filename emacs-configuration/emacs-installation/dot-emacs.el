@@ -293,6 +293,8 @@
 
 (require 'nomis-flycheck)
 
+(require 'nomis-eldoc)
+
 (require 'nomis-logview)
 
 (require 'nomis-auto-revert)

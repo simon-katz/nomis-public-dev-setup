@@ -195,31 +195,6 @@
    "You need to fix `nomis/show-flycheck-info` for this version of `lsp-ui`.")))
 ;; (advice-remove 'lsp-ui-sideline-mode 'nomis/show-flycheck-info)
 
-(with-eval-after-load 'lsp-mode ; nomis/show-lsp-errors-elsewhere
-  (cond
-   ((member (pkg-info-package-version 'lsp-mode)
-            '((20210821 1359)
-              (20211103 1331)
-              (20230823 446)
-              (20250214 818)))
-    (advice-add
-     'flycheck-display-error-messages
-     :around
-     (lambda (orig-fun errs)
-       (let* ((message-1 (current-message)))
-         (prog1 (funcall orig-fun errs)
-           (let* ((message-2 (current-message)))
-             (when message-1
-               (if message-2
-                   (message "  %s\n& %s" message-1 message-2)
-                 (message "%s" message-1)))))))
-     '((name . nomis/show-lsp-errors-elsewhere))))
-
-   (t
-    (message-box
-     "You need to fix `nomis/show-lsp-errors-elsewhere` for this version of `lsp`."))))
-;; (advice-remove 'flycheck-display-error-messages 'nomis/show-lsp-errors-elsewhere)
-
 ;;;; ___________________________________________________________________________
 ;;;; Additional functionality
 
