@@ -82,33 +82,20 @@
                (apply orig-fun args)))
      '((name . nomis/add-cider-prefix))))
 
-   ((member (pkg-info-version-info 'cider)
-            '("20250217.1433"))
-    (advice-add
-     'cider-eldoc-format-variable
-     :around
-     (lambda (orig-fun &rest args)
-       (concat nomis/-cider-eldoc-message-prefix
-               (apply orig-fun args)))
-     '((name . nomis/add-cider-prefix)))
-    (advice-add
-     'cider-eldoc-format-special-form
-     :around
-     (lambda (orig-fun &rest args)
-       (concat nomis/-cider-eldoc-message-prefix
-               (apply orig-fun args)))
-     '((name . nomis/add-cider-prefix)))
-    (advice-add
-     'cider-eldoc-format-function
-     :around
-     (lambda (orig-fun &rest args)
-       (concat nomis/-cider-eldoc-message-prefix
-               (apply orig-fun args)))
-     '((name . nomis/add-cider-prefix))))
-
    (t
-    (message-box
-     "You need to fix `nomis/add-cider-prefix` for this version of `CIDER`."))))
+    (advice-add
+     'cider-eldoc
+     :around
+     (lambda (orig-fun &rest args)
+       (let* ((res (apply orig-fun args)))
+         (if (or (null res)
+                 (not (stringp res)))
+             (progn
+               ;; (let ((inhibit-message t)) (message "Not a string: %s" res))
+               res)
+           (concat nomis/-cider-eldoc-message-prefix
+                   res))))
+     '((name . nomis/add-cider-prefix))))))
 
 ;;;; ___________________________________________________________________________
 ;;;; Fix annoying navigating back from single ns browser to all ns browser,
