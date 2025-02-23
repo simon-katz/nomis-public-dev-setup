@@ -45,4 +45,19 @@
 
 ;;;; ___________________________________________________________________________
 
+;;;; TODO: Can you find a way to add a prefix to all Eldoc messages (with the
+;;;;       prefix determined by the function that produces the message) in
+;;;;       a generic way? This would replace your hacks with
+;;;;       `nomis/-cider-eldoc-message-prefix` and
+;;;;       `nomis/-lsp-eldoc-message-prefix`.
+;;;;
+;;;;       You'd want to add prefixes for:
+;;;;       - `lsp-eldoc-function`
+;;;;       - `mp-flycheck-eldoc`
+;;;;       - `cider-eldoc`
+;;;;
+;;;;       This is a :possible-open-source-contribution
+
+;;;; ___________________________________________________________________________
+
 (provide 'nomis-eldoc)

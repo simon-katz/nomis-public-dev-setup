@@ -189,7 +189,7 @@ g. `error', `warning') and list of LSP TAGS."
 ;;;; ___________________________________________________________________________
 ;;;; Add a prefix to LSP eldoc info
 
-(defconst nomis/-lsp-eldoc-message-prefix "[lsp] ")
+(defconst nomis/-lsp-eldoc-message-prefix "[lsp] ") ; Do we ever see this now? sk 2025-02-23
 
 (with-eval-after-load 'lsp-mode
   (cond
