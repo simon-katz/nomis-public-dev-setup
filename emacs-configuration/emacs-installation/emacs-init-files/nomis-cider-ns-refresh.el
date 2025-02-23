@@ -1,5 +1,7 @@
 ;;;; Init stuff -- CIDER ns-refresh --  -*- lexical-binding: t -*-
 
+;;;; :possible-open-source-contribution `nomis-cider-ns-refresh`
+
 ;;;; ___________________________________________________________________________
 
 (defun nomis/cider-ns-refresh/-get-log-buffer ()

@@ -100,6 +100,8 @@ Push sideline overlays on `lsp-ui-sideline--ovs'."
 
 ;;;; ___________________________________________________________________________
 
+;;;; :possible-open-source-contribution `lsp-diagnostics--flycheck-level`
+
 (with-eval-after-load 'lsp-diagnostics ; hack `lsp-diagnostics--flycheck-level`
 
   ;; Get rid of huge numbers of messages like this:

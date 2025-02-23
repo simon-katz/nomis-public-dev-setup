@@ -4,6 +4,8 @@
 ;;;; Hack `cider-repl--history-replace` so that if we go beyond the bounds of
 ;;;; history, the input is cleared. See `:nomis-hack` below.
 
+;;;; :possible-open-source-contribution `cider-repl--history-replace`
+
 (cond
  ((member (pkg-info-version-info 'cider)
           '("1.2.0snapshot (package: 20211105.708)"
@@ -50,6 +52,9 @@ If REGEXP is non-nil, only lines matching REGEXP are considered."
 
 ;;;; ___________________________________________________________________________
 ;;;; ---- nomis/-write-cider-repl-history-file-immediately ----
+
+;;;; :possible-open-source-contribution `nomis/-write-cider-repl-history-file-immediately`
+;;;; - Need to include (some of) the stuff below this too.
 
 ;;;; CIDER REPL history is broken: when quitting, Emacs history is not saved
 ;;;; properly. CIDER does...

@@ -101,6 +101,8 @@
 ;;;; Fix annoying navigating back from single ns browser to all ns browser,
 ;;;; which always goes to top of buffer.
 
+;;;; :possible-open-source-contribution `nomis/cider-browse-ns-all-from-browse-single`
+
 ;;;; We want to hack `cider-browse-ns-all`, but only when called from the
 ;;;; single-ns browser. We do that by defining a new command
 ;;;; `nomis/cider-browse-ns-all-from-browse-single` and changing the
@@ -129,6 +131,8 @@
 
 ;;;; ___________________________________________________________________________
 ;;;; Fix annoying prompt for namespace in `cider-browse-ns`.
+
+;;;; :possible-open-source-contribution `nomis/cider-browse-ns`
 
 (cond
  ((member (pkg-info-version-info 'cider)

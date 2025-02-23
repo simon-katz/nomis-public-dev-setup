@@ -1,5 +1,7 @@
 ;;;; Init stuff -- nomis-cider-post-interactive-eval ---  -*- lexical-binding: t -*-
 
+;;;; :possible-open-source-contribution `nomis-cider-post-interactive-eval`
+
 ;;;; ___________________________________________________________________________
 ;;;; Design Notes
 

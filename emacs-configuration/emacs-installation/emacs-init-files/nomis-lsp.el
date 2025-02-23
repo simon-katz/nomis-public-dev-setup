@@ -165,6 +165,8 @@
 ;;;; ___________________________________________________________________________
 ;;;; Hack echo area messages.
 
+;;;; :possible-open-source-contribution `nomis/show-flycheck-info`
+
 ;;;; Don't stop showing flycheck info in the echo area. Useful, and also
 ;;;; sometimes diagnostics are not shown in the lsp-ui-sideline.
 ;;;;
