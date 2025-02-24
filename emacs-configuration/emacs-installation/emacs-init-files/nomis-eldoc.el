@@ -105,4 +105,21 @@ else wait for all doc strings."
 
 ;;;; ___________________________________________________________________________
 
+(with-eval-after-load 'eldoc
+
+  ;; From
+  ;; https://www.masteringemacs.org/article/seamlessly-merge-multiple-documentation-sources-eldoc
+
+  ;; For `M-x eldoc-doc-buffer`, open `*eldoc*` buffer at bottom of frame in
+  ;; a fresh window.
+  (add-to-list 'display-buffer-alist
+               '("^\\*eldoc\\*"
+                 display-buffer-at-bottom
+                 (window-height . 4)))
+
+  ;; Run Eldoc after more commands:
+  (eldoc-add-command-completions "paredit-"))
+
+;;;; ___________________________________________________________________________
+
 (provide 'nomis-eldoc)
