@@ -83,19 +83,8 @@
      '((name . nomis/add-cider-prefix))))
 
    (t
-    (advice-add
-     'cider-eldoc
-     :around
-     (lambda (orig-fun &rest args)
-       (let* ((res (apply orig-fun args)))
-         (if (or (null res)
-                 (not (stringp res)))
-             (progn
-               ;; (let ((inhibit-message t)) (message "Not a string: %s" res))
-               res)
-           (concat nomis/-cider-eldoc-message-prefix
-                   res))))
-     '((name . nomis/add-cider-prefix))))))
+    ;; We are doing this generically in `mp-flycheck-eldoc` now.
+    )))
 
 ;;;; ___________________________________________________________________________
 ;;;; Fix annoying navigating back from single ns browser to all ns browser,

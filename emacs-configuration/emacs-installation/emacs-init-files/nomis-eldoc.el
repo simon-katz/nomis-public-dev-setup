@@ -21,16 +21,19 @@
       (mapc
        (lambda (err)
          (funcall callback
-                  (format "%s: %s"
+                  (format "%s: [%s %s] %s"
                           (let ((level (flycheck-error-level err)))
                             (pcase level
                               ('info (propertize "I" 'face 'flycheck-error-list-info))
                               ('error (propertize "E" 'face 'flycheck-error-list-error))
                               ('warning (propertize "W" 'face 'flycheck-error-list-warning))
                               (_ level)))
+                          (symbol-name (flycheck-error-checker err))
+                          (or (flycheck-error-id err)
+                              (flycheck-error-group err))
                           (flycheck-error-message err))
-                  :thing (or (flycheck-error-id err)
-                             (flycheck-error-group err))
+                  ;; :thing (or (flycheck-error-id err)
+                  ;;            (flycheck-error-group err))
                   :face 'font-lock-doc-face))
        flycheck-errors)))
 
@@ -44,19 +47,61 @@
   :hook ((flycheck-mode . mp-flycheck-prefer-eldoc)))
 
 ;;;; ___________________________________________________________________________
+;;;; Add a prefix to all Eldoc messages to say which function produced it.
+;;;; :possible-open-source-contribution Add prefix to Eldoc messages.
 
-;;;; TODO: Can you find a way to add a prefix to all Eldoc messages (with the
-;;;;       prefix determined by the function that produces the message) in
-;;;;       a generic way? This would replace your hacks with
-;;;;       `nomis/-cider-eldoc-message-prefix` and
-;;;;       `nomis/-lsp-eldoc-message-prefix`.
-;;;;
-;;;;       You'd want to add prefixes for:
-;;;;       - `lsp-eldoc-function`
-;;;;       - `mp-flycheck-eldoc`
-;;;;       - `cider-eldoc`
-;;;;
-;;;;       This is a :possible-open-source-contribution
+(defvar -nomis/eldoc-function-name-alist
+  '((cider-eldoc        . "CIDER")
+    (lsp-eldoc-function . "lsp")
+    (mp-flycheck-eldoc  . "Flycheck")))
+
+(defvar -nomis/eldoc-function-name-max-size
+  (apply #'max
+         (mapcar (-compose #'length #'cdr)
+                 -nomis/eldoc-function-name-alist)))
+
+(defun -nomis/eldoc-documentation-function->ui-name (f)
+  (or (cdr (assoc f -nomis/eldoc-function-name-alist))
+      (format "%s" f)))
+
+(defun -nomis/eldoc-wrap-callback (f callback)
+  (lambda (str &rest plist)
+    (let ((f-name (-nomis/eldoc-documentation-function->ui-name f)))
+      (apply callback
+             (if (null str)
+                 str
+               (format "[%s]%s %s"
+                       f-name
+                       (make-string (max 0
+                                         (- -nomis/eldoc-function-name-max-size
+                                            (length f-name)))
+                                    ?\s)
+                       str))
+             plist))))
+
+(with-eval-after-load 'eldoc ; hack `nomis/eldoc-show-documentation-function`
+  (cond
+   ((member (pkg-info-version-info 'eldoc)
+            '("1.13.0"))
+    ;; The original `eldoc--documentation-compose-1` is in the `eldoc` package.
+    (defun eldoc--documentation-compose-1 (eagerlyp)
+      "Helper function for composing multiple doc strings.
+If EAGERLYP is non-nil show documentation as soon as possible,
+else wait for all doc strings."
+      (run-hook-wrapped 'eldoc-documentation-functions
+                        (lambda (f)
+                          (let* ((callback (eldoc--make-callback
+                                            (if eagerlyp :eager :patient)))
+                                 (callback ; :nomis-hack
+                                  (-nomis/eldoc-wrap-callback f callback))
+                                 (str (funcall f callback)))
+                            (if (or (null str) (stringp str)) (funcall callback str))
+                            nil)))
+      t))
+
+   (t
+    (message-box
+     "You need to fix `nomis/eldoc-show-documentation-function` for this version of `lsp-mode`."))))
 
 ;;;; ___________________________________________________________________________
 

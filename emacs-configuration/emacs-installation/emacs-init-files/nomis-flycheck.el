@@ -25,8 +25,7 @@
               "32snapshot (package: 20191126.2142)"
               "32snapshot (package: 20210708.1337)"
               "32snapshot (package: 20210825.1804)"
-              "33snapshot (package: 20230306.414)"
-              "20250201.759"))
+              "33snapshot (package: 20230306.414)"))
     (defvar *-nomis/add-checker-name-to-flycheck-message?* nil)
     (advice-add 'flycheck-display-error-messages
                 :around
@@ -58,8 +57,8 @@
                       raw-value)))
                 '((name . nomis/add-checker-name-to-flycheck-message*))))
    (t
-    (message-box
-     "You need to fix `nomis/add-checker-name-to-flycheck-message*` for this version of `flycheck`."))))
+    ;; We are doing this generically in `mp-flycheck-eldoc` now.
+    )))
 
 ;;;; ___________________________________________________________________________
 ;;;; Provide some easier-to-type key bindings than the built-in ones

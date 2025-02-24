@@ -233,51 +233,9 @@ g. `error', `warning') and list of LSP TAGS."
                    res))))
      '((name . nomis/add-lsp-prefix))))
 
-   ((member (pkg-info-package-version 'lsp-mode)
-            '((20250214 818)))
-    ;; This is handled below now, in a separate cond.
-    )
-
    (t
-    (message-box
-     "You need to fix `lsp--eldoc-message` for this version of `lsp`."))))
-
-
-(with-eval-after-load 'lsp-mode
-  (cond
-   ((member (pkg-info-package-version 'lsp-mode)
-            '((20250214 818)))
-    (advice-add
-     'lsp-eldoc-function
-     :around
-     (lambda (orig-fun &rest args)
-       (let* ((res (apply orig-fun args)))
-         (if (or (null res)
-                 (not (stringp res)))
-             (progn
-               ;; (let ((inhibit-message t)) (message "Not a string: %s" res))
-               res)
-           (concat nomis/-lsp-eldoc-message-prefix
-                   res))))
-     '((name . nomis/add-lsp-prefix))))
-
-   ((member (pkg-info-package-version 'lsp-mode)
-            '((20230823 446)))
-    (advice-add
-     'lsp--render-on-hover-content
-     :around
-     (lambda (orig-fun &rest args)
-       (let* ((res (apply orig-fun args)))
-         (if (or (null res)
-                 (not (stringp res)))
-             res
-           (concat nomis/-lsp-eldoc-message-prefix
-                   res))))
-     '((name . nomis/add-lsp-prefix))))
-
-   (t
-    (message-box
-     "You need to fix `nomis/add-lsp-prefix` for this version of `lsp`."))))
+    ;; We are doing this generically in `mp-flycheck-eldoc` now.
+    )))
 
 ;;;; ___________________________________________________________________________
 
