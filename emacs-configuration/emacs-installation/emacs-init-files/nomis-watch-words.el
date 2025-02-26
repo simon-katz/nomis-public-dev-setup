@@ -15,7 +15,8 @@
   '("--O\\R--"
     "--A\\ND--"
     "--AND/O\\R--"
-    "--N\\OT--"))
+    "--N\\OT--"
+    "--E\\QUIVALENT--"))
 
 (defconst nomis/ww/regexps/high-priority
   ;; Use \\ in the strings below so you don't get the highlighting here.
@@ -203,6 +204,8 @@
 ;;;; - aaa--AND/OR--aaa
 ;;;; - aaa[--NOT--]aaa
 ;;;; - aaa--NOT--aaa
+;;;; - aaa[--EQUIVALENT--]aaa
+;;;; - aaa--EQUIVALENT--aaa
 
 ;;;; ___________________________________________________________________________
 
