@@ -198,7 +198,8 @@ Do you want to revisit the file normally now? ")))
                                   rawfile truename number)))))))
 
  ((member emacs-version
-          '("29.4"))
+          '("29.4"
+            "30.1"))
   ;; The original is in `files`.
   (defun find-file-noselect (filename &optional nowarn rawfile wildcards)
     "Read file FILENAME into a buffer and return the buffer.

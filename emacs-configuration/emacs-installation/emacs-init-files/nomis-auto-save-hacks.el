@@ -37,7 +37,9 @@
  ((member emacs-version
           '("28.1"
             "28.2"
-            "29.4"))
+            "29.4"
+            "30.1" ; I don't know if we still need this, but it can't harm.
+            ))
   (advice-add 'make-auto-save-file-name
               :around
               (lambda (orig-fun &rest args)

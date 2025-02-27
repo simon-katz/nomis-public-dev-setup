@@ -101,7 +101,8 @@
     ((member emacs-version
              '("28.1"
                "28.2"
-               "29.4"))
+               "29.4"
+               "30.1"))
      ;; The original `custom-save-variables` is defined in `cus-edit`.
      (defun custom-save-variables ()
        "Save all customized variables in `custom-file'."

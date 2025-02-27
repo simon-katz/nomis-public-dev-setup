@@ -1,7 +1,8 @@
 (let ((expected-versions '(;; "27.2"
                            ;; "28.1"
-                           "28.2"
-                           "29.4"))
+                           ;; "28.2"
+                           ;; "29.4"
+                           "30.1"))
       (version emacs-version))
   (unless (or (member version expected-versions)
               (y-or-n-p

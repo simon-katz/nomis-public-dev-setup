@@ -99,6 +99,22 @@ else wait for all doc strings."
                             nil)))
       t))
 
+   ((member (pkg-info-version-info 'eldoc)
+            '("1.15.0"))
+    ;; The original `eldoc-documentation-compose-eagerly` is in the `eldoc` package.
+    (defun eldoc-documentation-compose-eagerly ()
+      "Show multiple documentation strings one by one as soon as possible.
+This is meant to be used as a value for `eldoc-documentation-strategy'."
+      (run-hook-wrapped 'eldoc-documentation-functions
+                        (lambda (f)
+                          (let* ((callback (eldoc--make-callback :eager f))
+                                 (callback ; :nomis-hack
+                                  (-nomis/eldoc-wrap-callback f callback))
+                                 (str (funcall f callback)))
+                            (if (or (null str) (stringp str)) (funcall callback str))
+                            nil)))
+      t))
+
    (t
     (message-box
      "You need to fix `nomis/eldoc-show-documentation-function` for this version of `lsp-mode`."))))

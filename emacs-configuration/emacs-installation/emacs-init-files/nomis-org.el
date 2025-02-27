@@ -364,6 +364,12 @@
   (add-hook 'org-agenda-finalize-hook
             'nomis/org-finalize-agenda-hook))
 
+(cond
+ ((member emacs-version
+          '("30.1"))
+  ;; Suppress buggy warnings that appear in org agenda buffer.
+  (add-to-list 'warning-suppress-types '(org-element org-element-parser))))
+
 ;;;; ___________________________________________________________________________
 ;;;; ____ * Fontify code in code blocks
 
@@ -775,7 +781,8 @@ With numerical argument N, show content up to level N."
 
 (cond ((member org-version
                '("9.5.5"
-                 "9.6.15"))
+                 "9.6.15"
+                 "9.7.11"))
        (advice-add 'org-move-subtree-down
                    :around
                    (lambda (orig-fun &rest args)

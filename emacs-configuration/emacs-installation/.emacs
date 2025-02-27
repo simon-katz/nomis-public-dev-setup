@@ -29,83 +29,83 @@
      auto-complete
      auto-dim-other-buffers
      beacon
-     bind-key
-     cider
-     cider-eval-sexp-fu
-     cl-format
-     cl-lib
-     clj-refactor
-     clojure-mode
-     company
-     counsel
-     dash-functional
-     diff-hl
-     discover
-     dumb-jump
-     edn
-     elisp-slime-nav
-     exec-path-from-shell
-     fill-column-indicator
-     flycheck
-     flycheck-clj-kondo
-     flycheck-joker
-     flycheck-kotlin
-     flycheck-projectile
-     fuzzy
-     gnu-elpa-keyring-update
-     helm
-     hide-lines
-     highlight-indentation
-     ht
-     hydra
-     ido-completing-read+
-     ido-vertical-mode
-     iedit
-     inflections
-     js2-mode
-     json-mode
-     kaocha-runner
-     key-chord
-     keycast
-     kotlin-mode
-     loccur
-     logview
-     lsp-mode
-     lsp-treemacs
-     lsp-ui
-     lua-mode
-     magit
-     markdown-mode
-     multiple-cursors
-     nav-flash
-     org
-     org-bullets
-     paredit
-     parseedn
-     paxedit
-     pkg-info
-     pos-tip
-     projectile
-     queue
-     rainbow-delimiters
-     rainbow-blocks
-     saveplace
-     sidecar-locals
-     smartrep
-     smex
-     spinner
-     sql-indent
-     sqlup-mode
-     terraform-mode
-     tldr
-     treepy
-     undo-tree
-     vterm
-     which-key
-     yafolding
-     yaml-mode
-     yasnippet
-     zenburn-theme))
+                       bind-key
+                       cider
+                       cider-eval-sexp-fu
+                       cl-format
+                       cl-lib
+                       clj-refactor
+                       clojure-mode
+                       company
+                       counsel
+                       dash-functional
+                       diff-hl
+                       discover
+                       dumb-jump
+                       edn
+                       elisp-slime-nav
+                       exec-path-from-shell
+                       fill-column-indicator
+                       flycheck
+                       flycheck-clj-kondo
+                       flycheck-joker
+                       flycheck-kotlin
+                       flycheck-projectile
+                       fuzzy
+                       gnu-elpa-keyring-update
+                       helm
+                       hide-lines
+                       highlight-indentation
+                       ht
+                       hydra
+                       ido-completing-read+
+                       ido-vertical-mode
+                       iedit
+                       inflections
+                       js2-mode
+                       json-mode
+                       kaocha-runner
+                       key-chord
+                       keycast
+                       kotlin-mode
+                       loccur
+                       logview
+                       lsp-mode
+                       lsp-treemacs
+                       lsp-ui
+                       lua-mode
+                       magit
+                       markdown-mode
+                       multiple-cursors
+                       nav-flash
+                       org
+                       org-bullets
+                       paredit
+                       parseedn
+                       paxedit
+                       pkg-info
+                       pos-tip
+                       projectile
+                       queue
+                       rainbow-delimiters
+                       rainbow-blocks
+                       saveplace
+                       sidecar-locals
+                       smartrep
+                       smex
+                       spinner
+                       sql-indent
+                       sqlup-mode
+                       terraform-mode
+                       tldr
+                       treepy
+                       undo-tree
+                       vterm
+                       which-key
+                       yafolding
+                       yaml-mode
+                       yasnippet
+                       zenburn-theme))
  '(safe-local-variable-values
    '((cider-clojure-cli-aliases . "-A:test")
      (cider-font-lock-max-length . 1000)
@@ -123,28 +123,21 @@
      (cider-ns-refresh-before-fn . "user/stop")
      (cider-show-eval-spinner)
      (cider-test-default-exclude-selectors "e2e")
-     (cider-test-default-exclude-selectors "with-test-containers" "needs-internet-connection")
+     (cider-test-default-exclude-selectors "with-test-containers"
+                                           "needs-internet-connection")
      (checkdoc-package-keywords-flag)
-     (elisp-lint-indent-specs
-      (if-let* . 2)
-      (when-let* . 1)
-      (let* . defun)
-      (nrepl-dbind-response . 2)
-      (cider-save-marker . 1)
-      (cider-propertize-region . 1)
-      (cider-map-repls . 1)
-      (cider--jack-in . 1)
-      (cider--make-result-overlay . 1)
-      (insert-label . defun)
-      (insert-align-label . defun)
-      (insert-rect . defun)
-      (cl-defun . 2)
-      (with-parsed-tramp-file-name . 2)
-      (thread-first . 1)
-      (thread-last . 1))
-     (eval define-clojure-indent
-           (for-all 1))
-     (eval nomis/add-to-list-local 'cider-jack-in-nrepl-middlewares "shadow.cljs.devtools.server.nrepl/middleware" t)
+     (elisp-lint-indent-specs (if-let* . 2) (when-let* . 1) (let* . defun)
+                              (nrepl-dbind-response . 2) (cider-save-marker . 1)
+                              (cider-propertize-region . 1)
+                              (cider-map-repls . 1) (cider--jack-in . 1)
+                              (cider--make-result-overlay . 1)
+                              (insert-label . defun)
+                              (insert-align-label . defun) (insert-rect . defun)
+                              (cl-defun . 2) (with-parsed-tramp-file-name . 2)
+                              (thread-first . 1) (thread-last . 1))
+     (eval define-clojure-indent (for-all 1))
+     (eval nomis/add-to-list-local 'cider-jack-in-nrepl-middlewares
+           "shadow.cljs.devtools.server.nrepl/middleware" t)
      (eval nomis/add-to-list-local 'grep-find-ignored-files "main.js")
      (eval org-content 999)
      (nomis/cider-cljs-offer-to-open-app-in-browser?)
@@ -156,12 +149,18 @@
      (nomis/cider/cljs-dev-port . 9000)
      (nomis/cider/cljs-dev-port . 9001)
      (nomis/cider/cljs-dev-port . 9002)
-     (nomis/cider/post-interactive-eval/clj-function-name . "dev/post-interactive-eval-hook")
-     (nomis/cider/post-interactive-eval/cljs-function-name . "cljs.user/post-interactive-eval-hook")
+     (nomis/cider/post-interactive-eval/clj-function-name
+      . "dev/post-interactive-eval-hook")
+     (nomis/cider/post-interactive-eval/cljs-function-name
+      . "cljs.user/post-interactive-eval-hook")
      (nomis/clojure-lsp-and-cider/find-definition/use-lsp? . t)
-     (nomis/grep/local-ignored-directories "compiler-output" "resources/dev-and-build/icons/bootstrap-icons-1.1.0" "resources/pub-prod/cross-env")
-     (nomis/grep/local-ignored-directories "_exported-site" "_pretty-printed-pages")
-     (nomis/grep/local-ignored-directories "compiler-output" "resources/pub-dev/assets")
+     (nomis/grep/local-ignored-directories "compiler-output"
+                                           "resources/dev-and-build/icons/bootstrap-icons-1.1.0"
+                                           "resources/pub-prod/cross-env")
+     (nomis/grep/local-ignored-directories "_exported-site"
+                                           "_pretty-printed-pages")
+     (nomis/grep/local-ignored-directories "compiler-output"
+                                           "resources/pub-dev/assets")
      (nomis/grep/local-ignored-directories "compiler-output")
      (nomis/grep/local-ignored-directories "giggin/public/js" "increments")
      (nomis/grep/local-ignored-directories "resources/public/js")

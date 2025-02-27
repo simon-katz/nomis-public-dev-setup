@@ -5,7 +5,8 @@
 (cond ((member emacs-version
                '("28.1"
                  "28.2"
-                 "29.4"))
+                 "29.4"
+                 "30.1"))
        (setq Buffer-menu-name-width
              (lambda (buffers)
                ;; Code taken from `Buffer-menu--dynamic-name-width` and hacked.
