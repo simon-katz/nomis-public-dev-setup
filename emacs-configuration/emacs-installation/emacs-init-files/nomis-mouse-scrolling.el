@@ -1,5 +1,7 @@
 ;;;; Init stuff -- Mouse scrolling.
 
+;;;; ___________________________________________________________________________
+
 (setq mouse-wheel-scroll-amount '(2
                                   ((shift) .      4)
                                   ;; The following don't seem to work
@@ -12,6 +14,14 @@
 
 (setq mouse-wheel-tilt-scroll t)
 (setq mouse-wheel-flip-direction t)
+
+;;;; ___________________________________________________________________________
+
+;; This is actually mouse zooming, not scrolling, but WTF...
+;; Disable `mouse-wheel-text-scale` commands:
+
+(global-unset-key (kbd "C-<wheel-up>"))
+(global-unset-key (kbd "C-<wheel-down>"))
 
 ;;;; ___________________________________________________________________________
 
