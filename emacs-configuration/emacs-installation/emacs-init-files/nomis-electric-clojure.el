@@ -2,6 +2,7 @@
 
 ;;;; Inspired by
 ;;;; https://gitlab.com/xificurC/hf-electric.el/-/blob/master/hf-electric.el
+;;;; Permalink: https://gitlab.com/xificurC/hf-electric.el/-/blob/5e6e3d69e42a64869f1eecd8b804cf4b679f9501/hf-electric.el
 
 ;;;; ___________________________________________________________________________
 ;;;; ---- The main functionality ----
