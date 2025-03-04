@@ -24,10 +24,20 @@
     (t ,(list :background "#ffc5c5")))
   "Face for Electric Clojure server code.")
 
-(defface nomis/ec-either-client-or-server-face
+(defface nomis/ec-neutral-face
   `((t ,(list :background "what-should-this-be?" ; TODO: What should this be?
               )))
-  "Face for Electric Clojure either client or server code.")
+  "Face for Electric code that is not specifically client code nor
+specifically server code.
+
+This can be:
+- code that is either client or server code; for example:
+  - code that is not lexically within `e/client` or `e/server`
+  - an `(e/fn ...)`
+- code that is neither client nor server; for example:
+  - in Electric v3:
+    - symbols that are being bound; /eg/ the LHS of `let` bindings
+    - `dom/xxxx` symbols.")
 
 (defface nomis/ec-flash-update-region-face-1
   `((t ,(list :background "red3")))
@@ -55,9 +65,9 @@
 
 (defun nomis/ec-apply-overlays (client-or-server start)
   (let* ((face (cl-case client-or-server
-                 (:client 'nomis/ec-client-face)
-                 (:server 'nomis/ec-server-face)
-                 (:either 'nomis/ec-either-client-or-server-face)))
+                 (:client  'nomis/ec-client-face)
+                 (:server  'nomis/ec-server-face)
+                 (:neutral 'nomis/ec-neutral-face)))
          (nesting-level (nomis/nesting-level))
          (end (save-excursion (goto-char start) (forward-sexp) (point))))
     (if nomis/ec-highlight-initial-whitespace?
@@ -111,7 +121,7 @@
           (when-let ((client-or-server
                       (cond ((looking-at "(e/client\\_>") :client)
                             ((looking-at "(e/server\\_>") :server)
-                            ((looking-at "(e/fn\\_>")     :either))))
+                            ((looking-at "(e/fn\\_>")     :neutral))))
             (nomis/ec-apply-overlays client-or-server (point))))
         (forward-char))
       (nomis/ec-feedback-flash start end start-2 end-2)
