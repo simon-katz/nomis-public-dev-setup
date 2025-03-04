@@ -12,7 +12,7 @@
 
 (defvar nomis/ec-highlight-initial-whitespace? nil)
 
-(defvar nomis/ec-give-feedback-flash? nil)
+(defvar nomis/ec-give-debug-feedback-flash? nil)
 
 (defface nomis/ec-client-face
   `((((background dark)) ,(list :background "DarkGreen"))
@@ -74,7 +74,7 @@
               (back-to-indentation))))))))
 
 (defun nomis/ec-feedback-flash (start end start-2 end-2)
-  (when nomis/ec-give-feedback-flash?
+  (when nomis/ec-give-debug-feedback-flash?
     (let* ((flash-overlay-1
             (let* ((ov (make-overlay start end nil t nil)))
               (overlay-put ov 'category 'nomis/ec-overlay)
