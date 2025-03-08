@@ -6,16 +6,6 @@
 
 ;;;; TODO: See all TODOs.
 
-;;;; TODO: Fix v3 being initially sited on the client.
-;;;;       Make it work for all uses of `e/defn`:
-;;;;       - Doc strings.
-;;;;       - Attribute map.
-;;;;       - Multiple arities.
-
-;;;; TODO: Where is v2 initially sited? Seems to be on the server. But there's
-;;;;       code to run it on both server and client. Maybe make it neutral.
-;;;;       Maybe ask on Slack (after mentioning this minor mode.)
-
 ;;;; TODO: Look at retaining/reapplying this minor mode when reverting buffer.
 ;;;;       - Especially because of auto-revert when a file changes.
 
@@ -279,15 +269,6 @@ This can be:
 ;;;; ___________________________________________________________________________
 ;;;; ---- Parse and overlay ----
 
-(defun -nomis/ec-overlay-defn ()
-  (save-excursion
-    ;; Body:
-    (-nomis/ec-checking-movement ("e/defn"
-                                  (progn (down-list) (forward-sexp 3)))
-      (-nomis/ec-overlay-body (cl-case -nomis/ec-electric-version
-                                (:v2 :server) ; See "Where is v2 initially sited?" question at top of file.
-                                (:v3 :client))))))
-
 (defun -nomis/ec-overlay-dom-xxxx ()
   (save-excursion
     (save-excursion (down-list)
@@ -330,18 +311,14 @@ This can be:
   (save-excursion
     (cl-case -nomis/ec-electric-version
       (:v2
-       (cond ((looking-at "(e/defn\\_>")
-              (-nomis/ec-overlay-defn))
-             ((looking-at "(e/client\\_>")
+       (cond ((looking-at "(e/client\\_>")
               (-nomis/ec-overlay-site :client))
              ((looking-at "(e/server\\_>")
               (-nomis/ec-overlay-site :server))
              ((-nomis/ec-looking-at-bracketed-sexp-start)
               (-nomis/ec-overlay-other-bracketed-form))))
       (:v3
-       (cond ((looking-at "(e/defn\\_>")
-              (-nomis/ec-overlay-defn))
-             ((looking-at "(e/client\\_>")
+       (cond ((looking-at "(e/client\\_>")
               (-nomis/ec-overlay-site :client))
              ((looking-at "(e/server\\_>")
               (-nomis/ec-overlay-site :server))
