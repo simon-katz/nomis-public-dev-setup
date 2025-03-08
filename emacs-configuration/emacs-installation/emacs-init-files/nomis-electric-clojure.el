@@ -4,15 +4,6 @@
 ;;;; https://gitlab.com/xificurC/hf-electric.el/-/blob/master/hf-electric.el
 ;;;; Permalink: https://gitlab.com/xificurC/hf-electric.el/-/blob/5e6e3d69e42a64869f1eecd8b804cf4b679f9501/hf-electric.el
 
-;;;; TODO: See all TODOs.
-
-;;;; TODO: Check for no dependencies on other packages.
-;;;;       - I've checked that there's no use of:
-;;;;         - `dash`
-;;;;         - `nomis-sexp-utils`.
-
-;;;; TODO: Decide how to publish. I think just point at this file.
-
 ;;;; TODO: When user changes `nomis/ec-highlight-initial-whitespace?`, re-apply
 ;;;;       overlays to all `nomis-electric-clojure-mode` buffers.
 
