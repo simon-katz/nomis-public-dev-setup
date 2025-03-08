@@ -215,6 +215,20 @@ This can be:
 ;;;; ___________________________________________________________________________
 ;;;; ---- Parse and overlay helpers ----
 
+(defun -nomis/ec-checking-movement* (desc move-fn overlay-fn)
+  (condition-case _
+      (funcall move-fn)
+    (error (nomis/ec-message-no-disp
+            "nomis-electric-clojure: Failed to parse %s"
+            desc)))
+  (funcall overlay-fn))
+
+(cl-defmacro -nomis/ec-checking-movement ((desc move-form) &body body)
+  (declare (indent 1))
+  `(-nomis/ec-checking-movement* ,desc
+                                 (lambda () ,move-form)
+                                 (lambda () ,@body)))
+
 (defun -nomis/ec-bof ()
   (forward-sexp)
   (backward-sexp))
@@ -273,13 +287,11 @@ This can be:
 (defun -nomis/ec-overlay-defn ()
   (save-excursion
     ;; Body:
-    (condition-case _
-        (progn (down-list) (forward-sexp 3))
-      (error (nomis/ec-message-no-disp
-              "nomis-electric-clojure: Failed to parse `e/defn`")))
-    (-nomis/ec-overlay-body (cl-case -nomis/ec-electric-version
-                              (:v2 :server) ; See "Where is v2 initially sited?" question at top of file.
-                              (:v3 :client)))))
+    (-nomis/ec-checking-movement ("e/defn"
+                                  (progn (down-list) (forward-sexp 3)))
+      (-nomis/ec-overlay-body (cl-case -nomis/ec-electric-version
+                                (:v2 :server) ; See "Where is v2 initially sited?" question at top of file.
+                                (:v3 :client))))))
 
 (defun -nomis/ec-overlay-dom-xxxx ()
   (save-excursion
