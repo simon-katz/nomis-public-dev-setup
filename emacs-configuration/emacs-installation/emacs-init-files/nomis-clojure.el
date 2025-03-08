@@ -13,6 +13,7 @@
 (require 'nomis-clojure-portal)
 (require 'nomis-clojure-privacy-highlighting-mode)
 (require 'nomis-electric-clojure)
+(require 'nomis-electric-clojure-key-bindings)
 
 ;;;; ___________________________________________________________________________
 

@@ -161,13 +161,5 @@ This can be:
       (message "%s" ov))))
 
 ;;;; ___________________________________________________________________________
-;;;; ---- Key bindings ----
-
-(define-key clojure-mode-map (kbd "M-E") 'nomis-electric-clojure-mode)
-
-(define-key clojure-mode-map (kbd "C-M-E")
-  'nomis/ec-toggle-highlight-initial-whitespace?)
-
-;;;; ___________________________________________________________________________
 
 (provide 'nomis-electric-clojure)
