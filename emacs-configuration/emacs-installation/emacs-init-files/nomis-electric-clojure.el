@@ -6,11 +6,6 @@
 
 ;;;; TODO: See all TODOs.
 
-;;;; TODO: Handle parsing errors.
-;;;;       You do this in `-nomis/ec-overlay-defn`.
-;;;;       Do elsewhere too.
-;;;;       Probably write a macro.
-
 ;;;; TODO: Fix v3 being initially sited on the client.
 ;;;;       Make it work for all uses of `e/defn`:
 ;;;;       - Doc strings.
@@ -307,8 +302,8 @@ This can be:
       ;; Whole form:
       (-nomis/ec-with-site (:neutral)
         ;; Bindings:
-        (save-excursion
-          (down-list 2)
+        (-nomis/ec-checking-movement ("let"
+                                      (down-list 2))
           (while (-nomis/ec-can-forward-sexp?)
             ;; Skip the LHS of the binding:
             (forward-sexp)
@@ -319,8 +314,8 @@ This can be:
                 (-nomis/ec-walk-and-overlay))
               (forward-sexp))))
         ;; Body:
-        (down-list)
-        (forward-sexp 2)
+        (backward-up-list)
+        (forward-sexp)
         (-nomis/ec-overlay-body inherited-site)))))
 
 (defun -nomis/ec-overlay-other-bracketed-form ()
