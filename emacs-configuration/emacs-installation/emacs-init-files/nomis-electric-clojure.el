@@ -24,8 +24,7 @@
   "Face for Electric Clojure server code.")
 
 (defface nomis/ec-neutral-face
-  `((t ,(list :background "what-should-this-be?" ; TODO: What should this be?
-              )))
+  `((t ,(list :inherit 'default)))
   "Face for Electric code that is not specifically client code nor
 specifically server code.
 
