@@ -17,6 +17,9 @@
 
 ;;;; TODO: Decide how to publish. I think just point at this file.
 
+;;;; TODO: When user changes `nomis/ec-highlight-initial-whitespace?`, re-apply
+;;;;       overlays to all `nomis-electric-clojure-mode` buffers.
+
 ;;;; ___________________________________________________________________________
 
 (defcustom nomis/ec-bound-for-electric-require-search 100000
@@ -36,7 +39,10 @@ You can re-run the auto-detection in any of the following ways:
 - by turning `nomis-electric-clojure-mode` off and then back on."
   :type 'integer)
 
-(defvar nomis/ec-highlight-initial-whitespace? nil) ; TODO: Change to `defcustom`.
+(defcustom nomis/ec-highlight-initial-whitespace? nil
+  "Whether to color whitespace at the beginning of lines in
+sited code."
+  :type 'boolean)
 
 (defface nomis/ec-client-face
   `((((background dark)) ,(list :background "DarkGreen"))
