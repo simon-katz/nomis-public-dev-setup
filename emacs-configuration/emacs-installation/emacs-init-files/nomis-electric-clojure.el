@@ -23,13 +23,12 @@
   "How far to search in Electric Clojure source code buffers when
 trying to detect the version of Electric Clojure.
 
-This detection is done by looking for
+This detection is done when `nomis-electric-clojure-mode` is turned on,
+by looking for
   `[hyperfiddle.electric :as e]`
 or
   `[hyperfiddle.electric3 :as e]`
 near the beginning of the buffer.
-
-We normally do this once for each buffer.
 
 You can re-run the auto-detection in any of the following ways:
 - by reverting the buffer
