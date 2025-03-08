@@ -32,7 +32,7 @@
     (if (not (search-backward "#_" nil t)) ; wrong -- not structure-aware
         (error "No reader comment found")
       (progn
-        (when (nomis/at-top-level?)
+        (when (nomis/sexp-at-top-level?)
           (error "Reader comment is already at top level"))
         (while (looking-at-p "#_") (forward-char 2))
         (backward-char 2)

@@ -24,7 +24,7 @@
 ;;;; hide-show utilities
 
 (defun nomis/hs/looking-at-beginning-of-hidden-sexp? ()
-  (and (nomis/looking-at-bracketed-sexp-start)
+  (and (nomis/sexp-looking-at-bracketed-sexp-start)
        (hs-already-hidden-p)))
 
 (cl-defmacro nomis/hs/with-only-if-looking-at-bracketed-sexp-start (&body body)
@@ -32,7 +32,7 @@
   ;; bracketed sexp start -- eg for `hs-show-block`, which moves the cursor
   ;; up a level when on an operator.
   (declare (indent 0))
-  `(when (nomis/looking-at-bracketed-sexp-start)
+  `(when (nomis/sexp-looking-at-bracketed-sexp-start)
      ,@body))
 
 ;;;; ___________________________________________________________________________
@@ -334,11 +334,11 @@ Otherwise, go to the beginning of the sexp after point and show it."
   (interactive)
   (nomis/scrolling/with-maybe-maintain-line-no-in-window
     (cl-flet ((error--cannot-move
-               ()
-               (error "Can't move forward")))
+                ()
+                (error "Can't move forward")))
       (cl-case nomis/hs/step-forward-position
         (:before-form
-         (cond ((not (nomis/can-forward-sexp?))
+         (cond ((not (nomis/sexp-can-forward-sexp?))
                 (error--cannot-move))
                ((nomis/looking-at-beginning-of-sexp/kinda?)
                 (if (nomis/hs/looking-at-beginning-of-hidden-sexp?)
@@ -352,7 +352,7 @@ Otherwise, go to the beginning of the sexp after point and show it."
                 (nomis/goto-beginning-of-sexp/or-end/forward)
                 (nomis/hs/adjust/show-all))))
         (:after-form
-         (if (not (nomis/can-forward-sexp?))
+         (if (not (nomis/sexp-can-forward-sexp?))
              (cond ((not (nomis/can-backward-sexp?))
                     (error--cannot-move))
                    ((save-excursion
@@ -396,8 +396,8 @@ Otherwise, go to the beginning of the sexp before point and show it."
   (nomis/scrolling/with-maybe-maintain-line-no-in-window
     (cond ((not (nomis/can-backward-sexp?))
            (cl-flet ((error--cannot-move
-                      ()
-                      (error "Can't move backward")))
+                       ()
+                       (error "Can't move backward")))
              (if (nomis/hs/looking-at-beginning-of-hidden-sexp?)
                  (error--cannot-move)
                (progn

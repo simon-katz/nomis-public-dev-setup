@@ -24,7 +24,7 @@
                                      (backward-char)
                                      (and (not (bolp))
                                           (nomis/looking-at-whitespace))))
-                            (when (nomis/looking-at-bracketed-sexp-start)
+                            (when (nomis/sexp-looking-at-bracketed-sexp-start)
                               (1+ (current-column)))))
        (apply orig-fun args)))
  '((name . nomis/-no-space-before-two-semicolon-comment-after-sexp-start)))
@@ -125,7 +125,7 @@
         (%do-indentation%)
       (nomis/beginning-of-top-level-form)
       (let* ((in-a-top-level-symbol-p (and (not
-                                            (nomis/looking-at-bracketed-sexp-start))
+                                            (nomis/sexp-looking-at-bracketed-sexp-start))
                                            (not (looking-at-p "#?")))))
         (cond (in-a-top-level-symbol-p
                ;; We are on a top-level symbol. `paredit-reindent-defun` would

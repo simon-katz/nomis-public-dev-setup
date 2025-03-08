@@ -108,10 +108,10 @@ This can be:
 (defun nomis/ec-overlay-region (start end)
   (save-excursion
     (goto-char start)
-    (unless (nomis/at-top-level?) (beginning-of-defun))
+    (unless (nomis/sexp-at-top-level?) (beginning-of-defun))
     (let* ((start-2 (point))
            (end-2 (save-excursion (goto-char end)
-                                  (unless (nomis/at-top-level?) (end-of-defun))
+                                  (unless (nomis/sexp-at-top-level?) (end-of-defun))
                                   (point))))
       (remove-overlays start-2 end-2 'category 'nomis/ec-overlay)
       (while (and (< (point) end-2)

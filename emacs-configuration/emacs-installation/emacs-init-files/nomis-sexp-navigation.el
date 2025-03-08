@@ -10,14 +10,14 @@
   (interactive)
   (backward-paragraph)
   (when (ignore-errors paredit-mode)
-    (while (not (nomis/at-top-level?))
+    (while (not (nomis/sexp-at-top-level?))
       (backward-paragraph))))
 
 (defun nomis/forward-top-level-sexp ()
   (interactive)
   (forward-paragraph)
   (when (ignore-errors paredit-mode)
-    (while (not (nomis/at-top-level?))
+    (while (not (nomis/sexp-at-top-level?))
       (forward-paragraph))))
 
 (progn

@@ -17,31 +17,31 @@
   (and (nomis/looking-at-whitespace)
        (not (nomis/looking-at-whitespace-start-p))))
 
-(defvar *regexp-for-bracketed-sexp-start*
+(defvar -nomis/sexp-regexp-for-bracketed-sexp-start
   "(\\|\\[\\|{\\|#{")
 
-(defvar *regexp-for-bracketed-sexp-end*
+(defvar -nomis/sexp-regexp-for-bracketed-sexp-end
   ")\\|]\\|}")
 
-(defun nomis/looking-at-bracketed-sexp-start ()
-  (looking-at *regexp-for-bracketed-sexp-start*))
+(defun nomis/sexp-looking-at-bracketed-sexp-start ()
+  (looking-at -nomis/sexp-regexp-for-bracketed-sexp-start))
 
-(defun -nomis/looking-at-bracketed-sexp-end ()
-  (looking-at *regexp-for-bracketed-sexp-end*))
+(defun -nomis/sexp-looking-at-bracketed-sexp-end ()
+  (looking-at -nomis/sexp-regexp-for-bracketed-sexp-end))
 
 (defun nomis/looking-after-bracketed-sexp-end ()
-  (and (not (nomis/looking-at-bracketed-sexp-start))
+  (and (not (nomis/sexp-looking-at-bracketed-sexp-start))
        (and (not (= (point) 1))
             (save-excursion
               (backward-char 1)
-              (-nomis/looking-at-bracketed-sexp-end)))))
+              (-nomis/sexp-looking-at-bracketed-sexp-end)))))
 
 (defun nomis/looking-at-end-of-empty-bracketed-sexp ()
-  (and (-nomis/looking-at-bracketed-sexp-end)
+  (and (-nomis/sexp-looking-at-bracketed-sexp-end)
        (and (not (= (point) 1))
             (save-excursion
               (backward-char 1)
-              (nomis/looking-at-bracketed-sexp-start)))))
+              (nomis/sexp-looking-at-bracketed-sexp-start)))))
 
 (defun nomis/looking-at-char-1-whitespace-p ()
   (and (= (point) 1)
@@ -59,19 +59,19 @@
 (defun nomis/looking-after-bracketed-sexp-end-at-bracketed-sexp-end-or-whitespace ()
   (and (nomis/looking-after-bracketed-sexp-end)
        (or (nomis/looking-at-whitespace)
-           (-nomis/looking-at-bracketed-sexp-end))))
+           (-nomis/sexp-looking-at-bracketed-sexp-end))))
 
 (defun nomis/looking-at-whitespace-after-bracketed-sexp-start ()
   (and (nomis/looking-at-whitespace)
        (and (not (= (point) 1))
             (save-excursion
               (backward-char)
-              (nomis/looking-at-bracketed-sexp-start)))))
+              (nomis/sexp-looking-at-bracketed-sexp-start)))))
 
 (defun nomis/looking-at-regexp-before-bracketed-sexp-start (regexp)
   (looking-at (concatenate 'string
                            regexp
-                           *regexp-for-bracketed-sexp-start*)))
+                           -nomis/sexp-regexp-for-bracketed-sexp-start)))
 
 (defun nomis/looking-at-boring-place-p ()
   ;; TODO: Add tests for these.
@@ -81,7 +81,7 @@
   ;;       If you can, setting the position will be fiddly.
   ;;       Ah! Can have a function that processes a string and looks for ^ or ^^
   ;;       or something.
-  (or (nomis/looking-at-bracketed-sexp-start)
+  (or (nomis/sexp-looking-at-bracketed-sexp-start)
       (nomis/looking-at-end-of-empty-bracketed-sexp)
       (nomis/looking-at-char-1-whitespace-p)
       (nomis/looking-at-multiple-whitespace)
@@ -106,7 +106,7 @@
         (progn (backward-sexp) t)
       (error nil))))
 
-(defun nomis/at-top-level? ()
+(defun nomis/sexp-at-top-level? ()
   (save-excursion
     (condition-case nil
         (progn (paredit-backward-up) nil)
@@ -115,15 +115,15 @@
 (defun nomis/nesting-level ()
   (save-excursion
     (let* ((cnt 1))
-      (while (not (nomis/at-top-level?))
+      (while (not (nomis/sexp-at-top-level?))
         (cl-incf cnt)
         (paredit-backward-up))
       cnt)))
 
-(defun nomis/can-forward-sexp? ()
+(defun nomis/sexp-can-forward-sexp? ()
   ;; This is complicated, because `forward-sexp` behaves differently at end
   ;; of file and inside-and-at-end-of a `(...)` form.
-  (cond ((not (nomis/at-top-level?))
+  (cond ((not (nomis/sexp-at-top-level?))
          (-nomis/forward-sexp-gives-no-error?))
         ((and (thing-at-point 'symbol)
               (save-excursion (ignore-errors (forward-char) t))
@@ -134,20 +134,18 @@
          (or (bobp) ; should really check that there's an sexp ahead
              (condition-case nil
                  (not (= (save-excursion
-                           (let* ((pos (point)))
-                             (backward-sexp)
-                             (point)))
+                           (backward-sexp)
+                           (point))
                          (save-excursion
-                           (let* ((pos (point)))
-                             (forward-sexp)
-                             (backward-sexp)
-                             (point)))))
+                           (forward-sexp)
+                           (backward-sexp)
+                           (point))))
                (error nil))))))
 
 (defun nomis/can-backward-sexp? ()
   ;; This is complicated, because `backward-sexp` behaves differently at end
   ;; of file and inside-and-at-beginning-of a `(...)` form.
-  (cond ((not (nomis/at-top-level?))
+  (cond ((not (nomis/sexp-at-top-level?))
          (-nomis/backward-sexp-gives-no-error?))
         ((and (thing-at-point 'symbol)
               (save-excursion (ignore-errors (backward-char) t))
@@ -172,7 +170,7 @@
 
 Note, for example, that for a quoted sexp, point would have to be
 on the quote for this to return t."
-  (and (nomis/can-forward-sexp?)
+  (and (nomis/sexp-can-forward-sexp?)
        (= (save-excursion (forward-sexp) (backward-sexp) (point))
           (point))))
 
@@ -186,7 +184,7 @@ Examples (| denotes cursor position):
     xxxx| -- nil
     |'xxxx -- nil
     '|xxxx -- t"
-  (and (nomis/can-forward-sexp?)
+  (and (nomis/sexp-can-forward-sexp?)
        (< (save-excursion (forward-sexp) (backward-sexp) (point))
           (point))))
 
@@ -198,7 +196,7 @@ Otherwise, if on a symbol, move to the end of the symbol.
 Otherwise, stay at point."
   (when (nomis/in-middle-of-symbol-ish?)
     (forward-sexp))
-  (when (nomis/can-forward-sexp?)
+  (when (nomis/sexp-can-forward-sexp?)
     (forward-sexp)
     (backward-sexp)))
 
@@ -238,7 +236,7 @@ If ARG is supplied, go to the beginning of the next-but-ARG-minus-1'th sexp."
 (add-hook 'paredit-mode-hook 'nomis/set-up-next-sexp-key)
 
 (defun nomis/move-to-start-of-bracketed-sexp-around-point ()
-  (cond ((nomis/looking-at-bracketed-sexp-start)
+  (cond ((nomis/sexp-looking-at-bracketed-sexp-start)
          ;; stay here
          )
         ((or (nomis/looking-at-whitespace)
@@ -253,7 +251,7 @@ If ARG is supplied, go to the beginning of the next-but-ARG-minus-1'th sexp."
   (backward-sexp))
 
 (defun nomis/end-of-top-level-form ()
-  (when (nomis/looking-at-bracketed-sexp-start)
+  (when (nomis/sexp-looking-at-bracketed-sexp-start)
     (forward-sexp))
   (while (ignore-errors (paredit-backward-up -1) t))
   (when (or
@@ -268,7 +266,7 @@ If ARG is supplied, go to the beginning of the next-but-ARG-minus-1'th sexp."
    else if looking after end of bracketed sexp, move to its start,
    else if within a bracketed sexp, move to its start,
    otherwise move to beginning of next top-level form."
-  (cond ((nomis/looking-at-bracketed-sexp-start)
+  (cond ((nomis/sexp-looking-at-bracketed-sexp-start)
          ;; stay where we are
          )
         ((nomis/looking-after-bracketed-sexp-end)
