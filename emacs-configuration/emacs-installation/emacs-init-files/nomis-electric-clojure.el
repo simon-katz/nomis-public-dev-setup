@@ -6,10 +6,6 @@
 
 ;;;; TODO: See all TODOs.
 
-;;;; TODO: How is this on a big file?
-;;;;       Not good. Simple editing can cause never-returning ~90% CPU.
-;;;;       - Maybe fixed.
-
 ;;;; TODO: Check for no dependencies on other packages.
 ;;;;       - I've checked that there's no use of:
 ;;;;         - `dash`
