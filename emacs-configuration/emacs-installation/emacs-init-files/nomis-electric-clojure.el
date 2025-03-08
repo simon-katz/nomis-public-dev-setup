@@ -4,14 +4,57 @@
 ;;;; https://gitlab.com/xificurC/hf-electric.el/-/blob/master/hf-electric.el
 ;;;; Permalink: https://gitlab.com/xificurC/hf-electric.el/-/blob/5e6e3d69e42a64869f1eecd8b804cf4b679f9501/hf-electric.el
 
+;;;; TODO: See all TODOs.
+
+;;;; TODO: Handle parsing errors.
+;;;;       You do this in `-nomis/ec-overlay-defn`.
+;;;;       Do elsewhere too.
+;;;;       Probably write a macro.
+
+;;;; TODO: Fix v3 being initially sited on the client.
+;;;;       Make it work for all uses of `e/defn`:
+;;;;       - Doc strings.
+;;;;       - Attribute map.
+;;;;       - Multiple arities.
+
+;;;; TODO: Where is v2 initially sited? Seems to be on the server. But there's
+;;;;       code to run it on both server and client. Maybe make it neutral.
+;;;;       Maybe ask on Slack (after mentioning this minor mode.)
+
+;;;; TODO: Look at retaining/reapplying this minor mode when reverting buffer.
+;;;;       - Especially because of auto-revert when a file changes.
+
+;;;; TODO: How is this on a big file?
+;;;;       Not good. Simple editing can cause never-returning ~90% CPU.
+;;;;       - Maybe fixed.
+
+;;;; TODO: Check for no dependencies on other packages.
+;;;;       - I've checked that there's no use of:
+;;;;         - `dash`
+;;;;         - `nomis-sexp-utils`.
+
+;;;; TODO: Decide how to publish. I think just point at this file.
+
 ;;;; ___________________________________________________________________________
-;;;; ---- The main functionality ----
 
-(require 'nomis-sexp-utils)
+(defcustom nomis/ec-bound-for-electric-require-search 100000
+  "How far to search in Electric Clojure source code buffers when
+trying to detect the version of Electric Clojure.
 
-(defvar nomis/ec-highlight-initial-whitespace? nil)
+This detection is done by looking for
+  `[hyperfiddle.electric :as e]`
+or
+  `[hyperfiddle.electric3 :as e]`
+near the beginning of the buffer.
 
-(defvar nomis/ec-give-debug-feedback-flash? nil)
+We normally do this once for each buffer.
+
+You can re-run the auto-detection in either of the following ways:
+- by running `M-x nomis/ec-redetect-electric-version`
+- by turning `nomis-electric-clojure-mode` off and then back on."
+  :type 'integer)
+
+(defvar nomis/ec-highlight-initial-whitespace? nil) ; TODO: Change to `defcustom`.
 
 (defface nomis/ec-client-face
   `((((background dark)) ,(list :background "DarkGreen"))
@@ -37,20 +80,110 @@ This can be:
     - symbols that are being bound; /eg/ the LHS of `let` bindings
     - `dom/xxxx` symbols.")
 
-(defface nomis/ec-flash-update-region-face-1
+;;;; ___________________________________________________________________________
+
+(defvar -nomis/ec-electric-version nil)
+(make-variable-buffer-local '-nomis/ec-electric-version)
+
+;;;; ___________________________________________________________________________
+
+(defun nomis/ec-message-no-disp (format-string &rest args)
+  (let* ((inhibit-message t))
+    (apply #'message format-string args)))
+
+;;;; ___________________________________________________________________________
+;;;; Some utilities copied from `nomis-sexp-utils`. (I don't want to
+;;;; make this package dependent on `nomis-sexp-utils`.)
+
+(defvar -nomis/ec-regexp-for-bracketed-sexp-start
+  "(\\|\\[\\|{\\|#{")
+
+(defun -nomis/ec-looking-at-bracketed-sexp-start ()
+  (looking-at -nomis/ec-regexp-for-bracketed-sexp-start))
+
+(defun -nomis/ec-at-top-level? ()
+  (save-excursion
+    (condition-case nil
+        (progn (backward-up-list) nil)
+      (error t))))
+
+(defun -nomis/ec-forward-sexp-gives-no-error? ()
+  (save-excursion
+    (condition-case nil
+        (progn (forward-sexp) t)
+      (error nil))))
+
+(defun -nomis/ec-can-forward-sexp? ()
+  ;; This is complicated, because `forward-sexp` behaves differently at end
+  ;; of file and inside-and-at-end-of a `(...)` form.
+  (cond ((not (-nomis/ec-at-top-level?))
+         (-nomis/ec-forward-sexp-gives-no-error?))
+        ((and (thing-at-point 'symbol)
+              (save-excursion (ignore-errors (forward-char) t))
+              (save-excursion (forward-char) (thing-at-point 'symbol)))
+         ;; We're on a top-level symbol (and not after its end).
+         t)
+        (t
+         (or (bobp) ; should really check that there's an sexp ahead
+             (condition-case nil
+                 (not (= (save-excursion
+                           (backward-sexp)
+                           (point))
+                         (save-excursion
+                           (forward-sexp)
+                           (backward-sexp)
+                           (point))))
+               (error nil))))))
+
+;;;; ___________________________________________________________________________
+;;;; Flashing of the re-overlayed region, to help with debugging.
+
+(defvar -nomis/ec-give-debug-feedback-flash? nil) ; for debugging
+
+(defface -nomis/ec-flash-update-region-face-1
   `((t ,(list :background "red3")))
   "Face for Electric Clojure flashing of provided region.")
 
-(defface nomis/ec-flash-update-region-face-2
+(defface -nomis/ec-flash-update-region-face-2
   `((t ,(list :background "yellow")))
   "Face for Electric Clojure flashing of extended region.")
 
-(defun nomis/ec-not-a-real-paren (p)
-  (let* ((parse-state (syntax-ppss p)))
-    ;;   string?             comment?            escaped?
-    (or (nth 3 parse-state) (nth 4 parse-state) (eq (char-before p)?\\))))
+(defun -nomis/ec-feedback-flash (start end start-2 end-2)
+  (when -nomis/ec-give-debug-feedback-flash?
+    (let* ((flash-overlay-1
+            (let* ((ov (make-overlay start end nil t nil)))
+              (overlay-put ov 'category 'nomis/ec-overlay)
+              (overlay-put ov 'face '-nomis/ec-flash-update-region-face-1)
+              (overlay-put ov 'evaporate t)
+              (overlay-put ov 'priority 999999)
+              ov))
+           (flash-overlay-2
+            (let* ((ov (make-overlay start-2 end-2 nil t nil)))
+              (overlay-put ov 'category 'nomis/ec-overlay)
+              (overlay-put ov 'face '-nomis/ec-flash-update-region-face-2)
+              (overlay-put ov 'evaporate t)
+              (overlay-put ov 'priority 999999)
+              ov)))
+      (run-at-time 0.2
+                   nil
+                   (lambda ()
+                     (delete-overlay flash-overlay-1)
+                     (delete-overlay flash-overlay-2))))))
 
-(defun nomis/ec-make-overlay (nesting-level face start end)
+;;;; ___________________________________________________________________________
+
+(defvar *-nomis/ec-n-lumps-in-current-update*)
+
+(defvar *-nomis/ec-site* :neutral
+  "The site of the code currently being analysed. One of `:neutral`,
+`:client` or `:server`.")
+
+(defvar *-nomis/ec-level* 0)
+
+;;;; ___________________________________________________________________________
+;;;; Overlay basics
+
+(defun -nomis/ec-make-overlay (nesting-level face start end)
   (let* ((ov (make-overlay start end nil t nil)))
     (overlay-put ov 'category 'nomis/ec-overlay)
     (overlay-put ov 'face face)
@@ -61,69 +194,199 @@ This can be:
       (overlay-put ov 'priority (cons nil nesting-level)))
     ov))
 
-(defun nomis/ec-apply-overlays (client-or-server start)
-  (let* ((face (cl-case client-or-server
+(defun -nomis/ec-overlay-single-lump (site nesting-level start end)
+  (cl-incf *-nomis/ec-n-lumps-in-current-update*)
+  (let* ((face (cl-case site
                  (:client  'nomis/ec-client-face)
                  (:server  'nomis/ec-server-face)
-                 (:neutral 'nomis/ec-neutral-face)))
-         (nesting-level (nomis/nesting-level))
-         (end (save-excursion (goto-char start) (forward-sexp) (point))))
+                 (:neutral 'nomis/ec-neutral-face))))
     (if nomis/ec-highlight-initial-whitespace?
-        (nomis/ec-make-overlay nesting-level face start end)
+        (-nomis/ec-make-overlay nesting-level face start end)
       (save-excursion
-        (goto-char start)
         (while (< (point) end)
           (let* ((start-2 (point))
                  (end-2 (min end
                              (progn (end-of-line) (1+ (point))))))
-            (nomis/ec-make-overlay nesting-level face start-2 end-2)
+            (-nomis/ec-make-overlay nesting-level face start-2 end-2)
             (unless (eobp) (forward-char))
             (when (bolp)
               (back-to-indentation))))))))
 
-(defun nomis/ec-feedback-flash (start end start-2 end-2)
-  (when nomis/ec-give-debug-feedback-flash?
-    (let* ((flash-overlay-1
-            (let* ((ov (make-overlay start end nil t nil)))
-              (overlay-put ov 'category 'nomis/ec-overlay)
-              (overlay-put ov 'face 'nomis/ec-flash-update-region-face-1)
-              (overlay-put ov 'evaporate t)
-              (overlay-put ov 'priority 999999)
-              ov))
-           (flash-overlay-2
-            (let* ((ov (make-overlay start-2 end-2 nil t nil)))
-              (overlay-put ov 'category 'nomis/ec-overlay)
-              (overlay-put ov 'face 'nomis/ec-flash-update-region-face-2)
-              (overlay-put ov 'evaporate t)
-              (overlay-put ov 'priority 999999)
-              ov)))
-      (run-at-time 0.2
-                   nil
-                   (lambda ()
-                     (delete-overlay flash-overlay-1)
-                     (delete-overlay flash-overlay-2))))))
+;;;; ___________________________________________________________________________
+;;;; ---- Parse and overlay helpers ----
 
-(defun nomis/ec-overlay-region (start end)
+(defun -nomis/ec-bof ()
+  (forward-sexp)
+  (backward-sexp))
+
+(defun -nomis/ec-with-site* (site end f)
+  (let* ((start (point))
+         (end (or end
+                  (save-excursion (forward-sexp) (point))))
+         (*-nomis/ec-level* (1+ *-nomis/ec-level*)))
+    (if (eq site *-nomis/ec-site*)
+        ;; No need for a new overlay.
+        (funcall f)
+      (let* ((*-nomis/ec-site* site))
+        (-nomis/ec-overlay-single-lump site *-nomis/ec-level* start end)
+        (funcall f)))))
+
+(cl-defmacro -nomis/ec-with-site ((site &optional end) &body body)
+  (declare (indent 1))
+  `(-nomis/ec-with-site* ,site ,end (lambda () ,@body)))
+
+(defun -nomis/ec-overlay-args-of-form ()
   (save-excursion
-    (goto-char start)
-    (unless (nomis/sexp-at-top-level?) (beginning-of-defun))
-    (let* ((start-2 (point))
-           (end-2 (save-excursion (goto-char end)
-                                  (unless (nomis/sexp-at-top-level?) (end-of-defun))
-                                  (point))))
-      (remove-overlays start-2 end-2 'category 'nomis/ec-overlay)
-      (while (and (< (point) end-2)
-                  (re-search-forward "(" end-2 'noerror))
-        (backward-char)
-        (unless (nomis/ec-not-a-real-paren (point))
-          (when-let ((client-or-server
-                      (cond ((looking-at "(e/client\\_>") :client)
-                            ((looking-at "(e/server\\_>") :server)
-                            ((looking-at "(e/fn\\_>")     :neutral))))
-            (nomis/ec-apply-overlays client-or-server (point))))
-        (forward-char))
-      (nomis/ec-feedback-flash start end start-2 end-2)
-      `(jit-lock-bounds ,start-2 . ,end-2))))
+    (down-list)
+    (forward-sexp)
+    (while (-nomis/ec-can-forward-sexp?)
+      (-nomis/ec-bof)
+      (-nomis/ec-walk-and-overlay)
+      (forward-sexp))))
+
+(defun -nomis/ec-overlay-site (site)
+  (save-excursion
+    (-nomis/ec-with-site (site)
+      (-nomis/ec-overlay-args-of-form))))
+
+(defun -nomis/ec-overlay-body (site)
+  (save-excursion
+    (when (-nomis/ec-can-forward-sexp?)
+      (-nomis/ec-bof)
+      ;; Whole body:
+      (-nomis/ec-with-site (site
+                            (let ((body-end
+                                   (save-excursion (backward-up-list)
+                                                   (forward-sexp)
+                                                   (backward-char)
+                                                   (point))))
+                              body-end))
+        ;; Each body form:
+        (while (-nomis/ec-can-forward-sexp?)
+          (-nomis/ec-bof)
+          (-nomis/ec-walk-and-overlay)
+          (forward-sexp))))))
+
+;;;; ___________________________________________________________________________
+;;;; ---- Parse and overlay ----
+
+(defun -nomis/ec-overlay-defn ()
+  (save-excursion
+    ;; Body:
+    (condition-case _
+        (progn (down-list) (forward-sexp 3))
+      (error (nomis/ec-message-no-disp
+              "nomis-electric-clojure: Failed to parse `e/defn`")))
+    (-nomis/ec-overlay-body (cl-case -nomis/ec-electric-version
+                              (:v2 :server) ; See "Where is v2 initially sited?" question at top of file.
+                              (:v3 :client)))))
+
+(defun -nomis/ec-overlay-dom-xxxx ()
+  (save-excursion
+    (save-excursion (down-list)
+                    (-nomis/ec-with-site (:client)
+                      ;; Nothing more.
+                      ))
+    (-nomis/ec-overlay-args-of-form)))
+
+(defun -nomis/ec-overlay-let ()
+  (save-excursion
+    (let* ((inherited-site *-nomis/ec-site*))
+      ;; Whole form:
+      (-nomis/ec-with-site (:neutral)
+        ;; Bindings:
+        (save-excursion
+          (down-list 2)
+          (while (-nomis/ec-can-forward-sexp?)
+            ;; Skip the LHS of the binding:
+            (forward-sexp)
+            ;; Walk the RHS of the binding, if there is one:
+            (when (-nomis/ec-can-forward-sexp?)
+              (-nomis/ec-bof)
+              (-nomis/ec-with-site (inherited-site)
+                (-nomis/ec-walk-and-overlay))
+              (forward-sexp))))
+        ;; Body:
+        (down-list)
+        (forward-sexp 2)
+        (-nomis/ec-overlay-body inherited-site)))))
+
+(defun -nomis/ec-overlay-other-bracketed-form ()
+  (save-excursion
+    (down-list)
+    (while (-nomis/ec-can-forward-sexp?)
+      (-nomis/ec-bof)
+      (-nomis/ec-walk-and-overlay)
+      (forward-sexp))))
+
+(defun -nomis/ec-walk-and-overlay ()
+  (save-excursion
+    (cl-case -nomis/ec-electric-version
+      (:v2
+       (cond ((looking-at "(e/defn\\_>")
+              (-nomis/ec-overlay-defn))
+             ((looking-at "(e/client\\_>")
+              (-nomis/ec-overlay-site :client))
+             ((looking-at "(e/server\\_>")
+              (-nomis/ec-overlay-site :server))
+             ((-nomis/ec-looking-at-bracketed-sexp-start)
+              (-nomis/ec-overlay-other-bracketed-form))))
+      (:v3
+       (cond ((looking-at "(e/defn\\_>")
+              (-nomis/ec-overlay-defn))
+             ((looking-at "(e/client\\_>")
+              (-nomis/ec-overlay-site :client))
+             ((looking-at "(e/server\\_>")
+              (-nomis/ec-overlay-site :server))
+             ((looking-at "(e/fn\\_>")
+              (-nomis/ec-overlay-site :neutral))
+             ((looking-at "(dom/")
+              (-nomis/ec-overlay-dom-xxxx))
+             ((looking-at "(let\\_>")
+              (-nomis/ec-overlay-let))
+             ((-nomis/ec-looking-at-bracketed-sexp-start)
+              (-nomis/ec-overlay-other-bracketed-form)))))))
+
+(defun -nomis/ec-buffer-has-text? (s)
+  (save-excursion (goto-char 0)
+                  (search-forward s
+                                  nomis/ec-bound-for-electric-require-search
+                                  t)))
+
+(defun -nomis/ec-detect-electric-version ()
+  (let* ((v (cond ((-nomis/ec-buffer-has-text? "[hyperfiddle.electric3 :as e]")
+                   :v3)
+                  ((-nomis/ec-buffer-has-text? "[hyperfiddle.electric :as e]")
+                   :v2)
+                  (t
+                   :v3))))
+    (setq -nomis/ec-electric-version v)
+    (message "Electric version = %s"
+             (string-replace ":" "" (symbol-name v)))))
+
+(defun -nomis/ec-overlay-region (start end)
+  (unless -nomis/ec-electric-version
+    (-nomis/ec-detect-electric-version))
+  (let* ((*-nomis/ec-n-lumps-in-current-update* 0))
+    (save-excursion
+      (goto-char start)
+      (unless (-nomis/ec-at-top-level?) (beginning-of-defun))
+      (let* ((start-2 (point))
+             (end-2 (save-excursion (goto-char end)
+                                    (unless (-nomis/ec-at-top-level?)
+                                      (end-of-defun))
+                                    (point))))
+        (remove-overlays start-2 end-2 'category 'nomis/ec-overlay)
+        (while (and (< (point) end-2)
+                    (-nomis/ec-can-forward-sexp?))
+          (-nomis/ec-bof)
+          (-nomis/ec-walk-and-overlay)
+          (forward-sexp))
+        (-nomis/ec-feedback-flash start end start-2 end-2)
+        `(jit-lock-bounds ,start-2 . ,end-2)))
+    ;; (nomis/ec-message-no-disp "*-nomis/ec-n-lumps-in-current-update* = %s"
+    ;;                           *-nomis/ec-n-lumps-in-current-update*)
+    ))
 
 ;;;; ___________________________________________________________________________
 
@@ -150,6 +413,16 @@ This can be:
       (remove-hook 'before-revert-hook '-nomis/ec-before-revert t))))
 
 ;;;; ___________________________________________________________________________
+;;;; ---- nomis/ec-redetect-electric-version ----
+
+(defun nomis/ec-redetect-electric-version ()
+  (interactive)
+  (cl-assert nomis-electric-clojure-mode)
+  (-nomis/ec-turn-off)
+  (-nomis/ec-turn-on))
+
+;;;; ___________________________________________________________________________
+;;;; ---- nomis/ec-toggle-highlight-initial-whitespace? ----
 
 (defun nomis/ec-toggle-highlight-initial-whitespace? ()
   (interactive)
@@ -158,7 +431,7 @@ This can be:
     (progn
       (setq nomis/ec-highlight-initial-whitespace?
             (not nomis/ec-highlight-initial-whitespace?))
-      (nomis/ec-overlay-region (point-min) (point-max)))))
+      (-nomis/ec-overlay-region (point-min) (point-max)))))
 
 ;;;; ___________________________________________________________________________
 ;;;; ---- nomis/ec-report-overlays ----
