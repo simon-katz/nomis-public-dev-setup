@@ -6,9 +6,6 @@
 
 ;;;; TODO: See all TODOs.
 
-;;;; TODO: Look at retaining/reapplying this minor mode when reverting buffer.
-;;;;       - Especially because of auto-revert when a file changes.
-
 ;;;; TODO: How is this on a big file?
 ;;;;       Not good. Simple editing can cause never-returning ~90% CPU.
 ;;;;       - Maybe fixed.
@@ -34,7 +31,8 @@ near the beginning of the buffer.
 
 We normally do this once for each buffer.
 
-You can re-run the auto-detection in either of the following ways:
+You can re-run the auto-detection in any of the following ways:
+- by reverting the buffer
 - by running `M-x nomis/ec-redetect-electric-version`
 - by turning `nomis-electric-clojure-mode` off and then back on."
   :type 'integer)
@@ -374,16 +372,31 @@ This can be:
 
 ;;;; ___________________________________________________________________________
 
+(defvar -nomis/ec-buffers '()
+  "A list of all buffers where `nomis-electric-clojure-mode` is
+turned on.
+
+This is used when reverting a buffer, when we reapply the mode.
+
+TODO: This is very DIY. Is there a better way?")
+
 (defun -nomis/ec-turn-on ()
+  (cl-pushnew (current-buffer) -nomis/ec-buffers)
   (jit-lock-register '-nomis/ec-overlay-region t))
 
-(defun -nomis/ec-turn-off ()
+(defun -nomis/ec-turn-off (&optional reverting?)
+  (unless reverting?
+    (setq -nomis/ec-buffers (cl-remove (current-buffer) -nomis/ec-buffers)))
   (setq -nomis/ec-electric-version nil) ; so we will re-detect this
   (jit-lock-unregister '-nomis/ec-overlay-region)
   (remove-overlays nil nil 'category 'nomis/ec-overlay))
 
 (defun -nomis/ec-before-revert ()
-  (-nomis/ec-turn-off))
+  (-nomis/ec-turn-off t))
+
+(defun -nomis/ec-after-revert ()
+  (when (member (current-buffer) -nomis/ec-buffers)
+    (nomis-electric-clojure-mode)))
 
 (define-minor-mode nomis-electric-clojure-mode
   "Highlight Electric Clojure client code regions and server code regions."
@@ -391,10 +404,12 @@ This can be:
   (if nomis-electric-clojure-mode
       (progn
         (-nomis/ec-turn-on)
-        (add-hook 'before-revert-hook '-nomis/ec-before-revert nil t))
+        (add-hook 'before-revert-hook '-nomis/ec-before-revert nil t)
+        (add-hook 'after-revert-hook '-nomis/ec-after-revert nil t))
     (progn
       (-nomis/ec-turn-off)
-      (remove-hook 'before-revert-hook '-nomis/ec-before-revert t))))
+      (remove-hook 'before-revert-hook '-nomis/ec-before-revert t)
+      (remove-hook 'after-revert-hook '-nomis/ec-after-revert t))))
 
 ;;;; ___________________________________________________________________________
 ;;;; ---- nomis/ec-redetect-electric-version ----
