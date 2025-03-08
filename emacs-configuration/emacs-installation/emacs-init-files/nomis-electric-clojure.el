@@ -7,7 +7,6 @@
 ;;;; ___________________________________________________________________________
 ;;;; ---- The main functionality ----
 
-(require 'dash)
 (require 'nomis-sexp-utils)
 
 (defvar nomis/ec-highlight-initial-whitespace? nil)
@@ -152,13 +151,27 @@ This can be:
 
 (defun nomis/ec-report-overlays ()
   (interactive)
-  (let* ((ovs (->> (overlays-in (point-min) (point-max))
-                   (-filter (lambda (ov)
-                              (eq 'nomis/ec-overlay
-                                  (overlay-get ov 'category)))))))
+  (let* ((all-ovs (overlays-in (point-min) (point-max)))
+         (ovs (cl-remove-if-not (lambda (ov)
+                                  (eq 'nomis/ec-overlay
+                                      (overlay-get ov 'category)))
+                                all-ovs)))
     (message "----------------")
     (dolist (ov ovs)
-      (message "%s" ov))))
+      (let* ((ov-start (overlay-start ov))
+             (ov-end   (overlay-end ov))
+             (end      (min ov-end
+                            (save-excursion
+                              (goto-char ov-start)
+                              (pos-eol)))))
+        (nomis/ec-message-no-disp "%s %s %s%s"
+                                  (overlay-get ov 'priority)
+                                  ov
+                                  (buffer-substring ov-start end)
+                                  (if (> ov-end end)
+                                      "..."
+                                    ""))))
+    (nomis/ec-message-no-disp "No. of overlays = %s" (length ovs))))
 
 ;;;; ___________________________________________________________________________
 
