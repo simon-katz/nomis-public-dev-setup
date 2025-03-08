@@ -7,6 +7,9 @@
 ;;;; TODO: When user changes `nomis/ec-highlight-initial-whitespace?`, re-apply
 ;;;;       overlays to all `nomis-electric-clojure-mode` buffers.
 
+;;;; TODO: The code to reapply `nomis-electric-clojure-mode` when a buffer
+;;;;       is reverted is very DIY. Does Emacs have something to do this?
+
 ;;;; ___________________________________________________________________________
 
 (defcustom nomis/ec-bound-for-electric-require-search 100000
@@ -370,7 +373,7 @@ turned on.
 
 This is used when reverting a buffer, when we reapply the mode.
 
-TODO: This is very DIY. Is there a better way?")
+This is very DIY. Is there a better way?")
 
 (defun -nomis/ec-turn-on ()
   (cl-pushnew (current-buffer) -nomis/ec-buffers)
