@@ -126,14 +126,29 @@ This can be:
       (nomis/ec-feedback-flash start end start-2 end-2)
       `(jit-lock-bounds ,start-2 . ,end-2))))
 
+;;;; ___________________________________________________________________________
+
+(defun -nomis/ec-turn-on ()
+  (jit-lock-register '-nomis/ec-overlay-region t))
+
+(defun -nomis/ec-turn-off ()
+  (setq -nomis/ec-electric-version nil) ; so we will re-detect this
+  (jit-lock-unregister '-nomis/ec-overlay-region)
+  (remove-overlays nil nil 'category 'nomis/ec-overlay))
+
+(defun -nomis/ec-before-revert ()
+  (-nomis/ec-turn-off))
+
 (define-minor-mode nomis-electric-clojure-mode
   "Highlight Electric Clojure client code regions and server code regions."
   :init-value nil
   (if nomis-electric-clojure-mode
-      (jit-lock-register 'nomis/ec-overlay-region t)
+      (progn
+        (-nomis/ec-turn-on)
+        (add-hook 'before-revert-hook '-nomis/ec-before-revert nil t))
     (progn
-      (jit-lock-unregister 'nomis/ec-overlay-region)
-      (remove-overlays nil nil 'category 'nomis/ec-overlay))))
+      (-nomis/ec-turn-off)
+      (remove-hook 'before-revert-hook '-nomis/ec-before-revert t))))
 
 ;;;; ___________________________________________________________________________
 
