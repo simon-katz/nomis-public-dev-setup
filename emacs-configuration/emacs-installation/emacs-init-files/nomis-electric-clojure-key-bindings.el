@@ -5,7 +5,7 @@
 (define-key clojure-mode-map (kbd "M-E") 'nomis-electric-clojure-mode)
 
 (define-key clojure-mode-map (kbd "C-M-E")
-            'nomis/ec-toggle-highlight-initial-whitespace?)
+            'nomis/ec-toggle-color-initial-whitespace)
 
 ;;;; ___________________________________________________________________________
 
