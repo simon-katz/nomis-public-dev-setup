@@ -441,6 +441,14 @@ This is very DIY. Is there a better way?")
         (not nomis/ec-highlight-initial-whitespace?))
   (-nomis/ec-overlay-region (point-min) (point-max)))
 
+(defun nomis/ec-toggle-debug-feedback-flash? ()
+  (interactive)
+  (-nomis/ec-check-nomis-electric-clojure-mode)
+  (setq -nomis/ec-give-debug-feedback-flash?
+        (not -nomis/ec-give-debug-feedback-flash?))
+  (message "Debug feedback flaah turned %s"
+           (if -nomis/ec-give-debug-feedback-flash? "on" "off")))
+
 (defun nomis/ec-report-overlays ()
   (interactive)
   (-nomis/ec-check-nomis-electric-clojure-mode)
