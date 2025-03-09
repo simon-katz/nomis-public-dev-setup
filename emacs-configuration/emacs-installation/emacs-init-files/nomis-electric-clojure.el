@@ -13,7 +13,9 @@
 
 ;;;; TODO: Are overlays created for the whole buffer, or just the
 ;;;;       displayed part?
-;;;; TODO: Check values of `start` and `end` in different scenarios.
+;;;;       - Check values of `start` and `end` in different scenarios.
+;;;;       - Do we really want
+;;;;         `(-nomis/ec-overlay-region (POINT-MIN) (POINT-MAX))`?
 
 ;;;; TODO: Go further through the tutorials -- is there more to do?
 
