@@ -422,31 +422,28 @@ This is very DIY. Is there a better way?")
       (remove-hook 'after-revert-hook '-nomis/ec-after-revert t))))
 
 ;;;; ___________________________________________________________________________
-;;;; ---- nomis/ec-redetect-electric-version ----
+;;;; ---- Interactive commands ----
+
+(defun -nomis/ec-check-nomis-electric-clojure-mode ()
+  (when (not nomis-electric-clojure-mode)
+    (user-error "nomis-electric-clojure-mode is not turned on")))
 
 (defun nomis/ec-redetect-electric-version ()
   (interactive)
-  (cl-assert nomis-electric-clojure-mode)
+  (-nomis/ec-check-nomis-electric-clojure-mode)
   (-nomis/ec-turn-off)
   (-nomis/ec-turn-on))
 
-;;;; ___________________________________________________________________________
-;;;; ---- nomis/ec-toggle-highlight-initial-whitespace? ----
-
 (defun nomis/ec-toggle-highlight-initial-whitespace? ()
   (interactive)
-  (if (not nomis-electric-clojure-mode)
-      (nomis-electric-clojure-mode)
-    (progn
-      (setq nomis/ec-highlight-initial-whitespace?
-            (not nomis/ec-highlight-initial-whitespace?))
-      (-nomis/ec-overlay-region (point-min) (point-max)))))
-
-;;;; ___________________________________________________________________________
-;;;; ---- nomis/ec-report-overlays ----
+  (-nomis/ec-check-nomis-electric-clojure-mode)
+  (setq nomis/ec-highlight-initial-whitespace?
+        (not nomis/ec-highlight-initial-whitespace?))
+  (-nomis/ec-overlay-region (point-min) (point-max)))
 
 (defun nomis/ec-report-overlays ()
   (interactive)
+  (-nomis/ec-check-nomis-electric-clojure-mode)
   (let* ((all-ovs (overlays-in (point-min) (point-max)))
          (ovs (cl-remove-if-not (lambda (ov)
                                   (eq 'nomis/ec-overlay
