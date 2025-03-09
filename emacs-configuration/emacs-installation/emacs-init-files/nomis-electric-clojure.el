@@ -458,7 +458,7 @@ This is very DIY. Is there a better way?")
                                   (if (> ov-end end)
                                       "..."
                                     ""))))
-    (nomis/ec-message-no-disp "No. of overlays = %s" (length ovs))))
+    (message "No. of overlays = %s" (length ovs))))
 
 ;;;; ___________________________________________________________________________
 
