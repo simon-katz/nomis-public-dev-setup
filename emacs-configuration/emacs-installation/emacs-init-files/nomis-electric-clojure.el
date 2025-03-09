@@ -6,6 +6,10 @@
 ;;;; https://gitlab.com/xificurC/hf-electric.el/-/blob/master/hf-electric.el
 ;;;; Permalink: https://gitlab.com/xificurC/hf-electric.el/-/blob/5e6e3d69e42a64869f1eecd8b804cf4b679f9501/hf-electric.el
 
+;;;; TODO: Are overlays created for the whole buffer, or just the
+;;;;       displayed part?
+;;;; TODO: Check values of `start` and `end` in different scenarios.
+
 ;;;; TODO: Go further through the tutorials -- is there more to do?
 
 ;;;; TODO: When user changes `nomis/ec-highlight-initial-whitespace?`, re-apply
