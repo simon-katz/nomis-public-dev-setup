@@ -14,6 +14,8 @@
 ;;;; TODO: The code to reapply `nomis-electric-clojure-mode` when a buffer
 ;;;;       is reverted is very DIY. Does Emacs have something to do this?
 
+;;;; TODO: Deal better with unbalanced parentheses.
+
 ;;;; ___________________________________________________________________________
 
 (defcustom nomis/ec-bound-for-electric-require-search 100000
