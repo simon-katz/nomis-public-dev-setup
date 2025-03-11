@@ -1,4 +1,4 @@
-;;;; nomis-electric-clojure-key-bindings.el --- Electric Clojure key bindings ---  -*- lexical-binding: t -*-
+;;;; nomis-electric-clojure-tailoring.el --- nomis-electric-clojure-mode tailoring ---  -*- lexical-binding: t -*-
 
 ;;;; ___________________________________________________________________________
 
@@ -9,4 +9,4 @@
 
 ;;;; ___________________________________________________________________________
 
-(provide 'nomis-electric-clojure-key-bindings)
+(provide 'nomis-electric-clojure-tailoring)
