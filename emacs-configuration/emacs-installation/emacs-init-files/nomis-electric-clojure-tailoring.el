@@ -3,9 +3,7 @@
 ;;;; ___________________________________________________________________________
 
 (define-key clojure-mode-map (kbd "M-E") 'nomis-electric-clojure-mode)
-
-(define-key clojure-mode-map (kbd "C-M-E")
-            'nomis/ec-toggle-color-initial-whitespace)
+(define-key clojure-mode-map (kbd "C-M-E") 'nomis/ec-cycle-options)
 
 ;;;; ___________________________________________________________________________
 
