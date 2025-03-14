@@ -1,7 +1,7 @@
 ;;;; nomis-message-window.el ---  -*- lexical-binding: t -*-
 
 ;;;; ___________________________________________________________________________
-;;;; ____ * nomis/fix-broken-messages-window and undo
+;;;; nomis/fix-broken-messages-window and undo
 
 (defun nomis/fix-broken-messages-window ()
   "Sometimes the *Messages* buffer stops tailing. When that happens, call
@@ -26,6 +26,19 @@ that are showing the buffer."
                  'goto-end-of-messages-buffer))
 
 ;;;; ___________________________________________________________________________
-;;;; ____ * End
+;;;; nomis/clear-messages-buffer
+
+(defun nomis/clear-messages-buffer ()
+  "Clear the *Messages* buffer."
+  (interactive)
+  (with-current-buffer "*Messages*"
+    (let* ((was-read-only buffer-read-only))
+      (when was-read-only
+        (read-only-mode -1))
+      (erase-buffer)
+      (when was-read-only
+        (read-only-mode 1)))))
+
+;;;; ___________________________________________________________________________
 
 (provide 'nomis-message-window)
