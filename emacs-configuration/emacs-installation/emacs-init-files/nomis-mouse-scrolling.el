@@ -22,6 +22,8 @@
 
 (global-unset-key (kbd "C-<wheel-up>"))
 (global-unset-key (kbd "C-<wheel-down>"))
+(global-unset-key (kbd "C-M-<wheel-up>"))
+(global-unset-key (kbd "C-M-<wheel-down>"))
 
 ;;;; ___________________________________________________________________________
 
