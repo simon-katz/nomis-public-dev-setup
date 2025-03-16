@@ -20,6 +20,7 @@ emacs-configuration/emacs-installation/.emacs.d/logview-cache.extmap
 emacs-configuration/emacs-installation/.emacs.d/transient/
 emacs-configuration/emacs-installation/.emacs.d/.lsp-session-v1
 emacs-configuration/emacs-installation/.emacs.d/tldr/
+emacs-configuration/emacs-installation/.emacs.d/tramp
 
 .nomis-space-debug
 hammerspoon.log
