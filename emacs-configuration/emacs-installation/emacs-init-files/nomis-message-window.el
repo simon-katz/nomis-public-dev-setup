@@ -39,6 +39,8 @@ that are showing the buffer."
       (when was-read-only
         (read-only-mode 1)))))
 
+(define-key messages-buffer-mode-map (kbd "M-k") 'nomis/clear-messages-buffer)
+
 ;;;; ___________________________________________________________________________
 
 (provide 'nomis-message-window)
