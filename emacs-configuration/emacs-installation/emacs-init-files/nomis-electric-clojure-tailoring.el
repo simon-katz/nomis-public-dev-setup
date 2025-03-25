@@ -7,4 +7,9 @@
 
 ;;;; ___________________________________________________________________________
 
+(add-hook 'nomis/themes/theme-changed-hook
+          'nomis/ec-update-normal-neutral-face)
+
+;;;; ___________________________________________________________________________
+
 (provide 'nomis-electric-clojure-tailoring)
