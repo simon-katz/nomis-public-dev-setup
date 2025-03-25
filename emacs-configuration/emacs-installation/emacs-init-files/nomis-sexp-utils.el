@@ -18,6 +18,10 @@
        (not (nomis/looking-at-whitespace-start-p))))
 
 (defvar -nomis/sexp-regexp-for-bracketed-sexp-start
+  ;; TODO: This doesn't include reader syntax for Clojure anonymous functions
+  ;;       (/ie/ `#(...)`), which is probably an oversite.
+  ;;       as `sited-single-item`s. Might want to fix this, but will need to
+  ;;       look at all uses and see what might break.
   "(\\|\\[\\|{\\|#{")
 
 (defvar -nomis/sexp-regexp-for-bracketed-sexp-end
