@@ -3,13 +3,13 @@
 ;;;; ___________________________________________________________________________
 ;;;; Make background colors more subtle.
 
-(face-spec-set 'nomis/ec-client-face/using-background
-  `((((background dark)) ,(list :background "#005500"))
-    (t ,(list :background "DarkSeaGreen1"))))
+;; (face-spec-set 'nomis/ec-client-face/using-background
+;;   `((((background dark)) ,(list :background "#005500"))
+;;     (t ,(list :background "DarkSeaGreen1"))))
 
-(face-spec-set 'nomis/ec-server-face/using-background
-  `((((background dark)) ,(list :background "#700000"))
-    (t ,(list :background "#ffc5c5"))))
+;; (face-spec-set 'nomis/ec-server-face/using-background
+;;   `((((background dark)) ,(list :background "#700000"))
+;;     (t ,(list :background "#ffc5c5"))))
 
 ;;;; ___________________________________________________________________________
 
