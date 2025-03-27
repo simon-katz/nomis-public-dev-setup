@@ -186,6 +186,8 @@
 (require 'nomis-vterm-hacks)
 (require 'nomis-vterm)
 
+(require 'nomis-tooltips)
+
 ;;;; ---- Lisp and Clojure stuff probably good for anyone ----
 
 (require 'nomis-sexp-navigation)
