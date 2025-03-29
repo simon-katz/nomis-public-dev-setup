@@ -238,5 +238,47 @@ g. `error', `warning') and list of LSP TAGS."
     )))
 
 ;;;; ___________________________________________________________________________
+;;;; Allow tailoring of priority of lsp highlight overlays.
+
+(defcustom -nomis/lsp-highlight-priority 0
+  "Priority for lsp highlight overlays."
+  :type 'integer)
+
+(with-eval-after-load 'lsp-mode
+  (cond
+
+   ((member (pkg-info-package-version 'lsp-mode)
+            '((20250214 818)))
+
+    (defvar *-nomis/lsp-in-lsp--document-highlight-callback?* nil)
+    (defvar *-nomis/lsp-collected-overlays '())
+
+    (advice-add
+     'make-overlay
+     :around
+     (lambda (orig-fun &rest args)
+       (let* ((ov (apply orig-fun args)))
+         (when *-nomis/lsp-in-lsp--document-highlight-callback?*
+           (push ov *-nomis/lsp-collected-overlays))
+         ov))
+     '((name . nomis/hack-lsp-overlay-priorities)))
+
+    (advice-add
+     'lsp--document-highlight-callback
+     :around
+     (lambda (orig-fun &rest args)
+       (let* ((*-nomis/lsp-in-lsp--document-highlight-callback?* t)
+              (res (apply orig-fun args)))
+         (mapc (lambda (ov)
+                 (overlay-put ov 'priority -nomis/lsp-highlight-priority))
+               *-nomis/lsp-collected-overlays)
+         res))
+     '((name . nomis/hack-lsp-overlay-priorities))))
+
+   (t
+    (message-box
+     "You need to fix `nomis/hack-lsp-overlay-priorities` for this version of `lsp-mode`."))))
+
+;;;; ___________________________________________________________________________
 
 (provide 'nomis-lsp-hacks)
