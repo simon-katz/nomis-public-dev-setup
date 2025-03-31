@@ -13,7 +13,7 @@
 (require 'nomis-clojure-portal)
 (require 'nomis-clojure-privacy-highlighting-mode)
 (require 'nomis-ec-mode)
-(require 'nomis-electric-clojure-tailoring)
+(require 'nomis-ec-mode-tailoring)
 
 ;;;; ___________________________________________________________________________
 

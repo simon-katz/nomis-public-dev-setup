@@ -1,4 +1,4 @@
-;;;; nomis-electric-clojure-tailoring.el --- nomis-electric-clojure-mode tailoring ---  -*- lexical-binding: t -*-
+;;;; nomis-ec-mode-tailoring.el --- nomis-ec-mode-mode tailoring ---  -*- lexical-binding: t -*-
 
 ;;;; ___________________________________________________________________________
 ;;;; Make background colors more subtle.
@@ -23,4 +23,4 @@
 
 ;;;; ___________________________________________________________________________
 
-(provide 'nomis-electric-clojure-tailoring)
+(provide 'nomis-ec-mode-tailoring)
