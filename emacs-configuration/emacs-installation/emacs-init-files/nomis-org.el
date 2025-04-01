@@ -783,7 +783,8 @@ With numerical argument N, show content up to level N."
 (cond ((member org-version
                '("9.5.5"
                  "9.6.15"
-                 "9.7.11"))
+                 "9.7.11"
+                 "9.7.27"))
        (advice-add 'org-move-subtree-down
                    :around
                    (lambda (orig-fun &rest args)
