@@ -79,8 +79,8 @@
      pos-tip
      projectile
      queue
-     rainbow-delimiters
      rainbow-blocks
+     rainbow-delimiters
      saveplace
      sidecar-locals
      smartrep
