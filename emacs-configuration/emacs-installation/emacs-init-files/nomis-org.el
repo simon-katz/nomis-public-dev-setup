@@ -365,11 +365,11 @@
             'nomis/org-finalize-agenda-hook))
 
 ;; Do we want this? Oh -- try upgrading Org mode.
-;; (cond
-;;  ((member emacs-version
-;;           '("30.1"))
-;;   ;; Suppress buggy warnings that appear in org agenda buffer.
-;;   (add-to-list 'warning-suppress-types '(org-element org-element-parser))))
+(cond
+ ((member emacs-version
+          '("30.1"))
+  ;; Suppress buggy warnings that appear in org agenda buffer.
+  (add-to-list 'warning-suppress-types '(org-element org-element-parser))))
 
 ;;;; ___________________________________________________________________________
 ;;;; ____ * Fontify code in code blocks
