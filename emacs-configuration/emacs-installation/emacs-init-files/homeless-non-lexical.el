@@ -92,20 +92,20 @@
   (when (featurep 'magit) (magit-refresh))
   (message "Finished indenting all clj files in project."))
 
-(defun nomis/indent-all-clj-files-in-project-and-commit (force-when-dirty?)
-  (interactive "P")
-  (let* ((committed? nil)
-         (root-dir (nomis/dirtree/vc-root-dir)))
-    (nomis/indent-all-clj-files-in-project force-when-dirty?)
-    (let* ((default-directory root-dir))
-      (shell-command-to-string "git add .")
-      (when (nomis/git-dirty?)
-        (shell-command-to-string "git commit -m apply-local-formatting")
-        (setq committed? t)))
-    (when (featurep 'magit) (magit-refresh))
-    (if committed?
-        (message "Finished indenting all clj files in project and committing.")
-      (message "Repo is clean after reformatting -- not commiting"))))
+;; (defun nomis/indent-all-clj-files-in-project-and-commit (force-when-dirty?)
+;;   (interactive "P")
+;;   (let* ((committed? nil)
+;;          (root-dir (nomis/dirtree/vc-root-dir)))
+;;     (nomis/indent-all-clj-files-in-project force-when-dirty?)
+;;     (let* ((default-directory root-dir))
+;;       (shell-command-to-string "git add .")
+;;       (when (nomis/git-dirty?)
+;;         (shell-command-to-string "git commit -m apply-local-formatting")
+;;         (setq committed? t)))
+;;     (when (featurep 'magit) (magit-refresh))
+;;     (if committed?
+;;         (message "Finished indenting all clj files in project and committing.")
+;;       (message "Repo is clean after reformatting -- not commiting"))))
 
 ;;;; ___________________________________________________________________________
 
