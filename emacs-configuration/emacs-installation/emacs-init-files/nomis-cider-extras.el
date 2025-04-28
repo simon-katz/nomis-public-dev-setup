@@ -248,5 +248,53 @@ NEW-ALIAS is always at the end (or at the beginning if PREPEND? is non-nil)."
                     (nomis/add-cider-clojure-cli-alias "c" :prepend? t))))
 
 ;;;; ___________________________________________________________________________
+;;;; Electric `e/defn` indentation goes wrong when I connect a CLJS sibling
+;;;; REPL. Here's a hack to fix that.
+;;;; See https://github.com/clojure-emacs/cider/issues/3815.
+
+(cond
+ ((member (pkg-info-version-info 'cider)
+          '("20250217.1433"
+            "20250430.722"))
+
+  (advice-add 'cider--get-symbol-indent
+              :around
+              (lambda (orig-fun symbol-name)
+                (let* ((orig-res (funcall orig-fun symbol-name)))
+                  (if (not (member symbol-name '("e/defn"
+                                                 "e/fn")))
+                      orig-res
+                    ;; (let* (;; Copy code from `cider--get-symbol-indent` and print
+                    ;;        ;; info:
+                    ;;        (ns (let ((clojure-cache-ns t)) ; we force ns caching here for performance reasons
+                    ;;              ;; silence bytecode warning of unused lexical var
+                    ;;              (ignore clojure-cache-ns)
+                    ;;              (cider-current-ns)))
+                    ;;        (meta (cider-resolve-var ns symbol-name))
+                    ;;        (indent (or (nrepl-dict-get meta "style/indent")
+                    ;;                    (nrepl-dict-get meta "indent"))))
+                    ;;   (let ((inhibit-message t))
+                    ;;     (message "For %s : res = %s / indent of %s in %s"
+                    ;;              symbol-name orig-res indent meta)))
+                    nil)))
+              '((name . nomis/fix-indentation-when-cljs-sibling))))
+
+ (t
+  (message-box
+   "You need to fix `nomis/fix-indentation-when-cljs-sibling for this version of CIDER.")))
+
+;; (advice-remove 'cider--get-symbol-indent 'nomis/fix-indentation-when-cljs-sibling)
+
+;; These change when connecting sibling:
+;;   (cider-resolve-var "hyperfiddle.electric3" "defn")
+;;   (cider-resolve-var "hyperfiddle.electric3" "fn")
+;; from
+;;   (dict "macro" "true")
+;;   (dict "macro" "true" "style/indent" ":defn")
+;; to
+;;   (dict "arglists" "([nm & fdecl])" "macro" "true" "style/indent" "1")
+;;   (dict "arglists" "([& args])" "macro" "true" "style/indent" "0")
+
+;;;; ___________________________________________________________________________
 
 (provide 'nomis-cider-extras)
