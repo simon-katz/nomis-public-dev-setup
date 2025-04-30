@@ -7,8 +7,8 @@
   (when (fboundp 'auto-dim-other-buffers-mode)
     (auto-dim-other-buffers-mode t)))
 
-(add-hook 'after-init-hook
-          '-nomis/window-backgrounds/turn-on-auto-dim)
+;; (add-hook 'after-init-hook
+;;           '-nomis/window-backgrounds/turn-on-auto-dim)
 
 ;;;; ___________________________________________________________________________
 
