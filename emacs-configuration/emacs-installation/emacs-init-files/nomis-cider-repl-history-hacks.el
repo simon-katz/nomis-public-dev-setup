@@ -12,7 +12,8 @@
             "1.3.0 (package: 20220405.1216)"
             "1.5.0 (package: 20220830.500)"
             "1.7.0 (package: 20230518.550)"
-            "20250217.1433"))
+            "20250217.1433"
+            "20250430.722"))
 
   (with-eval-after-load 'cider-repl
     ;; The original is in `cider-repl`.
@@ -93,7 +94,8 @@ If REGEXP is non-nil, only lines matching REGEXP are considered."
             "1.3.0 (package: 20220405.1216)"
             "1.5.0 (package: 20220830.500)"
             "1.7.0 (package: 20230518.550)"
-            "20250217.1433"))
+            "20250217.1433"
+            "20250430.722"))
 
   (defun nomis/-cider-repl-history-maybe-warn ()
     (when (and cider-repl-history-file
@@ -236,7 +238,8 @@ utf-8-unix."
 
 (cond
  ((member (pkg-info-version-info 'cider)
-          '("20250217.1433"))
+          '("20250217.1433"
+            "20250430.722"))
   ;; CIDER does do this but we need it earlier, otherwise /eg/ CLJ and CLJS
   ;; histories can get muddled.
   (make-variable-buffer-local 'cider-repl-input-history))
@@ -294,7 +297,7 @@ utf-8-unix."
             ;; With CIDER "20250217.1433", this is called when quitting a REPL
             ;; and when quitting Emacs even when `cider-repl-history-file` is
             ;; nil.
-            ))
+            "20250430.722"))
   ;; Do nothing.
   )
 

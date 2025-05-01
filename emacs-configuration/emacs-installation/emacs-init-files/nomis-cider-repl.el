@@ -6,7 +6,8 @@
  ((member (pkg-info-package-version 'cider)
           '((20220830 500)
             (20230518 550)
-            (20250217 1433)))
+            (20250217 1433)
+            (20250430 722)))
 
   ;; From https://github.com/dakra/cider/commit/93c9a22db864abb81a119e4d807268434b3576b2
 
