@@ -51,6 +51,24 @@
             (message "Couldn't find definition using CIDER -- trying LSP")
             (lsp-find-definition)))))))
 
+(defun nomis/clojure-lsp-and-cider/find-definition-v2 ()
+  "Try to find definition of thing at point.
+ If `nomis/clojure-lsp-and-cider/find-definition/use-lsp?` is truthy, use lsp.
+ Otherwise use CIDER, and if that fails try lsp.
+ This will find CLJ/CLJS definitions from .cljc files,"
+  (interactive)
+  (if nomis/clojure-lsp-and-cider/find-definition/use-lsp?
+      (lsp-find-definition)
+    (cl-flet ((buffer-and-point () (list (current-buffer) (point))))
+      (let* ((old-bap (buffer-and-point)))
+        (when (cider-repls)
+          (cider-find-var))
+        (let* ((new-bap (buffer-and-point)))
+          (when (equal old-bap new-bap)
+            (beep)
+            (message "Couldn't find definition using CIDER -- trying LSP")
+            (lsp-find-definition)))))))
+
 (with-eval-after-load 'cider
   (with-eval-after-load 'lsp-mode
     (cond
@@ -69,14 +87,19 @@
                        clojurescript-mode-map))
         (define-key m (kbd "M-.") 'nomis/clojure-lsp-and-cider/find-definition)))
 
-     ((version-list-<= '(20230518 55)
-                       (pkg-info-package-version 'cider))
+     ((and (version-list-<= '(20230518 55)
+                            (pkg-info-package-version 'cider))
+           (version-list-<= (pkg-info-package-version 'cider)
+                            '(20250429 0)))
       ;; Works now (it finds a Clojure Spec keyword).
       )
 
      (t
-      (message-box
-       "You need to fix `nomis/clojure-lsp-and-cider/find-definition` for this version of CIDER and LSP.")))))
+      (dolist (m (list clojure-mode-map
+                       cider-mode-map
+                       clojurec-mode-map
+                       clojurescript-mode-map))
+        (define-key m (kbd "M-.") 'nomis/clojure-lsp-and-cider/find-definition-v2))))))
 
 ;;;; ___________________________________________________________________________
 
