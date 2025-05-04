@@ -297,4 +297,13 @@ NEW-ALIAS is always at the end (or at the beginning if PREPEND? is non-nil)."
 
 ;;;; ___________________________________________________________________________
 
+(defun nomis/cider-uptime ()
+  (interactive)
+  (let* ((repl (first (cider-repls "clj" t))))
+    (with-current-buffer repl
+      (nomis/run-clojure-no-insert "(require 'nomis-clj-repl-tools)")
+      (nomis/run-clojure-and-display-message "(nomis-clj-repl-tools/uptime-string)"))))
+
+;;;; ___________________________________________________________________________
+
 (provide 'nomis-cider-extras)
