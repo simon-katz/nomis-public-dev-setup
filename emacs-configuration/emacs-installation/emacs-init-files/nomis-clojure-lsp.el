@@ -53,21 +53,15 @@
 
 (defun nomis/clojure-lsp-and-cider/find-definition-v2 ()
   "Try to find definition of thing at point.
- If `nomis/clojure-lsp-and-cider/find-definition/use-lsp?` is truthy, use lsp.
- Otherwise use CIDER, and if that fails try lsp.
- This will find CLJ/CLJS definitions from .cljc files,"
+ First try lsp; if that gives an error try CIDER."
   (interactive)
-  (if nomis/clojure-lsp-and-cider/find-definition/use-lsp?
-      (lsp-find-definition)
-    (cl-flet ((buffer-and-point () (list (current-buffer) (point))))
-      (let* ((old-bap (buffer-and-point)))
+  (let ((error? t))
+    (unwind-protect
+        (prog1 (lsp-find-definition)
+          (setq error? nil))
+      (when error?
         (when (cider-repls)
-          (cider-find-var))
-        (let* ((new-bap (buffer-and-point)))
-          (when (equal old-bap new-bap)
-            (beep)
-            (message "Couldn't find definition using CIDER -- trying LSP")
-            (lsp-find-definition)))))))
+          (run-at-time 0 nil (lambda () (cider-find-var nil))))))))
 
 (with-eval-after-load 'cider
   (with-eval-after-load 'lsp-mode
