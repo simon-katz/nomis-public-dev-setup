@@ -55,13 +55,17 @@
   "Try to find definition of thing at point.
  First try lsp; if that gives an error try CIDER."
   (interactive)
-  (let ((error? t))
-    (unwind-protect
-        (prog1 (lsp-find-definition)
-          (setq error? nil))
-      (when error?
-        (when (cider-repls)
-          (run-at-time 0 nil (lambda () (cider-find-var nil))))))))
+  (cl-flet ((buffer-and-point () (list (current-buffer) (point))))
+    (let* ((initial-bap (buffer-and-point)))
+      (unwind-protect
+          ;; Try lsp:
+          (lsp-find-definition)
+        (when (equal initial-bap (buffer-and-point))
+          ;; lsp didn't find the definition, so try CIDER:
+          (when (cider-repls)
+            ;; Use `run-at-time` so that any lsp-produced exception is dealt
+            ;; with first.
+            (run-at-time 0 nil (lambda () (cider-find-var nil)))))))))
 
 (with-eval-after-load 'cider
   (with-eval-after-load 'lsp-mode
