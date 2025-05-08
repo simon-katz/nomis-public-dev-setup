@@ -245,6 +245,8 @@
 
 (require 'align-cljlet)
 
+(add-hook 'clojurec-mode-hook 'nomis/replace-text-mode)
+
 ;;;; ___________________________________________________________________________
 ;;;; clj-refactor
 

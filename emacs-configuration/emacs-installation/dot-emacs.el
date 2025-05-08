@@ -327,6 +327,8 @@
 
 (require 'nomis-overlay-priorities)
 
+(require 'nomis-replace-text)
+
 ;; (eval-after-load "isearch" '(require 'isearch+))
 ;; Is this the cause of problems with Magit when trying to commit?...
 ;; -- *ERROR*: ‘recenter’ing a window that does not display current-buffer.
