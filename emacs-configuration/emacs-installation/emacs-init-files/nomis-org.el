@@ -566,7 +566,7 @@
     (write-region s nil input-path)
     (unwind-protect
         (progn
-          (nomis/run-clojure-no-insert
+          (nomis/run-clojure
            (format "(do (require '[nomis-blog.layer-2-domain.content.source.org-mode-source.pre-parse-transforms :as ppt])
                          (ppt/org-export-apply-hacks-to-file :latex
                                                               \"%s\"
