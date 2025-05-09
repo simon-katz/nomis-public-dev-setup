@@ -1,20 +1,35 @@
-;;;; Right margin
+;;;; nomis-right-margin ---  -*- lexical-binding: t -*-
 
 ;;;; ___________________________________________________________________________
 
-(require 'nomis-right-margin-column)
-(require 'nomis-fill-column)
+(defvar nomis/right-margin-column 80)
+(defvar nomis/right-margin-column-color "#cc99cc")
+
+(setq-default fill-column nomis/right-margin-column)
+
+(add-hook 'prog-mode-hook 'display-fill-column-indicator-mode)
+
+(set-face-foreground 'fill-column-indicator nomis/right-margin-column-color)
+
+;;;; ___________________________________________________________________________
+
+(require 'nomis-whitespace-with-overlays-mode)
+
+(add-hook 'text-mode-hook 'nomis/wwo/mode)
+(add-hook 'prog-mode-hook 'nomis/wwo/mode)
+(add-hook 'org-mode-hook  'nomis/wwo/mode/only-trailing)
+
+;;;; ___________________________________________________________________________
+
 (require 'column-marker)
 
 (defface nomis/column-marker-1-face `((t :box ,(list :line-width -1
-                                                     :color nomis/right-margin-column-color ; "red"
+                                                     :color nomis/right-margin-column-color
                                                      :style nil)))
   "Face used for a column marker.  Usually a background color."
   :group 'faces)
 
 (setq column-marker-1-face 'nomis/column-marker-1-face)
-
-;;;; ___________________________________________________________________________
 
 (defun nomis/get-80-column-stuff ()
   (let* ((f? (bound-and-true-p display-fill-column-indicator-mode))
