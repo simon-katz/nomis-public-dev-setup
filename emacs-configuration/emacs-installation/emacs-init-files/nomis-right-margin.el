@@ -3,11 +3,11 @@
 ;;;; ___________________________________________________________________________
 
 (require 'nomis-right-margin-column)
-(require 'nomis-fci-mode)
+(require 'nomis-fill-column)
 (require 'column-marker)
 
 (defface nomis/column-marker-1-face `((t :box ,(list :line-width -1
-                                                     :color fci-rule-color ; "red"
+                                                     :color nomis/right-margin-column-color ; "red"
                                                      :style nil)))
   "Face used for a column marker.  Usually a background color."
   :group 'faces)
@@ -17,7 +17,7 @@
 ;;;; ___________________________________________________________________________
 
 (defun nomis/get-80-column-stuff ()
-  (let* ((f? (bound-and-true-p fci-mode))
+  (let* ((f? (bound-and-true-p display-fill-column-indicator-mode))
          (c? column-marker-1))
     (cond ((and (not f?) (not c?)) 0)
           ((and      f?  (not c?)) 1)
@@ -27,8 +27,8 @@
 (defun nomis/set-80-column-stuff (n &optional print-message?)
   (when print-message?
     (message "nomis/set-80-column-stuff setting approach to %s" n))
-  (cl-flet ((f-off () (fci-mode 0))
-            (f-on  () (fci-mode 1))
+  (cl-flet ((f-off () (display-fill-column-indicator-mode 0))
+            (f-on  () (display-fill-column-indicator-mode 1))
             (c-off () (column-marker-1 '(4)))
             (c-on  () (column-marker-1 nomis/right-margin-column)))
     (cl-case n

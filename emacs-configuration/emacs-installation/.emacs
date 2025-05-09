@@ -45,7 +45,6 @@
                        edn
                        elisp-slime-nav
                        exec-path-from-shell
-                       fill-column-indicator
                        flycheck
                        flycheck-clj-kondo
                        flycheck-joker

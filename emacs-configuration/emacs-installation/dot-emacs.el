@@ -216,7 +216,7 @@
 (require 'nomis-whitespace)
 (require 'nomis-highlight-chars)
 (require 'nomis-right-margin)
-(require 'nomis-fci-mode)
+(require 'nomis-fill-column)
 (require 'nomis-highlighting)
 (require 'nomis-line-numbering)
 (require 'nomis-saveplace)
