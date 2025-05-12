@@ -321,4 +321,8 @@ NEW-ALIAS is always at the end (or at the beginning if PREPEND? is non-nil)."
 
 ;;;; ___________________________________________________________________________
 
+(setq cider-enable-nrepl-jvmti-agent t)
+
+;;;; ___________________________________________________________________________
+
 (provide 'nomis-cider-extras)
