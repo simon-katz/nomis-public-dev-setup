@@ -507,9 +507,9 @@
   ;; single quotes, or with yaml-mode, so we need this.
   (cl-case 2
     (1 (or (nomis/clojure-like-mode? major-mode)
-             (member major-mode
-                     '(emacs-lisp-mode
-                       yaml-mode))))
+           (member major-mode
+                   '(emacs-lisp-mode
+                     yaml-mode))))
     (2
      ;; This gives me what I want when I have characters like ♭ and ♯ in
      ;; text documents.
