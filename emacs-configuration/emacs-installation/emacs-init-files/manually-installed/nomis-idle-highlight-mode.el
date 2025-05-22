@@ -694,7 +694,7 @@
                      nomis/ih/approach)
             (message "colon-matters-p = %s"
                      nomis/idle-highlight-colon-at-start-matters-p)
-            (message "captured-target = %s"
+            (message "captured-target = \"%s\""
                      captured-target)
             (message "Looking for regexp \"%s\""
                      nomis/idle-highlight-regexp))
