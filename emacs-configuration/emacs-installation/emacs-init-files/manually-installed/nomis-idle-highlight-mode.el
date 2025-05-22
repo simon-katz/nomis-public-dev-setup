@@ -502,23 +502,18 @@
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-(defvar nomis/ih/allow-hack-symbol-boundaries?
-  ;; TODO: Instead of this, need to fix the nasty hacking of symbol boundaries.
-  nil)
-
 (defun nomis/ih/use-hack-for-symbol-boundaries? ()
-  (when nomis/ih/allow-hack-symbol-boundaries?
-    ;; "\\_<" and "\\_>" don't work well with Lispy symbols that contain
-    ;; single quotes, or with yaml-mode, so we need this.
-    (cl-case 2
-      (1 (or (nomis/clojure-like-mode? major-mode)
-             (member major-mode
-                     '(emacs-lisp-mode
-                       yaml-mode))))
-      (2
-       ;; This gives me what I want when I have characters like ♭ and ♯ in
-       ;; text documents.
-       t))))
+  ;; "\\_<" and "\\_>" don't work well with Lispy symbols that contain
+  ;; single quotes, or with yaml-mode, so we need this.
+  (cl-case 2
+    (1 (or (nomis/clojure-like-mode? major-mode)
+           (member major-mode
+                   '(emacs-lisp-mode
+                     yaml-mode))))
+    (2
+     ;; This gives me what I want when I have characters like ♭ and ♯ in
+     ;; text documents.
+     t)))
 
 (defun nomis/hacky-non-symbol-char-regexp ()
   (cl-assert (nomis/ih/use-hack-for-symbol-boundaries?))
