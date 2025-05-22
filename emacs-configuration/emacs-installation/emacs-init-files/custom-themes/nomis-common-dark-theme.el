@@ -6,7 +6,7 @@
 
  `(region  ((t  ,(list
                   ;; :foreground "white"
-                  :background "Red4"))))
+                  :background "Red3"))))
 
  `(hl-line ((t  ,(list :background "#407040"))))
 
