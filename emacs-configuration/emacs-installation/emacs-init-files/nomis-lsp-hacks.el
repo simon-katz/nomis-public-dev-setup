@@ -279,6 +279,9 @@ g. `error', `warning') and list of LSP TAGS."
     (message-box
      "You need to fix `nomis/hack-lsp-overlay-priorities` for this version of `lsp-mode`."))))
 
+;; (advice-remove 'make-overlay 'nomis/hack-lsp-overlay-priorities)
+;; (advice-remove 'lsp--document-highlight-callback 'nomis/hack-lsp-overlay-priorities)
+
 ;;;; ___________________________________________________________________________
 
 (provide 'nomis-lsp-hacks)
