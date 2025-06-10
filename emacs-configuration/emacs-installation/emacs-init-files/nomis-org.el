@@ -799,13 +799,14 @@ With numerical argument N, show content up to level N."
 ;;;; * org-todo-keywords
 
 (setq org-todo-keywords
-      '((sequence "TODO" "SOON" "CRNT" "|" "DONE" "WONT")))
+      '((sequence "TODO" "SOON" "CRNT" "|" "DONE" "WONT" "HOLD")))
 
 (setq org-todo-keyword-faces
       '(("TODO" . org-warning)
         ("SOON" . "Orange")
         ("CRNT" . "Yellow")
-        ("WONT" . "DodgerBlue1")))
+        ("WONT" . "DodgerBlue1")
+        ("HOLD" . "DodgerBlue1")))
 
 ;;;; ___________________________________________________________________________
 ;;;; * Key bindings
