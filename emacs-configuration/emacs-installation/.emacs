@@ -42,6 +42,7 @@
                        dash-functional
                        diff-hl
                        discover
+                       dockerfile-mode
                        dumb-jump
                        edn
                        elisp-slime-nav
