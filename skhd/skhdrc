@@ -37,6 +37,11 @@ fn         + ctrl + alt + cmd - w        : ~/bin-private/hs -c "nomisHelloWorld(
              ctrl + alt + cmd - d        : ~/bin-private/hs -c 'nomisMessage("Restarting Dock")' ;  killall Dock
 
 
+### Restart Finder
+
+             ctrl + alt + cmd - f        : ~/bin-private/hs -c 'nomisMessage("Restarting Finder")' ;  killall Finder
+
+
 ### Reload config (skhd, Hammerspoon, maybe more)
 
 fn         + ctrl + alt + cmd - r        : ~/bin-private/hs -c 'hs.reload()'
