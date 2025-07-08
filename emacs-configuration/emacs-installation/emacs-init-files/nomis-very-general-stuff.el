@@ -37,6 +37,10 @@
 (setq auto-save-file-name-transforms
       `((".*" ,nomis/backup-directory t)))
 
+(setq nomis/lockfile-directory (expand-file-name "~/.emacs-lockfiles/"))
+(make-directory nomis/lockfile-directory t)
+(setq lock-file-name-transforms `((".*" ,nomis/lockfile-directory t)))
+
 (when (display-graphic-p)
   ;; (mouse-wheel-mode t)
   (blink-cursor-mode -1))
