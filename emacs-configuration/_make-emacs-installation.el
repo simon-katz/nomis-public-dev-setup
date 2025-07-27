@@ -35,6 +35,7 @@
      discover
      dockerfile-mode
      dumb-jump
+     eca
      edn
      elisp-slime-nav
      exec-path-from-shell
