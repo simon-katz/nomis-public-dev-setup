@@ -74,6 +74,12 @@ If not provided, download and start eca automatically."
   :group 'eca
   :type 'string)
 
+(defcustom eca-curl-script (lambda ()
+                             )
+  "The script to run curl."
+  :group 'eca
+  :type 'string)
+
 (defun eca-process--buffer-name (session)
   "Return the process buffer name for SESSION."
   (format  "<eca:%s>" (eca--session-id session)))
@@ -83,6 +89,21 @@ If not provided, download and start eca automatically."
   (format  "<eca:stderr:%s>" (eca--session-id session)))
 
 (defvar eca-process--latest-server-version nil)
+
+(defun eca--download-file (url path)
+  "Download a file from URL to PATH shelling out to system.
+Workaround for `url-copy-file` that has issues with macos async threads.
+https://github.com/emacs-lsp/lsp-mode/issues/4746#issuecomment-2957183423"
+  (let ((curl-cmd (or (executable-find "curl")
+                      (executable-find "curl.exe"))))
+    (unless curl-cmd
+      (error "Curl not found. Please install curl or customize eca-custom-command"))
+    (let ((exit-code (shell-command (format "%s -L -s -S -f -o %s %s"
+                                            (shell-quote-argument curl-cmd)
+                                            (shell-quote-argument path)
+                                            (shell-quote-argument url)))))
+      (unless (= exit-code 0)
+        (error "Curl failed with exit code %d" exit-code)))))
 
 (defun eca-process--get-latest-server-version ()
   "Return the latest server version."
@@ -149,14 +170,16 @@ If not provided, download and start eca automatically."
              (when (f-exists? eca-server-version-file-path) (f-delete eca-server-version-file-path))
              (mkdir (f-parent download-path) t)
              (eca-info "Downloading eca server from %s to %s..."  url download-path)
-             (url-copy-file url download-path)
+             (eca--download-file url download-path)
+             (eca-info "Downloaded eca, unzipping it...")
              (unless eca-unzip-script
                (error "Unable to find `unzip' or `powershell' on the path, please customize `eca-unzip-script'"))
              (shell-command (format (funcall eca-unzip-script) download-path (f-parent store-path)))
              (f-write-text version 'utf-8 eca-server-version-file-path)
-             (eca-info "Downloaded eca successfully")
-             (funcall on-downloaded))
-         (error "Could not download eca server" err))))))
+             (set-file-modes store-path #o0700))
+         (error (eca-error "Could not download eca server %s" err)))
+       (eca-info "Installed eca successfully!")
+       (funcall on-downloaded)))))
 
 (defun eca-process--server-command ()
   "Return the command to start server."

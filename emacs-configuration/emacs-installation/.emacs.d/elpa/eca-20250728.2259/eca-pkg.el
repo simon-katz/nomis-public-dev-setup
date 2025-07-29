@@ -1,5 +1,5 @@
 ;; -*- no-byte-compile: t; lexical-binding: nil -*-
-(define-package "eca" "20250728.135"
+(define-package "eca" "20250728.2259"
   "AI pair programming via ECA (Editor Code Assistant)."
   '((emacs         "28.1")
     (dash          "2.18.0")
@@ -7,8 +7,8 @@
     (markdown-mode "2.3")
     (compat        "30.1"))
   :url "https://github.com/editor-code-assistant/eca-emacs"
-  :commit "ae6a41c118657e970d4e48ad5e5e123a3ea96bac"
-  :revdesc "ae6a41c11865"
+  :commit "0e8c74d88a97d8829514a3fa518833c4b19add1f"
+  :revdesc "0e8c74d88a97"
   :keywords '("tools")
   :authors '(("Eric Dallo" . "ercdll1337@gmail.com"))
   :maintainers '(("Eric Dallo" . "ercdll1337@gmail.com")))

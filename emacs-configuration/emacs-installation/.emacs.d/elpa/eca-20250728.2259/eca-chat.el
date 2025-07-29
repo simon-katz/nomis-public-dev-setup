@@ -287,7 +287,7 @@ Must be a valid model supported by server, check `eca-chat-select-model`."
   "Insert the prompt and context string adding overlay metadatas."
   (let ((prompt-area-ov (make-overlay (line-beginning-position) (1+ (line-beginning-position)) (current-buffer))))
     (overlay-put prompt-area-ov 'eca-chat-prompt-area t))
-  (let ((context-area-ov (make-overlay (line-beginning-position) (line-end-position) (current-buffer))))
+  (let ((context-area-ov (make-overlay (line-beginning-position) (line-end-position) (current-buffer) nil t)))
     (overlay-put context-area-ov 'eca-chat-context-area t))
   (insert (propertize eca-chat-context-prefix 'font-lock-face 'eca-chat-context-unlinked-face))
   (insert "\n")
@@ -381,9 +381,18 @@ Otherwise to a not loading state."
 (defun eca-chat--key-pressed-tab ()
   "Expand tool call if point is at expandable content, or use default behavior."
   (interactive)
-  (if-let ((ov (eca-chat--expandable-content-at-point)))
-      (eca-chat--expandable-content-toggle (overlay-get ov 'eca-chat--expandable-content-id))
-    (call-interactively #'markdown-cycle)))
+  (cond
+   ;; expandable toggle
+   ((eca-chat--expandable-content-at-point)
+    (eca-chat--expandable-content-toggle (overlay-get (eca-chat--expandable-content-at-point) 'eca-chat--expandable-content-id)))
+
+   ;; context completion
+   ((and (eca-chat--prompt-context-field-ov)
+         (eolp)
+         (functionp 'company-complete))
+    (company-complete))
+
+   (t t)))
 
 (defun eca-chat--prompt-field-ov ()
   "Return the overlay for the prompt field."
