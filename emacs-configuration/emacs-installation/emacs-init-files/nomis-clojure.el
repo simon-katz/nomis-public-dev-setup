@@ -177,7 +177,7 @@
                 (set-window-start (get-buffer-window) 0))
               `((name . ,advice-name))))
 
-(define-key cider-repl-mode-map (kbd "M-k") 'cider-repl-clear-buffer)
+(define-key cider-repl-mode-map (kbd "H-k") 'cider-repl-clear-buffer)
 
 ;;;; ___________________________________________________________________________
 ;;;; CIDER debug broken

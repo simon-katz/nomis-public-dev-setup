@@ -39,7 +39,7 @@ that are showing the buffer."
       (when was-read-only
         (read-only-mode 1)))))
 
-(define-key messages-buffer-mode-map (kbd "M-k") 'nomis/clear-messages-buffer)
+(define-key messages-buffer-mode-map (kbd "H-k") 'nomis/clear-messages-buffer)
 
 ;;;; ___________________________________________________________________________
 

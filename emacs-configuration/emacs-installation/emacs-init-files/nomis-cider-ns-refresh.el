@@ -289,7 +289,7 @@
     ([M-S-up]     . nomis/cider-ns-refresh/backward-section-align-top)
     ([M-S-down]   . nomis/cider-ns-refresh/forward-section-align-top)
     (,(kbd "M-j") . nomis/cider-ns-refresh/delete-to-beginning-of-buffer)
-    (,(kbd "M-k") . nomis/cider-ns-refresh/clear-buffer)))
+    (,(kbd "H-k") . nomis/cider-ns-refresh/clear-buffer)))
 
 ;;;; ___________________________________________________________________________
 

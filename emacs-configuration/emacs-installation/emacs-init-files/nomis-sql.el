@@ -12,7 +12,7 @@
 (add-hook 'sql-mode-hook 'sqlind-minor-mode)
 
 (defun nomis/initialize-sql-interactive-mode ()
-  (define-key sql-interactive-mode-map (kbd "M-k") 'comint-clear-buffer)
+  (define-key sql-interactive-mode-map (kbd "H-k") 'comint-clear-buffer)
   (toggle-truncate-lines t))
 
 (add-hook 'sql-interactive-mode-hook

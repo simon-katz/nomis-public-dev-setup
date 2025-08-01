@@ -18,7 +18,7 @@
   (setq vterm-clear-scrollback-when-clearing t)
   (setq vterm-copy-mode-remove-fake-newlines t)
 
-  (define-key vterm-mode-map (kbd "M-k") 'vterm-clear)
+  (define-key vterm-mode-map (kbd "H-k") 'vterm-clear)
 
   (unbind-key "M-`" vterm-mode-map))
 
