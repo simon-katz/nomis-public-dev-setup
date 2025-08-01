@@ -38,6 +38,14 @@ Select which model to use in the chat from what server supports." t)
 Select which chat behavior to use from what server supports." t)
 (autoload 'eca-chat-reset "eca-chat" "\
 Request a chat reset." t)
+(autoload 'eca-chat-add-context-at-point "eca-chat" "\
+Add file content with range at point to chat as context.
+Consider the defun at point unless a region is selected." t)
+(autoload 'eca-chat-add-file-context "eca-chat" "\
+Add full file to chat as context.
+if ARG is current prefix, ask for file, otherwise add current file.
+
+(fn &optional ARG)" t)
 (autoload 'eca-chat-talk "eca-chat" "\
 Talk to the assistent by recording audio and transcribing it." t)
 (register-definition-prefixes "eca-chat" '("eca-chat-"))

@@ -26,16 +26,38 @@
   :type 'hook
   :group 'eca)
 
-(defcustom eca-chat-window-width 0.35
-  "The width of `eca' dedicated chat window."
-  :type 'integer
+(defcustom eca-chat-window-side 'right
+  "Side of the frame where the ECA chat window should appear.
+Can be `'left', `'right', `'top', or `'bottom'.  This setting will only
+be used when `eca-chat-use-side-window' is non-nil."
+  :type '(choice (const :tag "Left" left)
+                 (const :tag "Right" right)
+                 (const :tag "Top" top)
+                 (const :tag "Bottom" bottom))
   :group 'eca)
 
-(defcustom eca-chat-position-params `((display-buffer-in-side-window)
-                                      (side . right)
-                                      (window-width . ,eca-chat-window-width))
-  "Position params for each chat display."
-  :type 'alist
+(defcustom eca-chat-window-width 0.40
+  "Width of the ECA chat side window when opened on left or right."
+  :type 'number
+  :group 'eca)
+
+(defcustom eca-chat-window-height 0.30
+  "Height of the ECA chat side window when opened on top or bottom."
+  :type 'number
+  :group 'eca)
+
+(defcustom eca-chat-use-side-window t
+  "Whether to display ECA chat in a side window.
+When non-nil (default), ECA chat opens in a dedicated side window
+controlled by `eca-chat-window-side' and related settings.  When nil,
+ECA chat opens in a regular buffer that follows standard
+`display-buffer' behavior."
+  :type 'boolean
+  :group 'eca)
+
+(defcustom eca-chat-focus-on-open t
+  "Whether to focus the ECA chat window when it opens."
+  :type 'boolean
   :group 'eca)
 
 (defcustom eca-chat-prompt-prefix "> "
@@ -193,6 +215,11 @@ Must be a valid model supported by server, check `eca-chat-select-model`."
   "Face for the strings segments in usage string in mode-line of the chat."
   :group 'eca)
 
+(defface eca-chat-command-description-face
+  '((t :inherit font-lock-comment-face))
+  "Face for the descriptions in chat command completion."
+  :group 'eca)
+
 ;; Internal
 
 (defvar-local eca-chat--closed nil)
@@ -288,9 +315,10 @@ Must be a valid model supported by server, check `eca-chat-select-model`."
   (let ((prompt-area-ov (make-overlay (line-beginning-position) (1+ (line-beginning-position)) (current-buffer))))
     (overlay-put prompt-area-ov 'eca-chat-prompt-area t))
   (let ((context-area-ov (make-overlay (line-beginning-position) (line-end-position) (current-buffer) nil t)))
-    (overlay-put context-area-ov 'eca-chat-context-area t))
-  (insert (propertize eca-chat-context-prefix 'font-lock-face 'eca-chat-context-unlinked-face))
-  (insert "\n")
+    (overlay-put context-area-ov 'eca-chat-context-area t)
+    (insert (propertize eca-chat-context-prefix 'font-lock-face 'eca-chat-context-unlinked-face))
+    (insert "\n")
+    (move-overlay context-area-ov (overlay-start context-area-ov) (1- (overlay-end context-area-ov))))
   (let ((prompt-field-ov (make-overlay (line-beginning-position) (1+ (line-beginning-position)) (current-buffer))))
     (overlay-put prompt-field-ov 'eca-chat-prompt-field t)
     (overlay-put prompt-field-ov 'before-string (propertize eca-chat-prompt-prefix 'font-lock-face 'eca-chat-prompt-prefix-face))))
@@ -576,12 +604,40 @@ This is similar to `backward-delete-char' but protects the prompt/context line."
   "Select the Window."
   (select-window (get-buffer-window (buffer-name))))
 
+(defun eca-chat--display-buffer (buffer)
+  "Display BUFFER in a side window according to customization.
+The window is displayed on the side specified by
+`eca-chat-window-side' with dimensions from
+`eca-chat-window-width' or `eca-chat-window-height'.
+If `eca-chat-focus-on-open' is non-nil, the window is selected."
+  (let ((window
+         (if eca-chat-use-side-window
+             ;; Use side window
+             (let* ((side eca-chat-window-side)
+                    (slot 0)
+                    (window-parameters '((no-delete-other-windows . t)))
+                    (display-buffer-alist
+                     `((,(regexp-quote (buffer-name buffer))
+                        (display-buffer-in-side-window)
+                        (side . ,side)
+                        (slot . ,slot)
+                        ,@(when (memq side '(left right))
+                            `((window-width . ,eca-chat-window-width)))
+                        ,@(when (memq side '(top bottom))
+                            `((window-height . ,eca-chat-window-height)))
+                        (window-parameters . ,window-parameters)))))
+               (display-buffer buffer))
+           ;; Use regular buffer
+           (display-buffer buffer))))
+    ;; Select the window to give it focus if configured to do so
+    (when (and window eca-chat-focus-on-open)
+      (select-window window))
+    window))
+
 (defun eca-chat--pop-window ()
   "Pop eca dedicated window if it exists."
   (let ((buffer (current-buffer)))
-    (display-buffer buffer eca-chat-position-params)
-    (select-window (get-buffer-window buffer))
-    (set-window-buffer (get-buffer-window buffer) buffer)))
+    (eca-chat--display-buffer buffer)))
 
 (defun eca-chat--mark-header ()
   "Mark last messages header."
@@ -729,7 +785,10 @@ If FORCE? decide to OPEN? or not."
       (-let (((&plist :type type) context))
         (insert
          (pcase type
-           ("file" (propertize (concat eca-chat-context-prefix (f-filename (plist-get context :path)))
+           ("file" (propertize (concat eca-chat-context-prefix
+                                       (f-filename (plist-get context :path))
+                                       (-when-let ((&plist :start start :end end) (plist-get context :linesRange))
+                                         (format " (%d-%d)" start end)))
                                'eca-chat-context-item context
                                'font-lock-face 'eca-chat-context-file-face))
            ("directory" (propertize (concat eca-chat-context-prefix (f-filename (plist-get context :path)))
@@ -746,22 +805,33 @@ If FORCE? decide to OPEN? or not."
 (defconst eca-chat--kind->symbol
   '(("file" . file)
     ("directory" . folder)
-    ("repoMap" . module)))
+    ("repoMap" . module)
+    ("mcpPrompt" . function)
+    ("native" . variable)))
 
-(defun eca-chat--completion-candidate-kind (item)
+(defun eca-chat--completion-item-kind (item)
   "Return the kind for ITEM."
-  (alist-get (plist-get (get-text-property 0 'eca-chat-completion-item item) :type)
+  (alist-get (plist-get item :type)
              eca-chat--kind->symbol
              nil
              nil
              #'string=))
+
+(defun eca-chat--completion-item-label-kind (item-label)
+  "Return the kind for ITEM-LABEL."
+  (eca-chat--completion-item-kind (get-text-property 0 'eca-chat-completion-item item-label)))
+
+(defun eca-chat--completion-item-company-box-icon (item-label)
+  "Return the kind for ITEM-LABEL."
+  (let ((symbol (eca-chat--completion-item-label-kind item-label)))
+    (intern (capitalize (symbol-name symbol)))))
 
 (defun eca-chat--add-context (context)
   "Add to chat CONTEXT."
   (add-to-list 'eca-chat--context context t)
   (eca-chat--refresh-context))
 
-(defun eca-chat--completion-annotate (roots item-label)
+(defun eca-chat--completion-context-annotate (roots item-label)
   "Annonate ITEM-LABEL detail for ROOTS."
   (-let (((&plist :type type :path path) (get-text-property 0 'eca-chat-completion-item item-label)))
     (pcase type
@@ -770,7 +840,14 @@ If FORCE? decide to OPEN? or not."
       ("repoMap" "Summary view of workspaces files")
       (_ ""))))
 
-(defun eca-chat--completion-exit-function (item _status)
+(defun eca-chat--completion-prompts-annotate (item-label)
+  "Annonate prompt ITEM-LABEL."
+  (-let (((&plist :description description :arguments args) (get-text-property 0 'eca-chat-completion-item item-label)))
+    (concat "(" (string-join (--map (plist-get it :name) args) ", ")
+            ") "
+            (truncate-string-to-width description (* 100 eca-chat-window-width)))))
+
+(defun eca-chat--completion-context-exit-function (item _status)
   "Add to context the selected ITEM."
   (eca-chat--add-context (get-text-property 0 'eca-chat-completion-item item))
   (end-of-line))
@@ -784,6 +861,11 @@ If FORCE? decide to OPEN? or not."
      ("repoMap" "repoMap")
      (_ (concat "Unknown - " (plist-get context :type))))
    'eca-chat-completion-item context))
+
+(defun eca-chat--command-to-completion (command)
+  "Convert COMMAND to a completion item."
+  (propertize (plist-get command :name)
+              'eca-chat-completion-item command))
 
 ;; Public
 
@@ -801,6 +883,10 @@ If FORCE? decide to OPEN? or not."
   (when (fboundp 'company-mode)
     (company-mode 1)
     (setq-local company-backends '(company-capf)))
+
+  (make-local-variable 'company-box-icons-functions)
+  (when (featurep 'company-box)
+    (add-to-list 'company-box-icons-functions #'eca-chat--completion-item-company-box-icon))
 
   (let ((session (eca-session)))
     (unless (listp header-line-format)
@@ -833,20 +919,51 @@ If FORCE? decide to OPEN? or not."
 
 (defun eca-chat-completion-at-point ()
   "Complete at point in the chat."
-  (let ((candidates (lambda ()
-                      (cond
-                       ((eca-chat--point-at-new-context-p)
-                        (-let (((&plist :contexts contexts) (eca-api-request-sync
-                                                             (eca-session)
-                                                             :method "chat/queryContext"
-                                                             :params (list :chatId eca-chat--id
-                                                                           :query (thing-at-point 'symbol t)
-                                                                           :contexts (vconcat eca-chat--context)))))
-                          (-map #'eca-chat--context-to-completion contexts)))
-                       (t nil)))))
+  (let* ((full-text (buffer-substring-no-properties (line-beginning-position) (point)))
+         (type (cond
+                ;; completing contexts
+                ((eca-chat--point-at-new-context-p)
+                 'contexts)
+
+                ;; completing commands with `/`
+                ((and (eca-chat--point-at-prompt-field-p)
+                      (string-prefix-p "/" full-text))
+                 'prompts)
+
+                (t nil)))
+         (bounds-start (pcase type
+                         ('prompts (1+ (line-beginning-position)))
+                         (_ (or
+                             (cl-first (bounds-of-thing-at-point 'symbol))
+                             (point)))))
+         (candidates-fn (lambda ()
+                          (pcase type
+                            ('contexts
+                             (-let (((&plist :contexts contexts) (eca-api-request-sync
+                                                                  (eca-session)
+                                                                  :method "chat/queryContext"
+                                                                  :params (list :chatId eca-chat--id
+                                                                                :query (thing-at-point 'symbol t)
+                                                                                :contexts (vconcat eca-chat--context)))))
+                               (-map #'eca-chat--context-to-completion contexts)))
+
+                            ('prompts
+                             (-let (((&plist :commands commands) (eca-api-request-sync
+                                                                  (eca-session)
+                                                                  :method "chat/queryCommands"
+                                                                  :params (list :chatId eca-chat--id
+                                                                                :query (substring full-text 1)))))
+                               (-map #'eca-chat--command-to-completion commands)))
+
+                            (_ nil))))
+         (exit-fn (pcase type
+                    ('contexts #'eca-chat--completion-context-exit-function)
+                    (_ nil)))
+         (annotation-fn (pcase type
+                          ('contexts (-partial #'eca-chat--completion-context-annotate (eca--session-workspace-folders (eca-session))))
+                          ('prompts #'eca-chat--completion-prompts-annotate))))
     (list
-     (or (cl-first (bounds-of-thing-at-point 'symbol))
-         (point))
+     bounds-start
      (point)
      (lambda (probe pred action)
        (cond
@@ -856,10 +973,11 @@ If FORCE? decide to OPEN? or not."
            (cycle-sort-function . identity)))
         ((eq (car-safe action) 'boundaries) nil)
         (t
-         (complete-with-action action (funcall candidates) probe pred))))
-     :company-kind #'eca-chat--completion-candidate-kind
-     :annotation-function (-partial #'eca-chat--completion-annotate (eca--session-workspace-folders (eca-session)))
-     :exit-function #'eca-chat--completion-exit-function)))
+         (complete-with-action action (funcall candidates-fn) probe pred))))
+     :company-kind #'eca-chat--completion-item-label-kind
+     :company-require-match 'never
+     :annotation-function annotation-fn
+     :exit-function exit-fn)))
 
 (defun eca-chat-content-received (session params)
   "Handle the content received notification with PARAMS for SESSION."
@@ -960,7 +1078,7 @@ If FORCE? decide to OPEN? or not."
                              (origin (plist-get content :origin))
                              (args (plist-get content :arguments))
                              (outputs (append (plist-get content :outputs) nil))
-                             (any-error? (-any-p (lambda (output) (plist-get output :error)) outputs))
+                             (error? (plist-get content :error))
                              (output-contents (-reduce-from (lambda (txt output) (concat txt "\n" (plist-get output :content)))
                                                             ""
                                                             outputs)))
@@ -971,7 +1089,7 @@ If FORCE? decide to OPEN? or not."
                                              'font-lock-face 'eca-chat-mcp-tool-call-label-face)
                                  (propertize name 'font-lock-face 'eca-chat-mcp-tool-call-label-face)
                                  " "
-                                 (if any-error?
+                                 (if error?
                                      eca-chat-mcp-tool-call-error-symbol
                                    eca-chat-mcp-tool-call-success-symbol))
                          (eca-chat--content-table `(("Arguments" . ,args)
@@ -1060,6 +1178,36 @@ If FORCE? decide to OPEN? or not."
     (setq-local eca-chat--message-cost nil)
     (setq-local eca-chat--session-cost nil)
     (eca-chat--clear (eca-session))))
+
+;;;###autoload
+(defun eca-chat-add-context-at-point ()
+  "Add file content with range at point to chat as context.
+Consider the defun at point unless a region is selected."
+  (interactive)
+  (eca-assert-session-running (eca-session))
+  (-let (((start . end) (if (use-region-p)
+                            `(,(line-number-at-pos (region-beginning)) . ,(line-number-at-pos (region-end)))
+                          (-let (((s . e) (bounds-of-thing-at-point 'defun)))
+                            `(,(line-number-at-pos s) . ,(line-number-at-pos e)))))
+         (path (buffer-file-name)))
+    (with-current-buffer (eca-chat--get-buffer (eca-session))
+      (eca-chat--add-context (list :type "file"
+                                   :path path
+                                   :linesRange (list :start start :end end))))))
+
+;;;###autoload
+(defun eca-chat-add-file-context (&optional arg)
+  "Add full file to chat as context.
+if ARG is current prefix, ask for file, otherwise add current file."
+  (interactive "P")
+  (eca-assert-session-running (eca-session))
+  (-let ((path (if (equal arg '(4))
+                   (read-file-name "Select the file to add to context: " (eca-find-root-for-buffer))
+                 (buffer-file-name))))
+    (with-current-buffer (eca-chat--get-buffer (eca-session))
+      (eca-chat--add-context (list :type "file"
+                                   :path path))
+      (eca-chat-open (eca-session)))))
 
 (declare-function whisper-run "ext:whisper" ())
 
