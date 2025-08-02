@@ -18,6 +18,8 @@ When ARG is current prefix, ask for workspace roots to use.
 (fn &optional ARG)" t)
 (autoload 'eca-stop "eca" "\
 Stop eca if running." t)
+(autoload 'eca-restart "eca" "\
+Restart eca, if not running just start." t)
 (autoload 'eca-workspaces "eca" "\
 Return workspaces used by current session." t)
 (register-definition-prefixes "eca" '("eca-"))
@@ -38,6 +40,16 @@ Select which model to use in the chat from what server supports." t)
 Select which chat behavior to use from what server supports." t)
 (autoload 'eca-chat-reset "eca-chat" "\
 Request a chat reset." t)
+(autoload 'eca-chat-go-to-prev-user-message "eca-chat" "\
+Go to the previous user message from point." t)
+(autoload 'eca-chat-go-to-next-user-message "eca-chat" "\
+Go to the next user message from point." t)
+(autoload 'eca-chat-go-to-prev-expandable-block "eca-chat" "\
+Go to the previous expandable block from point." t)
+(autoload 'eca-chat-go-to-next-expandable-block "eca-chat" "\
+Go to the next expandable block from point." t)
+(autoload 'eca-chat-toggle-expandable-block "eca-chat" "\
+Toggle current expandable block at point." t)
 (autoload 'eca-chat-add-context-at-point "eca-chat" "\
 Add file content with range at point to chat as context.
 Consider the defun at point unless a region is selected." t)

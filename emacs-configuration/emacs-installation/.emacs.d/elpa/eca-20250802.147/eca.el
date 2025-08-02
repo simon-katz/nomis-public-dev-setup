@@ -2,8 +2,8 @@
 ;; Copyright (C) 2025 Eric Dallo
 ;; Author: Eric Dallo <ercdll1337@gmail.com>
 ;; Maintainer: Eric Dallo <ercdll1337@gmail.com>
-;; Package-Version: 20250731.2259
-;; Package-Revision: 7f0c70be4985
+;; Package-Version: 20250802.147
+;; Package-Revision: 44717a79da53
 ;; Package-Requires: ((emacs "28.1") (dash "2.18.0") (f "0.20.0") (markdown-mode "2.3") (compat "30.1"))
 ;; Keywords: tools
 ;; Homepage: https://github.com/editor-code-assistant/eca-emacs
@@ -186,6 +186,13 @@ When ARG is current prefix, ask for workspace roots to use."
       (eca-chat-exit session)
       (eca-mcp-details-exit session)
       (eca-delete-session session))))
+
+;;;###autoload
+(defun eca-restart ()
+  "Restart eca, if not running just start."
+  (interactive)
+  (eca-stop)
+  (eca))
 
 ;;;###autoload
 (defun eca-workspaces ()

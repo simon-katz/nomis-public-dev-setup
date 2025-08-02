@@ -250,11 +250,16 @@ Must be a valid model supported by server, check `eca-chat-select-model`."
     (define-key map (kbd "S-<return>") #'eca-chat--key-pressed-newline)
     (define-key map (kbd "C-<up>") #'eca-chat--key-pressed-previous-prompt-history)
     (define-key map (kbd "C-<down>") #'eca-chat--key-pressed-next-prompt-history)
-    (define-key map (kbd "C-k") #'eca-chat-reset)
-    (define-key map (kbd "C-l") #'eca-chat-clear)
-    (define-key map (kbd "C-t") #'eca-chat-talk)
     (define-key map (kbd "<return>") #'eca-chat--key-pressed-return)
     (define-key map (kbd "<tab>") #'eca-chat--key-pressed-tab)
+    (define-key map (kbd "C-c C-k") #'eca-chat-reset)
+    (define-key map (kbd "C-c C-l") #'eca-chat-clear)
+    (define-key map (kbd "C-c C-t") #'eca-chat-talk)
+    (define-key map (kbd "C-c C-<up>") #'eca-chat-go-to-prev-user-message)
+    (define-key map (kbd "C-c C-<down>") #'eca-chat-go-to-next-user-message)
+    (define-key map (kbd "C-c <up>") #'eca-chat-go-to-prev-expandable-block)
+    (define-key map (kbd "C-c <down>") #'eca-chat-go-to-next-expandable-block)
+    (define-key map (kbd "C-c <tab>") #'eca-chat-toggle-expandable-block)
     map)
   "Keymap used by `eca-chat-mode'.")
 
@@ -416,9 +421,8 @@ Otherwise to a not loading state."
 
    ;; context completion
    ((and (eca-chat--prompt-context-field-ov)
-         (eolp)
-         (functionp 'company-complete))
-    (company-complete))
+         (eolp))
+    (completion-at-point))
 
    (t t)))
 
@@ -654,12 +658,16 @@ If `eca-chat-focus-on-open' is non-nil, the window is selected."
       (goto-char eca-chat--last-user-message-pos)
       (insert content))))
 
-(defun eca-chat--add-text-content (text)
-  "Add TEXT to the chat current position."
+(defun eca-chat--add-text-content (text &optional overlay-key overlay-value)
+  "Add TEXT to the chat current position.
+Add a overlay before with OVERLAY-KEY = OVERLAY-VALUE if passed."
   (let ((context-start (eca-chat--prompt-area-start-point)))
     (save-excursion
       (goto-char context-start)
       (goto-char (1- (point)))
+      (when overlay-key
+        (let ((ov (make-overlay (point) (point) (current-buffer))))
+          (overlay-put ov overlay-key overlay-value)))
       (insert text)
       (point))))
 
@@ -867,6 +875,14 @@ If FORCE? decide to OPEN? or not."
   (propertize (plist-get command :name)
               'eca-chat-completion-item command))
 
+(defun eca-chat--go-to-overlay (ov-key range-min range-max first?)
+  "Go to overlay finding from RANGE-MIN to RANGE-MAX if matches OV-KEY."
+  (with-current-buffer (eca-chat--get-buffer (eca-session))
+    (let ((get-fn (if first? #'-first #'-last)))
+      (when-let ((ov (funcall get-fn (-lambda (ov) (overlay-get ov ov-key))
+                              (overlays-in range-min range-max))))
+        (goto-char (overlay-start ov))))))
+
 ;; Public
 
 (define-derived-mode eca-chat-mode markdown-mode "eca-chat"
@@ -880,9 +896,6 @@ If FORCE? decide to OPEN? or not."
 
   (make-local-variable 'completion-at-point-functions)
   (setq-local completion-at-point-functions (list #'eca-chat-completion-at-point))
-  (when (fboundp 'company-mode)
-    (company-mode 1)
-    (setq-local company-backends '(company-capf)))
 
   (make-local-variable 'company-box-icons-functions)
   (when (featurep 'company-box)
@@ -992,7 +1005,8 @@ If FORCE? decide to OPEN? or not."
                                (propertize text
                                            'font-lock-face 'eca-chat-user-messages-face
                                            'line-prefix (propertize eca-chat-prompt-prefix 'font-lock-face 'eca-chat-user-messages-face)
-                                           'line-spacing 10))
+                                           'line-spacing 10)
+                               'eca-chat--user-message-id eca-chat--last-request-id)
                               (eca-chat--mark-header)
                               (font-lock-ensure)))
                     ("system" (progn
@@ -1079,7 +1093,7 @@ If FORCE? decide to OPEN? or not."
                              (args (plist-get content :arguments))
                              (outputs (append (plist-get content :outputs) nil))
                              (error? (plist-get content :error))
-                             (output-contents (-reduce-from (lambda (txt output) (concat txt "\n" (plist-get output :content)))
+                             (output-contents (-reduce-from (lambda (txt output) (concat txt "\n" (plist-get output :text)))
                                                             ""
                                                             outputs)))
                         (eca-chat--rename-expandable-content
@@ -1178,6 +1192,45 @@ If FORCE? decide to OPEN? or not."
     (setq-local eca-chat--message-cost nil)
     (setq-local eca-chat--session-cost nil)
     (eca-chat--clear (eca-session))))
+
+;;;###autoload
+(defun eca-chat-go-to-prev-user-message ()
+  "Go to the previous user message from point."
+  (interactive)
+  (eca-assert-session-running (eca-session))
+  (eca-chat--go-to-overlay 'eca-chat--user-message-id (point-min) (point) nil))
+
+;;;###autoload
+(defun eca-chat-go-to-next-user-message ()
+  "Go to the next user message from point."
+  (interactive)
+  (eca-assert-session-running (eca-session))
+  (eca-chat--go-to-overlay 'eca-chat--user-message-id (1+ (point)) (point-max) t))
+
+;;;###autoload
+(defun eca-chat-go-to-prev-expandable-block ()
+  "Go to the previous expandable block from point."
+  (interactive)
+  (eca-assert-session-running (eca-session))
+  (eca-chat--go-to-overlay 'eca-chat--expandable-content-id (point-min) (point) nil))
+
+;;;###autoload
+(defun eca-chat-go-to-next-expandable-block ()
+  "Go to the next expandable block from point."
+  (interactive)
+  (eca-assert-session-running (eca-session))
+  (eca-chat--go-to-overlay 'eca-chat--expandable-content-id (1+ (point)) (point-max) t))
+
+;;;###autoload
+(defun eca-chat-toggle-expandable-block ()
+  "Toggle current expandable block at point."
+  (interactive)
+  (eca-assert-session-running (eca-session))
+  (with-current-buffer (eca-chat--get-buffer (eca-session))
+    (unless (eca-chat--expandable-content-at-point)
+      (eca-chat-go-to-prev-expandable-block))
+    (when-let ((ov (eca-chat--expandable-content-at-point)))
+      (eca-chat--expandable-content-toggle (overlay-get ov 'eca-chat--expandable-content-id)))))
 
 ;;;###autoload
 (defun eca-chat-add-context-at-point ()

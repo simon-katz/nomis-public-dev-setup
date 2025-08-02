@@ -74,12 +74,6 @@ If not provided, download and start eca automatically."
   :group 'eca
   :type 'string)
 
-(defcustom eca-curl-script (lambda ()
-                             )
-  "The script to run curl."
-  :group 'eca
-  :type 'string)
-
 (defun eca-process--buffer-name (session)
   "Return the process buffer name for SESSION."
   (format  "<eca:%s>" (eca--session-id session)))
