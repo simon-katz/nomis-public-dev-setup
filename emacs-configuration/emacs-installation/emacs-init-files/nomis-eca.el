@@ -6,6 +6,10 @@
 
 ;;;; ___________________________________________________________________________
 
+(setq eca-chat-use-side-window nil)
+
+;;;; ___________________________________________________________________________
+
 (defun nomis/setup-eca-chat-mode ()
   (nomis/wwo/mode)
   (nomis/wwo/set-binary-encoding-0))
