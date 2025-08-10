@@ -12,6 +12,7 @@
         cljr-splice-sexp-killing-backward
         clojure-convert-collection-to-list
         clojure-convert-collection-to-map
+        clojure-convert-collection-to-set
         clojure-convert-collection-to-vector
         company-indent-or-complete-common
         dabbrev-expand
