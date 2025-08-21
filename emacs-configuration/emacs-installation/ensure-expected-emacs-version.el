@@ -2,7 +2,8 @@
                            ;; "28.1"
                            ;; "28.2"
                            ;; "29.4"
-                           "30.1"))
+                           ;; "30.1"
+                           "30.2"))
       (version emacs-version))
   (unless (or (member version expected-versions)
               (y-or-n-p
