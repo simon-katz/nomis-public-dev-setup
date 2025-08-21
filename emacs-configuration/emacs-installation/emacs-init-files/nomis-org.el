@@ -367,7 +367,8 @@
 ;; Do we want this? Oh -- try upgrading Org mode.
 (cond
  ((member emacs-version
-          '("30.1"))
+          '("30.1"
+            "30.2"))
   ;; Suppress buggy warnings that appear in org agenda buffer.
   (add-to-list 'warning-suppress-types '(org-element org-element-parser))))
 
