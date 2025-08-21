@@ -16,19 +16,18 @@
 Toggle Imenu support for frameworks and structural patterns.
 
 This is a minor mode.  If called interactively, toggle the
-`Js2-Imenu-Extras mode' mode.  If the prefix argument is
-positive, enable the mode, and if it is zero or negative, disable
-the mode.
+`Js2-Imenu-Extras mode' mode.  If the prefix argument is positive,
+enable the mode, and if it is zero or negative, disable the mode.
 
-If called from Lisp, toggle the mode if ARG is `toggle'.  Enable
-the mode if ARG is nil, omitted, or is a positive number.
-Disable the mode if ARG is a negative number.
+If called from Lisp, toggle the mode if ARG is `toggle'.  Enable the
+mode if ARG is nil, omitted, or is a positive number.  Disable the mode
+if ARG is a negative number.
 
 To check whether the minor mode is enabled in the current buffer,
-evaluate `js2-imenu-extras-mode'.
+evaluate the variable `js2-imenu-extras-mode'.
 
-The mode's hook is called both when the mode is enabled and when
-it is disabled.
+The mode's hook is called both when the mode is enabled and when it is
+disabled.
 
 (fn &optional ARG)" t)
 (register-definition-prefixes "js2-imenu-extras" '("js2-imenu-"))
@@ -40,19 +39,19 @@ it is disabled.
 Toggle highlight of unused variables.
 
 This is a minor mode.  If called interactively, toggle the
-`Js2-Highlight-Unused-Variables mode' mode.  If the prefix
-argument is positive, enable the mode, and if it is zero or
-negative, disable the mode.
+`Js2-Highlight-Unused-Variables mode' mode.  If the prefix argument is
+positive, enable the mode, and if it is zero or negative, disable the
+mode.
 
-If called from Lisp, toggle the mode if ARG is `toggle'.  Enable
-the mode if ARG is nil, omitted, or is a positive number.
-Disable the mode if ARG is a negative number.
+If called from Lisp, toggle the mode if ARG is `toggle'.  Enable the
+mode if ARG is nil, omitted, or is a positive number.  Disable the mode
+if ARG is a negative number.
 
 To check whether the minor mode is enabled in the current buffer,
-evaluate `js2-highlight-unused-variables-mode'.
+evaluate the variable `js2-highlight-unused-variables-mode'.
 
-The mode's hook is called both when the mode is enabled and when
-it is disabled.
+The mode's hook is called both when the mode is enabled and when it is
+disabled.
 
 (fn &optional ARG)" t)
 (autoload 'js2-minor-mode "js2-mode" "\
@@ -62,19 +61,19 @@ This allows you to use a different major mode for JavaScript editing,
 such as `js-mode', while retaining the asynchronous error/warning
 highlighting features of `js2-mode'.
 
-This is a minor mode.  If called interactively, toggle the `Js2
-minor mode' mode.  If the prefix argument is positive, enable the
-mode, and if it is zero or negative, disable the mode.
+This is a minor mode.  If called interactively, toggle the `Js2 minor
+mode' mode.  If the prefix argument is positive, enable the mode, and if
+it is zero or negative, disable the mode.
 
-If called from Lisp, toggle the mode if ARG is `toggle'.  Enable
-the mode if ARG is nil, omitted, or is a positive number.
-Disable the mode if ARG is a negative number.
+If called from Lisp, toggle the mode if ARG is `toggle'.  Enable the
+mode if ARG is nil, omitted, or is a positive number.  Disable the mode
+if ARG is a negative number.
 
 To check whether the minor mode is enabled in the current buffer,
-evaluate `js2-minor-mode'.
+evaluate the variable `js2-minor-mode'.
 
-The mode's hook is called both when the mode is enabled and when
-it is disabled.
+The mode's hook is called both when the mode is enabled and when it is
+disabled.
 
 (fn &optional ARG)" t)
 (autoload 'js2-mode "js2-mode" "\

@@ -48,18 +48,18 @@ mode. To leave this mode press <return> or \"C-g\"
 
 This is a minor mode.  If called interactively, toggle the
 `Mc-Hide-Unmatched-Lines mode' mode.  If the prefix argument is
-positive, enable the mode, and if it is zero or negative, disable
-the mode.
+positive, enable the mode, and if it is zero or negative, disable the
+mode.
 
-If called from Lisp, toggle the mode if ARG is `toggle'.  Enable
-the mode if ARG is nil, omitted, or is a positive number.
-Disable the mode if ARG is a negative number.
+If called from Lisp, toggle the mode if ARG is `toggle'.  Enable the
+mode if ARG is nil, omitted, or is a positive number.  Disable the mode
+if ARG is a negative number.
 
 To check whether the minor mode is enabled in the current buffer,
-evaluate `mc-hide-unmatched-lines-mode'.
+evaluate the variable `mc-hide-unmatched-lines-mode'.
 
-The mode's hook is called both when the mode is enabled and when
-it is disabled.
+The mode's hook is called both when the mode is enabled and when it is
+disabled.
 
 (fn &optional ARG)" t)
 (register-definition-prefixes "mc-hide-unmatched-lines-mode" '("hum/"))
@@ -273,19 +273,18 @@ which action is being undone.
 Mode while multiple cursors are active.
 
 This is a minor mode.  If called interactively, toggle the
-`Multiple-Cursors mode' mode.  If the prefix argument is
-positive, enable the mode, and if it is zero or negative, disable
-the mode.
+`Multiple-Cursors mode' mode.  If the prefix argument is positive,
+enable the mode, and if it is zero or negative, disable the mode.
 
-If called from Lisp, toggle the mode if ARG is `toggle'.  Enable
-the mode if ARG is nil, omitted, or is a positive number.
-Disable the mode if ARG is a negative number.
+If called from Lisp, toggle the mode if ARG is `toggle'.  Enable the
+mode if ARG is nil, omitted, or is a positive number.  Disable the mode
+if ARG is a negative number.
 
 To check whether the minor mode is enabled in the current buffer,
-evaluate `multiple-cursors-mode'.
+evaluate the variable `multiple-cursors-mode'.
 
-The mode's hook is called both when the mode is enabled and when
-it is disabled.
+The mode's hook is called both when the mode is enabled and when it is
+disabled.
 
 (fn &optional ARG)" t)
 (register-definition-prefixes "multiple-cursors-core" '("deactivate-cursor-after-undo" "mc--" "mc/" "unsupported-cmd"))
@@ -303,19 +302,18 @@ multiple cursors to multiple lines." t)
 A mode for creating a rectangular region to edit
 
 This is a minor mode.  If called interactively, toggle the
-`Rectangular-Region mode' mode.  If the prefix argument is
-positive, enable the mode, and if it is zero or negative, disable
-the mode.
+`Rectangular-Region mode' mode.  If the prefix argument is positive,
+enable the mode, and if it is zero or negative, disable the mode.
 
-If called from Lisp, toggle the mode if ARG is `toggle'.  Enable
-the mode if ARG is nil, omitted, or is a positive number.
-Disable the mode if ARG is a negative number.
+If called from Lisp, toggle the mode if ARG is `toggle'.  Enable the
+mode if ARG is nil, omitted, or is a positive number.  Disable the mode
+if ARG is a negative number.
 
 To check whether the minor mode is enabled in the current buffer,
-evaluate `rectangular-region-mode'.
+evaluate the variable `rectangular-region-mode'.
 
-The mode's hook is called both when the mode is enabled and when
-it is disabled.
+The mode's hook is called both when the mode is enabled and when it is
+disabled.
 
 (fn &optional ARG)" t)
 (register-definition-prefixes "rectangular-region-mode" '("rectangular-region-mode" "rrm/"))

@@ -37,19 +37,18 @@ Like `error', but use CL format strings.
 Adds font-lock support for cl format strings.
 
 This is a minor mode.  If called interactively, toggle the
-`Cl-Format-Font-Lock mode' mode.  If the prefix argument is
-positive, enable the mode, and if it is zero or negative, disable
-the mode.
+`Cl-Format-Font-Lock mode' mode.  If the prefix argument is positive,
+enable the mode, and if it is zero or negative, disable the mode.
 
-If called from Lisp, toggle the mode if ARG is `toggle'.  Enable
-the mode if ARG is nil, omitted, or is a positive number.
-Disable the mode if ARG is a negative number.
+If called from Lisp, toggle the mode if ARG is `toggle'.  Enable the
+mode if ARG is nil, omitted, or is a positive number.  Disable the mode
+if ARG is a negative number.
 
 To check whether the minor mode is enabled in the current buffer,
-evaluate `cl-format-font-lock-mode'.
+evaluate the variable `cl-format-font-lock-mode'.
 
-The mode's hook is called both when the mode is enabled and when
-it is disabled.
+The mode's hook is called both when the mode is enabled and when it is
+disabled.
 
 (fn &optional ARG)" t)
 (register-definition-prefixes "cl-format" '("cl-format-"))
@@ -57,7 +56,7 @@ it is disabled.
 
 ;;; Generated autoloads from cl-format-builtins.el
 
-(register-definition-prefixes "cl-format-builtins" '("?$" "?%" "?&" "?*" "?/" "?<" "??" "?\\[" "?^" "?_" "?a" "?b" "?c" "?d" "?e" "?f" "?g" "?i" "?o" "?p" "?r" "?s" "?t" "?w" "?x" "?{" "?~" "cl-format-" "single-key-description-forthcoming"))
+(register-definition-prefixes "cl-format-builtins" '("cl-format-" "single-key-description-forthcoming"))
 
 
 ;;; Generated autoloads from cl-format-def.el

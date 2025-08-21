@@ -21,7 +21,6 @@ Return the pluralized version of STR.
 
 (fn STR)")
 (define-obsolete-function-alias 'pluralize-string 'inflection-pluralize-string "2.6")
-(register-definition-prefixes "inflections" '(";;" "define-inflectors" "inflection-"))
 
 ;;; End of scraped data
 
