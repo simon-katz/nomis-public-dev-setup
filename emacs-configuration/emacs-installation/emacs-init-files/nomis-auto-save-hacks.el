@@ -10,7 +10,7 @@
 ;;;; - https://emacs.stackexchange.com/questions/48301/spacemacs-and-file-name-too-long-error-on-auto-save
 ;;;; - https://www.reddit.com/r/emacs/comments/t07e7e/file_name_too_long_error/
 
-(defconst nomis/auto-save-hacks/max-filename-length 200) ; A bit arbitrary,
+(defconst nomis/auto-save-hacks/max-filename-length 150) ; A bit arbitrary,
 (defconst nomis/auto-save-hacks/sha1-length 40)
 
 (defun nomis/auto-save-hacks/maybe-shorten-filename (filename)
@@ -38,8 +38,8 @@
           '("28.1"
             "28.2"
             "29.4"
-            "30.1" ; I don't know if we still need this, but it can't harm.
-            ))
+            "30.1"
+            "30.2"))
   (advice-add 'make-auto-save-file-name
               :around
               (lambda (orig-fun &rest args)

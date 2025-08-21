@@ -6,7 +6,8 @@
                '("28.1"
                  "28.2"
                  "29.4"
-                 "30.1"))
+                 "30.1"
+                 "30.2"))
        (setq Buffer-menu-name-width
              (lambda (buffers)
                ;; Code taken from `Buffer-menu--dynamic-name-width` and hacked.
