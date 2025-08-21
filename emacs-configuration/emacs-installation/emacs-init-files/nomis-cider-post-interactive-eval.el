@@ -55,7 +55,9 @@ the need to save files so that a file-watcher can spot changes).")
                 "1.5.0 (package: 20220830.500)"
                 "1.7.0 (package: 20230518.550)"
                 "20250217.1433"
-                "20250430.722")))
+                "20250430.722"
+                "20250806.1944" ; Not thoroughly checked but seems to work.
+                )))
 
   (cl-flet*
       ((check-current-buffer

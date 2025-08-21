@@ -132,8 +132,11 @@
         (concat blank-line "\n" line))))
 
    (t
-    (message-box
-     "You need to fix your hacks for this version of `diff-hl-inline-popup`."))))
+    ;; Was thia about not having arrows when scrolled to the top or bottom?
+    ;; That's handled now.
+    ;; (message-box
+    ;;  "You need to fix your hacks for this version of `diff-hl-inline-popup`.")
+    )))
 
 ;;;; ___________________________________________________________________________
 

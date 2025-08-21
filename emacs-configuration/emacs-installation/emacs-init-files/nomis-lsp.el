@@ -193,8 +193,10 @@
    '((name . nomis/show-flycheck-info))))
 
  (t
-  (message-box
-   "You need to fix `nomis/show-flycheck-info` for this version of `lsp-ui`.")))
+  ;; I think we don't need this anymore (with version `(20250804 2109)`).
+  ;; (message-box
+  ;;  "You need to fix `nomis/show-flycheck-info` for this version of `lsp-ui`.")
+  ))
 ;; (advice-remove 'lsp-ui-sideline-mode 'nomis/show-flycheck-info)
 
 ;;;; ___________________________________________________________________________

@@ -144,7 +144,8 @@
                 "1.5.0 (package: 20220830.500)"
                 "1.7.0 (package: 20230518.550)"
                 "20250217.1433"
-                "20250430.722")))
+                "20250430.722"
+                "20250806.1944")))
 
   (defvar nomis/cider-ns-refresh/-vars-to-pass-to-log-buffer
     '(nomis/cider-forbid-refresh?
@@ -300,7 +301,8 @@
             "1.5.0 (package: 20220830.500)"
             "1.7.0 (package: 20230518.550)"
             "20250217.1433"
-            "20250430.722"))
+            "20250430.722"
+            "20250806.1944"))
 
   (defvar *nomis/cider-ns-refresh/-in-handle-response?* nil)
 
@@ -350,7 +352,8 @@
             "1.5.0 (package: 20220830.500)"
             "1.7.0 (package: 20230518.550)"
             "20250217.1433"
-            "20250430.722"))
+            "20250430.722"
+            "20250806.1944"))
 
   (advice-add
    'cider-emit-into-popup-buffer

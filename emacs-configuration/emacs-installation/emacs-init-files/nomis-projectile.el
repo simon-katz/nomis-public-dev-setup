@@ -72,16 +72,14 @@
 ;;;; ___________________________________________________________________________
 ;;;; ---- Fix broken `projectile-grep` ----
 
-;;;; See https://github.com/bbatsov/projectile/issues/1687
-;;;; - Is that link relevant? Is this doing more than renaming buffers?
-
 (with-eval-after-load 'projectile
   (cond
    ((member (pkg-info-version-info 'projectile)
             '("20210811.435"
               "20211103.2050"
               "20230317.1101"
-              "20250213.1137"))
+              "20250213.1137"
+              "20250704.908"))
 
     (defvar *nomis/in-projectile-grep?* nil)
     (defvar *nomis/projectile-grep-regexp* nil)

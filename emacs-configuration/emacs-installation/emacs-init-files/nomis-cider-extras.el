@@ -102,7 +102,8 @@
           '("1.5.0 (package: 20220830.500)"
             "1.7.0 (package: 20230518.550)"
             "20250217.1433"
-            "20250430.722"))
+            "20250430.722"
+            "20250806.1944"))
 
   (defun nomis/cider-browse-ns-all-from-browse-single ()
     (interactive)
@@ -129,7 +130,8 @@
           '("1.5.0 (package: 20220830.500)"
             "1.7.0 (package: 20230518.550)"
             "20250217.1433"
-            "20250430.722"))
+            "20250430.722"
+            "20250806.1944"))
 
   (defun nomis/cider-browse-ns ()
     "Like `cider-browse-ns`, but uses the current namespace instead of prompting."
@@ -255,7 +257,8 @@ NEW-ALIAS is always at the end (or at the beginning if PREPEND? is non-nil)."
 (cond
  ((member (pkg-info-version-info 'cider)
           '("20250217.1433"
-            "20250430.722"))
+            "20250430.722"
+            "20250806.1944"))
 
   (advice-add 'cider--get-symbol-indent
               :around
