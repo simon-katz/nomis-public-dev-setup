@@ -76,7 +76,7 @@ Show the last `magit-log-section-commit-count' commits."
         ;; (INIT STYLE WIDTH AUTHOR AUTHOR-WIDTH)
         '(t "%Y-%m-%d %H:%M:%S" magit-log-margin-width t 18)) 
   (add-to-list 'same-window-regexps "\*magit: .*\*") ; was: (setq magit-status-buffer-switch-function 'switch-to-buffer) -- no longer works
-  (setq magit-completing-read-function 'magit-ido-completing-read)
+  ;; (setq magit-completing-read-function 'magit-ido-completing-read)
   (progn ; Old auto-revert stuff
     ;; (setq magit-revert-buffers 'silent) obsolete
     )
