@@ -364,7 +364,6 @@
   (add-hook 'org-agenda-finalize-hook
             'nomis/org-finalize-agenda-hook))
 
-;; Do we want this? Oh -- try upgrading Org mode.
 (cond
  ((member emacs-version
           '("30.1"
