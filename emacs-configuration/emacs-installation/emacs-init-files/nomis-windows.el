@@ -18,6 +18,11 @@
 (windmove-default-keybindings)
 
 ;;;; ___________________________________________________________________________
+
+(keymap-global-set "S-<home>" 'rotate-frame-anticlockwise)
+(keymap-global-set "S-<end>" 'rotate-frame-clockwise)
+
+;;;; ___________________________________________________________________________
 ;;;; ---- Cycle windows, across frames ----
 
 (define-key global-map [(control tab)] 'next-multiframe-window)
