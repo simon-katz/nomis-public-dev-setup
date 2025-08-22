@@ -132,7 +132,7 @@
         (concat blank-line "\n" line))))
 
    (t
-    ;; Was thia about not having arrows when scrolled to the top or bottom?
+    ;; Was this about not having arrows when scrolled to the top or bottom?
     ;; That's handled now.
     ;; (message-box
     ;;  "You need to fix your hacks for this version of `diff-hl-inline-popup`.")
