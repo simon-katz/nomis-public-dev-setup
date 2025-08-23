@@ -13,6 +13,8 @@
 
 ;;;; ___________________________________________________________________________
 
+(setq nomis/ec-auto-enable? nil)
+
 (define-key clojure-mode-map (kbd "M-E")   'nomis/ec-cycle-mode-and-brightness)
 (define-key clojure-mode-map (kbd "C-M-e") 'nomis/ec-cycle-options)
 
