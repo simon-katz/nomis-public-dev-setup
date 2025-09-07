@@ -149,6 +149,8 @@
 
 (setq-default cider-browse-ns-group-by 'visibility)
 
+(setq cider-test-fail-fast nil)
+
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ;;;; Company mode for Cider
 
