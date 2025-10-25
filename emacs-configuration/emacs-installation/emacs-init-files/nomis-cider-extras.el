@@ -264,9 +264,23 @@ NEW-ALIAS is always at the end (or at the beginning if PREPEND? is non-nil)."
               :around
               (lambda (orig-fun symbol-name)
                 (let* ((orig-res (funcall orig-fun symbol-name)))
-                  (if (not (member symbol-name '("e/defn"
-                                                 "e/fn")))
-                      orig-res
+                  (cond
+
+                   ;; 2025-10-25 This has recently gotten worse. I don't know
+                   ;; what's changed. Now I need more, even in a fresh Emacs.
+                   ;; >>>> BEGIN 2025-10-25 stuff
+                   ((member symbol-name '("items"
+                                          "item-align-left"
+                                          "item-align-right"))
+                    0)
+                   ((member symbol-name '("section"))
+                    1)
+                   ;; <<<< END 2025-10-25 stuff
+
+                   ((not (member symbol-name '("e/defn"
+                                               "e/fn")))
+                    orig-res)
+                   (t
                     ;; (let* (;; Copy code from `cider--get-symbol-indent` and print
                     ;;        ;; info:
                     ;;        (ns (let ((clojure-cache-ns t)) ; we force ns caching here for performance reasons
@@ -279,7 +293,7 @@ NEW-ALIAS is always at the end (or at the beginning if PREPEND? is non-nil)."
                     ;;   (let ((inhibit-message t))
                     ;;     (message "For %s : res = %s / indent of %s in %s"
                     ;;              symbol-name orig-res indent meta)))
-                    nil)))
+                    nil))))
               '((name . nomis/fix-indentation-when-cljs-sibling))))
 
  (t
