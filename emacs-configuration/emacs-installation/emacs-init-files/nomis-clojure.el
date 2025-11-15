@@ -256,6 +256,10 @@
 
 (defun nomis/setup-clj-refactor-mode ()
   (clj-refactor-mode 1)
+  (setq cljr-clojure-test-declaration "[clojure.test :as t :refer [deftest is testing]]")
+  (setq cljr-cljs-clojure-test-declaration "[cljs.test :as t :include-macros true :refer [deftest is testing]]")
+  (setq cljr-cljc-clojure-test-declaration "#?(:clj [clojure.test :as t :refer [deftest is testing]]
+:cljs [cljs.test :as t :include-macros true :refer [deftest is testing]])")
   (yas-minor-mode 1) ; for adding require/use/import statements
   ;; This choice of keybinding leaves cider-macroexpand-1 unbound
   (cljr-add-keybindings-with-prefix "C-c C-m"))
