@@ -8,12 +8,16 @@
      "◆")
     ("#_{:clj-kondo/ignore #?(:clj [:unresolved-namespace] :cljs [])}"
      "◆")
+    ("#_{:clj-kondo/ignore #?(:clj true :default nil)}"
+     "◆")
     ;; Electric Clojure server-only
     ("#_{:clj-kondo/ignore #?(:clj [] :cljs [:unresolved-symbol])}"
      "■")
     ("#_{:clj-kondo/ignore #?(:clj [] :cljs [:unresolved-var])}"
      "■")
     ("#_{:clj-kondo/ignore #?(:clj [] :cljs [:unresolved-namespace])}"
+     "■")
+    ("#_{:clj-kondo/ignore #?(:clj nil :default true)}"
      "■")))
 
 (defconst -nomis/replace-text-keywords
