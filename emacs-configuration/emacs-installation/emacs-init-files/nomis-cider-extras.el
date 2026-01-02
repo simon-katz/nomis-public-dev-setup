@@ -155,6 +155,14 @@
    "You need to fix `nomis/cider-browse-ns` for this version of `CIDER`.")))
 
 ;;;; ___________________________________________________________________________
+;;;; cider-docview-mode
+
+(defun nomis/-cider-docview-mode ()
+  (toggle-truncate-lines 0))
+
+(add-hook 'cider-docview-mode-hook 'nomis/-cider-docview-mode)
+
+;;;; ___________________________________________________________________________
 ;;;; `nomis/add-cider-clojure-cli-alias`
 
 (defun -nomis/new-cider-clojure-cli-aliases-value (old-value new-alias prepend?)
