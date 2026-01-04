@@ -91,7 +91,12 @@
       ((add-start-of-symbol (regexp)
                             (concat (when (nomis/ww/check-start-of-symbol?
                                            regexp)
-                                      "\\_<")
+                                      (nomis/rx/or "\\_<"
+                                                   ;; A hack to allow "•" at the
+                                                   ;; start. But this will match
+                                                   ;; not at start too. What are
+                                                   ;; the consequences of this?
+                                                   "•"))
                                     regexp))
        (hack-regexp (regexp)
                     (-> regexp
