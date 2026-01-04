@@ -54,9 +54,9 @@
   "Face for no-priority watch regexps.")
 
 (defface nomis/ww/face/standout
-  `((((background dark)) ,(list :bold t
+  `((((background dark)) ,(list :inherit font-lock-constant-face
                                 :slant 'italic))
-    (t ,(list :bold t
+    (t ,(list :inherit font-lock-constant-face
               :slant 'italic)))
   "Face for standout watch regexps.")
 
