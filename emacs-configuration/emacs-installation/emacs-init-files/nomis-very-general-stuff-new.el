@@ -173,4 +173,8 @@ This allows you to temporarily modify read-only buffers too."
 
 ;;;; ___________________________________________________________________________
 
+(setq message-log-max 10000)
+
+;;;; ___________________________________________________________________________
+
 (provide 'nomis-very-general-stuff-new)
