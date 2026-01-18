@@ -39,6 +39,7 @@
 (defconst nomis/ww/regexps/low-priority
   ;; Use \\ in the strings below so you don't get the highlighting here.
   (append '("N\\OTE")
+          '("N\\OMIS-NOTE")
           (mapcar #'(lambda (string)
                       (concat nomis/ww/low-priority-regexp-prefix
                               string))
