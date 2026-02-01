@@ -31,6 +31,7 @@
      auto-complete
      auto-dim-other-buffers
      beacon
+     bicycle
      bind-key
      cider
      cider-eval-sexp-fu
