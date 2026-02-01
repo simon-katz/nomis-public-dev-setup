@@ -75,6 +75,7 @@
     nav-flash
     org
     org-bullets
+    outline-minor-faces
     paredit
     parseedn
     paxedit
