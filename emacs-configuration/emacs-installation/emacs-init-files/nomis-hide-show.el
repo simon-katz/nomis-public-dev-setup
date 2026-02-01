@@ -425,10 +425,7 @@ Otherwise, go to the beginning of the sexp before point and show it."
 
 ;;;; ___________________________________________________________________________
 
-(defun nomis/turn-on-hs-minor-mode ()
-  (hs-minor-mode 1))
-
-(add-hook 'prog-mode-hook 'nomis/turn-on-hs-minor-mode)
+(add-hook 'prog-mode-hook 'hs-minor-mode)
 
 ;;;; ___________________________________________________________________________
 
