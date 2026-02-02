@@ -104,6 +104,14 @@ inadvertently remove the entire folded logical line."
 
 (add-hook 'clojure-mode-hook '-nomis/set-clojure-outline)
 
+(defun nomis/set-emacs-lisp-outline-for-old-style-nomis-config ()
+  ;; Changing all our Emacs config to fit the pucker aproach to outlines will
+  ;; take time (lots of comments to change!). For now we call this from our
+  ;; config files' local variable prop lines (first line of the file).
+  ;;
+  ;; (outline-minor-mode 0)
+  (outline-minor-faces-mode 0))
+
 ;;; End
 
 (provide 'nomis-outline)

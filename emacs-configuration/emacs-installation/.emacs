@@ -144,6 +144,7 @@
      (eval nomis/add-to-list-local 'cider-jack-in-nrepl-middlewares
            "shadow.cljs.devtools.server.nrepl/middleware" t)
      (eval nomis/add-to-list-local 'grep-find-ignored-files "main.js")
+     (eval nomis/set-emacs-lisp-outline-for-old-style-nomis-config)
      (eval org-content 999)
      (nomis/cider-cljs-offer-to-open-app-in-browser?)
      (nomis/cider-forbid-refresh? . t)
