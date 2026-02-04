@@ -34,6 +34,15 @@
 
 (add-hook 'outline-minor-faces-mode-hook '-nomis/hack-outline-minor-faces)
 
+;;; backline
+
+;; I'm not sure I want this with my heading styling, but it might be useful if
+;; I change things.
+
+;; (use-package backline
+;;   :after outline
+;;   :config (advice-add 'outline-flag-region :after 'backline-update))
+
 ;;; bicycle
 
 ;; `bicycle` combines `outline` and `hideshow`. We don't use the `hideshow`

@@ -21,6 +21,7 @@
     applescript-mode
     auto-complete
     auto-dim-other-buffers
+    backline
     beacon
     bicycle
     bind-key
