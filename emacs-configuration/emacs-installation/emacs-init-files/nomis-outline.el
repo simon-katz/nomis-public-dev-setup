@@ -51,20 +51,29 @@
 ;;; Emacs Lisp
 
 (defun -nomis/set-emacs-lisp-outline ()
-  ;; Note that we are severely simplifying the value of `outline-regexp`, which
-  ;; excludes autoload comments amongst other things. I'm not sure what else we
-  ;; lose with our simplification.
+  ;; ;; OLD
+  ;; ;;
+  ;; ;; Note that we are severely simplifying the value of `outline-regexp`,
+  ;; ;; which excludes autoload comments amongst other things. I'm not sure what
+  ;; ;; else we lose with our simplification.
+  ;; ;;
+  ;; ;; See the `(setq-local outline-regexp ...)` in `lisp-mode`.
+  ;; ;;
+  ;; ;; See also "The default outline-regexp for elisp-mode..." in
+  ;; ;; `my/elisp-outline-regexp-setup` at
+  ;; ;; https://www.reddit.com/r/emacs/comments/e2u5n9/comment/f924040/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button
+  ;; ;;
+  ;; ;; Set `outline-regexp` to `;;;` (and more semicolons) comments only, not
+  ;; ;; top-level forms.
+  ;; (setq-local outline-regexp ";;;;*") ; comments only
   ;;
-  ;; See the `(setq-local outline-regexp ...)` in `lisp-mode`.
+  ;; NEW
   ;;
-  ;; See also "The default outline-regexp for elisp-mode..." in
-  ;; `my/elisp-outline-regexp-setup` at
-  ;; https://www.reddit.com/r/emacs/comments/e2u5n9/comment/f924040/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button
-  ;;
-  ;; Set `outline-regexp` to `;;;` (and more semicolons) comments only, not
-  ;; top-level forms.
-  (setq-local outline-regexp ";;;;*") ; comments only
-  )
+  ;; A hacked version of the `(setq-local outline-regexp ...)` in `lisp-mode`
+  ;; that doesn't include top-leve forms.
+  (setq-local outline-regexp (concat ";;;;* [^ \t\n]\\|\\("
+                                     lisp-mode-autoload-regexp
+                                     "\\)")))
 
 (add-hook 'emacs-lisp-mode-hook '-nomis/set-emacs-lisp-outline)
 
