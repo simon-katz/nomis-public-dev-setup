@@ -72,6 +72,10 @@
   (define-key outline-minor-mode-map [C-tab] 'bicycle-cycle)
   (define-key outline-minor-mode-map [S-tab] 'bicycle-cycle-global))
 
+;; TODO: Add visual feedback when calling:
+;;       - `outline-show-subtree` from `bicycle-cycle-local`.
+;;       - `outline-show-all` from `bicycle-cycle-global`
+
 ;;; End
 
 (provide 'nomis-outline)
