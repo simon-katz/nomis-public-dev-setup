@@ -39,8 +39,10 @@
 
 (use-package outline-minor-faces
   :after outline
-  :config (add-hook 'outline-minor-mode-hook
-                    #'outline-minor-faces-mode))
+  ;; We now call `outline-minor-faces-mode`, if we want it, in sidecar-locals.
+  ;; :config (add-hook 'outline-minor-mode-hook
+  ;;                   #'outline-minor-faces-mode)
+  )
 
 (defun -nomis/hack-outline-minor-faces ()
   (set-face-attribute 'outline-minor-0 nil
