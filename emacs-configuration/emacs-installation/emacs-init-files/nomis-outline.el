@@ -18,7 +18,22 @@
 
 (setopt outline-minor-mode-use-buttons 'in-margins)
 
-(setopt outline-minor-mode-cycle t)
+;;; outline-minor-mode-cycle
+
+;; (setopt outline-minor-mode-cycle t)
+;;
+;; ^^ Don't set this. It's no good for top-level forms, where tab completion
+;; gets lost in favour of the cycling. For example, with cursor at the "|" in
+;; `(def|)` at top level, we get cycling instead of being offered completions of
+;; "def".
+;;
+;; Instead, use the `bicycle` commands. In any case, they're better because it
+;; cycles through all levels, not just the top two levels and then all.
+;;
+;; If we change our mind, we need to go back to setting `outline-regexp` to
+;; exclude top-level forms, which needs to be done separateley for Emacs Lisp,
+;; Clojure and other languages. (There are historical commits we can look at.
+;; See commit 2bb138fb "Don't make changes to `outline-regexp`".)
 
 ;;; outline-minor-faces
 
