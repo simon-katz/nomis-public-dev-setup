@@ -1,5 +1,31 @@
 ;;; Init stuff -- nomis-outline --  -*- lexical-binding: t -*-
 
+(require 'nomis-msg)
+
+;;; Utilities
+
+;;;; -nomis/outline-pulse-current-section
+
+(defun -nomis/outline-pulse-current-section ()
+  (let ((start (point)))
+    (cl-flet ((next-same-level-heading ()
+                (save-excursion (ignore-errors
+                                  (outline-forward-same-level 1)
+                                  (point))))
+              (next-up-one-level-heading ()
+                (save-excursion (ignore-errors
+                                  (outline-up-heading 1)
+                                  (outline-forward-same-level 1)
+                                  (unless (= (point) start)
+                                    ;; We have this guard because
+                                    ;; `outline-up-heading` is broken when
+                                    ;; there's no up-one-level heading.
+                                    (point))))))
+      (let* ((end (or (next-same-level-heading)
+                      (next-up-one-level-heading)
+                      (point-max))))
+        (pulse-momentary-highlight-region start end)))))
+
 ;;; Ellipses
 
 ;; Copy-and-hack from
@@ -62,6 +88,8 @@
 
 ;;; bicycle
 
+;;;; bicycle basics
+
 ;; `bicycle` combines `outline` and `hideshow`. We don't use the `hideshow`
 ;; part, because, we are ignoring code (top-level forms), but `bicycle-cycle`
 ;; and `bicycle-cycle-global` are useful.
@@ -72,9 +100,43 @@
   (define-key outline-minor-mode-map [C-tab] 'bicycle-cycle)
   (define-key outline-minor-mode-map [S-tab] 'bicycle-cycle-global))
 
-;; TODO: Add visual feedback when calling:
-;;       - `outline-show-subtree` from `bicycle-cycle-local`.
-;;       - `outline-show-all` from `bicycle-cycle-global`
+;;;; Provide feedback in bicycle-cycle-local
+
+(defvar *nomis/outline-in-bicycle-cycle-local?* nil)
+
+(advice-add 'bicycle-cycle-local
+            :around
+            (lambda (orig-fun &rest args)
+              (let* ((*nomis/outline-in-bicycle-cycle-local?* t))
+                (apply orig-fun args)))
+            '((name . nomis/outline-bicycle-feedback)))
+
+(advice-add 'outline-show-subtree
+            :around
+            (lambda (orig-fun &rest args)
+              (when *nomis/outline-in-bicycle-cycle-local?*
+                (-nomis/outline-pulse-current-section))
+              (apply orig-fun args))
+            '((name . nomis/outline-bicycle-feedback)))
+
+;;;; Provide feedback in bicycle-cycle-global
+
+(defvar *nomis/outline-in-bicycle-cycle-global?* nil)
+
+(advice-add 'bicycle-cycle-global
+            :around
+            (lambda (orig-fun &rest args)
+              (let* ((*nomis/outline-in-bicycle-cycle-global?* t))
+                (apply orig-fun args)))
+            '((name . nomis/outline-bicycle-feedback)))
+
+(advice-add 'outline-show-all
+            :around
+            (lambda (orig-fun &rest args)
+              (when *nomis/outline-in-bicycle-cycle-global?*
+                (nomis/msg/pulse-buffer))
+              (apply orig-fun args))
+            '((name . nomis/outline-bicycle-feedback)))
 
 ;;; End
 
