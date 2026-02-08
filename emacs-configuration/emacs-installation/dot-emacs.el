@@ -330,6 +330,7 @@
 (require 'nomis-eca)
 
 (require 'nomis-outline)
+(require 'nomis-outline-uber)
 
 ;; (eval-after-load "isearch" '(require 'isearch+))
 ;; Is this the cause of problems with Magit when trying to commit?...
