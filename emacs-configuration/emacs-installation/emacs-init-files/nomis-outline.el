@@ -61,6 +61,13 @@
 ;; Clojure and other languages. (There are historical commits we can look at.
 ;; See commit 2bb138fb "Don't make changes to `outline-regexp`".)
 
+;; TODO: Idea: Bind Tab to a new command
+;;       `nomis/outline-cycle-or-indent-or-complete` that checks whether we are
+;;       at the first character of a heading line. If we are, invoke
+;;       `bicycle-cycle`; if not, invoke `company-indent-or-complete-common` (or
+;;       maybe we can find whatever Tab would be bound to if
+;;       `outline-minor-mode` were not enabled).
+
 ;;; outline-minor-faces
 
 (use-package outline-minor-faces
