@@ -90,9 +90,7 @@
 
 ;;;; bicycle basics
 
-;; `bicycle` combines `outline` and `hideshow`. We don't use the `hideshow`
-;; part, because, we are ignoring code (top-level forms), but `bicycle-cycle`
-;; and `bicycle-cycle-global` are useful.
+;; `bicycle` combines `outline` and `hideshow`.
 
 (require 'bicycle)
 
