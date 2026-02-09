@@ -36,6 +36,13 @@
                           (vconcat (mapcar (lambda (c) (+ face-offset c))
                                            " ▶▶▶"))))
 
+;;; outline-mode
+
+;; We use TAB to do our cycling. We want RET to give us a newline instead of
+;; doing `outline-cycle`, so:
+
+(keymap-unset outline-overlay-button-map "RET" t)
+
 ;;; outline-minor-mode
 
 (setopt outline-minor-mode-prefix (kbd "C-S-o"))
