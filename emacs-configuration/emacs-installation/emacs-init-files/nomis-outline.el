@@ -36,16 +36,7 @@
                           (vconcat (mapcar (lambda (c) (+ face-offset c))
                                            " ▶▶▶"))))
 
-;;; outline-mode
-
-;; We use TAB to do our cycling. We want RET to give us a newline instead of
-;; doing `outline-cycle`, so:
-
-(keymap-unset outline-overlay-button-map "RET" t)
-
 ;;; outline-minor-mode
-
-(setopt outline-minor-mode-prefix (kbd "C-S-o"))
 
 (add-hook 'prog-mode-hook 'outline-minor-mode)
 
@@ -102,10 +93,6 @@
 ;; `bicycle` combines `outline` and `hideshow`.
 
 (require 'bicycle)
-
-(with-eval-after-load 'bicycle
-  (define-key outline-minor-mode-map [C-tab] 'bicycle-cycle)
-  (define-key outline-minor-mode-map [S-tab] 'bicycle-cycle-global))
 
 ;;;; Provide feedback in bicycle-cycle-local
 

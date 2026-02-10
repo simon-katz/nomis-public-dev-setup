@@ -12,9 +12,6 @@
     ;; at least for now.
     (company-indent-or-complete-common arg)))
 
-(define-key outline-minor-mode-map [tab]
-            'nomis/outline-cycle-or-indent-or-complete)
-
 ;;; End
 
 (provide 'nomis-outline-uber)
