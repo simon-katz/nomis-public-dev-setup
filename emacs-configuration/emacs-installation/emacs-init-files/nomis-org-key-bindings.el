@@ -93,7 +93,7 @@ H-q H-/  Show this help")
 (org-defkey org-mode-map (kbd "M-,") 'org-mark-ring-goto)
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-;;;; ____ ** nomis/org-search-heading-text
+;;;; ____ ** Search heading text
 
 (org-defkey org-mode-map (kbd "H-S")      'nomis/org-search-heading-text)
 (org-defkey org-mode-map (kbd "H-s")      'nomis/org-search-heading-text-again)
