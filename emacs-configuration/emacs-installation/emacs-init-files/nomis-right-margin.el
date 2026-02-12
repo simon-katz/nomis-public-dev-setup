@@ -31,6 +31,8 @@
 
 (setq column-marker-1-face 'nomis/column-marker-1-face)
 
+(set-face-attribute 'fill-column-indicator nil :foreground "pink")
+
 (defun nomis/get-80-column-stuff ()
   (let* ((f? (bound-and-true-p display-fill-column-indicator-mode))
          (c? column-marker-1))
