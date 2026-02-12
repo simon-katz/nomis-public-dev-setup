@@ -1,6 +1,6 @@
 ;;; Init stuff -- nomis-outline-key-bindings --  -*- lexical-binding: t -*-
 
-;;; outline-mode
+;;; Make RET give us a newline
 
 ;; We use TAB to do our cycling. We want RET to give us a newline instead of
 ;; doing `outline-cycle`, so:
