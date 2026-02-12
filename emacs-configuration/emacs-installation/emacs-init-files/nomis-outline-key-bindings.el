@@ -9,8 +9,6 @@
 
 ;;; outline-minor-mode
 
-(setopt outline-minor-mode-prefix (kbd "C-S-o"))
-
 (with-eval-after-load 'bicycle
   (define-key outline-minor-mode-map [C-tab] 'bicycle-cycle)
   (define-key outline-minor-mode-map [S-tab] 'bicycle-cycle-global))
