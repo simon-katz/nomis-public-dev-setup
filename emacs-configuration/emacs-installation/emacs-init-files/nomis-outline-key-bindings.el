@@ -11,9 +11,8 @@
 
 (define-key outline-minor-mode-map [tab] 'nomis/outline-cycle-or-indent-or-complete)
 
-(with-eval-after-load 'bicycle
-  (define-key outline-minor-mode-map [C-tab] 'bicycle-cycle)
-  (define-key outline-minor-mode-map [S-tab] 'bicycle-cycle-global))
+(define-key outline-minor-mode-map [C-tab] 'bicycle-cycle)
+(define-key outline-minor-mode-map [S-tab] 'bicycle-cycle-global)
 
 ;;; End
 
