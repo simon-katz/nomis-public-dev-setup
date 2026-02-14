@@ -124,6 +124,8 @@
      '((name . nomis/hack-projectile-grep))))
 
    (t
+    ;; It looks like this issue might be fixed -- see
+    ;; https://github.com/bbatsov/projectile/issues/1687#issuecomment-3902044954
     (message-box
      "You need to fix `nomis/hack-projectile-grep` for this version of `projectile`."))))
 
