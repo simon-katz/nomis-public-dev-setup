@@ -61,7 +61,7 @@
   ;; The `1` is important; otherwise we get bodies of children.
   (outline-show-children 1))
 
-(defun -nomis/outline-show-tree* (level &optional no-pulse?)
+(defun -nomis/outline-show-fat-tree* (n-child-levels &optional no-pulse?)
   (let* ((parent-points
           (let* ((ps '()))
             (save-excursion
@@ -79,7 +79,7 @@
                            (outline-hide-body)
                            (-nomis/show-children))))))
   (recenter-top-bottom -1)
-  (cl-ecase level
+  (cl-ecase n-child-levels
     (0 nil)
     (1 (-nomis/show-children))
     (2 (outline-show-branches))
@@ -90,7 +90,7 @@
 (defun -nomis/outline-show-context (show-context-approach)
   (cl-ecase show-context-approach
     (:show-entry (outline-show-entry))
-    (:show-fat-parents-and-subtree (-nomis/outline-show-tree* 3 t))))
+    (:show-fat-parents-and-subtree (-nomis/outline-show-fat-tree* 3 t))))
 
 (defun -nomis/outline-command* (f)
   (push-mark)
@@ -216,30 +216,30 @@
 
 ;;; API
 
-;;;; nomis/outline-show-tree-and-increments
+;;;; nomis/outline-show-fat-tree-and-increments
 
-(defvar *-nomis/outline-show-tree-n-child-levels*)
+(defvar *-nomis/outline-show-fat-tree-n-child-levels*)
 
-(defun nomis/outline-show-tree-and-increments ()
+(defun nomis/outline-show-fat-tree-and-increments ()
   (interactive)
   ;; Repeated invocations cycle amount of child stuff.
   (let* ((level (if (not (eq this-command (-nomis/outline-last-command)))
                     0
-                  (mod (1+ *-nomis/outline-show-tree-n-child-levels*)
+                  (mod (1+ *-nomis/outline-show-fat-tree-n-child-levels*)
                        4))))
-    (setq *-nomis/outline-show-tree-n-child-levels* level)
-    (-nomis/outline-show-tree* level)
+    (setq *-nomis/outline-show-fat-tree-n-child-levels* level)
+    (-nomis/outline-show-fat-tree* level)
     (cl-ecase level
       (0 (message "FOLDED"))
       (1 (message "CHILDREN"))
       (2 (message "BRANCHES"))
       (3 (message "SUBTREE")))))
 
-;;;; nomis/outline-show-tree-and-subtree
+;;;; nomis/outline-show-fat-tree-and-subtree
 
-(defun nomis/outline-show-tree-and-subtree ()
+(defun nomis/outline-show-fat-tree-and-subtree ()
   (interactive)
-  (-nomis/outline-show-tree* 3 t))
+  (-nomis/outline-show-fat-tree* 3 t))
 
 ;;;; nomis/outline-cycle-or-indent-or-complete
 

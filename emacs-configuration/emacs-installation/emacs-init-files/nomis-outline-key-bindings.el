@@ -2,8 +2,9 @@
 
 ;;; To dos
 
-;; TODO: Consider similarities between `nomis/outline-show-tree-and-increments`
-;;       and the `norg/show-children-from-point/xxxx` commands.
+;; TODO: Consider similarities between
+;;       `nomis/outline-show-fat-tree-and-increments` and the
+;;       `norg/show-children-from-point/xxxx` commands.
 
 ;; TODO: Maybe there is more stuff that could be consolidated across org mode
 ;;       and outline mode.
@@ -45,11 +46,11 @@
 ;; | (kbd "C-H-'")     | nomis/org-visibility-span/less                          |                                        |                             |
 ;; | (kbd "C-H-\\")    | nomis/org-visibility-span/more                          |                                        |                             |
 ;; | (kbd "C-H-M-'")   | nomis/org-visibility-span/set-min                       |                                        |                             |
-;; | (kbd "C-H-M-\\")  | nomis/org-visibility-span/set-max                       |                                        | nomis/outline-show-tree-and-subtree |
-;; | (kbd "H-M-m")     | norg/show-tree-only                                     |                                        | nomis/outline-show-tree-and-increments |
+;; | (kbd "C-H-M-\\")  | nomis/org-visibility-span/set-max                       |                                        | nomis/outline-show-fat-tree-and-subtree |
+;; | (kbd "H-M-m")     | norg/show-tree-only                                     |                                        | nomis/outline-show-fat-tree-and-increments |
 
-(define-key outline-minor-mode-map (kbd "C-H-M-\\")     'nomis/outline-show-tree-and-subtree)
-(define-key outline-minor-mode-map (kbd "H-M-m")        'nomis/outline-show-tree-and-increments)
+(define-key outline-minor-mode-map (kbd "C-H-M-\\")     'nomis/outline-show-fat-tree-and-subtree)
+(define-key outline-minor-mode-map (kbd "H-M-m")        'nomis/outline-show-fat-tree-and-increments)
 
 ;; | (kbd "H-q H-q s") | norg/set-step-n-levels-to-show                          |                                        |                             |
 
