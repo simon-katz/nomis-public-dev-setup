@@ -78,7 +78,7 @@
 
 ;;;; More substantial things
 
-(defun -nomis/outline-show-fat-tree* (n-child-levels &optional no-pulse?)
+(defun -nomis/outline-show-fat-tree* (n-child-levels no-pulse?)
   (let* ((parent-points
           (let* ((ps '()))
             (save-excursion
@@ -224,7 +224,7 @@
                   (mod (1+ *-nomis/outline-show-fat-tree-n-child-levels*)
                        4))))
     (setq *-nomis/outline-show-fat-tree-n-child-levels* level)
-    (-nomis/outline-show-fat-tree* level)
+    (-nomis/outline-show-fat-tree* level nil)
     (cl-ecase level
       (0 (nomis/popup/message "Folded"))
       (1 (nomis/popup/message "Children"))
