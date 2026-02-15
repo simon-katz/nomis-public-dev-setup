@@ -32,6 +32,12 @@
 (defun -nomis/outline-on-visible-heading? () ; TODO: Unused.
   (outline-on-heading-p))
 
+(defun -nomis/outline-back-to-heading? ()
+  (outline-back-to-heading t))
+
+(defun -nomis/outline-back-to-visible-heading? () ; TODO: Unused.
+  (outline-back-to-heading))
+
 (defun -nomis/outline-on-top-level-heading? ()
   "Are we on a top-level heading?"
   ;; `(outline-level)` and `(funcall outline-level)` return weird numbers in
@@ -138,7 +144,7 @@
       (if (not (and (-nomis/outline-on-heading?)
                     (bolp)))
           (progn
-            (outline-back-to-heading t)
+            (-nomis/outline-back-to-heading?)
             (point))
         (cl-ecase kind
           (:any-level
@@ -194,7 +200,7 @@
       (goto-char start)
       (unless (and (-nomis/outline-on-heading?)
                    (bolp))
-        (outline-back-to-heading t)
+        (-nomis/outline-back-to-heading?)
         (point))
       (cl-ecase kind
         (:any-level
