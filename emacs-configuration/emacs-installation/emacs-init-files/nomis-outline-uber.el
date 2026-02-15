@@ -192,6 +192,10 @@
   (when start
     (save-excursion
       (goto-char start)
+      (unless (and (-nomis/outline-on-heading?)
+                   (bolp))
+        (outline-back-to-heading t)
+        (point))
       (cl-ecase kind
         (:any-level
          (outline-next-heading))
