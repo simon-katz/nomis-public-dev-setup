@@ -32,15 +32,52 @@
 (defun -nomis/outline-on-visible-heading? () ; TODO: Unused.
   (outline-on-heading-p))
 
-(defun -nomis/outline-show-tree* (level &optional no-pulse?)
-  (outline-hide-other)
+(defun -nomis/outline-on-top-level-heading? ()
+  "Are we on a top-level heading?"
+  ;; `(outline-level)` and `(funcall outline-level)` return weird numbers in
+  ;; some modes. This, we hope, is bulletproof.
   (save-excursion
-    (outline-up-heading 1)
-    (outline-show-children))
+    (when (-nomis/outline-on-heading?)
+      (let* ((opoint (point))
+             (olevel (funcall outline-level)))
+        (ignore-errors (outline-up-heading 1 t))
+        (or (not (-nomis/outline-on-heading?)) ; blank lines at top of file?
+            (= olevel (funcall outline-level)))))))
+
+(defun -nomis/outline-top-level-level ()
+  (assert (-nomis/outline-on-heading?))
+  (save-excursion
+    (beginning-of-buffer)
+    (unless (-nomis/outline-on-heading?) (outline-next-heading))
+    (funcall outline-level)))
+
+(defun -nomis/show-children ()
+  ;; The `1` is important; otherwise we get bodies of children.
+  (outline-show-children 1))
+
+(defun -nomis/outline-show-tree* (level &optional no-pulse?)
+  (let* ((parent-points
+          (let* ((ps '()))
+            (save-excursion
+              (while (and (-nomis/outline-on-heading?)
+                          (not (-nomis/outline-on-top-level-heading?)))
+                (outline-up-heading 1)
+                (push (point) ps)))
+            ps)))
+    (save-excursion
+      (cl-case 2
+        (1 (outline-hide-other))
+        (2 (outline-hide-sublevels (-nomis/outline-top-level-level))))
+      (save-excursion
+        (cl-loop for p in parent-points
+                 do (progn (goto-char p)
+                           (outline-show-entry)
+                           (outline-hide-body)
+                           (-nomis/show-children))))))
   (recenter-top-bottom -1)
   (cl-ecase level
-    (0 (outline-hide-entry))
-    (1 (outline-show-children))
+    (0 nil)
+    (1 (-nomis/show-children))
     (2 (outline-show-branches))
     (3 (outline-show-subtree)
        (unless no-pulse?
@@ -70,7 +107,7 @@
 (defun -nomis/outline-show-context (show-context-approach)
   (cl-ecase show-context-approach
     (:show-entry (outline-show-entry))
-    (:show-tree-and-subtree (-nomis/outline-show-tree* 3 t))))
+    (:show-fat-parents-and-subtree (-nomis/outline-show-tree* 3 t))))
 
 ;;;; Previous helpers
 
@@ -236,7 +273,7 @@ Stop at the first and last headings of a superior heading."
   (interactive "p")
   (or (-nomis/outline-previous-heading* n
                                         :sibling
-                                        :show-tree-and-subtree)
+                                        :show-fat-parents-and-subtree)
       (error (if (= n 1)
                  "No previous sibling"
                (concat "No " (-nomis/outline-ordinal n) "-previous sibling")))))
@@ -248,7 +285,7 @@ Can pass by a superior heading."
   (interactive "p")
   (or (-nomis/outline-previous-heading* n
                                         :same-level-allow-cross-parent
-                                        :show-tree-and-subtree)
+                                        :show-fat-parents-and-subtree)
       (error (if (= n 1)
                  "No previous same-level"
                (concat "No " (-nomis/outline-ordinal n) "-previous same-level")))))
@@ -293,7 +330,7 @@ Stop at the first and last headings of a superior heading."
   (interactive "p")
   (or (-nomis/outline-next-heading* n
                                     :sibling
-                                    :show-tree-and-subtree)
+                                    :show-fat-parents-and-subtree)
       (error (if (= n 1)
                  "No next sibling"
                (concat "No " (-nomis/outline-ordinal n) "-next sibling")))))
@@ -305,7 +342,7 @@ Can pass by a superior heading."
   (interactive "p")
   (or (-nomis/outline-next-heading* n
                                     :same-level-allow-cross-parent
-                                    :show-tree-and-subtree)
+                                    :show-fat-parents-and-subtree)
       (error (if (= n 1)
                  "No next same-level"
                (concat "No " (-nomis/outline-ordinal n) "-next same-level")))))
