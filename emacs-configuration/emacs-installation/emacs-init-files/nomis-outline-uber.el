@@ -11,7 +11,10 @@
 ;;       thing for this? Can you show all parents of current heading without
 ;;       changing anything else?)
 
-;; TODO: Sibling navigation when not on a heading is broken.
+;; TODO: Bug: Sibling navigation when not on a heading is broken.
+
+;; TODO: Bug: Cross-parent stepping expands more than it should -- all
+;;       siblings too.
 
 ;;; Utilities
 
