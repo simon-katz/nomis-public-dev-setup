@@ -4,13 +4,6 @@
 (require 'dash)
 (require 'nomis-popup)
 
-;;; To dos
-
-;; TODO: For things that can navigate to invisible headings, implement wrappers
-;;       that make curent heading visible. (Is `outline-show-entry` the best
-;;       thing for this? Can you show all parents of current heading without
-;;       changing anything else?)
-
 ;;; Utilities
 
 ;;;; Misc
