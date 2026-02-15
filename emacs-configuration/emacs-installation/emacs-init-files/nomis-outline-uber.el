@@ -66,7 +66,7 @@
 
 ;;;; More substantial things
 
-(defun -nomis/outline-show-fat-tree** (n-child-levels no-pulse?)
+(defun -nomis/outline-show-fat-tree* (n-child-levels no-pulse?)
   (let* ((parent-points
           (let* ((ps '()))
             (save-excursion
@@ -92,23 +92,23 @@
        (unless no-pulse?
          (-nomis/outline-pulse-current-section)))))
 
-(defun -nomis/outline-show-fat-tree* (n-child-levels no-pulse?)
+(defun -nomis/outline-show-fat-tree (n-child-levels no-pulse?)
   (cl-ecase 2
     (1
      ;; After cross-parent stepping, this expands things more than it should
      ;; -- all siblings or the current heading are expanded too. I don't
      ;; understand why. So we don't do this.
-     (-nomis/outline-show-fat-tree**))
+     (-nomis/outline-show-fat-tree*))
     (2
      ;; Hackily get around the above problem...
      ;;
-     ;; Ensure point is visible, otherwise point is in a different place
-     ;; when we run `-nomis/outline-show-fat-tree**`.
+     ;; Ensure point is visible, otherwise point is in a different place when we
+     ;; run `-nomis/outline-show-fat-tree*`.
      (outline-show-entry)
      ;; Do the thing we want to do.
      (run-at-time 0 nil #'(lambda ()
-                            (-nomis/outline-show-fat-tree** n-child-levels
-                                                            no-pulse?))))))
+                            (-nomis/outline-show-fat-tree* n-child-levels
+                                                           no-pulse?))))))
 
 (defun -nomis/outline-command* (f)
   (push-mark)
@@ -198,7 +198,7 @@
           (goto-char pos)
           (cl-ecase show-context-approach
             (:show-entry (outline-show-entry))
-            (:show-fat-parents-and-subtree (-nomis/outline-show-fat-tree* 3 t))))
+            (:show-fat-parents-and-subtree (-nomis/outline-show-fat-tree 3 t))))
       (let* ((direction-word (cl-ecase direction
                                (:backward "previous")
                                (:forward "next")))
@@ -227,7 +227,7 @@
                   (mod (1+ *-nomis/outline-show-fat-tree-n-child-levels*)
                        4))))
     (setq *-nomis/outline-show-fat-tree-n-child-levels* level)
-    (-nomis/outline-show-fat-tree* level nil)
+    (-nomis/outline-show-fat-tree level nil)
     (cl-ecase level
       (0 (nomis/popup/message "Folded"))
       (1 (nomis/popup/message "Children"))
@@ -238,7 +238,7 @@
 
 (defun nomis/outline-show-fat-tree-and-subtree ()
   (interactive)
-  (-nomis/outline-show-fat-tree* 3 t))
+  (-nomis/outline-show-fat-tree 3 t))
 
 ;;;; nomis/outline-cycle-or-indent-or-complete
 
