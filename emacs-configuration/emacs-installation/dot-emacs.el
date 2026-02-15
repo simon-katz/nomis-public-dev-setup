@@ -162,6 +162,7 @@
 
 (require 'nomis-disable-c-z)
 (require 'nomis-hack-custom-save-variables)
+(require 'nomis-mark)
 
 (require 'nomis-datetime)
 
