@@ -119,11 +119,6 @@
                             (-nomis/outline-show-fat-tree** n-child-levels
                                                             no-pulse?))))))
 
-(defun -nomis/outline-show-context (show-context-approach)
-  (cl-ecase show-context-approach
-    (:show-entry (outline-show-entry))
-    (:show-fat-parents-and-subtree (-nomis/outline-show-fat-tree* 3 t))))
-
 (defun -nomis/outline-command* (f)
   (push-mark)
   (funcall f))
@@ -210,7 +205,9 @@
     (if pos
         (progn
           (goto-char pos)
-          (-nomis/outline-show-context show-context-approach))
+          (cl-ecase show-context-approach
+            (:show-entry (outline-show-entry))
+            (:show-fat-parents-and-subtree (-nomis/outline-show-fat-tree* 3 t))))
       (let* ((direction-word (cl-ecase direction
                                (:backward "previous")
                                (:forward "next")))
