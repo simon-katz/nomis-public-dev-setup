@@ -30,6 +30,8 @@
              (let ((x (cl-format nil "~:r" n)))
                (subseq x (- (length x) 2)))))
 
+;;;; Simple outline wrappers
+
 (defun -nomis/outline-on-heading? ()
   (outline-on-heading-p t))
 
@@ -38,6 +40,10 @@
 
 (defun -nomis/outline-back-to-heading? ()
   (outline-back-to-heading t))
+
+(defun -nomis/outline-at-beginning-of-heading? ()
+  (and (bolp)
+       (-nomis/outline-on-heading?)))
 
 (defun -nomis/outline-back-to-visible-heading? () ; TODO: Unused.
   (outline-back-to-heading))
@@ -64,6 +70,13 @@
 (defun -nomis/show-children ()
   ;; The `1` is important; otherwise we get bodies of children.
   (outline-show-children 1))
+
+(defun -nomis/outline-prev-or-next (direction)
+  (cl-ecase direction
+    (:backward (outline-previous-heading))
+    (:forward (outline-next-heading))))
+
+;;;; More substantial things
 
 (defun -nomis/outline-show-fat-tree* (n-child-levels &optional no-pulse?)
   (let* ((parent-points
@@ -104,110 +117,75 @@
   (declare (indent 1))
   `(-nomis/outline-command* (lambda () ,@body) ))
 
-;;;; Previous helpers
+;;;; Previous/next helpers
 
-(defun -nomis/outline-previous-same-level (allow-cross-parent?)
+(defun -nomis/outline-prev-next-same-level (direction allow-cross-parent?)
   (let* ((opoint (point))
          (level (funcall outline-level))
-         (npoint (save-excursion
-                   ;; The logic here is a copy-and-edit of
-                   ;; `outline-get-last-sibling`.
-                   (outline-previous-heading)
-                   (when (and (/= (point) opoint) (outline-on-heading-p t))
-                     (while (and (funcall (if allow-cross-parent? #'/= #'>)
-                                          (funcall outline-level)
-                                          level)
-                                 (not (bobp)))
-                       (outline-previous-heading))
-                     (if (< (funcall outline-level) level)
-                         nil
-                       (cl-assert (= level (funcall outline-level)))
-                       (point))))))
-    (when npoint
-      (goto-char npoint))))
-
-(defun -nomis/outline-previous-heading-pos (start kind)
-  (when start
-    (save-excursion
-      (goto-char start)
-      (if (not (and (-nomis/outline-on-heading?)
-                    (bolp)))
-          (progn
-            (-nomis/outline-back-to-heading?)
-            (point))
-        (cl-ecase kind
-          (:any-level
-           (outline-previous-heading))
-          (:sibling
-           (-nomis/outline-previous-same-level nil))
-          (:same-level-allow-cross-parent
-           (-nomis/outline-previous-same-level t)))
-        (when (and (/= (point) start)
-                   (-nomis/outline-on-heading?))
-          ;; ^^ Check of `(-nomis/outline-on-heading?)` needed because
-          ;;    `outline-previous-heading` goes to BOF when there's no
-          ;;    previous heading.
-          (point))))))
-
-(defun -nomis/outline-previous-heading* (n kind show-context-approach)
-  (when-let ((pos (->> (-iterate (lambda (start)
-                                   (-nomis/outline-previous-heading-pos
-                                    start
-                                    kind))
-                                 (point)
-                                 (1+ n))
-                       cl-rest
-                       (-drop (1- n))
-                       cl-first)))
-    (goto-char pos)
-    (-nomis/outline-show-context show-context-approach)
-    pos))
-
-;;;; Next helpers
-
-(defun -nomis/outline-next-same-level (allow-cross-parent?)
-  (let* ((level (funcall outline-level))
          (npoint  (save-excursion
                     ;; The logic here is a copy-and-edit of
+                    ;; `outline-get-last-sibling` and
                     ;; `outline-get-next-sibling`.
-                    (outline-next-heading)
-                    (while (and (not (eobp))
-                                (funcall (if allow-cross-parent? #'/= #'>)
-                                         (funcall outline-level)
-                                         level))
-                      (outline-next-heading))
-                    (if (or (eobp) (< (funcall outline-level) level))
-                        nil
-                      (cl-assert (= level (funcall outline-level)))
-                      (point)))))
+                    (-nomis/outline-prev-or-next direction)
+                    (when (cl-ecase direction
+                            (:backward (and (/= (point) opoint)
+                                            (outline-on-heading-p t)))
+                            (:forward t))
+                      (while (and (cl-ecase direction
+                                    (:backward t)
+                                    (:forward (not (eobp))))
+                                  (funcall (if allow-cross-parent? #'/= #'>)
+                                           (funcall outline-level)
+                                           level)
+                                  (cl-ecase direction
+                                    (:backward (not (bobp)))
+                                    (:forward t)))
+                        (-nomis/outline-prev-or-next direction))
+                      (if (or (cl-ecase direction
+                                (:backward nil)
+                                (:forward (eobp)))
+                              (< (funcall outline-level) level))
+                          nil
+                        (cl-assert (= level (funcall outline-level)))
+                        (point))))))
     (when npoint
       (goto-char npoint))))
 
-(defun -nomis/outline-next-heading-pos (start kind)
+(defun -nomis/outline-prev-or-next-heading-pos (start direction kind)
   (when start
     (save-excursion
       (goto-char start)
-      (unless (and (-nomis/outline-on-heading?)
-                   (bolp))
-        (-nomis/outline-back-to-heading?)
-        (point))
-      (cl-ecase kind
-        (:any-level
-         (outline-next-heading))
-        (:sibling
-         (-nomis/outline-next-same-level nil))
-        (:same-level-allow-cross-parent
-         (-nomis/outline-next-same-level t)))
-      (when (and (/= (point) start)
-                 (-nomis/outline-on-heading?))
-        ;; ^^ Check of `(-nomis/outline-on-heading?)` needed because
-        ;;    `outline-next-heading` goes to EOF when there's no next heading.
-        (point)))))
+      (let* ((boh? (-nomis/outline-at-beginning-of-heading?)))
+        (if (and (eq direction :backward)
+                 (not boh?))
+            (progn
+              (-nomis/outline-back-to-heading?)
+              (point))
+          (when (and (eq direction :forward)
+                     (not boh?))
+            (-nomis/outline-back-to-heading?))
+          (cl-ecase kind
+            (:any-level
+             (-nomis/outline-prev-or-next direction))
+            (:sibling
+             (-nomis/outline-prev-next-same-level direction nil))
+            (:same-level-allow-cross-parent
+             (-nomis/outline-prev-next-same-level direction t)))
+          (when (and (/= (point) start)
+                     (-nomis/outline-on-heading?))
+            ;; ^^ Check of `(-nomis/outline-on-heading?)` needed because
+            ;;    `-nomis/outline-prev-or-next` goes to BOF or EOF when there's
+            ;;    no prev/next heading.
+            (point)))))))
 
-(defun -nomis/outline-next-heading* (n kind show-context-approach)
+(defun -nomis/outline-prev-or-next-heading (n
+                                            direction
+                                            kind
+                                            show-context-approach)
   (when-let ((pos (->> (-iterate (lambda (start)
-                                   (-nomis/outline-next-heading-pos
+                                   (-nomis/outline-prev-or-next-heading-pos
                                     start
+                                    direction
                                     kind))
                                  (point)
                                  (1+ n))
@@ -263,9 +241,10 @@
   (interactive "p")
   (-nomis/outline-command
       nil
-    (or (-nomis/outline-previous-heading* n
-                                          :any-level
-                                          :show-entry)
+    (or (-nomis/outline-prev-or-next-heading n
+                                             :backward
+                                             :any-level
+                                             :show-entry)
         (error (if (= n 1)
                    "No previous heading"
                  (concat "No " (-nomis/outline-ordinal n) "-previous heading"))))))
@@ -276,9 +255,10 @@ Stop at the first and last headings of a superior heading."
   (interactive "p")
   (-nomis/outline-command
       nil
-    (or (-nomis/outline-previous-heading* n
-                                          :sibling
-                                          :show-entry)
+    (or (-nomis/outline-prev-or-next-heading n
+                                             :backward
+                                             :sibling
+                                             :show-entry)
         (error (if (= n 1)
                    "No previous sibling"
                  (concat "No " (-nomis/outline-ordinal n) "-previous sibling"))))))
@@ -289,9 +269,10 @@ Can pass by a superior heading."
   (interactive "p")
   (-nomis/outline-command
       nil
-    (or (-nomis/outline-previous-heading* n
-                                          :same-level-allow-cross-parent
-                                          :show-entry)
+    (or (-nomis/outline-prev-or-next-heading n
+                                             :backward
+                                             :same-level-allow-cross-parent
+                                             :show-entry)
         (error (if (= n 1)
                    "No previous same-level"
                  (concat "No " (-nomis/outline-ordinal n) "-previous same-level"))))))
@@ -303,9 +284,10 @@ Stop at the first and last headings of a superior heading."
   (interactive "p")
   (-nomis/outline-command
       nil
-    (or (-nomis/outline-previous-heading* n
-                                          :sibling
-                                          :show-fat-parents-and-subtree)
+    (or (-nomis/outline-prev-or-next-heading n
+                                             :backward
+                                             :sibling
+                                             :show-fat-parents-and-subtree)
         (error (if (= n 1)
                    "No previous sibling"
                  (concat "No " (-nomis/outline-ordinal n) "-previous sibling"))))))
@@ -317,9 +299,10 @@ Can pass by a superior heading."
   (interactive "p")
   (-nomis/outline-command
       nil
-    (or (-nomis/outline-previous-heading* n
-                                          :same-level-allow-cross-parent
-                                          :show-fat-parents-and-subtree)
+    (or (-nomis/outline-prev-or-next-heading n
+                                             :backward
+                                             :same-level-allow-cross-parent
+                                             :show-fat-parents-and-subtree)
         (error (if (= n 1)
                    "No previous same-level"
                  (concat "No " (-nomis/outline-ordinal n) "-previous same-level"))))))
@@ -330,9 +313,10 @@ Can pass by a superior heading."
   (interactive "p")
   (-nomis/outline-command
       nil
-    (or (-nomis/outline-next-heading* n
-                                      :any-level
-                                      :show-entry)
+    (or (-nomis/outline-prev-or-next-heading n
+                                             :forward
+                                             :any-level
+                                             :show-entry)
         (error (if (= n 1)
                    "No next heading"
                  (concat "No " (-nomis/outline-ordinal n) "-next heading"))))))
@@ -343,9 +327,10 @@ Stop at the first and last headings of a superior heading."
   (interactive "p")
   (-nomis/outline-command
       nil
-    (or (-nomis/outline-next-heading* n
-                                      :sibling
-                                      :show-entry)
+    (or (-nomis/outline-prev-or-next-heading n
+                                             :forward
+                                             :sibling
+                                             :show-entry)
         (error (if (= n 1)
                    "No next sibling"
                  (concat "No " (-nomis/outline-ordinal n) "-next sibling"))))))
@@ -356,9 +341,10 @@ Can pass by a superior heading."
   (interactive "p")
   (-nomis/outline-command
       nil
-    (or (-nomis/outline-next-heading* n
-                                      :same-level-allow-cross-parent
-                                      :show-entry)
+    (or (-nomis/outline-prev-or-next-heading n
+                                             :forward
+                                             :same-level-allow-cross-parent
+                                             :show-entry)
         (error (if (= n 1)
                    "No next same-level"
                  (concat "No " (-nomis/outline-ordinal n) "-next same-level"))))))
@@ -370,9 +356,10 @@ Stop at the first and last headings of a superior heading."
   (interactive "p")
   (-nomis/outline-command
       nil
-    (or (-nomis/outline-next-heading* n
-                                      :sibling
-                                      :show-fat-parents-and-subtree)
+    (or (-nomis/outline-prev-or-next-heading n
+                                             :forward
+                                             :sibling
+                                             :show-fat-parents-and-subtree)
         (error (if (= n 1)
                    "No next sibling"
                  (concat "No " (-nomis/outline-ordinal n) "-next sibling"))))))
@@ -384,9 +371,10 @@ Can pass by a superior heading."
   (interactive "p")
   (-nomis/outline-command
       nil
-    (or (-nomis/outline-next-heading* n
-                                      :same-level-allow-cross-parent
-                                      :show-fat-parents-and-subtree)
+    (or (-nomis/outline-prev-or-next-heading n
+                                             :forward
+                                             :same-level-allow-cross-parent
+                                             :show-fat-parents-and-subtree)
         (error (if (= n 1)
                    "No next same-level"
                  (concat "No " (-nomis/outline-ordinal n) "-next same-level"))))))
