@@ -13,9 +13,6 @@
 
 ;; TODO: Bug: Sibling navigation when not on a heading is broken.
 
-;; TODO: Bug: Cross-parent stepping expands more than it should -- all
-;;       siblings too.
-
 ;;; Utilities
 
 ;;;; Misc
@@ -78,7 +75,7 @@
 
 ;;;; More substantial things
 
-(defun -nomis/outline-show-fat-tree* (n-child-levels no-pulse?)
+(defun -nomis/outline-show-fat-tree** (n-child-levels no-pulse?)
   (let* ((parent-points
           (let* ((ps '()))
             (save-excursion
@@ -103,6 +100,24 @@
     (3 (outline-show-subtree)
        (unless no-pulse?
          (-nomis/outline-pulse-current-section)))))
+
+(defun -nomis/outline-show-fat-tree* (n-child-levels no-pulse?)
+  (cl-ecase 2
+    (1
+     ;; After cross-parent stepping, this expands things more than it should
+     ;; -- all siblings or the current heading are expanded too. I don't
+     ;; understand why. So we don't do this.
+     (-nomis/outline-show-fat-tree**))
+    (2
+     ;; Hackily get around the above problem...
+     ;;
+     ;; Ensure point is visible, otherwise point is in a different place
+     ;; when we run `-nomis/outline-show-fat-tree**`.
+     (outline-show-entry)
+     ;; Do the thing we want to do.
+     (run-at-time 0 nil #'(lambda ()
+                            (-nomis/outline-show-fat-tree** n-child-levels
+                                                            no-pulse?))))))
 
 (defun -nomis/outline-show-context (show-context-approach)
   (cl-ecase show-context-approach
