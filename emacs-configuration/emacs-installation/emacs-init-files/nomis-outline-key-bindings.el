@@ -74,7 +74,7 @@
 ;; | (kbd "H--")       | norg/show-children-from-all-roots/incremental/less      |                                        |                             |
 ;; | (kbd "H-=")       | norg/show-children-from-all-roots/incremental/more      |                                        |                             |
 ;; | (kbd "H-M--")     | norg/show-children-from-all-roots/set-min               | nomis/hs/hide-all                      |                             |
-;; | (kbd "H-M-=")     | norg/show-children-from-all-roots/fully-expand          | nomis/hs/show-all                      | Note: "M-o M-a" for outline-show-all |
+;; | (kbd "H-M-=")     | norg/show-children-from-all-roots/fully-expand          | nomis/hs/show-all                      | Note: "H-o a" for outline-show-all |
 ;; |                   |                                                         |                                        |                             |
 ;; | (kbd "H-q H-q ]") | norg/show-children-from-root/to-current-level           |                                        |                             |
 ;; | (kbd "H-q H-q =") | norg/show-children-from-all-roots/to-current-level      |                                        |                             |
@@ -145,9 +145,9 @@
 
 ;; (define-key outline-minor-mode-map (kbd "...") '...)
 
-(define-key outline-minor-mode-map (kbd "M-o M-p")     'outline-previous-visible-heading)
-(define-key outline-minor-mode-map (kbd "M-o M-n")     'outline-next-visible-heading)
-(define-key outline-minor-mode-map (kbd "M-o M-u")     'outline-up-heading)
+(define-key outline-minor-mode-map (kbd "H-o p")     'outline-previous-visible-heading)
+(define-key outline-minor-mode-map (kbd "H-o n")     'outline-next-visible-heading)
+(define-key outline-minor-mode-map (kbd "H-o u")     'outline-up-heading)
 
 
 (define-key outline-minor-mode-map (kbd "C-S-<right>") 'outline-demote)
@@ -157,21 +157,21 @@
 
 (define-key outline-minor-mode-map (kbd "M-RET")       'outline-insert-heading)
 
-(define-key outline-minor-mode-map (kbd "M-o M-a")     'outline-show-all)
+(define-key outline-minor-mode-map (kbd "H-o a")     'outline-show-all)
 
-;; | outline-hide-sublevels                    | M-o C-q |             |
-;; | outline-show-branches                     | M-o C-k |             |
-;; | outline-hide-leaves                       | M-o C-l |             |
-;; | outline-show-entry                        | M-o C-e |             |
-;; | outline-hide-entry                        | M-o C-c |             |
-;; | outline-hide-body                         | M-o C-t |             |
-;; | outline-hide-subtree                      | M-o C-d |             |
-;; | outline-show-subtree                      | M-o C-s |             |
-;; | outline-show-children                     | M-o TAB |             |
-;; | outline-hide-by-heading-regexp            | M-o / h |             |
-;; | outline-show-by-heading-regexp            | M-o / s |             |
+;; | outline-hide-sublevels                    | H-o C-q |             |
+;; | outline-show-branches                     | H-o C-k |             |
+;; | outline-hide-leaves                       | H-o C-l |             |
+;; | outline-show-entry                        | H-o C-e |             |
+;; | outline-hide-entry                        | H-o C-c |             |
+;; | outline-hide-body                         | H-o C-t |             |
+;; | outline-hide-subtree                      | H-o C-d |             |
+;; | outline-show-subtree                      | H-o C-s |             |
+;; | outline-show-children                     | H-o TAB |             |
+;; | outline-hide-by-heading-regexp            | H-o / h |             |
+;; | outline-show-by-heading-regexp            | H-o / s |             |
 
-;; | outline-mark-subtree                      | M-o @   |             |
+;; | outline-mark-subtree                      | H-o @   |             |
 ;; | outline-headers-as-kill                   |         |             |
 ;; | outline-cycle                             |         |             |
 ;; | outline-cycle-buffer                      |         |             |
