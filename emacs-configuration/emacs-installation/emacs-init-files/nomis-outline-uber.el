@@ -89,27 +89,6 @@
        (unless no-pulse?
          (-nomis/outline-pulse-current-section)))))
 
-(defvar *-nomis/outline-show-tree-n-child-levels*)
-
-(defun nomis/outline-show-tree-and-increments ()
-  (interactive)
-  ;; Repeated invocations cycle amount of child stuff.
-  (let* ((level (if (not (eq this-command (-nomis/outline-last-command)))
-                    0
-                  (mod (1+ *-nomis/outline-show-tree-n-child-levels*)
-                       4))))
-    (setq *-nomis/outline-show-tree-n-child-levels* level)
-    (-nomis/outline-show-tree* level)
-    (cl-ecase level
-      (0 (message "FOLDED"))
-      (1 (message "CHILDREN"))
-      (2 (message "BRANCHES"))
-      (3 (message "SUBTREE")))))
-
-(defun nomis/outline-show-tree-and-subtree ()
-  (interactive)
-  (-nomis/outline-show-tree* 3 t))
-
 (defun -nomis/outline-show-context (show-context-approach)
   (cl-ecase show-context-approach
     (:show-entry (outline-show-entry))
@@ -238,6 +217,31 @@
     pos))
 
 ;;; API
+
+;;;; nomis/outline-show-tree-and-increments
+
+(defvar *-nomis/outline-show-tree-n-child-levels*)
+
+(defun nomis/outline-show-tree-and-increments ()
+  (interactive)
+  ;; Repeated invocations cycle amount of child stuff.
+  (let* ((level (if (not (eq this-command (-nomis/outline-last-command)))
+                    0
+                  (mod (1+ *-nomis/outline-show-tree-n-child-levels*)
+                       4))))
+    (setq *-nomis/outline-show-tree-n-child-levels* level)
+    (-nomis/outline-show-tree* level)
+    (cl-ecase level
+      (0 (message "FOLDED"))
+      (1 (message "CHILDREN"))
+      (2 (message "BRANCHES"))
+      (3 (message "SUBTREE")))))
+
+;;;; nomis/outline-show-tree-and-subtree
+
+(defun nomis/outline-show-tree-and-subtree ()
+  (interactive)
+  (-nomis/outline-show-tree* 3 t))
 
 ;;;; nomis/outline-cycle-or-indent-or-complete
 
