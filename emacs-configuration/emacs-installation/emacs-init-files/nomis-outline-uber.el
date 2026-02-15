@@ -2,6 +2,7 @@
 
 (require 'cl-lib)
 (require 'dash)
+(require 'nomis-popup)
 
 ;;; To dos
 
@@ -230,10 +231,10 @@
     (setq *-nomis/outline-show-fat-tree-n-child-levels* level)
     (-nomis/outline-show-fat-tree* level)
     (cl-ecase level
-      (0 (message "FOLDED"))
-      (1 (message "CHILDREN"))
-      (2 (message "BRANCHES"))
-      (3 (message "SUBTREE")))))
+      (0 (nomis/popup/message "Folded"))
+      (1 (nomis/popup/message "Children"))
+      (2 (nomis/popup/message "Branches"))
+      (3 (nomis/popup/message "Subtree")))))
 
 ;;;; nomis/outline-show-fat-tree-and-subtree
 
