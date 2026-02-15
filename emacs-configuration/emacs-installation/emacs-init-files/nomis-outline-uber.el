@@ -71,9 +71,7 @@
                 (push (point) ps)))
             ps)))
     (save-excursion
-      (cl-case 2
-        (1 (outline-hide-other))
-        (2 (outline-hide-sublevels (-nomis/outline-top-level-level))))
+      (outline-hide-sublevels (-nomis/outline-top-level-level))
       (save-excursion
         (cl-loop for p in parent-points
                  do (progn (goto-char p)
