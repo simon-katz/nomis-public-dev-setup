@@ -11,8 +11,6 @@
 ;;       thing for this? Can you show all parents of current heading without
 ;;       changing anything else?)
 
-;; TODO: Bug: Sibling navigation when not on a heading is broken.
-
 ;;; Utilities
 
 ;;;; Misc
