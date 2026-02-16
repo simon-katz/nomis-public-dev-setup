@@ -119,6 +119,11 @@
                         ;; we've changed what is displayed.
                         (nomis/outline-maybe-restore-scroll-position)))))))
 
+(defun -nomis/outline-hide-show-lineage (show-lineage-approach)
+  (cl-ecase show-lineage-approach
+    (:show-entry (outline-show-entry))
+    (:show-fat-parents-and-subtree (-nomis/outline-show-fat-tree 3 t))))
+
 (defun -nomis/outline-command* (f)
   (push-mark)
   (nomis/scrolling/with-maybe-maintain-line-no-in-window
@@ -192,7 +197,7 @@
 (defun -nomis/outline-prev-or-next-heading (n
                                             direction
                                             kind
-                                            show-context-approach)
+                                            show-lineage-approach)
   (let* ((pos (->> (-iterate (lambda (start)
                                (-nomis/outline-prev-or-next-heading-pos
                                 start
@@ -206,9 +211,7 @@
     (if pos
         (progn
           (goto-char pos)
-          (cl-ecase show-context-approach
-            (:show-entry (outline-show-entry))
-            (:show-fat-parents-and-subtree (-nomis/outline-show-fat-tree 3 t))))
+          (-nomis/outline-hide-show-lineage show-lineage-approach))
       (let* ((direction-word (cl-ecase direction
                                (:backward "previous")
                                (:forward "next")))
