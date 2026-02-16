@@ -56,23 +56,35 @@
       1
     (count-screen-lines (window-start) (point) t)))
 
+(defun nomis/outline-restore-scroll-position (old-line-no)
+  ;; Ensure cursor is on screen, so that scrolling doesn't make
+  ;; any unwanted adjustments.
+  (let* ((recenter-redisplay nil))
+    (recenter))
+  ;; Reset scroll position.
+  (ignore-errors
+    ;; `ignore-errors` because if we're near the top of the buffer we may not be
+    ;; able to do this.
+    (scroll-up-line (- (nomis/scrolling/-line-no-in-window)
+                       old-line-no))))
+
+(defvar nomis/scrolling/-old-line-no nil)
+
+(defun nomis/outline-maybe-restore-scroll-position ()
+  (when (and nomis/scrolling/maintain-line-no-in-window?
+             nomis/scrolling/-old-line-no)
+    (nomis/outline-restore-scroll-position nomis/scrolling/-old-line-no)))
+
 (defun nomis/scrolling/-with-maybe-maintain-line-no-in-window* (fun force?)
   (cl-flet* ((do-it () (funcall fun)))
     (if (not (or force?
                  nomis/scrolling/maintain-line-no-in-window?))
-        (do-it)
+        (progn (setq nomis/scrolling/-old-line-no nil)
+               (do-it))
       (let* ((old-line-no (nomis/scrolling/-line-no-in-window)))
+        (setq nomis/scrolling/-old-line-no old-line-no)
         (prog1 (do-it)
-          ;; Ensure cursor is on screen, so that scrolling doesn't make
-          ;; any unwanted adjustments.
-          (let* ((recenter-redisplay nil))
-            (recenter))
-          ;; Reset scroll position
-          (ignore-errors
-            ;; `ignore-errors` because if we're near the top of the buffer
-            ;; we may not be able to do this.
-            (scroll-up-line (- (nomis/scrolling/-line-no-in-window)
-                               old-line-no))))))))
+          (nomis/outline-restore-scroll-position old-line-no))))))
 
 (cl-defmacro nomis/scrolling/with-maybe-maintain-line-no-in-window (&body body)
   (declare (indent 0))

@@ -3,6 +3,7 @@
 (require 'cl-lib)
 (require 'dash)
 (require 'nomis-popup)
+(require 'nomis-scrolling)
 
 ;;; Utilities
 
@@ -108,11 +109,16 @@
      ;; Do the thing we want to do.
      (run-at-time 0 nil #'(lambda ()
                             (-nomis/outline-show-fat-tree* n-child-levels
-                                                           no-pulse?))))))
+                                                           no-pulse?)
+                            ;; Our use of `run-at-time` means we need this,
+                            ;; because the automatic restore will have been done
+                            ;; before we've changed what is displayed.
+                            (nomis/outline-maybe-restore-scroll-position))))))
 
 (defun -nomis/outline-command* (f)
   (push-mark)
-  (funcall f))
+  (nomis/scrolling/with-maybe-maintain-line-no-in-window
+    (funcall f)))
 
 (cl-defmacro -nomis/outline-command (_opts &body body)
   (declare (indent 1))
