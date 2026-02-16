@@ -94,26 +94,30 @@
          (-nomis/outline-pulse-current-section)))))
 
 (defun -nomis/outline-show-fat-tree (n-child-levels no-pulse?)
-  (cl-ecase 2
-    (1
-     ;; After cross-parent stepping, this expands things more than it should
-     ;; -- all siblings or the current heading are expanded too. I don't
-     ;; understand why. So we don't do this.
-     (-nomis/outline-show-fat-tree*))
-    (2
-     ;; Hackily get around the above problem...
-     ;;
-     ;; Ensure point is visible, otherwise point is in a different place when we
-     ;; run `-nomis/outline-show-fat-tree*`.
-     (outline-show-entry)
-     ;; Do the thing we want to do.
-     (run-at-time 0 nil #'(lambda ()
-                            (-nomis/outline-show-fat-tree* n-child-levels
-                                                           no-pulse?)
-                            ;; Our use of `run-at-time` means we need this,
-                            ;; because the automatic restore will have been done
-                            ;; before we've changed what is displayed.
-                            (nomis/outline-maybe-restore-scroll-position))))))
+  (cl-flet* ((do-it ()
+               (-nomis/outline-show-fat-tree* n-child-levels
+                                              no-pulse?)))
+    (cl-ecase 2
+      (1
+       ;; After cross-parent stepping, this expands things more than it should
+       ;; -- all siblings or the current heading are expanded too. I don't
+       ;; understand why. So we don't do this.
+       (do-it))
+      (2
+       ;; Hackily get around the above problem...
+       ;;
+       ;; Ensure point is visible, otherwise point is in a different place when
+       ;; we run `-nomis/outline-show-fat-tree*`.
+       (outline-show-entry)
+       ;; Do the thing we want to do.
+       (run-at-time 0
+                    nil
+                    #'(lambda ()
+                        (do-it)
+                        ;; Our use of `run-at-time` means we need this, because
+                        ;; the automatic restore will have been done before
+                        ;; we've changed what is displayed.
+                        (nomis/outline-maybe-restore-scroll-position)))))))
 
 (defun -nomis/outline-command* (f)
   (push-mark)
