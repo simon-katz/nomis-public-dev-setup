@@ -82,7 +82,7 @@
         (cl-loop for p in parent-points
                  do (progn (goto-char p)
                            (outline-show-entry)
-                           (outline-hide-body)
+                           (outline-hide-entry)
                            (-nomis/show-children))))))
   (recenter-top-bottom -1)
   (cl-ecase n-child-levels
