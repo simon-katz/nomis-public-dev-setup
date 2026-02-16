@@ -90,7 +90,7 @@
 
 (define-key outline-minor-mode-map [tab]               'nomis/outline-cycle-or-indent-or-complete)
 (define-key outline-minor-mode-map [C-tab]             'bicycle-cycle)
-(define-key outline-minor-mode-map [S-tab]             'bicycle-cycle-global)
+(define-key outline-minor-mode-map (kbd "H-o <tab>")   'bicycle-cycle-global)
 
 ;; |-------------------+---------------------------------------------------------+----------------------------------------+---------------------------------------------------|
 ;; |                   | ---- Movement ----                                      |                                        |                                                   |
