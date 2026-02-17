@@ -247,9 +247,9 @@
       (2 (nomis/popup/message "Branches"))
       (3 (nomis/popup/message "Subtree")))))
 
-;;;; nomis/outline-show-fat-tree-and-subtree
+;;;; nomis/outline-show-max-lineage
 
-(defun nomis/outline-show-fat-tree-and-subtree ()
+(defun nomis/outline-show-max-lineage ()
   (interactive)
   (-nomis/outline-show-fat-tree 3 t))
 
