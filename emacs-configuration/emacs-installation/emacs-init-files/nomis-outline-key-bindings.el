@@ -15,6 +15,12 @@
 ;; TODO: Make make `norg/set-step-n-levels-to-show`-style functionality
 ;;       available in other modes.
 
+;;; Temporary keybindings to train myself for change of Projectile keybindings
+
+(define-key projectile-mode-map (kbd "H-o d") (lambda () (interactive) (error "Nope, Projectile is M-o now")))
+(define-key projectile-mode-map (kbd "H-o f") (lambda () (interactive) (error "Nope, Projectile is M-o now")))
+(define-key projectile-mode-map (kbd "H-o g") (lambda () (interactive) (error "Nope, Projectile is M-o now")))
+
 ;;; Make RET give us a newline
 
 ;; We use TAB to do our cycling. We want RET to give us a newline instead of
