@@ -65,7 +65,7 @@
     (:backward (outline-previous-heading))
     (:forward (outline-next-heading))))
 
-;;;; More substantial things
+;;;; Hide/show lineage
 
 (defun -nomis/outline-show-lineage* (n-child-levels no-pulse?)
   (let* ((parent-points
@@ -123,6 +123,8 @@
   (cl-ecase show-lineage-approach
     (:show-entry (outline-show-entry))
     (:show-fat-parents-and-subtree (-nomis/outline-show-lineage 3 t))))
+
+;;;; -nomis/outline-command
 
 (defun -nomis/outline-command* (f)
   (push-mark)
