@@ -106,6 +106,11 @@
                 ;;      This is confusing and needs reconsideration.
                 :spec/children-approach 0))
 
+(defun lineage-with-incs-or-decs-lineage-spec (children-approach)
+  (a-hash-table :spec/parents-approach :parents/fat
+                :spec/children-approach children-approach
+                :spec/pulse-max-children? t))
+
 ;;;; Hide/show lineage
 
 (defun -nomis/outline-show-parents (lineage-spec)
@@ -293,10 +298,8 @@
                              one-or-minus-one)
                           4))))
     (setq -nomis/outline-increments-children-approach approach)
-    (let* ((lineage-spec (a-hash-table :spec/parents-approach :parents/fat
-                                       :spec/children-approach approach
-                                       :spec/pulse-max-children? t)))
-      (-nomis/outline-show-lineage lineage-spec))
+    (-nomis/outline-show-lineage (lineage-with-incs-or-decs-lineage-spec
+                                  approach))
     (cl-ecase approach
       (0 (nomis/popup/message "Folded"))
       (1 (nomis/popup/message "Children"))
