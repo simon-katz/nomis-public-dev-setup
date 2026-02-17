@@ -56,7 +56,9 @@
     (when (-nomis/outline-on-heading?)
       (let* ((opoint (point))
              (olevel (funcall outline-level)))
-        (ignore-errors (-nomis/outline-up-heading 1))
+        (ignore-errors
+          ;; `ignore-errors` is needed when before first heading.
+          (-nomis/outline-up-heading 1))
         (or (not (-nomis/outline-on-heading?)) ; blank lines at top of file?
             (= olevel (funcall outline-level)))))))
 
