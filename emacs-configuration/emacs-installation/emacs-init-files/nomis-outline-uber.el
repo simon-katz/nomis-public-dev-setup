@@ -10,9 +10,6 @@
 
 ;; TODO: Look into why `run-at-time` is needed.
 
-;; TODO: Move `no-pulse?` into lineage-spec. Rename ->
-;;       `no-pulse-for-max-expansion`.
-
 ;;; Utilities
 
 ;;;; Misc
@@ -140,20 +137,17 @@
     (2 (outline-show-branches))
     (3 (outline-show-subtree))))
 
-(defun -nomis/outline-show-lineage* (lineage-spec no-pulse?)
+(defun -nomis/outline-show-lineage* (lineage-spec)
   (-nomis/outline-show-parents lineage-spec)
   (-nomis/outline-ensure-heading-shown)
   (-nomis/outline-show-children lineage-spec)
-  (when (= (a-get lineage-spec :spec/children-approach) 3)
-    (unless no-pulse?
-      (-nomis/outline-pulse-current-section))))
+  (when (and (a-get lineage-spec :spec/pulse-max-children?)
+             (= (a-get lineage-spec :spec/children-approach) 3))
+    (-nomis/outline-pulse-current-section)))
 
-(defun -nomis/outline-show-lineage (lineage-spec
-                                    ;; TODO: Make these part of the spec.
-                                    no-pulse?)
+(defun -nomis/outline-show-lineage (lineage-spec)
   (cl-flet* ((do-it ()
-               (-nomis/outline-show-lineage* lineage-spec
-                                             no-pulse?)))
+               (-nomis/outline-show-lineage* lineage-spec)))
     (cl-ecase 2
       (1
        ;; After cross-parent stepping, this expands things more than it should
@@ -269,7 +263,7 @@
     (if pos
         (progn
           (goto-char pos)
-          (-nomis/outline-show-lineage lineage-spec t))
+          (-nomis/outline-show-lineage lineage-spec))
       (let* ((direction-word (cl-ecase direction
                                (:backward "previous")
                                (:forward "next")))
@@ -300,8 +294,9 @@
                           4))))
     (setq -nomis/outline-increments-children-approach approach)
     (let* ((lineage-spec (a-hash-table :spec/parents-approach :parents/fat
-                                       :spec/children-approach approach)))
-      (-nomis/outline-show-lineage lineage-spec nil))
+                                       :spec/children-approach approach
+                                       :spec/pulse-max-children? t)))
+      (-nomis/outline-show-lineage lineage-spec))
     (cl-ecase approach
       (0 (nomis/popup/message "Folded"))
       (1 (nomis/popup/message "Children"))
@@ -322,7 +317,7 @@
 
 (defun nomis/outline-show-max-lineage ()
   (interactive)
-  (-nomis/outline-show-lineage max-lineage-spec t))
+  (-nomis/outline-show-lineage max-lineage-spec))
 
 ;;;; nomis/outline-cycle-or-indent-or-complete
 
