@@ -38,6 +38,12 @@
 (defun -nomis/outline-back-to-visible-heading? () ; TODO: Unused.
   (outline-back-to-heading))
 
+(defun -nomis/outline-up-heading (n)
+  (outline-up-heading n t))
+
+(defun -nomis/outline-up-visible-heading (n) ; TODO: Unused.
+  (outline-up-heading n))
+
 (defun -nomis/outline-at-beginning-of-heading? ()
   (and (bolp)
        (-nomis/outline-on-heading?)))
@@ -50,7 +56,7 @@
     (when (-nomis/outline-on-heading?)
       (let* ((opoint (point))
              (olevel (funcall outline-level)))
-        (ignore-errors (outline-up-heading 1 t))
+        (ignore-errors (-nomis/outline-up-heading 1))
         (or (not (-nomis/outline-on-heading?)) ; blank lines at top of file?
             (= olevel (funcall outline-level)))))))
 
@@ -121,7 +127,7 @@
               (save-excursion
                 (while (and (-nomis/outline-on-heading?)
                             (not (-nomis/outline-on-top-level-heading?)))
-                  (outline-up-heading 1 t)
+                  (-nomis/outline-up-heading 1)
                   (push (point) ps)))
               ps)))
       (save-excursion
