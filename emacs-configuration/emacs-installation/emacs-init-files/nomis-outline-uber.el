@@ -67,7 +67,7 @@
 
 ;;;; More substantial things
 
-(defun -nomis/outline-show-fat-tree* (n-child-levels no-pulse?)
+(defun -nomis/outline-show-lineage* (n-child-levels no-pulse?)
   (let* ((parent-points
           (let* ((ps '()))
             (save-excursion
@@ -93,10 +93,10 @@
        (unless no-pulse?
          (-nomis/outline-pulse-current-section)))))
 
-(defun -nomis/outline-show-fat-tree (n-child-levels no-pulse?)
+(defun -nomis/outline-show-lineage (n-child-levels no-pulse?)
   (cl-flet* ((do-it ()
-               (-nomis/outline-show-fat-tree* n-child-levels
-                                              no-pulse?)))
+               (-nomis/outline-show-lineage* n-child-levels
+                                             no-pulse?)))
     (cl-ecase 2
       (1
        ;; After cross-parent stepping, this expands things more than it should
@@ -107,7 +107,7 @@
        ;; Hackily get around the above problem...
        ;;
        ;; Ensure point is visible, otherwise point is in a different place when
-       ;; we run `-nomis/outline-show-fat-tree*`.
+       ;; we run `-nomis/outline-show-lineage*`.
        (outline-show-entry)
        ;; Do the thing we want to do.
        (run-at-time 0
@@ -122,7 +122,7 @@
 (defun -nomis/outline-hide-show-lineage (show-lineage-approach)
   (cl-ecase show-lineage-approach
     (:show-entry (outline-show-entry))
-    (:show-fat-parents-and-subtree (-nomis/outline-show-fat-tree 3 t))))
+    (:show-fat-parents-and-subtree (-nomis/outline-show-lineage 3 t))))
 
 (defun -nomis/outline-command* (f)
   (push-mark)
@@ -241,7 +241,7 @@
                              one-or-minus-one)
                           4))))
     (setq -nomis/outline-increments-children-approach approach)
-    (-nomis/outline-show-fat-tree approach nil)
+    (-nomis/outline-show-lineage approach nil)
     (cl-ecase approach
       (0 (nomis/popup/message "Folded"))
       (1 (nomis/popup/message "Children"))
@@ -262,7 +262,7 @@
 
 (defun nomis/outline-show-max-lineage ()
   (interactive)
-  (-nomis/outline-show-fat-tree 3 t))
+  (-nomis/outline-show-lineage 3 t))
 
 ;;;; nomis/outline-cycle-or-indent-or-complete
 
