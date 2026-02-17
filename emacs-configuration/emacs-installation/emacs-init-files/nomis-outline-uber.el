@@ -67,7 +67,7 @@
 
 ;;;; Hide/show lineage
 
-(defun -nomis/outline-show-lineage* (n-child-levels no-pulse?)
+(defun -nomis/outline-show-parents ()
   (let* ((parent-points
           (let* ((ps '()))
             (save-excursion
@@ -83,8 +83,9 @@
                  do (progn (goto-char p)
                            (outline-show-entry)
                            (outline-hide-entry)
-                           (-nomis/show-children))))))
-  (recenter-top-bottom -1)
+                           (-nomis/show-children)))))))
+
+(defun -nomis/outline-show-children (n-child-levels)
   (cl-ecase n-child-levels
     (0 nil)
     (1 (-nomis/show-children))
@@ -92,6 +93,11 @@
     (3 (outline-show-subtree)
        (unless no-pulse?
          (-nomis/outline-pulse-current-section)))))
+
+(defun -nomis/outline-show-lineage* (n-child-levels no-pulse?)
+  (-nomis/outline-show-parents)
+  (recenter-top-bottom -1)
+  (-nomis/outline-show-children n-child-levels))
 
 (defun -nomis/outline-show-lineage (n-child-levels no-pulse?)
   (cl-flet* ((do-it ()
