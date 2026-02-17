@@ -35,12 +35,12 @@
 (defun -nomis/outline-back-to-heading? ()
   (outline-back-to-heading t))
 
+(defun -nomis/outline-back-to-visible-heading? () ; TODO: Unused.
+  (outline-back-to-heading))
+
 (defun -nomis/outline-at-beginning-of-heading? ()
   (and (bolp)
        (-nomis/outline-on-heading?)))
-
-(defun -nomis/outline-back-to-visible-heading? () ; TODO: Unused.
-  (outline-back-to-heading))
 
 (defun -nomis/outline-on-top-level-heading? ()
   "Are we on a top-level heading?"
