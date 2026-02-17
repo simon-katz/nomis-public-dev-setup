@@ -230,18 +230,18 @@
 
 ;;;; nomis/outline-show-lineage-with-increments
 
-(defvar *-nomis/outline-show-fat-tree-n-child-levels*)
+(defvar -nomis/outline-increments-children-approach)
 
 (defun nomis/outline-show-lineage-with-increments ()
   (interactive)
   ;; Repeated invocations cycle amount of child stuff.
-  (let* ((level (if (not (eq this-command (-nomis/outline-last-command)))
-                    0
-                  (mod (1+ *-nomis/outline-show-fat-tree-n-child-levels*)
-                       4))))
-    (setq *-nomis/outline-show-fat-tree-n-child-levels* level)
-    (-nomis/outline-show-fat-tree level nil)
-    (cl-ecase level
+  (let* ((approach (if (not (eq this-command (-nomis/outline-last-command)))
+                       0
+                     (mod (1+ -nomis/outline-increments-children-approach)
+                          4))))
+    (setq -nomis/outline-increments-children-approach approach)
+    (-nomis/outline-show-fat-tree approach nil)
+    (cl-ecase approach
       (0 (nomis/popup/message "Folded"))
       (1 (nomis/popup/message "Children"))
       (2 (nomis/popup/message "Branches"))
