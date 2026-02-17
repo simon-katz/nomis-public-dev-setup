@@ -232,12 +232,13 @@
 
 (defvar -nomis/outline-increments-children-approach)
 
-(defun nomis/outline-show-lineage-with-increments ()
-  (interactive)
-  ;; Repeated invocations cycle amount of child stuff.
-  (let* ((approach (if (not (eq this-command (-nomis/outline-last-command)))
+(defun nomis/outline-show-lineage-with-incs-or-decs (one-or-minus-one)
+  (let* ((approach (if (not (member (-nomis/outline-last-command)
+                                    '(nomis/outline-show-lineage-with-increments
+                                      nomis/outline-show-lineage-with-decrements)))
                        0
-                     (mod (1+ -nomis/outline-increments-children-approach)
+                     (mod (+ -nomis/outline-increments-children-approach
+                             one-or-minus-one)
                           4))))
     (setq -nomis/outline-increments-children-approach approach)
     (-nomis/outline-show-fat-tree approach nil)
@@ -246,6 +247,16 @@
       (1 (nomis/popup/message "Children"))
       (2 (nomis/popup/message "Branches"))
       (3 (nomis/popup/message "Subtree")))))
+
+(defun nomis/outline-show-lineage-with-increments ()
+  (interactive)
+  ;; Repeated invocations cycle amount of child stuff.
+  (nomis/outline-show-lineage-with-incs-or-decs 1))
+
+(defun nomis/outline-show-lineage-with-decrements ()
+  (interactive)
+  ;; Repeated invocations cycle amount of child stuff backwards.
+  (nomis/outline-show-lineage-with-incs-or-decs -1))
 
 ;;;; nomis/outline-show-max-lineage
 
