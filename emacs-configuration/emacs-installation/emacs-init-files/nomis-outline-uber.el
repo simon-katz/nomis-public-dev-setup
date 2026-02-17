@@ -1,9 +1,17 @@
 ;;; nomis-outline-uber -- -*- lexical-binding: t -*-
 
+(require 'a)
 (require 'cl-lib)
 (require 'dash)
 (require 'nomis-popup)
 (require 'nomis-scrolling)
+
+;;; To dos
+
+;; TODO: Look into why `run-at-time` is needed.
+
+;; TODO: Move `no-pulse?` into lineage-spec. Rename ->
+;;       `no-pulse-for-max-expansion`.
 
 ;;; Utilities
 
@@ -56,6 +64,12 @@
     (unless (-nomis/outline-on-heading?) (outline-next-heading))
     (funcall outline-level)))
 
+(defun -nomis/outline-ensure-heading-shown ()
+  (when (outline-invisible-p)
+    ;; Is there a simpler way to show the heading but not the body?
+    (outline-show-entry)
+    (outline-hide-entry)))
+
 (defun -nomis/show-children ()
   ;; The `1` is important; otherwise we get bodies of children.
   (outline-show-children 1))
@@ -65,43 +79,80 @@
     (:backward (outline-previous-heading))
     (:forward (outline-next-heading))))
 
+;;;; Lineage spec
+
+;; A lineage-spec controls how lineages are displayed and has the following
+;; entries (with permitted values nested):
+;;
+;; - `:spec/parents-approach`
+;;   - `:parents/leave-as-is`
+;;   - `:parents/thin`
+;;   - `:parents/fat`
+;;
+;; - `:spec/children-approach`
+;;   - 0, 1, 2 or 3
+
+(defconst max-lineage-spec
+  (a-hash-table :spec/parents-approach :parents/fat
+                :spec/children-approach 3))
+
+(defconst step-lineage-spec
+  (a-hash-table :spec/parents-approach :parents/fat
+                :spec/children-approach 3))
+
+(defconst ensure-visible-lineage-spec
+  (a-hash-table :spec/parents-approach :parents/leave-as-is
+                ;; TODO: We need leave-as-is for children, and we want it here.
+                ;;       Ah, things are OK because we have
+                ;;       `:parents/leave-as-is` and so no hiding, and
+                ;;       `-nomis/outline-show-children` doesn't do any hiding.
+                ;;      This is confusing and needs reconsideration.
+                :spec/children-approach 0))
+
 ;;;; Hide/show lineage
 
-(defun -nomis/outline-show-parents ()
-  (let* ((parent-points
-          (let* ((ps '()))
-            (save-excursion
-              (while (and (-nomis/outline-on-heading?)
-                          (not (-nomis/outline-on-top-level-heading?)))
-                (outline-up-heading 1)
-                (push (point) ps)))
-            ps)))
-    (save-excursion
-      (outline-hide-sublevels (-nomis/outline-top-level-level))
+(defun -nomis/outline-show-parents (lineage-spec)
+  (unless (eq (a-get lineage-spec :spec/parents-approach)
+              :parents/leave-as-is)
+    (let* ((parent-points
+            (let* ((ps '()))
+              (save-excursion
+                (while (and (-nomis/outline-on-heading?)
+                            (not (-nomis/outline-on-top-level-heading?)))
+                  (outline-up-heading 1)
+                  (push (point) ps)))
+              ps)))
       (save-excursion
-        (cl-loop for p in parent-points
-                 do (progn (goto-char p)
-                           (outline-show-entry)
-                           (outline-hide-entry)
-                           (-nomis/show-children)))))))
+        (outline-hide-sublevels (-nomis/outline-top-level-level))
+        (cl-loop
+         for p in parent-points
+         do (progn
+              (goto-char p)
+              (-nomis/outline-ensure-heading-shown)
+              (cl-ecase (a-get lineage-spec :spec/parents-approach)
+                (:parents/thin nil)
+                (:parents/fat (-nomis/show-children)))))))))
 
-(defun -nomis/outline-show-children (n-child-levels)
-  (cl-ecase n-child-levels
+(defun -nomis/outline-show-children (lineage-spec)
+  (cl-ecase (a-get lineage-spec :spec/children-approach)
     (0 nil)
     (1 (-nomis/show-children))
     (2 (outline-show-branches))
-    (3 (outline-show-subtree)
-       (unless no-pulse?
-         (-nomis/outline-pulse-current-section)))))
+    (3 (outline-show-subtree))))
 
-(defun -nomis/outline-show-lineage* (n-child-levels no-pulse?)
-  (-nomis/outline-show-parents)
-  (recenter-top-bottom -1)
-  (-nomis/outline-show-children n-child-levels))
+(defun -nomis/outline-show-lineage* (lineage-spec no-pulse?)
+  (-nomis/outline-show-parents lineage-spec)
+  (-nomis/outline-ensure-heading-shown)
+  (-nomis/outline-show-children lineage-spec)
+  (when (= (a-get lineage-spec :spec/children-approach) 3)
+    (unless no-pulse?
+      (-nomis/outline-pulse-current-section))))
 
-(defun -nomis/outline-show-lineage (n-child-levels no-pulse?)
+(defun -nomis/outline-show-lineage (lineage-spec
+                                    ;; TODO: Make these part of the spec.
+                                    no-pulse?)
   (cl-flet* ((do-it ()
-               (-nomis/outline-show-lineage* n-child-levels
+               (-nomis/outline-show-lineage* lineage-spec
                                              no-pulse?)))
     (cl-ecase 2
       (1
@@ -113,8 +164,8 @@
        ;; Hackily get around the above problem...
        ;;
        ;; Ensure point is visible, otherwise point is in a different place when
-       ;; we run `-nomis/outline-show-lineage*`.
-       (outline-show-entry)
+       ;; we run `do-it`.
+       (-nomis/outline-ensure-heading-shown)
        ;; Do the thing we want to do.
        (run-at-time 0
                     nil
@@ -124,11 +175,6 @@
                         ;; the automatic restore will have been done before
                         ;; we've changed what is displayed.
                         (nomis/outline-maybe-restore-scroll-position)))))))
-
-(defun -nomis/outline-hide-show-lineage (show-lineage-approach)
-  (cl-ecase show-lineage-approach
-    (:show-entry (outline-show-entry))
-    (:show-fat-parents-and-subtree (-nomis/outline-show-lineage 3 t))))
 
 ;;;; -nomis/outline-command
 
@@ -175,7 +221,10 @@
     (when npoint
       (goto-char npoint))))
 
-(defun -nomis/outline-prev-or-next-heading-pos (start direction kind)
+(defun -nomis/outline-prev-or-next-heading-pos (lineage-spec
+                                                start
+                                                direction
+                                                kind)
   (when start
     (save-excursion
       (goto-char start)
@@ -202,12 +251,13 @@
             ;;    no prev/next heading.
             (point)))))))
 
-(defun -nomis/outline-prev-or-next-heading (n
+(defun -nomis/outline-prev-or-next-heading (lineage-spec
+                                            n
                                             direction
-                                            kind
-                                            show-lineage-approach)
+                                            kind)
   (let* ((pos (->> (-iterate (lambda (start)
                                (-nomis/outline-prev-or-next-heading-pos
+                                lineage-spec
                                 start
                                 direction
                                 kind))
@@ -219,7 +269,7 @@
     (if pos
         (progn
           (goto-char pos)
-          (-nomis/outline-hide-show-lineage show-lineage-approach))
+          (-nomis/outline-show-lineage lineage-spec t))
       (let* ((direction-word (cl-ecase direction
                                (:backward "previous")
                                (:forward "next")))
@@ -249,7 +299,9 @@
                              one-or-minus-one)
                           4))))
     (setq -nomis/outline-increments-children-approach approach)
-    (-nomis/outline-show-lineage approach nil)
+    (let* ((lineage-spec (a-hash-table :spec/parents-approach :parents/fat
+                                       :spec/children-approach approach)))
+      (-nomis/outline-show-lineage lineage-spec nil))
     (cl-ecase approach
       (0 (nomis/popup/message "Folded"))
       (1 (nomis/popup/message "Children"))
@@ -270,7 +322,7 @@
 
 (defun nomis/outline-show-max-lineage ()
   (interactive)
-  (-nomis/outline-show-lineage 3 t))
+  (-nomis/outline-show-lineage max-lineage-spec t))
 
 ;;;; nomis/outline-cycle-or-indent-or-complete
 
@@ -290,10 +342,10 @@
   (interactive "p")
   (-nomis/outline-command
       nil
-    (-nomis/outline-prev-or-next-heading n
+    (-nomis/outline-prev-or-next-heading ensure-visible-lineage-spec
+                                         n
                                          :backward
-                                         :any-level
-                                         :show-entry)))
+                                         :any-level)))
 
 (defun nomis/outline-previous-sibling (n)
   "Move backward to the N'th heading at same level as this one.
@@ -301,10 +353,10 @@ Stop at the first and last headings of a superior heading."
   (interactive "p")
   (-nomis/outline-command
       nil
-    (-nomis/outline-prev-or-next-heading n
+    (-nomis/outline-prev-or-next-heading ensure-visible-lineage-spec
+                                         n
                                          :backward
-                                         :sibling
-                                         :show-entry)))
+                                         :sibling)))
 
 (defun nomis/outline-previous-sibling/allow-cross-parent (n)
   "Move backward to the N'th heading at same level as this one.
@@ -312,10 +364,10 @@ Can pass by a superior heading."
   (interactive "p")
   (-nomis/outline-command
       nil
-    (-nomis/outline-prev-or-next-heading n
+    (-nomis/outline-prev-or-next-heading ensure-visible-lineage-spec
+                                         n
                                          :backward
-                                         :same-level-allow-cross-parent
-                                         :show-entry)))
+                                         :same-level-allow-cross-parent)))
 
 (defun nomis/outline-step-backward (n)
   "Move backward to the N'th heading at same level as this one and run
@@ -324,10 +376,10 @@ Stop at the first and last headings of a superior heading."
   (interactive "p")
   (-nomis/outline-command
       nil
-    (-nomis/outline-prev-or-next-heading n
+    (-nomis/outline-prev-or-next-heading step-lineage-spec
+                                         n
                                          :backward
-                                         :sibling
-                                         :show-fat-parents-and-subtree)))
+                                         :sibling)))
 
 (defun nomis/outline-step-backward/allow-cross-parent (n)
   "Move backward to the N'th heading at same level as this one and run
@@ -336,10 +388,10 @@ Can pass by a superior heading."
   (interactive "p")
   (-nomis/outline-command
       nil
-    (-nomis/outline-prev-or-next-heading n
+    (-nomis/outline-prev-or-next-heading step-lineage-spec
+                                         n
                                          :backward
-                                         :same-level-allow-cross-parent
-                                         :show-fat-parents-and-subtree)))
+                                         :same-level-allow-cross-parent)))
 
 ;;;; Next
 
@@ -347,10 +399,10 @@ Can pass by a superior heading."
   (interactive "p")
   (-nomis/outline-command
       nil
-    (-nomis/outline-prev-or-next-heading n
+    (-nomis/outline-prev-or-next-heading ensure-visible-lineage-spec
+                                         n
                                          :forward
-                                         :any-level
-                                         :show-entry)))
+                                         :any-level)))
 
 (defun nomis/outline-next-sibling (n)
   "Move forward to the N'th heading at same level as this one.
@@ -358,10 +410,10 @@ Stop at the first and last headings of a superior heading."
   (interactive "p")
   (-nomis/outline-command
       nil
-    (-nomis/outline-prev-or-next-heading n
+    (-nomis/outline-prev-or-next-heading ensure-visible-lineage-spec
+                                         n
                                          :forward
-                                         :sibling
-                                         :show-entry)))
+                                         :sibling)))
 
 (defun nomis/outline-next-sibling/allow-cross-parent (n)
   "Move forward to the N'th heading at same level as this one.
@@ -369,10 +421,10 @@ Can pass by a superior heading."
   (interactive "p")
   (-nomis/outline-command
       nil
-    (-nomis/outline-prev-or-next-heading n
+    (-nomis/outline-prev-or-next-heading ensure-visible-lineage-spec
+                                         n
                                          :forward
-                                         :same-level-allow-cross-parent
-                                         :show-entry)))
+                                         :same-level-allow-cross-parent)))
 
 (defun nomis/outline-step-forward (n)
   "Move forward to the N'th heading at same level as this one and run
@@ -381,10 +433,10 @@ Stop at the first and last headings of a superior heading."
   (interactive "p")
   (-nomis/outline-command
       nil
-    (-nomis/outline-prev-or-next-heading n
+    (-nomis/outline-prev-or-next-heading step-lineage-spec
+                                         n
                                          :forward
-                                         :sibling
-                                         :show-fat-parents-and-subtree)))
+                                         :sibling)))
 
 (defun nomis/outline-step-forward/allow-cross-parent (n)
   "Move forward to the N'th heading at same level as this one and run
@@ -393,10 +445,10 @@ Can pass by a superior heading."
   (interactive "p")
   (-nomis/outline-command
       nil
-    (-nomis/outline-prev-or-next-heading n
+    (-nomis/outline-prev-or-next-heading step-lineage-spec
+                                         n
                                          :forward
-                                         :same-level-allow-cross-parent
-                                         :show-fat-parents-and-subtree)))
+                                         :same-level-allow-cross-parent)))
 
 ;;; End
 
