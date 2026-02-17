@@ -228,11 +228,11 @@
 
 ;;; API
 
-;;;; nomis/outline-show-fat-tree-and-increments
+;;;; nomis/outline-show-lineage-with-increments
 
 (defvar *-nomis/outline-show-fat-tree-n-child-levels*)
 
-(defun nomis/outline-show-fat-tree-and-increments ()
+(defun nomis/outline-show-lineage-with-increments ()
   (interactive)
   ;; Repeated invocations cycle amount of child stuff.
   (let* ((level (if (not (eq this-command (-nomis/outline-last-command)))
