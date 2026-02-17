@@ -16,7 +16,8 @@
   ;; c.f. `package-selected-packages` in "emacs-installation/.emacs".
   ;; The strange space below is so that we have the same indentation as we
   ;; have for `package-selected-packages`.
-  '(adoc-mode
+  '(a
+    adoc-mode
     aggressive-indent
     applescript-mode
     auto-complete

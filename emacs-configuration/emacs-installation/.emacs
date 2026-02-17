@@ -25,7 +25,8 @@
      "9ac11c78f208abf58e5b313a33147cbf209ad9dc9cb169bf82464b043b45ad7a"
      default))
  '(package-selected-packages
-   '(adoc-mode
+   '(a
+     adoc-mode
      aggressive-indent
      applescript-mode
      auto-complete
