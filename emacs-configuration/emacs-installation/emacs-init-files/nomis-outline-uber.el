@@ -121,7 +121,7 @@
               (save-excursion
                 (while (and (-nomis/outline-on-heading?)
                             (not (-nomis/outline-on-top-level-heading?)))
-                  (outline-up-heading 1)
+                  (outline-up-heading 1 t)
                   (push (point) ps)))
               ps)))
       (save-excursion
@@ -142,38 +142,13 @@
     (2 (outline-show-branches))
     (3 (outline-show-subtree))))
 
-(defun -nomis/outline-show-lineage* (lineage-spec)
+(defun -nomis/outline-show-lineage (lineage-spec)
   (-nomis/outline-show-parents lineage-spec)
   (-nomis/outline-ensure-heading-shown)
   (-nomis/outline-show-children lineage-spec)
   (when (and (a-get lineage-spec :spec/pulse-max-children?)
              (= (a-get lineage-spec :spec/children-approach) 3))
     (-nomis/outline-pulse-current-section)))
-
-(defun -nomis/outline-show-lineage (lineage-spec)
-  (cl-flet* ((do-it ()
-               (-nomis/outline-show-lineage* lineage-spec)))
-    (cl-ecase 2
-      (1
-       ;; After cross-parent stepping, this expands things more than it should
-       ;; -- all siblings or the current heading are expanded too. I don't
-       ;; understand why. So we don't do this.
-       (do-it))
-      (2
-       ;; Hackily get around the above problem...
-       ;;
-       ;; Ensure point is visible, otherwise point is in a different place when
-       ;; we run `do-it`.
-       (-nomis/outline-ensure-heading-shown)
-       ;; Do the thing we want to do.
-       (run-at-time 0
-                    nil
-                    #'(lambda ()
-                        (do-it)
-                        ;; Our use of `run-at-time` means we need this, because
-                        ;; the automatic restore will have been done before
-                        ;; we've changed what is displayed.
-                        (nomis/outline-maybe-restore-scroll-position)))))))
 
 ;;;; -nomis/outline-command
 
