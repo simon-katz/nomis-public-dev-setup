@@ -118,6 +118,10 @@
 ;;   - `1` / `2` / `3`
 ;;     - Show children/branches/subtree.
 
+(defconst fat-parents-lineage-spec
+  (a-hash-table :spec/pre-hide-all? t
+                :spec/parents-approach :parents/fat))
+
 (defconst max-lineage-spec
   (a-hash-table :spec/parents-approach :parents/fat
                 :spec/children-approach 3))
@@ -333,6 +337,12 @@
 (defun nomis/outline-show-max-lineage ()
   (interactive)
   (-nomis/outline-show-lineage max-lineage-spec))
+
+;;;; nomis/outline-show-fat-parents
+
+(defun nomis/outline-show-fat-parents ()
+  (interactive)
+  (-nomis/outline-show-lineage fat-parents-lineage-spec))
 
 ;;;; nomis/outline-cycle-or-indent-or-complete
 

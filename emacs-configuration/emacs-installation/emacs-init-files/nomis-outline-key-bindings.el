@@ -53,12 +53,10 @@
 ;; | (kbd "C-H-\\")    | nomis/org-visibility-span/more                          |                                        |                             |
 ;; | (kbd "C-H-M-'")   | nomis/org-visibility-span/set-min                       |                                        |                             |
 ;; | (kbd "C-H-M-\\")  | nomis/org-visibility-span/set-max                       |                                        | nomis/outline-show-max-lineage |
-;; | (kbd "H-M-m")     | norg/show-tree-only                                     |                                        | nomis/outline-show-lineage-with-increments |
+;; | (kbd "H-M-m")     | norg/show-tree-only                                     |                                        | nomis/outline-show-fat-parents |
 
 (define-key outline-minor-mode-map (kbd "C-H-M-\\")     'nomis/outline-show-max-lineage)
-(define-key outline-minor-mode-map (kbd "H-M-m")        'nomis/outline-show-lineage-with-increments)
-(define-key outline-minor-mode-map (kbd "H-M-M")        'nomis/outline-show-lineage-with-decrements)
-;; TODO: ^^ Maybe make these tab and shift-tab.
+(define-key outline-minor-mode-map (kbd "H-M-m")        'nomis/outline-show-fat-parents)
 
 ;; | (kbd "H-q H-q s") | norg/set-step-n-levels-to-show                          |                                        |                             |
 
