@@ -154,17 +154,6 @@
              (= (a-get lineage-spec :spec/children-approach) 3))
     (-nomis/outline-pulse-current-section)))
 
-;;;; -nomis/outline-command
-
-(defun -nomis/outline-command* (f)
-  (push-mark)
-  (nomis/scrolling/with-maybe-maintain-line-no-in-window
-    (funcall f)))
-
-(cl-defmacro -nomis/outline-command (_opts &body body)
-  (declare (indent 1))
-  `(-nomis/outline-command* (lambda () ,@body) ))
-
 ;;;; Previous/next helpers
 
 (defun -nomis/outline-prev-next-same-level (direction allow-cross-parent?)
@@ -261,6 +250,17 @@
                                                  "-"))
                           direction-word
                           kind-word))))))
+
+;;;; -nomis/outline-command
+
+(defun -nomis/outline-command* (f)
+  (push-mark)
+  (nomis/scrolling/with-maybe-maintain-line-no-in-window
+    (funcall f)))
+
+(cl-defmacro -nomis/outline-command (_opts &body body)
+  (declare (indent 1))
+  `(-nomis/outline-command* (lambda () ,@body) ))
 
 ;;; API
 
