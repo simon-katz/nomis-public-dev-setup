@@ -8,6 +8,11 @@
 
 ;;; To dos
 
+;; TODO: I don't think I want code to be headings.
+;;       - What would I lose if I remove code from `outline-regexp`?
+;;       - We'd have to do that for all modes (all languages).
+;;       - What about wanting to have my code be useful for other people?
+
 ;; TODO: See to-dos in `nomis-outline-key-bindings`. (There's some duplication
 ;;       with what's here.)
 
