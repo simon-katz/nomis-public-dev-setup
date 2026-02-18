@@ -22,8 +22,6 @@
 ;;       - Make a shared low-level API around org and outline, and
 ;;         make higher-level functions use that.
 
-;; TODO: Make more use of `nomis/popup/message` and friends.
-
 ;;; Utilities
 
 ;;;; Misc
@@ -287,12 +285,12 @@
                           (:any-level "heading")
                           (:sibling "sibling")
                           (:same-level-allow-cross-parent "same-level"))))
-        (error (cl-format nil
-                          "No ~a~a ~a"
-                          (if (= n 1) "" (concat (-nomis/outline-ordinal n)
-                                                 "-"))
-                          direction-word
-                          kind-word))))))
+        (nomis/popup/error-message
+         "No %s%s %s"
+         (if (= n 1) "" (concat (-nomis/outline-ordinal n)
+                                "-"))
+         direction-word
+         kind-word)))))
 
 ;;;; -nomis/outline-command
 
