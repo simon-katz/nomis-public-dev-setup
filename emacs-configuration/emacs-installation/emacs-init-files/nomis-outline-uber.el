@@ -106,7 +106,7 @@
                 :spec/children-approach 3))
 
 (defconst ensure-visible-lineage-spec
-  (a-hash-table :spec/children-approach 0))
+  (a-hash-table))
 
 (defun lineage-with-incs-or-decs-lineage-spec (children-approach)
   (a-hash-table :spec/pre-hide-all? t
@@ -150,6 +150,7 @@
 
 (defun -nomis/outline-hsl-show-children (lineage-spec)
   (cl-ecase (a-get lineage-spec :spec/children-approach)
+    ((nil) nil)
     (0 nil)
     (1 (-nomis/show-children))
     (2 (outline-show-branches))
