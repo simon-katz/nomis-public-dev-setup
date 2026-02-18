@@ -139,7 +139,6 @@
 
 (defun show-children-lineage-spec (children-approach)
   (a-hash-table :spec/pre-hide-children? t
-                :spec/parents-approach :parents/fat
                 :spec/children-approach children-approach
                 :spec/pulse-max-children? t))
 
