@@ -31,6 +31,9 @@
 ;;       stuff). Maybe a prefix in front of the existing bindings. Oh, or maybe
 ;;       a modal UI.
 
+;; TODO: We could integrate hide-show -- so eg `nomis/outline-tab` could do
+;;       `nomis/hs/adjust/more` for children that are code.
+
 ;;; Utilities
 
 ;;;; Misc
