@@ -6,10 +6,6 @@
 (require 'nomis-popup)
 (require 'nomis-scrolling)
 
-;;; To dos
-
-;; TODO: Look into why `run-at-time` is needed.
-
 ;;; Utilities
 
 ;;;; Misc
