@@ -8,6 +8,10 @@
 
 ;;; To dos
 
+;; TODO: There's lots of potential work here and its not straightforward. So for
+;;       now do nothing apart from (a) mull things over, and (b) look at
+;;       existing code.
+
 ;; TODO: I don't think I want code to be headings.
 ;;       - What would I lose if I remove code from `outline-regexp`?
 ;;       - We'd have to do that for all modes (all languages).
