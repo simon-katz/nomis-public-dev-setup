@@ -112,7 +112,7 @@
                 :spec/children-approach 3))
 
 (defconst ensure-visible-lineage-spec
-  (a-hash-table))
+  (a-hash-table :spec/parents-approach :parents/thin))
 
 (defun lineage-with-incs-or-decs-lineage-spec (children-approach)
   (a-hash-table :spec/pre-hide-all? t
