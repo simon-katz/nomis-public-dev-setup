@@ -22,6 +22,9 @@
 ;;       - Implement more commands here.
 ;;       - Make a shared low-level API around org and outline, and
 ;;         make higher-level functions use that.
+;;       - Hmmmm, it might be non-trivial. I see that `norg` uses a mix of
+;;         `outline` and `org` functionality as its base layer. The `org`
+;;         stuff won't be available for outlines.
 
 ;; TODO: The key bindings for hide-show will need to be made different (because
 ;;       they duplicate our `norg` key bindings, which we want for outline
