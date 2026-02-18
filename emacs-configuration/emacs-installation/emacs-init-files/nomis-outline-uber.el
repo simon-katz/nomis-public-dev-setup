@@ -11,10 +11,6 @@
 ;; TODO: See to-dos in `nomis-outline-key-bindings`. (There's some duplication
 ;;       with what's here.)
 
-;; TODO: Look at `H-M-m` and compare with `norg`.
-
-;; TODO: Maybe `Tab` and `Shift-Tab` can be my expand command.
-
 ;; TODO: Compare with `norg` commands.
 ;;       - Indefinite number of levels.
 ;;       - Behaviour when reaching last sibling
