@@ -528,7 +528,9 @@
   (setq nomis/org-alternative-heading-stuff-on-p
         (not nomis/org-alternative-heading-stuff-on-p)))
 
-(add-hook 'org-mode-hook 'nomis/toggle-org-alternative-heading-stuff)
+;; Don't to this -- it blats my new "rainbow" outline colors. Maybe get rid of
+;; these alternative faces altogether.
+;; (add-hook 'org-mode-hook 'nomis/toggle-org-alternative-heading-stuff)
 
 ;;;; ___________________________________________________________________________
 ;;;; ____ * Export1
