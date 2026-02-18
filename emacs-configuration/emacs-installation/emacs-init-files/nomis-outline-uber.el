@@ -17,6 +17,9 @@
 ;;       - We'd have to do that for all modes (all languages).
 ;;       - What about wanting to have my code be useful for other people?
 
+;; TODO: We could integrate hide-show -- so eg `nomis/outline-tab` could do
+;;       `nomis/hs/adjust/more` for children that are code.
+
 ;; TODO: See to-dos in `nomis-outline-key-bindings`. (There's some duplication
 ;;       with what's here.)
 
@@ -34,9 +37,6 @@
 ;;       they duplicate our `norg` key bindings, which we want for outline
 ;;       stuff). Maybe a prefix in front of the existing bindings. Oh, or maybe
 ;;       a modal UI.
-
-;; TODO: We could integrate hide-show -- so eg `nomis/outline-tab` could do
-;;       `nomis/hs/adjust/more` for children that are code.
 
 ;;; Utilities
 
