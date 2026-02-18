@@ -15,12 +15,14 @@
 
 ;; TODO: Maybe `Tab` and `Shift-Tab` can be my expand command.
 
-;; TODO: Compare with `nprg` commands.
+;; TODO: Compare with `norg` commands.
 ;;       - Indefinite number of levels.
 ;;       - Behaviour when reaching last sibling
 ;;       - Implement more commands here.
 ;;       - Make a shared low-level API around org and outline, and
 ;;         make higher-level functions use that.
+
+;; TODO: Make more use of `nomis/popup/message` and friends.
 
 ;;; Utilities
 
