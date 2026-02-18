@@ -137,8 +137,8 @@
 (defconst navigation-lineage-spec
   (a-hash-table :spec/parents-approach :parents/thin))
 
-(defun lineage-with-incs-or-decs-lineage-spec (children-approach)
-  (a-hash-table :spec/pre-hide-all? t
+(defun lineage-with-incs-or-decs-lineage-spec (children-approach) ; TODO: misnomer
+  (a-hash-table :spec/pre-hide-children? t
                 :spec/parents-approach :parents/fat
                 :spec/children-approach children-approach
                 :spec/pulse-max-children? t))
@@ -313,7 +313,8 @@
 (defun nomis/outline-show-lineage-with-incs-or-decs (one-or-minus-one)
   (let* ((approach (if (not (member (-nomis/outline-last-command)
                                     '(nomis/outline-show-lineage-with-increments
-                                      nomis/outline-show-lineage-with-decrements)))
+                                      nomis/outline-show-lineage-with-decrements
+                                      nomis/outline-cycle-or-indent-or-complete)))
                        0
                      (mod (+ -nomis/outline-increments-children-approach
                              one-or-minus-one)
@@ -355,7 +356,7 @@
   (interactive "P")
   (if (and (bolp)
            (looking-at-p outline-regexp))
-      (bicycle-cycle arg)
+      (nomis/outline-show-lineage-with-increments)
     ;; Maybe we could find what Tab would be bound to if `outline-minor-mode`
     ;; were not enabled. I've tried but it's non-trivial. So I'm not bothering,
     ;; at least for now.

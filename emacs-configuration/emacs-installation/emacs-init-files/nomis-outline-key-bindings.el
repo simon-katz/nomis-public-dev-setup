@@ -88,13 +88,14 @@
 ;; |                   | - The following keys are copied from org.el.            |                                        |                             |
 ;; |                   | -- TAB key with modifiers                               |                                        |                             |
 ;; | "\C-i"            | norg/cycle                                              |                                        |                             |
-;; | [(tab)]           | norg/cycle                                              |                                        |                             |
+;; | [(tab)]           | norg/cycle                                              |                                        | nomis/outline-cycle-or-indent-or-complete                            |
 ;; |                   | -- The following line is necessary under Suse GNU/Linux |                                        |                             |
 ;; | [S-iso-lefttab]   | norg/shifttab                                           |                                        |                             |
-;; | [(shift tab)]     | norg/shifttab                                           |                                        |                             |
+;; | [(shift tab)]     | norg/shifttab                                           |                                        | nomis/outline-show-lineage-with-decrements                            |
 ;; | [backtab]         | norg/shifttab                                           |                                        |                             |
 
 (define-key outline-minor-mode-map [tab]               'nomis/outline-cycle-or-indent-or-complete)
+(define-key outline-minor-mode-map [S-tab]             'nomis/outline-show-lineage-with-decrements)
 (define-key outline-minor-mode-map [C-tab]             'bicycle-cycle)
 (define-key outline-minor-mode-map (kbd "H-o <tab>")   'bicycle-cycle-global)
 
