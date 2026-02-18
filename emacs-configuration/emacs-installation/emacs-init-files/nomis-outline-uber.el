@@ -352,8 +352,8 @@ Can pass by a superior heading."
                                          :same-level-allow-cross-parent)))
 
 (defun nomis/outline-step-backward (n)
-  "Move backward to the N'th heading at same level as this one and run
-`outline-hide-other`.
+  "Move backward to the N'th heading at same level as this one, then show
+fat parents and all children.
 Stop at the first and last headings of a superior heading."
   (interactive "p")
   (-nomis/outline-command
@@ -364,8 +364,8 @@ Stop at the first and last headings of a superior heading."
                                          :sibling)))
 
 (defun nomis/outline-step-backward/allow-cross-parent (n)
-  "Move backward to the N'th heading at same level as this one and run
-`outline-hide-other`.
+  "Move backward to the N'th heading at same level as this one, then show
+fat parents and all children.
 Can pass by a superior heading."
   (interactive "p")
   (-nomis/outline-command
@@ -409,8 +409,8 @@ Can pass by a superior heading."
                                          :same-level-allow-cross-parent)))
 
 (defun nomis/outline-step-forward (n)
-  "Move forward to the N'th heading at same level as this one and run
-`outline-hide-other`.
+  "Move forward to the N'th heading at same level as this one, then show
+fat parents and all children.
 Stop at the first and last headings of a superior heading."
   (interactive "p")
   (-nomis/outline-command
@@ -421,8 +421,8 @@ Stop at the first and last headings of a superior heading."
                                          :sibling)))
 
 (defun nomis/outline-step-forward/allow-cross-parent (n)
-  "Move forward to the N'th heading at same level as this one and run
-`outline-hide-other`.
+  "Move forward to the N'th heading at same level as this one, then show
+fat parents and all children.
 Can pass by a superior heading."
   (interactive "p")
   (-nomis/outline-command
