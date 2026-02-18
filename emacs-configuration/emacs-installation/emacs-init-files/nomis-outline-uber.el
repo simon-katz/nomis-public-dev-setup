@@ -89,7 +89,7 @@
 ;;   - boolean
 ;;
 ;; - `:spec/parents-approach`
-;;   - `:parents/leave-as-is`
+;;   - `nil`
 ;;   - `:parents/thin`
 ;;   - `:parents/fat`
 ;;
@@ -106,8 +106,7 @@
                 :spec/children-approach 3))
 
 (defconst ensure-visible-lineage-spec
-  (a-hash-table :spec/parents-approach :parents/leave-as-is
-                :spec/children-approach 0))
+  (a-hash-table :spec/children-approach 0))
 
 (defun lineage-with-incs-or-decs-lineage-spec (children-approach)
   (a-hash-table :spec/pre-hide-all? t
@@ -130,7 +129,7 @@
 
 (defun -nomis/outline-hsl-show-parents (lineage-spec)
   (let* ((parents-approach (a-get lineage-spec :spec/parents-approach)))
-    (unless (eq parents-approach :parents/leave-as-is)
+    (when parents-approach
       (let* ((parent-points
               (let* ((ps '()))
                 (save-excursion
