@@ -96,7 +96,6 @@
 
 (define-key outline-minor-mode-map [tab]               'nomis/outline-tab)
 (define-key outline-minor-mode-map [S-tab]             'nomis/outline-dec-children)
-(define-key outline-minor-mode-map [C-tab]             'bicycle-cycle)
 (define-key outline-minor-mode-map (kbd "H-o <tab>")   'bicycle-cycle-global)
 
 ;; |-------------------+---------------------------------------------------------+----------------------------------------+---------------------------------------------------|
