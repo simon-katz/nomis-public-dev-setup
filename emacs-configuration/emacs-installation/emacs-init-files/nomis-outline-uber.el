@@ -118,26 +118,31 @@
 ;;;; Hide/show lineage
 
 (defun -nomis/outline-show-parents (lineage-spec)
-  (unless (eq (a-get lineage-spec :spec/parents-approach)
-              :parents/leave-as-is)
-    (let* ((parent-points
-            (let* ((ps '()))
-              (save-excursion
-                (while (and (-nomis/outline-on-heading?)
-                            (not (-nomis/outline-on-top-level-heading?)))
-                  (-nomis/outline-up-heading 1)
-                  (push (point) ps)))
-              ps)))
-      (save-excursion
-        (outline-hide-sublevels (-nomis/outline-top-level-level))
-        (cl-loop
-         for p in parent-points
-         do (progn
-              (goto-char p)
-              (-nomis/outline-ensure-heading-shown)
-              (cl-ecase (a-get lineage-spec :spec/parents-approach)
-                (:parents/thin nil)
-                (:parents/fat (-nomis/show-children)))))))))
+  (let* ((parents-approach (a-get lineage-spec :spec/parents-approach)))
+    (unless (eq parents-approach :parents/leave-as-is)
+      (let* ((parent-points
+              (let* ((ps '()))
+                (save-excursion
+                  (while (and (-nomis/outline-on-heading?)
+                              (not (-nomis/outline-on-top-level-heading?)))
+                    (-nomis/outline-up-heading 1)
+                    (push (point) ps)))
+                ps)))
+        (save-excursion
+          (let* ((top-level-level (-nomis/outline-top-level-level))
+                 (hide-level (cl-ecase parents-approach
+                               (:parents/thin (1- top-level-level))
+                               (:parents/fat top-level-level))))
+            (outline-hide-sublevels (max 1 ; avoid error when < 1
+                                         hide-level)))
+          (cl-loop
+           for p in parent-points
+           do (progn
+                (goto-char p)
+                (-nomis/outline-ensure-heading-shown)
+                (cl-ecase parents-approach
+                  (:parents/thin nil)
+                  (:parents/fat (-nomis/show-children))))))))))
 
 (defun -nomis/outline-show-children (lineage-spec)
   (cl-ecase (a-get lineage-spec :spec/children-approach)
