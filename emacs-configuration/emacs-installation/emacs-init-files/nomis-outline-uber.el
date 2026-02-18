@@ -122,7 +122,7 @@
     (when pre-hide-all?
       (let* ((top-level-level (-nomis/outline-top-level-level))
              (hide-level (cl-ecase parents-approach
-                           (:parents/thin (1- top-level-level))
+                           ((nil :parents/thin) (1- top-level-level))
                            (:parents/fat top-level-level))))
         (outline-hide-sublevels (max 1 ; avoid error when < 1
                                      hide-level))))))
