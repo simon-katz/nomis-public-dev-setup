@@ -104,6 +104,9 @@
 ;; - `:spec/pre-hide-all?`
 ;;   - boolean
 ;;
+;; - `:spec/pre-hide-children?`
+;;   - boolean
+;;
 ;; - `:spec/parents-approach` (doesn't hide anything, but can show things)
 ;;   - `nil`
 ;;     - Do nothing.
@@ -175,6 +178,8 @@
                   (:parents/fat (-nomis/show-children))))))))))
 
 (defun -nomis/outline-hsl-show-children (lineage-spec)
+  (when (a-get lineage-spec :spec/pre-hide-children?)
+    (outline-hide-subtree))
   (cl-ecase (a-get lineage-spec :spec/children-approach)
     ((nil) nil)
     (0 nil)
