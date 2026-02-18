@@ -111,7 +111,7 @@
                 :spec/parents-approach :parents/fat
                 :spec/children-approach 3))
 
-(defconst ensure-visible-lineage-spec
+(defconst navigation-lineage-spec
   (a-hash-table :spec/parents-approach :parents/thin))
 
 (defun lineage-with-incs-or-decs-lineage-spec (children-approach)
@@ -336,7 +336,7 @@
   (interactive "p")
   (-nomis/outline-command
       nil
-    (-nomis/outline-prev-or-next-heading ensure-visible-lineage-spec
+    (-nomis/outline-prev-or-next-heading navigation-lineage-spec
                                          n
                                          :backward
                                          :any-level)))
@@ -347,7 +347,7 @@ Stop at the first and last headings of a superior heading."
   (interactive "p")
   (-nomis/outline-command
       nil
-    (-nomis/outline-prev-or-next-heading ensure-visible-lineage-spec
+    (-nomis/outline-prev-or-next-heading navigation-lineage-spec
                                          n
                                          :backward
                                          :sibling)))
@@ -358,7 +358,7 @@ Can pass by a superior heading."
   (interactive "p")
   (-nomis/outline-command
       nil
-    (-nomis/outline-prev-or-next-heading ensure-visible-lineage-spec
+    (-nomis/outline-prev-or-next-heading navigation-lineage-spec
                                          n
                                          :backward
                                          :same-level-allow-cross-parent)))
@@ -393,7 +393,7 @@ Can pass by a superior heading."
   (interactive "p")
   (-nomis/outline-command
       nil
-    (-nomis/outline-prev-or-next-heading ensure-visible-lineage-spec
+    (-nomis/outline-prev-or-next-heading navigation-lineage-spec
                                          n
                                          :forward
                                          :any-level)))
@@ -404,7 +404,7 @@ Stop at the first and last headings of a superior heading."
   (interactive "p")
   (-nomis/outline-command
       nil
-    (-nomis/outline-prev-or-next-heading ensure-visible-lineage-spec
+    (-nomis/outline-prev-or-next-heading navigation-lineage-spec
                                          n
                                          :forward
                                          :sibling)))
@@ -415,7 +415,7 @@ Can pass by a superior heading."
   (interactive "p")
   (-nomis/outline-command
       nil
-    (-nomis/outline-prev-or-next-heading ensure-visible-lineage-spec
+    (-nomis/outline-prev-or-next-heading navigation-lineage-spec
                                          n
                                          :forward
                                          :same-level-allow-cross-parent)))
