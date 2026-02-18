@@ -117,7 +117,7 @@
 
 ;;;; Hide/show lineage
 
-(defun -nomis/outline-show-parents (lineage-spec)
+(defun -nomis/outline-hsl-show-parents (lineage-spec)
   (let* ((parents-approach (a-get lineage-spec :spec/parents-approach)))
     (unless (eq parents-approach :parents/leave-as-is)
       (let* ((parent-points
@@ -144,7 +144,7 @@
                   (:parents/thin nil)
                   (:parents/fat (-nomis/show-children))))))))))
 
-(defun -nomis/outline-show-children (lineage-spec)
+(defun -nomis/outline-hsl-show-children (lineage-spec)
   (cl-ecase (a-get lineage-spec :spec/children-approach)
     (0 nil)
     (1 (-nomis/show-children))
@@ -152,9 +152,9 @@
     (3 (outline-show-subtree))))
 
 (defun -nomis/outline-show-lineage (lineage-spec)
-  (-nomis/outline-show-parents lineage-spec)
+  (-nomis/outline-hsl-show-parents lineage-spec)
   (-nomis/outline-ensure-heading-shown)
-  (-nomis/outline-show-children lineage-spec)
+  (-nomis/outline-hsl-show-children lineage-spec)
   (when (and (a-get lineage-spec :spec/pulse-max-children?)
              (= (a-get lineage-spec :spec/children-approach) 3))
     (-nomis/outline-pulse-current-section)))
