@@ -59,7 +59,7 @@
 ;; Clojure and other languages. (There are historical commits we can look at.
 ;; See commit 2bb138fb "Don't make changes to `outline-regexp`".)
 
-;; Update: See `nomis/outline-cycle-or-indent-or-complete`.
+;; Update: See `nomis/outline-tab`.
 
 ;;; outline-minor-faces
 

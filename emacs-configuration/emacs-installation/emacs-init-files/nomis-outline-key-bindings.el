@@ -3,7 +3,7 @@
 ;;; To dos
 
 ;; TODO: Consider similarities between
-;;       `nomis/outline-show-lineage-with-increments` and the
+;;       `nomis/outline-inc-children` and the
 ;;       `norg/show-children-from-point/xxxx` commands.
 
 ;; TODO: Maybe there is more stuff that could be consolidated across org mode
@@ -88,14 +88,14 @@
 ;; |                   | - The following keys are copied from org.el.            |                                        |                             |
 ;; |                   | -- TAB key with modifiers                               |                                        |                             |
 ;; | "\C-i"            | norg/cycle                                              |                                        |                             |
-;; | [(tab)]           | norg/cycle                                              |                                        | nomis/outline-cycle-or-indent-or-complete                            |
+;; | [(tab)]           | norg/cycle                                              |                                        | nomis/outline-tab                            |
 ;; |                   | -- The following line is necessary under Suse GNU/Linux |                                        |                             |
 ;; | [S-iso-lefttab]   | norg/shifttab                                           |                                        |                             |
-;; | [(shift tab)]     | norg/shifttab                                           |                                        | nomis/outline-show-lineage-with-decrements                            |
+;; | [(shift tab)]     | norg/shifttab                                           |                                        | nomis/outline-dec-children                            |
 ;; | [backtab]         | norg/shifttab                                           |                                        |                             |
 
-(define-key outline-minor-mode-map [tab]               'nomis/outline-cycle-or-indent-or-complete)
-(define-key outline-minor-mode-map [S-tab]             'nomis/outline-show-lineage-with-decrements)
+(define-key outline-minor-mode-map [tab]               'nomis/outline-tab)
+(define-key outline-minor-mode-map [S-tab]             'nomis/outline-dec-children)
 (define-key outline-minor-mode-map [C-tab]             'bicycle-cycle)
 (define-key outline-minor-mode-map (kbd "H-o <tab>")   'bicycle-cycle-global)
 

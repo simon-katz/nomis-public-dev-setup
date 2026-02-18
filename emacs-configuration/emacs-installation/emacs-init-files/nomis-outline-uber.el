@@ -137,7 +137,7 @@
 (defconst navigation-lineage-spec
   (a-hash-table :spec/parents-approach :parents/thin))
 
-(defun lineage-with-incs-or-decs-lineage-spec (children-approach) ; TODO: misnomer
+(defun show-children-lineage-spec (children-approach)
   (a-hash-table :spec/pre-hide-children? t
                 :spec/parents-approach :parents/fat
                 :spec/children-approach children-approach
@@ -306,34 +306,33 @@
 
 ;;; API
 
-;;;; nomis/outline-show-lineage-with-increments
+;;;; nomis/outline-inc-children / nomis/outline-dec-children
 
 (defvar -nomis/outline-increments-children-approach)
 
 (defun nomis/outline-show-lineage-with-incs-or-decs (one-or-minus-one)
   (let* ((approach (if (not (member (-nomis/outline-last-command)
-                                    '(nomis/outline-show-lineage-with-increments
-                                      nomis/outline-show-lineage-with-decrements
-                                      nomis/outline-cycle-or-indent-or-complete)))
+                                    '(nomis/outline-inc-children
+                                      nomis/outline-dec-children
+                                      nomis/outline-tab)))
                        0
                      (mod (+ -nomis/outline-increments-children-approach
                              one-or-minus-one)
                           4))))
     (setq -nomis/outline-increments-children-approach approach)
-    (-nomis/outline-show-lineage (lineage-with-incs-or-decs-lineage-spec
-                                  approach))
+    (-nomis/outline-show-lineage (show-children-lineage-spec approach))
     (cl-ecase approach
       (0 (nomis/popup/message "Folded"))
       (1 (nomis/popup/message "Children"))
       (2 (nomis/popup/message "Branches"))
       (3 (nomis/popup/message "Subtree")))))
 
-(defun nomis/outline-show-lineage-with-increments ()
+(defun nomis/outline-inc-children ()
   (interactive)
   ;; Repeated invocations cycle amount of child stuff.
   (nomis/outline-show-lineage-with-incs-or-decs 1))
 
-(defun nomis/outline-show-lineage-with-decrements ()
+(defun nomis/outline-dec-children ()
   (interactive)
   ;; Repeated invocations cycle amount of child stuff backwards.
   (nomis/outline-show-lineage-with-incs-or-decs -1))
@@ -350,13 +349,13 @@
   (interactive)
   (-nomis/outline-show-lineage fat-parents-lineage-spec))
 
-;;;; nomis/outline-cycle-or-indent-or-complete
+;;;; nomis/outline-tab
 
-(defun nomis/outline-cycle-or-indent-or-complete (arg)
+(defun nomis/outline-tab (arg)
   (interactive "P")
   (if (and (bolp)
            (looking-at-p outline-regexp))
-      (nomis/outline-show-lineage-with-increments)
+      (nomis/outline-inc-children)
     ;; Maybe we could find what Tab would be bound to if `outline-minor-mode`
     ;; were not enabled. I've tried but it's non-trivial. So I'm not bothering,
     ;; at least for now.
