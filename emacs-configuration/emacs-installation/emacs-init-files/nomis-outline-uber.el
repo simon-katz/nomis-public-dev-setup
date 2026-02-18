@@ -85,6 +85,9 @@
 ;; A lineage-spec controls how lineages are displayed and has the following
 ;; entries (with permitted values nested):
 ;;
+;; - `:spec/pre-hide-all?`
+;;   - boolean
+;;
 ;; - `:spec/parents-approach`
 ;;   - `:parents/leave-as-is`
 ;;   - `:parents/thin`
@@ -98,24 +101,32 @@
                 :spec/children-approach 3))
 
 (defconst step-lineage-spec
-  (a-hash-table :spec/parents-approach :parents/fat
+  (a-hash-table :spec/pre-hide-all? t
+                :spec/parents-approach :parents/fat
                 :spec/children-approach 3))
 
 (defconst ensure-visible-lineage-spec
   (a-hash-table :spec/parents-approach :parents/leave-as-is
-                ;; TODO: We need leave-as-is for children, and we want it here.
-                ;;       Ah, things are OK because we have
-                ;;       `:parents/leave-as-is` and so no hiding, and
-                ;;       `-nomis/outline-show-children` doesn't do any hiding.
-                ;;      This is confusing and needs reconsideration.
                 :spec/children-approach 0))
 
 (defun lineage-with-incs-or-decs-lineage-spec (children-approach)
-  (a-hash-table :spec/parents-approach :parents/fat
+  (a-hash-table :spec/pre-hide-all? t
+                :spec/parents-approach :parents/fat
                 :spec/children-approach children-approach
                 :spec/pulse-max-children? t))
 
 ;;;; Hide/show lineage
+
+(defun -nomis/outline-hsl-hide (lineage-spec)
+  (let* ((pre-hide-all? (a-get lineage-spec :spec/pre-hide-all?))
+         (parents-approach (a-get lineage-spec :spec/parents-approach)))
+    (when pre-hide-all?
+      (let* ((top-level-level (-nomis/outline-top-level-level))
+             (hide-level (cl-ecase parents-approach
+                           (:parents/thin (1- top-level-level))
+                           (:parents/fat top-level-level))))
+        (outline-hide-sublevels (max 1 ; avoid error when < 1
+                                     hide-level))))))
 
 (defun -nomis/outline-hsl-show-parents (lineage-spec)
   (let* ((parents-approach (a-get lineage-spec :spec/parents-approach)))
@@ -129,12 +140,6 @@
                     (push (point) ps)))
                 ps)))
         (save-excursion
-          (let* ((top-level-level (-nomis/outline-top-level-level))
-                 (hide-level (cl-ecase parents-approach
-                               (:parents/thin (1- top-level-level))
-                               (:parents/fat top-level-level))))
-            (outline-hide-sublevels (max 1 ; avoid error when < 1
-                                         hide-level)))
           (cl-loop
            for p in parent-points
            do (progn
@@ -152,6 +157,7 @@
     (3 (outline-show-subtree))))
 
 (defun -nomis/outline-show-lineage (lineage-spec)
+  (-nomis/outline-hsl-hide lineage-spec)
   (-nomis/outline-hsl-show-parents lineage-spec)
   (-nomis/outline-ensure-heading-shown)
   (-nomis/outline-hsl-show-children lineage-spec)
