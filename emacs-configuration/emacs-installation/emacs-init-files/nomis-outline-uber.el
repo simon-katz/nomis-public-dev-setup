@@ -311,32 +311,49 @@
 
 (defvar -nomis/outline-increments-children-approach)
 
-(defun nomis/outline-show-lineage-with-incs-or-decs (one-or-minus-one)
-  (let* ((approach (if (not (member (-nomis/outline-last-command)
-                                    '(nomis/outline-inc-children
-                                      nomis/outline-dec-children
-                                      nomis/outline-tab)))
-                       0
-                     (mod (+ -nomis/outline-increments-children-approach
-                             one-or-minus-one)
-                          4))))
-    (setq -nomis/outline-increments-children-approach approach)
-    (-nomis/outline-show-lineage (show-children-lineage-spec approach))
-    (cl-ecase approach
-      (0 (nomis/popup/message "Folded"))
-      (1 (nomis/popup/message "Children"))
-      (2 (nomis/popup/message "Branches"))
-      (3 (nomis/popup/message "Subtree")))))
+(defconst -nomis/outline-children-approach-max 3)
+
+(defun -nomis/outline-inc-dec-message (approach)
+  (cl-ecase approach
+    (0 (nomis/popup/message "Folded"))
+    (1 (nomis/popup/message "Children"))
+    (2 (nomis/popup/message "Branches"))
+    (3 (nomis/popup/message "Subtree"))))
+
+(defun nomis/outline-show-lineage-with-incs-or-decs (inc-or-dec)
+  (let* ((current-approach
+          ;; TODO: At some point change this to look at the actual text rather
+          ;;       than relying on `-nomis/outline-increments-children-approach`.
+          (if (member (-nomis/outline-last-command)
+                      '(nomis/outline-inc-children
+                        nomis/outline-dec-children
+                        nomis/outline-tab))
+              -nomis/outline-increments-children-approach
+            ;; TODO: These out-of-range values are a bit "clever".
+            ;;       Maybe rewrite.
+            (cl-ecase inc-or-dec
+              (:inc -1)
+              (:dec (1+ -nomis/outline-children-approach-max))))))
+    (if (= current-approach (cl-ecase inc-or-dec
+                              (:inc -nomis/outline-children-approach-max)
+                              (:dec 0)))
+        (nomis/popup/error-message (cl-ecase inc-or-dec
+                                     (:inc "Already fully expanded")
+                                     (:dec "Already fully collapsed")))
+      (let* ((approach (cl-ecase inc-or-dec
+                         (:inc (1+ current-approach))
+                         (:dec (1- current-approach)))))
+        (setq -nomis/outline-increments-children-approach approach)
+        (-nomis/outline-show-lineage (show-children-lineage-spec approach))
+        (-nomis/outline-inc-dec-message approach)))))
 
 (defun nomis/outline-inc-children ()
   (interactive)
-  ;; Repeated invocations cycle amount of child stuff.
-  (nomis/outline-show-lineage-with-incs-or-decs 1))
+  (nomis/outline-show-lineage-with-incs-or-decs :inc))
 
 (defun nomis/outline-dec-children ()
   (interactive)
-  ;; Repeated invocations cycle amount of child stuff backwards.
-  (nomis/outline-show-lineage-with-incs-or-decs -1))
+  (nomis/outline-show-lineage-with-incs-or-decs :dec))
 
 ;;;; nomis/outline-show-max-lineage
 
