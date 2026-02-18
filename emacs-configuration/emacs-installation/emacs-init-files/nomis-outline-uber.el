@@ -88,13 +88,19 @@
 ;; - `:spec/pre-hide-all?`
 ;;   - boolean
 ;;
-;; - `:spec/parents-approach`
+;; - `:spec/parents-approach` (doesn't hide anything, but can show things)
 ;;   - `nil`
+;;     - Do nothing.
 ;;   - `:parents/thin`
+;;     - Show parents.
 ;;   - `:parents/fat`
+;;     - Show parents, siblings of parents, and siblings.
 ;;
-;; - `:spec/children-approach`
-;;   - 0, 1, 2 or 3
+;; - `:spec/children-approach` (doesn't hide anything, but can show things)
+;;   - `nil` or `0`
+;;     - Do nothing.
+;;   - `1` / `2` / `3`
+;;     - Show children/branches/subtree.
 
 (defconst max-lineage-spec
   (a-hash-table :spec/parents-approach :parents/fat
