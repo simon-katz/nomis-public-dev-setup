@@ -23,6 +23,11 @@
 ;;       - Make a shared low-level API around org and outline, and
 ;;         make higher-level functions use that.
 
+;; TODO: The key bindings for hide-show will need to be made different (because
+;;       they duplicate our `norg` key bindings, which we want for outline
+;;       stuff). Maybe a prefix in front of the existing bindings. Oh, or maybe
+;;       a modal UI.
+
 ;;; Utilities
 
 ;;;; Misc
