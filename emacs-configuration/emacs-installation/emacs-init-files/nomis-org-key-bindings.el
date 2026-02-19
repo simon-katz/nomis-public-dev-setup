@@ -23,11 +23,11 @@
 ;;;; ___________________________________________________________________________
 ;;;; ____ * Scrolling
 
-;;;; These normally do `org-shiftcontrolup` and `org-shiftcontroldown`. They do
-;;;; things with timestamps, which I don't use.
-;;;; So use the key bindings to do my normal thing:
-(org-defkey org-mode-map (kbd "C-S-<up>")     'nomis/scroll-down-line-in-place)
-(org-defkey org-mode-map (kbd "C-S-<down>")   'nomis/scroll-up-line-in-place)
+;;;; These normally do `org-shiftcontrolup` and `org-shiftcontroldown`, which do
+;;;; things with timestamps. I don't use timestamps. So use the global
+;;;; key bindings.
+(org-defkey org-mode-map (kbd "C-S-<up>")     nil)
+(org-defkey org-mode-map (kbd "C-S-<down>")   nil)
 
 ;;;; ___________________________________________________________________________
 ;;;; ____ * Navigation and cycling
