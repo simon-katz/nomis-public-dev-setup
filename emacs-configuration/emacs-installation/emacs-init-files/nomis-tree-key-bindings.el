@@ -3,17 +3,17 @@
 ;;; nomis/tree/pop-up-help
 
 (defconst -nomis/tree/help
-  "Nomis Org Navigation and Cycling Help
-=====================================
+  "Nomis Tree Help
+===============
 
 Use H with various other keys:
 
-    Move forward or backward headlines
+    Move forward or backward headings
         , .
         < > (add S to , . on my keyboard) to cross the parent level
         Add M to step (ie collapse then move then expand)
-        Add C to visit headlines at any level
-        Add C-M to visit headlines at any level collapsing to current tree
+        Add C to visit headings at any level
+        Add C-M to visit headings at any level collapsing to current tree
 
     Expand and collapse from current point
         ' \\
