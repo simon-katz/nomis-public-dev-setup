@@ -335,6 +335,9 @@
 (require 'nomis-outline-uber)
 (require 'nomis-outline-key-bindings)
 
+(require 'nomis-tree)
+(require 'nomis-tree-key-bindings)
+
 ;; (eval-after-load "isearch" '(require 'isearch+))
 ;; Is this the cause of problems with Magit when trying to commit?...
 ;; -- *ERROR*: ‘recenter’ing a window that does not display current-buffer.
