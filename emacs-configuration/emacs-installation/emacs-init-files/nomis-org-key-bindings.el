@@ -33,60 +33,6 @@
 ;;;; ____ * Navigation and cycling
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-;;;; ____ ** The design of some of these key chords
-
-(defconst -nomis/org/navigation-and-cycling-help
-  "Nomis Org Navigation and Cycling Help
-=====================================
-
-Use H with various other keys:
-
-    Move forward or backward headlines
-        , .
-        < > (add S to , . on my keyboard) to cross the parent level
-        Add M to step (ie collapse then move then expand)
-        Add C to visit headlines at any level
-        Add C-M to visit headlines at any level collapsing to current tree
-
-    Expand and collapse from current point
-        ' \\
-        Add M to fully expand or collapse
-        Add C for visibility cycling of spans
-
-    Expand and collapse from root of current point
-        \" | (that's S-' and S-\ on my keyboard.)
-        Add M to fully expand or collapse
-
-    Expand and collapse from parent of current point
-        [ ]
-        Add M to fully expand or collapse
-
-    Expands and collapses all roots
-        - =
-        Add M to fully expand or collapse
-
-
-H-M-m    norg/show-tree-only
-
-H-q H-s  norg/set-step-n-levels-to-show
-H-q H-m  nomis/scrolling/toggle-maintain-line-no-in-window
-
-H-q H-]  norg/show-children-from-root/to-current-level
-H-q H-=  norg/show-children-from-all-roots/to-current-level
-
-H-q H-/  Show this help")
-
-(defun nomis/org/pop-up-navigation-and-cycling-help ()
-  (interactive)
-  (cl-case 2
-    (1 (let* ((*nomis/popup/message/auto-dismiss?* nil))
-         (nomis/popup/message "%s" -nomis/org/navigation-and-cycling-help)))
-    (2 (with-help-window (help-buffer)
-         (princ -nomis/org/navigation-and-cycling-help)))))
-
-(define-key org-mode-map (kbd "H-q H-q /") 'nomis/org/pop-up-navigation-and-cycling-help)
-
-;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ;;;; ____ ** Following links
 
 (define-key org-mode-map (kbd "M-.") 'org-open-at-point)
