@@ -1,20 +1,5 @@
 ;;; Init stuff -- nomis-outline-key-bindings --  -*- lexical-binding: t -*-
 
-;;; To dos
-
-;; TODO: Consider similarities between
-;;       `nomis/outline-inc-children` and the
-;;       `norg/show-children-from-point/xxxx` commands.
-
-;; TODO: Maybe there is more stuff that could be consolidated across org mode
-;;       and outline mode.
-
-;; TODO: Maybe we don't need some of the old hide/show stuff -- maybe bicycle
-;;       stuff is good enough.
-
-;; TODO: Make make `norg/set-step-n-levels-to-show`-style functionality
-;;       available in other modes.
-
 ;;; Temporary keybindings to train myself for change of Projectile keybindings
 
 (defun -nomis/outline/projectile-keybinding-error ()
@@ -37,11 +22,11 @@
 ;;; Key bindings for outline-minor-mode-map, cross-referncing `org-mode` mode and `hs-minor-mode`
 
 ;; |-------------------+---------------------------------------------------------+----------------------------------------+-----------------------------|
-;; | Key               | org mode                                                | hide/show                              | outline                     |
+;; | Key               | org mode                                                | hide-show                              | outline                     |
 
 ;; |-------------------+---------------------------------------------------------+----------------------------------------+-----------------------------|
 ;; |                   | ---- Help ----                                          |                                        |                             |
-;; | (kbd "H-q H-q /") | nomis/org/pop-up-navigation-and-cycling-help            |                                        | TODO                        |
+;; | (kbd "H-q H-q /") | nomis/org/pop-up-navigation-and-cycling-help            |                                        | TODO  (or wait until unification with `norg`) |
 
 ;; |-------------------+---------------------------------------------------------+----------------------------------------+-----------------------------|
 ;; |                   | ---- Following links ----                               |                                        |                             |

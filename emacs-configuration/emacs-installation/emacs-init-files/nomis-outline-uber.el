@@ -12,6 +12,11 @@
 ;;       now do nothing apart from (a) mull things over, and (b) look at
 ;;       existing code.
 
+;; TODO: The tables in `nomis-outline-key-bindings` summarise `norg`,
+;;       `hide-show` and `nomis/outline`.
+
+;; TODO: Have we decided that we don't want `bicycle`? (I think we have.)
+
 ;; TODO: I don't think I want code to be headings.
 ;;       - What would I lose if I remove code from `outline-regexp`?
 ;;       - We'd have to do that for all modes (all languages).
@@ -20,8 +25,8 @@
 ;; TODO: We could integrate hide-show -- so eg `nomis/outline-tab` could do
 ;;       `nomis/hs/adjust/more` for children that are code.
 
-;; TODO: See to-dos in `nomis-outline-key-bindings`. (There's some duplication
-;;       with what's here.)
+;; TODO: Make make `norg/set-step-n-levels-to-show`-style functionality
+;;       available here.
 
 ;; TODO: Compare with `norg` commands.
 ;;       - Indefinite number of levels.
@@ -57,19 +62,19 @@
 (defun -nomis/outline-on-heading? ()
   (outline-on-heading-p t))
 
-(defun -nomis/outline-on-visible-heading? () ; TODO: Unused.
+(defun -nomis/outline-on-visible-heading? ()
   (outline-on-heading-p))
 
 (defun -nomis/outline-back-to-heading? ()
   (outline-back-to-heading t))
 
-(defun -nomis/outline-back-to-visible-heading? () ; TODO: Unused.
+(defun -nomis/outline-back-to-visible-heading? ()
   (outline-back-to-heading))
 
 (defun -nomis/outline-up-heading (n)
   (outline-up-heading n t))
 
-(defun -nomis/outline-up-visible-heading (n) ; TODO: Unused.
+(defun -nomis/outline-up-visible-heading (n)
   (outline-up-heading n))
 
 (defun -nomis/outline-at-beginning-of-heading? ()
