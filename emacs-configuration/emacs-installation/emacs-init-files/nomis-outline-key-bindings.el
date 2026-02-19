@@ -17,9 +17,15 @@
 
 ;;; Temporary keybindings to train myself for change of Projectile keybindings
 
-(define-key projectile-mode-map (kbd "H-o d") (lambda () (interactive) (error "Nope, Projectile is M-o now")))
-(define-key projectile-mode-map (kbd "H-o f") (lambda () (interactive) (error "Nope, Projectile is M-o now")))
-(define-key projectile-mode-map (kbd "H-o g") (lambda () (interactive) (error "Nope, Projectile is M-o now")))
+(defun -nomis/outline/projectile-keybinding-error ()
+  (interactive)
+  (nomis/msg/pulse-buffer-error)
+  (nomis/temporarily-disable-keys t) ; avoid accidental input
+  (error "Nope, Projectile is M-o now"))
+
+(define-key projectile-mode-map (kbd "H-o d") '-nomis/outline/projectile-keybinding-error)
+(define-key projectile-mode-map (kbd "H-o f") '-nomis/outline/projectile-keybinding-error)
+(define-key projectile-mode-map (kbd "H-o g") '-nomis/outline/projectile-keybinding-error)
 
 ;;; Make RET give us a newline
 
