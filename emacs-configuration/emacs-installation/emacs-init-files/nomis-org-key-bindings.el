@@ -13,7 +13,7 @@
 (global-set-key "\C-ca" 'org-agenda)
 (global-set-key "\C-cb" 'org-iswitchb)
 
-(org-defkey global-map "\C-cc" 'org-capture)
+(define-key global-map "\C-cc" 'org-capture)
 
 ;;;; ___________________________________________________________________________
 ;;;; ____ * Hooks
@@ -26,8 +26,8 @@
 ;;;; These normally do `org-shiftcontrolup` and `org-shiftcontroldown`, which do
 ;;;; things with timestamps. I don't use timestamps. So use the global
 ;;;; key bindings.
-(org-defkey org-mode-map (kbd "C-S-<up>")     nil)
-(org-defkey org-mode-map (kbd "C-S-<down>")   nil)
+(define-key org-mode-map (kbd "C-S-<up>")     nil)
+(define-key org-mode-map (kbd "C-S-<down>")   nil)
 
 ;;;; ___________________________________________________________________________
 ;;;; ____ * Navigation and cycling
@@ -84,96 +84,96 @@ H-q H-/  Show this help")
     (2 (with-help-window (help-buffer)
          (princ -nomis/org/navigation-and-cycling-help)))))
 
-(org-defkey org-mode-map (kbd "H-q H-q /") 'nomis/org/pop-up-navigation-and-cycling-help)
+(define-key org-mode-map (kbd "H-q H-q /") 'nomis/org/pop-up-navigation-and-cycling-help)
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ;;;; ____ ** Following links
 
-(org-defkey org-mode-map (kbd "M-.") 'org-open-at-point)
-(org-defkey org-mode-map (kbd "M-,") 'org-mark-ring-goto)
+(define-key org-mode-map (kbd "M-.") 'org-open-at-point)
+(define-key org-mode-map (kbd "M-,") 'org-mark-ring-goto)
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ;;;; ____ ** Search heading text
 
-(org-defkey org-mode-map (kbd "H-S")      'nomis/org-search-heading-text)
-(org-defkey org-mode-map (kbd "H-s")      'nomis/org-search-heading-text-again)
+(define-key org-mode-map (kbd "H-S")      'nomis/org-search-heading-text)
+(define-key org-mode-map (kbd "H-s")      'nomis/org-search-heading-text-again)
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ;;;; ____ ** Visibility span
 
-(org-defkey org-mode-map (kbd "C-H-'")    'nomis/org-visibility-span/less)
-(org-defkey org-mode-map (kbd "C-H-\\")   'nomis/org-visibility-span/more)
-(org-defkey org-mode-map (kbd "C-H-M-'")  'nomis/org-visibility-span/set-min)
-(org-defkey org-mode-map (kbd "C-H-M-\\") 'nomis/org-visibility-span/set-max)
+(define-key org-mode-map (kbd "C-H-'")    'nomis/org-visibility-span/less)
+(define-key org-mode-map (kbd "C-H-\\")   'nomis/org-visibility-span/more)
+(define-key org-mode-map (kbd "C-H-M-'")  'nomis/org-visibility-span/set-min)
+(define-key org-mode-map (kbd "C-H-M-\\") 'nomis/org-visibility-span/set-max)
 
-(org-defkey org-mode-map (kbd "H-M-m")       'norg/show-tree-only)
-(org-defkey org-mode-map (kbd "H-q H-q s") 'norg/set-step-n-levels-to-show)
+(define-key org-mode-map (kbd "H-M-m")       'norg/show-tree-only)
+(define-key org-mode-map (kbd "H-q H-q s") 'norg/set-step-n-levels-to-show)
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ;;;; ____ ** Expand/collapse
 
-(org-defkey org-mode-map (kbd "H-'")     'norg/show-children-from-point/incremental/less)
-(org-defkey org-mode-map (kbd "H-\\")    'norg/show-children-from-point/incremental/more)
-(org-defkey org-mode-map (kbd "H-M-'")   'norg/show-children-from-point/set-min)
-(org-defkey org-mode-map (kbd "H-M-\\")  'norg/show-children-from-point/fully-expand)
+(define-key org-mode-map (kbd "H-'")     'norg/show-children-from-point/incremental/less)
+(define-key org-mode-map (kbd "H-\\")    'norg/show-children-from-point/incremental/more)
+(define-key org-mode-map (kbd "H-M-'")   'norg/show-children-from-point/set-min)
+(define-key org-mode-map (kbd "H-M-\\")  'norg/show-children-from-point/fully-expand)
 
-(org-defkey org-mode-map (kbd "H-\"")    'norg/show-children-from-root/incremental/less)
-(org-defkey org-mode-map (kbd "H-|")     'norg/show-children-from-root/incremental/more)
-(org-defkey org-mode-map (kbd "H-M-\"")  'norg/show-children-from-root/set-min)
-(org-defkey org-mode-map (kbd "H-M-|")   'norg/show-children-from-root/fully-expand)
+(define-key org-mode-map (kbd "H-\"")    'norg/show-children-from-root/incremental/less)
+(define-key org-mode-map (kbd "H-|")     'norg/show-children-from-root/incremental/more)
+(define-key org-mode-map (kbd "H-M-\"")  'norg/show-children-from-root/set-min)
+(define-key org-mode-map (kbd "H-M-|")   'norg/show-children-from-root/fully-expand)
 
-(org-defkey org-mode-map (kbd "H-[")     'norg/show-children-from-parent/incremental/less)
-(org-defkey org-mode-map (kbd "H-]")     'norg/show-children-from-parent/incremental/more)
-(org-defkey org-mode-map (kbd "H-M-[")   'norg/show-children-from-parent/set-min)
-(org-defkey org-mode-map (kbd "H-M-]")   'norg/show-children-from-parent/fully-expand)
+(define-key org-mode-map (kbd "H-[")     'norg/show-children-from-parent/incremental/less)
+(define-key org-mode-map (kbd "H-]")     'norg/show-children-from-parent/incremental/more)
+(define-key org-mode-map (kbd "H-M-[")   'norg/show-children-from-parent/set-min)
+(define-key org-mode-map (kbd "H-M-]")   'norg/show-children-from-parent/fully-expand)
 
-(org-defkey org-mode-map (kbd "H--")     'norg/show-children-from-all-roots/incremental/less)
-(org-defkey org-mode-map (kbd "H-=")     'norg/show-children-from-all-roots/incremental/more)
-(org-defkey org-mode-map (kbd "H-M--")   'norg/show-children-from-all-roots/set-min)
-(org-defkey org-mode-map (kbd "H-M-=")   'norg/show-children-from-all-roots/fully-expand)
+(define-key org-mode-map (kbd "H--")     'norg/show-children-from-all-roots/incremental/less)
+(define-key org-mode-map (kbd "H-=")     'norg/show-children-from-all-roots/incremental/more)
+(define-key org-mode-map (kbd "H-M--")   'norg/show-children-from-all-roots/set-min)
+(define-key org-mode-map (kbd "H-M-=")   'norg/show-children-from-all-roots/fully-expand)
 
-(org-defkey org-mode-map (kbd "H-q H-q ]") 'norg/show-children-from-root/to-current-level)
-(org-defkey org-mode-map (kbd "H-q H-q =") 'norg/show-children-from-all-roots/to-current-level)
+(define-key org-mode-map (kbd "H-q H-q ]") 'norg/show-children-from-root/to-current-level)
+(define-key org-mode-map (kbd "H-q H-q =") 'norg/show-children-from-all-roots/to-current-level)
 
 ;;; The following keys are copied from org.el.
 ;; TAB key with modifiers
-(org-defkey org-mode-map "\C-i"          'norg/cycle)
-(org-defkey org-mode-map [(tab)]         'norg/cycle)
+(define-key org-mode-map "\C-i"          'norg/cycle)
+(define-key org-mode-map [(tab)]         'norg/cycle)
 ;; The following line is necessary under Suse GNU/Linux
-(org-defkey org-mode-map [S-iso-lefttab] 'norg/shifttab)
-(org-defkey org-mode-map [(shift tab)]   'norg/shifttab)
+(define-key org-mode-map [S-iso-lefttab] 'norg/shifttab)
+(define-key org-mode-map [(shift tab)]   'norg/shifttab)
 (define-key org-mode-map [backtab]       'norg/shifttab)
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ;;;; ____ ** Movement
 
-(org-defkey org-mode-map (kbd "H-,")     'norg/backward-heading-same-level)
-(org-defkey org-mode-map (kbd "H-.")     'norg/forward-heading-same-level)
-(org-defkey org-mode-map (kbd "H-<")     'norg/backward-heading-same-level/allow-cross-parent)
-(org-defkey org-mode-map (kbd "H->")     'norg/forward-heading-same-level/allow-cross-parent)
+(define-key org-mode-map (kbd "H-,")     'norg/backward-heading-same-level)
+(define-key org-mode-map (kbd "H-.")     'norg/forward-heading-same-level)
+(define-key org-mode-map (kbd "H-<")     'norg/backward-heading-same-level/allow-cross-parent)
+(define-key org-mode-map (kbd "H->")     'norg/forward-heading-same-level/allow-cross-parent)
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ;;;; ____ ** Movement + expand/collapse
 
-(org-defkey org-mode-map (kbd "H-M-,")   'norg/step-backward)
-(org-defkey org-mode-map (kbd "H-M-.")   'norg/step-forward)
-(org-defkey org-mode-map (kbd "H-M-<")   'norg/step-backward/allow-cross-parent)
-(org-defkey org-mode-map (kbd "H-M->")   'norg/step-forward/allow-cross-parent)
+(define-key org-mode-map (kbd "H-M-,")   'norg/step-backward)
+(define-key org-mode-map (kbd "H-M-.")   'norg/step-forward)
+(define-key org-mode-map (kbd "H-M-<")   'norg/step-backward/allow-cross-parent)
+(define-key org-mode-map (kbd "H-M->")   'norg/step-forward/allow-cross-parent)
 
-(org-defkey org-mode-map (kbd "C-H-,")   'norg/backward-heading/any-level)
-(org-defkey org-mode-map (kbd "C-H-.")   'norg/forward-heading/any-level)
-(org-defkey org-mode-map (kbd "C-H-M-,") 'norg/backward-heading/any-level/set-tree+body)
-(org-defkey org-mode-map (kbd "C-H-M-.") 'norg/forward-heading/any-level/set-tree+body)
+(define-key org-mode-map (kbd "C-H-,")   'norg/backward-heading/any-level)
+(define-key org-mode-map (kbd "C-H-.")   'norg/forward-heading/any-level)
+(define-key org-mode-map (kbd "C-H-M-,") 'norg/backward-heading/any-level/set-tree+body)
+(define-key org-mode-map (kbd "C-H-M-.") 'norg/forward-heading/any-level/set-tree+body)
 
-;; (org-defkey org-mode-map (kbd "C-H-<")   ????) ; No real meaning -- with the M we are already crossing parent levels
-;; (org-defkey org-mode-map (kbd "C-H->")   ????) ; No real meaning -- with the M we are already crossing parent levels
-;; (org-defkey org-mode-map (kbd "C-H-M-<") ????) ; No real meaning -- with the M we are already crossing parent levels
-;; (org-defkey org-mode-map (kbd "C-H-M->") ????) ; No real meaning -- with the M we are already crossing parent levels
+;; (define-key org-mode-map (kbd "C-H-<")   ????) ; No real meaning -- with the M we are already crossing parent levels
+;; (define-key org-mode-map (kbd "C-H->")   ????) ; No real meaning -- with the M we are already crossing parent levels
+;; (define-key org-mode-map (kbd "C-H-M-<") ????) ; No real meaning -- with the M we are already crossing parent levels
+;; (define-key org-mode-map (kbd "C-H-M->") ????) ; No real meaning -- with the M we are already crossing parent levels
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ;;;; ____ ** Maintain cursor position
 
-(org-defkey org-mode-map (kbd "H-q H-q m") 'nomis/scrolling/toggle-maintain-line-no-in-window)
+(define-key org-mode-map (kbd "H-q H-q m") 'nomis/scrolling/toggle-maintain-line-no-in-window)
 
 ;;;; ___________________________________________________________________________
 ;;;; ____ * Agenda
@@ -182,11 +182,11 @@ H-q H-/  Show this help")
   (defun nomis/setup-org-keys ()
     ;; I don't like RETURN in org agenda giving ORG-AGENDA-SWITCH-TO.
     ;; I prefer this:
-    (org-defkey org-agenda-mode-map "\C-m" 'org-agenda-show)
-    (org-defkey org-agenda-mode-map (kbd "<SPC>") 'org-agenda-show)
+    (define-key org-agenda-mode-map "\C-m" 'org-agenda-show)
+    (define-key org-agenda-mode-map (kbd "<SPC>") 'org-agenda-show)
     ;; Stuff that got changed when I upgraded to Emacs 26.1 -- this is mad!
-    (org-defkey org-mode-map (kbd "M-S-<down>") 'org-move-subtree-down)
-    (org-defkey org-mode-map (kbd "M-S-<up>")   'org-move-subtree-up))
+    (define-key org-mode-map (kbd "M-S-<down>") 'org-move-subtree-down)
+    (define-key org-mode-map (kbd "M-S-<up>")   'org-move-subtree-up))
   (add-hook 'org-mode-hook 'nomis/setup-org-keys))
 
 ;;;; ___________________________________________________________________________
