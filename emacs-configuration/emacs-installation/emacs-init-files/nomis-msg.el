@@ -183,6 +183,16 @@
 (defun nomis/msg/pulse-buffer ()
   (pulse-momentary-highlight-region (point-min) (point-max)))
 
+(defface nomis/msg/error
+  `((t ,(list :background "red"
+              :extend t)))
+  "Face for flashing buffers on error.")
+
+(defun nomis/msg/pulse-buffer-error ()
+  (pulse-momentary-highlight-region (point-min)
+                                    (point-max)
+                                    'nomis/msg/error))
+
 ;;;; ___________________________________________________________________________
 
 (provide 'nomis-msg)
