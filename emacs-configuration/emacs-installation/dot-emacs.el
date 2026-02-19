@@ -145,6 +145,7 @@
 
 (require 'nomis-core-utils)
 (require 'nomis-very-general-stuff-new)
+(require 'nomis-very-general-stuff-new-lexical)
 (require 'nomis-message-window)
 
 (require 'nomis-themes)
