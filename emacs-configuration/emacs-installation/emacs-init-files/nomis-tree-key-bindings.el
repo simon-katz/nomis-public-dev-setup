@@ -1,5 +1,17 @@
 ;;; nomis-tree-key-bindings -*- lexical-binding: t -*-
 
+;;; Temporary keybindings to train myself for change of Projectile keybindings
+
+(defun -nomis/outline/projectile-keybinding-error ()
+  (interactive)
+  (nomis/msg/pulse-buffer-error)
+  (nomis/temporarily-disable-keys t) ; avoid accidental input
+  (error "Nope, Projectile is M-o now"))
+
+(define-key projectile-mode-map (kbd "H-o d") '-nomis/outline/projectile-keybinding-error)
+(define-key projectile-mode-map (kbd "H-o f") '-nomis/outline/projectile-keybinding-error)
+(define-key projectile-mode-map (kbd "H-o g") '-nomis/outline/projectile-keybinding-error)
+
 ;;; nomis/tree/pop-up-help
 
 (defconst -nomis/tree/help
