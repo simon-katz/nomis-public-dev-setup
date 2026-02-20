@@ -139,10 +139,10 @@
 ;; - `:spec/children-approach` (doesn't hide anything, but can show things)
 ;;   - `nil` or `0`
 ;;     - Do nothing.
-;;   - `1` / `2` / `3`
-;;     - Show children/branches/subtree.
+;;   - `1` / `2` / `3` / `4`
+;;     - Show body/children/branches/subtree.
 
-(defconst -nomis/outline-children-approach-max 3)
+(defconst -nomis/outline-children-approach-max 4)
 
 (defconst fat-parents-lineage-spec
   (a-hash-table :spec/pre-hide-all? t
@@ -205,9 +205,12 @@
   (cl-ecase (a-get lineage-spec :spec/children-approach)
     ((nil) nil)
     (0 nil)
-    (1 (-nomis/show-children))
-    (2 (outline-show-branches))
-    (3 (outline-show-subtree))))
+    (1 (outline-show-entry))
+    (2 (outline-show-entry)
+       (-nomis/show-children))
+    (3 (outline-show-entry)
+       (outline-show-branches))
+    (4 (outline-show-subtree))))
 
 (defun -nomis/outline-show-lineage (lineage-spec)
   (-nomis/outline-hsl-hide lineage-spec)
@@ -336,9 +339,10 @@
 (defun -nomis/outline-inc-dec-message (approach)
   (cl-ecase approach
     (0 (nomis/popup/message "Folded"))
-    (1 (nomis/popup/message "Children"))
-    (2 (nomis/popup/message "Branches"))
-    (3 (nomis/popup/message "Subtree"))))
+    (1 (nomis/popup/message "Body"))
+    (2 (nomis/popup/message "Children"))
+    (3 (nomis/popup/message "Branches"))
+    (4 (nomis/popup/message "Subtree"))))
 
 (defun nomis/outline-show-lineage-with-incs-or-decs (inc-or-dec)
   (let* ((current-approach
