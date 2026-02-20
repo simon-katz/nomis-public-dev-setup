@@ -52,10 +52,10 @@ H-M-m        nomis/tree/show-tree-only
 H-q H-q s    nomis/tree/set-step-n-levels-to-show
 H-q H-q m    nomis/scrolling/toggle-maintain-line-no-in-window
 
-H-q H-]      norg/show-children-from-root/to-current-level
-H-q H-=      norg/show-children-from-all-roots/to-current-level
+H-q H-q ]    norg/show-children-from-root/to-current-level
+H-q H-q =    norg/show-children-from-all-roots/to-current-level
 
-H-q H-/      Show this help")
+H-q H-q /    Show this help")
 
 (defun nomis/tree/pop-up-help ()
   (interactive)
