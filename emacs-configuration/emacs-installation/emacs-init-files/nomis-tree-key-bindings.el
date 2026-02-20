@@ -45,15 +45,15 @@ Use H with various other keys:
         Add M to fully expand or collapse
 
 
-H-M-m    norg/show-tree-only
+H-M-m        nomis/tree/show-tree-only
 
-H-q H-s  norg/set-step-n-levels-to-show
-H-q H-m  nomis/scrolling/toggle-maintain-line-no-in-window
+H-q H-q H-s  nomis/tree/set-step-n-levels-to-show
+H-q H-m      nomis/scrolling/toggle-maintain-line-no-in-window
 
-H-q H-]  norg/show-children-from-root/to-current-level
-H-q H-=  norg/show-children-from-all-roots/to-current-level
+H-q H-]      norg/show-children-from-root/to-current-level
+H-q H-=      norg/show-children-from-all-roots/to-current-level
 
-H-q H-/  Show this help")
+H-q H-/      Show this help")
 
 (defun nomis/tree/pop-up-help ()
   (interactive)

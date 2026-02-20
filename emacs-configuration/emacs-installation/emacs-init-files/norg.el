@@ -443,9 +443,14 @@ headline."
     (collapse)
     (org-show-set-visibility detail)))
 
-(defun norg/show-tree-only ()
-  (interactive)
+(cl-defmethod nomis/tree/show-tree-only--aux ((k (eql :org)))
   (norg/collapse-all-and-set-visibility-span 'tree))
+
+;;;; ___________________________________________________________________________
+;;;; ---- * Max lineage
+
+(cl-defmethod nomis/tree/max-lineage--aux ((k (eql :org)))
+  (error "Not supported: %s %s" k this-command))
 
 ;;;; ___________________________________________________________________________
 ;;;; ____ * Navigation
@@ -594,8 +599,8 @@ Same for the `backward` commands.")
 
 (defvar norg/step-n-levels-to-show nil)
 
-(defun norg/set-step-n-levels-to-show (n)
-  (interactive "P")
+(cl-defmethod nomis/tree/set-step-n-levels-to-show--aux ((k (eql :org))
+                                                         n)
   (when (null n)
     (setq n
           (let* ((s (read-string

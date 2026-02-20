@@ -114,13 +114,7 @@
         1)))
 
 (defconst -nomis/org-visibility-span/commands
-  '(nomis/org-visibility-span/more
-    nomis/org-visibility-span/less
-    nomis/org-visibility-span/set-min
-    nomis/org-visibility-span/set-max
-    ;; Knowledge of these commands doesn't belong here, but that will come out
-    ;; in the wash after we finish consolidating org and outline.
-    nomis/tree/visibility-span/less
+  '(nomis/tree/visibility-span/less
     nomis/tree/visibility-span/more
     nomis/tree/visibility-span/set-min
     nomis/tree/visibility-span/set-max))
@@ -167,20 +161,16 @@
         (unless no-message?
           (nomis/popup/message "%s" msg))))))
 
-(defun nomis/org-visibility-span/more ()
-  (interactive)
+(cl-defmethod nomis/tree/visibility-span/more--aux ((k (eql :org)))
   (-nomis/org-visibility-span/set-level/numeric 1 t))
 
-(defun nomis/org-visibility-span/less ()
-  (interactive)
+(cl-defmethod nomis/tree/visibility-span/less--aux ((k (eql :org)))
   (-nomis/org-visibility-span/set-level/numeric -1 t))
 
-(defun nomis/org-visibility-span/set-min ()
-  (interactive)
+(cl-defmethod nomis/tree/visibility-span/set-min--aux ((k (eql :org)))
   (-nomis/org-visibility-span/set-level/numeric 0 nil))
 
-(defun nomis/org-visibility-span/set-max ()
-  (interactive)
+(cl-defmethod nomis/tree/visibility-span/set-max--aux ((k (eql :org)))
   (let* ((v -nomis/org-visibility-span/max-value))
     (-nomis/org-visibility-span/set-level/numeric v nil)))
 

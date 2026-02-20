@@ -25,7 +25,7 @@
 ;; TODO: We could integrate hide-show -- so eg `nomis/outline-tab` could do
 ;;       `nomis/hs/adjust/more` for children that are code.
 
-;; TODO: Make make `norg/set-step-n-levels-to-show`-style functionality
+;; TODO: Make `nomis/tree/set-step-n-levels-to-show`-style functionality
 ;;       available here.
 
 ;; TODO: Compare with `norg` commands.
@@ -387,21 +387,33 @@
 
 ;;;; nomis/outline/visibility-span/set-max
 
-(defun nomis/outline/visibility-span/set-max ()
-  (interactive)
+(cl-defmethod nomis/tree/visibility-span/less--aux ((k (eql :outline)))
+  (error "Not supported: %s %s" k this-command))
+
+(cl-defmethod nomis/tree/visibility-span/more--aux ((k (eql :outline)))
+  (error "Not supported: %s %s" k this-command))
+
+(cl-defmethod nomis/tree/visibility-span/set-min--aux ((k (eql :outline)))
+  (error "Not supported: %s %s" k this-command))
+
+(cl-defmethod nomis/tree/visibility-span/set-max--aux ((k (eql :outline)))
   (-nomis/outline-show-lineage max-visibility-span-lineage-spec))
 
 ;;;; nomis/outline-show-max-lineage
 
-(defun nomis/outline-show-max-lineage ()
-  (interactive)
+(cl-defmethod nomis/tree/max-lineage--aux ((k (eql :outline)))
   (-nomis/outline-show-lineage max-lineage-spec))
 
-;;;; nomis/outline-show-fat-parents
+;;;; nomis/tree/show-tree-only--aux
 
-(defun nomis/outline-show-fat-parents ()
-  (interactive)
+(cl-defmethod nomis/tree/show-tree-only--aux ((k (eql :outline)))
   (-nomis/outline-show-lineage fat-parents-lineage-spec))
+
+;;;; nomis/tree/set-step-n-levels-to-show--aux
+
+(cl-defmethod nomis/tree/set-step-n-levels-to-show--aux ((k (eql :outline))
+                                                         n)
+  (error "Not supported: %s %s" k this-command))
 
 ;;;; nomis/outline-tab
 

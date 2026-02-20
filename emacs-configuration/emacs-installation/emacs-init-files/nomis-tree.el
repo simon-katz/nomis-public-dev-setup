@@ -40,57 +40,49 @@
         (t
          (error "Unexpected: None of outline-mode, outline-minor-mode or org-mode is active"))))
 
-(defun -not-supported ()
-  (error "Not supported"))
-
 ;;; Visibility span
+
+(cl-defgeneric nomis/tree/visibility-span/less--aux (k))
+(cl-defgeneric nomis/tree/visibility-span/more--aux (k))
+(cl-defgeneric nomis/tree/visibility-span/set-min--aux (k))
+(cl-defgeneric nomis/tree/visibility-span/set-max--aux (k))
 
 (defun nomis/tree/visibility-span/less ()
   (interactive)
-  (cl-ecase (-nomis/tree/mode)
-    (:outline (-not-supported))
-    (:org     (nomis/org-visibility-span/less))))
+  (nomis/tree/visibility-span/less--aux (-nomis/tree/mode)))
 
 (defun nomis/tree/visibility-span/more ()
   (interactive)
-  (cl-ecase (-nomis/tree/mode)
-    (:outline (-not-supported))
-    (:org     (nomis/org-visibility-span/more))))
+  (nomis/tree/visibility-span/more--aux (-nomis/tree/mode)))
 
 (defun nomis/tree/visibility-span/set-min ()
   (interactive)
-  (cl-ecase (-nomis/tree/mode)
-    (:outline (-not-supported))
-    (:org     (nomis/org-visibility-span/set-min))))
+  (nomis/tree/visibility-span/set-min--aux (-nomis/tree/mode)))
 
 (defun nomis/tree/visibility-span/set-max ()
   (interactive)
-  (cl-ecase (-nomis/tree/mode)
-    (:outline (nomis/outline/visibility-span/set-max))
-    (:org     (nomis/org-visibility-span/set-max))))
+  (nomis/tree/visibility-span/set-max--aux (-nomis/tree/mode)))
 
 ;;; nomis/tree/show-tree-only and nomis/tree/max-lineage
 
+(cl-defgeneric nomis/tree/show-tree-only--aux (k))
+(cl-defgeneric nomis/tree/max-lineage--aux (k))
+
 (defun nomis/tree/show-tree-only ()
   (interactive)
-  (cl-ecase (-nomis/tree/mode)
-    (:outline (nomis/outline-show-fat-parents))
-    (:org     (norg/show-tree-only))))
+  (nomis/tree/show-tree-only--aux (-nomis/tree/mode)))
 
 (defun nomis/tree/max-lineage ()
   (interactive)
-  (cl-ecase (-nomis/tree/mode)
-    (:outline (nomis/outline-show-max-lineage))
-    (:org     (-not-supported)) ; easy to add
-    ))
+  (nomis/tree/max-lineage--aux (-nomis/tree/mode)))
 
 ;;; nomis/tree/set-step-n-levels-to-show
 
+(cl-defgeneric nomis/tree/set-step-n-levels-to-show--aux (k n))
+
 (defun nomis/tree/set-step-n-levels-to-show (n)
   (interactive "P")
-  (cl-ecase (-nomis/tree/mode)
-    (:outline (-not-supported))
-    (:org     (norg/set-step-n-levels-to-show n))))
+  (nomis/tree/set-step-n-levels-to-show--aux (-nomis/tree/mode) n))
 
 ;;; End
 
