@@ -149,7 +149,8 @@
                 :spec/parents-approach :parents/fat))
 
 (defconst max-lineage-spec
-  (a-hash-table :spec/parents-approach :parents/fat
+  (a-hash-table :spec/pre-hide-all? t
+                :spec/parents-approach :parents/fat
                 :spec/children-approach -nomis/outline-children-approach-max))
 
 (defconst step-lineage-spec
