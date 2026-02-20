@@ -72,8 +72,12 @@
 
 (defun -nomis/hack-outline-minor-faces ()
   (set-face-attribute 'outline-minor-0 nil
+                      :weight 'normal
                       :overline t
                       :background (face-background 'default)))
+
+;; If we decide that the extra vertical space for overlines is bad, we can do:
+;; `(setq overline-margin 0)`.
 
 (add-hook 'outline-minor-faces-mode-hook '-nomis/hack-outline-minor-faces)
 
