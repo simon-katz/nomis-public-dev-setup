@@ -85,7 +85,7 @@ H-q H-/      Show this help")
 
 ;;; nomis/tree/set-step-n-levels-to-show
 
-(define-key nomis/tree-mode-map (kbd "H-q H-q s") 'nomis/tree/set-step-n-levels-to-show)
+(define-key nomis/tree-mode-map (kbd "H-q H-q H-s") 'nomis/tree/set-step-n-levels-to-show)
 
 ;;; End
 
