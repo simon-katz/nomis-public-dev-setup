@@ -65,6 +65,13 @@ H-q H-/  Show this help")
 
 (define-key nomis/tree-mode-map (kbd "H-q H-q /") 'nomis/tree/pop-up-help)
 
+;;; Visibility span
+
+(define-key nomis/tree-mode-map (kbd "C-H-'")    'nomis/tree/visibility-span/less)
+(define-key nomis/tree-mode-map (kbd "C-H-\\")   'nomis/tree/visibility-span/more)
+(define-key nomis/tree-mode-map (kbd "C-H-M-'")  'nomis/tree/visibility-span/set-min)
+(define-key nomis/tree-mode-map (kbd "C-H-M-\\") 'nomis/tree/visibility-span/set-max)
+
 ;;; End
 
 (provide 'nomis-tree-key-bindings)

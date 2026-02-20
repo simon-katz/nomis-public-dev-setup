@@ -18,15 +18,6 @@
 ;; | (kbd "H-s")       | nomis/org-search-heading-text-again                     |                                        |                             |
 
 ;; |-------------------+---------------------------------------------------------+----------------------------------------+-----------------------------|
-;; |                   | ---- Visibility span ----                               |                                        |                             |
-;; | (kbd "C-H-'")     | nomis/org-visibility-span/less                          |                                        |                             |
-;; | (kbd "C-H-\\")    | nomis/org-visibility-span/more                          |                                        |                             |
-;; | (kbd "C-H-M-'")   | nomis/org-visibility-span/set-min                       |                                        |                             |
-;; | (kbd "C-H-M-\\")  | nomis/org-visibility-span/set-max                       |                                        | nomis/outline/visibility-span/set-max|
-
-(define-key outline-minor-mode-map (kbd "C-H-M-\\") 'nomis/outline/visibility-span/set-max)
-
-;; |-------------------+---------------------------------------------------------+----------------------------------------+-----------------------------|
 ;; |                   | ---- Tree only / fat parents and max lineage ----       |                                        |                             |
 ;; | (kbd "H-M-m")     | norg/show-tree-only                                     |                                        | nomis/outline-show-fat-parents |
 ;; | (kbd "H-M-M")     |                                                         |                                        | nomis/outline-show-max-lineage |

@@ -44,6 +44,31 @@
   (error "Not supported"))
 
 ;;; Visibility span
+
+(defun nomis/tree/visibility-span/less ()
+  (interactive)
+  (cl-ecase (-nomis/tree/mode)
+    (:outline (-not-supported))
+    (:org     (nomis/org-visibility-span/less))))
+
+(defun nomis/tree/visibility-span/more ()
+  (interactive)
+  (cl-ecase (-nomis/tree/mode)
+    (:outline (-not-supported))
+    (:org     (nomis/org-visibility-span/more))))
+
+(defun nomis/tree/visibility-span/set-min ()
+  (interactive)
+  (cl-ecase (-nomis/tree/mode)
+    (:outline (-not-supported))
+    (:org     (nomis/org-visibility-span/set-min))))
+
+(defun nomis/tree/visibility-span/set-max ()
+  (interactive)
+  (cl-ecase (-nomis/tree/mode)
+    (:outline (nomis/outline/visibility-span/set-max))
+    (:org     (nomis/org-visibility-span/set-max))))
+
 ;;; End
 
 (provide 'nomis-tree)

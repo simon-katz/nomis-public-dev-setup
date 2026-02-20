@@ -45,14 +45,13 @@
 (define-key org-mode-map (kbd "H-s")      'nomis/org-search-heading-text-again)
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-;;;; ____ ** Visibility span
-
-(define-key org-mode-map (kbd "C-H-'")    'nomis/org-visibility-span/less)
-(define-key org-mode-map (kbd "C-H-\\")   'nomis/org-visibility-span/more)
-(define-key org-mode-map (kbd "C-H-M-'")  'nomis/org-visibility-span/set-min)
-(define-key org-mode-map (kbd "C-H-M-\\") 'nomis/org-visibility-span/set-max)
+;;;; ____ ** Tree only
 
 (define-key org-mode-map (kbd "H-M-m")       'norg/show-tree-only)
+
+;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+;;;; ____ ** N step levels
+
 (define-key org-mode-map (kbd "H-q H-q s") 'norg/set-step-n-levels-to-show)
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

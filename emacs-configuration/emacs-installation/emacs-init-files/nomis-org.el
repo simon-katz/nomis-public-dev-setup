@@ -117,7 +117,13 @@
   '(nomis/org-visibility-span/more
     nomis/org-visibility-span/less
     nomis/org-visibility-span/set-min
-    nomis/org-visibility-span/set-max))
+    nomis/org-visibility-span/set-max
+    ;; Knowledge of these commands doesn't belong here, but that will come out
+    ;; in the wash after we finish consolidating org and outline.
+    nomis/tree/visibility-span/less
+    nomis/tree/visibility-span/more
+    nomis/tree/visibility-span/set-min
+    nomis/tree/visibility-span/set-max))
 
 (defvar -nomis/org-visibility-span/prev-action-index -1)
 
