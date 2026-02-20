@@ -22,7 +22,9 @@
 ;; | (kbd "C-H-'")     | nomis/org-visibility-span/less                          |                                        |                             |
 ;; | (kbd "C-H-\\")    | nomis/org-visibility-span/more                          |                                        |                             |
 ;; | (kbd "C-H-M-'")   | nomis/org-visibility-span/set-min                       |                                        |                             |
-;; | (kbd "C-H-M-\\")  | nomis/org-visibility-span/set-max                       |                                        |                             |
+;; | (kbd "C-H-M-\\")  | nomis/org-visibility-span/set-max                       |                                        | nomis/outline/visibility-span/set-max|
+
+(define-key outline-minor-mode-map (kbd "C-H-M-\\") 'nomis/outline/visibility-span/set-max)
 
 ;; |-------------------+---------------------------------------------------------+----------------------------------------+-----------------------------|
 ;; |                   | ---- Tree only / fat parents and max lineage ----       |                                        |                             |

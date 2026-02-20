@@ -148,6 +148,11 @@
   (a-hash-table :spec/pre-hide-all? t
                 :spec/parents-approach :parents/fat))
 
+(defconst max-visibility-span-lineage-spec
+  (a-hash-table :spec/pre-hide-all? t
+                :spec/parents-approach :parents/fat
+                :spec/children-approach 1))
+
 (defconst max-lineage-spec
   (a-hash-table :spec/pre-hide-all? t
                 :spec/parents-approach :parents/fat
@@ -379,6 +384,12 @@
 (defun nomis/outline-dec-children ()
   (interactive)
   (nomis/outline-show-lineage-with-incs-or-decs :dec))
+
+;;;; nomis/outline/visibility-span/set-max
+
+(defun nomis/outline/visibility-span/set-max ()
+  (interactive)
+  (-nomis/outline-show-lineage max-visibility-span-lineage-spec))
 
 ;;;; nomis/outline-show-max-lineage
 
