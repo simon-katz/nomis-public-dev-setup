@@ -82,26 +82,26 @@
   ;; consistent.
   (kbd k))
 
-(define-key hs-minor-mode-map (k•• "H-M--")    'nomis/hs/hide-all)
-(define-key hs-minor-mode-map (k•• "H-M-'")    'nomis/hs/adjust/set-min)
-(define-key hs-minor-mode-map (k•• "H-'")      'nomis/hs/adjust/less)
-(define-key hs-minor-mode-map (kbd "H-q H-l")  'nomis/hs/adjust/set-level)
-(define-key hs-minor-mode-map (k•• "H-\\")     'nomis/hs/adjust/more)
-(define-key hs-minor-mode-map (k•• "H-M-\\")   'nomis/hs/adjust/show-all)
-(define-key hs-minor-mode-map (k•• "H-M-[")    'nomis/hs/adjust/set-min-for-top-level)
-(define-key hs-minor-mode-map (k•• "H-M-]")    'nomis/hs/adjust/show-all-for-top-level)
-(define-key hs-minor-mode-map (k•• "H-M-=")    'nomis/hs/show-all)
-(define-key hs-minor-mode-map (kbd "H-q H-/")  'nomis/hs/toggle-hiding) ; not really needed
-(define-key hs-minor-mode-map (kbd "H-q H-0")  'nomis/hs/adjust/set-level/0)
-(define-key hs-minor-mode-map (kbd "H-q H-1")  'nomis/hs/adjust/set-level/1)
-(define-key hs-minor-mode-map (kbd "H-q H-2")  'nomis/hs/adjust/set-level/2)
-(define-key hs-minor-mode-map (kbd "H-q H-3")  'nomis/hs/adjust/set-level/3)
-(define-key hs-minor-mode-map (kbd "H-q H-4")  'nomis/hs/adjust/set-level/4)
-(define-key hs-minor-mode-map (kbd "H-q H-5")  'nomis/hs/adjust/set-level/5)
-(define-key hs-minor-mode-map (kbd "H-q H-6")  'nomis/hs/adjust/set-level/6)
-(define-key hs-minor-mode-map (kbd "H-q H-7")  'nomis/hs/adjust/set-level/7)
-(define-key hs-minor-mode-map (kbd "H-q H-8")  'nomis/hs/adjust/set-level/8)
-(define-key hs-minor-mode-map (kbd "H-q H-9")  'nomis/hs/adjust/set-level/9)
+(define-key hs-minor-mode-map (k•• "H-z H-M--")    'nomis/hs/hide-all)
+(define-key hs-minor-mode-map (k•• "H-z H-M-'")    'nomis/hs/adjust/set-min)
+(define-key hs-minor-mode-map (k•• "H-z H-'")      'nomis/hs/adjust/less)
+(define-key hs-minor-mode-map (kbd "H-z H-q H-l")  'nomis/hs/adjust/set-level)
+(define-key hs-minor-mode-map (k•• "H-z H-\\")     'nomis/hs/adjust/more)
+(define-key hs-minor-mode-map (k•• "H-z H-M-\\")   'nomis/hs/adjust/show-all)
+(define-key hs-minor-mode-map (k•• "H-z H-M-[")    'nomis/hs/adjust/set-min-for-top-level)
+(define-key hs-minor-mode-map (k•• "H-z H-M-]")    'nomis/hs/adjust/show-all-for-top-level)
+(define-key hs-minor-mode-map (k•• "H-z H-M-=")    'nomis/hs/show-all)
+(define-key hs-minor-mode-map (kbd "H-z H-q H-/")  'nomis/hs/toggle-hiding) ; not really needed
+(define-key hs-minor-mode-map (kbd "H-z H-q H-0")  'nomis/hs/adjust/set-level/0)
+(define-key hs-minor-mode-map (kbd "H-z H-q H-1")  'nomis/hs/adjust/set-level/1)
+(define-key hs-minor-mode-map (kbd "H-z H-q H-2")  'nomis/hs/adjust/set-level/2)
+(define-key hs-minor-mode-map (kbd "H-z H-q H-3")  'nomis/hs/adjust/set-level/3)
+(define-key hs-minor-mode-map (kbd "H-z H-q H-4")  'nomis/hs/adjust/set-level/4)
+(define-key hs-minor-mode-map (kbd "H-z H-q H-5")  'nomis/hs/adjust/set-level/5)
+(define-key hs-minor-mode-map (kbd "H-z H-q H-6")  'nomis/hs/adjust/set-level/6)
+(define-key hs-minor-mode-map (kbd "H-z H-q H-7")  'nomis/hs/adjust/set-level/7)
+(define-key hs-minor-mode-map (kbd "H-z H-q H-8")  'nomis/hs/adjust/set-level/8)
+(define-key hs-minor-mode-map (kbd "H-z H-q H-9")  'nomis/hs/adjust/set-level/9)
 
 ;; (key-chord-define hs-minor-mode-map "q-"  'nomis/hs/hide-all)
 ;; (key-chord-define hs-minor-mode-map "q["  'nomis/hs/adjust/set-min)
@@ -280,7 +280,7 @@
 
 (define-nomis/hydra nomis/hs/adjust
   :name-as-string "Hide-show incremental"
-  :key "H-q H-q H-q"
+  :key "H-z H-z"
   :keymap hs-minor-mode-map
   :vars (nomis/hs/adjust/saved-level)
   :init-form    (progn
@@ -413,9 +413,9 @@ Otherwise, go to the beginning of the sexp before point and show it."
            (nomis/goto-beginning-of-sexp/or-end/backward)
            (nomis/hs/adjust/show-all)))))
 
-;; (define-key hs-minor-mode-map (k•• "H-M-,")   'nomis/hs/step-backward)
-;; (define-key hs-minor-mode-map (k•• "H-M-.")   'nomis/hs/step-forward)
-(define-key hs-minor-mode-map (k•• "H-q H-q m") 'nomis/scrolling/toggle-maintain-line-no-in-window)
+;; (define-key hs-minor-mode-map (k•• "H-z H-M-,")   'nomis/hs/step-backward)
+;; (define-key hs-minor-mode-map (k•• "H-z H-M-.")   'nomis/hs/step-forward)
+(define-key hs-minor-mode-map (k•• "H-z m") 'nomis/scrolling/toggle-maintain-line-no-in-window)
 
 ;;;; Key chords only work for chars whose codes are in the range 32..126 -- see
 ;;;; limitations in `key-chord`. So you can't use the cursor keys. Annoying!
