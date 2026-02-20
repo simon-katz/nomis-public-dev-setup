@@ -90,9 +90,6 @@
 ;; | (kbd "C-H->")     | (*)                                                     |                                        |                             |
 ;; | (kbd "C-H-M-<")   | (*)                                                     |                                        |                             |
 ;; | (kbd "C-H-M->")   | (*)                                                     |                                        |                             |
-;; |                   |                                                         |                                        |                             |
-;; | (kbd "H-q H-q m") | nomis/scrolling/toggle-maintain-line-no-in-window       | Same as <-                             |                             |
-
 ;; |-------------------+---------------------------------------------------------+----------------------------------------+-----------------------------|
 
 ;; (*) No real meaning -- with the M we are already crossing parent levels

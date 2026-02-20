@@ -99,11 +99,6 @@
 ;; (define-key org-mode-map (kbd "C-H-M-<") ????) ; No real meaning -- with the M we are already crossing parent levels
 ;; (define-key org-mode-map (kbd "C-H-M->") ????) ; No real meaning -- with the M we are already crossing parent levels
 
-;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-;;;; ____ ** Maintain cursor position
-
-(define-key org-mode-map (kbd "H-q H-q m") 'nomis/scrolling/toggle-maintain-line-no-in-window)
-
 ;;;; ___________________________________________________________________________
 ;;;; ____ * Agenda
 
