@@ -23,6 +23,27 @@
 ;;       active when deciding what to do?
 ;; (add-hook 'hs-minor-mode-hook 'nomis/tree-mode)
 
+;;; Utilities
+
+(defun -nomis/tree/outline-mode? ()
+  (or (eq major-mode 'outline-mode)
+      outline-minor-mode))
+
+(defun -nomis/tree/org-mode? ()
+  (eq major-mode 'org-mode))
+
+(defun -nomis/tree/mode ()
+  (cond ((-nomis/tree/outline-mode?)
+         :outline)
+        ((-nomis/tree/org-mode?)
+         :org)
+        (t
+         (error "Unexpected: None of outline-mode, outline-minor-mode or org-mode is active"))))
+
+(defun -not-supported ()
+  (error "Not supported"))
+
+;;; Visibility span
 ;;; End
 
 (provide 'nomis-tree)
