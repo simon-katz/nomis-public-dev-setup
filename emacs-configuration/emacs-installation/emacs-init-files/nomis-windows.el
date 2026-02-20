@@ -25,8 +25,8 @@
 ;;;; ___________________________________________________________________________
 ;;;; ---- Cycle windows, across frames ----
 
-;; (define-key global-map [(control tab)] 'next-multiframe-window)
-;; (define-key global-map [(control shift tab)] 'previous-multiframe-window)
+(define-key global-map [(control tab)] 'next-multiframe-window)
+(define-key global-map [(control shift tab)] 'previous-multiframe-window)
 
 ;;;; ___________________________________________________________________________
 ;;;; ---- Fiddling with windows ----
