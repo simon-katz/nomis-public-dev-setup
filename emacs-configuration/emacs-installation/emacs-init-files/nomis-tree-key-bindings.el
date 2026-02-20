@@ -72,6 +72,11 @@ H-q H-/  Show this help")
 (define-key nomis/tree-mode-map (kbd "C-H-M-'")  'nomis/tree/visibility-span/set-min)
 (define-key nomis/tree-mode-map (kbd "C-H-M-\\") 'nomis/tree/visibility-span/set-max)
 
+;;; nomis/tree/show-tree-only and nomis/tree/max-lineage
+
+(define-key nomis/tree-mode-map (kbd "H-M-m")     'nomis/tree/show-tree-only)
+(define-key nomis/tree-mode-map (kbd "H-M-M")     'nomis/tree/max-lineage)
+
 ;;; End
 
 (provide 'nomis-tree-key-bindings)

@@ -45,9 +45,6 @@
 (define-key org-mode-map (kbd "H-s")      'nomis/org-search-heading-text-again)
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-;;;; ____ ** Tree only
-
-(define-key org-mode-map (kbd "H-M-m")       'norg/show-tree-only)
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ;;;; ____ ** N step levels

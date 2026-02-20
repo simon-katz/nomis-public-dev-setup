@@ -17,14 +17,6 @@
 ;; | (kbd "H-S")       | nomis/org-search-heading-text                           |                                        |                             |
 ;; | (kbd "H-s")       | nomis/org-search-heading-text-again                     |                                        |                             |
 
-;; |-------------------+---------------------------------------------------------+----------------------------------------+-----------------------------|
-;; |                   | ---- Tree only / fat parents and max lineage ----       |                                        |                             |
-;; | (kbd "H-M-m")     | norg/show-tree-only                                     |                                        | nomis/outline-show-fat-parents |
-;; | (kbd "H-M-M")     |                                                         |                                        | nomis/outline-show-max-lineage |
-
-(define-key outline-minor-mode-map (kbd "H-M-m")        'nomis/outline-show-fat-parents)
-(define-key outline-minor-mode-map (kbd "H-M-M")        'nomis/outline-show-max-lineage)
-
 
 ;; |-------------------+---------------------------------------------------------+----------------------------------------+-----------------------------|
 ;; |                   | ---- Span levels to show ----                           |                                        |                             |

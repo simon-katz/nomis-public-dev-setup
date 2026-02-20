@@ -69,6 +69,21 @@
     (:outline (nomis/outline/visibility-span/set-max))
     (:org     (nomis/org-visibility-span/set-max))))
 
+;;; nomis/tree/show-tree-only and nomis/tree/max-lineage
+
+(defun nomis/tree/show-tree-only ()
+  (interactive)
+  (cl-ecase (-nomis/tree/mode)
+    (:outline (nomis/outline-show-fat-parents))
+    (:org     (norg/show-tree-only))))
+
+(defun nomis/tree/max-lineage ()
+  (interactive)
+  (cl-ecase (-nomis/tree/mode)
+    (:outline (nomis/outline-show-max-lineage))
+    (:org     (-not-supported)) ; easy to add
+    ))
+
 ;;; End
 
 (provide 'nomis-tree)
