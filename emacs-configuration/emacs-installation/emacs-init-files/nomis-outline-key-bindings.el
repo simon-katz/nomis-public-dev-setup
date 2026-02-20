@@ -1,13 +1,15 @@
 ;;; Init stuff -- nomis-outline-key-bindings --  -*- lexical-binding: t -*-
 
-;;; Make RET give us a newline
+;;; Code
+
+;;;; Make RET give us a newline
 
 ;; We use TAB to do our cycling. We want RET to give us a newline instead of
 ;; doing `outline-cycle`, so:
 
 (keymap-unset outline-overlay-button-map "RET" t)
 
-;;; Key bindings for outline-minor-mode-map, cross-referncing `org-mode` mode and `hs-minor-mode`
+;;;; Key bindings for outline-minor-mode-map, cross-referncing `org-mode` mode and `hs-minor-mode`
 
 ;; |-------------------+---------------------------------------------------------+----------------------------------------+-----------------------------|
 ;; | Key               | org mode                                                | hide-show                              | outline                     |
@@ -95,7 +97,7 @@
 
 ;; (*) No real meaning -- with the M we are already crossing parent levels
 
-;;; Other outline-minor-mode key bindings
+;;;; Other outline-minor-mode key bindings
 
 ;; outline-minor-mode
 ;; outline-minor-faces-mode
@@ -103,9 +105,9 @@
 
 ;; (define-key outline-minor-mode-map (kbd "...") '...)
 
-(define-key outline-minor-mode-map (kbd "H-o p")     'outline-previous-visible-heading)
-(define-key outline-minor-mode-map (kbd "H-o n")     'outline-next-visible-heading)
-(define-key outline-minor-mode-map (kbd "H-o u")     'outline-up-heading)
+(define-key outline-minor-mode-map (kbd "H-o p")       'outline-previous-visible-heading)
+(define-key outline-minor-mode-map (kbd "H-o n")       'outline-next-visible-heading)
+(define-key outline-minor-mode-map (kbd "H-o u")       'outline-up-heading)
 
 
 (define-key outline-minor-mode-map (kbd "C-S-<right>") 'outline-demote)
@@ -115,7 +117,7 @@
 
 (define-key outline-minor-mode-map (kbd "M-RET")       'outline-insert-heading)
 
-(define-key outline-minor-mode-map (kbd "H-o a")     'outline-show-all)
+(define-key outline-minor-mode-map (kbd "H-o a")       'outline-show-all)
 
 ;; | outline-hide-sublevels                    | H-o C-q |             |
 ;; | outline-show-branches                     | H-o C-k |             |

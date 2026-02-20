@@ -2,9 +2,11 @@
 
 (require 'nomis-msg)
 
-;;; Utilities
+;;; Code
 
-;;;; -nomis/outline-pulse-current-section
+;;;; Utilities
+
+;;;;; -nomis/outline-pulse-current-section
 
 (defun -nomis/outline-pulse-current-section ()
   (let ((start (point)))
@@ -26,7 +28,7 @@
                       (point-max))))
         (pulse-momentary-highlight-region start end)))))
 
-;;; Ellipses
+;;;; Ellipses
 
 ;; Copy-and-hack from
 ;; https://www.reddit.com/r/emacs/comments/e2u5n9/code_folding_with_outlineminormode/
@@ -36,13 +38,13 @@
                           (vconcat (mapcar (lambda (c) (+ face-offset c))
                                            " ▶▶▶"))))
 
-;;; outline-minor-mode
+;;;; outline-minor-mode
 
 (add-hook 'prog-mode-hook 'outline-minor-mode)
 
 (setopt outline-minor-mode-use-buttons 'in-margins)
 
-;;; outline-minor-mode-cycle
+;;;; outline-minor-mode-cycle
 
 ;; (setopt outline-minor-mode-cycle t)
 ;;
@@ -61,7 +63,7 @@
 
 ;; Update: See `nomis/outline-tab`.
 
-;;; outline-minor-faces
+;;;; outline-minor-faces
 
 (use-package outline-minor-faces
   :after outline
@@ -81,7 +83,7 @@
 
 (add-hook 'outline-minor-faces-mode-hook '-nomis/hack-outline-minor-faces)
 
-;;; Outline colors
+;;;; Outline colors
 
 (defun nomis/outline-colors/set-default ()
   (set-face-attribute 'outline-1 nil :inherit 'font-lock-function-name-face)
@@ -121,7 +123,7 @@
 ;; (nomis/outline-colors/set-rainbow-8)
 (nomis/outline-colors/set-rainbow-4)
 
-;;; backline
+;;;; backline
 
 ;; I'm not sure I want this with my heading styling, but it might be useful if
 ;; I change things.
@@ -130,15 +132,15 @@
 ;;   :after outline
 ;;   :config (advice-add 'outline-flag-region :after 'backline-update))
 
-;;; bicycle
+;;;; bicycle
 
-;;;; bicycle basics
+;;;;; bicycle basics
 
 ;; `bicycle` combines `outline` and `hideshow`.
 
 (require 'bicycle)
 
-;;;; Provide feedback in bicycle-cycle-local
+;;;;; Provide feedback in bicycle-cycle-local
 
 (defvar *nomis/outline-in-bicycle-cycle-local?* nil)
 
@@ -157,7 +159,7 @@
               (apply orig-fun args))
             '((name . nomis/outline-bicycle-feedback)))
 
-;;;; Provide feedback in bicycle-cycle-global
+;;;;; Provide feedback in bicycle-cycle-global
 
 (defvar *nomis/outline-in-bicycle-cycle-global?* nil)
 

@@ -1,6 +1,8 @@
 ;;; nomis-tree -*- lexical-binding: t -*-
 
-;;; nomis/tree-mode
+;;; Code
+
+;;;; nomis/tree-mode
 
 (defvar nomis/tree-mode-map
   (make-sparse-keymap)
@@ -14,7 +16,7 @@
   ;; need to do anything when turning on and off.
   )
 
-;;; Turn on the mode
+;;;; Turn on the mode
 
 (add-hook 'org-mode-hook 'nomis/tree-mode)
 (add-hook 'outline-minor-mode-hook 'nomis/tree-mode)
@@ -23,7 +25,7 @@
 ;;       active when deciding what to do?
 ;; (add-hook 'hs-minor-mode-hook 'nomis/tree-mode)
 
-;;; Utilities
+;;;; Utilities
 
 (defun -nomis/tree/outline-mode? ()
   (or (eq major-mode 'outline-mode)
@@ -40,7 +42,7 @@
         (t
          (error "Unexpected: None of outline-mode, outline-minor-mode or org-mode is active"))))
 
-;;; Search heading text
+;;;; Search heading text
 
 (cl-defgeneric nomis/tree/search-heading-text--aux (k))
 (cl-defgeneric nomis/tree/search-heading-text-again--aux (k))
@@ -53,7 +55,7 @@
   (interactive)
   (nomis/tree/search-heading-text-again--aux (-nomis/tree/mode)))
 
-;;; Visibility span
+;;;; Visibility span
 
 (cl-defgeneric nomis/tree/visibility-span/less--aux (k))
 (cl-defgeneric nomis/tree/visibility-span/more--aux (k))
@@ -76,7 +78,7 @@
   (interactive)
   (nomis/tree/visibility-span/set-max--aux (-nomis/tree/mode)))
 
-;;; nomis/tree/show-tree-only and nomis/tree/max-lineage
+;;;; nomis/tree/show-tree-only and nomis/tree/max-lineage
 
 (cl-defgeneric nomis/tree/show-tree-only--aux (k))
 (cl-defgeneric nomis/tree/max-lineage--aux (k))
@@ -89,7 +91,7 @@
   (interactive)
   (nomis/tree/max-lineage--aux (-nomis/tree/mode)))
 
-;;; nomis/tree/set-step-n-levels-to-show
+;;;; nomis/tree/set-step-n-levels-to-show
 
 (cl-defgeneric nomis/tree/set-step-n-levels-to-show--aux (k n))
 

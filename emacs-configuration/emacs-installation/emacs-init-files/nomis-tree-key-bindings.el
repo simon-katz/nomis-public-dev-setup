@@ -1,6 +1,8 @@
 ;;; nomis-tree-key-bindings -*- lexical-binding: t -*-
 
-;;; Temporary keybindings to train myself for change of Projectile keybindings
+;;; Code
+
+;;;; Temporary keybindings to train myself for change of Projectile keybindings
 
 (defun -nomis/outline/projectile-keybinding-error ()
   (interactive)
@@ -12,7 +14,7 @@
 (define-key projectile-mode-map (kbd "H-o f") '-nomis/outline/projectile-keybinding-error)
 (define-key projectile-mode-map (kbd "H-o g") '-nomis/outline/projectile-keybinding-error)
 
-;;; nomis/tree/pop-up-help
+;;;; nomis/tree/pop-up-help
 
 (defconst -nomis/tree/help
   "Nomis Tree Help
@@ -66,24 +68,24 @@ H-q H-/      Show this help")
 (define-key nomis/tree-mode-map (kbd "H-q H-q /") 'nomis/tree/pop-up-help)
 
 
-;;; Search heading text
+;;;; Search heading text
 
 (define-key nomis/tree-mode-map (kbd "H-S")      'nomis/tree/search-heading-text)
 (define-key nomis/tree-mode-map (kbd "H-s")      'nomis/tree/search-heading-text-again)
 
-;;; Visibility span
+;;;; Visibility span
 
 (define-key nomis/tree-mode-map (kbd "C-H-'")    'nomis/tree/visibility-span/less)
 (define-key nomis/tree-mode-map (kbd "C-H-\\")   'nomis/tree/visibility-span/more)
 (define-key nomis/tree-mode-map (kbd "C-H-M-'")  'nomis/tree/visibility-span/set-min)
 (define-key nomis/tree-mode-map (kbd "C-H-M-\\") 'nomis/tree/visibility-span/set-max)
 
-;;; nomis/tree/show-tree-only and nomis/tree/max-lineage
+;;;; nomis/tree/show-tree-only and nomis/tree/max-lineage
 
 (define-key nomis/tree-mode-map (kbd "H-M-m")     'nomis/tree/show-tree-only)
 (define-key nomis/tree-mode-map (kbd "H-M-M")     'nomis/tree/max-lineage)
 
-;;; nomis/tree/set-step-n-levels-to-show
+;;;; nomis/tree/set-step-n-levels-to-show
 
 (define-key nomis/tree-mode-map (kbd "H-q H-q H-s") 'nomis/tree/set-step-n-levels-to-show)
 

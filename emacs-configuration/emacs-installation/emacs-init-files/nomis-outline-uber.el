@@ -1,11 +1,5 @@
 ;;; nomis-outline-uber -- -*- lexical-binding: t -*-
 
-(require 'a)
-(require 'cl-lib)
-(require 'dash)
-(require 'nomis-popup)
-(require 'nomis-scrolling)
-
 ;;; To dos
 
 ;; TODO: There's lots of potential work here and its not straightforward. So for
@@ -43,9 +37,19 @@
 ;;       stuff). Maybe a prefix in front of the existing bindings. Oh, or maybe
 ;;       a modal UI.
 
-;;; Utilities
+;;; Code
 
-;;;; Misc
+;;;; Requires
+
+(require 'a)
+(require 'cl-lib)
+(require 'dash)
+(require 'nomis-popup)
+(require 'nomis-scrolling)
+
+;;;; Utilities
+
+;;;;; Misc
 
 (defun -nomis/outline-last-command ()
   (or (bound-and-true-p *nomis/smex/last-command*)
@@ -57,7 +61,7 @@
              (let ((x (cl-format nil "~:r" n)))
                (subseq x (- (length x) 2)))))
 
-;;;; Simple outline wrappers
+;;;;; Simple outline wrappers
 
 (defun -nomis/outline-on-heading? ()
   (outline-on-heading-p t))
@@ -117,7 +121,7 @@
     (:backward (outline-previous-heading))
     (:forward (outline-next-heading))))
 
-;;;; Lineage spec
+;;;;; Lineage spec
 
 ;; A lineage-spec controls how lineages are displayed and has the following
 ;; entries (with permitted values nested):
@@ -171,7 +175,7 @@
                 :spec/children-approach children-approach
                 :spec/pulse-max-children? t))
 
-;;;; Hide/show lineage
+;;;;; Hide/show lineage
 
 (defun -nomis/outline-hsl-hide (lineage-spec)
   (let* ((pre-hide-all? (a-get lineage-spec :spec/pre-hide-all?))
@@ -228,7 +232,7 @@
                 -nomis/outline-children-approach-max))
     (-nomis/outline-pulse-current-section)))
 
-;;;; Previous/next helpers
+;;;;; Previous/next helpers
 
 (defun -nomis/outline-prev-next-same-level (direction allow-cross-parent?)
   (let* ((opoint (point))
@@ -325,7 +329,7 @@
          direction-word
          kind-word)))))
 
-;;;; -nomis/outline-command
+;;;;; -nomis/outline-command
 
 (defun -nomis/outline-command* (f)
   (push-mark)
@@ -336,9 +340,9 @@
   (declare (indent 1))
   `(-nomis/outline-command* (lambda () ,@body) ))
 
-;;; API
+;;;; API
 
-;;;; nomis/outline-inc-children / nomis/outline-dec-children
+;;;;; nomis/outline-inc-children / nomis/outline-dec-children
 
 (defvar -nomis/outline-increments-children-approach)
 
@@ -385,7 +389,7 @@
   (interactive)
   (nomis/outline-show-lineage-with-incs-or-decs :dec))
 
-;;;; Search heading text
+;;;;; Search heading text
 
 (cl-defmethod nomis/tree/search-heading-text--aux ((k (eql :outline)))
   (error "Not supported: %s %s" k this-command))
@@ -393,7 +397,7 @@
 (cl-defmethod nomis/tree/search-heading-text-again--aux ((k (eql :outline)))
   (error "Not supported: %s %s" k this-command))
 
-;;;; nomis/outline/visibility-span
+;;;;; nomis/outline/visibility-span
 
 (cl-defmethod nomis/tree/visibility-span/less--aux ((k (eql :outline)))
   (error "Not supported: %s %s" k this-command))
@@ -407,23 +411,23 @@
 (cl-defmethod nomis/tree/visibility-span/set-max--aux ((k (eql :outline)))
   (-nomis/outline-show-lineage max-visibility-span-lineage-spec))
 
-;;;; nomis/outline-show-max-lineage
+;;;;; nomis/outline-show-max-lineage
 
 (cl-defmethod nomis/tree/max-lineage--aux ((k (eql :outline)))
   (-nomis/outline-show-lineage max-lineage-spec))
 
-;;;; nomis/tree/show-tree-only--aux
+;;;;; nomis/tree/show-tree-only--aux
 
 (cl-defmethod nomis/tree/show-tree-only--aux ((k (eql :outline)))
   (-nomis/outline-show-lineage fat-parents-lineage-spec))
 
-;;;; nomis/tree/set-step-n-levels-to-show--aux
+;;;;; nomis/tree/set-step-n-levels-to-show--aux
 
 (cl-defmethod nomis/tree/set-step-n-levels-to-show--aux ((k (eql :outline))
                                                          n)
   (error "Not supported: %s %s" k this-command))
 
-;;;; nomis/outline-tab
+;;;;; nomis/outline-tab
 
 (defun nomis/outline-tab (arg)
   (interactive "P")
@@ -435,7 +439,7 @@
     ;; at least for now.
     (company-indent-or-complete-common arg)))
 
-;;;; Previous
+;;;;; Previous
 
 (defun nomis/outline-previous-heading (n)
   (interactive "p")
@@ -492,7 +496,7 @@ Can pass by a superior heading."
                                          :backward
                                          :same-level-allow-cross-parent)))
 
-;;;; Next
+;;;;; Next
 
 (defun nomis/outline-next-heading (n)
   (interactive "p")
