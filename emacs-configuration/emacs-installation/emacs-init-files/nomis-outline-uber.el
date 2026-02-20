@@ -385,7 +385,15 @@
   (interactive)
   (nomis/outline-show-lineage-with-incs-or-decs :dec))
 
-;;;; nomis/outline/visibility-span/set-max
+;;;; Search heading text
+
+(cl-defmethod nomis/tree/search-heading-text--aux ((k (eql :outline)))
+  (error "Not supported: %s %s" k this-command))
+
+(cl-defmethod nomis/tree/search-heading-text-again--aux ((k (eql :outline)))
+  (error "Not supported: %s %s" k this-command))
+
+;;;; nomis/outline/visibility-span
 
 (cl-defmethod nomis/tree/visibility-span/less--aux ((k (eql :outline)))
   (error "Not supported: %s %s" k this-command))

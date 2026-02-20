@@ -40,6 +40,19 @@
         (t
          (error "Unexpected: None of outline-mode, outline-minor-mode or org-mode is active"))))
 
+;;; Search heading text
+
+(cl-defgeneric nomis/tree/search-heading-text--aux (k))
+(cl-defgeneric nomis/tree/search-heading-text-again--aux (k))
+
+(defun nomis/tree/search-heading-text ()
+  (interactive)
+  (nomis/tree/search-heading-text--aux (-nomis/tree/mode)))
+
+(defun nomis/tree/search-heading-text-again ()
+  (interactive)
+  (nomis/tree/search-heading-text-again--aux (-nomis/tree/mode)))
+
 ;;; Visibility span
 
 (cl-defgeneric nomis/tree/visibility-span/less--aux (k))

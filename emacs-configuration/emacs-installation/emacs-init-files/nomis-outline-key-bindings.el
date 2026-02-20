@@ -13,12 +13,6 @@
 ;; | Key               | org mode                                                | hide-show                              | outline                     |
 
 ;; |-------------------+---------------------------------------------------------+----------------------------------------+-----------------------------|
-;; |                   | ---- Search heading text ----                           |                                        |                             |
-;; | (kbd "H-S")       | nomis/org-search-heading-text                           |                                        |                             |
-;; | (kbd "H-s")       | nomis/org-search-heading-text-again                     |                                        |                             |
-
-
-;; |-------------------+---------------------------------------------------------+----------------------------------------+-----------------------------|
 ;; |                   | ---- Expand/collapse ----                               |                                        |                             |
 ;; | (kbd "H-'")       | norg/show-children-from-point/incremental/less          | nomis/hs/adjust/less                   |                             |
 ;; | (kbd "H-\\")      | norg/show-children-from-point/incremental/more          | nomis/hs/adjust/more                   |                             |

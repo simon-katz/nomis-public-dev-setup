@@ -39,12 +39,6 @@
 (define-key org-mode-map (kbd "M-,") 'org-mark-ring-goto)
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-;;;; ____ ** Search heading text
-
-(define-key org-mode-map (kbd "H-S")      'nomis/org-search-heading-text)
-(define-key org-mode-map (kbd "H-s")      'nomis/org-search-heading-text-again)
-
-;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ;;;; ____ ** Expand/collapse
 
 (define-key org-mode-map (kbd "H-'")     'norg/show-children-from-point/incremental/less)

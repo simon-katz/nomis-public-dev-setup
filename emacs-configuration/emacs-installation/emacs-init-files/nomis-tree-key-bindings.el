@@ -65,6 +65,12 @@ H-q H-/      Show this help")
 
 (define-key nomis/tree-mode-map (kbd "H-q H-q /") 'nomis/tree/pop-up-help)
 
+
+;;; Search heading text
+
+(define-key nomis/tree-mode-map (kbd "H-S")      'nomis/tree/search-heading-text)
+(define-key nomis/tree-mode-map (kbd "H-s")      'nomis/tree/search-heading-text-again)
+
 ;;; Visibility span
 
 (define-key nomis/tree-mode-map (kbd "C-H-'")    'nomis/tree/visibility-span/less)

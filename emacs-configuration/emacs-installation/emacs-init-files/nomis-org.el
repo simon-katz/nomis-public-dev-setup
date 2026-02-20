@@ -649,7 +649,7 @@
 ;;                        )))))
 
 ;;;; ___________________________________________________________________________
-;;;; * nomis/org-search-heading-text
+;;;; * nomis/tree/search-heading-text
 
 (defun -nomis/org-grab-heading-text ()
   (save-excursion
@@ -695,8 +695,7 @@
           (search-for-text))))
   (norg/show-point))
 
-(defun nomis/org-search-heading-text ()
-  (interactive)
+(cl-defmethod nomis/tree/search-heading-text--aux ((k (eql :org)))
   (setq -nomis/org-search-heading-text/text (-nomis/org-grab-heading-text))
   (unless (and org-mark-ring
                (ignore-errors ; without this, we can get "Marker does not point anywhere" errors
@@ -709,10 +708,9 @@
     (org-mark-ring-push))
   (-nomis/org-search-heading-text/search nil))
 
-(defun nomis/org-search-heading-text-again ()
-  (interactive)
+(cl-defmethod nomis/tree/search-heading-text-again--aux ((k (eql :org))) ()
   (if (null -nomis/org-search-heading-text/text)
-      (error "nomis/org-search-heading-text hasn't been called yet")
+      (error "nomis/tree/search-heading-text--aux hasn't been called yet")
     (-nomis/org-search-heading-text/search t)))
 
 ;;;; ___________________________________________________________________________
