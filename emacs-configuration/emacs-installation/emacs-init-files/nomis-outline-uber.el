@@ -142,18 +142,20 @@
 ;;   - `1` / `2` / `3`
 ;;     - Show children/branches/subtree.
 
+(defconst -nomis/outline-children-approach-max 3)
+
 (defconst fat-parents-lineage-spec
   (a-hash-table :spec/pre-hide-all? t
                 :spec/parents-approach :parents/fat))
 
 (defconst max-lineage-spec
   (a-hash-table :spec/parents-approach :parents/fat
-                :spec/children-approach 3))
+                :spec/children-approach -nomis/outline-children-approach-max))
 
 (defconst step-lineage-spec
   (a-hash-table :spec/pre-hide-all? t
                 :spec/parents-approach :parents/fat
-                :spec/children-approach 3))
+                :spec/children-approach -nomis/outline-children-approach-max))
 
 (defconst navigation-lineage-spec
   (a-hash-table :spec/parents-approach :parents/thin))
@@ -213,7 +215,8 @@
   (-nomis/outline-ensure-heading-shown)
   (-nomis/outline-hsl-show-children lineage-spec)
   (when (and (a-get lineage-spec :spec/pulse-max-children?)
-             (= (a-get lineage-spec :spec/children-approach) 3))
+             (= (a-get lineage-spec :spec/children-approach)
+                -nomis/outline-children-approach-max))
     (-nomis/outline-pulse-current-section)))
 
 ;;;; Previous/next helpers
@@ -329,8 +332,6 @@
 ;;;; nomis/outline-inc-children / nomis/outline-dec-children
 
 (defvar -nomis/outline-increments-children-approach)
-
-(defconst -nomis/outline-children-approach-max 3)
 
 (defun -nomis/outline-inc-dec-message (approach)
   (cl-ecase approach
