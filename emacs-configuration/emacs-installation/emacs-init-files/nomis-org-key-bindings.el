@@ -45,13 +45,6 @@
 (define-key org-mode-map (kbd "H-s")      'nomis/org-search-heading-text-again)
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-;;;; ____ ** N step levels
-
-(define-key org-mode-map (kbd "H-q H-q s") 'norg/set-step-n-levels-to-show)
-
-;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ;;;; ____ ** Expand/collapse
 
 (define-key org-mode-map (kbd "H-'")     'norg/show-children-from-point/incremental/less)

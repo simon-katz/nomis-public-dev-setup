@@ -19,10 +19,6 @@
 
 
 ;; |-------------------+---------------------------------------------------------+----------------------------------------+-----------------------------|
-;; |                   | ---- Span levels to show ----                           |                                        |                             |
-;; | (kbd "H-q H-q s") | norg/set-step-n-levels-to-show                          |                                        |                             |
-
-;; |-------------------+---------------------------------------------------------+----------------------------------------+-----------------------------|
 ;; |                   | ---- Expand/collapse ----                               |                                        |                             |
 ;; | (kbd "H-'")       | norg/show-children-from-point/incremental/less          | nomis/hs/adjust/less                   |                             |
 ;; | (kbd "H-\\")      | norg/show-children-from-point/incremental/more          | nomis/hs/adjust/more                   |                             |

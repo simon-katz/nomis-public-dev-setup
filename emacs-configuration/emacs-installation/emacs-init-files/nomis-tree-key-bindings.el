@@ -77,6 +77,10 @@ H-q H-/  Show this help")
 (define-key nomis/tree-mode-map (kbd "H-M-m")     'nomis/tree/show-tree-only)
 (define-key nomis/tree-mode-map (kbd "H-M-M")     'nomis/tree/max-lineage)
 
+;;; nomis/tree/set-step-n-levels-to-show
+
+(define-key nomis/tree-mode-map (kbd "H-q H-q s") 'nomis/tree/set-step-n-levels-to-show)
+
 ;;; End
 
 (provide 'nomis-tree-key-bindings)

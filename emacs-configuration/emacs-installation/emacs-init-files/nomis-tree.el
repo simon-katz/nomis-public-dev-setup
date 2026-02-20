@@ -84,6 +84,14 @@
     (:org     (-not-supported)) ; easy to add
     ))
 
+;;; nomis/tree/set-step-n-levels-to-show
+
+(defun nomis/tree/set-step-n-levels-to-show (n)
+  (interactive "P")
+  (cl-ecase (-nomis/tree/mode)
+    (:outline (-not-supported))
+    (:org     (norg/set-step-n-levels-to-show n))))
+
 ;;; End
 
 (provide 'nomis-tree)
