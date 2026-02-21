@@ -42,36 +42,6 @@
         (t
          (error "Unexpected: None of outline-mode, outline-minor-mode or org-mode is active"))))
 
-;;;; Movement
-
-(cl-defgeneric nomis/tree/previous-sibling--aux (k))
-
-(defun nomis/tree/previous-sibling ()
-  "Move backward one heading at the same level as this one."
-  (interactive)
-  (nomis/tree/previous-sibling--aux (-nomis/tree/mode)))
-
-(cl-defgeneric nomis/tree/next-sibling--aux (k))
-
-(defun nomis/tree/next-sibling ()
-  "Move forward one heading at the same level as this one."
-  (interactive)
-  (nomis/tree/next-sibling--aux (-nomis/tree/mode)))
-
-(cl-defgeneric nomis/tree/previous-sibling/allow-cross-parent--aux (k))
-
-(defun nomis/tree/previous-sibling/allow-cross-parent ()
-  "Move backward one heading at the same level, crossing parent boundaries."
-  (interactive)
-  (nomis/tree/previous-sibling/allow-cross-parent--aux (-nomis/tree/mode)))
-
-(cl-defgeneric nomis/tree/next-sibling/allow-cross-parent--aux (k))
-
-(defun nomis/tree/next-sibling/allow-cross-parent ()
-  "Move forward one heading at the same level, crossing parent boundaries."
-  (interactive)
-  (nomis/tree/next-sibling/allow-cross-parent--aux (-nomis/tree/mode)))
-
 ;;;; Search heading text
 
 (cl-defgeneric nomis/tree/search-heading-text--aux (k))
@@ -269,6 +239,36 @@ the current entry's parent."
 (defun nomis/tree/show-children-from-root/fully-expand ()
   (interactive)
   (nomis/tree/show-children-from-root/fully-expand--aux (-nomis/tree/mode)))
+
+;;;; Movement
+
+(cl-defgeneric nomis/tree/previous-sibling--aux (k))
+
+(defun nomis/tree/previous-sibling ()
+  "Move backward one heading at the same level as this one."
+  (interactive)
+  (nomis/tree/previous-sibling--aux (-nomis/tree/mode)))
+
+(cl-defgeneric nomis/tree/next-sibling--aux (k))
+
+(defun nomis/tree/next-sibling ()
+  "Move forward one heading at the same level as this one."
+  (interactive)
+  (nomis/tree/next-sibling--aux (-nomis/tree/mode)))
+
+(cl-defgeneric nomis/tree/previous-sibling/allow-cross-parent--aux (k))
+
+(defun nomis/tree/previous-sibling/allow-cross-parent ()
+  "Move backward one heading at the same level, crossing parent boundaries."
+  (interactive)
+  (nomis/tree/previous-sibling/allow-cross-parent--aux (-nomis/tree/mode)))
+
+(cl-defgeneric nomis/tree/next-sibling/allow-cross-parent--aux (k))
+
+(defun nomis/tree/next-sibling/allow-cross-parent ()
+  "Move forward one heading at the same level, crossing parent boundaries."
+  (interactive)
+  (nomis/tree/next-sibling/allow-cross-parent--aux (-nomis/tree/mode)))
 
 ;;; End
 

@@ -89,13 +89,6 @@ H-q H-q /    Show this help")
 
 (define-key nomis/tree-mode-map (kbd "H-q H-q s") 'nomis/tree/set-step-n-levels-to-show)
 
-;;;; Movement
-
-(define-key nomis/tree-mode-map (kbd "H-,")       'nomis/tree/previous-sibling)
-(define-key nomis/tree-mode-map (kbd "H-.")       'nomis/tree/next-sibling)
-(define-key nomis/tree-mode-map (kbd "H-<")       'nomis/tree/previous-sibling/allow-cross-parent)
-(define-key nomis/tree-mode-map (kbd "H->")       'nomis/tree/next-sibling/allow-cross-parent)
-
 ;;;; Expand/collapse
 
 (define-key nomis/tree-mode-map (kbd "H-'")       'nomis/tree/show-children-from-point/incremental/less)
@@ -116,6 +109,13 @@ H-q H-q /    Show this help")
 (define-key nomis/tree-mode-map (kbd "H-M-=")     'nomis/tree/show-children-from-all-roots/fully-expand)
 (define-key nomis/tree-mode-map (kbd "H-q H-q ]") 'nomis/tree/show-children-from-root/to-current-level)
 (define-key nomis/tree-mode-map (kbd "H-q H-q =") 'nomis/tree/show-children-from-all-roots/to-current-level)
+
+;;;; Movement
+
+(define-key nomis/tree-mode-map (kbd "H-,")       'nomis/tree/previous-sibling)
+(define-key nomis/tree-mode-map (kbd "H-.")       'nomis/tree/next-sibling)
+(define-key nomis/tree-mode-map (kbd "H-<")       'nomis/tree/previous-sibling/allow-cross-parent)
+(define-key nomis/tree-mode-map (kbd "H->")       'nomis/tree/next-sibling/allow-cross-parent)
 
 ;;;; nomis/scrolling/toggle-maintain-line-no-in-window
 
