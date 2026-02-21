@@ -92,6 +92,7 @@ H-q H-q /    Show this help")
 ;;;; Expand/collapse
 
 (define-key nomis/tree-mode-map (kbd "H-'")       'nomis/tree/show-children-from-point/incremental/less)
+(define-key nomis/tree-mode-map (kbd "H-\\")      'nomis/tree/show-children-from-point/incremental/more)
 
 ;;;; nomis/scrolling/toggle-maintain-line-no-in-window
 

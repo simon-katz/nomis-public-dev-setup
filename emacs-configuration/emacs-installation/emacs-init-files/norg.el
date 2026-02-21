@@ -1114,10 +1114,13 @@ When in a body, \"current headline\" means the current body's parent headline."
 (defun norg/show-children-from-point/incremental/more (&optional arg)
   "Incrementally expand the current headline by `arg` levels, default 1.
 When in a body, \"current headline\" means the current body's parent headline."
-  (interactive "P")
   (let* ((v (-> (norg/smallest-invisible-level-below-or-infinity)
                 (norg/-unmodified-value-and-arg->level arg :more))))
     (norg/-show-children-from-point/set-level-etc v :more :dummy)))
+
+(cl-defmethod nomis/tree/show-children-from-point/incremental/more--aux
+  ((k (eql :org)) arg)
+  (norg/show-children-from-point/incremental/more arg))
 
 ;;;; ____ ** norg/show-children-from-parent/xxxx support
 

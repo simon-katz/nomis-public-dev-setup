@@ -110,6 +110,15 @@ When in a body, \"current heading\" means the current body's parent heading."
   (nomis/tree/show-children-from-point/incremental/less--aux (-nomis/tree/mode)
                                                              n))
 
+(cl-defgeneric nomis/tree/show-children-from-point/incremental/more--aux (k n))
+
+(defun nomis/tree/show-children-from-point/incremental/more (n)
+  "Incrementally expand the current heading by `arg` levels, default 1.
+When in a body, \"current heading\" means the current body's parent heading."
+  (interactive "P")
+  (nomis/tree/show-children-from-point/incremental/more--aux (-nomis/tree/mode)
+                                                             n))
+
 ;;; End
 
 (provide 'nomis-tree)

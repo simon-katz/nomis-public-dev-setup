@@ -16,7 +16,6 @@
 
 ;; |-------------------+---------------------------------------------------------+-----------------------------|
 ;; |                   | ---- Expand/collapse ----                               |                             |
-;; | (kbd "H-\\")      | norg/show-children-from-point/incremental/more          |                             |
 ;; | (kbd "H-M-'")     | norg/show-children-from-point/set-min                   |                             |
 ;; | (kbd "H-M-\\")    | norg/show-children-from-point/fully-expand              |                             |
 ;; |                   |                                                         |                             |
