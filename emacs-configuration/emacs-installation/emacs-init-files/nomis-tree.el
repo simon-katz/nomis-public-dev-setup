@@ -99,7 +99,7 @@
   (interactive "P")
   (nomis/tree/set-step-n-levels-to-show--aux (-nomis/tree/mode) n))
 
-;;;; Expand/collapse
+;;;; Expand/collapse from point
 
 (cl-defgeneric nomis/tree/show-children-from-point/incremental/less--aux (k n))
 
@@ -134,6 +134,34 @@ When in a body, \"current heading\" means the current body's parent heading."
 When in a body, \"current heading\" means the current body's parent heading."
   (interactive)
   (nomis/tree/show-children-from-point/fully-expand--aux (-nomis/tree/mode)))
+
+;;;; Expand/collapse from root
+
+(cl-defgeneric nomis/tree/show-children-from-root/incremental/less--aux (k n))
+
+(defun nomis/tree/show-children-from-root/incremental/less (n)
+  "Incrementally collapse the current root by `arg` levels, default 1."
+  (interactive "P")
+  (nomis/tree/show-children-from-root/incremental/less--aux (-nomis/tree/mode) n))
+
+(cl-defgeneric nomis/tree/show-children-from-root/incremental/more--aux (k n))
+
+(defun nomis/tree/show-children-from-root/incremental/more (n)
+  "Incrementally expand the current root by `arg` levels, default 1."
+  (interactive "P")
+  (nomis/tree/show-children-from-root/incremental/more--aux (-nomis/tree/mode) n))
+
+(cl-defgeneric nomis/tree/show-children-from-root/set-min--aux (k))
+
+(defun nomis/tree/show-children-from-root/set-min ()
+  (interactive)
+  (nomis/tree/show-children-from-root/set-min--aux (-nomis/tree/mode)))
+
+(cl-defgeneric nomis/tree/show-children-from-root/fully-expand--aux (k))
+
+(defun nomis/tree/show-children-from-root/fully-expand ()
+  (interactive)
+  (nomis/tree/show-children-from-root/fully-expand--aux (-nomis/tree/mode)))
 
 ;;; End
 

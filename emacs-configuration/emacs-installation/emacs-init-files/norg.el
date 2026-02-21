@@ -1204,28 +1204,28 @@ the parameter."
   (let* ((v n))
     (norg/-show-children-from-root/set-level-etc v :no-check :dummy)))
 
-(defun norg/show-children-from-root/set-min ()
-  (interactive)
+(cl-defmethod nomis/tree/show-children-from-root/set-min--aux
+  ((k (eql :org)))
   (let* ((current-value (1+ (norg/level-for-incremental-contract/root)))
          (v 0))
     (norg/-show-children-from-root/set-level-etc v :setting-min current-value)))
 
-(defun norg/show-children-from-root/fully-expand ()
-  (interactive)
+(cl-defmethod nomis/tree/show-children-from-root/fully-expand--aux
+  ((k (eql :org)))
   (let* ((current-value (norg/smallest-invisible-level-below-or-infinity/root))
          (v :max))
     (norg/-show-children-from-root/set-level-etc v :setting-max current-value)))
 
-(defun norg/show-children-from-root/incremental/less (&optional arg)
+(cl-defmethod nomis/tree/show-children-from-root/incremental/less--aux
+  ((k (eql :org)) arg)
   "Incrementally collapse the current root by `arg` levels, default 1."
-  (interactive "P")
   (let* ((v (-> (norg/level-for-incremental-contract/root)
                 (norg/-unmodified-value-and-arg->level arg :less))))
     (norg/-show-children-from-root/set-level-etc v :less :dummy)))
 
-(defun norg/show-children-from-root/incremental/more (&optional arg)
+(cl-defmethod nomis/tree/show-children-from-root/incremental/more--aux
+  ((k (eql :org)) arg)
   "Incrementally expand the current root by `arg` levels, default 1."
-  (interactive "P")
   (let* ((v (-> (norg/smallest-invisible-level-below-or-infinity/root)
                 (norg/-unmodified-value-and-arg->level arg :more))))
     (norg/-show-children-from-root/set-level-etc v :more :dummy)))

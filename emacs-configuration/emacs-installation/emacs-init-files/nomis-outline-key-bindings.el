@@ -17,10 +17,6 @@
 ;; |-------------------+---------------------------------------------------------+-----------------------------|
 ;; |                   | ---- Expand/collapse ----                               |                             |
 ;; |                   |                                                         |                             |
-;; | (kbd "H-\"")      | norg/show-children-from-root/incremental/less           |                             |
-;; | (kbd "H-")        | norg/show-children-from-root/incremental/more           |                             |
-;; | (kbd "H-M-\"")    | norg/show-children-from-root/set-min                    |                             |
-;; | (kbd "H-M-")      | norg/show-children-from-root/fully-expand               |                             |
 ;; |                   |                                                         |                             |
 ;; | (kbd "H-[")       | norg/show-children-from-parent/incremental/less         |                             |
 ;; | (kbd "H-]")       | norg/show-children-from-parent/incremental/more         |                             |
