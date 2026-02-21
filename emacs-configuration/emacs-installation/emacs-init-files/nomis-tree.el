@@ -99,6 +99,17 @@
   (interactive "P")
   (nomis/tree/set-step-n-levels-to-show--aux (-nomis/tree/mode) n))
 
+;;;; Expand/collapse
+
+(cl-defgeneric nomis/tree/show-children-from-point/incremental/less--aux (k n))
+
+(defun nomis/tree/show-children-from-point/incremental/less (n)
+  "Incrementally collapse the current heading by `arg` levels, default 1.
+When in a body, \"current heading\" means the current body's parent heading."
+  (interactive "P")
+  (nomis/tree/show-children-from-point/incremental/less--aux (-nomis/tree/mode)
+                                                             n))
+
 ;;; End
 
 (provide 'nomis-tree)

@@ -89,6 +89,10 @@ H-q H-q /    Show this help")
 
 (define-key nomis/tree-mode-map (kbd "H-q H-q s") 'nomis/tree/set-step-n-levels-to-show)
 
+;;;; Expand/collapse
+
+(define-key nomis/tree-mode-map (kbd "H-'")       'nomis/tree/show-children-from-point/incremental/less)
+
 ;;;; nomis/scrolling/toggle-maintain-line-no-in-window
 
 (define-key nomis/tree-mode-map (kbd "H-q H-q m") 'nomis/scrolling/toggle-maintain-line-no-in-window)
