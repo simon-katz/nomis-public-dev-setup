@@ -437,6 +437,10 @@
   ((k (eql :outline)) n)
   (error "Not supported: %s %s" k this-command))
 
+(cl-defmethod nomis/tree/show-children-from-point/set-min--aux
+  ((k (eql :outline)))
+  (error "Not supported: %s %s" k this-command))
+
 ;;;;; nomis/outline-tab
 
 (defun nomis/outline-tab (arg)

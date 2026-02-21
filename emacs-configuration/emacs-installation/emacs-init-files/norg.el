@@ -1085,12 +1085,15 @@ When in a body, \"current headline\" means the current body's parent headline."
     (norg/-show-children-from-point/set-level-etc v :no-check :dummy)))
 
 (defun norg/show-children-from-point/set-min ()
-  (interactive)
   "Fully collapse the current headline.
 When in a body, \"current headline\" means the current body's parent headline."
   (let* ((current-value (1+ (norg/level-for-incremental-contract)))
          (v (if *expanding-parent?* 1 0)))
     (norg/-show-children-from-point/set-level-etc v :setting-min current-value)))
+
+(cl-defmethod nomis/tree/show-children-from-point/set-min--aux
+  ((k (eql :org)))
+  (norg/show-children-from-point/set-min))
 
 (defun norg/show-children-from-point/fully-expand ()
   (interactive)

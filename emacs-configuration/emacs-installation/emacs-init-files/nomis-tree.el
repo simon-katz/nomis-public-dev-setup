@@ -119,6 +119,14 @@ When in a body, \"current heading\" means the current body's parent heading."
   (nomis/tree/show-children-from-point/incremental/more--aux (-nomis/tree/mode)
                                                              n))
 
+(cl-defgeneric nomis/tree/show-children-from-point/set-min--aux (k))
+
+(defun nomis/tree/show-children-from-point/set-min ()
+  "Fully collapse the current heading.
+When in a body, \"current heading\" means the current body's parent heading."
+  (interactive)
+  (nomis/tree/show-children-from-point/set-min--aux (-nomis/tree/mode)))
+
 ;;; End
 
 (provide 'nomis-tree)
