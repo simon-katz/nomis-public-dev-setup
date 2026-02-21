@@ -11,32 +11,11 @@
 
 ;;;; Key bindings for outline-minor-mode-map, cross-referncing `org-mode` mode and `hs-minor-mode`
 
-;; |-------------------+---------------------------------------------------------+-----------------------------|
-;; | Key               | org mode                                                | outline                     |
-
-;; |-------------------+---------------------------------------------------------+-----------------------------|
-;; |                   | - The following keys are copied from org.el.            |                             |
-;; |                   | -- TAB key with modifiers                               |                             |
-;; | "\C-i"            | norg/tab                                              |                             |
-;; | [(tab)]           | norg/tab                                              | nomis/outline-tab                            |
-;; |                   | -- The following line is necessary under Suse GNU/Linux |                             |
-;; | [S-iso-lefttab]   | norg/shifttab                                           |                             |
-;; | [(shift tab)]     | norg/shifttab                                           | nomis/outline-dec-children                            |
-;; | [backtab]         | norg/shifttab                                           |                             |
-
-(define-key outline-minor-mode-map [tab]               'nomis/outline-tab)
-(define-key outline-minor-mode-map [S-tab]             'nomis/outline-dec-children)
 (define-key outline-minor-mode-map (kbd "H-o <tab>")   'bicycle-cycle-global)
-
-;; |-------------------+---------------------------------------------------------+---------------------------------------------------|
-;; |                   | ---- Movement ----                                      |                                                   |
-
 
 ;; |-------------------+---------------------------------------------------------+-----------------------------|
 ;; |                   | ---- Movement + expand/collapse ----                    |                             |
 
-
-;; |                   |                                                         |                             |
 ;; | (kbd "C-H-,")     | norg/backward-heading/any-level                         | nomis/outline-previous-heading |
 ;; | (kbd "C-H-.")     | norg/forward-heading/any-level                          | nomis/outline-next-heading  |
 

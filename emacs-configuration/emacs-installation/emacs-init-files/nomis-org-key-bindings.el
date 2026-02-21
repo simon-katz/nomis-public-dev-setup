@@ -39,18 +39,6 @@
 (define-key org-mode-map (kbd "M-,") 'org-mark-ring-goto)
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-;;;; ____ ** Tab etc
-
-;;; The following keys are copied from org.el.
-;; TAB key with modifiers
-(define-key org-mode-map "\C-i"          'norg/tab)
-(define-key org-mode-map [(tab)]         'norg/tab)
-;; The following line is necessary under Suse GNU/Linux
-(define-key org-mode-map [S-iso-lefttab] 'norg/shifttab)
-(define-key org-mode-map [(shift tab)]   'norg/shifttab)
-(define-key org-mode-map [backtab]       'norg/shifttab)
-
-;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ;;;; ____ ** Movement + expand/collapse
 
 (define-key org-mode-map (kbd "C-H-,")   'norg/backward-heading/any-level)

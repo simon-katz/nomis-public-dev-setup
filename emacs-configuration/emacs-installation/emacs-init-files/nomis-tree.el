@@ -240,6 +240,19 @@ the current entry's parent."
   (interactive)
   (nomis/tree/show-children-from-root/fully-expand--aux (-nomis/tree/mode)))
 
+;;;; Tab and shifttab
+
+(cl-defgeneric nomis/tree/tab--aux (k))
+(cl-defgeneric nomis/tree/shifttab--aux (k))
+
+(defun nomis/tree/tab (arg)
+  (interactive "P")
+  (nomis/tree/tab--aux (-nomis/tree/mode) arg))
+
+(defun nomis/tree/shifttab (arg)
+  (interactive "P")
+  (nomis/tree/shifttab--aux (-nomis/tree/mode) arg))
+
 ;;;; Movement
 
 (cl-defgeneric nomis/tree/previous-sibling--aux (k))

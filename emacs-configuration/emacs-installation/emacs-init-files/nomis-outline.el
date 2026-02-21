@@ -61,7 +61,7 @@
 ;; Clojure and other languages. (There are historical commits we can look at.
 ;; See commit 2bb138fb "Don't make changes to `outline-regexp`".)
 
-;; Update: See `nomis/outline-tab`.
+;; Update: See `nomis/tree/tab--aux` `:outline` method.
 
 ;;;; outline-minor-faces
 

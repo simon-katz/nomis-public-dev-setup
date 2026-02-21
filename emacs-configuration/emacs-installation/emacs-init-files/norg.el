@@ -1298,8 +1298,7 @@ the parameter."
 ;;;; ___________________________________________________________________________
 ;;;; ____ * Replacements for `org-cycle` and `org-shifttab`
 
-(defun norg/tab (&optional arg)
-  (interactive "P")
+(cl-defmethod nomis/tree/tab--aux ((k (eql :org)) arg)
   (cond ((not (norg/w/at-heading-p))
          (org-cycle arg))
         ((null arg)
@@ -1313,8 +1312,7 @@ the parameter."
         (t
          (error "Bad arg"))))
 
-(defun norg/shifttab (&optional arg)
-  (interactive "P")
+(cl-defmethod nomis/tree/shifttab--aux ((k (eql :org)) arg)
   (cond ((not (norg/w/at-heading-p))
          (org-shifttab arg))
         ((null arg)

@@ -110,6 +110,18 @@ H-q H-q /    Show this help")
 (define-key nomis/tree-mode-map (kbd "H-q H-q ]") 'nomis/tree/show-children-from-root/to-current-level)
 (define-key nomis/tree-mode-map (kbd "H-q H-q =") 'nomis/tree/show-children-from-all-roots/to-current-level)
 
+;;;; Tab and shift-tab
+
+;; The following keys are copied from org.el.
+
+;; TAB key with modifiers
+(define-key nomis/tree-mode-map "\C-i"          'nomis/tree/tab)
+(define-key nomis/tree-mode-map [(tab)]         'nomis/tree/tab)
+;; The following line is necessary under Suse GNU/Linux
+(define-key nomis/tree-mode-map [S-iso-lefttab] 'nomis/tree/shifttab)
+(define-key nomis/tree-mode-map [(shift tab)]   'nomis/tree/shifttab)
+(define-key nomis/tree-mode-map [backtab]       'nomis/tree/shifttab)
+
 ;;;; Movement
 
 (define-key nomis/tree-mode-map (kbd "H-,")       'nomis/tree/previous-sibling)

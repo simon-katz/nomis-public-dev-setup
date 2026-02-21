@@ -16,8 +16,8 @@
 ;;       - We'd have to do that for all modes (all languages).
 ;;       - What about wanting to have my code be useful for other people?
 
-;; TODO: We could integrate hide-show -- so eg `nomis/outline-tab` could do
-;;       `nomis/hs/adjust/more` for children that are code.
+;; TODO: We could integrate hide-show -- so eg `nomis/tree/tab` `:outline`
+;;       method could do `nomis/hs/adjust/more` for children that are code.
 
 ;; TODO: Make `nomis/tree/set-step-n-levels-to-show`-style functionality
 ;;       available here.
@@ -359,9 +359,8 @@
           ;; TODO: At some point change this to look at the actual text rather
           ;;       than relying on `-nomis/outline-increments-children-approach`.
           (if (member (-nomis/outline-last-command)
-                      '(nomis/outline-inc-children
-                        nomis/outline-dec-children
-                        nomis/outline-tab))
+                      '(nomis/tree/tab
+                        nomis/tree/shifttab))
               -nomis/outline-increments-children-approach
             ;; TODO: These out-of-range values are a bit "clever".
             ;;       Maybe rewrite.
@@ -382,11 +381,9 @@
         (-nomis/outline-inc-dec-message approach)))))
 
 (defun nomis/outline-inc-children ()
-  (interactive)
   (nomis/outline-show-lineage-with-incs-or-decs :inc))
 
 (defun nomis/outline-dec-children ()
-  (interactive)
   (nomis/outline-show-lineage-with-incs-or-decs :dec))
 
 ;;;;; Search heading text
@@ -517,10 +514,12 @@
   ((k (eql :outline)))
   (nomis/outline-next-sibling/allow-cross-parent 1))
 
-;;;;; nomis/outline-tab
+;;;;; Tab and shift-tab
 
-(defun nomis/outline-tab (arg)
-  (interactive "P")
+(cl-defmethod nomis/tree/tab--aux ((k (eql :outline)) arg)
+  ;; TODO: Compare with the `:org` method and extract common functionality
+  ;;       into the caller.
+  ;; TODO: Make use of `arg`.
   (if (and (bolp)
            (looking-at-p outline-regexp))
       (nomis/outline-inc-children)
@@ -528,6 +527,9 @@
     ;; were not enabled. I've tried but it's non-trivial. So I'm not bothering,
     ;; at least for now.
     (company-indent-or-complete-common arg)))
+
+(cl-defmethod nomis/tree/shifttab--aux ((k (eql :outline)) arg)
+  (nomis/outline-dec-children))
 
 ;;;;; Previous
 
