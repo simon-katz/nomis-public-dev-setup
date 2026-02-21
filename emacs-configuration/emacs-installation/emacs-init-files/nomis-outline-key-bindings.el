@@ -19,10 +19,7 @@
 ;; |                   |                                                         |                             |
 ;; |                   |                                                         |                             |
 ;; |                   |                                                         |                             |
-;; | (kbd "H--")       | norg/show-children-from-all-roots/incremental/less      |                             |
-;; | (kbd "H-=")       | norg/show-children-from-all-roots/incremental/more      |                             |
-;; | (kbd "H-M--")     | norg/show-children-from-all-roots/set-min               |                             |
-;; | (kbd "H-M-=")     | norg/show-children-from-all-roots/fully-expand          | Note: "H-o a" for outline-show-all |
+
 ;; |                   |                                                         |                             |
 ;; | (kbd "H-q H-q ]") | norg/show-children-from-root/to-current-level           |                             |
 ;; | (kbd "H-q H-q =") | norg/show-children-from-all-roots/to-current-level      |                             |
@@ -102,7 +99,7 @@
 
 (define-key outline-minor-mode-map (kbd "M-RET")       'outline-insert-heading)
 
-(define-key outline-minor-mode-map (kbd "H-o a")       'outline-show-all)
+(define-key outline-minor-mode-map (kbd "H-o a")       'outline-show-all) ; TODO: We will have `H-M-=` for `nomis/tree/show-children-from-all-roots/fully-expand`.
 
 ;; | outline-hide-sublevels                    | H-o C-q |             |
 ;; | outline-show-branches                     | H-o C-k |             |

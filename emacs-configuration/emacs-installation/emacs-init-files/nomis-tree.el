@@ -170,6 +170,34 @@ the current entry's parent."
   (interactive)
   (nomis/tree/show-children-from-parent/fully-expand--aux (-nomis/tree/mode)))
 
+;;;; Expand/collapse from all roots
+
+(cl-defgeneric nomis/tree/show-children-from-all-roots/incremental/less--aux (k n))
+
+(defun nomis/tree/show-children-from-all-roots/incremental/less (n)
+  "Incrementally collapse all roots by `arg` levels, default 1."
+  (interactive "P")
+  (nomis/tree/show-children-from-all-roots/incremental/less--aux (-nomis/tree/mode) n))
+
+(cl-defgeneric nomis/tree/show-children-from-all-roots/incremental/more--aux (k n))
+
+(defun nomis/tree/show-children-from-all-roots/incremental/more (n)
+  "Incrementally expand all roots by `arg` levels, default 1."
+  (interactive "P")
+  (nomis/tree/show-children-from-all-roots/incremental/more--aux (-nomis/tree/mode) n))
+
+(cl-defgeneric nomis/tree/show-children-from-all-roots/set-min--aux (k))
+
+(defun nomis/tree/show-children-from-all-roots/set-min ()
+  (interactive)
+  (nomis/tree/show-children-from-all-roots/set-min--aux (-nomis/tree/mode)))
+
+(cl-defgeneric nomis/tree/show-children-from-all-roots/fully-expand--aux (k))
+
+(defun nomis/tree/show-children-from-all-roots/fully-expand ()
+  (interactive)
+  (nomis/tree/show-children-from-all-roots/fully-expand--aux (-nomis/tree/mode)))
+
 ;;;; Expand/collapse from root
 
 (cl-defgeneric nomis/tree/show-children-from-root/incremental/less--aux (k n))
