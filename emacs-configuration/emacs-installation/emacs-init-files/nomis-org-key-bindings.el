@@ -43,8 +43,8 @@
 
 ;;; The following keys are copied from org.el.
 ;; TAB key with modifiers
-(define-key org-mode-map "\C-i"          'norg/cycle)
-(define-key org-mode-map [(tab)]         'norg/cycle)
+(define-key org-mode-map "\C-i"          'norg/tab)
+(define-key org-mode-map [(tab)]         'norg/tab)
 ;; The following line is necessary under Suse GNU/Linux
 (define-key org-mode-map [S-iso-lefttab] 'norg/shifttab)
 (define-key org-mode-map [(shift tab)]   'norg/shifttab)

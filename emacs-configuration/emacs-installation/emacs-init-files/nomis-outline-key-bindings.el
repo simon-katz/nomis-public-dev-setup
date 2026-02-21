@@ -17,8 +17,8 @@
 ;; |-------------------+---------------------------------------------------------+-----------------------------|
 ;; |                   | - The following keys are copied from org.el.            |                             |
 ;; |                   | -- TAB key with modifiers                               |                             |
-;; | "\C-i"            | norg/cycle                                              |                             |
-;; | [(tab)]           | norg/cycle                                              | nomis/outline-tab                            |
+;; | "\C-i"            | norg/tab                                              |                             |
+;; | [(tab)]           | norg/tab                                              | nomis/outline-tab                            |
 ;; |                   | -- The following line is necessary under Suse GNU/Linux |                             |
 ;; | [S-iso-lefttab]   | norg/shifttab                                           |                             |
 ;; | [(shift tab)]     | norg/shifttab                                           | nomis/outline-dec-children                            |

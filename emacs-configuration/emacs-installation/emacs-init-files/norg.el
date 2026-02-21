@@ -1298,7 +1298,7 @@ the parameter."
 ;;;; ___________________________________________________________________________
 ;;;; ____ * Replacements for `org-cycle` and `org-shifttab`
 
-(defun norg/cycle (&optional arg)
+(defun norg/tab (&optional arg)
   (interactive "P")
   (cond ((not (norg/w/at-heading-p))
          (org-cycle arg))
