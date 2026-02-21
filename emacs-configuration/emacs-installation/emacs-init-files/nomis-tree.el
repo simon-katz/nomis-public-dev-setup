@@ -317,6 +317,30 @@ the current entry's parent."
   (interactive "P")
   (nomis/tree/step-forward/allow-cross-parent--aux (-nomis/tree/mode) n))
 
+(cl-defgeneric nomis/tree/previous-heading--aux (k n))
+
+(defun nomis/tree/previous-heading (n)
+  (interactive "p")
+  (nomis/tree/previous-heading--aux (-nomis/tree/mode) n))
+
+(cl-defgeneric nomis/tree/next-heading--aux (k n))
+
+(defun nomis/tree/next-heading (n)
+  (interactive "p")
+  (nomis/tree/next-heading--aux (-nomis/tree/mode) n))
+
+(cl-defgeneric nomis/tree/previous-heading/set-tree+body--aux (k))
+
+(defun nomis/tree/previous-heading/set-tree+body ()
+  (interactive)
+  (nomis/tree/previous-heading/set-tree+body--aux (-nomis/tree/mode)))
+
+(cl-defgeneric nomis/tree/next-heading/set-tree+body--aux (k))
+
+(defun nomis/tree/next-heading/set-tree+body ()
+  (interactive)
+  (nomis/tree/next-heading/set-tree+body--aux (-nomis/tree/mode)))
+
 ;;; End
 
 (provide 'nomis-tree)

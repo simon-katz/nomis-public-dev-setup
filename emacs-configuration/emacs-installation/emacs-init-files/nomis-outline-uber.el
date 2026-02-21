@@ -542,6 +542,12 @@
                                          :backward
                                          :any-level)))
 
+(cl-defmethod nomis/tree/previous-heading--aux ((k (eql :outline)) n)
+  (nomis/outline-previous-heading n))
+
+(cl-defmethod nomis/tree/previous-heading/set-tree+body--aux ((k (eql :outline)))
+  (error "Not supported: %s %s" k this-command))
+
 (defun nomis/outline-previous-sibling (n)
   "Move backward to the N'th heading at same level as this one.
 Stop at the first and last headings of a superior heading."
@@ -596,6 +602,12 @@ Can pass by a superior heading."
                                          n
                                          :forward
                                          :any-level)))
+
+(cl-defmethod nomis/tree/next-heading--aux ((k (eql :outline)) n)
+  (nomis/outline-next-heading n))
+
+(cl-defmethod nomis/tree/next-heading/set-tree+body--aux ((k (eql :outline)))
+  (error "Not supported: %s %s" k this-command))
 
 (defun nomis/outline-next-sibling (n)
   "Move forward to the N'th heading at same level as this one.

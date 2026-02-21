@@ -15,16 +15,6 @@
 
 ;; |-------------------+---------------------------------------------------------+-----------------------------|
 ;; |                   | ---- Movement + expand/collapse ----                    |                             |
-
-;; | (kbd "C-H-,")     | norg/backward-heading/any-level                         | nomis/outline-previous-heading |
-;; | (kbd "C-H-.")     | norg/forward-heading/any-level                          | nomis/outline-next-heading  |
-
-(define-key outline-minor-mode-map (kbd "C-H-,")       'nomis/outline-previous-heading)
-(define-key outline-minor-mode-map (kbd "C-H-.")       'nomis/outline-next-heading)
-
-;; | (kbd "C-H-M-,")   | norg/backward-heading/any-level/set-tree+body           |                             |
-;; | (kbd "C-H-M-.")   | norg/forward-heading/any-level/set-tree+body            |                             |
-;; |                   |                                                         |                             |
 ;; | (kbd "C-H-<")     | (*)                                                     |                             |
 ;; | (kbd "C-H->")     | (*)                                                     |                             |
 ;; | (kbd "C-H-M-<")   | (*)                                                     |                             |

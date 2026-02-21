@@ -41,11 +41,6 @@
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ;;;; ____ ** Movement + expand/collapse
 
-(define-key org-mode-map (kbd "C-H-,")   'norg/backward-heading/any-level)
-(define-key org-mode-map (kbd "C-H-.")   'norg/forward-heading/any-level)
-(define-key org-mode-map (kbd "C-H-M-,") 'norg/backward-heading/any-level/set-tree+body)
-(define-key org-mode-map (kbd "C-H-M-.") 'norg/forward-heading/any-level/set-tree+body)
-
 ;; (define-key org-mode-map (kbd "C-H-<")   ????) ; No real meaning -- with the M we are already crossing parent levels
 ;; (define-key org-mode-map (kbd "C-H->")   ????) ; No real meaning -- with the M we are already crossing parent levels
 ;; (define-key org-mode-map (kbd "C-H-M-<") ????) ; No real meaning -- with the M we are already crossing parent levels

@@ -546,35 +546,45 @@ subheading at this level in the previous parent."
 
 (defvar norg/-heading-any-level-show-entry?
   t
-  "Truthy if `norg/forward-heading/any-level` should show bodies (and so match
-`norg/forward-heading/any-level/set-tree+body)`.
+  "Truthy if `norg/next-heading` should show bodies (and so match
+`norg/next-heading/set-tree+body)`.
 Same for the `backward` commands.")
 
-(defun norg/forward-heading/any-level ()
-  (interactive)
+(defun norg/next-heading ()
   (nomis/scrolling/with-maybe-maintain-line-no-in-window
     (norg/w/next-heading)
     (if norg/-heading-any-level-show-entry?
         (norg/w/show-entry)
       (norg/show-point))))
 
-(defun norg/backward-heading/any-level ()
-  (interactive)
+(cl-defmethod nomis/tree/next-heading--aux ((k (eql :org)) n)
+  ;; TODO: We are ignoring `n`.
+  (norg/next-heading))
+
+(defun norg/previous-heading ()
   (nomis/scrolling/with-maybe-maintain-line-no-in-window
     (norg/w/previous-heading)
     (if norg/-heading-any-level-show-entry?
         (norg/w/show-entry)
       (norg/show-point))))
 
-(defun norg/forward-heading/any-level/set-tree+body ()
-  (interactive)
-  (norg/forward-heading/any-level)
+(cl-defmethod nomis/tree/previous-heading--aux ((k (eql :org)) n)
+  ;; TODO: We are ignoring `n`.
+  (norg/previous-heading))
+
+(defun norg/next-heading/set-tree+body ()
+  (norg/next-heading)
   (nomis/org-visibility-span/set-tree+body))
 
-(defun norg/backward-heading/any-level/set-tree+body ()
-  (interactive)
-  (norg/backward-heading/any-level)
+(cl-defmethod nomis/tree/next-heading/set-tree+body--aux ((k (eql :org)))
+  (norg/next-heading/set-tree+body))
+
+(defun norg/previous-heading/set-tree+body ()
+  (norg/previous-heading)
   (nomis/org-visibility-span/set-tree+body))
+
+(cl-defmethod nomis/tree/previous-heading/set-tree+body--aux ((k (eql :org)))
+  (norg/previous-heading/set-tree+body))
 
 ;;;; ___________________________________________________________________________
 ;;;; ____ * Info that relies on our navigation stuff
