@@ -1153,31 +1153,43 @@ When in a body, \"current headline\" means the current body's parent headline."
 (defun norg/show-children-from-parent/set-min ()
   "Like `norg/show-children-from-point/set-min`, but from the
 current entry's parent and showing one level."
-  (interactive)
   (norg/save-excursion-to-parent-and-then-show-point
     (norg/show-children-from-point/set-min)))
+
+(cl-defmethod nomis/tree/show-children-from-parent/set-min--aux
+  ((k (eql :org)))
+  (norg/show-children-from-parent/set-min))
 
 (defun norg/show-children-from-parent/fully-expand ()
   "Like `norg/show-children-from-point/fully-expand`, but from
 the current entry's parent."
-  (interactive)
   (norg/save-excursion-to-parent-and-then-show-point
     (norg/show-children-from-point/fully-expand)))
+
+(cl-defmethod nomis/tree/show-children-from-parent/fully-expand--aux
+  ((k (eql :org)))
+  (norg/show-children-from-parent/fully-expand))
 
 (defun norg/show-children-from-parent/incremental/less (&optional arg)
   "Like `norg/show-children-from-point/incremental/less`, but
 from the current entry's parent and with the parent always
 expanded at least one level."
-  (interactive "P")
   (norg/save-excursion-to-parent-and-then-show-point
     (norg/show-children-from-point/incremental/less arg)))
+
+(cl-defmethod nomis/tree/show-children-from-parent/incremental/less--aux
+  ((k (eql :org)) arg)
+  (norg/show-children-from-parent/incremental/less arg))
 
 (defun norg/show-children-from-parent/incremental/more (&optional arg)
   "Like `norg/show-children-from-point/incremental/more`, but
 from the current entry's parent."
-  (interactive "P")
   (norg/save-excursion-to-parent-and-then-show-point
     (norg/show-children-from-point/incremental/more arg)))
+
+(cl-defmethod nomis/tree/show-children-from-parent/incremental/more--aux
+  ((k (eql :org)) arg)
+  (norg/show-children-from-parent/incremental/more arg))
 
 ;;;; ____ ** norg/show-children-from-root/xxxx support
 

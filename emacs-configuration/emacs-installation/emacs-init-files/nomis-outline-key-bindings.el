@@ -18,10 +18,6 @@
 ;; |                   | ---- Expand/collapse ----                               |                             |
 ;; |                   |                                                         |                             |
 ;; |                   |                                                         |                             |
-;; | (kbd "H-[")       | norg/show-children-from-parent/incremental/less         |                             |
-;; | (kbd "H-]")       | norg/show-children-from-parent/incremental/more         |                             |
-;; | (kbd "H-M-[")     | norg/show-children-from-parent/set-min                  |                             |
-;; | (kbd "H-M-]")     | norg/show-children-from-parent/fully-expand             |                             |
 ;; |                   |                                                         |                             |
 ;; | (kbd "H--")       | norg/show-children-from-all-roots/incremental/less      |                             |
 ;; | (kbd "H-=")       | norg/show-children-from-all-roots/incremental/more      |                             |

@@ -45,10 +45,7 @@
 
 
 
-(define-key org-mode-map (kbd "H-[")     'norg/show-children-from-parent/incremental/less)
-(define-key org-mode-map (kbd "H-]")     'norg/show-children-from-parent/incremental/more)
-(define-key org-mode-map (kbd "H-M-[")   'norg/show-children-from-parent/set-min)
-(define-key org-mode-map (kbd "H-M-]")   'norg/show-children-from-parent/fully-expand)
+
 
 (define-key org-mode-map (kbd "H--")     'norg/show-children-from-all-roots/incremental/less)
 (define-key org-mode-map (kbd "H-=")     'norg/show-children-from-all-roots/incremental/more)
