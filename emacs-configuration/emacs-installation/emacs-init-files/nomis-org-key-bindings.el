@@ -39,17 +39,7 @@
 (define-key org-mode-map (kbd "M-,") 'org-mark-ring-goto)
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-;;;; ____ ** Expand/collapse
-
-
-
-
-
-
-
-
-
-
+;;;; ____ ** Tab etc
 
 ;;; The following keys are copied from org.el.
 ;; TAB key with modifiers
@@ -61,14 +51,7 @@
 (define-key org-mode-map [backtab]       'norg/shifttab)
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-;;;; ____ ** Movement
-
-
-
-;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ;;;; ____ ** Movement + expand/collapse
-
-
 
 (define-key org-mode-map (kbd "C-H-,")   'norg/backward-heading/any-level)
 (define-key org-mode-map (kbd "C-H-.")   'norg/forward-heading/any-level)

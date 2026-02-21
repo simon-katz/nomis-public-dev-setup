@@ -15,14 +15,6 @@
 ;; | Key               | org mode                                                | outline                     |
 
 ;; |-------------------+---------------------------------------------------------+-----------------------------|
-;; |                   | ---- Expand/collapse ----                               |                             |
-;; |                   |                                                         |                             |
-;; |                   |                                                         |                             |
-;; |                   |                                                         |                             |
-
-;; |                   |                                                         |                             |
-
-;; |                   |                                                         |                             |
 ;; |                   | - The following keys are copied from org.el.            |                             |
 ;; |                   | -- TAB key with modifiers                               |                             |
 ;; | "\C-i"            | norg/cycle                                              |                             |
