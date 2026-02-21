@@ -127,6 +127,14 @@ When in a body, \"current heading\" means the current body's parent heading."
   (interactive)
   (nomis/tree/show-children-from-point/set-min--aux (-nomis/tree/mode)))
 
+(cl-defgeneric nomis/tree/show-children-from-point/fully-expand--aux (k))
+
+(defun nomis/tree/show-children-from-point/fully-expand ()
+  "Fully expand the current heading.
+When in a body, \"current heading\" means the current body's parent heading."
+  (interactive)
+  (nomis/tree/show-children-from-point/fully-expand--aux (-nomis/tree/mode)))
+
 ;;; End
 
 (provide 'nomis-tree)

@@ -41,7 +41,7 @@
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ;;;; ____ ** Expand/collapse
 
-(define-key org-mode-map (kbd "H-M-\\")  'norg/show-children-from-point/fully-expand)
+
 
 (define-key org-mode-map (kbd "H-\"")    'norg/show-children-from-root/incremental/less)
 (define-key org-mode-map (kbd "H-|")     'norg/show-children-from-root/incremental/more)
