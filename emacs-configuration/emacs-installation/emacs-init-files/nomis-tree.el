@@ -170,6 +170,20 @@ the current entry's parent."
   (interactive)
   (nomis/tree/show-children-from-parent/fully-expand--aux (-nomis/tree/mode)))
 
+;;;; Expand/collapse from root -- to current level, and from all roots -- to current level
+
+(cl-defgeneric nomis/tree/show-children-from-root/to-current-level--aux (k))
+
+(defun nomis/tree/show-children-from-root/to-current-level ()
+  (interactive)
+  (nomis/tree/show-children-from-root/to-current-level--aux (-nomis/tree/mode)))
+
+(cl-defgeneric nomis/tree/show-children-from-all-roots/to-current-level--aux (k))
+
+(defun nomis/tree/show-children-from-all-roots/to-current-level ()
+  (interactive)
+  (nomis/tree/show-children-from-all-roots/to-current-level--aux (-nomis/tree/mode)))
+
 ;;;; Expand/collapse from all roots
 
 (cl-defgeneric nomis/tree/show-children-from-all-roots/incremental/less--aux (k n))

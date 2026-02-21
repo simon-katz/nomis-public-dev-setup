@@ -52,8 +52,8 @@ H-M-m        nomis/tree/show-tree-only
 H-q H-q s    nomis/tree/set-step-n-levels-to-show
 H-q H-q m    nomis/scrolling/toggle-maintain-line-no-in-window
 
-H-q H-q ]    norg/show-children-from-root/to-current-level
-H-q H-q =    norg/show-children-from-all-roots/to-current-level
+H-q H-q ]    nomis/tree/show-children-from-root/to-current-level
+H-q H-q =    nomis/tree/show-children-from-all-roots/to-current-level
 
 H-q H-q /    Show this help")
 
@@ -107,6 +107,8 @@ H-q H-q /    Show this help")
 (define-key nomis/tree-mode-map (kbd "H-=")       'nomis/tree/show-children-from-all-roots/incremental/more)
 (define-key nomis/tree-mode-map (kbd "H-M--")     'nomis/tree/show-children-from-all-roots/set-min)
 (define-key nomis/tree-mode-map (kbd "H-M-=")     'nomis/tree/show-children-from-all-roots/fully-expand)
+(define-key nomis/tree-mode-map (kbd "H-q H-q ]") 'nomis/tree/show-children-from-root/to-current-level)
+(define-key nomis/tree-mode-map (kbd "H-q H-q =") 'nomis/tree/show-children-from-all-roots/to-current-level)
 
 ;;;; nomis/scrolling/toggle-maintain-line-no-in-window
 

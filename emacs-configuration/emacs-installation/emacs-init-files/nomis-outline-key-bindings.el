@@ -21,8 +21,7 @@
 ;; |                   |                                                         |                             |
 
 ;; |                   |                                                         |                             |
-;; | (kbd "H-q H-q ]") | norg/show-children-from-root/to-current-level           |                             |
-;; | (kbd "H-q H-q =") | norg/show-children-from-all-roots/to-current-level      |                             |
+
 ;; |                   |                                                         |                             |
 ;; |                   | - The following keys are copied from org.el.            |                             |
 ;; |                   | -- TAB key with modifiers                               |                             |

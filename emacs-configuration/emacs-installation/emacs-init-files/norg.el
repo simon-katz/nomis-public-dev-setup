@@ -1242,8 +1242,8 @@ the parameter."
                 (norg/-unmodified-value-and-arg->level arg :more))))
     (norg/-show-children-from-root/set-level-etc v :more :dummy)))
 
-(defun norg/show-children-from-root/to-current-level ()
-  (interactive)
+(cl-defmethod nomis/tree/show-children-from-root/to-current-level--aux
+  ((k (eql :org)))
   (let* ((v (1- (norg/current-level t))))
     (norg/-show-children-from-root/set-level-etc v :no-check :dummy)))
 
@@ -1297,8 +1297,8 @@ the parameter."
                 (norg/-unmodified-value-and-arg->level arg :more))))
     (norg/-show-children-from-all-roots/set-level-etc v :more :dummy)))
 
-(defun norg/show-children-from-all-roots/to-current-level ()
-  (interactive)
+(cl-defmethod nomis/tree/show-children-from-all-roots/to-current-level--aux
+  ((k (eql :org)))
   (let* ((v (1- (norg/current-level t))))
     (norg/-show-children-from-all-roots/set-level-etc v :no-check :dummy)))
 
