@@ -501,6 +501,22 @@
   ((k (eql :outline)))
   (error "Not supported: %s %s" k this-command))
 
+;;;;; Movement
+
+(cl-defmethod nomis/tree/previous-sibling--aux ((k (eql :outline)))
+  (nomis/outline-previous-sibling 1))
+
+(cl-defmethod nomis/tree/next-sibling--aux ((k (eql :outline)))
+  (nomis/outline-next-sibling 1))
+
+(cl-defmethod nomis/tree/previous-sibling/allow-cross-parent--aux
+  ((k (eql :outline)))
+  (nomis/outline-previous-sibling/allow-cross-parent 1))
+
+(cl-defmethod nomis/tree/next-sibling/allow-cross-parent--aux
+  ((k (eql :outline)))
+  (nomis/outline-next-sibling/allow-cross-parent 1))
+
 ;;;;; nomis/outline-tab
 
 (defun nomis/outline-tab (arg)

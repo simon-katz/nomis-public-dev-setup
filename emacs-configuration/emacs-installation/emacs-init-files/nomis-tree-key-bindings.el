@@ -89,6 +89,13 @@ H-q H-q /    Show this help")
 
 (define-key nomis/tree-mode-map (kbd "H-q H-q s") 'nomis/tree/set-step-n-levels-to-show)
 
+;;;; Movement
+
+(define-key nomis/tree-mode-map (kbd "H-,")       'nomis/tree/previous-sibling)
+(define-key nomis/tree-mode-map (kbd "H-.")       'nomis/tree/next-sibling)
+(define-key nomis/tree-mode-map (kbd "H-<")       'nomis/tree/previous-sibling/allow-cross-parent)
+(define-key nomis/tree-mode-map (kbd "H->")       'nomis/tree/next-sibling/allow-cross-parent)
+
 ;;;; Expand/collapse
 
 (define-key nomis/tree-mode-map (kbd "H-'")       'nomis/tree/show-children-from-point/incremental/less)

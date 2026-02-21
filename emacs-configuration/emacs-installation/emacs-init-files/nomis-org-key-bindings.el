@@ -63,10 +63,7 @@
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ;;;; ____ ** Movement
 
-(define-key org-mode-map (kbd "H-,")     'norg/backward-heading-same-level)
-(define-key org-mode-map (kbd "H-.")     'norg/forward-heading-same-level)
-(define-key org-mode-map (kbd "H-<")     'norg/backward-heading-same-level/allow-cross-parent)
-(define-key org-mode-map (kbd "H->")     'norg/forward-heading-same-level/allow-cross-parent)
+
 
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ;;;; ____ ** Movement + expand/collapse

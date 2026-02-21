@@ -467,21 +467,19 @@ headline."
       (when (= (point) starting-point)
         (nomis/popup/error-message "%s" error-message)))))
 
-(defun norg/forward-heading-same-level ()
+(cl-defmethod nomis/tree/next-sibling--aux ((k (eql :org)))
   "Move forward one subheading at same level as this one.
 Like `org-forward-heading-same-level` but:
 - when the target is invisible, make it visible
 - if this is the first subheading within its parent, display a popup message."
-  (interactive)
   (norg/-heading-same-level-helper #'norg/w/forward-heading-same-level
                                    "No next heading at this level"))
 
-(defun norg/backward-heading-same-level ()
+(cl-defmethod nomis/tree/previous-sibling--aux ((k (eql :org)))
   "Move backward one subheading at same level as this one.
 Like `org-backward-heading-same-level` but:
 - when the target is invisible, make it visible
 - if this is the first subheading within its parent, display a popup message."
-  (interactive)
   (norg/-heading-same-level-helper #'norg/w/backward-heading-same-level
                                    "No previous heading at this level"))
 
@@ -527,22 +525,21 @@ Like `org-backward-heading-same-level` but:
                              ))))
                 (nomis/popup/error-message "%s" msg)))))))))
 
-(defun norg/forward-heading-same-level/allow-cross-parent ()
+(cl-defmethod nomis/tree/next-sibling/allow-cross-parent--aux ((k (eql :org)))
   "Move forward one subheading at same level as this one.
 Like `org-forward-heading-same-level` but:
 - when the target is invisible, make it visible
 - if this is the first subheading within its parent, move to the first
   subheading at this level in the next parent."
-  (interactive)
   (norg/-heading-same-level/allow-cross-parent/helper :forward))
 
-(defun norg/backward-heading-same-level/allow-cross-parent ()
+(cl-defmethod nomis/tree/previous-sibling/allow-cross-parent--aux
+  ((k (eql :org)))
   "Move backward one subheading at same level as this one.
 Like `org-backward-heading-same-level` but:
 - when the target is invisible, make it visible
 - if this is the first subheading within its parent, move to the last
 subheading at this level in the previous parent."
-  (interactive)
   (norg/-heading-same-level/allow-cross-parent/helper :backward))
 
 ;;;; ____ ** Forward and backward at any level

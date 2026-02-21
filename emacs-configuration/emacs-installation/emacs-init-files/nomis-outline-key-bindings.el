@@ -38,15 +38,7 @@
 
 ;; |-------------------+---------------------------------------------------------+---------------------------------------------------|
 ;; |                   | ---- Movement ----                                      |                                                   |
-;; | (kbd "H-,")       | norg/backward-heading-same-level                        | nomis/outline-previous-sibling                    |
-;; | (kbd "H-.")       | norg/forward-heading-same-level                         | nomis/outline-next-sibling                        |
-;; | (kbd "H-<")       | norg/backward-heading-same-level/allow-cross-parent     | nomis/outline-previous-sibling/allow-cross-parent |
-;; | (kbd "H->")       | norg/forward-heading-same-level/allow-cross-parent      | nomis/outline-next-sibling/allow-cross-parent     |
 
-(define-key outline-minor-mode-map (kbd "H-,")         'nomis/outline-previous-sibling)
-(define-key outline-minor-mode-map (kbd "H-.")         'nomis/outline-next-sibling)
-(define-key outline-minor-mode-map (kbd "H-<")         'nomis/outline-previous-sibling/allow-cross-parent)
-(define-key outline-minor-mode-map (kbd "H->")         'nomis/outline-next-sibling/allow-cross-parent)
 
 ;; |-------------------+---------------------------------------------------------+-----------------------------|
 ;; |                   | ---- Movement + expand/collapse ----                    |                             |
