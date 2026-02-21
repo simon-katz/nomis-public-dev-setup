@@ -616,20 +616,20 @@ Same for the `backward` commands.")
   (let ((cmds (list (norg/last-command)
                     this-command)))
     (member cmds
-            '((norg/step-forward
-               norg/step-forward/allow-cross-parent)
-              (norg/step-backward
-               norg/step-backward/allow-cross-parent)))))
+            '((nomis/tree/step-forward
+               nomis/tree/step-forward/allow-cross-parent)
+              (nomis/tree/step-backward
+               nomis/tree/step-backward/allow-cross-parent)))))
 
 (defun norg/-doing-one-of-the-step-forward-commands? ()
   (member this-command
-          '(norg/step-forward
-            norg/step-forward/allow-cross-parent)))
+          '(nomis/tree/step-forward
+            nomis/tree/step-forward/allow-cross-parent)))
 
 (defun norg/-doing-one-of-the-step-backward-commands? ()
   (member this-command
-          '(norg/step-backward
-            norg/step-backward/allow-cross-parent)))
+          '(nomis/tree/step-backward
+            nomis/tree/step-backward/allow-cross-parent)))
 
 (defun norg/-stepping-forward-on-last-but-not-first-child/must-be-at-boh ()
   (and (norg/-doing-one-of-the-step-forward-commands?)
@@ -735,21 +735,17 @@ Same for the `backward` commands.")
     (setq norg/-most-recent-step-time (float-time))
     (message "n-levels = %s" (or n-levels-or-nil "all"))))
 
-(defun norg/step-forward (n-levels-to-show-or-nil)
-  (interactive "P")
-  (norg/-step/impl 1 nil n-levels-to-show-or-nil))
+(cl-defmethod nomis/tree/step-forward--aux ((k (eql :org)) n)
+  (norg/-step/impl 1 nil n))
 
-(defun norg/step-backward (n-levels-to-show-or-nil)
-  (interactive "P")
-  (norg/-step/impl -1 nil n-levels-to-show-or-nil))
+(cl-defmethod nomis/tree/step-backward--aux ((k (eql :org)) n)
+  (norg/-step/impl -1 nil n))
 
-(defun norg/step-forward/allow-cross-parent (n-levels-to-show-or-nil)
-  (interactive "P")
-  (norg/-step/impl 1 t n-levels-to-show-or-nil))
+(cl-defmethod nomis/tree/step-forward/allow-cross-parent--aux ((k (eql :org)) n)
+  (norg/-step/impl 1 t n))
 
-(defun norg/step-backward/allow-cross-parent (n-levels-to-show-or-nil)
-  (interactive "P")
-  (norg/-step/impl -1 t n-levels-to-show-or-nil))
+(cl-defmethod nomis/tree/step-backward/allow-cross-parent--aux ((k (eql :org)) n)
+  (norg/-step/impl -1 t n))
 
 ;;;; ___________________________________________________________________________
 ;;;; ____ * Info about trees

@@ -117,6 +117,13 @@ H-q H-q /    Show this help")
 (define-key nomis/tree-mode-map (kbd "H-<")       'nomis/tree/previous-sibling/allow-cross-parent)
 (define-key nomis/tree-mode-map (kbd "H->")       'nomis/tree/next-sibling/allow-cross-parent)
 
+;;;; Movement + expand/collapse
+
+(define-key nomis/tree-mode-map (kbd "H-M-,")     'nomis/tree/step-backward)
+(define-key nomis/tree-mode-map (kbd "H-M-.")     'nomis/tree/step-forward)
+(define-key nomis/tree-mode-map (kbd "H-M-<")     'nomis/tree/step-backward/allow-cross-parent)
+(define-key nomis/tree-mode-map (kbd "H-M->")     'nomis/tree/step-forward/allow-cross-parent)
+
 ;;;; nomis/scrolling/toggle-maintain-line-no-in-window
 
 (define-key nomis/tree-mode-map (kbd "H-q H-q m") 'nomis/scrolling/toggle-maintain-line-no-in-window)

@@ -270,6 +270,40 @@ the current entry's parent."
   (interactive)
   (nomis/tree/next-sibling/allow-cross-parent--aux (-nomis/tree/mode)))
 
+;;;; Movement + expand/collapse
+
+;; TODO: The prefix arg here has different meanings for `:outline` and `:org`.
+;;
+;;       For the former it's the number of headings to move, and we convert
+;;       `nil` to 1. See uses of `(or n 1)` in `nomis-outline-uber`.
+;;
+;;       For the latter it's `n-levels-to-show-or-nil`, and we convert `nil` to
+;;       `norg/step-n-levels-to-show`.
+
+(cl-defgeneric nomis/tree/step-backward--aux (k n))
+
+(defun nomis/tree/step-backward (n)
+  (interactive "P")
+  (nomis/tree/step-backward--aux (-nomis/tree/mode) n))
+
+(cl-defgeneric nomis/tree/step-forward--aux (k n))
+
+(defun nomis/tree/step-forward (n)
+  (interactive "P")
+  (nomis/tree/step-forward--aux (-nomis/tree/mode) n))
+
+(cl-defgeneric nomis/tree/step-backward/allow-cross-parent--aux (k n))
+
+(defun nomis/tree/step-backward/allow-cross-parent (n)
+  (interactive "P")
+  (nomis/tree/step-backward/allow-cross-parent--aux (-nomis/tree/mode) n))
+
+(cl-defgeneric nomis/tree/step-forward/allow-cross-parent--aux (k n))
+
+(defun nomis/tree/step-forward/allow-cross-parent (n)
+  (interactive "P")
+  (nomis/tree/step-forward/allow-cross-parent--aux (-nomis/tree/mode) n))
+
 ;;; End
 
 (provide 'nomis-tree)

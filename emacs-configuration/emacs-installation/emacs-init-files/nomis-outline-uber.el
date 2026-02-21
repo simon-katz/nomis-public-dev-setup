@@ -562,27 +562,25 @@ Can pass by a superior heading."
                                          :backward
                                          :same-level-allow-cross-parent)))
 
-(defun nomis/outline-step-backward (n)
+(cl-defmethod nomis/tree/step-backward--aux ((k (eql :outline)) n)
   "Move backward to the N'th heading at same level as this one, then show
 fat parents and all children.
 Stop at the first and last headings of a superior heading."
-  (interactive "p")
   (-nomis/outline-command
       nil
     (-nomis/outline-prev-or-next-heading step-lineage-spec
-                                         n
+                                         (or n 1)
                                          :backward
                                          :sibling)))
 
-(defun nomis/outline-step-backward/allow-cross-parent (n)
+(cl-defmethod nomis/tree/step-backward/allow-cross-parent--aux ((k (eql :outline)) n)
   "Move backward to the N'th heading at same level as this one, then show
 fat parents and all children.
 Can pass by a superior heading."
-  (interactive "p")
   (-nomis/outline-command
       nil
     (-nomis/outline-prev-or-next-heading step-lineage-spec
-                                         n
+                                         (or n 1)
                                          :backward
                                          :same-level-allow-cross-parent)))
 
@@ -619,27 +617,25 @@ Can pass by a superior heading."
                                          :forward
                                          :same-level-allow-cross-parent)))
 
-(defun nomis/outline-step-forward (n)
+(cl-defmethod nomis/tree/step-forward--aux ((k (eql :outline)) n)
   "Move forward to the N'th heading at same level as this one, then show
 fat parents and all children.
 Stop at the first and last headings of a superior heading."
-  (interactive "p")
   (-nomis/outline-command
       nil
     (-nomis/outline-prev-or-next-heading step-lineage-spec
-                                         n
+                                         (or n 1)
                                          :forward
                                          :sibling)))
 
-(defun nomis/outline-step-forward/allow-cross-parent (n)
+(cl-defmethod nomis/tree/step-forward/allow-cross-parent--aux ((k (eql :outline)) n)
   "Move forward to the N'th heading at same level as this one, then show
 fat parents and all children.
 Can pass by a superior heading."
-  (interactive "p")
   (-nomis/outline-command
       nil
     (-nomis/outline-prev-or-next-heading step-lineage-spec
-                                         n
+                                         (or n 1)
                                          :forward
                                          :same-level-allow-cross-parent)))
 
