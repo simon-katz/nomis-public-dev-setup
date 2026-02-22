@@ -161,18 +161,30 @@
         (unless no-message?
           (nomis/popup/message "%s" msg))))))
 
-(cl-defmethod nomis/tree/visibility-span/more--aux ((k (eql :org)))
+(defun nomis/org-visibility-span/more ()
   (-nomis/org-visibility-span/set-level/numeric 1 t))
 
-(cl-defmethod nomis/tree/visibility-span/less--aux ((k (eql :org)))
+(cl-defmethod nomis/tree/visibility-span/more--aux ((k (eql :org)))
+  (nomis/org-visibility-span/more))
+
+(defun nomis/org-visibility-span/less ()
   (-nomis/org-visibility-span/set-level/numeric -1 t))
 
-(cl-defmethod nomis/tree/visibility-span/set-min--aux ((k (eql :org)))
+(cl-defmethod nomis/tree/visibility-span/less--aux ((k (eql :org)))
+  (nomis/org-visibility-span/less))
+
+(defun nomis/org-visibility-span/set-min ()
   (-nomis/org-visibility-span/set-level/numeric 0 nil))
 
-(cl-defmethod nomis/tree/visibility-span/set-max--aux ((k (eql :org)))
+(cl-defmethod nomis/tree/visibility-span/set-min--aux ((k (eql :org)))
+  (nomis/org-visibility-span/set-min))
+
+(defun nomis/org-visibility-span/set-max ()
   (let* ((v -nomis/org-visibility-span/max-value))
     (-nomis/org-visibility-span/set-level/numeric v nil)))
+
+(cl-defmethod nomis/tree/visibility-span/set-max--aux ((k (eql :org)))
+  (nomis/org-visibility-span/set-max))
 
 (defun nomis/org-visibility-span/set-tree+body ()
   (interactive)
@@ -695,7 +707,7 @@
           (search-for-text))))
   (norg/show-point))
 
-(cl-defmethod nomis/tree/search-heading-text--aux ((k (eql :org)))
+(defun nomis/org-search-heading-text ()
   (setq -nomis/org-search-heading-text/text (-nomis/org-grab-heading-text))
   (unless (and org-mark-ring
                (ignore-errors ; without this, we can get "Marker does not point anywhere" errors
@@ -708,10 +720,16 @@
     (org-mark-ring-push))
   (-nomis/org-search-heading-text/search nil))
 
-(cl-defmethod nomis/tree/search-heading-text-again--aux ((k (eql :org))) ()
+(cl-defmethod nomis/tree/search-heading-text--aux ((k (eql :org)))
+  (nomis/org-search-heading-text))
+
+(defun nomis/org-search-heading-text-again ()
   (if (null -nomis/org-search-heading-text/text)
       (error "nomis/tree/search-heading-text--aux hasn't been called yet")
     (-nomis/org-search-heading-text/search t)))
+
+(cl-defmethod nomis/tree/search-heading-text-again--aux ((k (eql :org))) ()
+  (nomis/org-search-heading-text-again))
 
 ;;;; ___________________________________________________________________________
 ;;;; * nomis/org-get-links-to-current-heading
