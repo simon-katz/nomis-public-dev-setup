@@ -1,5 +1,29 @@
 ;;; Init stuff -- emacs-lisp and ielm  -*- lexical-binding: t; -*-
 
+;;; Describe symbol at point
+
+;; This is a replacement for `elisp-slime-nav`'s describe feature.
+
+;; `elisp-slime-nav` used to bind `C-c C-d d` / `C-c C-d C-d` to describe the
+;; symbol at point. Emacs's built-in `describe-symbol` covers the same ground.
+
+(dolist (map (list emacs-lisp-mode-map
+                   lisp-interaction-mode-map))
+  (define-key map (kbd "C-c C-d d") #'describe-symbol)
+  (define-key map (kbd "C-c C-d C-d") #'describe-symbol))
+
+(with-eval-after-load 'ielm
+  (define-key ielm-map (kbd "C-c C-d d") #'describe-symbol)
+  (define-key ielm-map (kbd "C-c C-d C-d") #'describe-symbol))
+
+;;; xref
+
+;;;; Make xref work in ielm
+
+(add-hook 'ielm-mode-hook
+          (lambda ()
+            (add-hook 'xref-backend-functions #'elisp--xref-backend nil t)))
+
 ;;; emacs-lisp and ielm
 
 (defvar nomis/lisp-and-ielm-mode-hook-functions
@@ -8,7 +32,6 @@
     paxedit-mode ; some commands (at least) don't work in ielm mode
     ;; See https://github.com/clojure-emacs/clojure-mode/issues/516#issuecomment-569336063
     ,(lambda () (set (make-local-variable 'comment-column) 0))
-    turn-on-elisp-slime-nav-mode
     turn-on-eldoc-mode
     ;; aggressive-indent-mode
     ))

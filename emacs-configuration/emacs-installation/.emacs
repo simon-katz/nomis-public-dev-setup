@@ -50,7 +50,6 @@
      dumb-jump
      eca
      edn
-     elisp-slime-nav
      exec-path-from-shell
      flycheck
      flycheck-clj-kondo
