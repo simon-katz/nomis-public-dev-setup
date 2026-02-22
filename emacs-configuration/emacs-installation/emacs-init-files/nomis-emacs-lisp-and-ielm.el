@@ -24,6 +24,14 @@
           (lambda ()
             (add-hook 'xref-backend-functions #'elisp--xref-backend nil t)))
 
+;;;; Make xref buffers use same window
+
+;; This affects all modes, not just emacs-lisp and ielm. Maybe that's OK.
+
+(add-to-list 'display-buffer-alist
+             '("\\*xref\\*"
+               (display-buffer-same-window)))
+
 ;;; emacs-lisp and ielm
 
 (defvar nomis/lisp-and-ielm-mode-hook-functions
