@@ -1,6 +1,6 @@
-;;;; Init stuff -- emacs-lisp and ielm  -*- lexical-binding: t; -*-
+;;; Init stuff -- emacs-lisp and ielm  -*- lexical-binding: t; -*-
 
-;;;; ___________________________________________________________________________
+;;; emacs-lisp and ielm
 
 (defvar nomis/lisp-and-ielm-mode-hook-functions
   `(rainbow-delimiters-mode
@@ -34,6 +34,6 @@
   (with-eval-after-load 'ielm
     (define-key ielm-map (kbd "RET") 'ielm-return)))
 
-;;;; ___________________________________________________________________________
+;;; End
 
 (provide 'nomis-emacs-lisp-and-ielm)
