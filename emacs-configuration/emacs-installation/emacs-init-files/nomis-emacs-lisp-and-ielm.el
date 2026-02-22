@@ -32,7 +32,50 @@
              '("\\*xref\\*"
                (display-buffer-same-window)))
 
-;;; emacs-lisp and ielm
+;;;; On `M-.` for package name, return to previous position in file
+
+;; By default it goes to the `(provide ...)` line. Yeuch!
+
+;;;;; Update `save-place-alist` on every command
+
+;; By default, Emacs only updates `save-place-alist` when we kill a buffer or
+;; exit Emacs. If we are jumping back and forth between open buffers, the
+;; "saved" position stays stale. So:
+
+(defun nomis/save-place-to-alist ()
+  (when (and (fboundp 'save-place-to-alist)
+             buffer-file-name)
+    (save-place-to-alist)))
+
+(add-hook 'post-command-hook 'nomis/save-place-to-alist)
+
+;;;;; Add advice to `xref-find-definitions`
+
+;; Restore position if we landed on '(provide ...)'.
+
+(defun nomis/xref-restore-pos-if-on-provide (&rest _)
+  "Restore save-place if `xref` lands on '(provide ...)'."
+  (save-excursion
+    (beginning-of-line)
+    (when (looking-at "[[:space:]]*(provide[[:space:]]+'")
+      (let* ((true-name (file-truename buffer-file-name))
+             (saved-pos (and (boundp 'save-place-alist)
+                             (cdr (assoc true-name save-place-alist)))))
+        (when saved-pos
+          ;; It seems that `xref` does its own saving of positions after
+          ;; `xref-find-definitions` finishes, so do this in a timer:
+          (run-with-timer 0 nil
+                          (lambda (buf pos)
+                            (with-current-buffer buf
+                              (goto-char pos)
+                              ;; Emacs will have blatted the saved place, so:
+                              (nomis/save-place-to-alist)))
+                          (current-buffer)
+                          saved-pos))))))
+
+(advice-add 'xref-find-definitions :after 'nomis/xref-restore-pos-if-on-provide)
+
+;;; Other stuff
 
 (defvar nomis/lisp-and-ielm-mode-hook-functions
   `(rainbow-delimiters-mode
