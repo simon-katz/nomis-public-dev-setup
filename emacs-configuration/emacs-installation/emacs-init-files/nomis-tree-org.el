@@ -32,7 +32,7 @@
   (norg/show-tree-only))
 
 (cl-defmethod nomis/tree/max-lineage--aux ((k (eql :org)))
-  (error "Not supported: %s %s" k this-command))
+  (nomis/tree/unimplemented-method k))
 
 ;;;;; nomis/tree/set-step-n-levels-to-show
 

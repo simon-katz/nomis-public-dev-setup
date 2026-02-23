@@ -7,21 +7,21 @@
 ;;;;; Search heading text
 
 (cl-defmethod nomis/tree/search-heading-text--aux ((k (eql :outline)))
-  (error "Not supported: %s %s" k this-command))
+  (nomis/tree/unimplemented-method k))
 
 (cl-defmethod nomis/tree/search-heading-text-again--aux ((k (eql :outline)))
-  (error "Not supported: %s %s" k this-command))
+  (nomis/tree/unimplemented-method k))
 
 ;;;;; Visibility span
 
 (cl-defmethod nomis/tree/visibility-span/less--aux ((k (eql :outline)))
-  (error "Not supported: %s %s" k this-command))
+  (nomis/tree/unimplemented-method k))
 
 (cl-defmethod nomis/tree/visibility-span/more--aux ((k (eql :outline)))
-  (error "Not supported: %s %s" k this-command))
+  (nomis/tree/unimplemented-method k))
 
 (cl-defmethod nomis/tree/visibility-span/set-min--aux ((k (eql :outline)))
-  (error "Not supported: %s %s" k this-command))
+  (nomis/tree/unimplemented-method k))
 
 (cl-defmethod nomis/tree/visibility-span/set-max--aux ((k (eql :outline)))
   (nomis/outline/visibility-span/set-max))
@@ -38,89 +38,89 @@
 
 (cl-defmethod nomis/tree/set-step-n-levels-to-show--aux ((k (eql :outline))
                                                          n)
-  (error "Not supported: %s %s" k this-command))
+  (nomis/tree/unimplemented-method k))
 
 ;;;;; Expand/collapse from point
 
 (cl-defmethod nomis/tree/show-children-from-point/incremental/less--aux
   ((k (eql :outline)) n)
-  (error "Not supported: %s %s" k this-command))
+  (nomis/tree/unimplemented-method k))
 
 (cl-defmethod nomis/tree/show-children-from-point/incremental/more--aux
   ((k (eql :outline)) n)
-  (error "Not supported: %s %s" k this-command))
+  (nomis/tree/unimplemented-method k))
 
 (cl-defmethod nomis/tree/show-children-from-point/set-min--aux
   ((k (eql :outline)))
-  (error "Not supported: %s %s" k this-command))
+  (nomis/tree/unimplemented-method k))
 
 (cl-defmethod nomis/tree/show-children-from-point/fully-expand--aux
   ((k (eql :outline)))
-  (error "Not supported: %s %s" k this-command))
+  (nomis/tree/unimplemented-method k))
 
 ;;;;; Expand/collapse from parent
 
 (cl-defmethod nomis/tree/show-children-from-parent/incremental/less--aux
   ((k (eql :outline)) n)
-  (error "Not supported: %s %s" k this-command))
+  (nomis/tree/unimplemented-method k))
 
 (cl-defmethod nomis/tree/show-children-from-parent/incremental/more--aux
   ((k (eql :outline)) n)
-  (error "Not supported: %s %s" k this-command))
+  (nomis/tree/unimplemented-method k))
 
 (cl-defmethod nomis/tree/show-children-from-parent/set-min--aux
   ((k (eql :outline)))
-  (error "Not supported: %s %s" k this-command))
+  (nomis/tree/unimplemented-method k))
 
 (cl-defmethod nomis/tree/show-children-from-parent/fully-expand--aux
   ((k (eql :outline)))
-  (error "Not supported: %s %s" k this-command))
+  (nomis/tree/unimplemented-method k))
 
 ;;;;; Expand/collapse from root -- to current level, and from all roots -- to current level
 
 (cl-defmethod nomis/tree/show-children-from-root/to-current-level--aux
   ((k (eql :outline)))
-  (error "Not supported: %s %s" k this-command))
+  (nomis/tree/unimplemented-method k))
 
 (cl-defmethod nomis/tree/show-children-from-all-roots/to-current-level--aux
   ((k (eql :outline)))
-  (error "Not supported: %s %s" k this-command))
+  (nomis/tree/unimplemented-method k))
 
 ;;;;; Expand/collapse from all roots
 
 (cl-defmethod nomis/tree/show-children-from-all-roots/incremental/less--aux
   ((k (eql :outline)) n)
-  (error "Not supported: %s %s" k this-command))
+  (nomis/tree/unimplemented-method k))
 
 (cl-defmethod nomis/tree/show-children-from-all-roots/incremental/more--aux
   ((k (eql :outline)) n)
-  (error "Not supported: %s %s" k this-command))
+  (nomis/tree/unimplemented-method k))
 
 (cl-defmethod nomis/tree/show-children-from-all-roots/set-min--aux
   ((k (eql :outline)))
-  (error "Not supported: %s %s" k this-command))
+  (nomis/tree/unimplemented-method k))
 
 (cl-defmethod nomis/tree/show-children-from-all-roots/fully-expand--aux
   ((k (eql :outline)))
-  (error "Not supported: %s %s" k this-command))
+  (nomis/tree/unimplemented-method k))
 
 ;;;;; Expand/collapse from root
 
 (cl-defmethod nomis/tree/show-children-from-root/incremental/less--aux
   ((k (eql :outline)) n)
-  (error "Not supported: %s %s" k this-command))
+  (nomis/tree/unimplemented-method k))
 
 (cl-defmethod nomis/tree/show-children-from-root/incremental/more--aux
   ((k (eql :outline)) n)
-  (error "Not supported: %s %s" k this-command))
+  (nomis/tree/unimplemented-method k))
 
 (cl-defmethod nomis/tree/show-children-from-root/set-min--aux
   ((k (eql :outline)))
-  (error "Not supported: %s %s" k this-command))
+  (nomis/tree/unimplemented-method k))
 
 (cl-defmethod nomis/tree/show-children-from-root/fully-expand--aux
   ((k (eql :outline)))
-  (error "Not supported: %s %s" k this-command))
+  (nomis/tree/unimplemented-method k))
 
 ;;;;; Tab and shifttab
 
@@ -167,10 +167,10 @@
   (nomis/outline-next-heading n))
 
 (cl-defmethod nomis/tree/previous-heading/set-tree+body--aux ((k (eql :outline)))
-  (error "Not supported: %s %s" k this-command))
+  (nomis/tree/unimplemented-method k))
 
 (cl-defmethod nomis/tree/next-heading/set-tree+body--aux ((k (eql :outline)))
-  (error "Not supported: %s %s" k this-command))
+  (nomis/tree/unimplemented-method k))
 
 ;;; End
 
