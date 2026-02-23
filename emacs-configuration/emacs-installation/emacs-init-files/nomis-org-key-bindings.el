@@ -1,6 +1,8 @@
-;;;; nomis-org-key-bindings  ---  -*- lexical-binding: t -*-
+;;; nomis-org-key-bindings  ---  -*- lexical-binding: t -*-
 
-;;; General
+;;; Code
+
+;;;; General
 
 ;; The following lines are always needed. Choose your own keys.
 
@@ -14,11 +16,11 @@
 
 (define-key global-map "\C-cc" 'org-capture)
 
-;;; Hooks
+;;;; Hooks
 
 (add-hook 'org-mode-hook 'nomis/turn-on-idle-highlight-mode)
 
-;;; Scrolling
+;;;; Scrolling
 
 ;; These normally do `org-shiftcontrolup` and `org-shiftcontroldown`, which do
 ;; things with timestamps. I don't use timestamps. So use the global
@@ -26,14 +28,14 @@
 (define-key org-mode-map (kbd "C-S-<up>")     nil)
 (define-key org-mode-map (kbd "C-S-<down>")   nil)
 
-;;; Navigation and cycling
+;;;; Navigation and cycling
 
 ;;;; Following links
 
 (define-key org-mode-map (kbd "M-.") 'org-open-at-point)
 (define-key org-mode-map (kbd "M-,") 'org-mark-ring-goto)
 
-;;; Agenda
+;;;; Agenda
 
 (progn ; TODO This is not only agenda stuff (contrary to the comment above), and this does not need to be done in a hook (or else everything should go in a hook)
   (defun nomis/setup-org-keys ()
