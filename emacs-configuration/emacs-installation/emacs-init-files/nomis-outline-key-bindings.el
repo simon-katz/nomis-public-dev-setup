@@ -9,17 +9,9 @@
 
 (keymap-unset outline-overlay-button-map "RET" t)
 
-;;;; Key bindings for outline-minor-mode-map, cross-referncing `org-mode` mode and `hs-minor-mode`
+;;;; `bicycle-cycle-global`
 
 (define-key outline-minor-mode-map (kbd "H-o <tab>")   'bicycle-cycle-global)
-
-;; |                   | ---- Movement + expand/collapse ---- |
-;; | (kbd "C-H-<")     | (*) |
-;; | (kbd "C-H->")     | (*) |
-;; | (kbd "C-H-M-<")   | (*) |
-;; | (kbd "C-H-M->")   | (*) |
-
-;; (*) No real meaning in our scneme -- without the Shift we are already crossing parent levels
 
 ;;;; Other outline-minor-mode key bindings
 
