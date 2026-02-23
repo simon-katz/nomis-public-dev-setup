@@ -28,8 +28,6 @@
 (define-key org-mode-map (kbd "C-S-<up>")     nil)
 (define-key org-mode-map (kbd "C-S-<down>")   nil)
 
-;;;; Navigation and cycling
-
 ;;;; Following links
 
 (define-key org-mode-map (kbd "M-.") 'org-open-at-point)
