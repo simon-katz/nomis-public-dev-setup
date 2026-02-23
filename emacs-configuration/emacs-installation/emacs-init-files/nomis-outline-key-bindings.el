@@ -11,6 +11,9 @@
 
 ;;;; `bicycle-cycle-global`
 
+;; Keep this until we implement
+;; `nomis/tree/show-children-from-all-roots/incremental/less--aux` and
+;; `nomis/tree/show-children-from-all-roots/incremental/more--aux`.
 (define-key outline-minor-mode-map (kbd "H-o <tab>")   'bicycle-cycle-global)
 
 ;;;; Other outline-minor-mode key bindings

@@ -10,6 +10,7 @@
 ;;       `hide-show` and `nomis/outline`.
 
 ;; TODO: Have we decided that we don't want `bicycle`? (I think we have.)
+;;       - See `nomis-bicycle`.
 
 ;; TODO: I don't think I want code to be headings.
 ;;       - What would I lose if I remove code from `outline-regexp`?

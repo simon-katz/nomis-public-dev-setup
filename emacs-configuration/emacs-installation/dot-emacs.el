@@ -335,6 +335,7 @@
 (require 'nomis-outline-uber)
 (require 'nomis-outline-key-bindings)
 
+(require 'nomis-bicycle)
 (require 'nomis-tree)
 (require 'nomis-tree-key-bindings)
 
