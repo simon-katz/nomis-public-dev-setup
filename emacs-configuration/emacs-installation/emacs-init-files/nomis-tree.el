@@ -45,11 +45,12 @@
 ;;;; Search heading text
 
 (cl-defgeneric nomis/tree/search-heading-text--aux (k))
-(cl-defgeneric nomis/tree/search-heading-text-again--aux (k))
 
 (defun nomis/tree/search-heading-text ()
   (interactive)
   (nomis/tree/search-heading-text--aux (-nomis/tree/mode)))
+
+(cl-defgeneric nomis/tree/search-heading-text-again--aux (k))
 
 (defun nomis/tree/search-heading-text-again ()
   (interactive)
@@ -58,21 +59,23 @@
 ;;;; Visibility span
 
 (cl-defgeneric nomis/tree/visibility-span/less--aux (k))
-(cl-defgeneric nomis/tree/visibility-span/more--aux (k))
-(cl-defgeneric nomis/tree/visibility-span/set-min--aux (k))
-(cl-defgeneric nomis/tree/visibility-span/set-max--aux (k))
 
 (defun nomis/tree/visibility-span/less ()
   (interactive)
   (nomis/tree/visibility-span/less--aux (-nomis/tree/mode)))
 
+(cl-defgeneric nomis/tree/visibility-span/more--aux (k))
+
 (defun nomis/tree/visibility-span/more ()
   (interactive)
   (nomis/tree/visibility-span/more--aux (-nomis/tree/mode)))
 
+(cl-defgeneric nomis/tree/visibility-span/set-min--aux (k))
+
 (defun nomis/tree/visibility-span/set-min ()
   (interactive)
   (nomis/tree/visibility-span/set-min--aux (-nomis/tree/mode)))
+(cl-defgeneric nomis/tree/visibility-span/set-max--aux (k))
 
 (defun nomis/tree/visibility-span/set-max ()
   (interactive)
@@ -81,11 +84,12 @@
 ;;;; nomis/tree/show-tree-only and nomis/tree/max-lineage
 
 (cl-defgeneric nomis/tree/show-tree-only--aux (k))
-(cl-defgeneric nomis/tree/max-lineage--aux (k))
 
 (defun nomis/tree/show-tree-only ()
   (interactive)
   (nomis/tree/show-tree-only--aux (-nomis/tree/mode)))
+
+(cl-defgeneric nomis/tree/max-lineage--aux (k))
 
 (defun nomis/tree/max-lineage ()
   (interactive)
@@ -243,11 +247,12 @@ the current entry's parent."
 ;;;; Tab and shifttab
 
 (cl-defgeneric nomis/tree/tab--aux (k))
-(cl-defgeneric nomis/tree/shifttab--aux (k))
 
 (defun nomis/tree/tab (arg)
   (interactive "P")
   (nomis/tree/tab--aux (-nomis/tree/mode) arg))
+
+(cl-defgeneric nomis/tree/shifttab--aux (k))
 
 (defun nomis/tree/shifttab (arg)
   (interactive "P")
