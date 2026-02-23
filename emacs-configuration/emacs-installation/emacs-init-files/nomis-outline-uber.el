@@ -343,6 +343,15 @@
 
 ;;;; API
 
+;;;;; nomis/outline-show-all
+
+;; TODO: Temporary, until we have
+;;       `nomis/tree/show-children-from-all-roots/fully-expand`.
+(defun nomis/outline-show-all ()
+  (interactive)
+  (outline-show-all)
+  (nomis/msg/pulse-buffer))
+
 ;;;;; nomis/outline-inc-children / nomis/outline-dec-children
 
 (defvar -nomis/outline-increments-children-approach)
