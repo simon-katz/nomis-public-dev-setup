@@ -35,8 +35,7 @@
 
 (progn) ; this stops `hs-hide-all` from hiding the next comment
 
-;;;; ___________________________________________________________________________
-;;;; ____ * Some rejected (at least for now) ideas
+;;;; Some rejected (at least for now) ideas
 
 ;; XXXX (Too hard! Park this for now.)
 ;;      Sometimes things take a long time and a busy pointer would be useful.
@@ -87,30 +86,29 @@
 ;;      REJECTED
 ;;      This would give a modal UI. An invisibly-modal UI.
 
-;;;; ___________________________________________________________________________
-;;;; ____ * Require things
+;;;; Require things
 
 (require 'org)
 (require 'cl-lib)
 (require 'dash)
 
-;;;; Things that you might want to make into packages if you make norg into a
-;;;; package.
+;; Things that you might want to make into packages if you make norg into a
+;; package.
 
 (require 'nomis-popup)
 (require 'nomis-scrolling)
 
-;;;; ___________________________________________________________________________
-;;;; ____ * Tailor other functionality
+;;;; Tailor other functionality
 
-;;;; ____ ** last-command
+;;;;; last-command
 
 (defun norg/last-command ()
   (or (bound-and-true-p *nomis/smex/last-command*)
       last-command))
 
-;;;; ____ ** what-cursor-position
-;;;; Add org level to the output of `what-cursor-position`.
+;;;;; what-cursor-position
+
+;; Add org level to the output of `what-cursor-position`.
 
 (defvar norg/add-info-to-what-cursor-position?
   t
@@ -145,18 +143,16 @@ message and in case adding org level messes things up.")
                 (apply orig-fun args)))
             '((name . norg/add-level-info)))
 
-;;;; ___________________________________________________________________________
-;;;; ____ * Infinity
+;;;; Infinity
 
 (defconst norg/-plus-infinity   1.0e+INF)
 (defconst norg/-minus-infinity -1.0e+INF)
 
-;;;; ___________________________________________________________________________
-;;;; ____ * Wrappers for `outline` and `org`
+;;;; Wrappers for `outline` and `org`
 
-;;;; I'm not clear about the public API of `outline` and `org`, so let's
-;;;; be safe.
-;;;; Besides, it's useful to isolate how we use `outline` and `org`.
+;; I'm not clear about the public API of `outline` and `org`, so let's
+;; be safe.
+;; Besides, it's useful to isolate how we use `outline` and `org`.
 
 (defalias 'norg/w/end-of-line 'org-end-of-line)
 (defalias 'norg/w/beginning-of-line 'org-beginning-of-line)
@@ -194,8 +190,7 @@ Return the nesting depth of the headline in the outline."
 
 (defvaralias 'norg/w/catch-invisible-edits 'org-catch-invisible-edits)
 
-;;;; ___________________________________________________________________________
-;;;; ____ * Whether to show bodies
+;;;; Whether to show bodies
 
 (defvar norg/show-bodies? t)
 
@@ -204,10 +199,9 @@ Return the nesting depth of the headline in the outline."
   (setq norg/show-bodies? (not norg/show-bodies?))
   (message "norg/show-bodies? set to %s" norg/show-bodies?))
 
-;;;; ___________________________________________________________________________
-;;;; ____ * Some wrappers for org functionality
+;;;; Some wrappers for org functionality
 
-;;;; Basic stuff
+;;;;; Basic stuff
 
 (defun norg/point-is-visible? ()
   (not (norg/w/invisible-p)))
@@ -308,7 +302,7 @@ value."
      (norg/w/up-heading 1)
      ,@body))
 
-;;;; Support for do-ing and mapping
+;;;;; Support for do-ing and mapping
 
 (defun norg/-mapc-headlines-satisfying (pred-of-no-args fun)
   (save-excursion
@@ -335,7 +329,7 @@ value."
                               acc)))
       (nreverse acc))))
 
-;;;; Do-ing
+;;;;; Do-ing
 
 (defun norg/mapc-entries-from-point (fun)
   "Call FUN for the current headline and for each headline below the current
@@ -360,7 +354,7 @@ When in a body, \"current headline\" means the current body's parent headline."
                                    fun)
   nil)
 
-;;;; Mapping
+;;;;; Mapping
 
 (defun norg/map-entries-from-point (fun)
   (funcall (norg/-convert-mapc-fun-to-map-fun #'norg/mapc-entries-from-point)
@@ -378,7 +372,7 @@ When in a body, \"current headline\" means the current body's parent headline."
   (funcall (norg/-convert-mapc-fun-to-map-fun #'norg/mapc-entries-from-all-roots)
            fun))
 
-;;;; Reducing (add more here if and when needed)
+;;;;; Reducing (add more here if and when needed)
 
 (cl-defun norg/reduce-entries-from-point (initial-value
                                           value-fun
@@ -395,7 +389,7 @@ When in a body, \"current headline\" means the current body's parent headline."
                                                        v))))))
     sofar))
 
-;;;; Expanding and collapsing
+;;;;; Expanding and collapsing
 
 (defun norg/collapse ()
   (cl-case 2
@@ -429,8 +423,7 @@ headline."
   (norg/expand 1000) ; TODO magic number
   )
 
-;;;; ___________________________________________________________________________
-;;;; ____ * Visibility span
+;;;;; Visibility span
 
 (defun norg/collapse-all-and-set-visibility-span (detail)
   (cl-flet ((collapse
@@ -449,16 +442,12 @@ headline."
 (cl-defmethod nomis/tree/show-tree-only--aux ((k (eql :org)))
   (norg/show-tree-only))
 
-;;;; ___________________________________________________________________________
-;;;; ---- * Max lineage
-
 (cl-defmethod nomis/tree/max-lineage--aux ((k (eql :org)))
   (error "Not supported: %s %s" k this-command))
 
-;;;; ___________________________________________________________________________
-;;;; ____ * Navigation
+;;;; Navigation
 
-;;;; ____ ** Forward and backward at same level
+;;;;; Forward and backward at same level
 
 (defun norg/-heading-same-level-helper (move-fun
                                         error-message)
@@ -492,7 +481,7 @@ Like `org-backward-heading-same-level` but:
 (cl-defmethod nomis/tree/previous-sibling--aux ((k (eql :org)))
   (norg/previous-sibling))
 
-;;;; ____ ** Forward and backward at same level, allow cross-parent
+;;;;; Forward and backward at same level, allow cross-parent
 
 (defun norg/-heading-same-level/allow-cross-parent/helper (direction)
   (nomis/scrolling/with-maybe-maintain-line-no-in-window
@@ -557,7 +546,7 @@ subheading at this level in the previous parent."
   ((k (eql :org)))
   (norg/previous-sibling/allow-cross-parent))
 
-;;;; ____ ** Forward and backward at any level
+;;;;; Forward and backward at any level
 
 (defvar norg/-heading-any-level-show-entry?
   t
@@ -601,8 +590,7 @@ Same for the `backward` commands.")
 (cl-defmethod nomis/tree/previous-heading/set-tree+body--aux ((k (eql :org)))
   (norg/previous-heading/set-tree+body))
 
-;;;; ___________________________________________________________________________
-;;;; ____ * Info that relies on our navigation stuff
+;;;; Info that relies on our navigation stuff
 
 (defun norg/on-first-child?/must-be-at-boh ()
   (save-excursion
@@ -616,8 +604,7 @@ Same for the `backward` commands.")
       (norg/w/forward-heading-same-level 1 t)
       (= (point) starting-point))))
 
-;;;; ___________________________________________________________________________
-;;;; ____ * Stepping TODO This uses `norg/fully-expanded?`, and so belongs later in the file
+;;;; Stepping TODO This uses `norg/fully-expanded?`, and so belongs later in the file
 
 (defvar norg/step-n-levels-to-show nil)
 
@@ -787,8 +774,7 @@ Same for the `backward` commands.")
 (cl-defmethod nomis/tree/step-backward/allow-cross-parent--aux ((k (eql :org)) n-levels-to-show-or-nil)
   (norg/step-backward/allow-cross-parent n-levels-to-show-or-nil))
 
-;;;; ___________________________________________________________________________
-;;;; ____ * Info about trees
+;;;; Info about trees
 
 (defun norg/deepest-level-below ()
   "The deepest level that exists below the current headline.
@@ -830,8 +816,7 @@ When in a body, \"current headline\" means the current body's parent headline."
       #'min)
      (norg/current-level)))
 
-;;;; ___________________________________________________________________________
-;;;; ____ * The idea of tree-info, and things that use it
+;;;; The idea of tree-info, and things that use it
 
 (defun norg/-tree-info ()
   "Tree info for the current headline.
@@ -922,8 +907,7 @@ When in a body, \"current headline\" means the current body's parent headline."
                  1))))
     (- v (norg/current-level))))
 
-;;;; ___________________________________________________________________________
-;;;; ____ * Operations on root
+;;;; Operations on root
 
 (defun norg/n-levels-below/root ()
   (norg/save-excursion-to-root
@@ -937,8 +921,7 @@ When in a body, \"current headline\" means the current body's parent headline."
   (norg/save-excursion-to-root
     (norg/smallest-invisible-level-below-or-infinity)))
 
-;;;; ___________________________________________________________________________
-;;;; ____ * Operations on buffer
+;;;; Operations on buffer
 
 (defun norg/levels/max-in-buffer ()
   (let* ((sofar 0))
@@ -958,10 +941,9 @@ When in a body, \"current headline\" means the current body's parent headline."
   (->> (norg/map-roots #'norg/smallest-invisible-level-below-or-infinity)
        (apply #'min)))
 
-;;;; ___________________________________________________________________________
-;;;; ____ * Expanding and collapsing
+;;;; Expanding and collapsing
 
-;;;; ____ ** General support
+;;;;; General support
 
 (defun norg/-unmodified-value-and-arg->level (unmodified-value arg setting-kind)
   (let* ((delta (if (numberp arg) arg 1))
@@ -972,7 +954,7 @@ When in a body, \"current headline\" means the current body's parent headline."
              unmodified-value
              (1- delta))))
 
-;;;; ____ ** norg/-set-level-etc
+;;;;; norg/-set-level-etc
 
 (defun norg/-out-of-range (v maximum setting-kind current-value)
   (let* ((min-allowed-value (if *expanding-parent?* 1 0)))
@@ -1075,7 +1057,7 @@ When in a body, \"current headline\" means the current body's parent headline."
                             " —- already fully expanded"))
                        ""))))))))
 
-;;;; ____ ** norg/show-children-from-point/xxxx support
+;;;;; norg/show-children-from-point/xxxx support
 
 (defun norg/show-children-from-point* (n) ; TODO You don't use the special negative arg thing. Simplify or get back that functionality.
   "Make point visible if it isn't already, and expand current headline to
@@ -1107,7 +1089,7 @@ that is already being displayed."
                        setting-kind
                        current-value))
 
-;;;; ____ ** norg/show-children-from-point/xxxx
+;;;;; norg/show-children-from-point/xxxx
 
 (defun norg/show-children-from-point (n)
   (interactive "^p")
@@ -1161,7 +1143,7 @@ When in a body, \"current headline\" means the current body's parent headline."
   ((k (eql :org)) arg)
   (norg/show-children-from-point/incremental/more arg))
 
-;;;; ____ ** norg/show-children-from-parent/xxxx support
+;;;;; norg/show-children-from-parent/xxxx support
 
 (defvar *expanding-parent?* nil)
 
@@ -1175,7 +1157,7 @@ When in a body, \"current headline\" means the current body's parent headline."
   (declare (indent 0))
   `(norg/save-excursion-to-parent-and-then-show-point* (lambda () ,@body)))
 
-;;;; ____ ** norg/show-children-from-parent/xxxx
+;;;;; norg/show-children-from-parent/xxxx
 
 (defun norg/show-children-from-parent (n)
   "Like `norg/show-children-from-point`, but from the current entry's parent."
@@ -1224,7 +1206,7 @@ from the current entry's parent."
   ((k (eql :org)) arg)
   (norg/show-children-from-parent/incremental/more arg))
 
-;;;; ____ ** norg/show-children-from-root/xxxx support
+;;;;; norg/show-children-from-root/xxxx support
 
 (defun norg/show-children-from-root* (n)
   "Call `norg/show-children-from-point*` on the current root headline, with N as
@@ -1242,7 +1224,7 @@ the parameter."
                        setting-kind
                        current-value))
 
-;;;; ____ ** norg/show-children-from-root/xxxx
+;;;;; norg/show-children-from-root/xxxx
 
 (defun norg/show-children-from-root (n)
   (interactive "^p")
@@ -1295,7 +1277,7 @@ the parameter."
   ((k (eql :org)))
   (norg/show-children-from-root/to-current-level))
 
-;;;; ____ ** norg/show-children-from-all-roots/xxxx support
+;;;;; norg/show-children-from-all-roots/xxxx support
 
 (defun norg/show-children-from-all-roots* (n)
   "Call `norg/show-children-from-point*` on all root headlines, with N as
@@ -1312,7 +1294,7 @@ the parameter."
                        setting-kind
                        current-value))
 
-;;;; ____ ** norg/show-children-from-all-roots/xxxx
+;;;;; norg/show-children-from-all-roots/xxxx
 
 (defun norg/show-children-from-all-roots (n)
   (interactive "^p")
@@ -1365,8 +1347,7 @@ the parameter."
   ((k (eql :org)))
   (norg/show-children-from-all-roots/to-current-level))
 
-;;;; ___________________________________________________________________________
-;;;; ____ * Replacements for `org-cycle` and `org-shifttab`
+;;;; Replacements for `org-cycle` and `org-shifttab`
 
 (defun norg/tab (arg)
   (cond ((not (norg/w/at-heading-p))
@@ -1398,8 +1379,8 @@ the parameter."
 (cl-defmethod nomis/tree/shifttab--aux ((k (eql :org)) arg)
   (norg/shifttab arg))
 
-;;;; ___________________________________________________________________________
-;;;; ____ * End
+;;; End
 
 (provide 'norg)
+
 ;;; norg.el ends here
