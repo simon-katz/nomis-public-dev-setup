@@ -53,14 +53,13 @@
 
 ;; Restore position if we landed on '(provide ...)'.
 
-(defun nomis/xref-restore-pos-if-on-provide (&rest _)
-  "Restore save-place if `xref` lands on '(provide ...)'."
+(defun nomis/xref-restore-pos-if-stupid-place (&rest _)
+  "Restore save-place if `xref` lands on `;;;; Code:` or `(provide ...)`."
   (save-excursion
     (beginning-of-line)
-    (when (looking-at "[[:space:]]*(provide[[:space:]]+'")
+    (when (or (looking-at ";;; Code")
+              (looking-at "[[:space:]]*(provide[[:space:]]+'"))
       (let* ((true-name (file-truename buffer-file-name))
-             (saved-pos (and (boundp 'save-place-alist)
-                             (cdr (assoc true-name save-place-alist)))))
              (saved-pos (or (and (boundp 'save-place-alist)
                                  (cdr (assoc true-name save-place-alist)))
                             1 ; `save-place` removes entries when we go to BOF
@@ -77,7 +76,7 @@
                           (current-buffer)
                           saved-pos))))))
 
-(advice-add 'xref-find-definitions :after 'nomis/xref-restore-pos-if-on-provide)
+(advice-add 'xref-find-definitions :after 'nomis/xref-restore-pos-if-stupid-place)
 
 ;;; Other stuff
 
