@@ -539,32 +539,6 @@ Can pass by a superior heading."
                                          :forward
                                          :same-level-allow-cross-parent)))
 
-;;;; `nomis/tree` methods
-
-;;;;; Search heading text
-
-;;;;; Visibility span
-
-;;;;; nomis/tree/show-tree-only and nomis/tree/max-lineage
-
-;;;;; nomis/tree/set-step-n-levels-to-show
-
-;;;;; Expand/collapse from point
-
-;;;;; Expand/collapse from parent
-
-;;;;; Expand/collapse from root -- to current level, and from all roots -- to current level
-
-;;;;; Expand/collapse from all roots
-
-;;;;; Expand/collapse from root
-
-;;;;; Tab and shifttab
-
-;;;;; Movement
-
-;;;;; Movement + expand/collapse
-
 ;;; End
 
 (provide 'nomis-outline-uber)
