@@ -439,12 +439,6 @@ headline."
 (defun norg/show-tree-only ()
   (norg/collapse-all-and-set-visibility-span 'tree))
 
-(cl-defmethod nomis/tree/show-tree-only--aux ((k (eql :org)))
-  (norg/show-tree-only))
-
-(cl-defmethod nomis/tree/max-lineage--aux ((k (eql :org)))
-  (error "Not supported: %s %s" k this-command))
-
 ;;;; Navigation
 
 ;;;;; Forward and backward at same level
@@ -467,9 +461,6 @@ Like `org-forward-heading-same-level` but:
   (norg/-heading-same-level-helper #'norg/w/forward-heading-same-level
                                    "No next heading at this level"))
 
-(cl-defmethod nomis/tree/next-sibling--aux ((k (eql :org)))
-  (norg/next-sibling))
-
 (defun norg/previous-sibling ()
   "Move backward one subheading at same level as this one.
 Like `org-backward-heading-same-level` but:
@@ -477,9 +468,6 @@ Like `org-backward-heading-same-level` but:
 - if this is the first subheading within its parent, display a popup message."
   (norg/-heading-same-level-helper #'norg/w/backward-heading-same-level
                                    "No previous heading at this level"))
-
-(cl-defmethod nomis/tree/previous-sibling--aux ((k (eql :org)))
-  (norg/previous-sibling))
 
 ;;;;; Forward and backward at same level, allow cross-parent
 
@@ -531,9 +519,6 @@ Like `org-forward-heading-same-level` but:
   subheading at this level in the next parent."
   (norg/-heading-same-level/allow-cross-parent/helper :forward))
 
-(cl-defmethod nomis/tree/next-sibling/allow-cross-parent--aux ((k (eql :org)))
-  (norg/next-sibling/allow-cross-parent))
-
 (defun norg/previous-sibling/allow-cross-parent ()
   "Move backward one subheading at same level as this one.
 Like `org-backward-heading-same-level` but:
@@ -541,10 +526,6 @@ Like `org-backward-heading-same-level` but:
 - if this is the first subheading within its parent, move to the last
 subheading at this level in the previous parent."
   (norg/-heading-same-level/allow-cross-parent/helper :backward))
-
-(cl-defmethod nomis/tree/previous-sibling/allow-cross-parent--aux
-  ((k (eql :org)))
-  (norg/previous-sibling/allow-cross-parent))
 
 ;;;;; Forward and backward at any level
 
@@ -561,10 +542,6 @@ Same for the `backward` commands.")
         (norg/w/show-entry)
       (norg/show-point))))
 
-(cl-defmethod nomis/tree/next-heading--aux ((k (eql :org)) n)
-  ;; TODO: We are ignoring `n`.
-  (norg/next-heading))
-
 (defun norg/previous-heading ()
   (nomis/scrolling/with-maybe-maintain-line-no-in-window
     (norg/w/previous-heading)
@@ -572,23 +549,13 @@ Same for the `backward` commands.")
         (norg/w/show-entry)
       (norg/show-point))))
 
-(cl-defmethod nomis/tree/previous-heading--aux ((k (eql :org)) n)
-  ;; TODO: We are ignoring `n`.
-  (norg/previous-heading))
-
 (defun norg/next-heading/set-tree+body ()
   (norg/next-heading)
   (nomis/org-visibility-span/set-tree+body))
 
-(cl-defmethod nomis/tree/next-heading/set-tree+body--aux ((k (eql :org)))
-  (norg/next-heading/set-tree+body))
-
 (defun norg/previous-heading/set-tree+body ()
   (norg/previous-heading)
   (nomis/org-visibility-span/set-tree+body))
-
-(cl-defmethod nomis/tree/previous-heading/set-tree+body--aux ((k (eql :org)))
-  (norg/previous-heading/set-tree+body))
 
 ;;;; Info that relies on our navigation stuff
 
@@ -622,10 +589,6 @@ Same for the `backward` commands.")
               (string-to-number s)))))
   (setq norg/step-n-levels-to-show (if (null n) n (max 1 (floor n))))
   (message "n-levels-to-show set to %s" norg/step-n-levels-to-show))
-
-(cl-defmethod nomis/tree/set-step-n-levels-to-show--aux ((k (eql :org))
-                                                         n)
-  (norg/set-step-n-levels-to-show n))
 
 (defun norg/-step-then-step-cross-parent? ()
   (let ((cmds (list (norg/last-command)
@@ -753,26 +716,14 @@ Same for the `backward` commands.")
 (defun norg/step-forward (n-levels-to-show-or-nil)
   (norg/-step/impl 1 nil n-levels-to-show-or-nil))
 
-(cl-defmethod nomis/tree/step-forward--aux ((k (eql :org)) n-levels-to-show-or-nil)
-  (norg/step-forward n-levels-to-show-or-nil))
-
 (defun norg/step-backward (n-levels-to-show-or-nil)
   (norg/-step/impl -1 nil n-levels-to-show-or-nil))
-
-(cl-defmethod nomis/tree/step-backward--aux ((k (eql :org)) n-levels-to-show-or-nil)
-  (norg/step-backward n-levels-to-show-or-nil))
 
 (defun norg/step-forward/allow-cross-parent (n-levels-to-show-or-nil)
   (norg/-step/impl 1 t n-levels-to-show-or-nil))
 
-(cl-defmethod nomis/tree/step-forward/allow-cross-parent--aux ((k (eql :org)) n-levels-to-show-or-nil)
-  (norg/step-forward/allow-cross-parent n-levels-to-show-or-nil))
-
 (defun norg/step-backward/allow-cross-parent (n-levels-to-show-or-nil)
   (norg/-step/impl -1 t n-levels-to-show-or-nil))
-
-(cl-defmethod nomis/tree/step-backward/allow-cross-parent--aux ((k (eql :org)) n-levels-to-show-or-nil)
-  (norg/step-backward/allow-cross-parent n-levels-to-show-or-nil))
 
 ;;;; Info about trees
 
@@ -1106,20 +1057,12 @@ When in a body, \"current headline\" means the current body's parent headline."
          (v (if *expanding-parent?* 1 0)))
     (norg/-show-children-from-point/set-level-etc v :setting-min current-value)))
 
-(cl-defmethod nomis/tree/show-children-from-point/set-min--aux
-  ((k (eql :org)))
-  (norg/show-children-from-point/set-min))
-
 (defun norg/show-children-from-point/fully-expand ()
   "Fully expand the current headline.
 When in a body, \"current headline\" means the current body's parent headline."
   (let* ((current-value (norg/smallest-invisible-level-below-or-infinity))
          (v :max))
     (norg/-show-children-from-point/set-level-etc v :setting-max current-value)))
-
-(cl-defmethod nomis/tree/show-children-from-point/fully-expand--aux
-  ((k (eql :org)))
-  (norg/show-children-from-point/fully-expand))
 
 (defun norg/show-children-from-point/incremental/less (&optional arg)
   "Incrementally collapse the current headline by `arg` levels, default 1.
@@ -1128,20 +1071,12 @@ When in a body, \"current headline\" means the current body's parent headline."
                 (norg/-unmodified-value-and-arg->level arg :less))))
     (norg/-show-children-from-point/set-level-etc v :less :dummy)))
 
-(cl-defmethod nomis/tree/show-children-from-point/incremental/less--aux
-  ((k (eql :org)) arg)
-  (norg/show-children-from-point/incremental/less arg))
-
 (defun norg/show-children-from-point/incremental/more (&optional arg)
   "Incrementally expand the current headline by `arg` levels, default 1.
 When in a body, \"current headline\" means the current body's parent headline."
   (let* ((v (-> (norg/smallest-invisible-level-below-or-infinity)
                 (norg/-unmodified-value-and-arg->level arg :more))))
     (norg/-show-children-from-point/set-level-etc v :more :dummy)))
-
-(cl-defmethod nomis/tree/show-children-from-point/incremental/more--aux
-  ((k (eql :org)) arg)
-  (norg/show-children-from-point/incremental/more arg))
 
 ;;;;; norg/show-children-from-parent/xxxx support
 
@@ -1171,19 +1106,11 @@ current entry's parent and showing one level."
   (norg/save-excursion-to-parent-and-then-show-point
     (norg/show-children-from-point/set-min)))
 
-(cl-defmethod nomis/tree/show-children-from-parent/set-min--aux
-  ((k (eql :org)))
-  (norg/show-children-from-parent/set-min))
-
 (defun norg/show-children-from-parent/fully-expand ()
   "Like `norg/show-children-from-point/fully-expand`, but from
 the current entry's parent."
   (norg/save-excursion-to-parent-and-then-show-point
     (norg/show-children-from-point/fully-expand)))
-
-(cl-defmethod nomis/tree/show-children-from-parent/fully-expand--aux
-  ((k (eql :org)))
-  (norg/show-children-from-parent/fully-expand))
 
 (defun norg/show-children-from-parent/incremental/less (&optional arg)
   "Like `norg/show-children-from-point/incremental/less`, but
@@ -1192,19 +1119,11 @@ expanded at least one level."
   (norg/save-excursion-to-parent-and-then-show-point
     (norg/show-children-from-point/incremental/less arg)))
 
-(cl-defmethod nomis/tree/show-children-from-parent/incremental/less--aux
-  ((k (eql :org)) arg)
-  (norg/show-children-from-parent/incremental/less arg))
-
 (defun norg/show-children-from-parent/incremental/more (&optional arg)
   "Like `norg/show-children-from-point/incremental/more`, but
 from the current entry's parent."
   (norg/save-excursion-to-parent-and-then-show-point
     (norg/show-children-from-point/incremental/more arg)))
-
-(cl-defmethod nomis/tree/show-children-from-parent/incremental/more--aux
-  ((k (eql :org)) arg)
-  (norg/show-children-from-parent/incremental/more arg))
 
 ;;;;; norg/show-children-from-root/xxxx support
 
@@ -1236,18 +1155,10 @@ the parameter."
          (v 0))
     (norg/-show-children-from-root/set-level-etc v :setting-min current-value)))
 
-(cl-defmethod nomis/tree/show-children-from-root/set-min--aux
-  ((k (eql :org)))
-  (norg/show-children-from-root/set-min))
-
 (defun norg/show-children-from-root/fully-expand ()
   (let* ((current-value (norg/smallest-invisible-level-below-or-infinity/root))
          (v :max))
     (norg/-show-children-from-root/set-level-etc v :setting-max current-value)))
-
-(cl-defmethod nomis/tree/show-children-from-root/fully-expand--aux
-  ((k (eql :org)))
-  (norg/show-children-from-root/fully-expand))
 
 (defun norg/show-children-from-root/incremental/less (arg)
   "Incrementally collapse the current root by `arg` levels, default 1."
@@ -1255,27 +1166,15 @@ the parameter."
                 (norg/-unmodified-value-and-arg->level arg :less))))
     (norg/-show-children-from-root/set-level-etc v :less :dummy)))
 
-(cl-defmethod nomis/tree/show-children-from-root/incremental/less--aux
-  ((k (eql :org)) arg)
-  (norg/show-children-from-root/incremental/less arg))
-
 (defun norg/show-children-from-root/incremental/more (arg)
   "Incrementally expand the current root by `arg` levels, default 1."
   (let* ((v (-> (norg/smallest-invisible-level-below-or-infinity/root)
                 (norg/-unmodified-value-and-arg->level arg :more))))
     (norg/-show-children-from-root/set-level-etc v :more :dummy)))
 
-(cl-defmethod nomis/tree/show-children-from-root/incremental/more--aux
-  ((k (eql :org)) arg)
-  (norg/show-children-from-root/incremental/more arg))
-
 (defun norg/show-children-from-root/to-current-level ()
   (let* ((v (1- (norg/current-level t))))
     (norg/-show-children-from-root/set-level-etc v :no-check :dummy)))
-
-(cl-defmethod nomis/tree/show-children-from-root/to-current-level--aux
-  ((k (eql :org)))
-  (norg/show-children-from-root/to-current-level))
 
 ;;;;; norg/show-children-from-all-roots/xxxx support
 
@@ -1306,18 +1205,10 @@ the parameter."
          (v 0))
     (norg/-show-children-from-all-roots/set-level-etc v :setting-min current-value)))
 
-(cl-defmethod nomis/tree/show-children-from-all-roots/set-min--aux
-  ((k (eql :org)))
-  (norg/show-children-from-all-roots/set-min))
-
 (defun norg/show-children-from-all-roots/fully-expand ()
   (let* ((current-value (norg/smallest-invisible-level-below-or-infinity/buffer))
          (v :max))
     (norg/-show-children-from-all-roots/set-level-etc v :setting-max current-value)))
-
-(cl-defmethod nomis/tree/show-children-from-all-roots/fully-expand--aux
-  ((k (eql :org)))
-  (norg/show-children-from-all-roots/fully-expand))
 
 (defun norg/show-children-from-all-roots/incremental/less (arg)
   "Incrementally collapse all roots by `arg` levels, default 1."
@@ -1325,27 +1216,15 @@ the parameter."
                 (norg/-unmodified-value-and-arg->level arg :less))))
     (norg/-show-children-from-all-roots/set-level-etc v :less :dummy)))
 
-(cl-defmethod nomis/tree/show-children-from-all-roots/incremental/less--aux
-  ((k (eql :org)) arg)
-  (norg/show-children-from-all-roots/incremental/less arg))
-
 (defun norg/show-children-from-all-roots/incremental/more (arg)
   "Incrementally expand all roots by `arg` levels, default 1."
   (let* ((v (-> (norg/smallest-invisible-level-below-or-infinity/buffer)
                 (norg/-unmodified-value-and-arg->level arg :more))))
     (norg/-show-children-from-all-roots/set-level-etc v :more :dummy)))
 
-(cl-defmethod nomis/tree/show-children-from-all-roots/incremental/more--aux
-  ((k (eql :org)) arg)
-  (norg/show-children-from-all-roots/incremental/more arg))
-
 (defun norg/show-children-from-all-roots/to-current-level ()
   (let* ((v (1- (norg/current-level t))))
     (norg/-show-children-from-all-roots/set-level-etc v :no-check :dummy)))
-
-(cl-defmethod nomis/tree/show-children-from-all-roots/to-current-level--aux
-  ((k (eql :org)))
-  (norg/show-children-from-all-roots/to-current-level))
 
 ;;;; Replacements for `org-cycle` and `org-shifttab`
 
@@ -1363,9 +1242,6 @@ the parameter."
         (t
          (error "Bad arg"))))
 
-(cl-defmethod nomis/tree/tab--aux ((k (eql :org)) arg)
-  (norg/tab arg))
-
 (defun norg/shifttab (arg)
   (cond ((not (norg/w/at-heading-p))
          (org-shifttab arg))
@@ -1375,9 +1251,6 @@ the parameter."
          (norg/show-children-from-point arg))
         (t
          (error "Bad arg"))))
-
-(cl-defmethod nomis/tree/shifttab--aux ((k (eql :org)) arg)
-  (norg/shifttab arg))
 
 ;;; End
 

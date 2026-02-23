@@ -337,6 +337,8 @@
 
 (require 'nomis-bicycle)
 (require 'nomis-tree)
+(require 'nomis-tree-org)
+(require 'nomis-tree-outline)
 (require 'nomis-tree-key-bindings)
 
 ;; (eval-after-load "isearch" '(require 'isearch+))

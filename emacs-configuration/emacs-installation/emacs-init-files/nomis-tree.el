@@ -42,7 +42,9 @@
         (t
          (error "Unexpected: None of outline-mode, outline-minor-mode or org-mode is active"))))
 
-;;;; Search heading text
+;;;; API
+
+;;;;; Search heading text
 
 (cl-defgeneric nomis/tree/search-heading-text--aux (k))
 
@@ -56,7 +58,7 @@
   (interactive)
   (nomis/tree/search-heading-text-again--aux (-nomis/tree/mode)))
 
-;;;; Visibility span
+;;;;; Visibility span
 
 (cl-defgeneric nomis/tree/visibility-span/less--aux (k))
 
@@ -75,13 +77,14 @@
 (defun nomis/tree/visibility-span/set-min ()
   (interactive)
   (nomis/tree/visibility-span/set-min--aux (-nomis/tree/mode)))
+
 (cl-defgeneric nomis/tree/visibility-span/set-max--aux (k))
 
 (defun nomis/tree/visibility-span/set-max ()
   (interactive)
   (nomis/tree/visibility-span/set-max--aux (-nomis/tree/mode)))
 
-;;;; nomis/tree/show-tree-only and nomis/tree/max-lineage
+;;;;; nomis/tree/show-tree-only and nomis/tree/max-lineage
 
 (cl-defgeneric nomis/tree/show-tree-only--aux (k))
 
@@ -95,7 +98,7 @@
   (interactive)
   (nomis/tree/max-lineage--aux (-nomis/tree/mode)))
 
-;;;; nomis/tree/set-step-n-levels-to-show
+;;;;; nomis/tree/set-step-n-levels-to-show
 
 (cl-defgeneric nomis/tree/set-step-n-levels-to-show--aux (k n))
 
@@ -103,7 +106,7 @@
   (interactive "P")
   (nomis/tree/set-step-n-levels-to-show--aux (-nomis/tree/mode) n))
 
-;;;; Expand/collapse from point
+;;;;; Expand/collapse from point
 
 (cl-defgeneric nomis/tree/show-children-from-point/incremental/less--aux (k n))
 
@@ -139,7 +142,7 @@ When in a body, \"current heading\" means the current body's parent heading."
   (interactive)
   (nomis/tree/show-children-from-point/fully-expand--aux (-nomis/tree/mode)))
 
-;;;; Expand/collapse from parent
+;;;;; Expand/collapse from parent
 
 (cl-defgeneric nomis/tree/show-children-from-parent/incremental/less--aux (k n))
 
@@ -174,7 +177,7 @@ the current entry's parent."
   (interactive)
   (nomis/tree/show-children-from-parent/fully-expand--aux (-nomis/tree/mode)))
 
-;;;; Expand/collapse from root -- to current level, and from all roots -- to current level
+;;;;; Expand/collapse from root -- to current level, and from all roots -- to current level
 
 (cl-defgeneric nomis/tree/show-children-from-root/to-current-level--aux (k))
 
@@ -188,7 +191,7 @@ the current entry's parent."
   (interactive)
   (nomis/tree/show-children-from-all-roots/to-current-level--aux (-nomis/tree/mode)))
 
-;;;; Expand/collapse from all roots
+;;;;; Expand/collapse from all roots
 
 (cl-defgeneric nomis/tree/show-children-from-all-roots/incremental/less--aux (k n))
 
@@ -216,7 +219,7 @@ the current entry's parent."
   (interactive)
   (nomis/tree/show-children-from-all-roots/fully-expand--aux (-nomis/tree/mode)))
 
-;;;; Expand/collapse from root
+;;;;; Expand/collapse from root
 
 (cl-defgeneric nomis/tree/show-children-from-root/incremental/less--aux (k n))
 
@@ -244,7 +247,7 @@ the current entry's parent."
   (interactive)
   (nomis/tree/show-children-from-root/fully-expand--aux (-nomis/tree/mode)))
 
-;;;; Tab and shifttab
+;;;;; Tab and shifttab
 
 (cl-defgeneric nomis/tree/tab--aux (k))
 
@@ -258,7 +261,7 @@ the current entry's parent."
   (interactive "P")
   (nomis/tree/shifttab--aux (-nomis/tree/mode) arg))
 
-;;;; Movement
+;;;;; Movement
 
 (cl-defgeneric nomis/tree/previous-sibling--aux (k))
 
@@ -288,7 +291,7 @@ the current entry's parent."
   (interactive)
   (nomis/tree/next-sibling/allow-cross-parent--aux (-nomis/tree/mode)))
 
-;;;; Movement + expand/collapse
+;;;;; Movement + expand/collapse
 
 ;; TODO: The prefix arg here has different meanings for `:outline` and `:org`.
 ;;

@@ -398,140 +398,24 @@
 
 ;;;;; Search heading text
 
-(cl-defmethod nomis/tree/search-heading-text--aux ((k (eql :outline)))
-  (error "Not supported: %s %s" k this-command))
-
-(cl-defmethod nomis/tree/search-heading-text-again--aux ((k (eql :outline)))
-  (error "Not supported: %s %s" k this-command))
-
 ;;;;; nomis/outline/visibility-span
-
-(cl-defmethod nomis/tree/visibility-span/less--aux ((k (eql :outline)))
-  (error "Not supported: %s %s" k this-command))
-
-(cl-defmethod nomis/tree/visibility-span/more--aux ((k (eql :outline)))
-  (error "Not supported: %s %s" k this-command))
-
-(cl-defmethod nomis/tree/visibility-span/set-min--aux ((k (eql :outline)))
-  (error "Not supported: %s %s" k this-command))
 
 (defun nomis/outline/visibility-span/set-max ()
   (-nomis/outline-show-lineage max-visibility-span-lineage-spec))
-
-(cl-defmethod nomis/tree/visibility-span/set-max--aux ((k (eql :outline)))
-  (nomis/outline/visibility-span/set-max))
 
 ;;;;; nomis/outline-show-max-lineage
 
 (defun nomis/outline-show-max-lineage ()
   (-nomis/outline-show-lineage max-lineage-spec))
 
-(cl-defmethod nomis/tree/max-lineage--aux ((k (eql :outline)))
-  (nomis/outline-show-max-lineage))
-
 ;;;;; nomis/outline-show-tree-only
 
 (defun nomis/outline-show-tree-only ()
   (-nomis/outline-show-lineage fat-parents-lineage-spec))
 
-(cl-defmethod nomis/tree/show-tree-only--aux ((k (eql :outline)))
-  (nomis/outline-show-tree-only))
-
-;;;;; nomis/tree/set-step-n-levels-to-show--aux
-
-(cl-defmethod nomis/tree/set-step-n-levels-to-show--aux ((k (eql :outline))
-                                                         n)
-  (error "Not supported: %s %s" k this-command))
-
 ;;;;; Expand/collapse
 
-(cl-defmethod nomis/tree/show-children-from-point/incremental/less--aux
-  ((k (eql :outline)) n)
-  (error "Not supported: %s %s" k this-command))
-
-(cl-defmethod nomis/tree/show-children-from-point/incremental/more--aux
-  ((k (eql :outline)) n)
-  (error "Not supported: %s %s" k this-command))
-
-(cl-defmethod nomis/tree/show-children-from-point/set-min--aux
-  ((k (eql :outline)))
-  (error "Not supported: %s %s" k this-command))
-
-(cl-defmethod nomis/tree/show-children-from-point/fully-expand--aux
-  ((k (eql :outline)))
-  (error "Not supported: %s %s" k this-command))
-
-(cl-defmethod nomis/tree/show-children-from-root/incremental/less--aux
-  ((k (eql :outline)) n)
-  (error "Not supported: %s %s" k this-command))
-
-(cl-defmethod nomis/tree/show-children-from-root/incremental/more--aux
-  ((k (eql :outline)) n)
-  (error "Not supported: %s %s" k this-command))
-
-(cl-defmethod nomis/tree/show-children-from-root/set-min--aux
-  ((k (eql :outline)))
-  (error "Not supported: %s %s" k this-command))
-
-(cl-defmethod nomis/tree/show-children-from-root/fully-expand--aux
-  ((k (eql :outline)))
-  (error "Not supported: %s %s" k this-command))
-
-(cl-defmethod nomis/tree/show-children-from-parent/incremental/less--aux
-  ((k (eql :outline)) n)
-  (error "Not supported: %s %s" k this-command))
-
-(cl-defmethod nomis/tree/show-children-from-parent/incremental/more--aux
-  ((k (eql :outline)) n)
-  (error "Not supported: %s %s" k this-command))
-
-(cl-defmethod nomis/tree/show-children-from-parent/set-min--aux
-  ((k (eql :outline)))
-  (error "Not supported: %s %s" k this-command))
-
-(cl-defmethod nomis/tree/show-children-from-parent/fully-expand--aux
-  ((k (eql :outline)))
-  (error "Not supported: %s %s" k this-command))
-
-(cl-defmethod nomis/tree/show-children-from-all-roots/incremental/less--aux
-  ((k (eql :outline)) n)
-  (error "Not supported: %s %s" k this-command))
-
-(cl-defmethod nomis/tree/show-children-from-all-roots/incremental/more--aux
-  ((k (eql :outline)) n)
-  (error "Not supported: %s %s" k this-command))
-
-(cl-defmethod nomis/tree/show-children-from-all-roots/set-min--aux
-  ((k (eql :outline)))
-  (error "Not supported: %s %s" k this-command))
-
-(cl-defmethod nomis/tree/show-children-from-all-roots/fully-expand--aux
-  ((k (eql :outline)))
-  (error "Not supported: %s %s" k this-command))
-
-(cl-defmethod nomis/tree/show-children-from-root/to-current-level--aux
-  ((k (eql :outline)))
-  (error "Not supported: %s %s" k this-command))
-
-(cl-defmethod nomis/tree/show-children-from-all-roots/to-current-level--aux
-  ((k (eql :outline)))
-  (error "Not supported: %s %s" k this-command))
-
 ;;;;; Movement
-
-(cl-defmethod nomis/tree/previous-sibling--aux ((k (eql :outline)))
-  (nomis/outline-previous-sibling 1))
-
-(cl-defmethod nomis/tree/next-sibling--aux ((k (eql :outline)))
-  (nomis/outline-next-sibling 1))
-
-(cl-defmethod nomis/tree/previous-sibling/allow-cross-parent--aux
-  ((k (eql :outline)))
-  (nomis/outline-previous-sibling/allow-cross-parent 1))
-
-(cl-defmethod nomis/tree/next-sibling/allow-cross-parent--aux
-  ((k (eql :outline)))
-  (nomis/outline-next-sibling/allow-cross-parent 1))
 
 ;;;;; Tab and shift-tab
 
@@ -547,12 +431,6 @@
     ;; at least for now.
     (company-indent-or-complete-common arg)))
 
-(cl-defmethod nomis/tree/tab--aux ((k (eql :outline)) arg)
-  (nomis/outline-tab arg))
-
-(cl-defmethod nomis/tree/shifttab--aux ((k (eql :outline)) arg)
-  (nomis/outline-dec-children))
-
 ;;;;; Previous
 
 (defun nomis/outline-previous-heading (n)
@@ -562,12 +440,6 @@
                                          n
                                          :backward
                                          :any-level)))
-
-(cl-defmethod nomis/tree/previous-heading--aux ((k (eql :outline)) n)
-  (nomis/outline-previous-heading n))
-
-(cl-defmethod nomis/tree/previous-heading/set-tree+body--aux ((k (eql :outline)))
-  (error "Not supported: %s %s" k this-command))
 
 (defun nomis/outline-previous-sibling (n)
   "Move backward to the N'th heading at same level as this one.
@@ -602,9 +474,6 @@ Stop at the first and last headings of a superior heading."
                                          :backward
                                          :sibling)))
 
-(cl-defmethod nomis/tree/step-backward--aux ((k (eql :outline)) n)
-  (nomis/outline-step-backward n))
-
 (defun nomis/outline-step-backward/allow-cross-parent (n)
   "Move backward to the N'th heading at same level as this one, then show
 fat parents and all children.
@@ -616,9 +485,6 @@ Can pass by a superior heading."
                                          :backward
                                          :same-level-allow-cross-parent)))
 
-(cl-defmethod nomis/tree/step-backward/allow-cross-parent--aux ((k (eql :outline)) n)
-  (nomis/outline-step-backward/allow-cross-parent n))
-
 ;;;;; Next
 
 (defun nomis/outline-next-heading (n)
@@ -628,12 +494,6 @@ Can pass by a superior heading."
                                          n
                                          :forward
                                          :any-level)))
-
-(cl-defmethod nomis/tree/next-heading--aux ((k (eql :outline)) n)
-  (nomis/outline-next-heading n))
-
-(cl-defmethod nomis/tree/next-heading/set-tree+body--aux ((k (eql :outline)))
-  (error "Not supported: %s %s" k this-command))
 
 (defun nomis/outline-next-sibling (n)
   "Move forward to the N'th heading at same level as this one.
@@ -668,9 +528,6 @@ Stop at the first and last headings of a superior heading."
                                          :forward
                                          :sibling)))
 
-(cl-defmethod nomis/tree/step-forward--aux ((k (eql :outline)) n)
-  (nomis/outline-step-forward n))
-
 (defun nomis/outline-step-forward/allow-cross-parent (n)
   "Move forward to the N'th heading at same level as this one, then show
 fat parents and all children.
@@ -682,8 +539,31 @@ Can pass by a superior heading."
                                          :forward
                                          :same-level-allow-cross-parent)))
 
-(cl-defmethod nomis/tree/step-forward/allow-cross-parent--aux ((k (eql :outline)) n)
-  (nomis/outline-step-forward/allow-cross-parent n))
+;;;; `nomis/tree` methods
+
+;;;;; Search heading text
+
+;;;;; Visibility span
+
+;;;;; nomis/tree/show-tree-only and nomis/tree/max-lineage
+
+;;;;; nomis/tree/set-step-n-levels-to-show
+
+;;;;; Expand/collapse from point
+
+;;;;; Expand/collapse from parent
+
+;;;;; Expand/collapse from root -- to current level, and from all roots -- to current level
+
+;;;;; Expand/collapse from all roots
+
+;;;;; Expand/collapse from root
+
+;;;;; Tab and shifttab
+
+;;;;; Movement
+
+;;;;; Movement + expand/collapse
 
 ;;; End
 
