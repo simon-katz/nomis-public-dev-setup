@@ -27,8 +27,12 @@
 
 ;;;; Utilities
 
+;;;;; nomis/tree/unimplemented-method
+
 (defun nomis/tree/unimplemented-method (k)
   (error "Not supported: %s %s" k this-command))
+
+;;;;; -nomis/tree/mode
 
 (defun -nomis/tree/outline-mode? ()
   (or (eq major-mode 'outline-mode)
