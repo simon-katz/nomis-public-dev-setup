@@ -546,7 +546,6 @@
 ;;;;; Previous
 
 (defun nomis/outline-previous-heading (n)
-  (interactive "p")
   (-nomis/outline-command
       nil
     (-nomis/outline-prev-or-next-heading navigation-lineage-spec
@@ -613,7 +612,6 @@ Can pass by a superior heading."
 ;;;;; Next
 
 (defun nomis/outline-next-heading (n)
-  (interactive "p")
   (-nomis/outline-command
       nil
     (-nomis/outline-prev-or-next-heading navigation-lineage-spec
