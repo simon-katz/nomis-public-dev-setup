@@ -1,9 +1,8 @@
 ;;;; nomis-org-key-bindings  ---  -*- lexical-binding: t -*-
 
-;;;; ___________________________________________________________________________
-;;;; ____ * General
+;;; General
 
-;;; The following lines are always needed. Choose your own keys.
+;; The following lines are always needed. Choose your own keys.
 
 (add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))
 
@@ -15,39 +14,33 @@
 
 (define-key global-map "\C-cc" 'org-capture)
 
-;;;; ___________________________________________________________________________
-;;;; ____ * Hooks
+;;; Hooks
 
 (add-hook 'org-mode-hook 'nomis/turn-on-idle-highlight-mode)
 
-;;;; ___________________________________________________________________________
-;;;; ____ * Scrolling
+;;; Scrolling
 
-;;;; These normally do `org-shiftcontrolup` and `org-shiftcontroldown`, which do
-;;;; things with timestamps. I don't use timestamps. So use the global
-;;;; key bindings.
+;; These normally do `org-shiftcontrolup` and `org-shiftcontroldown`, which do
+;; things with timestamps. I don't use timestamps. So use the global
+;; key bindings.
 (define-key org-mode-map (kbd "C-S-<up>")     nil)
 (define-key org-mode-map (kbd "C-S-<down>")   nil)
 
-;;;; ___________________________________________________________________________
-;;;; ____ * Navigation and cycling
+;;; Navigation and cycling
 
-;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-;;;; ____ ** Following links
+;;;; Following links
 
 (define-key org-mode-map (kbd "M-.") 'org-open-at-point)
 (define-key org-mode-map (kbd "M-,") 'org-mark-ring-goto)
 
-;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-;;;; ____ ** Movement + expand/collapse
+;;;; Movement + expand/collapse
 
 ;; (define-key org-mode-map (kbd "C-H-<")   ????) ; No real meaning -- with the M we are already crossing parent levels
 ;; (define-key org-mode-map (kbd "C-H->")   ????) ; No real meaning -- with the M we are already crossing parent levels
 ;; (define-key org-mode-map (kbd "C-H-M-<") ????) ; No real meaning -- with the M we are already crossing parent levels
 ;; (define-key org-mode-map (kbd "C-H-M->") ????) ; No real meaning -- with the M we are already crossing parent levels
 
-;;;; ___________________________________________________________________________
-;;;; ____ * Agenda
+;;; Agenda
 
 (progn ; TODO This is not only agenda stuff (contrary to the comment above), and this does not need to be done in a hook (or else everything should go in a hook)
   (defun nomis/setup-org-keys ()
@@ -60,7 +53,6 @@
     (define-key org-mode-map (kbd "M-S-<up>")   'org-move-subtree-up))
   (add-hook 'org-mode-hook 'nomis/setup-org-keys))
 
-;;;; ___________________________________________________________________________
-;;;; ____ * End
+;;; End
 
 (provide 'nomis-org-key-bindings)
