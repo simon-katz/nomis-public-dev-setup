@@ -15,10 +15,6 @@
 
 ;;;; Other outline-minor-mode key bindings
 
-;; outline-minor-mode
-
-;; (define-key outline-minor-mode-map (kbd "...") '...)
-
 (define-key outline-minor-mode-map (kbd "H-o f")       'outline-minor-faces-mode)
 
 (define-key outline-minor-mode-map (kbd "H-o p")       'outline-previous-visible-heading)
