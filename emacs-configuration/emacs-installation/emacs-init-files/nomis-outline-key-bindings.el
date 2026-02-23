@@ -17,11 +17,11 @@
 (define-key outline-minor-mode-map (kbd "H-o n")       'outline-next-visible-heading)
 (define-key outline-minor-mode-map (kbd "H-o u")       'outline-up-heading)
 
-;; TODO: These are blatting global key bindings.
-(define-key outline-minor-mode-map (kbd "C-S-<right>") 'outline-demote)
-(define-key outline-minor-mode-map (kbd "C-S-<left>")  'outline-promote)
-(define-key outline-minor-mode-map (kbd "C-S-<up>")    'outline-move-subtree-up)
-(define-key outline-minor-mode-map (kbd "C-S-<down>")  'outline-move-subtree-down)
+;; These key bindings match the equivalent `org-mode` built-in key bindings.
+(define-key outline-minor-mode-map (kbd "M-S-<right>") 'outline-demote)
+(define-key outline-minor-mode-map (kbd "M-S-<left>")  'outline-promote)
+(define-key outline-minor-mode-map (kbd "M-S-<up>")    'outline-move-subtree-up)
+(define-key outline-minor-mode-map (kbd "M-S-<down>")  'outline-move-subtree-down)
 
 (define-key outline-minor-mode-map (kbd "M-RET")       'outline-insert-heading)
 
