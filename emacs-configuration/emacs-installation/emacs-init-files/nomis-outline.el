@@ -140,52 +140,6 @@
 ;;   :after outline
 ;;   :config (advice-add 'outline-flag-region :after 'backline-update))
 
-;;;; bicycle
-
-;;;;; bicycle basics
-
-;; `bicycle` combines `outline` and `hideshow`.
-
-(require 'bicycle)
-
-;;;;; Provide feedback in bicycle-cycle-local
-
-(defvar *nomis/outline-in-bicycle-cycle-local?* nil)
-
-(advice-add 'bicycle-cycle-local
-            :around
-            (lambda (orig-fun &rest args)
-              (let* ((*nomis/outline-in-bicycle-cycle-local?* t))
-                (apply orig-fun args)))
-            '((name . nomis/outline-bicycle-feedback)))
-
-(advice-add 'outline-show-subtree
-            :around
-            (lambda (orig-fun &rest args)
-              (when *nomis/outline-in-bicycle-cycle-local?*
-                (-nomis/outline-pulse-current-section))
-              (apply orig-fun args))
-            '((name . nomis/outline-bicycle-feedback)))
-
-;;;;; Provide feedback in bicycle-cycle-global
-
-(defvar *nomis/outline-in-bicycle-cycle-global?* nil)
-
-(advice-add 'bicycle-cycle-global
-            :around
-            (lambda (orig-fun &rest args)
-              (let* ((*nomis/outline-in-bicycle-cycle-global?* t))
-                (apply orig-fun args)))
-            '((name . nomis/outline-bicycle-feedback)))
-
-(advice-add 'outline-show-all
-            :around
-            (lambda (orig-fun &rest args)
-              (when *nomis/outline-in-bicycle-cycle-global?*
-                (nomis/msg/pulse-buffer))
-              (apply orig-fun args))
-            '((name . nomis/outline-bicycle-feedback)))
-
 ;;; End
 
 (provide 'nomis-outline)
