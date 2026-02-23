@@ -13,15 +13,13 @@
 
 (define-key outline-minor-mode-map (kbd "H-o <tab>")   'bicycle-cycle-global)
 
-;; |-------------------+---------------------------------------------------------+-----------------------------|
-;; |                   | ---- Movement + expand/collapse ----                    |                             |
-;; | (kbd "C-H-<")     | (*)                                                     |                             |
-;; | (kbd "C-H->")     | (*)                                                     |                             |
-;; | (kbd "C-H-M-<")   | (*)                                                     |                             |
-;; | (kbd "C-H-M->")   | (*)                                                     |                             |
-;; |-------------------+---------------------------------------------------------+-----------------------------|
+;; |                   | ---- Movement + expand/collapse ---- |
+;; | (kbd "C-H-<")     | (*) |
+;; | (kbd "C-H->")     | (*) |
+;; | (kbd "C-H-M-<")   | (*) |
+;; | (kbd "C-H-M->")   | (*) |
 
-;; (*) No real meaning -- with the M we are already crossing parent levels
+;; (*) No real meaning in our scneme -- without the Shift we are already crossing parent levels
 
 ;;;; Other outline-minor-mode key bindings
 
