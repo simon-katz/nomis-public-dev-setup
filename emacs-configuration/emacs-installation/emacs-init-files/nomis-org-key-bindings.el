@@ -1,6 +1,6 @@
 ;;; nomis-org-key-bindings  ---  -*- lexical-binding: t -*-
 
-;;; Code
+;;; Code:
 
 ;;;; General
 

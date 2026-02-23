@@ -38,7 +38,7 @@
 ;;       stuff). Maybe a prefix in front of the existing bindings. Oh, or maybe
 ;;       a modal UI.
 
-;;; Code
+;;; Code:
 
 ;;;; Requires
 

@@ -1,6 +1,6 @@
 ;;; nomis-mark -- -*- lexical-binding: t -*-
 
-;;; Code
+;;; Code:
 
 (advice-add 'pop-to-mark-command
             :around

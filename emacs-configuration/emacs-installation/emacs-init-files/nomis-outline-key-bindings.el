@@ -1,6 +1,6 @@
 ;;; Init stuff -- nomis-outline-key-bindings --  -*- lexical-binding: t -*-
 
-;;; Code
+;;; Code:
 
 ;;;; Make RET give us a newline
 

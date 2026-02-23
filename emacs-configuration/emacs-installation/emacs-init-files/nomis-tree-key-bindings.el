@@ -1,6 +1,6 @@
 ;;; nomis-tree-key-bindings -*- lexical-binding: t -*-
 
-;;; Code
+;;; Code:
 
 ;;;; Temporary keybindings to train myself for change of Projectile keybindings
 

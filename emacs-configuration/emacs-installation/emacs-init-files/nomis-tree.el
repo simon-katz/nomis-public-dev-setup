@@ -1,6 +1,6 @@
 ;;; nomis-tree -*- lexical-binding: t -*-
 
-;;; Code
+;;; Code:
 
 ;;;; nomis/tree-mode
 

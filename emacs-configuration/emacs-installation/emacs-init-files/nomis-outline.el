@@ -2,7 +2,7 @@
 
 (require 'nomis-msg)
 
-;;; Code
+;;; Code:
 
 ;;;; Utilities
 
