@@ -333,7 +333,7 @@
 ;;;;; -nomis/outline-command
 
 (defun -nomis/outline-command* (f)
-  (push-mark)
+  (unless mark-active (push-mark))
   (nomis/scrolling/with-maybe-maintain-line-no-in-window
     (funcall f)))
 
