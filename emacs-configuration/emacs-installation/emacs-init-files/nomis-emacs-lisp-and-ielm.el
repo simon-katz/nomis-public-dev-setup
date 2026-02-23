@@ -61,6 +61,10 @@
       (let* ((true-name (file-truename buffer-file-name))
              (saved-pos (and (boundp 'save-place-alist)
                              (cdr (assoc true-name save-place-alist)))))
+             (saved-pos (or (and (boundp 'save-place-alist)
+                                 (cdr (assoc true-name save-place-alist)))
+                            1 ; `save-place` removes entries when we go to BOF
+                            )))
         (when saved-pos
           ;; It seems that `xref` does its own saving of positions after
           ;; `xref-find-definitions` finishes, so do this in a timer:
