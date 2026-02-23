@@ -123,6 +123,13 @@ H-q H-q /    Show this help")
 (define-key nomis/tree-mode-map [(shift tab)]   'nomis/tree/shifttab)
 (define-key nomis/tree-mode-map [backtab]       'nomis/tree/shifttab)
 
+;;;; `bicycle-cycle-global`
+
+;; Keep this until we implement
+;; `nomis/tree/show-children-from-all-roots/incremental/less--aux` and
+;; `nomis/tree/show-children-from-all-roots/incremental/more--aux`.
+(define-key nomis/tree-mode-map (kbd "H-o <tab>")   'bicycle-cycle-global)
+
 ;;;; Movement
 
 (define-key nomis/tree-mode-map (kbd "H-,")       'nomis/tree/previous-sibling)
