@@ -33,13 +33,6 @@
 (define-key org-mode-map (kbd "M-.") 'org-open-at-point)
 (define-key org-mode-map (kbd "M-,") 'org-mark-ring-goto)
 
-;;;; Movement + expand/collapse
-
-;; (define-key org-mode-map (kbd "C-H-<")   ????) ; No real meaning -- with the M we are already crossing parent levels
-;; (define-key org-mode-map (kbd "C-H->")   ????) ; No real meaning -- with the M we are already crossing parent levels
-;; (define-key org-mode-map (kbd "C-H-M-<") ????) ; No real meaning -- with the M we are already crossing parent levels
-;; (define-key org-mode-map (kbd "C-H-M->") ????) ; No real meaning -- with the M we are already crossing parent levels
-
 ;;; Agenda
 
 (progn ; TODO This is not only agenda stuff (contrary to the comment above), and this does not need to be done in a hook (or else everything should go in a hook)
