@@ -11,7 +11,8 @@
   (error "Nope, Projectile is M-o now"))
 
 (define-key projectile-mode-map (kbd "H-o d") '-nomis/outline/projectile-keybinding-error)
-(define-key projectile-mode-map (kbd "H-o f") '-nomis/outline/projectile-keybinding-error)
+;; We are using this for `outline-minor-faces-mode` now:
+;; (define-key projectile-mode-map (kbd "H-o f") 'nomis/outline/projectile-keybinding-error)
 (define-key projectile-mode-map (kbd "H-o g") '-nomis/outline/projectile-keybinding-error)
 
 ;;;; nomis/tree/pop-up-help
