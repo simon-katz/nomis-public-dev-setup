@@ -333,9 +333,16 @@
 ;;;;; -nomis/outline-command
 
 (defun -nomis/outline-command* (f)
-  (unless mark-active (push-mark))
-  (nomis/scrolling/with-maybe-maintain-line-no-in-window
-    (funcall f)))
+  (cl-flet* ((do-it () (nomis/scrolling/with-maybe-maintain-line-no-in-window
+                         (funcall f))))
+    (if mark-active
+        (do-it)
+      (let* ((start-point (point)))
+        (prog1
+            (do-it)
+          (let* ((end-point (point)))
+            (unless (= start-point end-point)
+              (push-mark))))))))
 
 (cl-defmacro -nomis/outline-command (_opts &body body)
   (declare (indent 1))
