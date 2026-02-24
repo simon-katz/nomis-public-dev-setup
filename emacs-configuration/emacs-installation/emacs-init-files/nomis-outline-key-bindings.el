@@ -1,4 +1,4 @@
-;;; Init stuff -- nomis-outline-key-bindings --  -*- lexical-binding: t -*-
+;;; nomis-outline-key-bindings.el ---  -*- lexical-binding: t; -*-
 
 ;;; Code:
 

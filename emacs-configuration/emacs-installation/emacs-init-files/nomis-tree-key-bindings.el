@@ -1,4 +1,4 @@
-;;; nomis-tree-key-bindings -*- lexical-binding: t -*-
+;;; nomis-tree-key-bindings.el ---  -*- lexical-binding: t; -*-
 
 ;;; Code:
 

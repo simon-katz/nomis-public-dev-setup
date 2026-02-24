@@ -1,4 +1,4 @@
-;;; Init stuff -- emacs-lisp and ielm  -*- lexical-binding: t; -*-
+;;; nomis-emacs-lisp-and-ielm.el --- emacs-lisp and ielm  -*- lexical-binding: t; -*-
 
 ;;; Describe symbol at point
 

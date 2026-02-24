@@ -1,4 +1,4 @@
-;;; nomis-tree-org.el --- A layer on top of Org mode -*- lexical-binding: t -*-
+;;; nomis-tree-org.el --- A layer on top of Org mode  -*- lexical-binding: t; -*-
 
 ;;; Code:
 

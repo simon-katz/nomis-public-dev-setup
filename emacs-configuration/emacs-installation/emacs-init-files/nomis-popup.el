@@ -1,4 +1,4 @@
-;;; nomis-popup.el --- Pop up messages using overlays -*- lexical-binding: t -*-
+;;; nomis-popup.el --- Pop up messages using overlays  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2019-2021 Simon Katz.
 

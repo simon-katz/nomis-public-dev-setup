@@ -1,4 +1,4 @@
-;;; Init stuff -- nomis-outline --  -*- lexical-binding: t -*-
+;;; nomis-outline.el ---  -*- lexical-binding: t; -*-
 
 (require 'nomis-msg)
 

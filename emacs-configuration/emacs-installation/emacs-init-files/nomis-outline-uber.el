@@ -1,4 +1,4 @@
-;;; nomis-outline-uber -- -*- lexical-binding: t -*-
+;;; nomis-outline-uber.el ---  -*- lexical-binding: t; -*-
 
 ;;; To dos
 

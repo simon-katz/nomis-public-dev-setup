@@ -1,4 +1,4 @@
-;;; nomis-tree-outline.el -*- lexical-binding: t -*-
+;;; nomis-tree-outline.el ---  -*- lexical-binding: t; -*-
 
 ;;; Code:
 

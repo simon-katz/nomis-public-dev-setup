@@ -1,4 +1,4 @@
-;;; nomis-org-key-bindings  ---  -*- lexical-binding: t -*-
+;;; nomis-org-key-bindings.el ---  -*- lexical-binding: t; -*-
 
 ;;; Code:
 

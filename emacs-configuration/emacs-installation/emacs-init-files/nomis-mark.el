@@ -1,4 +1,4 @@
-;;; nomis-mark -- -*- lexical-binding: t -*-
+;;; nomis-mark.el ---  -*- lexical-binding: t; -*-
 
 ;;; Code:
 

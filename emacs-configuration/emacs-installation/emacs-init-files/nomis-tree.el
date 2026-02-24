@@ -1,4 +1,4 @@
-;;; nomis-tree -*- lexical-binding: t -*-
+;;; nomis-tree.el --- A protocol for navigating trees in files  -*- lexical-binding: t; -*-
 
 ;;; Code:
 

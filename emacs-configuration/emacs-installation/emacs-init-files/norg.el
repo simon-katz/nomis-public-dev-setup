@@ -1,4 +1,4 @@
-;;; norg.el --- A layer on top of Org mode -*- lexical-binding: t -*-
+;;; norg.el --- A layer on top of Org mode  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2019-2021 Simon Katz.
 

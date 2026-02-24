@@ -1,4 +1,4 @@
-;;; nomis-memoize.el --- Memoization functions -*- lexical-binding: t; -*-
+;;; nomis-memoize.el --- Memoization functions  -*- lexical-binding: t; -*-
 
 
 ;; =============================================================================

@@ -1,4 +1,4 @@
-;;; nomis-scrolling.el --- Scrolling hacks  -*- lexical-binding: t -*-
+;;; nomis-scrolling.el --- Scrolling hacks  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2019-2021 Simon Katz.
 
