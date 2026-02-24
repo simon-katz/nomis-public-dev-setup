@@ -1,32 +1,29 @@
 ;;; nomis-tree.el --- A protocol for navigating trees in files  -*- lexical-binding: t; -*-
 
+
 ;;; To dos
 
-;; TODO: There's lots of potential work here and its not straightforward. So for
-;;       now do nothing apart from (a) mull things over, and (b) look at
+;; TODO: There's lots of potential work here and it's not straightforward.
+;;       So for now do nothing apart from (a) mull things over, and (b) look at
 ;;       existing code.
+
+;;;; Bicycle
 
 ;; TODO: Have we decided that we don't want `bicycle`? (I think we have.)
 ;;       - See `nomis-bicycle`.
+
+;;;; Code as headings
 
 ;; TODO: I don't think I want code to be headings.
 ;;       - What would I lose if I remove code from `outline-regexp`?
 ;;       - We'd have to do that for all modes (all languages).
 ;;       - What about wanting to have my code be useful for other people?
 
+;;;; Fill out the implementation for `:outline`
+
 ;; TODO: Replace uses of `nomis/tree/unimplemented-method` with implementations.
 
-;; TODO: Extract common functionality from `:outline` and `:org` methods, where
-;;       possible. (Especially when replacing some of the current uses of
-;;       `nomis/tree/unimplemented-method`.
-
-;; TODO: We could integrate hide-show -- so eg `nomis/tree/tab` `:outline`
-;;       method could do `nomis/hs/adjust/more` for children that are code.
-
-;; TODO: Make `nomis/tree/set-step-n-levels-to-show`-style functionality
-;;       available here.
-
-;; TODO: Compare with `norg` commands.
+;; TODO: Compare `nomis-outline-uber` commands with `norg` commands.
 ;;       - Indefinite number of levels.
 ;;       - Behaviour when reaching last sibling
 ;;       - Implement more commands here.
@@ -35,6 +32,15 @@
 ;;       - Hmmmm, it might be non-trivial. I see that `norg` uses a mix of
 ;;         `outline` and `org` functionality as its base layer. The `org`
 ;;         stuff won't be available for outlines.
+
+;; TODO: Extract common functionality from `:outline` and `:org` methods, where
+;;       possible. (Especially when replacing some of the current uses of
+;;       `nomis/tree/unimplemented-method`.
+
+;;;; Hide-show
+
+;; TODO: We could integrate hide-show -- so eg `nomis/tree/tab` `:outline`
+;;       method could do `nomis/hs/adjust/more` for children that are code.
 
 ;; TODO: The key bindings for hide-show will need to be made different (because
 ;;       they duplicate our `norg` key bindings, which we want for outline
