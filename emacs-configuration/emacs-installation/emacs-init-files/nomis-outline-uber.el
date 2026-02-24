@@ -1,43 +1,5 @@
 ;;; nomis-outline-uber.el ---  -*- lexical-binding: t; -*-
 
-;;; To dos
-
-;; TODO: There's lots of potential work here and its not straightforward. So for
-;;       now do nothing apart from (a) mull things over, and (b) look at
-;;       existing code.
-
-;; TODO: The tables in `nomis-outline-key-bindings` summarise `norg`,
-;;       `hide-show` and `nomis/outline`.
-
-;; TODO: Have we decided that we don't want `bicycle`? (I think we have.)
-;;       - See `nomis-bicycle`.
-
-;; TODO: I don't think I want code to be headings.
-;;       - What would I lose if I remove code from `outline-regexp`?
-;;       - We'd have to do that for all modes (all languages).
-;;       - What about wanting to have my code be useful for other people?
-
-;; TODO: We could integrate hide-show -- so eg `nomis/tree/tab` `:outline`
-;;       method could do `nomis/hs/adjust/more` for children that are code.
-
-;; TODO: Make `nomis/tree/set-step-n-levels-to-show`-style functionality
-;;       available here.
-
-;; TODO: Compare with `norg` commands.
-;;       - Indefinite number of levels.
-;;       - Behaviour when reaching last sibling
-;;       - Implement more commands here.
-;;       - Make a shared low-level API around org and outline, and
-;;         make higher-level functions use that.
-;;       - Hmmmm, it might be non-trivial. I see that `norg` uses a mix of
-;;         `outline` and `org` functionality as its base layer. The `org`
-;;         stuff won't be available for outlines.
-
-;; TODO: The key bindings for hide-show will need to be made different (because
-;;       they duplicate our `norg` key bindings, which we want for outline
-;;       stuff). Maybe a prefix in front of the existing bindings. Oh, or maybe
-;;       a modal UI.
-
 ;;; Code:
 
 ;;;; Requires
