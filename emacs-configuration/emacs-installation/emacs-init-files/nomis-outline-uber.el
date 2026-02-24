@@ -234,7 +234,7 @@
 
 ;;;;; Previous/next helpers
 
-(defun -nomis/outline-prev-next-same-level (direction allow-cross-parent?)
+(defun -nomis/outline-prev-next-same-level (direction sibling-or-peer)
   (let* ((opoint (point))
          (level (funcall outline-level))
          (npoint  (save-excursion
@@ -249,7 +249,9 @@
                       (while (and (cl-ecase direction
                                     (:backward t)
                                     (:forward (not (eobp))))
-                                  (funcall (if allow-cross-parent? #'/= #'>)
+                                  (funcall (cl-ecase sibling-or-peer
+                                             (:sibling #'>)
+                                             (:peer #'/=))
                                            (funcall outline-level)
                                            level)
                                   (cl-ecase direction
@@ -286,9 +288,9 @@
             (:any-level
              (-nomis/outline-prev-or-next direction))
             (:sibling
-             (-nomis/outline-prev-next-same-level direction nil))
-            (:same-level-allow-cross-parent
-             (-nomis/outline-prev-next-same-level direction t)))
+             (-nomis/outline-prev-next-same-level direction :sibling))
+            (:peer
+             (-nomis/outline-prev-next-same-level direction :peer)))
           (when (and (/= (point) start)
                      (-nomis/outline-on-heading?))
             ;; ^^ Check of `(-nomis/outline-on-heading?)` needed because
@@ -321,7 +323,7 @@
              (kind-word (cl-ecase kind
                           (:any-level "heading")
                           (:sibling "sibling")
-                          (:same-level-allow-cross-parent "same-level"))))
+                          (:peer "same-level"))))
         (nomis/popup/error-message
          "No %s%s %s"
          (if (= n 1) "" (concat (-nomis/outline-ordinal n)
@@ -436,16 +438,16 @@ Stop at the first and last headings of a superior heading."
                                        :backward
                                        :sibling))
 
-(defun nomis/outline-previous-sibling/allow-cross-parent (n)
+(defun nomis/outline-previous-peer (n)
   "Move backward to the N'th heading at same level as this one.
 Can pass by a superior heading."
   (interactive "p")
   (-nomis/outline-prev-or-next-heading navigation-lineage-spec
                                        n
                                        :backward
-                                       :same-level-allow-cross-parent))
+                                       :peer))
 
-(defun nomis/outline-step-backward (n)
+(defun nomis/outline-step-backward-sibling (n)
   "Move backward to the N'th heading at same level as this one, then show
 fat parents and all children.
 Stop at the first and last headings of a superior heading."
@@ -454,14 +456,14 @@ Stop at the first and last headings of a superior heading."
                                        :backward
                                        :sibling))
 
-(defun nomis/outline-step-backward/allow-cross-parent (n)
+(defun nomis/outline-step-backward-peer (n)
   "Move backward to the N'th heading at same level as this one, then show
 fat parents and all children.
 Can pass by a superior heading."
   (-nomis/outline-prev-or-next-heading step-lineage-spec
                                        (or n 1)
                                        :backward
-                                       :same-level-allow-cross-parent))
+                                       :peer))
 
 ;;;;; Next
 
@@ -480,16 +482,16 @@ Stop at the first and last headings of a superior heading."
                                        :forward
                                        :sibling))
 
-(defun nomis/outline-next-sibling/allow-cross-parent (n)
+(defun nomis/outline-next-peer (n)
   "Move forward to the N'th heading at same level as this one.
 Can pass by a superior heading."
   (interactive "p")
   (-nomis/outline-prev-or-next-heading navigation-lineage-spec
                                        n
                                        :forward
-                                       :same-level-allow-cross-parent))
+                                       :peer))
 
-(defun nomis/outline-step-forward (n)
+(defun nomis/outline-step-forward-sibling (n)
   "Move forward to the N'th heading at same level as this one, then show
 fat parents and all children.
 Stop at the first and last headings of a superior heading."
@@ -498,14 +500,14 @@ Stop at the first and last headings of a superior heading."
                                        :forward
                                        :sibling))
 
-(defun nomis/outline-step-forward/allow-cross-parent (n)
+(defun nomis/outline-step-forward-peer (n)
   "Move forward to the N'th heading at same level as this one, then show
 fat parents and all children.
 Can pass by a superior heading."
   (-nomis/outline-prev-or-next-heading step-lineage-spec
                                        (or n 1)
                                        :forward
-                                       :same-level-allow-cross-parent))
+                                       :peer))
 
 ;;; End
 

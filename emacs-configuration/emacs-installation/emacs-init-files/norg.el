@@ -469,9 +469,9 @@ Like `org-backward-heading-same-level` but:
   (norg/-heading-same-level-helper #'norg/w/backward-heading-same-level
                                    "No previous heading at this level"))
 
-;;;;; Forward and backward at same level, allow cross-parent
+;;;;; Forward and backward at same level, sibling or peer
 
-(defun norg/-heading-same-level/allow-cross-parent/helper (direction)
+(defun norg/-peer/helper (direction)
   (nomis/scrolling/with-maybe-maintain-line-no-in-window
     (let ((start-position-fun (cl-case direction
                                 (:forward 'norg/w/end-of-line)
@@ -511,21 +511,21 @@ Like `org-backward-heading-same-level` but:
                              ))))
                 (nomis/popup/error-message "%s" msg)))))))))
 
-(defun norg/next-sibling/allow-cross-parent ()
+(defun norg/next-peer ()
   "Move forward one subheading at same level as this one.
 Like `org-forward-heading-same-level` but:
 - when the target is invisible, make it visible
 - if this is the first subheading within its parent, move to the first
   subheading at this level in the next parent."
-  (norg/-heading-same-level/allow-cross-parent/helper :forward))
+  (norg/-peer/helper :forward))
 
-(defun norg/previous-sibling/allow-cross-parent ()
+(defun norg/previous-peer ()
   "Move backward one subheading at same level as this one.
 Like `org-backward-heading-same-level` but:
 - when the target is invisible, make it visible
 - if this is the first subheading within its parent, move to the last
 subheading at this level in the previous parent."
-  (norg/-heading-same-level/allow-cross-parent/helper :backward))
+  (norg/-peer/helper :backward))
 
 ;;;;; Forward and backward at any level
 
@@ -590,24 +590,24 @@ Same for the `backward` commands.")
   (setq norg/step-n-levels-to-show (if (null n) n (max 1 (floor n))))
   (message "n-levels-to-show set to %s" norg/step-n-levels-to-show))
 
-(defun norg/-step-then-step-cross-parent? ()
+(defun norg/-step-sibling-then-step-peer? ()
   (let ((cmds (list (norg/last-command)
                     this-command)))
     (member cmds
-            '((nomis/tree/step-forward
-               nomis/tree/step-forward/allow-cross-parent)
-              (nomis/tree/step-backward
-               nomis/tree/step-backward/allow-cross-parent)))))
+            '((nomis/tree/step-forward-sibling
+               nomis/tree/step-forward-peer)
+              (nomis/tree/step-backward-sibling
+               nomis/tree/step-backward-peer)))))
 
 (defun norg/-doing-one-of-the-step-forward-commands? ()
   (member this-command
-          '(nomis/tree/step-forward
-            nomis/tree/step-forward/allow-cross-parent)))
+          '(nomis/tree/step-forward-sibling
+            nomis/tree/step-forward-peer)))
 
 (defun norg/-doing-one-of-the-step-backward-commands? ()
   (member this-command
-          '(nomis/tree/step-backward
-            nomis/tree/step-backward/allow-cross-parent)))
+          '(nomis/tree/step-backward-sibling
+            nomis/tree/step-backward-peer)))
 
 (defun norg/-stepping-forward-on-last-but-not-first-child/must-be-at-boh ()
   (and (norg/-doing-one-of-the-step-forward-commands?)
@@ -631,62 +631,62 @@ Same for the `backward` commands.")
      (+ norg/-most-recent-step-time
         norg/step-quick-repeat-delay)))
 
-(defun norg/-step-then-step-cross-parent-with-small-time-gap? ()
+(defun norg/-step-sibling-then-step-peer-with-small-time-gap? ()
   (and (norg/-small-time-gap-since-prev-step-command?)
-       (norg/-step-then-step-cross-parent?)))
+       (norg/-step-sibling-then-step-peer?)))
 
-(defun norg/-step/impl (n allow-cross-parent? n-levels-to-show-or-nil)
+(defun norg/-step/impl (n sibling-or-peer n-levels-to-show-or-nil)
   (let* ((n-levels-or-nil (or n-levels-to-show-or-nil
                               norg/step-n-levels-to-show)))
     (nomis/scrolling/with-maybe-maintain-line-no-in-window
       (cl-flet ((expanded-to-desired-level?
-                 ()
-                 (if (null n-levels-or-nil)
-                     (norg/fully-expanded?)
-                   (let* ((n-levels-being-shown-or-infinity
-                           (1- (norg/smallest-invisible-level-below-or-infinity))))
-                     (if (= n-levels-being-shown-or-infinity
-                            norg/-plus-infinity)
-                         ;; The tree is fully expanded at point. This is truthy if
-                         ;; the number of levels below is less than or equal to
-                         ;; the desired number of levels to show.
-                         (<= (norg/n-levels-below)
-                             n-levels-or-nil)
-                       ;; The tree is not fully expanded at point. This is truthy
-                       ;; if the number of levels being shown is the same as the
-                       ;; desired number of levels.
-                       (= n-levels-being-shown-or-infinity
-                          n-levels-or-nil)))))
+                  ()
+                  (if (null n-levels-or-nil)
+                      (norg/fully-expanded?)
+                    (let* ((n-levels-being-shown-or-infinity
+                            (1- (norg/smallest-invisible-level-below-or-infinity))))
+                      (if (= n-levels-being-shown-or-infinity
+                             norg/-plus-infinity)
+                          ;; The tree is fully expanded at point. This is truthy if
+                          ;; the number of levels below is less than or equal to
+                          ;; the desired number of levels to show.
+                          (<= (norg/n-levels-below)
+                              n-levels-or-nil)
+                        ;; The tree is not fully expanded at point. This is truthy
+                        ;; if the number of levels being shown is the same as the
+                        ;; desired number of levels.
+                        (= n-levels-being-shown-or-infinity
+                           n-levels-or-nil)))))
                 (try-to-move
-                 ()
-                 (if allow-cross-parent?
-                     (norg/-heading-same-level/allow-cross-parent/helper
-                      (cl-case n
-                        (1 :forward)
-                        (-1 :backward)))
-                   (norg/w/forward-heading-same-level n t)))
+                  ()
+                  (cl-ecase sibling-or-peer
+                    (:sibling (norg/w/forward-heading-same-level n t))
+                    (:peer (norg/-peer/helper
+                            (cl-case n
+                              (1 :forward)
+                              (-1 :backward))))))
                 (tried-to-go-too-far
-                 ()
-                 (let* ((msg (concat (if (< n 0)
-                                         "No previous heading at this level"
-                                       "No next heading at this level")
-                                     (if allow-cross-parent?
-                                         ", even across parents"
-                                       ""))))
-                   (nomis/popup/error-message msg)))
+                  ()
+                  (let* ((msg (concat (if (< n 0)
+                                          "No previous heading at this level"
+                                        "No next heading at this level")
+                                      (cl-ecase sibling-or-peer
+                                        (:sibling "")
+                                        (:peer ", even across parents")))))
+                    (nomis/popup/error-message msg)))
                 (expand
-                 ()
-                 (if (null n-levels-or-nil)
-                     (norg/expand-fully)
-                   (norg/expand n-levels-or-nil t))))
+                  ()
+                  (if (null n-levels-or-nil)
+                      (norg/expand-fully)
+                    (norg/expand n-levels-or-nil t))))
         (norg/w/back-to-heading t)
         (if (not (or (norg/-stepping-forward-on-last-but-not-first-child/must-be-at-boh)
                      (norg/-stepping-backward-on-first-but-not-last-child/must-be-at-boh)
-                     ;; If we very recently did a `norg/step-xxxx` which tried to
-                     ;; go too far and which so collapsed the current heading, and
-                     ;; if now we're doing a `norg/step-xxxx/allow-cross-parent`,
+                     ;; If we very recently did a `norg/step-xxxx-sibling` which
+                     ;; tried to go too far and which so collapsed the current
+                     ;; heading, and if now we're doing a `norg/step-xxxx-peer`,
                      ;; we're happy to do a step across the parent.
-                     (norg/-step-then-step-cross-parent-with-small-time-gap?)
+                     (norg/-step-sibling-then-step-peer-with-small-time-gap?)
                      (expanded-to-desired-level?)))
             (expand)
           (let* ((starting-point (point))
@@ -713,17 +713,17 @@ Same for the `backward` commands.")
     (setq norg/-most-recent-step-time (float-time))
     (message "n-levels = %s" (or n-levels-or-nil "all"))))
 
-(defun norg/step-forward (n-levels-to-show-or-nil)
-  (norg/-step/impl 1 nil n-levels-to-show-or-nil))
+(defun norg/step-forward-sibling (n-levels-to-show-or-nil)
+  (norg/-step/impl 1 :sibling n-levels-to-show-or-nil))
 
-(defun norg/step-backward (n-levels-to-show-or-nil)
-  (norg/-step/impl -1 nil n-levels-to-show-or-nil))
+(defun norg/step-backward-sibling (n-levels-to-show-or-nil)
+  (norg/-step/impl -1 :sibling n-levels-to-show-or-nil))
 
-(defun norg/step-forward/allow-cross-parent (n-levels-to-show-or-nil)
-  (norg/-step/impl 1 t n-levels-to-show-or-nil))
+(defun norg/step-forward-peer (n-levels-to-show-or-nil)
+  (norg/-step/impl 1 :peer n-levels-to-show-or-nil))
 
-(defun norg/step-backward/allow-cross-parent (n-levels-to-show-or-nil)
-  (norg/-step/impl -1 t n-levels-to-show-or-nil))
+(defun norg/step-backward-peer (n-levels-to-show-or-nil)
+  (norg/-step/impl -1 :peer n-levels-to-show-or-nil))
 
 ;;;; Info about trees
 

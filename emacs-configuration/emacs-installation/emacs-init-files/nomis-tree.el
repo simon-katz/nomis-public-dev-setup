@@ -336,8 +336,8 @@ the current entry's parent."
 
 (cl-defgeneric nomis/tree/previous-sibling--aux (k))
 (cl-defgeneric nomis/tree/next-sibling--aux (k))
-(cl-defgeneric nomis/tree/previous-sibling/allow-cross-parent--aux (k))
-(cl-defgeneric nomis/tree/next-sibling/allow-cross-parent--aux (k))
+(cl-defgeneric nomis/tree/previous-peer--aux (k))
+(cl-defgeneric nomis/tree/next-peer--aux (k))
 
 (defun nomis/tree/previous-sibling ()
   "Move backward one heading at the same level as this one."
@@ -353,19 +353,19 @@ the current entry's parent."
       nil
     (nomis/tree/next-sibling--aux (-nomis/tree/mode))))
 
-(defun nomis/tree/previous-sibling/allow-cross-parent ()
+(defun nomis/tree/previous-peer ()
   "Move backward one heading at the same level, crossing parent boundaries."
   (interactive)
   (-nomis/tree/command
       nil
-    (nomis/tree/previous-sibling/allow-cross-parent--aux (-nomis/tree/mode))))
+    (nomis/tree/previous-peer--aux (-nomis/tree/mode))))
 
-(defun nomis/tree/next-sibling/allow-cross-parent ()
+(defun nomis/tree/next-peer ()
   "Move forward one heading at the same level, crossing parent boundaries."
   (interactive)
   (-nomis/tree/command
       nil
-    (nomis/tree/next-sibling/allow-cross-parent--aux (-nomis/tree/mode))))
+    (nomis/tree/next-peer--aux (-nomis/tree/mode))))
 
 ;;;;; Movement + expand/collapse
 
@@ -377,38 +377,38 @@ the current entry's parent."
 ;;       For the latter it's `n-levels-to-show-or-nil`, and we convert `nil` to
 ;;       `norg/step-n-levels-to-show`.
 
-(cl-defgeneric nomis/tree/step-backward--aux (k n))
-(cl-defgeneric nomis/tree/step-forward--aux (k n))
-(cl-defgeneric nomis/tree/step-backward/allow-cross-parent--aux (k n))
-(cl-defgeneric nomis/tree/step-forward/allow-cross-parent--aux (k n))
+(cl-defgeneric nomis/tree/step-backward-sibling--aux (k n))
+(cl-defgeneric nomis/tree/step-forward-sibling--aux (k n))
+(cl-defgeneric nomis/tree/step-backward-peer--aux (k n))
+(cl-defgeneric nomis/tree/step-forward-peer--aux (k n))
 (cl-defgeneric nomis/tree/previous-heading--aux (k n))
 (cl-defgeneric nomis/tree/next-heading--aux (k n))
 (cl-defgeneric nomis/tree/previous-heading/set-tree+body--aux (k))
 (cl-defgeneric nomis/tree/next-heading/set-tree+body--aux (k))
 
-(defun nomis/tree/step-backward (n)
+(defun nomis/tree/step-backward-sibling (n)
   (interactive "P")
   (-nomis/tree/command
       nil
-    (nomis/tree/step-backward--aux (-nomis/tree/mode) n)))
+    (nomis/tree/step-backward-sibling--aux (-nomis/tree/mode) n)))
 
-(defun nomis/tree/step-forward (n)
+(defun nomis/tree/step-forward-sibling (n)
   (interactive "P")
   (-nomis/tree/command
       nil
-    (nomis/tree/step-forward--aux (-nomis/tree/mode) n)))
+    (nomis/tree/step-forward-sibling--aux (-nomis/tree/mode) n)))
 
-(defun nomis/tree/step-backward/allow-cross-parent (n)
+(defun nomis/tree/step-backward-peer (n)
   (interactive "P")
   (-nomis/tree/command
       nil
-    (nomis/tree/step-backward/allow-cross-parent--aux (-nomis/tree/mode) n)))
+    (nomis/tree/step-backward-peer--aux (-nomis/tree/mode) n)))
 
-(defun nomis/tree/step-forward/allow-cross-parent (n)
+(defun nomis/tree/step-forward-peer (n)
   (interactive "P")
   (-nomis/tree/command
       nil
-    (nomis/tree/step-forward/allow-cross-parent--aux (-nomis/tree/mode) n)))
+    (nomis/tree/step-forward-peer--aux (-nomis/tree/mode) n)))
 
 (defun nomis/tree/previous-heading (n)
   (interactive "p")

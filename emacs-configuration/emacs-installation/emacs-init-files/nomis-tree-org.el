@@ -138,26 +138,26 @@
 (cl-defmethod nomis/tree/next-sibling--aux ((k (eql :org)))
   (norg/next-sibling))
 
-(cl-defmethod nomis/tree/previous-sibling/allow-cross-parent--aux
+(cl-defmethod nomis/tree/previous-peer--aux
   ((k (eql :org)))
-  (norg/previous-sibling/allow-cross-parent))
+  (norg/previous-peer))
 
-(cl-defmethod nomis/tree/next-sibling/allow-cross-parent--aux ((k (eql :org)))
-  (norg/next-sibling/allow-cross-parent))
+(cl-defmethod nomis/tree/next-peer--aux ((k (eql :org)))
+  (norg/next-peer))
 
 ;;;;; Movement + expand/collapse
 
-(cl-defmethod nomis/tree/step-backward--aux ((k (eql :org)) n-levels-to-show-or-nil)
-  (norg/step-backward n-levels-to-show-or-nil))
+(cl-defmethod nomis/tree/step-backward-sibling--aux ((k (eql :org)) n-levels-to-show-or-nil)
+  (norg/step-backward-sibling n-levels-to-show-or-nil))
 
-(cl-defmethod nomis/tree/step-forward--aux ((k (eql :org)) n-levels-to-show-or-nil)
-  (norg/step-forward n-levels-to-show-or-nil))
+(cl-defmethod nomis/tree/step-forward-sibling--aux ((k (eql :org)) n-levels-to-show-or-nil)
+  (norg/step-forward-sibling n-levels-to-show-or-nil))
 
-(cl-defmethod nomis/tree/step-backward/allow-cross-parent--aux ((k (eql :org)) n-levels-to-show-or-nil)
-  (norg/step-backward/allow-cross-parent n-levels-to-show-or-nil))
+(cl-defmethod nomis/tree/step-backward-peer--aux ((k (eql :org)) n-levels-to-show-or-nil)
+  (norg/step-backward-peer n-levels-to-show-or-nil))
 
-(cl-defmethod nomis/tree/step-forward/allow-cross-parent--aux ((k (eql :org)) n-levels-to-show-or-nil)
-  (norg/step-forward/allow-cross-parent n-levels-to-show-or-nil))
+(cl-defmethod nomis/tree/step-forward-peer--aux ((k (eql :org)) n-levels-to-show-or-nil)
+  (norg/step-forward-peer n-levels-to-show-or-nil))
 
 (cl-defmethod nomis/tree/previous-heading--aux ((k (eql :org)) n)
   ;; TODO: We are ignoring `n`.

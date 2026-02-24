@@ -138,27 +138,27 @@
 (cl-defmethod nomis/tree/next-sibling--aux ((k (eql :outline)))
   (nomis/outline-next-sibling 1))
 
-(cl-defmethod nomis/tree/previous-sibling/allow-cross-parent--aux
+(cl-defmethod nomis/tree/previous-peer--aux
   ((k (eql :outline)))
-  (nomis/outline-previous-sibling/allow-cross-parent 1))
+  (nomis/outline-previous-peer 1))
 
-(cl-defmethod nomis/tree/next-sibling/allow-cross-parent--aux
+(cl-defmethod nomis/tree/next-peer--aux
   ((k (eql :outline)))
-  (nomis/outline-next-sibling/allow-cross-parent 1))
+  (nomis/outline-next-peer 1))
 
 ;;;;; Movement + expand/collapse
 
-(cl-defmethod nomis/tree/step-backward--aux ((k (eql :outline)) n)
-  (nomis/outline-step-backward n))
+(cl-defmethod nomis/tree/step-backward-sibling--aux ((k (eql :outline)) n)
+  (nomis/outline-step-backward-sibling n))
 
-(cl-defmethod nomis/tree/step-forward--aux ((k (eql :outline)) n)
-  (nomis/outline-step-forward n))
+(cl-defmethod nomis/tree/step-forward-sibling--aux ((k (eql :outline)) n)
+  (nomis/outline-step-forward-sibling n))
 
-(cl-defmethod nomis/tree/step-backward/allow-cross-parent--aux ((k (eql :outline)) n)
-  (nomis/outline-step-backward/allow-cross-parent n))
+(cl-defmethod nomis/tree/step-backward-peer--aux ((k (eql :outline)) n)
+  (nomis/outline-step-backward-peer n))
 
-(cl-defmethod nomis/tree/step-forward/allow-cross-parent--aux ((k (eql :outline)) n)
-  (nomis/outline-step-forward/allow-cross-parent n))
+(cl-defmethod nomis/tree/step-forward-peer--aux ((k (eql :outline)) n)
+  (nomis/outline-step-forward-peer n))
 
 (cl-defmethod nomis/tree/previous-heading--aux ((k (eql :outline)) n)
   (nomis/outline-previous-heading n))
