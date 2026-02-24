@@ -13,11 +13,11 @@
 
 ;;;;; Misc
 
-(defun -nomis/outline-last-command ()
+(defun -nomis/outline/last-command ()
   (or (bound-and-true-p *nomis/smex/last-command*)
       last-command))
 
-(defun -nomis/outline-ordinal (n)
+(defun -nomis/outline/ordinal (n)
   (cl-format nil "~a~a"
              n
              (let ((x (cl-format nil "~:r" n)))
@@ -25,50 +25,50 @@
 
 ;;;;; Simple outline wrappers
 
-(defun -nomis/outline-on-heading? ()
+(defun -nomis/outline/on-heading? ()
   (outline-on-heading-p t))
 
-(defun -nomis/outline-on-visible-heading? ()
+(defun -nomis/outline/on-visible-heading? ()
   (outline-on-heading-p))
 
-(defun -nomis/outline-back-to-heading? ()
+(defun -nomis/outline/back-to-heading? ()
   (outline-back-to-heading t))
 
-(defun -nomis/outline-back-to-visible-heading? ()
+(defun -nomis/outline/back-to-visible-heading? ()
   (outline-back-to-heading))
 
-(defun -nomis/outline-up-heading (n)
+(defun -nomis/outline/up-heading (n)
   (outline-up-heading n t))
 
-(defun -nomis/outline-up-visible-heading (n)
+(defun -nomis/outline/up-visible-heading (n)
   (outline-up-heading n))
 
-(defun -nomis/outline-at-beginning-of-heading? ()
+(defun -nomis/outline/at-beginning-of-heading? ()
   (and (bolp)
-       (-nomis/outline-on-heading?)))
+       (-nomis/outline/on-heading?)))
 
-(defun -nomis/outline-on-top-level-heading? ()
+(defun -nomis/outline/on-top-level-heading? ()
   "Are we on a top-level heading?"
   ;; `(outline-level)` and `(funcall outline-level)` return weird numbers in
   ;; some modes. This, we hope, is bulletproof.
   (save-excursion
-    (when (-nomis/outline-on-heading?)
+    (when (-nomis/outline/on-heading?)
       (let* ((opoint (point))
              (olevel (funcall outline-level)))
         (ignore-errors
           ;; `ignore-errors` is needed when before first heading.
-          (-nomis/outline-up-heading 1))
-        (or (not (-nomis/outline-on-heading?)) ; blank lines at top of file?
+          (-nomis/outline/up-heading 1))
+        (or (not (-nomis/outline/on-heading?)) ; blank lines at top of file?
             (= olevel (funcall outline-level)))))))
 
-(defun -nomis/outline-top-level-level ()
-  (assert (-nomis/outline-on-heading?))
+(defun -nomis/outline/top-level-level ()
+  (assert (-nomis/outline/on-heading?))
   (save-excursion
     (beginning-of-buffer)
-    (unless (-nomis/outline-on-heading?) (outline-next-heading))
+    (unless (-nomis/outline/on-heading?) (outline-next-heading))
     (funcall outline-level)))
 
-(defun -nomis/outline-ensure-heading-shown ()
+(defun -nomis/outline/ensure-heading-shown ()
   (when (outline-invisible-p)
     ;; Is there a simpler way to show the heading but not the body?
     (outline-show-entry)
@@ -78,7 +78,7 @@
   ;; The `1` is important; otherwise we get bodies of children.
   (outline-show-children 1))
 
-(defun -nomis/outline-prev-or-next (direction)
+(defun -nomis/outline/prev-or-next (direction)
   (cl-ecase direction
     (:backward (outline-previous-heading))
     (:forward (outline-next-heading))))
@@ -108,7 +108,7 @@
 ;;   - `1` / `2` / `3` / `4`
 ;;     - Show body/children/branches/subtree.
 
-(defconst -nomis/outline-children-approach-max 4)
+(defconst -nomis/outline/children-approach-max 4)
 
 (defconst fat-parents-lineage-spec
   (a-hash-table :spec/pre-hide-all? t
@@ -122,12 +122,12 @@
 (defconst max-lineage-spec
   (a-hash-table :spec/pre-hide-all? t
                 :spec/parents-approach :parents/fat
-                :spec/children-approach -nomis/outline-children-approach-max))
+                :spec/children-approach -nomis/outline/children-approach-max))
 
 (defconst step-lineage-spec
   (a-hash-table :spec/pre-hide-all? t
                 :spec/parents-approach :parents/fat
-                :spec/children-approach -nomis/outline-children-approach-max))
+                :spec/children-approach -nomis/outline/children-approach-max))
 
 (defconst navigation-lineage-spec
   (a-hash-table :spec/parents-approach :parents/thin))
@@ -139,26 +139,26 @@
 
 ;;;;; Hide/show lineage
 
-(defun -nomis/outline-hsl-hide (lineage-spec)
+(defun -nomis/outline/hsl-hide (lineage-spec)
   (let* ((pre-hide-all? (a-get lineage-spec :spec/pre-hide-all?))
          (parents-approach (a-get lineage-spec :spec/parents-approach)))
     (when pre-hide-all?
-      (let* ((top-level-level (-nomis/outline-top-level-level))
+      (let* ((top-level-level (-nomis/outline/top-level-level))
              (hide-level (cl-ecase parents-approach
                            ((nil :parents/thin) (1- top-level-level))
                            (:parents/fat top-level-level))))
         (outline-hide-sublevels (max 1 ; avoid error when < 1
                                      hide-level))))))
 
-(defun -nomis/outline-hsl-show-parents (lineage-spec)
+(defun -nomis/outline/hsl-show-parents (lineage-spec)
   (let* ((parents-approach (a-get lineage-spec :spec/parents-approach)))
     (when parents-approach
       (let* ((parent-points
               (let* ((ps '()))
                 (save-excursion
-                  (while (and (-nomis/outline-on-heading?)
-                              (not (-nomis/outline-on-top-level-heading?)))
-                    (-nomis/outline-up-heading 1)
+                  (while (and (-nomis/outline/on-heading?)
+                              (not (-nomis/outline/on-top-level-heading?)))
+                    (-nomis/outline/up-heading 1)
                     (push (point) ps)))
                 ps)))
         (save-excursion
@@ -166,12 +166,12 @@
            for p in parent-points
            do (progn
                 (goto-char p)
-                (-nomis/outline-ensure-heading-shown)
+                (-nomis/outline/ensure-heading-shown)
                 (cl-ecase parents-approach
                   (:parents/thin nil)
                   (:parents/fat (-nomis/show-children))))))))))
 
-(defun -nomis/outline-hsl-show-children (lineage-spec)
+(defun -nomis/outline/hsl-show-children (lineage-spec)
   (when (a-get lineage-spec :spec/pre-hide-children?)
     (outline-hide-subtree))
   (cl-ecase (a-get lineage-spec :spec/children-approach)
@@ -184,26 +184,26 @@
        (outline-show-branches))
     (4 (outline-show-subtree))))
 
-(defun -nomis/outline-show-lineage (lineage-spec)
-  (-nomis/outline-hsl-hide lineage-spec)
-  (-nomis/outline-hsl-show-parents lineage-spec)
-  (-nomis/outline-ensure-heading-shown)
-  (-nomis/outline-hsl-show-children lineage-spec)
+(defun -nomis/outline/show-lineage (lineage-spec)
+  (-nomis/outline/hsl-hide lineage-spec)
+  (-nomis/outline/hsl-show-parents lineage-spec)
+  (-nomis/outline/ensure-heading-shown)
+  (-nomis/outline/hsl-show-children lineage-spec)
   (when (and (a-get lineage-spec :spec/pulse-max-children?)
              (= (a-get lineage-spec :spec/children-approach)
-                -nomis/outline-children-approach-max))
-    (-nomis/outline-pulse-current-section)))
+                -nomis/outline/children-approach-max))
+    (-nomis/outline/pulse-current-section)))
 
 ;;;;; Previous/next helpers
 
-(defun -nomis/outline-prev-next-same-level (direction sibling-or-peer)
+(defun -nomis/outline/prev-next-same-level (direction sibling-or-peer)
   (let* ((opoint (point))
          (level (funcall outline-level))
          (npoint  (save-excursion
                     ;; The logic here is a copy-and-edit of
                     ;; `outline-get-last-sibling` and
                     ;; `outline-get-next-sibling`.
-                    (-nomis/outline-prev-or-next direction)
+                    (-nomis/outline/prev-or-next direction)
                     (when (cl-ecase direction
                             (:backward (and (/= (point) opoint)
                                             (outline-on-heading-p t)))
@@ -219,7 +219,7 @@
                                   (cl-ecase direction
                                     (:backward (not (bobp)))
                                     (:forward t)))
-                        (-nomis/outline-prev-or-next direction))
+                        (-nomis/outline/prev-or-next direction))
                       (if (or (cl-ecase direction
                                 (:backward nil)
                                 (:forward (eobp)))
@@ -230,42 +230,42 @@
     (when npoint
       (goto-char npoint))))
 
-(defun -nomis/outline-prev-or-next-heading-pos (lineage-spec
+(defun -nomis/outline/prev-or-next-heading-pos (lineage-spec
                                                 start
                                                 direction
                                                 kind)
   (when start
     (save-excursion
       (goto-char start)
-      (let* ((boh? (-nomis/outline-at-beginning-of-heading?)))
+      (let* ((boh? (-nomis/outline/at-beginning-of-heading?)))
         (if (and (eq direction :backward)
                  (not boh?))
             (progn
-              (-nomis/outline-back-to-heading?)
+              (-nomis/outline/back-to-heading?)
               (point))
           (when (and (eq direction :forward)
                      (not boh?))
-            (-nomis/outline-back-to-heading?))
+            (-nomis/outline/back-to-heading?))
           (cl-ecase kind
             (:any-level
-             (-nomis/outline-prev-or-next direction))
+             (-nomis/outline/prev-or-next direction))
             (:sibling
-             (-nomis/outline-prev-next-same-level direction :sibling))
+             (-nomis/outline/prev-next-same-level direction :sibling))
             (:peer
-             (-nomis/outline-prev-next-same-level direction :peer)))
+             (-nomis/outline/prev-next-same-level direction :peer)))
           (when (and (/= (point) start)
-                     (-nomis/outline-on-heading?))
-            ;; ^^ Check of `(-nomis/outline-on-heading?)` needed because
-            ;;    `-nomis/outline-prev-or-next` goes to BOF or EOF when there's
+                     (-nomis/outline/on-heading?))
+            ;; ^^ Check of `(-nomis/outline/on-heading?)` needed because
+            ;;    `-nomis/outline/prev-or-next` goes to BOF or EOF when there's
             ;;    no prev/next heading.
             (point)))))))
 
-(defun -nomis/outline-prev-or-next-heading (lineage-spec
+(defun -nomis/outline/prev-or-next-heading (lineage-spec
                                             n
                                             direction
                                             kind)
   (let* ((pos (->> (-iterate (lambda (start)
-                               (-nomis/outline-prev-or-next-heading-pos
+                               (-nomis/outline/prev-or-next-heading-pos
                                 lineage-spec
                                 start
                                 direction
@@ -278,7 +278,7 @@
     (if pos
         (progn
           (goto-char pos)
-          (-nomis/outline-show-lineage lineage-spec))
+          (-nomis/outline/show-lineage lineage-spec))
       (let* ((direction-word (cl-ecase direction
                                (:backward "previous")
                                (:forward "next")))
@@ -288,27 +288,27 @@
                           (:peer "same-level"))))
         (nomis/popup/error-message
          "No %s%s %s"
-         (if (= n 1) "" (concat (-nomis/outline-ordinal n)
+         (if (= n 1) "" (concat (-nomis/outline/ordinal n)
                                 "-"))
          direction-word
          kind-word)))))
 
 ;;;; API
 
-;;;;; nomis/outline-show-all
+;;;;; nomis/outline/show-all
 
 ;; TODO: Temporary, until we have
 ;;       `nomis/tree/show-children-from-all-roots/fully-expand`.
-(defun nomis/outline-show-all ()
+(defun nomis/outline/show-all ()
   (interactive)
   (outline-show-all)
   (nomis/msg/pulse-buffer))
 
-;;;;; nomis/outline-inc-children / nomis/outline-dec-children
+;;;;; nomis/outline/inc-children / nomis/outline/dec-children
 
-(defvar -nomis/outline-increments-children-approach)
+(defvar -nomis/outline/increments-children-approach)
 
-(defun -nomis/outline-inc-dec-message (approach)
+(defun -nomis/outline/inc-dec-message (approach)
   (cl-ecase approach
     (0 (nomis/popup/message "Folded"))
     (1 (nomis/popup/message "Body"))
@@ -316,21 +316,21 @@
     (3 (nomis/popup/message "Branches"))
     (4 (nomis/popup/message "Subtree"))))
 
-(defun nomis/outline-show-lineage-with-incs-or-decs (inc-or-dec)
+(defun nomis/outline/show-lineage-with-incs-or-decs (inc-or-dec)
   (let* ((current-approach
           ;; TODO: At some point change this to look at the actual text rather
-          ;;       than relying on `-nomis/outline-increments-children-approach`.
-          (if (member (-nomis/outline-last-command)
+          ;;       than relying on `-nomis/outline/increments-children-approach`.
+          (if (member (-nomis/outline/last-command)
                       '(nomis/tree/tab
                         nomis/tree/shifttab))
-              -nomis/outline-increments-children-approach
+              -nomis/outline/increments-children-approach
             ;; TODO: These out-of-range values are a bit "clever".
             ;;       Maybe rewrite.
             (cl-ecase inc-or-dec
               (:inc -1)
-              (:dec (1+ -nomis/outline-children-approach-max))))))
+              (:dec (1+ -nomis/outline/children-approach-max))))))
     (if (= current-approach (cl-ecase inc-or-dec
-                              (:inc -nomis/outline-children-approach-max)
+                              (:inc -nomis/outline/children-approach-max)
                               (:dec 0)))
         (nomis/popup/error-message (cl-ecase inc-or-dec
                                      (:inc "Already fully expanded")
@@ -338,32 +338,32 @@
       (let* ((approach (cl-ecase inc-or-dec
                          (:inc (1+ current-approach))
                          (:dec (1- current-approach)))))
-        (setq -nomis/outline-increments-children-approach approach)
-        (-nomis/outline-show-lineage (show-children-lineage-spec approach))
-        (-nomis/outline-inc-dec-message approach)))))
+        (setq -nomis/outline/increments-children-approach approach)
+        (-nomis/outline/show-lineage (show-children-lineage-spec approach))
+        (-nomis/outline/inc-dec-message approach)))))
 
-(defun nomis/outline-inc-children ()
-  (nomis/outline-show-lineage-with-incs-or-decs :inc))
+(defun nomis/outline/inc-children ()
+  (nomis/outline/show-lineage-with-incs-or-decs :inc))
 
-(defun nomis/outline-dec-children ()
-  (nomis/outline-show-lineage-with-incs-or-decs :dec))
+(defun nomis/outline/dec-children ()
+  (nomis/outline/show-lineage-with-incs-or-decs :dec))
 
 ;;;;; Search heading text
 
 ;;;;; nomis/outline/visibility-span
 
 (defun nomis/outline/visibility-span/set-max ()
-  (-nomis/outline-show-lineage max-visibility-span-lineage-spec))
+  (-nomis/outline/show-lineage max-visibility-span-lineage-spec))
 
-;;;;; nomis/outline-show-max-lineage
+;;;;; nomis/outline/show-max-lineage
 
-(defun nomis/outline-show-max-lineage ()
-  (-nomis/outline-show-lineage max-lineage-spec))
+(defun nomis/outline/show-max-lineage ()
+  (-nomis/outline/show-lineage max-lineage-spec))
 
-;;;;; nomis/outline-show-tree-only
+;;;;; nomis/outline/show-tree-only
 
-(defun nomis/outline-show-tree-only ()
-  (-nomis/outline-show-lineage fat-parents-lineage-spec))
+(defun nomis/outline/show-tree-only ()
+  (-nomis/outline/show-lineage fat-parents-lineage-spec))
 
 ;;;;; Expand/collapse
 
@@ -371,13 +371,13 @@
 
 ;;;;; Tab and shift-tab
 
-(defun nomis/outline-tab (arg)
+(defun nomis/outline/tab (arg)
   ;; TODO: Compare with the `:org` method and extract common functionality
   ;;       into the caller.
   ;; TODO: Make use of `arg`.
   (if (and (bolp)
            (looking-at-p outline-regexp))
-      (nomis/outline-inc-children)
+      (nomis/outline/inc-children)
     ;; Maybe we could find what Tab would be bound to if `outline-minor-mode`
     ;; were not enabled. I've tried but it's non-trivial. So I'm not bothering,
     ;; at least for now.
@@ -385,88 +385,88 @@
 
 ;;;;; Previous
 
-(defun nomis/outline-previous-heading (n)
-  (-nomis/outline-prev-or-next-heading navigation-lineage-spec
+(defun nomis/outline/previous-heading (n)
+  (-nomis/outline/prev-or-next-heading navigation-lineage-spec
                                        n
                                        :backward
                                        :any-level))
 
-(defun nomis/outline-previous-sibling (n)
+(defun nomis/outline/previous-sibling (n)
   "Move backward to the N'th heading at same level as this one.
 Stop at the first and last headings of a superior heading."
   (interactive "p")
-  (-nomis/outline-prev-or-next-heading navigation-lineage-spec
+  (-nomis/outline/prev-or-next-heading navigation-lineage-spec
                                        n
                                        :backward
                                        :sibling))
 
-(defun nomis/outline-previous-peer (n)
+(defun nomis/outline/previous-peer (n)
   "Move backward to the N'th heading at same level as this one.
 Can pass by a superior heading."
   (interactive "p")
-  (-nomis/outline-prev-or-next-heading navigation-lineage-spec
+  (-nomis/outline/prev-or-next-heading navigation-lineage-spec
                                        n
                                        :backward
                                        :peer))
 
-(defun nomis/outline-step-backward-sibling (n)
+(defun nomis/outline/step-backward-sibling (n)
   "Move backward to the N'th heading at same level as this one, then show
 fat parents and all children.
 Stop at the first and last headings of a superior heading."
-  (-nomis/outline-prev-or-next-heading step-lineage-spec
+  (-nomis/outline/prev-or-next-heading step-lineage-spec
                                        (or n 1)
                                        :backward
                                        :sibling))
 
-(defun nomis/outline-step-backward-peer (n)
+(defun nomis/outline/step-backward-peer (n)
   "Move backward to the N'th heading at same level as this one, then show
 fat parents and all children.
 Can pass by a superior heading."
-  (-nomis/outline-prev-or-next-heading step-lineage-spec
+  (-nomis/outline/prev-or-next-heading step-lineage-spec
                                        (or n 1)
                                        :backward
                                        :peer))
 
 ;;;;; Next
 
-(defun nomis/outline-next-heading (n)
-  (-nomis/outline-prev-or-next-heading navigation-lineage-spec
+(defun nomis/outline/next-heading (n)
+  (-nomis/outline/prev-or-next-heading navigation-lineage-spec
                                        n
                                        :forward
                                        :any-level))
 
-(defun nomis/outline-next-sibling (n)
+(defun nomis/outline/next-sibling (n)
   "Move forward to the N'th heading at same level as this one.
 Stop at the first and last headings of a superior heading."
   (interactive "p")
-  (-nomis/outline-prev-or-next-heading navigation-lineage-spec
+  (-nomis/outline/prev-or-next-heading navigation-lineage-spec
                                        n
                                        :forward
                                        :sibling))
 
-(defun nomis/outline-next-peer (n)
+(defun nomis/outline/next-peer (n)
   "Move forward to the N'th heading at same level as this one.
 Can pass by a superior heading."
   (interactive "p")
-  (-nomis/outline-prev-or-next-heading navigation-lineage-spec
+  (-nomis/outline/prev-or-next-heading navigation-lineage-spec
                                        n
                                        :forward
                                        :peer))
 
-(defun nomis/outline-step-forward-sibling (n)
+(defun nomis/outline/step-forward-sibling (n)
   "Move forward to the N'th heading at same level as this one, then show
 fat parents and all children.
 Stop at the first and last headings of a superior heading."
-  (-nomis/outline-prev-or-next-heading step-lineage-spec
+  (-nomis/outline/prev-or-next-heading step-lineage-spec
                                        (or n 1)
                                        :forward
                                        :sibling))
 
-(defun nomis/outline-step-forward-peer (n)
+(defun nomis/outline/step-forward-peer (n)
   "Move forward to the N'th heading at same level as this one, then show
 fat parents and all children.
 Can pass by a superior heading."
-  (-nomis/outline-prev-or-next-heading step-lineage-spec
+  (-nomis/outline/prev-or-next-heading step-lineage-spec
                                        (or n 1)
                                        :forward
                                        :peer))

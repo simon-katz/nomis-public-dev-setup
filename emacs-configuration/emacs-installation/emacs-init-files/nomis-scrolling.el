@@ -56,7 +56,7 @@
       1
     (count-screen-lines (window-start) (point) t)))
 
-(defun nomis/outline-restore-scroll-position (old-line-no)
+(defun nomis/outline/restore-scroll-position (old-line-no)
   ;; Ensure cursor is on screen, so that scrolling doesn't make
   ;; any unwanted adjustments.
   (let* ((recenter-redisplay nil))
@@ -70,12 +70,12 @@
 
 (defvar nomis/scrolling/-old-line-no nil)
 
-(defun nomis/outline-maybe-restore-scroll-position ()
+(defun nomis/outline/maybe-restore-scroll-position ()
   "Unused. Was needed when we had a `run-at-time` before expanding parents
 in `nomis-outline-uber`."
   (when (and nomis/scrolling/maintain-line-no-in-window?
              nomis/scrolling/-old-line-no)
-    (nomis/outline-restore-scroll-position nomis/scrolling/-old-line-no)))
+    (nomis/outline/restore-scroll-position nomis/scrolling/-old-line-no)))
 
 (defun nomis/scrolling/-with-maybe-maintain-line-no-in-window* (fun force?)
   (cl-flet* ((do-it () (funcall fun)))
@@ -86,7 +86,7 @@ in `nomis-outline-uber`."
       (let* ((old-line-no (nomis/scrolling/-line-no-in-window)))
         (setq nomis/scrolling/-old-line-no old-line-no)
         (prog1 (do-it)
-          (nomis/outline-restore-scroll-position old-line-no))))))
+          (nomis/outline/restore-scroll-position old-line-no))))))
 
 (cl-defmacro nomis/scrolling/with-maybe-maintain-line-no-in-window (&body body)
   (declare (indent 0))

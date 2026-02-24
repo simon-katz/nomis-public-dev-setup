@@ -6,9 +6,9 @@
 
 ;;;; Utilities
 
-;;;;; -nomis/outline-pulse-current-section
+;;;;; -nomis/outline/pulse-current-section
 
-(defun -nomis/outline-pulse-current-section ()
+(defun -nomis/outline/pulse-current-section ()
   (let ((start (point)))
     (cl-flet ((next-same-level-heading ()
                 (save-excursion (ignore-errors
@@ -93,7 +93,7 @@
 
 ;;;; Outline colors
 
-(defun nomis/outline-colors/set-default ()
+(defun nomis/outline/colors/set-default ()
   (set-face-attribute 'outline-1 nil :inherit 'font-lock-function-name-face)
   (set-face-attribute 'outline-2 nil :inherit 'font-lock-variable-name-face)
   (set-face-attribute 'outline-3 nil :inherit 'font-lock-keyword-face)
@@ -103,7 +103,7 @@
   (set-face-attribute 'outline-7 nil :inherit 'font-lock-builtin-face)
   (set-face-attribute 'outline-8 nil :inherit 'font-lock-string-face))
 
-(defun nomis/outline-colors/set-rainbow-8 ()
+(defun nomis/outline/colors/set-rainbow-8 ()
   ;; 8 colors in rainbow order, at least when using a dark theme.
   (set-face-attribute 'outline-1 nil :inherit 'font-lock-string-face)
   (set-face-attribute 'outline-2 nil :inherit 'font-lock-variable-name-face)
@@ -114,7 +114,7 @@
   (set-face-attribute 'outline-7 nil :inherit 'font-lock-comment-face)
   (set-face-attribute 'outline-8 nil :inherit 'font-lock-builtin-face))
 
-(defun nomis/outline-colors/set-rainbow-4 ()
+(defun nomis/outline/colors/set-rainbow-4 ()
   ;; 4 colors in rainbow order, at least when using a dark theme.
   ;;
   ;; "Of York Gave Battle"
@@ -127,9 +127,9 @@
   (set-face-attribute 'outline-7 nil :inherit 'outline-3)
   (set-face-attribute 'outline-8 nil :inherit 'outline-4))
 
-;; (nomis/outline-colors/set-default)
-;; (nomis/outline-colors/set-rainbow-8)
-(nomis/outline-colors/set-rainbow-4)
+;; (nomis/outline/colors/set-default)
+;; (nomis/outline/colors/set-rainbow-8)
+(nomis/outline/colors/set-rainbow-4)
 
 ;;;; backline
 

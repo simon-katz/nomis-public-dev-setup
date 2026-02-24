@@ -4,16 +4,16 @@
 
 ;;; Utilities
 
-(defun -nomis/outline-making-visible (f) ; TODO: Unused.
+(defun -nomis/outline/making-visible (f) ; TODO: Unused.
   (save-excursion
     (funcall f)
     (outline-show-entry))
   (funcall f))
 
-(defun -nomis/outline-regexp-at-bol () ; TODO: Rename
+(defun -nomis/outline/regexp-at-bol () ; TODO: Rename
   (concat "^" outline-regexp))
 
-(defun -nomis/outline-regexp-at-bol-2 () ; TODO: Rename
+(defun -nomis/outline/regexp-at-bol-2 () ; TODO: Rename
   ;; TODO: What about things that start with other things?
   (concat "^"
           "\\("
@@ -25,13 +25,13 @@
 
 ;;; Other stuff
 
-(defun nomis/outline-previous-heading-v001 ()
+(defun nomis/outline/previous-heading-v001 ()
   (interactive)
   (if (bobp)
       (error "Beginning of buffer")
     (let* ((new-pos
             (save-excursion
-              (let* ((pos (re-search-backward (-nomis/outline-regexp-at-bol-2)
+              (let* ((pos (re-search-backward (-nomis/outline/regexp-at-bol-2)
                                               nil
                                               t)))
                 (when pos (outline-show-entry))
@@ -40,15 +40,15 @@
           (goto-char new-pos)
         (error "No previous heading")))))
 
-(defun nomis/outline-next-heading-v001 ()
+(defun nomis/outline/next-heading-v001 ()
   (interactive)
   (if (eobp)
       (error "End of buffer")
     (let* ((new-pos
             (save-excursion
-              (when (looking-at-p (-nomis/outline-regexp-at-bol))
+              (when (looking-at-p (-nomis/outline/regexp-at-bol))
                 (forward-char))
-              (let* ((pos (re-search-forward (-nomis/outline-regexp-at-bol-2)
+              (let* ((pos (re-search-forward (-nomis/outline/regexp-at-bol-2)
                                              nil
                                              t)))
                 (when pos (outline-show-entry))
@@ -58,7 +58,7 @@
                  (beginning-of-line))
         (error "No next heading")))))
 
-(defun nomis/outline-next-heading-v002 ()
+(defun nomis/outline/next-heading-v002 ()
   (interactive)
   (if (eobp)
       (error "End of buffer")
