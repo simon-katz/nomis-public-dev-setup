@@ -43,7 +43,10 @@
             (do-it)
           (let* ((end-point (point)))
             (unless (= start-point end-point)
-              (push-mark))))))))
+              (push-mark (point)
+                         ;; Use `nomsg` arg in case `f` has displayed
+                         ;; a message already.
+                         t))))))))
 
 (cl-defmacro -nomis/tree/command (_opts &body body)
   (declare (indent 1))
