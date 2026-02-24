@@ -6,9 +6,6 @@
 ;;       now do nothing apart from (a) mull things over, and (b) look at
 ;;       existing code.
 
-;; TODO: The tables in `nomis-outline-key-bindings` summarise `norg`,
-;;       `hide-show` and `nomis/outline`.
-
 ;; TODO: Have we decided that we don't want `bicycle`? (I think we have.)
 ;;       - See `nomis-bicycle`.
 
@@ -16,6 +13,12 @@
 ;;       - What would I lose if I remove code from `outline-regexp`?
 ;;       - We'd have to do that for all modes (all languages).
 ;;       - What about wanting to have my code be useful for other people?
+
+;; TODO: Replace uses of `nomis/tree/unimplemented-method` with implementations.
+
+;; TODO: Extract common functionality from `:outline` and `:org` methods, where
+;;       possible. (Especially when replacing some of the current uses of
+;;       `nomis/tree/unimplemented-method`.
 
 ;; TODO: We could integrate hide-show -- so eg `nomis/tree/tab` `:outline`
 ;;       method could do `nomis/hs/adjust/more` for children that are code.
@@ -37,6 +40,7 @@
 ;;       they duplicate our `norg` key bindings, which we want for outline
 ;;       stuff). Maybe a prefix in front of the existing bindings. Oh, or maybe
 ;;       a modal UI.
+;;       - Done (different key bindings.)
 
 ;;; Code:
 
