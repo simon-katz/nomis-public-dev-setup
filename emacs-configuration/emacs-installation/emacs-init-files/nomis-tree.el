@@ -2,6 +2,10 @@
 
 ;;; Code:
 
+;;;; Requires
+
+(require 'nomis-scrolling)
+
 ;;;; nomis/tree-mode
 
 (defvar nomis/tree-mode-map
@@ -26,6 +30,24 @@
 ;; (add-hook 'hs-minor-mode-hook 'nomis/tree-mode)
 
 ;;;; Utilities
+
+;;;;; -nomis/tree/command
+
+(defun -nomis/tree/command* (f)
+  (cl-flet* ((do-it () (nomis/scrolling/with-maybe-maintain-line-no-in-window
+                         (funcall f))))
+    (if mark-active
+        (do-it)
+      (let* ((start-point (point)))
+        (prog1
+            (do-it)
+          (let* ((end-point (point)))
+            (unless (= start-point end-point)
+              (push-mark))))))))
+
+(cl-defmacro -nomis/tree/command (_opts &body body)
+  (declare (indent 1))
+  `(-nomis/tree/command* (lambda () ,@body) ))
 
 ;;;;; nomis/tree/unimplemented-method
 
@@ -58,11 +80,15 @@
 
 (defun nomis/tree/search-heading-text ()
   (interactive)
-  (nomis/tree/search-heading-text--aux (-nomis/tree/mode)))
+  (-nomis/tree/command
+      nil
+    (nomis/tree/search-heading-text--aux (-nomis/tree/mode))))
 
 (defun nomis/tree/search-heading-text-again ()
   (interactive)
-  (nomis/tree/search-heading-text-again--aux (-nomis/tree/mode)))
+  (-nomis/tree/command
+      nil
+    (nomis/tree/search-heading-text-again--aux (-nomis/tree/mode))))
 
 ;;;;; Visibility span
 
@@ -73,19 +99,27 @@
 
 (defun nomis/tree/visibility-span/less ()
   (interactive)
-  (nomis/tree/visibility-span/less--aux (-nomis/tree/mode)))
+  (-nomis/tree/command
+      nil
+    (nomis/tree/visibility-span/less--aux (-nomis/tree/mode))))
 
 (defun nomis/tree/visibility-span/more ()
   (interactive)
-  (nomis/tree/visibility-span/more--aux (-nomis/tree/mode)))
+  (-nomis/tree/command
+      nil
+    (nomis/tree/visibility-span/more--aux (-nomis/tree/mode))))
 
 (defun nomis/tree/visibility-span/set-min ()
   (interactive)
-  (nomis/tree/visibility-span/set-min--aux (-nomis/tree/mode)))
+  (-nomis/tree/command
+      nil
+    (nomis/tree/visibility-span/set-min--aux (-nomis/tree/mode))))
 
 (defun nomis/tree/visibility-span/set-max ()
   (interactive)
-  (nomis/tree/visibility-span/set-max--aux (-nomis/tree/mode)))
+  (-nomis/tree/command
+      nil
+    (nomis/tree/visibility-span/set-max--aux (-nomis/tree/mode))))
 
 ;;;;; nomis/tree/show-tree-only and nomis/tree/max-lineage
 
@@ -94,11 +128,15 @@
 
 (defun nomis/tree/show-tree-only ()
   (interactive)
-  (nomis/tree/show-tree-only--aux (-nomis/tree/mode)))
+  (-nomis/tree/command
+      nil
+    (nomis/tree/show-tree-only--aux (-nomis/tree/mode))))
 
 (defun nomis/tree/max-lineage ()
   (interactive)
-  (nomis/tree/max-lineage--aux (-nomis/tree/mode)))
+  (-nomis/tree/command
+      nil
+    (nomis/tree/max-lineage--aux (-nomis/tree/mode))))
 
 ;;;;; nomis/tree/set-step-n-levels-to-show
 
@@ -106,7 +144,9 @@
 
 (defun nomis/tree/set-step-n-levels-to-show (n)
   (interactive "P")
-  (nomis/tree/set-step-n-levels-to-show--aux (-nomis/tree/mode) n))
+  (-nomis/tree/command
+      nil
+    (nomis/tree/set-step-n-levels-to-show--aux (-nomis/tree/mode) n)))
 
 ;;;;; Expand/collapse from point
 
@@ -119,27 +159,35 @@
   "Incrementally collapse the current heading by `arg` levels, default 1.
 When in a body, \"current heading\" means the current body's parent heading."
   (interactive "P")
-  (nomis/tree/show-children-from-point/incremental/less--aux (-nomis/tree/mode)
-                                                             n))
+  (-nomis/tree/command
+      nil
+    (nomis/tree/show-children-from-point/incremental/less--aux (-nomis/tree/mode)
+                                                               n)))
 
 (defun nomis/tree/show-children-from-point/incremental/more (n)
   "Incrementally expand the current heading by `arg` levels, default 1.
 When in a body, \"current heading\" means the current body's parent heading."
   (interactive "P")
-  (nomis/tree/show-children-from-point/incremental/more--aux (-nomis/tree/mode)
-                                                             n))
+  (-nomis/tree/command
+      nil
+    (nomis/tree/show-children-from-point/incremental/more--aux (-nomis/tree/mode)
+                                                               n)))
 
 (defun nomis/tree/show-children-from-point/set-min ()
   "Fully collapse the current heading.
 When in a body, \"current heading\" means the current body's parent heading."
   (interactive)
-  (nomis/tree/show-children-from-point/set-min--aux (-nomis/tree/mode)))
+  (-nomis/tree/command
+      nil
+    (nomis/tree/show-children-from-point/set-min--aux (-nomis/tree/mode))))
 
 (defun nomis/tree/show-children-from-point/fully-expand ()
   "Fully expand the current heading.
 When in a body, \"current heading\" means the current body's parent heading."
   (interactive)
-  (nomis/tree/show-children-from-point/fully-expand--aux (-nomis/tree/mode)))
+  (-nomis/tree/command
+      nil
+    (nomis/tree/show-children-from-point/fully-expand--aux (-nomis/tree/mode))))
 
 ;;;;; Expand/collapse from parent
 
@@ -153,25 +201,33 @@ When in a body, \"current heading\" means the current body's parent heading."
 from the current entry's parent and with the parent always
 expanded at least one level."
   (interactive "P")
-  (nomis/tree/show-children-from-parent/incremental/less--aux (-nomis/tree/mode) n))
+  (-nomis/tree/command
+      nil
+    (nomis/tree/show-children-from-parent/incremental/less--aux (-nomis/tree/mode) n)))
 
 (defun nomis/tree/show-children-from-parent/incremental/more (n)
   "Like `nomis/tree/show-children-from-point/incremental/more`, but
 from the current entry's parent."
   (interactive "P")
-  (nomis/tree/show-children-from-parent/incremental/more--aux (-nomis/tree/mode) n))
+  (-nomis/tree/command
+      nil
+    (nomis/tree/show-children-from-parent/incremental/more--aux (-nomis/tree/mode) n)))
 
 (defun nomis/tree/show-children-from-parent/set-min ()
   "Like `nomis/tree/show-children-from-point/set-min`, but from the
 current entry's parent and showing one level."
   (interactive)
-  (nomis/tree/show-children-from-parent/set-min--aux (-nomis/tree/mode)))
+  (-nomis/tree/command
+      nil
+    (nomis/tree/show-children-from-parent/set-min--aux (-nomis/tree/mode))))
 
 (defun nomis/tree/show-children-from-parent/fully-expand ()
   "Like `nomis/tree/show-children-from-point/fully-expand`, but from
 the current entry's parent."
   (interactive)
-  (nomis/tree/show-children-from-parent/fully-expand--aux (-nomis/tree/mode)))
+  (-nomis/tree/command
+      nil
+    (nomis/tree/show-children-from-parent/fully-expand--aux (-nomis/tree/mode))))
 
 ;;;;; Expand/collapse from root -- to current level, and from all roots -- to current level
 
@@ -180,11 +236,15 @@ the current entry's parent."
 
 (defun nomis/tree/show-children-from-root/to-current-level ()
   (interactive)
-  (nomis/tree/show-children-from-root/to-current-level--aux (-nomis/tree/mode)))
+  (-nomis/tree/command
+      nil
+    (nomis/tree/show-children-from-root/to-current-level--aux (-nomis/tree/mode))))
 
 (defun nomis/tree/show-children-from-all-roots/to-current-level ()
   (interactive)
-  (nomis/tree/show-children-from-all-roots/to-current-level--aux (-nomis/tree/mode)))
+  (-nomis/tree/command
+      nil
+    (nomis/tree/show-children-from-all-roots/to-current-level--aux (-nomis/tree/mode))))
 
 ;;;;; Expand/collapse from all roots
 
@@ -196,20 +256,28 @@ the current entry's parent."
 (defun nomis/tree/show-children-from-all-roots/incremental/less (n)
   "Incrementally collapse all roots by `arg` levels, default 1."
   (interactive "P")
-  (nomis/tree/show-children-from-all-roots/incremental/less--aux (-nomis/tree/mode) n))
+  (-nomis/tree/command
+      nil
+    (nomis/tree/show-children-from-all-roots/incremental/less--aux (-nomis/tree/mode) n)))
 
 (defun nomis/tree/show-children-from-all-roots/incremental/more (n)
   "Incrementally expand all roots by `arg` levels, default 1."
   (interactive "P")
-  (nomis/tree/show-children-from-all-roots/incremental/more--aux (-nomis/tree/mode) n))
+  (-nomis/tree/command
+      nil
+    (nomis/tree/show-children-from-all-roots/incremental/more--aux (-nomis/tree/mode) n)))
 
 (defun nomis/tree/show-children-from-all-roots/set-min ()
   (interactive)
-  (nomis/tree/show-children-from-all-roots/set-min--aux (-nomis/tree/mode)))
+  (-nomis/tree/command
+      nil
+    (nomis/tree/show-children-from-all-roots/set-min--aux (-nomis/tree/mode))))
 
 (defun nomis/tree/show-children-from-all-roots/fully-expand ()
   (interactive)
-  (nomis/tree/show-children-from-all-roots/fully-expand--aux (-nomis/tree/mode)))
+  (-nomis/tree/command
+      nil
+    (nomis/tree/show-children-from-all-roots/fully-expand--aux (-nomis/tree/mode))))
 
 ;;;;; Expand/collapse from root
 
@@ -221,20 +289,28 @@ the current entry's parent."
 (defun nomis/tree/show-children-from-root/incremental/less (n)
   "Incrementally collapse the current root by `arg` levels, default 1."
   (interactive "P")
-  (nomis/tree/show-children-from-root/incremental/less--aux (-nomis/tree/mode) n))
+  (-nomis/tree/command
+      nil
+    (nomis/tree/show-children-from-root/incremental/less--aux (-nomis/tree/mode) n)))
 
 (defun nomis/tree/show-children-from-root/incremental/more (n)
   "Incrementally expand the current root by `arg` levels, default 1."
   (interactive "P")
-  (nomis/tree/show-children-from-root/incremental/more--aux (-nomis/tree/mode) n))
+  (-nomis/tree/command
+      nil
+    (nomis/tree/show-children-from-root/incremental/more--aux (-nomis/tree/mode) n)))
 
 (defun nomis/tree/show-children-from-root/set-min ()
   (interactive)
-  (nomis/tree/show-children-from-root/set-min--aux (-nomis/tree/mode)))
+  (-nomis/tree/command
+      nil
+    (nomis/tree/show-children-from-root/set-min--aux (-nomis/tree/mode))))
 
 (defun nomis/tree/show-children-from-root/fully-expand ()
   (interactive)
-  (nomis/tree/show-children-from-root/fully-expand--aux (-nomis/tree/mode)))
+  (-nomis/tree/command
+      nil
+    (nomis/tree/show-children-from-root/fully-expand--aux (-nomis/tree/mode))))
 
 ;;;;; Tab and shifttab
 
@@ -243,11 +319,15 @@ the current entry's parent."
 
 (defun nomis/tree/tab (arg)
   (interactive "P")
-  (nomis/tree/tab--aux (-nomis/tree/mode) arg))
+  (-nomis/tree/command
+      nil
+    (nomis/tree/tab--aux (-nomis/tree/mode) arg)))
 
 (defun nomis/tree/shifttab (arg)
   (interactive "P")
-  (nomis/tree/shifttab--aux (-nomis/tree/mode) arg))
+  (-nomis/tree/command
+      nil
+    (nomis/tree/shifttab--aux (-nomis/tree/mode) arg)))
 
 ;;;;; Movement
 
@@ -259,22 +339,30 @@ the current entry's parent."
 (defun nomis/tree/previous-sibling ()
   "Move backward one heading at the same level as this one."
   (interactive)
-  (nomis/tree/previous-sibling--aux (-nomis/tree/mode)))
+  (-nomis/tree/command
+      nil
+    (nomis/tree/previous-sibling--aux (-nomis/tree/mode))))
 
 (defun nomis/tree/next-sibling ()
   "Move forward one heading at the same level as this one."
   (interactive)
-  (nomis/tree/next-sibling--aux (-nomis/tree/mode)))
+  (-nomis/tree/command
+      nil
+    (nomis/tree/next-sibling--aux (-nomis/tree/mode))))
 
 (defun nomis/tree/previous-sibling/allow-cross-parent ()
   "Move backward one heading at the same level, crossing parent boundaries."
   (interactive)
-  (nomis/tree/previous-sibling/allow-cross-parent--aux (-nomis/tree/mode)))
+  (-nomis/tree/command
+      nil
+    (nomis/tree/previous-sibling/allow-cross-parent--aux (-nomis/tree/mode))))
 
 (defun nomis/tree/next-sibling/allow-cross-parent ()
   "Move forward one heading at the same level, crossing parent boundaries."
   (interactive)
-  (nomis/tree/next-sibling/allow-cross-parent--aux (-nomis/tree/mode)))
+  (-nomis/tree/command
+      nil
+    (nomis/tree/next-sibling/allow-cross-parent--aux (-nomis/tree/mode))))
 
 ;;;;; Movement + expand/collapse
 
@@ -297,35 +385,51 @@ the current entry's parent."
 
 (defun nomis/tree/step-backward (n)
   (interactive "P")
-  (nomis/tree/step-backward--aux (-nomis/tree/mode) n))
+  (-nomis/tree/command
+      nil
+    (nomis/tree/step-backward--aux (-nomis/tree/mode) n)))
 
 (defun nomis/tree/step-forward (n)
   (interactive "P")
-  (nomis/tree/step-forward--aux (-nomis/tree/mode) n))
+  (-nomis/tree/command
+      nil
+    (nomis/tree/step-forward--aux (-nomis/tree/mode) n)))
 
 (defun nomis/tree/step-backward/allow-cross-parent (n)
   (interactive "P")
-  (nomis/tree/step-backward/allow-cross-parent--aux (-nomis/tree/mode) n))
+  (-nomis/tree/command
+      nil
+    (nomis/tree/step-backward/allow-cross-parent--aux (-nomis/tree/mode) n)))
 
 (defun nomis/tree/step-forward/allow-cross-parent (n)
   (interactive "P")
-  (nomis/tree/step-forward/allow-cross-parent--aux (-nomis/tree/mode) n))
+  (-nomis/tree/command
+      nil
+    (nomis/tree/step-forward/allow-cross-parent--aux (-nomis/tree/mode) n)))
 
 (defun nomis/tree/previous-heading (n)
   (interactive "p")
-  (nomis/tree/previous-heading--aux (-nomis/tree/mode) n))
+  (-nomis/tree/command
+      nil
+    (nomis/tree/previous-heading--aux (-nomis/tree/mode) n)))
 
 (defun nomis/tree/next-heading (n)
   (interactive "p")
-  (nomis/tree/next-heading--aux (-nomis/tree/mode) n))
+  (-nomis/tree/command
+      nil
+    (nomis/tree/next-heading--aux (-nomis/tree/mode) n)))
 
 (defun nomis/tree/previous-heading/set-tree+body ()
   (interactive)
-  (nomis/tree/previous-heading/set-tree+body--aux (-nomis/tree/mode)))
+  (-nomis/tree/command
+      nil
+    (nomis/tree/previous-heading/set-tree+body--aux (-nomis/tree/mode))))
 
 (defun nomis/tree/next-heading/set-tree+body ()
   (interactive)
-  (nomis/tree/next-heading/set-tree+body--aux (-nomis/tree/mode)))
+  (-nomis/tree/command
+      nil
+    (nomis/tree/next-heading/set-tree+body--aux (-nomis/tree/mode))))
 
 ;;; End
 

@@ -46,7 +46,6 @@
 (require 'cl-lib)
 (require 'dash)
 (require 'nomis-popup)
-(require 'nomis-scrolling)
 
 ;;;; Utilities
 
@@ -330,24 +329,6 @@
          direction-word
          kind-word)))))
 
-;;;;; -nomis/outline-command
-
-(defun -nomis/outline-command* (f)
-  (cl-flet* ((do-it () (nomis/scrolling/with-maybe-maintain-line-no-in-window
-                         (funcall f))))
-    (if mark-active
-        (do-it)
-      (let* ((start-point (point)))
-        (prog1
-            (do-it)
-          (let* ((end-point (point)))
-            (unless (= start-point end-point)
-              (push-mark))))))))
-
-(cl-defmacro -nomis/outline-command (_opts &body body)
-  (declare (indent 1))
-  `(-nomis/outline-command* (lambda () ,@body) ))
-
 ;;;; API
 
 ;;;;; nomis/outline-show-all
@@ -441,110 +422,90 @@
 ;;;;; Previous
 
 (defun nomis/outline-previous-heading (n)
-  (-nomis/outline-command
-      nil
-    (-nomis/outline-prev-or-next-heading navigation-lineage-spec
-                                         n
-                                         :backward
-                                         :any-level)))
+  (-nomis/outline-prev-or-next-heading navigation-lineage-spec
+                                       n
+                                       :backward
+                                       :any-level))
 
 (defun nomis/outline-previous-sibling (n)
   "Move backward to the N'th heading at same level as this one.
 Stop at the first and last headings of a superior heading."
   (interactive "p")
-  (-nomis/outline-command
-      nil
-    (-nomis/outline-prev-or-next-heading navigation-lineage-spec
-                                         n
-                                         :backward
-                                         :sibling)))
+  (-nomis/outline-prev-or-next-heading navigation-lineage-spec
+                                       n
+                                       :backward
+                                       :sibling))
 
 (defun nomis/outline-previous-sibling/allow-cross-parent (n)
   "Move backward to the N'th heading at same level as this one.
 Can pass by a superior heading."
   (interactive "p")
-  (-nomis/outline-command
-      nil
-    (-nomis/outline-prev-or-next-heading navigation-lineage-spec
-                                         n
-                                         :backward
-                                         :same-level-allow-cross-parent)))
+  (-nomis/outline-prev-or-next-heading navigation-lineage-spec
+                                       n
+                                       :backward
+                                       :same-level-allow-cross-parent))
 
 (defun nomis/outline-step-backward (n)
   "Move backward to the N'th heading at same level as this one, then show
 fat parents and all children.
 Stop at the first and last headings of a superior heading."
-  (-nomis/outline-command
-      nil
-    (-nomis/outline-prev-or-next-heading step-lineage-spec
-                                         (or n 1)
-                                         :backward
-                                         :sibling)))
+  (-nomis/outline-prev-or-next-heading step-lineage-spec
+                                       (or n 1)
+                                       :backward
+                                       :sibling))
 
 (defun nomis/outline-step-backward/allow-cross-parent (n)
   "Move backward to the N'th heading at same level as this one, then show
 fat parents and all children.
 Can pass by a superior heading."
-  (-nomis/outline-command
-      nil
-    (-nomis/outline-prev-or-next-heading step-lineage-spec
-                                         (or n 1)
-                                         :backward
-                                         :same-level-allow-cross-parent)))
+  (-nomis/outline-prev-or-next-heading step-lineage-spec
+                                       (or n 1)
+                                       :backward
+                                       :same-level-allow-cross-parent))
 
 ;;;;; Next
 
 (defun nomis/outline-next-heading (n)
-  (-nomis/outline-command
-      nil
-    (-nomis/outline-prev-or-next-heading navigation-lineage-spec
-                                         n
-                                         :forward
-                                         :any-level)))
+  (-nomis/outline-prev-or-next-heading navigation-lineage-spec
+                                       n
+                                       :forward
+                                       :any-level))
 
 (defun nomis/outline-next-sibling (n)
   "Move forward to the N'th heading at same level as this one.
 Stop at the first and last headings of a superior heading."
   (interactive "p")
-  (-nomis/outline-command
-      nil
-    (-nomis/outline-prev-or-next-heading navigation-lineage-spec
-                                         n
-                                         :forward
-                                         :sibling)))
+  (-nomis/outline-prev-or-next-heading navigation-lineage-spec
+                                       n
+                                       :forward
+                                       :sibling))
 
 (defun nomis/outline-next-sibling/allow-cross-parent (n)
   "Move forward to the N'th heading at same level as this one.
 Can pass by a superior heading."
   (interactive "p")
-  (-nomis/outline-command
-      nil
-    (-nomis/outline-prev-or-next-heading navigation-lineage-spec
-                                         n
-                                         :forward
-                                         :same-level-allow-cross-parent)))
+  (-nomis/outline-prev-or-next-heading navigation-lineage-spec
+                                       n
+                                       :forward
+                                       :same-level-allow-cross-parent))
 
 (defun nomis/outline-step-forward (n)
   "Move forward to the N'th heading at same level as this one, then show
 fat parents and all children.
 Stop at the first and last headings of a superior heading."
-  (-nomis/outline-command
-      nil
-    (-nomis/outline-prev-or-next-heading step-lineage-spec
-                                         (or n 1)
-                                         :forward
-                                         :sibling)))
+  (-nomis/outline-prev-or-next-heading step-lineage-spec
+                                       (or n 1)
+                                       :forward
+                                       :sibling))
 
 (defun nomis/outline-step-forward/allow-cross-parent (n)
   "Move forward to the N'th heading at same level as this one, then show
 fat parents and all children.
 Can pass by a superior heading."
-  (-nomis/outline-command
-      nil
-    (-nomis/outline-prev-or-next-heading step-lineage-spec
-                                         (or n 1)
-                                         :forward
-                                         :same-level-allow-cross-parent)))
+  (-nomis/outline-prev-or-next-heading step-lineage-spec
+                                       (or n 1)
+                                       :forward
+                                       :same-level-allow-cross-parent))
 
 ;;; End
 
