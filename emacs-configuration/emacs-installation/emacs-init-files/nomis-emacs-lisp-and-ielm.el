@@ -7,14 +7,18 @@
 ;; `elisp-slime-nav` used to bind `C-c C-d d` / `C-c C-d C-d` to describe the
 ;; symbol at point. Emacs's built-in `describe-symbol` covers the same ground.
 
+(defun nomis/describe-symbol ()
+  (interactive)
+  (describe-symbol (symbol-at-point)))
+
 (dolist (map (list emacs-lisp-mode-map
                    lisp-interaction-mode-map))
-  (define-key map (kbd "C-c C-d d") #'describe-symbol)
-  (define-key map (kbd "C-c C-d C-d") #'describe-symbol))
+  (define-key map (kbd "C-c C-d d") #'nomis/describe-symbol)
+  (define-key map (kbd "C-c C-d C-d") #'nomis/describe-symbol))
 
 (with-eval-after-load 'ielm
-  (define-key ielm-map (kbd "C-c C-d d") #'describe-symbol)
-  (define-key ielm-map (kbd "C-c C-d C-d") #'describe-symbol))
+  (define-key ielm-map (kbd "C-c C-d d") #'nomis/describe-symbol)
+  (define-key ielm-map (kbd "C-c C-d C-d") #'nomis/describe-symbol))
 
 ;;; xref
 
