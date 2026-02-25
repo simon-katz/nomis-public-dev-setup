@@ -1229,28 +1229,20 @@ the parameter."
 ;;;; Replacements for `org-cycle` and `org-shifttab`
 
 (defun norg/tab (arg)
-  (cond ((not (norg/w/at-heading-p))
-         (org-cycle arg))
-        ((null arg)
+  (cond ((null arg)
          (norg/show-children-from-point/incremental/more))
         ((integerp arg)
          (norg/show-children-from-point arg))
-        ((equal arg '(4))   (org-cycle nil))
-        ((equal arg '(16))  (org-cycle '(4)))
-        ((equal arg '(64))  (org-cycle '(16)))
-        ((equal arg '(256)) (org-cycle '(64)))
         (t
-         (error "Bad arg"))))
+         (error "norg/tab: Unexpected arg: %s" arg))))
 
 (defun norg/shifttab (arg)
-  (cond ((not (norg/w/at-heading-p))
-         (org-shifttab arg))
-        ((null arg)
+  (cond ((null arg)
          (norg/show-children-from-point/incremental/less))
         ((integerp arg)
          (norg/show-children-from-point arg))
         (t
-         (error "Bad arg"))))
+         (error "norg/shifttab: Unexpected arg: %s" arg))))
 
 ;;; End
 

@@ -2,6 +2,10 @@
 
 ;;; Code:
 
+;;;; Requires
+
+(require 'nomis-very-general-stuff-new-lexical)
+
 ;;;; Temporary keybindings to train myself for change of Projectile keybindings
 
 (defun -nomis/outline/projectile-keybinding-error ()
@@ -111,17 +115,45 @@ H-q H-q /    Show this help")
 (define-key nomis/tree-mode-map (kbd "H-q H-q ]") 'nomis/tree/show-children-from-root/to-current-level)
 (define-key nomis/tree-mode-map (kbd "H-q H-q =") 'nomis/tree/show-children-from-all-roots/to-current-level)
 
-;;;; Tab and shift-tab
+;;;; Tab and shifttab
 
-;; The following keys are copied from org.el.
+;;;;; Tab
 
-;; TAB key with modifiers
-(define-key nomis/tree-mode-map "\C-i"          'nomis/tree/tab)
-(define-key nomis/tree-mode-map [(tab)]         'nomis/tree/tab)
-;; The following line is necessary under Suse GNU/Linux
-(define-key nomis/tree-mode-map [S-iso-lefttab] 'nomis/tree/shifttab)
-(define-key nomis/tree-mode-map [(shift tab)]   'nomis/tree/shifttab)
-(define-key nomis/tree-mode-map [backtab]       'nomis/tree/shifttab)
+;; `tab` in `org-mode` is bound to `org-cycle`, in which null and numeric prefix
+;; args at a heading do visibility cycling. We replace that functionality, using
+;; a filter, with our "incremental/more" functionality.
+
+(defconst -nomis/tree/tab-keys
+  ;; These keys are copied from `org`.
+  '("\C-i" [(tab)]))
+
+(dolist (key -nomis/tree/tab-keys)
+  (nomis/define-key-with-filter nomis/tree-mode-map
+                                key
+                                'nomis/tree/tab
+                                (and (norg/w/at-heading-p)
+                                     (or (null prefix-arg)
+                                         (integerp prefix-arg)))))
+
+;;;;; Shifttab
+
+;; `shifttab` in `org-mode` is bound to `org-shifttab`, in which null and
+;; numeric prefix args have special functionality. We want those for
+;; "incremental/less" functionality, so we preserve access to `org-shifttab`
+;; using a separate key binding.
+
+;; Arguably this belongs in `nomis-org-key-bindings`, but perhaps having it here
+;; is clearer.
+(define-key org-mode-map (kbd "H-`") 'org-shifttab) ; preserve access
+
+(defconst -nomis/tree/shifttab-keys
+  ;; These keys are copied from `org`.
+  '([S-iso-lefttab] ; necessary under Suse GNU/Linux
+    [(shift tab)]
+    [backtab]))
+
+(dolist (key -nomis/tree/shifttab-keys)
+  (define-key nomis/tree-mode-map key 'nomis/tree/shifttab))
 
 ;;;; `bicycle-cycle-global`
 
