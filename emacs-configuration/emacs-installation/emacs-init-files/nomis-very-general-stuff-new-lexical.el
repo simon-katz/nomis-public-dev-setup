@@ -1,6 +1,20 @@
 ;;; Very general stuff (new + lexical) -- -*- lexical-binding: t -*-
 
-;;; nomis/temporarily-disable-keys
+;;; Code:
+
+;;;; `nomis/define-key-with-filter`
+
+(defmacro nomis/define-key-with-filter (keymap key command condition)
+  "In KEYMAP, bind KEY to COMMAND only if CONDITION is met.
+Otherwise, the keybinding is ignored, letting Emacs search lower-priority maps."
+  ;; The `menu-item` trick with `:filter` is an Emacs idiom for conditional
+  ;; keybindings. When the filter returns `nil`, Emacs treats the binding as if
+  ;; it doesn't exist and falls through to lower-priority keymaps.
+  `(define-key ,keymap ,key
+               `(menu-item ,(symbol-name ,command) ,,command
+                           :filter (lambda (cmd) (when ,',condition cmd)))))
+
+;;;; `nomis/temporarily-disable-keys`
 
 (defconst -nomis/ignore-all-keys-keymap
   (let* ((km (make-sparse-keymap)))
