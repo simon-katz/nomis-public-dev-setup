@@ -82,6 +82,16 @@
 
 (advice-add 'xref-find-definitions :after 'nomis/xref-restore-pos-if-stupid-place)
 
+;;; Linting and flycheck-mode
+
+(defun -nomis/emacs-lisp/set-up-flycheck ()
+  (flycheck-mode))
+
+(add-hook 'emacs-lisp-mode-hook #'-nomis/emacs-lisp/set-up-flycheck)
+
+(with-eval-after-load 'flycheck
+  (setq-default flycheck-disabled-checkers '(emacs-lisp-checkdoc)))
+
 ;;; Other stuff
 
 (defvar nomis/lisp-and-ielm-mode-hook-functions
