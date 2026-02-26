@@ -2,6 +2,10 @@
 
 ;;; Code:
 
+;;;; Requires
+
+(require 'flycheck)
+
 ;;;; Describe symbol at point
 
 ;; This is a replacement for `elisp-slime-nav`'s describe feature.
@@ -86,6 +90,8 @@
 
 ;;;; Linting and flycheck-mode
 
+;;;;; Basics
+
 (defun -nomis/emacs-lisp/set-up-flycheck ()
   (flycheck-mode))
 
@@ -93,6 +99,28 @@
 
 (with-eval-after-load 'flycheck
   (setq-default flycheck-disabled-checkers '(emacs-lisp-checkdoc)))
+
+;;;;; Add "; noflycheck" capability
+
+;; Adapted from https://emacs.stackexchange.com/a/83533
+
+(defcustom nomis/flycheck-elisp-noflycheck-marker "; noflycheck"
+  "Flycheck line regions marked with this marker string are ignored."
+  :type 'string
+  :group 'flycheck)
+
+(defun nomis/flycheck-elisp-noflycheck (err)
+  "Ignore flycheck if line contain value of
+`nomis/flycheck-elisp-noflycheck-marker'."
+  (save-excursion
+    (goto-char (cdr (flycheck-error-region-for-mode err 'symbols)))
+    (let ((text (buffer-substring (line-beginning-position)
+                                  (line-end-position))))
+      (when (string-match-p nomis/flycheck-elisp-noflycheck-marker text)
+        (setq flycheck-current-errors (delete err flycheck-current-errors))
+        t))))
+
+(add-hook 'flycheck-process-error-functions #'nomis/flycheck-elisp-noflycheck)
 
 ;;;; Other stuff
 
