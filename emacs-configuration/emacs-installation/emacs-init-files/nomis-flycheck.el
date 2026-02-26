@@ -61,6 +61,10 @@
     )))
 
 ;;;; ___________________________________________________________________________
+
+(setopt flycheck-emacs-lisp-load-path 'inherit)
+
+;;;; ___________________________________________________________________________
 ;;;; Provide some easier-to-type key bindings than the built-in ones
 
 (let* ((m flycheck-mode-map))
