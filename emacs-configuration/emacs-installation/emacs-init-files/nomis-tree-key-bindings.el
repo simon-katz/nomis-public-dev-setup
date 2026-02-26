@@ -125,7 +125,7 @@ H-q H-q /    Show this help")
 
 (defconst -nomis/tree/tab-keys
   ;; These keys are copied from `org`.
-  '("\C-i" [(tab)]))
+  `(,(kbd "TAB")))
 
 (dolist (key -nomis/tree/tab-keys)
   (nomis/define-key-with-filter nomis/tree-mode-map
@@ -148,9 +148,8 @@ H-q H-q /    Show this help")
 
 (defconst -nomis/tree/shifttab-keys
   ;; These keys are copied from `org`.
-  '([S-iso-lefttab] ; necessary under Suse GNU/Linux
-    [(shift tab)]
-    [backtab]))
+  `(,(kbd "S-TAB")
+    ,(kbd "<backtab>")))
 
 (dolist (key -nomis/tree/shifttab-keys)
   (define-key nomis/tree-mode-map key 'nomis/tree/shifttab))
