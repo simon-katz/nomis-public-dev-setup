@@ -192,7 +192,7 @@
   (when (and (a-get lineage-spec :spec/pulse-max-children?)
              (= (a-get lineage-spec :spec/children-approach)
                 -nomis/outline/children-approach-max))
-    (-nomis/outline/pulse-current-section)))
+    (nomis/outline/pulse-current-section)))
 
 ;;;;; Previous/next helpers
 

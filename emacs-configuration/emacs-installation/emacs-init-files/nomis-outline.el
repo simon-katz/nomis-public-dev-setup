@@ -6,9 +6,9 @@
 
 ;;;; Utilities
 
-;;;;; -nomis/outline/pulse-current-section
+;;;;; nomis/outline/pulse-current-section
 
-(defun -nomis/outline/pulse-current-section ()
+(defun nomis/outline/pulse-current-section ()
   (let ((start (point)))
     (cl-flet ((next-same-level-heading ()
                 (save-excursion (ignore-errors
