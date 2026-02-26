@@ -369,7 +369,7 @@
 
 ;;;;; Movement
 
-;;;;; Tab and shift-tab
+;;;;; Tab and shifttab
 
 (defun nomis/outline/tab (arg)
   ;; TODO: Compare with the `:org` method and extract common functionality

@@ -1226,7 +1226,7 @@ the parameter."
   (let* ((v (1- (norg/current-level t))))
     (norg/-show-children-from-all-roots/set-level-etc v :no-check :dummy)))
 
-;;;; Replacements for `org-cycle` and `org-shifttab`
+;;;; Tab and shifttab
 
 (defun norg/tab (arg)
   (cond ((null arg)
