@@ -4,7 +4,9 @@
 
 ;;;; Requires
 
+(require 'ielm)
 (require 'flycheck)
+(require 'paredit)
 
 ;;;; Describe symbol at point
 

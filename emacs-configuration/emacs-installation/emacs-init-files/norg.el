@@ -88,9 +88,10 @@
 
 ;;;; Require things
 
-(require 'org)
 (require 'cl-lib)
 (require 'dash)
+(require 'nomis-org) ; noflycheck
+(require 'org)
 
 ;; Things that you might want to make into packages if you make norg into a
 ;; package.
@@ -132,11 +133,11 @@ message and in case adding org level messes things up.")
                        (eq major-mode 'org-mode)
                        *norg/-in-what-cursor-position?*)
                   (let* ((format-string
-                          (concat "org-level=%s  " (first args)))
+                          (concat "org-level=%s  " (cl-first args)))
                          (format-args
                           (append
                            (list (norg/current-level-or-error-string t))
-                           (rest args)))
+                           (cl-rest args)))
                          (s (apply #'format format-string format-args)))
                     (funcall orig-fun "%s" s)
                     (nomis/popup/message "%s" s))
@@ -310,7 +311,7 @@ value."
                ()
                (when (funcall pred-of-no-args)
                  (funcall fun))))
-      (beginning-of-buffer)
+      (goto-char (point-min))
       (unless (norg/w/at-heading-p)
         (norg/w/next-heading))
       (when (norg/w/at-heading-p)
@@ -434,7 +435,7 @@ headline."
                     (norg/goto-root)
                     (norg/collapse))))))
     (collapse)
-    (org-show-set-visibility detail)))
+    (org-fold-show-set-visibility detail)))
 
 (defun norg/show-tree-only ()
   (norg/collapse-all-and-set-visibility-span 'tree))

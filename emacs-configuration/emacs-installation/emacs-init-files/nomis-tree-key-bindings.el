@@ -4,7 +4,11 @@
 
 ;;;; Requires
 
+(require 'nomis-msg)
+(require 'nomis-tree)
 (require 'nomis-very-general-stuff-new-lexical)
+(require 'org)
+(require 'projectile)
 
 ;;;; Temporary keybindings to train myself for change of Projectile keybindings
 

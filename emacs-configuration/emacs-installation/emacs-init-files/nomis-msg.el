@@ -3,6 +3,7 @@
 ;;;; ___________________________________________________________________________
 
 (require 'nomis-timers)
+(require 'mmt)
 
 ;;;; ___________________________________________________________________________
 
@@ -39,8 +40,8 @@
 
 (defun nomis/msg/-clear-fg-and-bg ()
   (let* ((fg-and-bg (pop nomis/-flash-old-colours))
-         (fg (first fg-and-bg))
-         (bg (second fg-and-bg)))
+         (fg (cl-first fg-and-bg))
+         (bg (cl-second fg-and-bg)))
     (set-face-foreground nomis/msg/-flash-face fg)
     (set-face-background nomis/msg/-flash-face bg)))
 
@@ -113,7 +114,7 @@
 
 
 (progn
-  (defadvice y-or-n-p (around y-or-n-p/grab-user-attention
+  (defadvice y-or-n-p (around y-or-n-p/grab-user-attention ; noflycheck
                               (&rest args-to-ignore))
     (nomis/msg/with-grab-user-attention/input-required ()
       ad-do-it))

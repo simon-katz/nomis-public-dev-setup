@@ -2,6 +2,11 @@
 
 ;;; Code:
 
+;;;; Requires
+
+(require 'org)
+(require 'org-agenda)
+
 ;;;; General
 
 ;; The following lines are always needed. Choose your own keys.

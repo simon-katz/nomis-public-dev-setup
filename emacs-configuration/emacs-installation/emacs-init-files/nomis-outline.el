@@ -1,8 +1,11 @@
 ;;; nomis-outline.el ---  -*- lexical-binding: t; -*-
 
-(require 'nomis-msg)
-
 ;;; Code:
+
+;;;; Requires
+
+(require 'nomis-msg)
+(require 'outline)
 
 ;;;; Utilities
 

@@ -1,4 +1,4 @@
-;;; Very general stuff (new + lexical) -- -*- lexical-binding: t -*-
+;;; nomis-very-general-stuff-new-lexical.el --- Very general stuff (new + lexical)  -*- lexical-binding: t; -*-
 
 ;;; Code:
 
@@ -20,7 +20,7 @@ Otherwise, the keybinding is ignored, letting Emacs search lower-priority maps."
   (let* ((km (make-sparse-keymap)))
     (define-key km [t] (lambda ()
                          (interactive)
-                         (nomis/msg/pulse-buffer-error)))
+                         (nomis/msg/pulse-buffer-error))) ; noflycheck -- TODO: Delete this comment and move this functionality to a place loader in the load sequence
     km))
 
 (defun nomis/temporarily-disable-keys (&optional pulse-on-restore?)
@@ -41,7 +41,7 @@ Otherwise, the keybinding is ignored, letting Emacs search lower-priority maps."
                    (use-local-map old-lkm)
                    (setq minor-mode-map-alist old-mmma)
                    (when pulse-on-restore?
-                     (nomis/msg/pulse-buffer))))))
+                     (nomis/msg/pulse-buffer)))))) ; noflycheck -- see earlier `noflycheck` comment
 
 ;;; End
 

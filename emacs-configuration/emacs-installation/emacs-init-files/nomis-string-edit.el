@@ -2,7 +2,7 @@
 
 (require 'dash)
 (require 's)
-(require 'cl)
+(require 'cl-lib)
 (require 'nomis-msg)
 
 ;;;; ___________________________________________________________________________

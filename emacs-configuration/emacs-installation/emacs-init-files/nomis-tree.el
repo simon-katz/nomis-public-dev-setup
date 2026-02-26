@@ -60,6 +60,7 @@
 ;;;; Requires
 
 (require 'nomis-scrolling)
+(require 'outline)
 
 ;;;; nomis/tree-mode
 

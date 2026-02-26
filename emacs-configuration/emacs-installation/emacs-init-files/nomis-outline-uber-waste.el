@@ -1,8 +1,12 @@
-;;; nomis-outline-uber-waste -- -*- lexical-binding: t -*-
+;;; nomis-outline-uber-waste.el --- Junk  -*- lexical-binding: t; -*-
 
 ;;; Code:
 
 (error "nomis-outline-uber-waste is not for loading")
+
+;;;; Requires
+
+(require 'outline)
 
 ;;;; Utilities
 

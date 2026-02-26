@@ -32,6 +32,10 @@
 
 ;;; Code:
 
+;;;; Requires
+
+(require 'cl-lib)
+
 ;;;; ___________________________________________________________________________
 
 (defvar nomis/scrolling/-debug? nil)

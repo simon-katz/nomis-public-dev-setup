@@ -5,9 +5,13 @@
 ;;;; Requires
 
 (require 'a)
+(require 'cl-format)
 (require 'cl-lib)
+(require 'company)
 (require 'dash)
+(require 'nomis-outline)
 (require 'nomis-popup)
+(require 'outline)
 
 ;;;; Utilities
 
@@ -21,7 +25,7 @@
   (cl-format nil "~a~a"
              n
              (let ((x (cl-format nil "~:r" n)))
-               (subseq x (- (length x) 2)))))
+               (cl-subseq x (- (length x) 2)))))
 
 ;;;;; Simple outline wrappers
 
@@ -53,8 +57,7 @@
   ;; some modes. This, we hope, is bulletproof.
   (save-excursion
     (when (-nomis/outline/on-heading?)
-      (let* ((opoint (point))
-             (olevel (funcall outline-level)))
+      (let* ((olevel (funcall outline-level)))
         (ignore-errors
           ;; `ignore-errors` is needed when before first heading.
           (-nomis/outline/up-heading 1))
@@ -62,9 +65,9 @@
             (= olevel (funcall outline-level)))))))
 
 (defun -nomis/outline/top-level-level ()
-  (assert (-nomis/outline/on-heading?))
+  (cl-assert (-nomis/outline/on-heading?))
   (save-excursion
-    (beginning-of-buffer)
+    (goto-char (point-min))
     (unless (-nomis/outline/on-heading?) (outline-next-heading))
     (funcall outline-level)))
 
@@ -230,7 +233,7 @@
     (when npoint
       (goto-char npoint))))
 
-(defun -nomis/outline/prev-or-next-heading-pos (lineage-spec
+(defun -nomis/outline/prev-or-next-heading-pos (_lineage-spec
                                                 start
                                                 direction
                                                 kind)

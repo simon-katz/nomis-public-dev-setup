@@ -1,4 +1,4 @@
-;;;; Init stuff -- Org Mode
+;;;; Init stuff -- Org Mode    ; noflycheck
 
 (progn) ; this stops `hs-hide-all` from hiding the next comment
 
@@ -9,8 +9,8 @@
   (cl-flet
       ((do-stuff-that-must-be-done-before-requiring-org
         ()
-        (setq org-replace-disputed-keys t)
-        (setq org-disputed-keys
+        (setq org-replace-disputed-keys t) ; noflycheck
+        (setq org-disputed-keys            ; noflycheck
               '(([(shift up)]               . [(meta p)])
                 ([(shift down)]             . [(meta n)])
                 ;; M-- was being taken away from `negative-argument`, so
@@ -26,11 +26,13 @@
     (do-stuff-that-must-be-done-before-requiring-org)
     (require 'org)))
 
-(require 'norg)
-(require 'nomis-popup)
-(require 'org-bullets)
-(require 'cl)
+(require 'cl-lib)
 (require 'dash)
+(require 'nomis-msg)
+(require 'nomis-popup)
+(require 'nomis-rx) ; noflycheck
+(require 'org-bullets)
+(require 's)
 
 ;;;; ___________________________________________________________________________
 ;;;; ____ * General
@@ -49,9 +51,9 @@
 
 (progn ; Use current window when clicking links.
   (setq org-link-frame-setup
-        (acons 'file
-               'find-file
-               org-link-frame-setup)))
+        (cl-acons 'file
+                  'find-file
+                  org-link-frame-setup)))
 
 (setq org-indirect-buffer-display 'new-frame)
 
@@ -72,7 +74,7 @@
             :after
             (lambda (&rest _)
               (when (eql major-mode 'org-mode)
-                (norg/w/show-entry)))
+                (norg/w/show-entry))) ; noflycheck
             '((name . nomis/org-show-entry-when-going-to-grep-results)))
 
 ;;;; ___________________________________________________________________________
@@ -94,20 +96,20 @@
     (canonical t   "Canonical + body")))
 
 (defconst -nomis/org-visibility-span/min-detail
-  (first -nomis/org-visibility-span/detail-values))
+  (cl-first -nomis/org-visibility-span/detail-values))
 
 (defconst -nomis/org-visibility-span/max-detail
   (-> -nomis/org-visibility-span/detail-values
       last
-      first))
+      cl-first))
 
 (defconst -nomis/org-visibility-span/max-value
   (1- (length -nomis/org-visibility-span/detail-values)))
 
 (defun -nomis/org-visibility-span/initial-incremental-value ()
-  (or (position 'ancestors
-                -nomis/org-visibility-span/detail-values
-                :key #'first)
+  (or (cl-position 'ancestors
+                   -nomis/org-visibility-span/detail-values
+                   :key #'cl-first)
       (progn
         (message "Didn't find entry in -nomis/org-visibility-span/detail-values")
         (nomis/msg/grab-user-attention/low)
@@ -148,7 +150,7 @@
                 action-index)
             nil)))
     (if (null new-pos-or-nil)
-        (let* ((msg (third
+        (let* ((msg (cl-third
                      (if (if delta? (< n 0) (= n 0))
                          -nomis/org-visibility-span/min-detail
                        -nomis/org-visibility-span/max-detail))))
@@ -156,8 +158,8 @@
       (cl-multiple-value-bind (detail show? msg)
           (nth new-pos-or-nil
                -nomis/org-visibility-span/detail-values)
-        (norg/collapse-all-and-set-visibility-span detail)
-        (if show? (norg/w/show-entry) (norg/w/hide-entry))
+        (norg/collapse-all-and-set-visibility-span detail) ; noflycheck
+        (if show? (norg/w/show-entry) (norg/w/hide-entry)) ; noflycheck
         (unless no-message?
           (nomis/popup/message "%s" msg))))))
 
@@ -176,9 +178,9 @@
 
 (defun nomis/org-visibility-span/set-tree+body ()
   (interactive)
-  (let* ((v (position '(tree nil "Tree")
-                      -nomis/org-visibility-span/detail-values
-                      :test #'equal)))
+  (let* ((v (cl-position '(tree nil "Tree")
+                         -nomis/org-visibility-span/detail-values
+                         :test #'equal)))
     (cl-assert (not (null v)))
     (-nomis/org-visibility-span/set-level/numeric v nil t))
   (norg/w/show-entry))
@@ -200,7 +202,7 @@
   (when (version< emacs-version "29")
     ;; See "Linum-mode + org-indent-mode gives strange graphical refresh bugs"
     ;; at http://orgmode.org/worg/org-issues.html
-    (linum-mode 0))
+    (linum-mode 0)) ; noflycheck
   ;; (setq org-indent-fix-section-after-idle-time nil)
   ;; (setq org-indent-indentation-per-level 3) ; the default of 2 is too small; 4 screws up auto indentation in large files
   ;; (setq org-indent-max 60)
@@ -254,7 +256,7 @@
                                      (looking-at-p ".*|\\s-+<[rcl]?\\([0-9]+\\)?>"))
                             (move-beginning-of-line 2))
                           (line-beginning-position)))
-                   (end (save-excursion (goto-char beg) (point-at-eol))))
+                   (end (save-excursion (goto-char beg) (point-at-eol)))) ; noflycheck
               (if (pos-visible-in-window-p beg)
                   (when (overlayp org-table-header-overlay)
                     (delete-overlay org-table-header-overlay))
@@ -282,7 +284,7 @@
 (setq org-default-notes-file
       (concat org-directory
               "/___captured-notes-from-"
-              (substring (symbol-name nomis/system-name)
+              (substring (symbol-name nomis/system-name) ; noflycheck
                          1)
               ".org"))
 
@@ -342,9 +344,9 @@
     (setq org-agenda-files
           (progn
             (load-library "find-lisp")
-            (find-lisp-find-files org-directory
+            (find-lisp-find-files org-directory ; noflycheck
                                   "\\\.org$"))))
-  (defadvice org-todo-list (before reset-agenda-files
+  (defadvice org-todo-list (before reset-agenda-files ; noflycheck
                                    activate compile)
     (nomis/org-reset-org-agenda-files)))
 
@@ -544,7 +546,7 @@
     (output-path &optional (n-attempts 1))
   (cl-flet ((sleep-a-bit
              ()
-             (sleep-for 0 nomis/org-export-apply-hacks-sleep-ms)))
+             (sleep-for nomis/org-export-apply-hacks-sleep-ms)))
     (cond ((file-exists-p output-path)
            (sleep-a-bit) ; in case file exists but writing hasn't finished
            (get-string-from-file output-path))
@@ -564,7 +566,7 @@
     (write-region s nil input-path)
     (unwind-protect
         (progn
-          (nomis/run-clojure
+          (nomis/run-clojure ; noflycheck
            (format "(do (require '[nomis-blog.layer-2-domain.content.source.org-mode-source.pre-parse-transforms :as ppt])
                          (ppt/org-export-apply-hacks-to-file :latex
                                                               \"%s\"
@@ -654,7 +656,7 @@
 (defun -nomis/org-grab-heading-text ()
   (save-excursion
     ;; Jump to first word of heading
-    (norg/w/back-to-heading)
+    (norg/w/back-to-heading) ; noflycheck
     (forward-word)
     (backward-word)
     ;; Grab text of heading
@@ -691,15 +693,15 @@
       (norg/w/back-to-heading))
     (or (search-for-text)
         (progn
-          (end-of-buffer)
+          (goto-char (point-max))
           (search-for-text))))
-  (norg/show-point))
+  (norg/show-point)) ; noflycheck
 
 (defun nomis/org-search-heading-text ()
   (setq -nomis/org-search-heading-text/text (-nomis/org-grab-heading-text))
   (unless (and org-mark-ring
                (ignore-errors ; without this, we can get "Marker does not point anywhere" errors
-                 (= (first org-mark-ring)
+                 (= (cl-first org-mark-ring)
                     (point))))
     ;; Note: Ive tried customising `org-mark-ring-length` using
     ;; `customize-variable`, but I can't get it to work. There's a comment in
@@ -757,7 +759,7 @@ limit the search to the current buffer."
          "Show all headlines in the buffer, like a table of contents.
 With numerical argument N, show content up to level N."
          (interactive "P")
-         (org-show-all '(headings drawers))
+         (org-show-all '(headings drawers)) ; noflycheck
          (save-excursion
            (goto-char (point-max))
            (let ((regexp (if (and (wholenump arg) (> arg 0))
@@ -765,7 +767,7 @@ With numerical argument N, show content up to level N."
                            "^\\*+ "))
                  (last (point)))
              (while (re-search-backward regexp nil t)
-               (org-flag-region (line-end-position) last t 'outline)
+               (org-flag-region (line-end-position) last t 'outline) ; noflycheck
                (setq last (line-end-position 0)))))))
       ((version<= "9.5.5" org-version)
        ;; It's fixed now.

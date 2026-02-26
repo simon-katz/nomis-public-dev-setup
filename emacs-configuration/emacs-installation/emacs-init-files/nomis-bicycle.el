@@ -1,10 +1,12 @@
-;;; -- nomis-bicycle --  -*- lexical-binding: t -*-
+;;; nomis-bicycle.el --- Nomis bicycle  -*- lexical-binding: t; -*-
 
 ;;; Code:
 
 ;;;; Requires
 
 (require 'bicycle)
+(require 'nomis-msg)
+(require 'nomis-outline)
 
 ;;;; Thoughts on bicycle
 
