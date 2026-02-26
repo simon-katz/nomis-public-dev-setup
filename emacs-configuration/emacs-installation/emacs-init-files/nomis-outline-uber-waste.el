@@ -1,8 +1,10 @@
 ;;; nomis-outline-uber-waste -- -*- lexical-binding: t -*-
 
+;;; Code:
+
 (error "nomis-outline-uber-waste is not for loading")
 
-;;; Utilities
+;;;; Utilities
 
 (defun -nomis/outline/making-visible (f) ; TODO: Unused.
   (save-excursion
@@ -23,7 +25,7 @@
           " \\|("
           "\\)"))
 
-;;; Other stuff
+;;;; Other stuff
 
 (defun nomis/outline/previous-heading-v001 ()
   (interactive)

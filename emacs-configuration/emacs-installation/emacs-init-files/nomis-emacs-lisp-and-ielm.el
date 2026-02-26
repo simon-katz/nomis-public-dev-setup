@@ -1,6 +1,8 @@
 ;;; nomis-emacs-lisp-and-ielm.el --- emacs-lisp and ielm  -*- lexical-binding: t; -*-
 
-;;; Describe symbol at point
+;;; Code:
+
+;;;; Describe symbol at point
 
 ;; This is a replacement for `elisp-slime-nav`'s describe feature.
 
@@ -20,15 +22,15 @@
   (define-key ielm-map (kbd "C-c C-d d") #'nomis/describe-symbol)
   (define-key ielm-map (kbd "C-c C-d C-d") #'nomis/describe-symbol))
 
-;;; xref
+;;;; xref
 
-;;;; Make xref work in ielm
+;;;;; Make xref work in ielm
 
 (add-hook 'ielm-mode-hook
           (lambda ()
             (add-hook 'xref-backend-functions #'elisp--xref-backend nil t)))
 
-;;;; Make xref buffers use same window
+;;;;; Make xref buffers use same window
 
 ;; This affects all modes, not just emacs-lisp and ielm. Maybe that's OK.
 
@@ -36,11 +38,11 @@
              '("\\*xref\\*"
                (display-buffer-same-window)))
 
-;;;; On `M-.` for package name, return to previous position in file
+;;;;; On `M-.` for package name, return to previous position in file
 
 ;; By default it goes to the `(provide ...)` line. Yeuch!
 
-;;;;; Update `save-place-alist` on every command
+;;;;;; Update `save-place-alist` on every command
 
 ;; By default, Emacs only updates `save-place-alist` when we kill a buffer or
 ;; exit Emacs. If we are jumping back and forth between open buffers, the
@@ -53,7 +55,7 @@
 
 (add-hook 'post-command-hook 'nomis/save-place-to-alist)
 
-;;;;; Add advice to `xref-find-definitions`
+;;;;;; Add advice to `xref-find-definitions`
 
 ;; Restore position if we landed on '(provide ...)'.
 
@@ -82,7 +84,7 @@
 
 (advice-add 'xref-find-definitions :after 'nomis/xref-restore-pos-if-stupid-place)
 
-;;; Linting and flycheck-mode
+;;;; Linting and flycheck-mode
 
 (defun -nomis/emacs-lisp/set-up-flycheck ()
   (flycheck-mode))
@@ -92,7 +94,7 @@
 (with-eval-after-load 'flycheck
   (setq-default flycheck-disabled-checkers '(emacs-lisp-checkdoc)))
 
-;;; Other stuff
+;;;; Other stuff
 
 (defvar nomis/lisp-and-ielm-mode-hook-functions
   `(rainbow-delimiters-mode

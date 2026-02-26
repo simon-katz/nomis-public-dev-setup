@@ -1,10 +1,12 @@
 ;;; -- nomis-bicycle --  -*- lexical-binding: t -*-
 
-;;; Requires
+;;; Code:
+
+;;;; Requires
 
 (require 'bicycle)
 
-;;; Thoughts on bicycle
+;;;; Thoughts on bicycle
 
 ;; `bicycle` combines `outline` and `hideshow`.
 ;;
@@ -14,9 +16,9 @@
 ;; Now we have (or will have) `nomis-tree`, which makes some of
 ;; `bicycle` unnecessary.
 
-;;; Bicycle tailoring
+;;;; Bicycle tailoring
 
-;;;; Provide feedback in `bicycle-cycle-local`
+;;;;; Provide feedback in `bicycle-cycle-local`
 
 (defvar *nomis/outline/in-bicycle-cycle-local?* nil)
 
@@ -35,7 +37,7 @@
               (apply orig-fun args))
             '((name . nomis/outline/bicycle-feedback)))
 
-;;;; Provide feedback in `bicycle-cycle-global`
+;;;;; Provide feedback in `bicycle-cycle-global`
 
 (defvar *nomis/outline/in-bicycle-cycle-global?* nil)
 
