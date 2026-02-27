@@ -55,8 +55,7 @@
   ((k (eql :org)) arg)
   (norg/show-children-from-point/incremental/more arg))
 
-(cl-defmethod nomis/tree/show-children-from-point/set-min--aux
-  ((k (eql :org)))
+(cl-defmethod nomis/tree/show-children-from-point/set-min--aux ((k (eql :org)))
   (norg/show-children-from-point/set-min))
 
 (cl-defmethod nomis/tree/show-children-from-point/fully-expand--aux
@@ -73,8 +72,7 @@
   ((k (eql :org)) arg)
   (norg/show-children-from-parent/incremental/more arg))
 
-(cl-defmethod nomis/tree/show-children-from-parent/set-min--aux
-  ((k (eql :org)))
+(cl-defmethod nomis/tree/show-children-from-parent/set-min--aux ((k (eql :org)))
   (norg/show-children-from-parent/set-min))
 
 (cl-defmethod nomis/tree/show-children-from-parent/fully-expand--aux
@@ -119,8 +117,7 @@
   ((k (eql :org)) arg)
   (norg/show-children-from-root/incremental/more arg))
 
-(cl-defmethod nomis/tree/show-children-from-root/set-min--aux
-  ((k (eql :org)))
+(cl-defmethod nomis/tree/show-children-from-root/set-min--aux ((k (eql :org)))
   (norg/show-children-from-root/set-min))
 
 (cl-defmethod nomis/tree/show-children-from-root/fully-expand--aux
@@ -143,8 +140,7 @@
 (cl-defmethod nomis/tree/next-sibling--aux ((k (eql :org)))
   (norg/next-sibling))
 
-(cl-defmethod nomis/tree/previous-peer--aux
-  ((k (eql :org)))
+(cl-defmethod nomis/tree/previous-peer--aux ((k (eql :org)))
   (norg/previous-peer))
 
 (cl-defmethod nomis/tree/next-peer--aux ((k (eql :org)))

@@ -42,8 +42,7 @@
 
 ;;;;; nomis/tree/set-step-n-levels-to-show
 
-(cl-defmethod nomis/tree/set-step-n-levels-to-show--aux ((k (eql :outline))
-                                                         _n)
+(cl-defmethod nomis/tree/set-step-n-levels-to-show--aux ((k (eql :outline)) _n)
   (nomis/tree/unimplemented-method k))
 
 ;;;;; Expand/collapse from point
@@ -144,12 +143,10 @@
 (cl-defmethod nomis/tree/next-sibling--aux ((_k (eql :outline)))
   (nomis/outline/next-sibling 1))
 
-(cl-defmethod nomis/tree/previous-peer--aux
-  ((_k (eql :outline)))
+(cl-defmethod nomis/tree/previous-peer--aux ((_k (eql :outline)))
   (nomis/outline/previous-peer 1))
 
-(cl-defmethod nomis/tree/next-peer--aux
-  ((_k (eql :outline)))
+(cl-defmethod nomis/tree/next-peer--aux ((_k (eql :outline)))
   (nomis/outline/next-peer 1))
 
 ;;;;; Movement + expand/collapse
