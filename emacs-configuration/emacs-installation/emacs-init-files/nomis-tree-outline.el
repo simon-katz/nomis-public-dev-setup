@@ -49,11 +49,11 @@
 
 (cl-defmethod nomis/tree/show-children-from-point/incremental/less--aux
   ((k (eql :outline)) _n)
-  (nomis/tree/unimplemented-method k))
+  (nomis/outline/dec-children))
 
 (cl-defmethod nomis/tree/show-children-from-point/incremental/more--aux
   ((k (eql :outline)) _n)
-  (nomis/tree/unimplemented-method k))
+  (nomis/outline/inc-children))
 
 (cl-defmethod nomis/tree/show-children-from-point/set-min--aux
   ((k (eql :outline)))
