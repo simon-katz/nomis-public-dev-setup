@@ -5,6 +5,7 @@
 ;;;; Requires
 
 (require 'nomis-msg)
+(require 'nomis-outline-uber)
 (require 'nomis-tree)
 (require 'nomis-very-general-stuff-new-lexical)
 (require 'org)
@@ -135,16 +136,12 @@ H-q H-q /    Show this help")
   (nomis/define-key-with-filter nomis/tree-mode-map
                                 key
                                 'nomis/tree/tab
-                                (and (norg/w/at-heading-p)
-                                     (or (null prefix-arg)
-                                         (integerp prefix-arg)))))
+                                (nomis/outline/on-heading?)))
 
 ;;;;; Shifttab
 
-;; `shifttab` in `org-mode` is bound to `org-shifttab`, in which null and
-;; numeric prefix args have special functionality. We want those for
-;; "incremental/less" functionality, so we preserve access to `org-shifttab`
-;; using a separate key binding.
+;; `shifttab` in `org-mode` is bound to `org-shifttab`. We mirror what we do
+;; with `tab`.
 
 ;; Arguably this belongs in `nomis-org-key-bindings`, but perhaps having it here
 ;; is clearer.
@@ -156,7 +153,10 @@ H-q H-q /    Show this help")
     ,(kbd "<backtab>")))
 
 (dolist (key -nomis/tree/shifttab-keys)
-  (define-key nomis/tree-mode-map key 'nomis/tree/shifttab))
+  (nomis/define-key-with-filter nomis/tree-mode-map
+                                key
+                                'nomis/tree/shifttab
+                                (nomis/outline/on-heading?)))
 
 ;;;; `bicycle-cycle-global`
 
