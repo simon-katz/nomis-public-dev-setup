@@ -29,7 +29,7 @@
 
 ;;;;; Simple outline wrappers
 
-(defun -nomis/outline/on-heading? ()
+(defun nomis/outline/on-heading? ()
   (outline-on-heading-p t))
 
 (defun -nomis/outline/on-visible-heading? ()
@@ -49,26 +49,26 @@
 
 (defun -nomis/outline/at-beginning-of-heading? ()
   (and (bolp)
-       (-nomis/outline/on-heading?)))
+       (nomis/outline/on-heading?)))
 
 (defun -nomis/outline/on-top-level-heading? ()
   "Are we on a top-level heading?"
   ;; `(outline-level)` and `(funcall outline-level)` return weird numbers in
   ;; some modes. This, we hope, is bulletproof.
   (save-excursion
-    (when (-nomis/outline/on-heading?)
+    (when (nomis/outline/on-heading?)
       (let* ((olevel (funcall outline-level)))
         (ignore-errors
           ;; `ignore-errors` is needed when before first heading.
           (-nomis/outline/up-heading 1))
-        (or (not (-nomis/outline/on-heading?)) ; blank lines at top of file?
+        (or (not (nomis/outline/on-heading?)) ; blank lines at top of file?
             (= olevel (funcall outline-level)))))))
 
 (defun -nomis/outline/top-level-level ()
-  (cl-assert (-nomis/outline/on-heading?))
+  (cl-assert (nomis/outline/on-heading?))
   (save-excursion
     (goto-char (point-min))
-    (unless (-nomis/outline/on-heading?) (outline-next-heading))
+    (unless (nomis/outline/on-heading?) (outline-next-heading))
     (funcall outline-level)))
 
 (defun -nomis/outline/ensure-heading-shown ()
@@ -159,7 +159,7 @@
       (let* ((parent-points
               (let* ((ps '()))
                 (save-excursion
-                  (while (and (-nomis/outline/on-heading?)
+                  (while (and (nomis/outline/on-heading?)
                               (not (-nomis/outline/on-top-level-heading?)))
                     (-nomis/outline/up-heading 1)
                     (push (point) ps)))
@@ -257,8 +257,8 @@
             (:peer
              (-nomis/outline/prev-next-same-level direction :peer)))
           (when (and (/= (point) start)
-                     (-nomis/outline/on-heading?))
-            ;; ^^ Check of `(-nomis/outline/on-heading?)` needed because
+                     (nomis/outline/on-heading?))
+            ;; ^^ Check of `(nomis/outline/on-heading?)` needed because
             ;;    `-nomis/outline/prev-or-next` goes to BOF or EOF when there's
             ;;    no prev/next heading.
             (point)))))))
