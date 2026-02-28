@@ -124,9 +124,17 @@ H-q H-q /    Show this help")
 
 ;;;;; Tab
 
-;; `tab` in `org-mode` is bound to `org-cycle`, in which null and numeric prefix
-;; args at a heading do visibility cycling. We replace that functionality, using
-;; a filter, with our "incremental/more" functionality.
+;; Preserve access to built-in `tab` functionality. Arguably this
+;; belongs in `nomis-org-key-bindings`, but perhaps having it here is clearer.
+
+(defconst -nomis/tree/org-cycle-keys
+  `(,(kbd "<f18>") ; H-tab via Karabiner Elements
+    ))
+
+(dolist (key -nomis/tree/org-cycle-keys)
+  (define-key org-mode-map key 'org-cycle))
+
+;; Override the `tab` key binding.
 
 (defconst -nomis/tree/tab-keys
   ;; These keys are copied from `org`.
@@ -140,12 +148,17 @@ H-q H-q /    Show this help")
 
 ;;;;; Shifttab
 
-;; `shifttab` in `org-mode` is bound to `org-shifttab`. We mirror what we do
-;; with `tab`.
+;; Preserve access to built-in `shifttab` functionality. See the comment for
+;; `Tab`.
 
-;; Arguably this belongs in `nomis-org-key-bindings`, but perhaps having it here
-;; is clearer.
-(define-key org-mode-map (kbd "H-`") 'org-shifttab) ; preserve access
+(defconst -nomis/tree/org-shifttab-keys
+  `(,(kbd "<f19>") ; H-shift-tab via Karabiner Elements
+    ))
+
+(dolist (key -nomis/tree/org-shifttab-keys)
+  (define-key org-mode-map key 'org-shifttab))
+
+;; Override the `shifttab` key binding.
 
 (defconst -nomis/tree/shifttab-keys
   ;; These keys are copied from `org`.
