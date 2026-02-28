@@ -1044,7 +1044,6 @@ that is already being displayed."
 ;;;;; norg/show-children-from-point/xxxx
 
 (defun norg/show-children-from-point (n)
-  (interactive "^p")
   "Show N levels from the current headline, and collapse anything that's
 at a higher level.
 When in a body, \"current headline\" means the current body's parent headline."
@@ -1097,7 +1096,6 @@ When in a body, \"current headline\" means the current body's parent headline."
 
 (defun norg/show-children-from-parent (n)
   "Like `norg/show-children-from-point`, but from the current entry's parent."
-  (interactive "^p")
   (norg/save-excursion-to-parent-and-then-show-point
     (norg/show-children-from-point n)))
 
@@ -1147,7 +1145,6 @@ the parameter."
 ;;;;; norg/show-children-from-root/xxxx
 
 (defun norg/show-children-from-root (n)
-  (interactive "^p")
   (let* ((v n))
     (norg/-show-children-from-root/set-level-etc v :no-check :dummy)))
 
@@ -1197,7 +1194,6 @@ the parameter."
 ;;;;; norg/show-children-from-all-roots/xxxx
 
 (defun norg/show-children-from-all-roots (n)
-  (interactive "^p")
   (let* ((v n))
     (norg/-show-children-from-all-roots/set-level-etc v :no-check :dummy)))
 
