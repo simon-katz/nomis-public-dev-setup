@@ -891,17 +891,6 @@ When in a body, \"current headline\" means the current body's parent headline."
 
 ;;;; Expanding and collapsing
 
-;;;;; General support
-
-(defun norg/-unmodified-value-and-arg->level (unmodified-value arg setting-kind)
-  (let* ((delta (if (numberp arg) arg 1))
-         (f (cl-ecase setting-kind
-              (:less #'-)
-              (:more #'+))))
-    (funcall f
-             unmodified-value
-             delta)))
-
 ;;;;; norg/-set-level-etc
 
 (defun norg/-out-of-range (v maximum setting-kind current-value)
@@ -1066,9 +1055,8 @@ If `N` is provided, set the number of child levels to `N`.
 When in a body, \"current headline\" means the current body's parent headline."
   (if n
       (norg/show-children-from-point n)
-    (let* ((v (-> (norg/start-level-for-incremental-contract)
-                  (norg/-unmodified-value-and-arg->level n :less))))
-      (norg/-show-children-from-point/set-level-etc v :less :dummy))))
+    (norg/-show-children-from-point/set-level-etc
+     (1- (norg/start-level-for-incremental-contract)) :less :dummy)))
 
 (defun norg/show-children-from-point/incremental/more (n)
   "If `N` is not provided, expand the current headline by one level.
@@ -1076,9 +1064,8 @@ If `N` is provided, set the number of child levels to `N`.
 When in a body, \"current headline\" means the current body's parent headline."
   (if n
       (norg/show-children-from-point n)
-    (let* ((v (-> (norg/n-levels-being-shown-or-infinity)
-                  (norg/-unmodified-value-and-arg->level n :more))))
-      (norg/-show-children-from-point/set-level-etc v :more :dummy))))
+    (norg/-show-children-from-point/set-level-etc
+     (1+ (norg/n-levels-being-shown-or-infinity)) :more :dummy)))
 
 ;;;;; norg/show-children-from-parent/xxxx support
 
@@ -1165,18 +1152,16 @@ the parameter."
 If `N` is provided, set the number of child levels to `N`."
   (if n
       (norg/show-children-from-root n)
-    (let* ((v (-> (norg/start-level-for-incremental-contract/root)
-                  (norg/-unmodified-value-and-arg->level n :less))))
-      (norg/-show-children-from-root/set-level-etc v :less :dummy))))
+    (norg/-show-children-from-root/set-level-etc
+     (1- (norg/start-level-for-incremental-contract/root)) :less :dummy)))
 
 (defun norg/show-children-from-root/incremental/more (n)
   "If `N` is not provided, expand the current headline's root by one level.
 If `N` is provided, set the number of child levels to `N`."
   (if n
       (norg/show-children-from-root n)
-    (let* ((v (-> (norg/n-levels-being-shown-or-infinity/root)
-                  (norg/-unmodified-value-and-arg->level n :more))))
-      (norg/-show-children-from-root/set-level-etc v :more :dummy))))
+    (norg/-show-children-from-root/set-level-etc
+     (1+ (norg/n-levels-being-shown-or-infinity/root)) :more :dummy)))
 
 (defun norg/show-children-from-root/to-current-level ()
   (let* ((v (1- (norg/current-level t))))
@@ -1220,18 +1205,16 @@ the parameter."
 If `N` is provided, set the number of child levels to `N`."
   (if n
       (norg/show-children-from-all-roots n)
-    (let* ((v (-> (norg/start-level-for-incremental-contract/buffer)
-                  (norg/-unmodified-value-and-arg->level n :less))))
-      (norg/-show-children-from-all-roots/set-level-etc v :less :dummy))))
+    (norg/-show-children-from-all-roots/set-level-etc
+     (1- (norg/start-level-for-incremental-contract/buffer)) :less :dummy)))
 
 (defun norg/show-children-from-all-roots/incremental/more (n)
   "If `N` is not provided, expand all roots by one level.
 If `N` is provided, set the number of child levels to `N`."
   (if n
       (norg/show-children-from-all-roots n)
-    (let* ((v (-> (norg/n-levels-being-shown-or-infinity/buffer)
-                  (norg/-unmodified-value-and-arg->level n :more))))
-      (norg/-show-children-from-all-roots/set-level-etc v :more :dummy))))
+    (norg/-show-children-from-all-roots/set-level-etc
+     (1+ (norg/n-levels-being-shown-or-infinity/buffer)) :more :dummy)))
 
 (defun norg/show-children-from-all-roots/to-current-level ()
   (let* ((v (1- (norg/current-level t))))
