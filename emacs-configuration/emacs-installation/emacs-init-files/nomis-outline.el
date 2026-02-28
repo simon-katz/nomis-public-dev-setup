@@ -63,7 +63,6 @@
 ;;   then all.
 ;;
 ;; - Now we are in the process of implementing `nomis-tree`.
-;;   - See `nomis/tree/tab--aux` `:outline` method.
 ;;   - We will no longer need `bicycle` when we have implemented `:outline`
 ;;     versions of
 ;;     `nomis/tree/show-children-from-all-roots/incremental/less--aux` and

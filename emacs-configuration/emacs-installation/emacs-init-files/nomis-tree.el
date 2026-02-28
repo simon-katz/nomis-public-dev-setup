@@ -46,7 +46,8 @@
 
 ;;;; Hide-show
 
-;; TODO: We could integrate hide-show -- so eg `nomis/tree/tab` `:outline`
+;; TODO: We could integrate hide-show -- so eg
+;;       `nomis/tree/show-children-from-point/incremental/more` `:outline`
 ;;       method could do `nomis/hs/adjust/more` for children that are code.
 
 ;; TODO: The key bindings for hide-show will need to be made different (because
@@ -370,23 +371,6 @@ the current entry's parent."
   (-nomis/tree/command
       nil
     (nomis/tree/show-children-from-root/fully-expand--aux (-nomis/tree/mode))))
-
-;;;;; Tab and shifttab
-
-(cl-defgeneric nomis/tree/tab--aux (k))
-(cl-defgeneric nomis/tree/shifttab--aux (k))
-
-(defun nomis/tree/tab (arg)
-  (interactive "P")
-  (-nomis/tree/command
-      nil
-    (nomis/tree/tab--aux (-nomis/tree/mode) arg)))
-
-(defun nomis/tree/shifttab (arg)
-  (interactive "P")
-  (-nomis/tree/command
-      nil
-    (nomis/tree/shifttab--aux (-nomis/tree/mode) arg)))
 
 ;;;;; Movement
 

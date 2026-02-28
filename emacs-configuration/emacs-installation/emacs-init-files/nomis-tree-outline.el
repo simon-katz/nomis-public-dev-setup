@@ -127,14 +127,6 @@
   ((k (eql :outline)))
   (nomis/tree/unimplemented-method k))
 
-;;;;; Tab and shifttab
-
-(cl-defmethod nomis/tree/tab--aux ((_k (eql :outline)) arg)
-  (nomis/outline/tab arg))
-
-(cl-defmethod nomis/tree/shifttab--aux ((_k (eql :outline)) _arg)
-  (nomis/outline/dec-children))
-
 ;;;;; Movement
 
 (cl-defmethod nomis/tree/previous-sibling--aux ((_k (eql :outline)))

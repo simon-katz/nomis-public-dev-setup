@@ -324,9 +324,7 @@
           ;; TODO: At some point change this to look at the actual text rather
           ;;       than relying on `-nomis/outline/increments-children-approach`.
           (if (member (-nomis/outline/last-command)
-                      '(nomis/tree/tab
-                        nomis/tree/shifttab
-                        nomis/tree/show-children-from-point/incremental/more
+                      '(nomis/tree/show-children-from-point/incremental/more
                         nomis/tree/show-children-from-point/incremental/less))
               -nomis/outline/increments-children-approach
             ;; TODO: These out-of-range values are a bit "clever".

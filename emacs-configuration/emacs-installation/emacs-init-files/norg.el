@@ -1227,24 +1227,6 @@ the parameter."
   (let* ((v (1- (norg/current-level t))))
     (norg/-show-children-from-all-roots/set-level-etc v :no-check :dummy)))
 
-;;;; Tab and shifttab
-
-(defun norg/tab (arg)
-  (cond ((null arg)
-         (norg/show-children-from-point/incremental/more))
-        ((integerp arg)
-         (norg/show-children-from-point arg))
-        (t
-         (error "norg/tab: Unexpected arg: %s" arg))))
-
-(defun norg/shifttab (arg)
-  (cond ((null arg)
-         (norg/show-children-from-point/incremental/less))
-        ((integerp arg)
-         (norg/show-children-from-point arg))
-        (t
-         (error "norg/shifttab: Unexpected arg: %s" arg))))
-
 ;;; End
 
 (provide 'norg)

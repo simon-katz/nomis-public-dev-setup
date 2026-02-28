@@ -124,14 +124,6 @@
   ((k (eql :org)))
   (norg/show-children-from-root/fully-expand))
 
-;;;;; Tab and shifttab
-
-(cl-defmethod nomis/tree/tab--aux ((k (eql :org)) arg)
-  (norg/tab arg))
-
-(cl-defmethod nomis/tree/shifttab--aux ((k (eql :org)) arg)
-  (norg/shifttab arg))
-
 ;;;;; Movement
 
 (cl-defmethod nomis/tree/previous-sibling--aux ((k (eql :org)))
