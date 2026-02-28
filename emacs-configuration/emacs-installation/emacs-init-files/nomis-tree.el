@@ -216,7 +216,8 @@
 (cl-defgeneric nomis/tree/show-children-from-point/fully-expand--aux (k))
 
 (defun nomis/tree/show-children-from-point/incremental/less (n)
-  "Incrementally collapse the current heading by `N` levels, default 1.
+  "Incrementally collapse the current heading by 1 level.
+With a numeric prefix `N`, set the number of visible levels to exactly `N`.
 When in a body, \"current heading\" means the current body's parent heading."
   (interactive "P")
   (-nomis/tree/command
@@ -225,7 +226,8 @@ When in a body, \"current heading\" means the current body's parent heading."
                                                                n)))
 
 (defun nomis/tree/show-children-from-point/incremental/more (n)
-  "Incrementally expand the current heading by `N` levels, default 1.
+  "Incrementally expand the current heading by 1 level.
+With a numeric prefix `N`, set the number of visible levels to exactly `N`.
 When in a body, \"current heading\" means the current body's parent heading."
   (interactive "P")
   (-nomis/tree/command
@@ -257,17 +259,17 @@ When in a body, \"current heading\" means the current body's parent heading."
 (cl-defgeneric nomis/tree/show-children-from-parent/fully-expand--aux (k))
 
 (defun nomis/tree/show-children-from-parent/incremental/less (n)
-  "Like `nomis/tree/show-children-from-point/incremental/less`, but
-from the current entry's parent and with the parent always
-expanded at least one level."
+  "Like `nomis/tree/show-children-from-point/incremental/less`, but from
+the current entry's parent and with the parent always expanded at least
+one level."
   (interactive "P")
   (-nomis/tree/command
       nil
     (nomis/tree/show-children-from-parent/incremental/less--aux (-nomis/tree/mode) n)))
 
 (defun nomis/tree/show-children-from-parent/incremental/more (n)
-  "Like `nomis/tree/show-children-from-point/incremental/more`, but
-from the current entry's parent."
+  "Like `nomis/tree/show-children-from-point/incremental/more`, but from
+the current entry's parent."
   (interactive "P")
   (-nomis/tree/command
       nil
@@ -314,14 +316,16 @@ the current entry's parent."
 (cl-defgeneric nomis/tree/show-children-from-all-roots/fully-expand--aux (k))
 
 (defun nomis/tree/show-children-from-all-roots/incremental/less (n)
-  "Incrementally collapse all roots by `N` levels, default 1."
+  "Incrementally collapse all roots by 1 level.
+With a numeric prefix `N`, set the number of visible levels to exactly `N`."
   (interactive "P")
   (-nomis/tree/command
       nil
     (nomis/tree/show-children-from-all-roots/incremental/less--aux (-nomis/tree/mode) n)))
 
 (defun nomis/tree/show-children-from-all-roots/incremental/more (n)
-  "Incrementally expand all roots by `N` levels, default 1."
+  "Incrementally expand all roots by 1 level.
+With a numeric prefix `N`, set the number of visible levels to exactly `N`."
   (interactive "P")
   (-nomis/tree/command
       nil
@@ -347,14 +351,16 @@ the current entry's parent."
 (cl-defgeneric nomis/tree/show-children-from-root/fully-expand--aux (k))
 
 (defun nomis/tree/show-children-from-root/incremental/less (n)
-  "Incrementally collapse the current root by `N` levels, default 1."
+  "Incrementally collapse the current root by 1 level.
+With a numeric prefix `N`, set the number of visible levels to exactly `N`."
   (interactive "P")
   (-nomis/tree/command
       nil
     (nomis/tree/show-children-from-root/incremental/less--aux (-nomis/tree/mode) n)))
 
 (defun nomis/tree/show-children-from-root/incremental/more (n)
-  "Incrementally expand the current root by `N` levels, default 1."
+  "Incrementally expand the current root by 1 level.
+With a numeric prefix `N`, set the number of visible levels to exactly `N`."
   (interactive "P")
   (-nomis/tree/command
       nil
