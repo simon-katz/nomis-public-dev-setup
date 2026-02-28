@@ -830,27 +830,24 @@ When in a body, \"current headline\" means the current body's parent headline."
 
              do (setq just-did-a-body? has-body?))))
 
-(defun norg/fully-expanded? (&optional tree-info)
+(defun norg/fully-expanded? ()
   "Is the tree beneath the current headline fully expanded?
 When in a body, \"current headline\" means the current body's parent headline."
-  (setq tree-info (or tree-info (norg/-tree-info)))
   (cl-loop for (level visible? dummy?)
-           in tree-info
+           in (norg/-tree-info)
            when (not dummy?)
            always visible?))
 
-(defun norg/level-for-incremental-contract (&optional tree-info)
+(defun norg/level-for-incremental-contract ()
   "The level to use when incrementally collapsing the current headline.
 When in a body, \"current headline\" means the current body's parent headline."
   ;; Collapse the most-deeply-nested expanded level, and expand everything
   ;; else to that level.
-  (setq tree-info (or tree-info
-                      (norg/-tree-info)))
   (let* ((v (let* ((deepest-visible-levels
                     (cl-loop for ((prev-level prev-visible?)
                                   . ((level visible?) . _))
                              on (cons '(most-negative-fixnum t)
-                                      tree-info)
+                                      (norg/-tree-info))
                              when (and prev-visible?
                                        (not visible?)
                                        (> level prev-level))
