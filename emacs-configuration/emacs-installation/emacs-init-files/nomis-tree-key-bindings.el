@@ -59,13 +59,13 @@ Use H with various other keys:
 
 H-M-m        nomis/tree/show-tree-only
 
-H-q H-q s    nomis/tree/set-step-n-levels-to-show
+H-q H-q H-s  nomis/tree/set-step-n-levels-to-show
 H-q H-q m    nomis/scrolling/toggle-maintain-line-no-in-window
 
-H-q H-q ]    nomis/tree/show-children-from-root/to-current-level
-H-q H-q =    nomis/tree/show-children-from-all-roots/to-current-level
+H-q H-q H-]  nomis/tree/show-children-from-root/to-current-level
+H-q H-q H-=  nomis/tree/show-children-from-all-roots/to-current-level
 
-H-q H-q /    Show this help")
+H-q H-q H-/  Show this help")
 
 (defun nomis/tree/pop-up-help ()
   (interactive)
@@ -75,7 +75,7 @@ H-q H-q /    Show this help")
     (2 (with-help-window (help-buffer)
          (princ -nomis/tree/help)))))
 
-(define-key nomis/tree-mode-map (kbd "H-q H-q /") 'nomis/tree/pop-up-help)
+(define-key nomis/tree-mode-map (kbd "H-q H-q H-/") 'nomis/tree/pop-up-help)
 
 
 ;;;; Search heading text
@@ -97,7 +97,7 @@ H-q H-q /    Show this help")
 
 ;;;; nomis/tree/set-step-n-levels-to-show
 
-(define-key nomis/tree-mode-map (kbd "H-q H-q s") 'nomis/tree/set-step-n-levels-to-show)
+(define-key nomis/tree-mode-map (kbd "H-q H-q H-s") 'nomis/tree/set-step-n-levels-to-show)
 
 ;;;; Expand/collapse
 
@@ -117,8 +117,8 @@ H-q H-q /    Show this help")
 (define-key nomis/tree-mode-map (kbd "H-=")       'nomis/tree/show-children-from-all-roots/incremental/more)
 (define-key nomis/tree-mode-map (kbd "H-M--")     'nomis/tree/show-children-from-all-roots/set-min)
 (define-key nomis/tree-mode-map (kbd "H-M-=")     'nomis/tree/show-children-from-all-roots/fully-expand)
-(define-key nomis/tree-mode-map (kbd "H-q H-q ]") 'nomis/tree/show-children-from-root/to-current-level)
-(define-key nomis/tree-mode-map (kbd "H-q H-q =") 'nomis/tree/show-children-from-all-roots/to-current-level)
+(define-key nomis/tree-mode-map (kbd "H-q H-q H-]") 'nomis/tree/show-children-from-root/to-current-level)
+(define-key nomis/tree-mode-map (kbd "H-q H-q H-=") 'nomis/tree/show-children-from-all-roots/to-current-level)
 
 ;;;; Tab and shifttab
 
