@@ -307,49 +307,63 @@
   (outline-show-all)
   (nomis/msg/pulse-buffer))
 
-;;;;; nomis/outline/inc-children / nomis/outline/dec-children
+;;;;; nomis/outline/show-children-from-point/xxxx
 
 (defvar -nomis/outline/increments-children-approach)
 
-(defun -nomis/outline/inc-dec-message (approach)
-  (cl-ecase approach
-    (0 (nomis/popup/message "Folded"))
-    (1 (nomis/popup/message "Body"))
-    (2 (nomis/popup/message "Children"))
-    (3 (nomis/popup/message "Branches"))
-    (4 (nomis/popup/message "Subtree"))))
+(defun -nomis/outline/increments-children-approach/get ()
+  ;; TODO: At some point change this to look at the actual text rather than
+  ;;       relying on `-nomis/outline/increments-children-approach`.
+  (when (member (-nomis/outline/last-command)
+                '(nomis/tree/show-children-from-point/incremental/more
+                  nomis/tree/show-children-from-point/incremental/less))
+    -nomis/outline/increments-children-approach))
 
-(defun nomis/outline/show-lineage-with-incs-or-decs (inc-or-dec)
-  (let* ((current-approach
-          ;; TODO: At some point change this to look at the actual text rather
-          ;;       than relying on `-nomis/outline/increments-children-approach`.
-          (if (member (-nomis/outline/last-command)
-                      '(nomis/tree/show-children-from-point/incremental/more
-                        nomis/tree/show-children-from-point/incremental/less))
-              -nomis/outline/increments-children-approach
-            ;; TODO: These out-of-range values are a bit "clever".
-            ;;       Maybe rewrite.
-            (cl-ecase inc-or-dec
-              (:inc -1)
-              (:dec (1+ -nomis/outline/children-approach-max))))))
-    (if (= current-approach (cl-ecase inc-or-dec
-                              (:inc -nomis/outline/children-approach-max)
-                              (:dec 0)))
-        (nomis/popup/error-message (cl-ecase inc-or-dec
-                                     (:inc "Already fully expanded")
-                                     (:dec "Already fully collapsed")))
-      (let* ((approach (cl-ecase inc-or-dec
-                         (:inc (1+ current-approach))
-                         (:dec (1- current-approach)))))
-        (setq -nomis/outline/increments-children-approach approach)
-        (-nomis/outline/show-lineage (show-children-lineage-spec approach))
-        (-nomis/outline/inc-dec-message approach)))))
+(defun -nomis/outline/inc-dec-message (approach clamped?)
+  (nomis/popup/message (concat (cl-ecase approach
+                                 (0 "Folded")
+                                 (1 "Body")
+                                 (2 "Children")
+                                 (3 "Branches")
+                                 (4 "Subtree"))
+                               (when clamped? " (clamped)"))))
 
-(defun nomis/outline/inc-children ()
-  (nomis/outline/show-lineage-with-incs-or-decs :inc))
+(defun -nomis/outline/increments-children-approach/set (approach clamped?)
+  (setq -nomis/outline/increments-children-approach approach)
+  (-nomis/outline/show-lineage (show-children-lineage-spec approach))
+  (-nomis/outline/inc-dec-message approach clamped?))
 
-(defun nomis/outline/dec-children ()
-  (nomis/outline/show-lineage-with-incs-or-decs :dec))
+(defun -nomis/outline/set-n-children-from-point (n)
+  (let* ((new-approach (max 0
+                            (min n
+                                 -nomis/outline/children-approach-max)))
+         (clamped? (/= n new-approach)))
+    (-nomis/outline/increments-children-approach/set new-approach
+                                                     clamped?)))
+
+(defun nomis/outline/show-children-from-point/incremental/less (n)
+  (if n
+      (-nomis/outline/set-n-children-from-point n)
+    (let* ((current-approach (-nomis/outline/increments-children-approach/get)))
+      (if (eql current-approach 0)
+          (nomis/popup/error-message "Already fully collapsed")
+        (let* ((new-approach (if current-approach
+                                 (1- current-approach)
+                               -nomis/outline/children-approach-max)))
+          (-nomis/outline/increments-children-approach/set new-approach
+                                                           nil))))))
+
+(defun nomis/outline/show-children-from-point/incremental/more (n)
+  (if n
+      (-nomis/outline/set-n-children-from-point n)
+    (let* ((current-approach (-nomis/outline/increments-children-approach/get)))
+      (if (eql current-approach -nomis/outline/children-approach-max)
+          (nomis/popup/error-message "Already fully expanded")
+        (let* ((new-approach (if current-approach
+                                 (1+ current-approach)
+                               0)))
+          (-nomis/outline/increments-children-approach/set new-approach
+                                                           nil))))))
 
 ;;;;; Search heading text
 

@@ -48,12 +48,12 @@
 ;;;;; Expand/collapse from point
 
 (cl-defmethod nomis/tree/show-children-from-point/incremental/less--aux
-  ((_k (eql :outline)) _n)
-  (nomis/outline/dec-children))
+  ((_k (eql :outline)) n)
+  (nomis/outline/show-children-from-point/incremental/less n))
 
 (cl-defmethod nomis/tree/show-children-from-point/incremental/more--aux
-  ((_k (eql :outline)) _n)
-  (nomis/outline/inc-children))
+  ((_k (eql :outline)) n)
+  (nomis/outline/show-children-from-point/incremental/more n))
 
 (cl-defmethod nomis/tree/show-children-from-point/set-min--aux
   ((k (eql :outline)))
