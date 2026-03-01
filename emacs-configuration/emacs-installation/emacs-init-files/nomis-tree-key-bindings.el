@@ -60,7 +60,7 @@ Use H with various other keys:
 H-M-m        nomis/tree/show-tree-only
 
 H-q H-q H-s  nomis/tree/set-step-n-levels-to-show
-H-q H-q m    nomis/scrolling/toggle-maintain-line-no-in-window
+H-q H-q H-m  nomis/scrolling/toggle-maintain-line-no-in-window
 
 H-q H-q H-]  nomis/tree/show-children-from-root/to-current-level
 H-q H-q H-=  nomis/tree/show-children-from-all-roots/to-current-level
@@ -208,7 +208,10 @@ H-q H-q H-/  Show this help")
 
 ;;;; nomis/scrolling/toggle-maintain-line-no-in-window
 
-(define-key nomis/tree-mode-map (kbd "H-q H-q m") 'nomis/scrolling/toggle-maintain-line-no-in-window)
+(dolist (key `(,(kbd "H-q H-q H-m")
+               ,(kbd "H-q H-q <f17>") ; H-m via Karabiner Elements
+               ))
+  (define-key nomis/tree-mode-map key 'nomis/scrolling/toggle-maintain-line-no-in-window))
 
 ;;; End
 
