@@ -127,21 +127,15 @@ H-q H-q H-/  Show this help")
 ;; Preserve access to built-in `tab` functionality. Arguably this
 ;; belongs in `nomis-org-key-bindings`, but perhaps having it here is clearer.
 
-(defconst -nomis/tree/org-cycle-keys
-  `(,(kbd "H-TAB")
-    ,(kbd "<f18>") ; H-TAB via Karabiner Elements
-    ))
-
-(dolist (key -nomis/tree/org-cycle-keys)
+(dolist (key `(,(kbd "H-TAB")
+               ,(kbd "<f18>") ; H-TAB via Karabiner Elements
+               ))
   (define-key org-mode-map key 'org-cycle))
 
 ;; Override the `tab` key binding.
 
-(defconst -nomis/tree/tab-keys
-  ;; These keys are copied from `org`.
-  `(,(kbd "TAB")))
-
-(dolist (key -nomis/tree/tab-keys)
+(dolist (key `(;; These keys are copied from `org`.
+               ,(kbd "TAB")))
   (nomis/define-key-with-filter nomis/tree-mode-map
                                 key
                                 'nomis/tree/show-children-from-point/incremental/more
@@ -152,22 +146,16 @@ H-q H-q H-/  Show this help")
 ;; Preserve access to built-in `shifttab` functionality. See the comment for
 ;; `Tab`.
 
-(defconst -nomis/tree/org-shifttab-keys
-  `(,(kbd "H-S-TAB")
-    ,(kbd "<f19>") ; H-S-TAB via Karabiner Elements
-    ))
-
-(dolist (key -nomis/tree/org-shifttab-keys)
+(dolist (key `(,(kbd "H-S-TAB")
+               ,(kbd "<f19>") ; H-S-TAB via Karabiner Elements
+               ))
   (define-key org-mode-map key 'org-shifttab))
 
 ;; Override the `shifttab` key binding.
 
-(defconst -nomis/tree/shifttab-keys
-  ;; These keys are copied from `org`.
-  `(,(kbd "S-TAB")
-    ,(kbd "<backtab>")))
-
-(dolist (key -nomis/tree/shifttab-keys)
+(dolist (key `(;; These keys are copied from `org`.
+               ,(kbd "S-TAB")
+               ,(kbd "<backtab>")))
   (nomis/define-key-with-filter nomis/tree-mode-map
                                 key
                                 'nomis/tree/show-children-from-point/incremental/less
