@@ -372,20 +372,6 @@
 
 ;;;;; Movement
 
-;;;;; Tab and shifttab
-
-(defun nomis/outline/tab (arg)
-  ;; TODO: Compare with the `:org` method and extract common functionality
-  ;;       into the caller.
-  ;; TODO: Make use of `arg`.
-  (if (and (bolp)
-           (looking-at-p outline-regexp))
-      (nomis/outline/inc-children)
-    ;; Maybe we could find what Tab would be bound to if `outline-minor-mode`
-    ;; were not enabled. I've tried but it's non-trivial. So I'm not bothering,
-    ;; at least for now.
-    (company-indent-or-complete-common arg)))
-
 ;;;;; Previous
 
 (defun nomis/outline/previous-heading (n)
