@@ -128,7 +128,8 @@ H-q H-q H-/  Show this help")
 ;; belongs in `nomis-org-key-bindings`, but perhaps having it here is clearer.
 
 (defconst -nomis/tree/org-cycle-keys
-  `(,(kbd "<f18>") ; H-tab via Karabiner Elements
+  `(,(kbd "H-TAB")
+    ,(kbd "<f18>") ; H-TAB via Karabiner Elements
     ))
 
 (dolist (key -nomis/tree/org-cycle-keys)
@@ -152,7 +153,8 @@ H-q H-q H-/  Show this help")
 ;; `Tab`.
 
 (defconst -nomis/tree/org-shifttab-keys
-  `(,(kbd "<f19>") ; H-shift-tab via Karabiner Elements
+  `(,(kbd "H-S-TAB")
+    ,(kbd "<f19>") ; H-S-TAB via Karabiner Elements
     ))
 
 (dolist (key -nomis/tree/org-shifttab-keys)
