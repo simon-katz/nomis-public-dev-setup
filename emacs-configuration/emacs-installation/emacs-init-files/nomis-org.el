@@ -1,9 +1,8 @@
-;;;; Init stuff -- Org Mode    ; noflycheck
+;;; nomis-org.el    ; noflycheck
 
-(progn) ; this stops `hs-hide-all` from hiding the next comment
+;;; Code:
 
-;;;; ___________________________________________________________________________
-;;;; ____ * Require things
+;;;; Requires
 
 (progn ; do-stuff-that-must-be-done-before-requiring-org
   (cl-flet
@@ -34,8 +33,7 @@
 (require 'org-bullets)
 (require 's)
 
-;;;; ___________________________________________________________________________
-;;;; ____ * General
+;;;; General
 
 (setq org-directory (file-truename "~/org"))
 
@@ -57,15 +55,13 @@
 
 (setq org-indirect-buffer-display 'new-frame)
 
-;;;; ___________________________________________________________________________
-;;;; ____ * Priorities
+;;;; Priorities
 
 (setq org-highest-priority 1)
 (setq org-lowest-priority  9)
 (setq org-default-priority 2)
 
-;;;; ___________________________________________________________________________
-;;;; ____ * Org mode hook function
+;;;; Org mode hook function
 
 (setq org-startup-shrink-all-tables t)
 
@@ -101,8 +97,7 @@
 
 (add-hook 'org-mode-hook 'nomis/org-mode)
 
-;;;; ___________________________________________________________________________
-;;;; ____ * Hacky fix for `org-table-header-set-header`
+;;;; Hacky fix for `org-table-header-set-header`
 
 (cond
  ((string-match-p (regexp-quote "/org-9.4.4/")
@@ -144,14 +139,12 @@
   ;; `org-table-header-set-header`).
   ))
 
-;;;; ___________________________________________________________________________
-;;;; ____ * Dependencies
+;;;; Dependencies
 
 (setq org-enforce-todo-dependencies t)
 ;; (setq org-agenda-dim-blocked-tasks 'invisible) ; actually the default dimmimg is nice -- you can see more info
 
-;;;; ___________________________________________________________________________
-;;;; ____ * Capture
+;;;; Capture
 
 (setq org-default-notes-file
       (concat org-directory
@@ -160,8 +153,7 @@
                          1)
               ".org"))
 
-;;;; ___________________________________________________________________________
-;;;; ____ * Refiling
+;;;; Refiling
 
 ;;;; - I haven't quite got this nice (or maybe I did).
 ;;;; - BUT:
@@ -205,8 +197,7 @@
 ;;         org-refile-allow-creating-parent-nodes nil
 ;;         org-completion-use-ido t))
 
-;;;; ___________________________________________________________________________
-;;;; ____ * Agendas
+;;;; Agendas
 
 (require 'org-agenda)
 
@@ -241,25 +232,21 @@
   ;; Suppress buggy warnings that appear in org agenda buffer.
   (add-to-list 'warning-suppress-types '(org-element org-element-parser))))
 
-;;;; ___________________________________________________________________________
-;;;; ____ * Fontify code in code blocks
+;;;; Fontify code in code blocks
 
 (setq org-src-fontify-natively t)
 
-;;;; ___________________________________________________________________________
-;;;; ***************************************************************************
-;;;; After upgrading to Org Mode 9.4.4, the following orgstruct stuff gives an
-;;;; error when I start Emacs:
-;;;;
-;;;; run-hooks: Autoloading file
-;;;; [...]/emacs-configuration/emacs-installation/.emacs.d/elpa/org-9.4.4/org.elc
-;;;; failed to define function orgstruct-mode
-;;;;
-;;;; ***************************************************************************
-;;;; ___________________________________________________________________________
+;; ***************************************************************************
+;; After upgrading to Org Mode 9.4.4, the following orgstruct stuff gives an
+;; error when I start Emacs:
 ;;
-;; ;;;; ___________________________________________________________________________
-;; ;;;; ____ * orgstruct
+;; run-hooks: Autoloading file
+;; [...]/emacs-configuration/emacs-installation/.emacs.d/elpa/org-9.4.4/org.elc
+;; failed to define function orgstruct-mode
+;;
+;; ***************************************************************************
+;;
+;; ;;;; _________________________________________________________________________;; ;;;; orgstruct
 ;;
 ;; ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ;; ;;;; ____ orgstruct-mode general
@@ -294,8 +281,7 @@
 ;;
 ;; (add-hook 'orgstruct-mode-hook 'nomis/orgstruct-set-up-display-table)
 
-;;;; ___________________________________________________________________________
-;;;; ____ * Display -- misc
+;;;; Display -- misc
 
 (setq org-ellipsis " ▶")
 
@@ -317,8 +303,7 @@
 
 (add-hook 'org-mode-hook 'org-bullets-mode)
 
-;;;; ___________________________________________________________________________
-;;;; ____ * Display -- links
+;;;; Display -- links
 
 (defun nomis/org-show-link-destination ()
   ;; Copied with changes from
@@ -334,13 +319,11 @@
 
 (add-hook 'post-command-hook 'nomis/org-show-link-destination)
 
-;;;; ___________________________________________________________________________
-;;;; ____ * Display -- faces
+;;;; Display -- faces
 
 (set-face-attribute 'org-meta-line nil :height 0.75) ; But maybe try https://github.com/minad/org-modern
 
-;;;; ___________________________________________________________________________
-;;;; ____ * Display -- blog faces
+;;;; Display -- blog faces
 
 (defconst nomis/org-blog-faces
   '((org-level-1 . (:inherit outline-1 :weight bold :height 1.3
@@ -367,10 +350,9 @@
   (setq nomis/org-blog-stuff-on-p
         (not nomis/org-blog-stuff-on-p)))
 
-;;;; ___________________________________________________________________________
-;;;; ____ * Display -- Alternative heading faces
+;;;; Display -- Alternative heading faces
 
-;;;; A set of colours that avoids clashes with my `xxxx` highlighting.
+;; A set of colours that avoids clashes with my `xxxx` highlighting.
 
 (defvar nomis/org-alternative-heading-faces
   '((outline-1 . (:inherit font-lock-function-name-face))
@@ -402,8 +384,7 @@
 ;; these alternative faces altogether.
 ;; (add-hook 'org-mode-hook 'nomis/toggle-org-alternative-heading-stuff)
 
-;;;; ___________________________________________________________________________
-;;;; ____ * Export1
+;;;; Export1
 
 (defun get-string-from-file (path)
   "Return filePath's file content."
@@ -478,7 +459,7 @@
 
 ;;;; Publishing
 
-;;;; This doesn't work particularly well. Do it in a terminal window instead.
+;; This doesn't work particularly well. Do it in a terminal window instead.
 
 ;; (defun nomis/ordinary-insertion-filter (proc string)
 ;;   ;; Copied, with changes, from
@@ -522,11 +503,10 @@
 ;;                        ;; :stderr output-buffer
 ;;                        )))))
 
-;;;; ___________________________________________________________________________
-;;;; * nomis/org-get-links-to-current-heading
+;;;; nomis/org-get-links-to-current-heading
 
-;;;; Inspired by
-;;;; https://stackoverflow.com/questions/9844154/list-all-inbound-links-to-a-header-in-org-mode
+;; Inspired by
+;; https://stackoverflow.com/questions/9844154/list-all-inbound-links-to-a-header-in-org-mode
 
 (defun nomis/org-get-links-to-current-heading (arg)
   "Show links to the current heading.
@@ -546,8 +526,7 @@ limit the search to the current buffer."
         (occur regexp)
       (multi-occur-in-matching-buffers ".*\\.org$" regexp))))
 
-;;;; ___________________________________________________________________________
-;;;; * nomis/org-global-todo-list
+;;;; nomis/org-global-todo-list
 
 (defun nomis/org-global-todo-list ()
   (interactive)
@@ -555,8 +534,7 @@ limit the search to the current buffer."
   ;;  nomis/themes/standard-light+nomis+altbg1)
   (org-todo-list))
 
-;;;; ___________________________________________________________________________
-;;;; * org-content
+;;;; org-content
 
 (cond ((member org-version
                '("9.5.2"))
@@ -582,8 +560,7 @@ With numerical argument N, show content up to level N."
       (t
        (message-box "You need to fix `org-content` for this version of org mode.")))
 
-;;;; ___________________________________________________________________________
-;;;; * Fix `org-move-subtree-down` -- don't move cursor when there's an error
+;;;; Fix `org-move-subtree-down` -- don't move cursor when there's an error
 
 (cond ((member org-version
                '("9.5.5"
@@ -600,8 +577,7 @@ With numerical argument N, show content up to level N."
       (t
        (message-box "You need to fix `org-move-subtree-down` for this version of org mode.")))
 
-;;;; ___________________________________________________________________________
-;;;; * org-todo-keywords
+;;;; org-todo-keywords
 
 (setq org-todo-keywords
       '((sequence "TODO" "SOON" "CRNT" "|" "DONE" "WONT" "HOLD")))
@@ -613,12 +589,10 @@ With numerical argument N, show content up to level N."
         ("WONT" . "DodgerBlue1")
         ("HOLD" . "DodgerBlue1")))
 
-;;;; ___________________________________________________________________________
-;;;; * Key bindings
+;;;; Key bindings
 
 (require 'nomis-org-key-bindings)
 
-;;;; ___________________________________________________________________________
-;;;; * End
+;;; End
 
 (provide 'nomis-org)
