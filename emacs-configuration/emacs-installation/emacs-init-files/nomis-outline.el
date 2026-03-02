@@ -110,9 +110,7 @@
 (defun -nomis/set-emacs-lisp-outline ()
   ;; A hacked version of the `(setq-local outline-regexp ...)` in `lisp-mode`
   ;; that doesn't include top-level forms.
-  (setq-local outline-regexp (concat ";;;;* [^ \t\n]\\|\\("
-                                     lisp-mode-autoload-regexp
-                                     "\\)")))
+  (setq-local outline-regexp ";;;;*"))
 
 (add-hook 'emacs-lisp-mode-hook '-nomis/set-emacs-lisp-outline)
 
