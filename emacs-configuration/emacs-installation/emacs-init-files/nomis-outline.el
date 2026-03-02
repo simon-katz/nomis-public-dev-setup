@@ -23,32 +23,6 @@
 
 (setopt outline-minor-mode-use-buttons 'in-margins)
 
-;;;; outline-minor-mode-cycle
-
-;; (setopt outline-minor-mode-cycle t)
-;;
-;; ^^ Don't set this. It's no good for top-level forms, where tab completion
-;; gets lost in favour of the cycling. For example, with cursor at the "|" in
-;; `(def|)` at top level, we get cycling instead of being offered completions of
-;; "def".
-;;
-;; Instead:
-;;
-;; - Initially we used the `bicycle` commands. In any case, they're better
-;;   because it cycles through all levels, not just the top two levels and
-;;   then all.
-;;
-;; - Now we are in the process of implementing `nomis-tree`.
-;;   - We will no longer need `bicycle` when we have implemented `:outline`
-;;     versions of
-;;     `nomis/tree/show-children-from-all-roots/incremental/less--aux` and
-;;     `nomis/tree/show-children-from-all-roots/incremental/more--aux`
-;;
-;; If we change our mind, we need to go back to setting `outline-regexp` to
-;; exclude top-level forms, which needs to be done separateley for Emacs Lisp,
-;; Clojure and other languages. (There are historical commits we can look at.
-;; See commit 2bb138fb "Don't make changes to `outline-regexp`".)
-
 ;;;; outline-minor-faces
 
 (use-package outline-minor-faces
@@ -127,6 +101,32 @@
                         (bound-and-true-p outline-minor-mode))
                 (outline-show-entry)))
             '((name . nomis/outline-show-entry-when-going-to-grep-results)))
+
+
+;;;; `outline-regexp`
+
+;;;;; Emacs Lisp
+
+(defun -nomis/set-emacs-lisp-outline ()
+  ;; A hacked version of the `(setq-local outline-regexp ...)` in `lisp-mode`
+  ;; that doesn't include top-level forms.
+  (setq-local outline-regexp (concat ";;;;* [^ \t\n]\\|\\("
+                                     lisp-mode-autoload-regexp
+                                     "\\)")))
+
+(add-hook 'emacs-lisp-mode-hook '-nomis/set-emacs-lisp-outline)
+
+;;;;; Clojure
+
+(defun -nomis/set-clojure-outline ()
+  ;; Note that we are changing the value of `outline-regexp` set in
+  ;; `clojure-mode-variables`.
+  ;;
+  ;; Set `outline-regexp` to `;;;;` (and more semicolons) comments only, not
+  ;; top-level forms.
+  (setq-local outline-regexp ";;;;;*"))
+
+(add-hook 'clojure-mode-hook '-nomis/set-clojure-outline)
 
 ;;; End
 

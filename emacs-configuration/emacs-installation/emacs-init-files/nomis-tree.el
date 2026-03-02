@@ -12,20 +12,6 @@
 ;; TODO: Have we decided that we don't want `bicycle`? (I think we have.)
 ;;       - See `nomis-bicycle`.
 
-;;;; Code as headings
-
-;; TODO: I don't think I want code to be headings.
-;;       - What would I lose if I remove code from `outline-regexp`?
-;;       - We'd have to do that for all modes (all languages).
-;;       - What about wanting to have my code be useful for other people?
-;;
-;;       If we decide we want to change `outline-regexp`, here's a copy of some
-;;       notes from `nomis-outline`:
-;;           [...] setting `outline-regexp` to exclude top-level forms, which
-;;           needs to be done separateley for Emacs Lisp, Clojure and other
-;;           languages. (There are historical commits we can look at. See commit
-;;           2bb138fb "Don't make changes to `outline-regexp`".)
-
 ;;;; Fill out the implementation for `:outline`
 
 ;; TODO: Replace uses of `nomis/tree/unimplemented-method` with implementations.
