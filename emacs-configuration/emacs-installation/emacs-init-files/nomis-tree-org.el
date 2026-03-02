@@ -20,16 +20,16 @@
 ;;;;; Visibility span
 
 (cl-defmethod nomis/tree/visibility-span/less--aux ((k (eql :org)))
-  (nomis/org-visibility-span/less))
+  (norg/visibility-span/less))
 
 (cl-defmethod nomis/tree/visibility-span/more--aux ((k (eql :org)))
-  (nomis/org-visibility-span/more))
+  (norg/visibility-span/more))
 
 (cl-defmethod nomis/tree/visibility-span/set-min--aux ((k (eql :org)))
-  (nomis/org-visibility-span/set-min))
+  (norg/visibility-span/set-min))
 
 (cl-defmethod nomis/tree/visibility-span/set-max--aux ((k (eql :org)))
-  (nomis/org-visibility-span/set-max))
+  (norg/visibility-span/set-max))
 
 ;;;;; nomis/tree/show-tree-only and nomis/tree/max-lineage
 

@@ -414,7 +414,7 @@ headline."
   (norg/expand 1000) ; TODO magic number
   )
 
-;;;;; Visibility span
+;;;;; Visibility span -- part 1
 
 (defun norg/collapse-all-and-set-visibility-span (detail)
   (cl-flet ((collapse
@@ -429,6 +429,113 @@ headline."
 
 (defun norg/show-tree-only ()
   (norg/collapse-all-and-set-visibility-span 'tree))
+
+;;;;; Visibility span -- part 2
+
+(defconst -norg/visibility-span/detail-values
+  ;;  See `org-show-context-detail`.
+  '((minimal   nil "Minimal")
+    ;; (minimal   t   "Minimal + body")
+    ;; (local     nil "Local - body")
+    ;; (local     t   "Local (includes body)")
+    (ancestors nil "Ancestors")
+    ;; (ancestors t   "Ancestors + body")
+    (lineage   nil "Lineage")
+    ;; (lineage   t   "Lineage + body")
+    (tree      nil "Tree")
+    ;; (tree      t   "Tree + body")
+    (canonical nil "Canonical")
+    (canonical t   "Canonical + body")))
+
+(defconst -norg/visibility-span/min-detail
+  (cl-first -norg/visibility-span/detail-values))
+
+(defconst -norg/visibility-span/max-detail
+  (-> -norg/visibility-span/detail-values
+      last
+      cl-first))
+
+(defconst -norg/visibility-span/max-value
+  (1- (length -norg/visibility-span/detail-values)))
+
+(defun -norg/visibility-span/initial-incremental-value ()
+  (or (cl-position 'ancestors
+                   -norg/visibility-span/detail-values
+                   :key #'cl-first)
+      (progn
+        (message "Didn't find entry in -norg/visibility-span/detail-values")
+        (nomis/msg/grab-user-attention/low)
+        1)))
+
+(defconst -norg/visibility-span/commands
+  '(nomis/tree/visibility-span/less
+    nomis/tree/visibility-span/more
+    nomis/tree/visibility-span/set-min
+    nomis/tree/visibility-span/set-max))
+
+(defvar -norg/visibility-span/prev-action-index -1)
+
+(defun -norg/visibility-span/set-level/numeric (n delta?
+                                                  &optional no-message?)
+  (let* ((prev-command-was-not-visibility-span?
+          (not (member (nomis/org/last-command)
+                       -norg/visibility-span/commands)))
+         (prev-action-index -norg/visibility-span/prev-action-index)
+         (action-index (cond
+                        ((not delta?)
+                         n)
+                        (prev-command-was-not-visibility-span?
+                         (-norg/visibility-span/initial-incremental-value))
+                        (t
+                         (+ n prev-action-index))))
+         (ok? (if delta?
+                  (<= 0
+                      action-index
+                      -norg/visibility-span/max-value)
+                (or prev-command-was-not-visibility-span?
+                    (not (= n prev-action-index)))))
+         (new-pos-or-nil
+          (if ok?
+              (progn
+                (setq -norg/visibility-span/prev-action-index
+                      action-index)
+                action-index)
+            nil)))
+    (if (null new-pos-or-nil)
+        (let* ((msg (cl-third
+                     (if (if delta? (< n 0) (= n 0))
+                         -norg/visibility-span/min-detail
+                       -norg/visibility-span/max-detail))))
+          (nomis/popup/error-message "%s" msg))
+      (cl-multiple-value-bind (detail show? msg)
+          (nth new-pos-or-nil
+               -norg/visibility-span/detail-values)
+        (norg/collapse-all-and-set-visibility-span detail)
+        (if show? (norg/w/show-entry) (norg/w/hide-entry))
+        (unless no-message?
+          (nomis/popup/message "%s" msg))))))
+
+(defun norg/visibility-span/more ()
+  (-norg/visibility-span/set-level/numeric 1 t))
+
+(defun norg/visibility-span/less ()
+  (-norg/visibility-span/set-level/numeric -1 t))
+
+(defun norg/visibility-span/set-min ()
+  (-norg/visibility-span/set-level/numeric 0 nil))
+
+(defun norg/visibility-span/set-max ()
+  (let* ((v -norg/visibility-span/max-value))
+    (-norg/visibility-span/set-level/numeric v nil)))
+
+(defun norg/visibility-span/set-tree+body ()
+  (interactive)
+  (let* ((v (cl-position '(tree nil "Tree")
+                         -norg/visibility-span/detail-values
+                         :test #'equal)))
+    (cl-assert (not (null v)))
+    (-norg/visibility-span/set-level/numeric v nil t))
+  (norg/w/show-entry))
 
 ;;;; Navigation
 
@@ -542,11 +649,11 @@ Same for the `backward` commands.")
 
 (defun norg/next-heading/set-tree+body ()
   (norg/next-heading)
-  (nomis/org-visibility-span/set-tree+body))
+  (norg/visibility-span/set-tree+body))
 
 (defun norg/previous-heading/set-tree+body ()
   (norg/previous-heading)
-  (nomis/org-visibility-span/set-tree+body))
+  (norg/visibility-span/set-tree+body))
 
 ;;;; Info that relies on our navigation stuff
 
