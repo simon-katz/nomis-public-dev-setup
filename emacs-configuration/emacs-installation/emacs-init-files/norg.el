@@ -180,12 +180,12 @@ Return the nesting depth of the headline in the outline."
 (defalias 'norg/w/show-children 'outline-show-children) ; Not `org-show-children`, because that shows first level when n is 0
 (defalias 'norg/w/cycle 'org-cycle)
 (defalias 'norg/w/overview 'org-overview)
-(defalias 'norg/w/show-set-visibility 'org-show-set-visibility)
+(defalias 'norg/w/show-set-visibility 'org-fold-show-set-visibility)
 
 (defalias 'norg/w/map-tree 'org-map-tree)
 
 (defalias 'norg/w/invisible-p 'org-invisible-p)
-(defalias 'norg/w/flag-subtree 'org-flag-subtree)
+(defalias 'norg/w/fold-subtree 'org-fold-subtree)
 
 (defalias 'norg/w/check-before-invisible-edit 'org-check-before-invisible-edit)
 
@@ -393,17 +393,7 @@ When in a body, \"current headline\" means the current body's parent headline."
 ;;;;; Expanding and collapsing
 
 (defun norg/collapse ()
-  (cl-case 2
-    (1
-     ;; This hides too much stuff.
-     (norg/w/overview)
-     (norg/w/show-set-visibility 'canonical))
-    (2
-     ;; This hides just the subtree under the headline at point.
-     ;; Idea from http://christiantietze.de/posts/2019/06/org-fold-heading/.
-     ;; But what does `org-flag-subtree` do, is it part of the org public API,
-     ;; and why can't I find any useful info by googling?
-     (norg/w/flag-subtree t))))
+  (norg/w/fold-subtree t))
 
 (defun norg/expand (n &optional collapse-first?)
   "Expand N levels below the current headline. If COLLAPSE-FIRST? is non-nil,
