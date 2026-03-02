@@ -46,3 +46,5 @@ emacs-configuration/emacs-installation/.emacs.d/elpa/vterm-20210908.640/vterm-mo
 # `/Users/simonkatz/development-100/repositories/nomis/notes/sys-admin--mine/sys-admin-log-files/machine-log-my-mac-defoe.org`).
 # So you just need to delete stuff (see ignored stuff above) and rebuild
 # following the README.
+
+flycheck_*.el
