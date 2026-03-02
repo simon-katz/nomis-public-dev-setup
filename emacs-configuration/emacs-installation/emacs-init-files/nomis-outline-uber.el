@@ -255,8 +255,7 @@
     (when npoint
       (goto-char npoint))))
 
-(defun -nomis/outline/prev-or-next-heading-pos (_lineage-spec
-                                                start
+(defun -nomis/outline/prev-or-next-heading-pos (start
                                                 direction
                                                 kind)
   (when start
@@ -291,7 +290,6 @@
                                             kind)
   (let* ((pos (->> (-iterate (lambda (start)
                                (-nomis/outline/prev-or-next-heading-pos
-                                lineage-spec
                                 start
                                 direction
                                 kind))
