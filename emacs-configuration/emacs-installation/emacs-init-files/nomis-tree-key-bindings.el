@@ -166,6 +166,9 @@ H-q H-q H-/  Show this help")
 ;; Keep this until we implement
 ;; `nomis/tree/show-children-from-all-roots/incremental/less--aux` and
 ;; `nomis/tree/show-children-from-all-roots/incremental/more--aux`.
+;; - Oh, but it has the useful "Recursively show all headings, without treating
+;;   code blocks as sections." (But maybe we don't want to treat code
+;;   as headings.)
 (define-key nomis/tree-mode-map (kbd "H-o <tab>")   'bicycle-cycle-global)
 
 ;;;; Movement
