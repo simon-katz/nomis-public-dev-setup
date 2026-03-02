@@ -58,16 +58,6 @@
 (setq org-indirect-buffer-display 'new-frame)
 
 ;;;; ___________________________________________________________________________
-;;;; ____ * Show point and entry when jumping to grep results
-
-(advice-add 'compilation-next-error-function
-            :after
-            (lambda (&rest _)
-              (when (eql major-mode 'org-mode)
-                (norg/w/show-entry))) ; noflycheck
-            '((name . nomis/org-show-entry-when-going-to-grep-results)))
-
-;;;; ___________________________________________________________________________
 ;;;; ____ * Priorities
 
 (setq org-highest-priority 1)

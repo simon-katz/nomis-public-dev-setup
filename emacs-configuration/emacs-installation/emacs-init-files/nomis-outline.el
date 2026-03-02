@@ -142,6 +142,16 @@
 ;;   :after outline
 ;;   :config (advice-add 'outline-flag-region :after 'backline-update))
 
+;;;; Show point and entry when jumping to grep results
+
+(advice-add 'compilation-next-error-function
+            :after
+            (lambda (&rest _)
+              (when (or (derived-mode-p 'outline-mode)
+                        (bound-and-true-p outline-minor-mode))
+                (outline-show-entry)))
+            '((name . nomis/outline-show-entry-when-going-to-grep-results)))
+
 ;;; End
 
 (provide 'nomis-outline)
