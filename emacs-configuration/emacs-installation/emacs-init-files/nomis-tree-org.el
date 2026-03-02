@@ -12,10 +12,10 @@
 ;;;;; Search heading text
 
 (cl-defmethod nomis/tree/search-heading-text--aux ((k (eql :org)))
-  (nomis/org-search-heading-text))
+  (norg/search-heading-text))
 
 (cl-defmethod nomis/tree/search-heading-text-again--aux ((k (eql :org))) ()
-  (nomis/org-search-heading-text-again))
+  (norg/search-heading-text-again))
 
 ;;;;; Visibility span
 
