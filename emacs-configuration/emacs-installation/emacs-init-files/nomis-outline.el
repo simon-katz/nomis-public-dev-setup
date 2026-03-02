@@ -7,30 +7,6 @@
 (require 'nomis-msg)
 (require 'outline)
 
-;;;; Utilities
-
-;;;;; nomis/outline/pulse-current-section
-
-(defun nomis/outline/pulse-current-section ()
-  (let ((start (point)))
-    (cl-flet ((next-same-level-heading ()
-                (save-excursion (ignore-errors
-                                  (outline-forward-same-level 1)
-                                  (point))))
-              (next-up-one-level-heading ()
-                (save-excursion (ignore-errors
-                                  (outline-up-heading 1)
-                                  (outline-forward-same-level 1)
-                                  (unless (= (point) start)
-                                    ;; We have this guard because
-                                    ;; `outline-up-heading` is broken when
-                                    ;; there's no up-one-level heading.
-                                    (point))))))
-      (let* ((end (or (next-same-level-heading)
-                      (next-up-one-level-heading)
-                      (point-max))))
-        (pulse-momentary-highlight-region start end)))))
-
 ;;;; Ellipses
 
 ;; Copy-and-hack from
