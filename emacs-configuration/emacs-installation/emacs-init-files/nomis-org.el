@@ -58,16 +58,6 @@
 (setq org-indirect-buffer-display 'new-frame)
 
 ;;;; ___________________________________________________________________________
-;;;; ____ * Misc API-ish things -- perhaps candidates for `norg`
-
-;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-;;;; ____ ** Last command
-
-(defun nomis/org/last-command ()
-  (or (bound-and-true-p *nomis/smex/last-command*)
-      last-command))
-
-;;;; ___________________________________________________________________________
 ;;;; ____ * Show point and entry when jumping to grep results
 
 (advice-add 'compilation-next-error-function

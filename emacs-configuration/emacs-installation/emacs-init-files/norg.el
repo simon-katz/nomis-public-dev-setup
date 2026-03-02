@@ -478,7 +478,7 @@ headline."
 (defun -norg/visibility-span/set-level/numeric (n delta?
                                                   &optional no-message?)
   (let* ((prev-command-was-not-visibility-span?
-          (not (member (nomis/org/last-command)
+          (not (member (norg/last-command)
                        -norg/visibility-span/commands)))
          (prev-action-index -norg/visibility-span/prev-action-index)
          (action-index (cond
