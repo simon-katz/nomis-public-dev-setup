@@ -5,6 +5,7 @@
 ;;;; Requires
 
 (require 'a)
+(require 'cl-lib)
 (require 'dash)
 (require 'nomis-msg)
 (require 'nomis-outline-common)

@@ -4,6 +4,7 @@
 
 ;;;; Requires
 
+(require 'cl-lib)
 (require 'cl-format)
 (require 'dash)
 (require 'nomis-popup)
