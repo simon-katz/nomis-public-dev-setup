@@ -166,7 +166,6 @@ Return the nesting depth of the headline in the outline."
 (defalias 'norg/w/forward-heading-same-level 'org-forward-heading-same-level)
 
 (defalias 'norg/w/backward-heading-same-level 'org-backward-heading-same-level)
-(defalias 'norg/w/back-to-heading 'org-back-to-heading)
 (defalias 'norg/w/up-heading 'outline-up-heading)
 (defalias 'norg/w/previous-heading 'outline-previous-heading)
 
@@ -224,7 +223,7 @@ Return the nesting depth of the headline in the outline."
 
 (defun -norg/body-info ()
   (save-excursion
-    (norg/w/back-to-heading t)
+    (nomis/outline/back-to-heading?)
     (let* ((has-body?
             (-norg/has-body?/must-be-at-boh/leaving-cursor-at-end-of-heading))
            (has-visible-body? (and has-body?
@@ -247,7 +246,7 @@ Return the nesting depth of the headline in the outline."
 (defun -norg/in-body? ()
   (> (point)
      (save-excursion
-       (norg/w/back-to-heading t)
+       (nomis/outline/back-to-heading?)
        (norg/w/end-of-heading)
        (point))))
 
@@ -256,7 +255,7 @@ Return the nesting depth of the headline in the outline."
 of the current heading in the outline. Otherwise return one more than that
 value."
   (+ (save-excursion
-       (norg/w/back-to-heading t)
+       (nomis/outline/back-to-heading?)
        (norg/w/level/must-be-at-boh))
      (if (and norg/show-bodies?
               inc-if-in-body?
@@ -537,7 +536,7 @@ headline."
 (defun -norg/grab-heading-text ()
   (save-excursion
     ;; Jump to first word of heading
-    (norg/w/back-to-heading)
+    (nomis/outline/back-to-heading?)
     (forward-word)
     (backward-word)
     ;; Grab text of heading
@@ -571,7 +570,7 @@ headline."
                               nil
                               t)))
     (when again?
-      (norg/w/back-to-heading))
+      (nomis/outline/back-to-heading?))
     (or (search-for-text)
         (progn
           (goto-char (point-max))
@@ -603,7 +602,7 @@ headline."
 (defun -norg/heading-same-level-helper (move-fun
                                         error-message)
   (nomis/scrolling/with-maybe-maintain-line-no-in-window
-    (norg/w/back-to-heading t)
+    (nomis/outline/back-to-heading?)
     (let* ((starting-point (point)))
       (funcall move-fun 1 t)
       (norg/show-point)
@@ -836,7 +835,7 @@ Same for the `backward` commands.")
                   (if (null n-levels-or-nil)
                       (norg/expand-fully)
                     (norg/expand n-levels-or-nil t))))
-        (norg/w/back-to-heading t)
+        (nomis/outline/back-to-heading?)
         (if (not (or (-norg/stepping-forward-on-last-but-not-first-child/must-be-at-boh)
                      (-norg/stepping-backward-on-first-but-not-last-child/must-be-at-boh)
                      ;; If we very recently did a `norg/step-xxxx-sibling` which
