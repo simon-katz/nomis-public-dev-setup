@@ -1,8 +1,8 @@
-;;; noutline-waste.el --- Junk  -*- lexical-binding: t; -*-
+;;; nomis-tree-outline-2-waste.el --- Junk  -*- lexical-binding: t; -*-
 
 ;;; Code:
 
-(error "noutline-waste is not for loading")
+(error "nomis-tree-outline-2-waste is not for loading")
 
 ;;;; Requires
 
@@ -80,4 +80,4 @@
 
 ;;; End
 
-(provide 'noutline-waste)
+(provide 'nomis-tree-outline-2-waste)

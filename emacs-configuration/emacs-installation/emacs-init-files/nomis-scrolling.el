@@ -76,7 +76,7 @@
 
 (defun nomis/outline/maybe-restore-scroll-position ()
   "Unused. Was needed when we had a `run-at-time` before expanding parents
-in `noutline`."
+in `nomis-tree-outline-2`."
   (when (and nomis/scrolling/maintain-line-no-in-window?
              nomis/scrolling/-old-line-no)
     (nomis/outline/restore-scroll-position nomis/scrolling/-old-line-no)))

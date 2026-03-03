@@ -16,7 +16,7 @@
 
 ;; TODO: Replace uses of `nomis/tree/unimplemented-method` with implementations.
 
-;; TODO: Compare `noutline` commands with `norg` commands.
+;; TODO: Compare `nomis-tree-outline-2` commands with `norg` commands.
 ;;       - Indefinite number of levels.
 ;;       - Behaviour when reaching last sibling
 ;;       - Implement more commands here.
@@ -404,7 +404,7 @@ With a numeric prefix `N`, set the number of visible levels to exactly `N`."
 ;; TODO: The prefix arg here has different meanings for `:outline` and `:org`.
 ;;
 ;;       For the former it's the number of headings to move, and we convert
-;;       `nil` to 1. See uses of `(or n 1)` in `noutline`.
+;;       `nil` to 1. See uses of `(or n 1)` in `nomis-tree-outline-2`.
 ;;
 ;;       For the latter it's `n-levels-to-show-or-nil`, and we convert `nil` to
 ;;       `norg/step-n-levels-to-show`.
