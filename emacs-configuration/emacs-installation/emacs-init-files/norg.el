@@ -637,8 +637,7 @@ subheading at this level in the previous parent."
 
 (defvar -norg/heading-any-level-show-entry?
   t
-  "Truthy if `norg/next-heading` should show bodies (and so match
-`norg/next-heading/set-tree+body)`.
+  "Truthy if `norg/next-heading` and `norg/previous-heading` should show bodies.
 Same for the `backward` commands.")
 
 (defun norg/next-heading ()
