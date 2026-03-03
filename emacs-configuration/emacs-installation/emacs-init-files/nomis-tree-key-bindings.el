@@ -139,7 +139,7 @@ H-q H-q H-/  Show this help")
   (nomis/define-key-with-filter nomis/tree-mode-map
                                 key
                                 'nomis/tree/show-children-from-point/incremental/more
-                                (nomis/outline/on-heading?)))
+                                (nomis/outline-c/on-heading?)))
 
 ;;;;; Shifttab
 
@@ -159,7 +159,7 @@ H-q H-q H-/  Show this help")
   (nomis/define-key-with-filter nomis/tree-mode-map
                                 key
                                 'nomis/tree/show-children-from-point/incremental/less
-                                (nomis/outline/on-heading?)))
+                                (nomis/outline-c/on-heading?)))
 
 ;;;; `bicycle-cycle-global`
 

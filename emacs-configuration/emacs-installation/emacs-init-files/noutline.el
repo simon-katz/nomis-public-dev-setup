@@ -95,7 +95,7 @@
   (let* ((pre-hide-all? (a-get lineage-spec :spec/pre-hide-all?))
          (parents-approach (a-get lineage-spec :spec/parents-approach)))
     (when pre-hide-all?
-      (let* ((top-level-level (-nomis/outline/top-level-level))
+      (let* ((top-level-level (-nomis/outline-c/top-level-level))
              (hide-level (cl-ecase parents-approach
                            ((nil :parents/thin) (1- top-level-level))
                            (:parents/fat top-level-level))))
@@ -108,9 +108,9 @@
       (let* ((parent-points
               (let* ((ps '()))
                 (save-excursion
-                  (while (and (nomis/outline/on-heading?)
-                              (not (-nomis/outline/on-top-level-heading?)))
-                    (-nomis/outline/up-heading 1)
+                  (while (and (nomis/outline-c/on-heading?)
+                              (not (-nomis/outline-c/on-top-level-heading?)))
+                    (-nomis/outline-c/up-heading 1)
                     (push (point) ps)))
                 ps)))
         (save-excursion
@@ -118,10 +118,10 @@
            for p in parent-points
            do (progn
                 (goto-char p)
-                (-nomis/outline/ensure-heading-shown)
+                (-nomis/outline-c/ensure-heading-shown)
                 (cl-ecase parents-approach
                   (:parents/thin nil)
-                  (:parents/fat (-nomis/show-children))))))))))
+                  (:parents/fat (-nomis/outline-c/show-children))))))))))
 
 (defun -nomis/outline/hsl-show-children (lineage-spec)
   (when (a-get lineage-spec :spec/pre-hide-children?)
@@ -131,7 +131,7 @@
     (0 nil)
     (1 (outline-show-entry))
     (2 (outline-show-entry)
-       (-nomis/show-children))
+       (-nomis/outline-c/show-children))
     (3 (outline-show-entry)
        (outline-show-branches))
     (4 (outline-show-subtree))))
@@ -139,7 +139,7 @@
 (defun -nomis/outline/show-lineage (lineage-spec)
   (-nomis/outline/hsl-hide lineage-spec)
   (-nomis/outline/hsl-show-parents lineage-spec)
-  (-nomis/outline/ensure-heading-shown)
+  (-nomis/outline-c/ensure-heading-shown)
   (-nomis/outline/hsl-show-children lineage-spec)
   (when (and (a-get lineage-spec :spec/pulse-max-children?)
              (= (a-get lineage-spec :spec/children-approach)
@@ -152,7 +152,7 @@
                                                              n
                                                              direction
                                                              kind)
-  (when (nomis/outline/prev-or-next-heading n direction kind)
+  (when (nomis/outline-c/prev-or-next-heading n direction kind)
     (-nomis/outline/show-lineage lineage-spec)))
 
 ;;;; API
@@ -173,7 +173,7 @@
 (defun -nomis/outline/increments-children-approach/get ()
   ;; TODO: At some point change this to look at the actual text rather than
   ;;       relying on `-nomis/outline/increments-children-approach`.
-  (when (member (nomis/outline/last-command)
+  (when (member (nomis/outline-c/last-command)
                 '(nomis/tree/show-children-from-point/incremental/more
                   nomis/tree/show-children-from-point/incremental/less))
     -nomis/outline/increments-children-approach))
