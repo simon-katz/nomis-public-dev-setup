@@ -155,9 +155,6 @@ message and in case adding org level messes things up.")
 ;; be safe.
 ;; Besides, it's useful to isolate how we use `outline` and `org`.
 
-(defalias 'norg/w/end-of-line 'org-end-of-line)
-(defalias 'norg/w/beginning-of-line 'org-beginning-of-line)
-
 (defalias 'norg/w/at-heading-p 'org-at-heading-p)
 
 (defun norg/w/level/must-be-at-boh ()
@@ -636,16 +633,16 @@ Like `org-backward-heading-same-level` but:
 (defun -norg/peer/helper (direction)
   (nomis/scrolling/with-maybe-maintain-line-no-in-window
     (let ((start-position-fun (cl-case direction
-                                (:forward 'norg/w/end-of-line)
-                                (:backward 'norg/w/beginning-of-line)))
+                                (:forward #'end-of-line)
+                                (:backward #'beginning-of-line)))
           (re-search-function (cl-case direction
                                 (:forward 're-search-forward)
                                 (:backward 're-search-backward)))
           (post-search-adjust-function (cl-case direction
-                                         (:forward 'norg/w/beginning-of-line)
-                                         (:backward #'(lambda ())))))
+                                         (:forward #'beginning-of-line)
+                                         (:backward (lambda ())))))
       (let* ((text-to-look-for (save-excursion
-                                 (norg/w/beginning-of-line)
+                                 (beginning-of-line)
                                  (concat (thing-at-point 'symbol)
                                          " "))))
         (funcall start-position-fun)
@@ -663,7 +660,7 @@ Like `org-backward-heading-same-level` but:
                 (norg/show-point)
                 (funcall post-search-adjust-function))
             (progn
-              (norg/w/beginning-of-line)
+              (beginning-of-line)
               (let* ((msg (cl-case direction
                             (:forward
                              "No next heading at this level, even across parents")
