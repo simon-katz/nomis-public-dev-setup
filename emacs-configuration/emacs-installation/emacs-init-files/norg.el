@@ -117,12 +117,12 @@
 `what-cursor-position`. This is here just in case someone might be parsing the
 message and in case adding org level messes things up.")
 
-(defvar *norg/-in-what-cursor-position?* nil)
+(defvar *-norg/in-what-cursor-position?* nil)
 
 (advice-add 'what-cursor-position
             :around
             (lambda (orig-fun &rest args)
-              (let* ((*norg/-in-what-cursor-position?* t))
+              (let* ((*-norg/in-what-cursor-position?* t))
                 (apply orig-fun args)))
             '((name . norg/add-level-info)))
 
@@ -131,7 +131,7 @@ message and in case adding org level messes things up.")
             (lambda (orig-fun &rest args)
               (if (and norg/add-info-to-what-cursor-position?
                        (eq major-mode 'org-mode)
-                       *norg/-in-what-cursor-position?*)
+                       *-norg/in-what-cursor-position?*)
                   (let* ((format-string
                           (concat "org-level=%s  " (cl-first args)))
                          (format-args
@@ -146,8 +146,8 @@ message and in case adding org level messes things up.")
 
 ;;;; Infinity
 
-(defconst norg/-plus-infinity   1.0e+INF)
-(defconst norg/-minus-infinity -1.0e+INF)
+(defconst -norg/plus-infinity   1.0e+INF)
+(defconst -norg/minus-infinity -1.0e+INF)
 
 ;;;; Wrappers for `outline` and `org`
 
@@ -207,7 +207,7 @@ Return the nesting depth of the headline in the outline."
 (defun norg/point-is-visible? ()
   (not (norg/w/invisible-p)))
 
-(defun norg/-has-body?/must-be-at-boh/leaving-cursor-at-end-of-heading ()
+(defun -norg/has-body?/must-be-at-boh/leaving-cursor-at-end-of-heading ()
   (let* ((_ (norg/w/end-of-heading))
          (end-of-heading-position (point))
          (_ (norg/w/next-preface))
@@ -223,15 +223,15 @@ Return the nesting depth of the headline in the outline."
       ;; This newline char being visible or not tells us what we want to know.
       (goto-char end-of-heading-position))))
 
-(defun norg/-has-body?/must-be-at-boh ()
+(defun -norg/has-body?/must-be-at-boh ()
   (save-excursion
-    (norg/-has-body?/must-be-at-boh/leaving-cursor-at-end-of-heading)))
+    (-norg/has-body?/must-be-at-boh/leaving-cursor-at-end-of-heading)))
 
-(defun norg/-body-info ()
+(defun -norg/body-info ()
   (save-excursion
     (norg/w/back-to-heading t)
     (let* ((has-body?
-            (norg/-has-body?/must-be-at-boh/leaving-cursor-at-end-of-heading))
+            (-norg/has-body?/must-be-at-boh/leaving-cursor-at-end-of-heading))
            (has-visible-body? (and has-body?
                                    (not
                                     (norg/w/invisible-p (point)))))
@@ -245,11 +245,11 @@ Return the nesting depth of the headline in the outline."
   (let* ((heading-level (norg/w/level/must-be-at-boh)))
     (+ heading-level
        (if (and norg/show-bodies?
-                (norg/-has-body?/must-be-at-boh))
+                (-norg/has-body?/must-be-at-boh))
            1
          0))))
 
-(defun norg/-in-body? ()
+(defun -norg/in-body? ()
   (> (point)
      (save-excursion
        (norg/w/back-to-heading t)
@@ -265,7 +265,7 @@ value."
        (norg/w/level/must-be-at-boh))
      (if (and norg/show-bodies?
               inc-if-in-body?
-              (norg/-in-body?))
+              (-norg/in-body?))
          1
        0)))
 
@@ -305,7 +305,7 @@ value."
 
 ;;;;; Support for do-ing and mapping
 
-(defun norg/-mapc-headlines-satisfying (pred-of-no-args fun)
+(defun -norg/mapc-headlines-satisfying (pred-of-no-args fun)
   (save-excursion
     (cl-flet ((call-fun-when-pred-is-satisfied
                ()
@@ -322,7 +322,7 @@ value."
           (call-fun-when-pred-is-satisfied)))))
   nil)
 
-(defun norg/-convert-mapc-fun-to-map-fun (do-fun)
+(defun -norg/convert-mapc-fun-to-map-fun (do-fun)
   (lambda (fun)
     (let* ((acc '()))
       (funcall do-fun (lambda ()
@@ -345,32 +345,32 @@ When in a body, \"current headline\" means the current body's parent headline."
     (norg/mapc-entries-from-point fun)))
 
 (defun norg/mapc-roots (fun)
-  (norg/-mapc-headlines-satisfying (lambda ()
+  (-norg/mapc-headlines-satisfying (lambda ()
                                      (= (norg/w/level/must-be-at-boh)
                                         1))
                                    fun))
 
 (defun norg/mapc-entries-from-all-roots (fun)
-  (norg/-mapc-headlines-satisfying (lambda () t)
+  (-norg/mapc-headlines-satisfying (lambda () t)
                                    fun)
   nil)
 
 ;;;;; Mapping
 
 (defun norg/map-entries-from-point (fun)
-  (funcall (norg/-convert-mapc-fun-to-map-fun #'norg/mapc-entries-from-point)
+  (funcall (-norg/convert-mapc-fun-to-map-fun #'norg/mapc-entries-from-point)
            fun))
 
 (defun norg/map-entries-from-root (fun)
-  (funcall (norg/-convert-mapc-fun-to-map-fun #'norg/mapc-entries-from-root)
+  (funcall (-norg/convert-mapc-fun-to-map-fun #'norg/mapc-entries-from-root)
            fun))
 
 (defun norg/map-roots (fun)
-  (funcall (norg/-convert-mapc-fun-to-map-fun #'norg/mapc-roots)
+  (funcall (-norg/convert-mapc-fun-to-map-fun #'norg/mapc-roots)
            fun))
 
 (defun norg/map-entries-from-all-roots (fun)
-  (funcall (norg/-convert-mapc-fun-to-map-fun #'norg/mapc-entries-from-all-roots)
+  (funcall (-norg/convert-mapc-fun-to-map-fun #'norg/mapc-entries-from-all-roots)
            fun))
 
 ;;;;; Reducing (add more here if and when needed)
@@ -605,7 +605,7 @@ headline."
 
 ;;;;; Forward and backward at same level
 
-(defun norg/-heading-same-level-helper (move-fun
+(defun -norg/heading-same-level-helper (move-fun
                                         error-message)
   (nomis/scrolling/with-maybe-maintain-line-no-in-window
     (norg/w/back-to-heading t)
@@ -620,7 +620,7 @@ headline."
 Like `org-forward-heading-same-level` but:
 - when the target is invisible, make it visible
 - if this is the first subheading within its parent, display a popup message."
-  (norg/-heading-same-level-helper #'norg/w/forward-heading-same-level
+  (-norg/heading-same-level-helper #'norg/w/forward-heading-same-level
                                    "No next heading at this level"))
 
 (defun norg/previous-sibling ()
@@ -628,12 +628,12 @@ Like `org-forward-heading-same-level` but:
 Like `org-backward-heading-same-level` but:
 - when the target is invisible, make it visible
 - if this is the first subheading within its parent, display a popup message."
-  (norg/-heading-same-level-helper #'norg/w/backward-heading-same-level
+  (-norg/heading-same-level-helper #'norg/w/backward-heading-same-level
                                    "No previous heading at this level"))
 
 ;;;;; Forward and backward at same level, sibling or peer
 
-(defun norg/-peer/helper (direction)
+(defun -norg/peer/helper (direction)
   (nomis/scrolling/with-maybe-maintain-line-no-in-window
     (let ((start-position-fun (cl-case direction
                                 (:forward 'norg/w/end-of-line)
@@ -679,7 +679,7 @@ Like `org-forward-heading-same-level` but:
 - when the target is invisible, make it visible
 - if this is the first subheading within its parent, move to the first
   subheading at this level in the next parent."
-  (norg/-peer/helper :forward))
+  (-norg/peer/helper :forward))
 
 (defun norg/previous-peer ()
   "Move backward one subheading at same level as this one.
@@ -687,11 +687,11 @@ Like `org-backward-heading-same-level` but:
 - when the target is invisible, make it visible
 - if this is the first subheading within its parent, move to the last
 subheading at this level in the previous parent."
-  (norg/-peer/helper :backward))
+  (-norg/peer/helper :backward))
 
 ;;;;; Forward and backward at any level
 
-(defvar norg/-heading-any-level-show-entry?
+(defvar -norg/heading-any-level-show-entry?
   t
   "Truthy if `norg/next-heading` should show bodies (and so match
 `norg/next-heading/set-tree+body)`.
@@ -700,14 +700,14 @@ Same for the `backward` commands.")
 (defun norg/next-heading ()
   (nomis/scrolling/with-maybe-maintain-line-no-in-window
     (norg/w/next-heading)
-    (if norg/-heading-any-level-show-entry?
+    (if -norg/heading-any-level-show-entry?
         (norg/w/show-entry)
       (norg/show-point))))
 
 (defun norg/previous-heading ()
   (nomis/scrolling/with-maybe-maintain-line-no-in-window
     (norg/w/previous-heading)
-    (if norg/-heading-any-level-show-entry?
+    (if -norg/heading-any-level-show-entry?
         (norg/w/show-entry)
       (norg/show-point))))
 
@@ -752,7 +752,7 @@ Same for the `backward` commands.")
   (setq norg/step-n-levels-to-show (if (null n) n (max 1 (floor n))))
   (message "n-levels-to-show set to %s" norg/step-n-levels-to-show))
 
-(defun norg/-step-sibling-then-step-peer? ()
+(defun -norg/step-sibling-then-step-peer? ()
   (let ((cmds (list (norg/last-command)
                     this-command)))
     (member cmds
@@ -761,43 +761,43 @@ Same for the `backward` commands.")
               (nomis/tree/step-backward-sibling
                nomis/tree/step-backward-peer)))))
 
-(defun norg/-doing-one-of-the-step-forward-commands? ()
+(defun -norg/doing-one-of-the-step-forward-commands? ()
   (member this-command
           '(nomis/tree/step-forward-sibling
             nomis/tree/step-forward-peer)))
 
-(defun norg/-doing-one-of-the-step-backward-commands? ()
+(defun -norg/doing-one-of-the-step-backward-commands? ()
   (member this-command
           '(nomis/tree/step-backward-sibling
             nomis/tree/step-backward-peer)))
 
-(defun norg/-stepping-forward-on-last-but-not-first-child/must-be-at-boh ()
-  (and (norg/-doing-one-of-the-step-forward-commands?)
+(defun -norg/stepping-forward-on-last-but-not-first-child/must-be-at-boh ()
+  (and (-norg/doing-one-of-the-step-forward-commands?)
        (norg/on-last-child?/must-be-at-boh)
        (not (norg/on-first-child?/must-be-at-boh))))
 
-(defun norg/-stepping-backward-on-first-but-not-last-child/must-be-at-boh ()
-  (and (norg/-doing-one-of-the-step-backward-commands?)
+(defun -norg/stepping-backward-on-first-but-not-last-child/must-be-at-boh ()
+  (and (-norg/doing-one-of-the-step-backward-commands?)
        (norg/on-first-child?/must-be-at-boh)
        (not (norg/on-last-child?/must-be-at-boh))))
 
-(defvar norg/-most-recent-step-time -9999)
+(defvar -norg/most-recent-step-time -9999)
 
 (defvar norg/step-quick-repeat-delay
   (if (boundp '*nomis/popup/duration*)
       *nomis/popup/duration*
     1))
 
-(defun norg/-small-time-gap-since-prev-step-command? ()
+(defun -norg/small-time-gap-since-prev-step-command? ()
   (< (float-time)
-     (+ norg/-most-recent-step-time
+     (+ -norg/most-recent-step-time
         norg/step-quick-repeat-delay)))
 
-(defun norg/-step-sibling-then-step-peer-with-small-time-gap? ()
-  (and (norg/-small-time-gap-since-prev-step-command?)
-       (norg/-step-sibling-then-step-peer?)))
+(defun -norg/step-sibling-then-step-peer-with-small-time-gap? ()
+  (and (-norg/small-time-gap-since-prev-step-command?)
+       (-norg/step-sibling-then-step-peer?)))
 
-(defun norg/-step/impl (n sibling-or-peer n-levels-to-show-or-nil)
+(defun -norg/step/impl (n sibling-or-peer n-levels-to-show-or-nil)
   (let* ((n-levels-or-nil (or n-levels-to-show-or-nil
                               norg/step-n-levels-to-show)))
     (nomis/scrolling/with-maybe-maintain-line-no-in-window
@@ -808,7 +808,7 @@ Same for the `backward` commands.")
                     (let* ((n-levels-being-shown-or-infinity
                             (norg/n-levels-being-shown-or-infinity)))
                       (if (= n-levels-being-shown-or-infinity
-                             norg/-plus-infinity)
+                             -norg/plus-infinity)
                           ;; The tree is fully expanded at point. This is truthy if
                           ;; the number of levels below is less than or equal to
                           ;; the desired number of levels to show.
@@ -823,7 +823,7 @@ Same for the `backward` commands.")
                   ()
                   (cl-ecase sibling-or-peer
                     (:sibling (norg/w/forward-heading-same-level n t))
-                    (:peer (norg/-peer/helper
+                    (:peer (-norg/peer/helper
                             (cl-case n
                               (1 :forward)
                               (-1 :backward))))))
@@ -842,13 +842,13 @@ Same for the `backward` commands.")
                       (norg/expand-fully)
                     (norg/expand n-levels-or-nil t))))
         (norg/w/back-to-heading t)
-        (if (not (or (norg/-stepping-forward-on-last-but-not-first-child/must-be-at-boh)
-                     (norg/-stepping-backward-on-first-but-not-last-child/must-be-at-boh)
+        (if (not (or (-norg/stepping-forward-on-last-but-not-first-child/must-be-at-boh)
+                     (-norg/stepping-backward-on-first-but-not-last-child/must-be-at-boh)
                      ;; If we very recently did a `norg/step-xxxx-sibling` which
                      ;; tried to go too far and which so collapsed the current
                      ;; heading, and if now we're doing a `norg/step-xxxx-peer`,
                      ;; we're happy to do a step across the parent.
-                     (norg/-step-sibling-then-step-peer-with-small-time-gap?)
+                     (-norg/step-sibling-then-step-peer-with-small-time-gap?)
                      (expanded-to-desired-level?)))
             (expand)
           (let* ((starting-point (point))
@@ -872,20 +872,20 @@ Same for the `backward` commands.")
                 (progn
                   (norg/collapse)
                   (tried-to-go-too-far))))))))
-    (setq norg/-most-recent-step-time (float-time))
+    (setq -norg/most-recent-step-time (float-time))
     (message "n-levels = %s" (or n-levels-or-nil "all"))))
 
 (defun norg/step-forward-sibling (n-levels-to-show-or-nil)
-  (norg/-step/impl 1 :sibling n-levels-to-show-or-nil))
+  (-norg/step/impl 1 :sibling n-levels-to-show-or-nil))
 
 (defun norg/step-backward-sibling (n-levels-to-show-or-nil)
-  (norg/-step/impl -1 :sibling n-levels-to-show-or-nil))
+  (-norg/step/impl -1 :sibling n-levels-to-show-or-nil))
 
 (defun norg/step-forward-peer (n-levels-to-show-or-nil)
-  (norg/-step/impl 1 :peer n-levels-to-show-or-nil))
+  (-norg/step/impl 1 :peer n-levels-to-show-or-nil))
 
 (defun norg/step-backward-peer (n-levels-to-show-or-nil)
-  (norg/-step/impl -1 :peer n-levels-to-show-or-nil))
+  (-norg/step/impl -1 :peer n-levels-to-show-or-nil))
 
 ;;;; Info about trees
 
@@ -911,7 +911,7 @@ is 2."
 infinity if it is fully expanded.
 When in a body, \"current headline\" means the current body's parent headline."
   (- (norg/reduce-entries-from-point
-      norg/-plus-infinity
+      -norg/plus-infinity
       #'(lambda ()
           (let* ((point-visible? (norg/point-is-visible?))
                  (level (norg/w/level/must-be-at-boh)))
@@ -920,18 +920,18 @@ When in a body, \"current headline\" means the current body's parent headline."
               (cl-destructuring-bind (has-body?
                                       has-visible-body?
                                       has-invisible-body?)
-                  (norg/-body-info)
+                  (-norg/body-info)
                 (if (or (not norg/show-bodies?)
                         (not has-body?)
                         has-visible-body?)
-                    norg/-plus-infinity
+                    -norg/plus-infinity
                   level)))))
       #'min)
      (norg/current-level)))
 
 ;;;; The idea of tree-info, and things that use it
 
-(defun norg/-tree-info ()
+(defun -norg/tree-info ()
   "Tree info for the current headline.
 When in a body, \"current headline\" means the current body's parent headline."
   ;; This is rather expensive, because the value returned by
@@ -950,7 +950,7 @@ When in a body, \"current headline\" means the current body's parent headline."
           (norg/map-entries-from-point (lambda ()
                                          (list* (norg/w/level/must-be-at-boh)
                                                 (norg/point-is-visible?)
-                                                (norg/-body-info)))))
+                                                (-norg/body-info)))))
          (just-did-a-body? nil))
     (cl-loop for ((prev-level prev-visible? . _)
                   . ((level
@@ -995,7 +995,7 @@ When in a body, \"current headline\" means the current body's parent headline."
   "Is the tree beneath the current headline fully expanded?
 When in a body, \"current headline\" means the current body's parent headline."
   (cl-loop for (level visible? dummy?)
-           in (norg/-tree-info)
+           in (-norg/tree-info)
            when (not dummy?)
            always visible?))
 
@@ -1008,7 +1008,7 @@ When in a body, \"current headline\" means the current body's parent headline."
                     (cl-loop for ((prev-level prev-visible?)
                                   . ((level visible?) . _))
                              on (cons '(most-negative-fixnum t)
-                                      (norg/-tree-info))
+                                      (-norg/tree-info))
                              when (and prev-visible?
                                        (not visible?)
                                        (> level prev-level))
@@ -1052,9 +1052,9 @@ When in a body, \"current headline\" means the current body's parent headline."
 
 ;;;; Expanding and collapsing
 
-;;;;; norg/-set-level-etc
+;;;;; -norg/set-level-etc
 
-(defun norg/-out-of-range (v maximum setting-kind current-value)
+(defun -norg/out-of-range (v maximum setting-kind current-value)
   (let* ((min-allowed-value (if *expanding-parent?* 1 0)))
     (cl-ecase setting-kind
       (:no-check
@@ -1066,29 +1066,29 @@ When in a body, \"current headline\" means the current body's parent headline."
       (:setting-min
        (= current-value min-allowed-value))
       (:setting-max
-       (= current-value norg/-plus-infinity)))))
+       (= current-value -norg/plus-infinity)))))
 
 (defvar *norg/wrap-expand-collapse? nil)
-(defvar *norg/-allow-cycle-wrap-now?* nil)
-(defvar *norg/-allow-cycle-wrap-timer* nil)
+(defvar *-norg/allow-cycle-wrap-now?* nil)
+(defvar *-norg/allow-cycle-wrap-timer* nil)
 
-(defun norg/-cancel-cycle-to-zero-timer ()
-  (when *norg/-allow-cycle-wrap-timer*
-    (cancel-timer *norg/-allow-cycle-wrap-timer*)
-    (setq *norg/-allow-cycle-wrap-timer* nil)
-    (setq *norg/-allow-cycle-wrap-now?* nil)))
+(defun -norg/cancel-cycle-to-zero-timer ()
+  (when *-norg/allow-cycle-wrap-timer*
+    (cancel-timer *-norg/allow-cycle-wrap-timer*)
+    (setq *-norg/allow-cycle-wrap-timer* nil)
+    (setq *-norg/allow-cycle-wrap-now?* nil)))
 
-(defun norg/-allow-cycle-to-zero-for-a-while ()
-  (setq *norg/-allow-cycle-wrap-now?* t)
+(defun -norg/allow-cycle-to-zero-for-a-while ()
+  (setq *-norg/allow-cycle-wrap-now?* t)
   (let ((secs (if (boundp '*nomis/popup/duration*)
                   *nomis/popup/duration*
                 1)))
-    (setq *norg/-allow-cycle-wrap-timer*
+    (setq *-norg/allow-cycle-wrap-timer*
           (run-at-time secs
                        nil
-                       'norg/-cancel-cycle-to-zero-timer))))
+                       '-norg/cancel-cycle-to-zero-timer))))
 
-(defun norg/-bring-within-range (v maximum)
+(defun -norg/bring-within-range (v maximum)
   (let* ((min-allowed-value (if *expanding-parent?* 1 0)))
     (cl-flet ((normal-behaviour () (list (min (max min-allowed-value v)
                                               maximum)
@@ -1097,16 +1097,16 @@ When in a body, \"current headline\" means the current body's parent headline."
                                              maximum
                                            min-allowed-value)
                                          t)))
-      (let* ((allow-cycle-wrap-now? *norg/-allow-cycle-wrap-now?*))
-        (norg/-cancel-cycle-to-zero-timer)
+      (let* ((allow-cycle-wrap-now? *-norg/allow-cycle-wrap-now?*))
+        (-norg/cancel-cycle-to-zero-timer)
         (if (or (= maximum 0)
                 (not (or (= v (1- min-allowed-value))
-                         (= v norg/-plus-infinity))))
+                         (= v -norg/plus-infinity))))
             (normal-behaviour)
           (if (not allow-cycle-wrap-now?)
               (progn
                 (when *norg/wrap-expand-collapse?
-                  (norg/-allow-cycle-to-zero-for-a-while))
+                  (-norg/allow-cycle-to-zero-for-a-while))
                 (normal-behaviour))
             ;; Don't cycle if we moved to another position that also
             ;; happens to be fully-expanded.
@@ -1115,7 +1115,7 @@ When in a body, \"current headline\" means the current body's parent headline."
                 (normal-behaviour)
               (cycled-behaviour))))))))
 
-(defun norg/-set-level-etc (new-value-action-fun
+(defun -norg/set-level-etc (new-value-action-fun
                             new-level/maybe-out-of-range
                             maximum
                             message-format-string
@@ -1129,9 +1129,9 @@ When in a body, \"current headline\" means the current body's parent headline."
                   maximum
                 new-level/maybe-out-of-range)))
       (cl-multiple-value-bind (new-level do-cycling?)
-          (norg/-bring-within-range v maximum)
+          (-norg/bring-within-range v maximum)
         (let* ((out-of-range? (and (not do-cycling?)
-                                   (norg/-out-of-range v
+                                   (-norg/out-of-range v
                                                        maximum
                                                        setting-kind
                                                        current-value))))
@@ -1175,10 +1175,10 @@ that is already being displayed."
       (norg/collapse))
     (norg/expand n)))
 
-(defun norg/-show-children-from-point/set-level-etc (level
+(defun -norg/show-children-from-point/set-level-etc (level
                                                      setting-kind
                                                      current-value)
-  (norg/-set-level-etc #'norg/show-children-from-point*
+  (-norg/set-level-etc #'norg/show-children-from-point*
                        level
                        (norg/n-levels-below)
                        (if *expanding-parent?*
@@ -1194,21 +1194,21 @@ that is already being displayed."
 at a higher level.
 When in a body, \"current headline\" means the current body's parent headline."
   (let* ((v n))
-    (norg/-show-children-from-point/set-level-etc v :no-check :dummy)))
+    (-norg/show-children-from-point/set-level-etc v :no-check :dummy)))
 
 (defun norg/show-children-from-point/set-min ()
   "Fully collapse the current headline.
 When in a body, \"current headline\" means the current body's parent headline."
   (let* ((current-value (norg/start-level-for-incremental-contract))
          (v (if *expanding-parent?* 1 0)))
-    (norg/-show-children-from-point/set-level-etc v :setting-min current-value)))
+    (-norg/show-children-from-point/set-level-etc v :setting-min current-value)))
 
 (defun norg/show-children-from-point/fully-expand ()
   "Fully expand the current headline.
 When in a body, \"current headline\" means the current body's parent headline."
   (let* ((current-value (norg/n-levels-being-shown-or-infinity))
          (v :max))
-    (norg/-show-children-from-point/set-level-etc v :setting-max current-value)))
+    (-norg/show-children-from-point/set-level-etc v :setting-max current-value)))
 
 (defun norg/show-children-from-point/incremental/less (n)
   "If `N` is not provided, collapse the current headline by one level.
@@ -1216,7 +1216,7 @@ If `N` is provided, set the number of child levels to `N`.
 When in a body, \"current headline\" means the current body's parent headline."
   (if n
       (norg/show-children-from-point n)
-    (norg/-show-children-from-point/set-level-etc
+    (-norg/show-children-from-point/set-level-etc
      (1- (norg/start-level-for-incremental-contract)) :less :dummy)))
 
 (defun norg/show-children-from-point/incremental/more (n)
@@ -1225,7 +1225,7 @@ If `N` is provided, set the number of child levels to `N`.
 When in a body, \"current headline\" means the current body's parent headline."
   (if n
       (norg/show-children-from-point n)
-    (norg/-show-children-from-point/set-level-etc
+    (-norg/show-children-from-point/set-level-etc
      (1+ (norg/n-levels-being-shown-or-infinity)) :more :dummy)))
 
 ;;;;; norg/show-children-from-parent/xxxx support
@@ -1282,10 +1282,10 @@ the parameter."
   (norg/save-excursion-to-root
     (norg/show-children-from-point* n)))
 
-(defun norg/-show-children-from-root/set-level-etc (level
+(defun -norg/show-children-from-root/set-level-etc (level
                                                     setting-kind
                                                     current-value)
-  (norg/-set-level-etc #'norg/show-children-from-root*
+  (-norg/set-level-etc #'norg/show-children-from-root*
                        level
                        (norg/n-levels-below/root)
                        "[%s of %s] from root"
@@ -1296,24 +1296,24 @@ the parameter."
 
 (defun norg/show-children-from-root (n)
   (let* ((v n))
-    (norg/-show-children-from-root/set-level-etc v :no-check :dummy)))
+    (-norg/show-children-from-root/set-level-etc v :no-check :dummy)))
 
 (defun norg/show-children-from-root/set-min ()
   (let* ((current-value (norg/start-level-for-incremental-contract/root))
          (v 0))
-    (norg/-show-children-from-root/set-level-etc v :setting-min current-value)))
+    (-norg/show-children-from-root/set-level-etc v :setting-min current-value)))
 
 (defun norg/show-children-from-root/fully-expand ()
   (let* ((current-value (norg/n-levels-being-shown-or-infinity/root))
          (v :max))
-    (norg/-show-children-from-root/set-level-etc v :setting-max current-value)))
+    (-norg/show-children-from-root/set-level-etc v :setting-max current-value)))
 
 (defun norg/show-children-from-root/incremental/less (n)
   "If `N` is not provided, collapse the current headline's root by one level.
 If `N` is provided, set the number of child levels to `N`."
   (if n
       (norg/show-children-from-root n)
-    (norg/-show-children-from-root/set-level-etc
+    (-norg/show-children-from-root/set-level-etc
      (1- (norg/start-level-for-incremental-contract/root)) :less :dummy)))
 
 (defun norg/show-children-from-root/incremental/more (n)
@@ -1321,12 +1321,12 @@ If `N` is provided, set the number of child levels to `N`."
 If `N` is provided, set the number of child levels to `N`."
   (if n
       (norg/show-children-from-root n)
-    (norg/-show-children-from-root/set-level-etc
+    (-norg/show-children-from-root/set-level-etc
      (1+ (norg/n-levels-being-shown-or-infinity/root)) :more :dummy)))
 
 (defun norg/show-children-from-root/to-current-level ()
   (let* ((v (1- (norg/current-level t))))
-    (norg/-show-children-from-root/set-level-etc v :no-check :dummy)))
+    (-norg/show-children-from-root/set-level-etc v :no-check :dummy)))
 
 ;;;;; norg/show-children-from-all-roots/xxxx support
 
@@ -1335,10 +1335,10 @@ If `N` is provided, set the number of child levels to `N`."
 the parameter."
   (norg/mapc-roots (lambda () (norg/show-children-from-point* n))))
 
-(defun norg/-show-children-from-all-roots/set-level-etc (level
+(defun -norg/show-children-from-all-roots/set-level-etc (level
                                                          setting-kind
                                                          current-value)
-  (norg/-set-level-etc #'norg/show-children-from-all-roots*
+  (-norg/set-level-etc #'norg/show-children-from-all-roots*
                        level
                        (norg/n-levels-below/buffer)
                        "[%s of %s] from all roots"
@@ -1349,24 +1349,24 @@ the parameter."
 
 (defun norg/show-children-from-all-roots (n)
   (let* ((v n))
-    (norg/-show-children-from-all-roots/set-level-etc v :no-check :dummy)))
+    (-norg/show-children-from-all-roots/set-level-etc v :no-check :dummy)))
 
 (defun norg/show-children-from-all-roots/set-min ()
   (let* ((current-value (norg/start-level-for-incremental-contract/buffer))
          (v 0))
-    (norg/-show-children-from-all-roots/set-level-etc v :setting-min current-value)))
+    (-norg/show-children-from-all-roots/set-level-etc v :setting-min current-value)))
 
 (defun norg/show-children-from-all-roots/fully-expand ()
   (let* ((current-value (norg/n-levels-being-shown-or-infinity/buffer))
          (v :max))
-    (norg/-show-children-from-all-roots/set-level-etc v :setting-max current-value)))
+    (-norg/show-children-from-all-roots/set-level-etc v :setting-max current-value)))
 
 (defun norg/show-children-from-all-roots/incremental/less (n)
   "If `N` is not provided, collapse all roots by one level.
 If `N` is provided, set the number of child levels to `N`."
   (if n
       (norg/show-children-from-all-roots n)
-    (norg/-show-children-from-all-roots/set-level-etc
+    (-norg/show-children-from-all-roots/set-level-etc
      (1- (norg/start-level-for-incremental-contract/buffer)) :less :dummy)))
 
 (defun norg/show-children-from-all-roots/incremental/more (n)
@@ -1374,12 +1374,12 @@ If `N` is provided, set the number of child levels to `N`."
 If `N` is provided, set the number of child levels to `N`."
   (if n
       (norg/show-children-from-all-roots n)
-    (norg/-show-children-from-all-roots/set-level-etc
+    (-norg/show-children-from-all-roots/set-level-etc
      (1+ (norg/n-levels-being-shown-or-infinity/buffer)) :more :dummy)))
 
 (defun norg/show-children-from-all-roots/to-current-level ()
   (let* ((v (1- (norg/current-level t))))
-    (norg/-show-children-from-all-roots/set-level-etc v :no-check :dummy)))
+    (-norg/show-children-from-all-roots/set-level-etc v :no-check :dummy)))
 
 ;;; End
 
