@@ -284,9 +284,9 @@
             ;;    no prev/next heading.
             (point)))))))
 
-(defun -nomis/outline/prev-or-next-heading (n
-                                            direction
-                                            kind)
+(defun nomis/outline/prev-or-next-heading (n
+                                           direction
+                                           kind)
   "Go to the N'th-next heading of kind KIND in direction DIRECTION.
 If such a heading exists, return `t`.
 If no such heading exists, return `nil', leave point unchanged and
@@ -326,7 +326,7 @@ DIRECTION is one or `:forward` and `:backward`."
                                                              n
                                                              direction
                                                              kind)
-  (when (-nomis/outline/prev-or-next-heading n direction kind)
+  (when (nomis/outline/prev-or-next-heading n direction kind)
     (-nomis/outline/show-lineage lineage-spec)))
 
 ;;;; API
