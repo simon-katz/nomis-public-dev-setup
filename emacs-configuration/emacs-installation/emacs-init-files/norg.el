@@ -163,9 +163,7 @@ Return the nesting depth of the headline in the outline."
 (defalias 'norg/w/next-heading 'outline-next-heading)
 (defalias 'norg/w/end-of-heading 'outline-end-of-heading)
 (defalias 'norg/w/next-preface 'outline-next-preface)
-(defalias 'norg/w/forward-heading-same-level 'org-forward-heading-same-level)
 
-(defalias 'norg/w/backward-heading-same-level 'org-backward-heading-same-level)
 (defalias 'norg/w/up-heading 'outline-up-heading)
 (defalias 'norg/w/previous-heading 'outline-previous-heading)
 
@@ -616,53 +614,14 @@ Like `org-backward-heading-same-level` but:
 
 ;;;;; Forward and backward at same level, sibling or peer
 
-(defun -norg/peer/helper (direction)
-  (nomis/scrolling/with-maybe-maintain-line-no-in-window
-    (let ((start-position-fun (cl-case direction
-                                (:forward #'end-of-line)
-                                (:backward #'beginning-of-line)))
-          (re-search-function (cl-case direction
-                                (:forward 're-search-forward)
-                                (:backward 're-search-backward)))
-          (post-search-adjust-function (cl-case direction
-                                         (:forward #'beginning-of-line)
-                                         (:backward (lambda ())))))
-      (let* ((text-to-look-for (save-excursion
-                                 (beginning-of-line)
-                                 (concat (thing-at-point 'symbol)
-                                         " "))))
-        (funcall start-position-fun)
-        (let ((found-p (condition-case nil
-                           (progn
-                             (funcall re-search-function
-                                      (concat "^" (regexp-quote text-to-look-for))
-                                      nil
-                                      nil ;t
-                                      )
-                             t)
-                         (error nil))))
-          (if found-p
-              (progn
-                (norg/show-point)
-                (funcall post-search-adjust-function))
-            (progn
-              (beginning-of-line)
-              (let* ((msg (cl-case direction
-                            (:forward
-                             "No next heading at this level, even across parents")
-                            (:backward
-                             "No previous heading at this level, even across parents"
-                             ;; but maybe there is -- I've seen a bug here
-                             ))))
-                (nomis/popup/error-message "%s" msg)))))))))
-
 (defun norg/next-peer ()
   "Move forward one subheading at same level as this one.
 Like `org-forward-heading-same-level` but:
 - when the target is invisible, make it visible
 - if this is the first subheading within its parent, move to the first
   subheading at this level in the next parent."
-  (-norg/peer/helper :forward))
+  (when (nomis/outline/prev-or-next-heading 1 :forward :peer)
+    (norg/show-point)))
 
 (defun norg/previous-peer ()
   "Move backward one subheading at same level as this one.
@@ -670,7 +629,8 @@ Like `org-backward-heading-same-level` but:
 - when the target is invisible, make it visible
 - if this is the first subheading within its parent, move to the last
 subheading at this level in the previous parent."
-  (-norg/peer/helper :backward))
+  (when (nomis/outline/prev-or-next-heading 1 :backward :peer)
+    (norg/show-point)))
 
 ;;;;; Forward and backward at any level
 
@@ -707,13 +667,13 @@ Same for the `backward` commands.")
 (defun norg/on-first-child?/must-be-at-boh ()
   (save-excursion
     (let ((starting-point (point)))
-      (norg/w/backward-heading-same-level 1 t)
+      (nomis/outline/prev-or-next-heading 1 :backward :sibling t)
       (= (point) starting-point))))
 
 (defun norg/on-last-child?/must-be-at-boh ()
   (save-excursion
     (let ((starting-point (point)))
-      (norg/w/forward-heading-same-level 1 t)
+      (nomis/outline/prev-or-next-heading 1 :forward :sibling t)
       (= (point) starting-point))))
 
 ;;;; Stepping TODO This uses `norg/fully-expanded?`, and so belongs later in the file
@@ -804,12 +764,12 @@ Same for the `backward` commands.")
                            n-levels-or-nil)))))
                 (try-to-move
                   ()
-                  (cl-ecase sibling-or-peer
-                    (:sibling (norg/w/forward-heading-same-level n t))
-                    (:peer (-norg/peer/helper
-                            (cl-case n
-                              (1 :forward)
-                              (-1 :backward))))))
+                  (nomis/outline/prev-or-next-heading 1
+                                                      (if (< n 0)
+                                                          :backward
+                                                        :forward)
+                                                      sibling-or-peer
+                                                      t))
                 (tried-to-go-too-far
                   ()
                   (let* ((msg (concat (if (< n 0)

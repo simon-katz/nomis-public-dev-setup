@@ -286,7 +286,12 @@
 
 (defun nomis/outline/prev-or-next-heading (n
                                            direction
-                                           kind)
+                                           kind
+                                           &optional
+                                           ;; TODO: I don't like this.
+                                           ;;       Refactor and make outline
+                                           ;;       and org callers consistent.
+                                           no-msg?)
   "Go to the N'th-next heading of kind KIND in direction DIRECTION.
 If such a heading exists, return `t`.
 If no such heading exists, return `nil', leave point unchanged and
@@ -307,19 +312,20 @@ DIRECTION is one or `:forward` and `:backward`."
         (progn
           (goto-char pos)
           t)
-      (let* ((direction-word (cl-ecase direction
-                               (:backward "previous")
-                               (:forward "next")))
-             (kind-word (cl-ecase kind
-                          (:any-level "heading")
-                          (:sibling "sibling")
-                          (:peer "same-level"))))
-        (nomis/popup/error-message
-         "No %s%s %s"
-         (if (= n 1) "" (concat (-nomis/outline/ordinal n)
-                                "-"))
-         direction-word
-         kind-word))
+      (unless no-msg?
+        (let* ((direction-word (cl-ecase direction
+                                 (:backward "previous")
+                                 (:forward "next")))
+               (kind-word (cl-ecase kind
+                            (:any-level "heading")
+                            (:sibling "sibling")
+                            (:peer "same-level"))))
+          (nomis/popup/error-message
+           "No %s%s %s"
+           (if (= n 1) "" (concat (-nomis/outline/ordinal n)
+                                  "-"))
+           direction-word
+           kind-word)))
       nil)))
 
 (defun -nomis/outline/prev-or-next-heading-and-show-lineage (lineage-spec
