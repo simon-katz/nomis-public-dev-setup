@@ -5,7 +5,7 @@
 ;;;; Requires
 
 (require 'nomis-msg)
-(require 'noutline)
+(require 'nomis-outline-common)
 (require 'nomis-tree)
 (require 'nomis-very-general-stuff-new-lexical)
 (require 'org)

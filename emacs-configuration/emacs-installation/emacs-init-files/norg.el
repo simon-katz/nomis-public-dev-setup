@@ -91,6 +91,7 @@
 (require 'cl-lib)
 (require 'dash)
 (require 'nomis-org) ; noflycheck
+(require 'nomis-outline-common) ; TODO: Check the require chains (and not all needed at top level).
 (require 'org)
 
 ;; Things that you might want to make into packages if you make norg into a
