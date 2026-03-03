@@ -155,8 +155,6 @@ message and in case adding org level messes things up.")
 ;; be safe.
 ;; Besides, it's useful to isolate how we use `outline` and `org`.
 
-(defalias 'norg/w/at-heading-p 'org-at-heading-p)
-
 (defun norg/w/level/must-be-at-boh ()
   "Point must be at the beginning of a headline.
 Return the nesting depth of the headline in the outline."
@@ -309,9 +307,9 @@ value."
                (when (funcall pred-of-no-args)
                  (funcall fun))))
       (goto-char (point-min))
-      (unless (norg/w/at-heading-p)
+      (unless (nomis/outline/on-heading?)
         (norg/w/next-heading))
-      (when (norg/w/at-heading-p)
+      (when (nomis/outline/on-heading?)
         (call-fun-when-pred-is-satisfied)
         (while (progn
                  (norg/w/next-heading)
