@@ -65,7 +65,7 @@
 
 (setq org-startup-shrink-all-tables t)
 
-(defun nomis/org-mode ()
+(defun nomis/org/mode ()
   ;; Layout
   (when (version< emacs-version "29")
     ;; See "Linum-mode + org-indent-mode gives strange graphical refresh bugs"
@@ -95,7 +95,7 @@
   (visual-line-mode 1) ; Try this for a while and see whether you like it
   )
 
-(add-hook 'org-mode-hook 'nomis/org-mode)
+(add-hook 'org-mode-hook 'nomis/org/mode)
 
 ;;;; Hacky fix for `org-table-header-set-header`
 
@@ -175,21 +175,21 @@
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ;;;; ____ Play #2 -- 2017-08-10
 
-;; (defun nomis/org-refile-values ()
+;; (defun nomis/org/refile-values ()
 ;;   (list org-refile-targets
 ;;         org-refile-use-outline-path
 ;;         org-outline-path-complete-in-steps
 ;;         org-refile-allow-creating-parent-nodes
 ;;         org-completion-use-ido))
 
-;; (defun nomis/org-refile-reset ()
+;; (defun nomis/org/refile-reset ()
 ;;   (setq org-refile-targets nil
 ;;         org-refile-use-outline-path nil
 ;;         org-outline-path-complete-in-steps t
 ;;         org-refile-allow-creating-parent-nodes nil
 ;;         org-completion-use-ido nil))
 
-;; (defun nomis/org-refile-setup ()
+;; (defun nomis/org/refile-setup ()
 ;;   (setq org-refile-targets '((nil :maxlevel . 9)
 ;;                              (org-agenda-files :maxlevel . 9))
 ;;         org-refile-use-outline-path nil ; 'file
@@ -202,7 +202,7 @@
 (require 'org-agenda)
 
 (progn
-  (defun nomis/org-reset-org-agenda-files ()
+  (defun nomis/org/reset-org-agenda-files ()
     (interactive)
     (setq org-agenda-files
           (progn
@@ -211,10 +211,10 @@
                                   "\\\.org$"))))
   (defadvice org-todo-list (before reset-agenda-files ; noflycheck
                                    activate compile)
-    (nomis/org-reset-org-agenda-files)))
+    (nomis/org/reset-org-agenda-files)))
 
 (progn
-  (defun nomis/org-finalize-agenda-hook ()
+  (defun nomis/org/finalize-agenda-hook ()
     (hl-line-mode)
     ;; From http://orgmode.org/worg/org-faq.html
     ;;   How can I stop the mouse cursor from highlighting lines
@@ -223,7 +223,7 @@
     (remove-text-properties
      (point-min) (point-max) '(mouse-face t)))
   (add-hook 'org-agenda-finalize-hook
-            'nomis/org-finalize-agenda-hook))
+            'nomis/org/finalize-agenda-hook))
 
 (cond
  ((member emacs-version
@@ -305,7 +305,7 @@
 
 ;;;; Display -- links
 
-(defun nomis/org-show-link-destination ()
+(defun nomis/org/show-link-destination ()
   ;; Copied with changes from
   ;; https://stackoverflow.com/questions/30312638/is-there-a-package-or-setting-to-show-an-org-mode-link-under-cursor-destinatio
   (when (memq major-mode
@@ -317,7 +317,7 @@
           (message "%s"
                    (org-element-property :raw-link object)))))))
 
-(add-hook 'post-command-hook 'nomis/org-show-link-destination)
+(add-hook 'post-command-hook 'nomis/org/show-link-destination)
 
 ;;;; Display -- faces
 
@@ -325,7 +325,7 @@
 
 ;;;; Display -- blog faces
 
-(defconst nomis/org-blog-faces
+(defconst nomis/org/blog-faces
   '((org-level-1 . (:inherit outline-1 :weight bold :height 1.3
                              :box (:line-width 2
                                                :color "grey75"
@@ -334,27 +334,27 @@
     (org-level-3 . (:inherit outline-3 :weight bold :height 1.1))
     (org-level-7 . nil)))
 
-(defvar nomis/org-blog-stuff-on-p nil)
+(defvar nomis/org/blog-stuff-on-p nil)
 
 (defun nomis/toggle-org-blog-stuff ()
   (interactive)
-  (make-local-variable 'nomis/org-blog-stuff-on-p)
+  (make-local-variable 'nomis/org/blog-stuff-on-p)
   (make-local-variable 'face-remapping-alist)
   (setq face-remapping-alist
-        (if nomis/org-blog-stuff-on-p
-            (let* ((org-blog-faces-keys (-map 'car nomis/org-blog-faces)))
+        (if nomis/org/blog-stuff-on-p
+            (let* ((org-blog-faces-keys (-map 'car nomis/org/blog-faces)))
               (-remove (lambda (x) (memq (car x) org-blog-faces-keys))
                        face-remapping-alist))
-          (append nomis/org-blog-faces
+          (append nomis/org/blog-faces
                   face-remapping-alist)))
-  (setq nomis/org-blog-stuff-on-p
-        (not nomis/org-blog-stuff-on-p)))
+  (setq nomis/org/blog-stuff-on-p
+        (not nomis/org/blog-stuff-on-p)))
 
 ;;;; Display -- Alternative heading faces
 
 ;; A set of colours that avoids clashes with my `xxxx` highlighting.
 
-(defvar nomis/org-alternative-heading-faces
+(defvar nomis/org/alternative-heading-faces
   '((outline-1 . (:inherit font-lock-function-name-face))
     (outline-2 . (:inherit font-lock-variable-name-face))
     (outline-3 . (:inherit font-lock-keyword-face))
@@ -364,21 +364,21 @@
     (outline-7 . (:inherit font-lock-builtin-face))
     (outline-8 . (:inherit font-lock-string-face))))
 
-(defvar nomis/org-alternative-heading-stuff-on-p nil)
+(defvar nomis/org/alternative-heading-stuff-on-p nil)
 
 (defun nomis/toggle-org-alternative-heading-stuff ()
   (interactive)
-  (make-local-variable 'nomis/org-alternative-heading-stuff-on-p)
+  (make-local-variable 'nomis/org/alternative-heading-stuff-on-p)
   (make-local-variable 'face-remapping-alist)
   (setq face-remapping-alist
-        (if nomis/org-alternative-heading-stuff-on-p
-            (let* ((org-alternative-heading-faces-keys (-map 'car nomis/org-alternative-heading-faces)))
+        (if nomis/org/alternative-heading-stuff-on-p
+            (let* ((org-alternative-heading-faces-keys (-map 'car nomis/org/alternative-heading-faces)))
               (-remove (lambda (x) (memq (car x) org-alternative-heading-faces-keys))
                        face-remapping-alist))
-          (append nomis/org-alternative-heading-faces
+          (append nomis/org/alternative-heading-faces
                   face-remapping-alist)))
-  (setq nomis/org-alternative-heading-stuff-on-p
-        (not nomis/org-alternative-heading-stuff-on-p)))
+  (setq nomis/org/alternative-heading-stuff-on-p
+        (not nomis/org/alternative-heading-stuff-on-p)))
 
 ;; Don't to this -- it blats my new "rainbow" outline colors. Maybe get rid of
 ;; these alternative faces altogether.
@@ -392,27 +392,27 @@
     (insert-file-contents path)
     (buffer-string)))
 
-(defconst nomis/org-export-apply-hacks-max-read-attempts 20)
-(defconst nomis/org-export-apply-hacks-sleep-ms 100)
+(defconst nomis/org/export-apply-hacks-max-read-attempts 20)
+(defconst nomis/org/export-apply-hacks-sleep-ms 100)
 
-(cl-defun nomis/org-export-read-hacked-file
+(cl-defun nomis/org/export-read-hacked-file
     (output-path &optional (n-attempts 1))
   (cl-flet ((sleep-a-bit
              ()
-             (sleep-for nomis/org-export-apply-hacks-sleep-ms)))
+             (sleep-for nomis/org/export-apply-hacks-sleep-ms)))
     (cond ((file-exists-p output-path)
            (sleep-a-bit) ; in case file exists but writing hasn't finished
            (get-string-from-file output-path))
-          ((<= n-attempts nomis/org-export-apply-hacks-max-read-attempts)
+          ((<= n-attempts nomis/org/export-apply-hacks-max-read-attempts)
            (sleep-a-bit)
-           (nomis/org-export-read-hacked-file output-path (1+ n-attempts)))
+           (nomis/org/export-read-hacked-file output-path (1+ n-attempts)))
           (t
            (beep)
            (error "FAILED: Tried %s times to read %s"
-                  nomis/org-export-apply-hacks-max-read-attempts
+                  nomis/org/export-apply-hacks-max-read-attempts
                   output-path)))))
 
-(cl-defun nomis/org-export-apply-hacks (&optional s)
+(cl-defun nomis/org/export-apply-hacks (&optional s)
   (let ((input-path (make-temp-file "__nomis-org-export--input-"))
         (output-path (make-temp-file "__nomis-org-export--output-")))
     (delete-file output-path) ; later we will wait for it to be created
@@ -426,11 +426,11 @@
                                                               \"%s\"))"
                    input-path
                    output-path))
-          (nomis/org-export-read-hacked-file output-path))
+          (nomis/org/export-read-hacked-file output-path))
       (ignore-errors (delete-file input-path))
       (ignore-errors (delete-file output-path)))))
 
-(defun nomis/org-export ()
+(defun nomis/org/export ()
   (interactive)
   (let* ((s (buffer-string))
          (old-buffer (current-buffer))
@@ -441,7 +441,7 @@
          (new-buffer (generate-new-buffer temp-name)))
     (progn ; I did have `unwind-protect`, but that meant I didn't see errors
       (with-current-buffer new-buffer
-        (let ((new-s (nomis/org-export-apply-hacks s)))
+        (let ((new-s (nomis/org/export-apply-hacks s)))
           (insert new-s))
         (write-file temp-name)
         (org-export-dispatch) ; user must select "latex", then "pdf"
@@ -476,10 +476,10 @@
 ;;           (set-marker (process-mark proc) (point)))
 ;;         (if moving (goto-char (process-mark proc)))))))
 
-;; (defun nomis/org-publish-filter-function (proc string)
+;; (defun nomis/org/publish-filter-function (proc string)
 ;;   (nomis/ordinary-insertion-filter proc string))
 
-;; (defun nomis/org-publish ()
+;; (defun nomis/org/publish ()
 ;;   (interactive)
 ;;   (let (;; (password (read-passwd "Enter password: "))
 ;;         (output-buffer (get-buffer-create "nomis-org-publish")))
@@ -496,19 +496,19 @@
 ;;                        ))
 ;;       (2 (make-process :name "nomis-org-publish"
 ;;                        :buffer output-buffer
-;;                        :filter 'nomis/org-publish-filter-function
+;;                        :filter 'nomis/org/publish-filter-function
 ;;                        :command (list "/Users/simonkatz/development-100/repositories/nomis/nomis-blog/_scripts/publish.sh"
 ;;                                       ;; (concat "\"" password "\"")
 ;;                                       )
 ;;                        ;; :stderr output-buffer
 ;;                        )))))
 
-;;;; nomis/org-get-links-to-current-heading
+;;;; nomis/org/get-links-to-current-heading
 
 ;; Inspired by
 ;; https://stackoverflow.com/questions/9844154/list-all-inbound-links-to-a-header-in-org-mode
 
-(defun nomis/org-get-links-to-current-heading (arg)
+(defun nomis/org/get-links-to-current-heading (arg)
   "Show links to the current heading.
 
 By default search in all .org buffers. With a prefix argument,
@@ -526,9 +526,9 @@ limit the search to the current buffer."
         (occur regexp)
       (multi-occur-in-matching-buffers ".*\\.org$" regexp))))
 
-;;;; nomis/org-global-todo-list
+;;;; nomis/org/global-todo-list
 
-(defun nomis/org-global-todo-list ()
+(defun nomis/org/global-todo-list ()
   (interactive)
   ;; (nomis/themes/disable-and-set-custom-themes
   ;;  nomis/themes/standard-light+nomis+altbg1)

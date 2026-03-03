@@ -30,15 +30,15 @@
   (nomis/tree/unimplemented-method k))
 
 (cl-defmethod nomis/tree/visibility-span/set-max--aux ((_k (eql :outline)))
-  (nomis/outline/visibility-span/set-max))
+  (nomis/tree/outline/visibility-span/set-max))
 
 ;;;;; nomis/tree/show-tree-only and nomis/tree/max-lineage
 
 (cl-defmethod nomis/tree/show-tree-only--aux ((_k (eql :outline)))
-  (nomis/outline/show-tree-only))
+  (nomis/tree/outline/show-tree-only))
 
 (cl-defmethod nomis/tree/max-lineage--aux ((_k (eql :outline)))
-  (nomis/outline/show-max-lineage))
+  (nomis/tree/outline/show-max-lineage))
 
 ;;;;; nomis/tree/set-step-n-levels-to-show
 
@@ -49,11 +49,11 @@
 
 (cl-defmethod nomis/tree/show-children-from-point/incremental/less--aux
   ((_k (eql :outline)) n)
-  (nomis/outline/show-children-from-point/incremental/less n))
+  (nomis/tree/outline/show-children-from-point/incremental/less n))
 
 (cl-defmethod nomis/tree/show-children-from-point/incremental/more--aux
   ((_k (eql :outline)) n)
-  (nomis/outline/show-children-from-point/incremental/more n))
+  (nomis/tree/outline/show-children-from-point/incremental/more n))
 
 (cl-defmethod nomis/tree/show-children-from-point/set-min--aux
   ((k (eql :outline)))
@@ -130,36 +130,36 @@
 ;;;;; Movement
 
 (cl-defmethod nomis/tree/previous-sibling--aux ((_k (eql :outline)))
-  (nomis/outline/previous-sibling 1))
+  (nomis/tree/outline/previous-sibling 1))
 
 (cl-defmethod nomis/tree/next-sibling--aux ((_k (eql :outline)))
-  (nomis/outline/next-sibling 1))
+  (nomis/tree/outline/next-sibling 1))
 
 (cl-defmethod nomis/tree/previous-peer--aux ((_k (eql :outline)))
-  (nomis/outline/previous-peer 1))
+  (nomis/tree/outline/previous-peer 1))
 
 (cl-defmethod nomis/tree/next-peer--aux ((_k (eql :outline)))
-  (nomis/outline/next-peer 1))
+  (nomis/tree/outline/next-peer 1))
 
 ;;;;; Movement + expand/collapse
 
 (cl-defmethod nomis/tree/step-backward-sibling--aux ((_k (eql :outline)) n)
-  (nomis/outline/step-backward-sibling n))
+  (nomis/tree/outline/step-backward-sibling n))
 
 (cl-defmethod nomis/tree/step-forward-sibling--aux ((_k (eql :outline)) n)
-  (nomis/outline/step-forward-sibling n))
+  (nomis/tree/outline/step-forward-sibling n))
 
 (cl-defmethod nomis/tree/step-backward-peer--aux ((_k (eql :outline)) n)
-  (nomis/outline/step-backward-peer n))
+  (nomis/tree/outline/step-backward-peer n))
 
 (cl-defmethod nomis/tree/step-forward-peer--aux ((_k (eql :outline)) n)
-  (nomis/outline/step-forward-peer n))
+  (nomis/tree/outline/step-forward-peer n))
 
 (cl-defmethod nomis/tree/previous-heading--aux ((_k (eql :outline)) n)
-  (nomis/outline/previous-heading n))
+  (nomis/tree/outline/previous-heading n))
 
 (cl-defmethod nomis/tree/next-heading--aux ((_k (eql :outline)) n)
-  (nomis/outline/next-heading n))
+  (nomis/tree/outline/next-heading n))
 
 (cl-defmethod nomis/tree/previous-heading/set-tree+body--aux ((k (eql :outline)))
   (nomis/tree/unimplemented-method k))

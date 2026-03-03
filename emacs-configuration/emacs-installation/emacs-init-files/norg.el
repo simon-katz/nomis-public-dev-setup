@@ -221,7 +221,7 @@ Return the nesting depth of the headline in the outline."
 
 (defun -norg/body-info ()
   (save-excursion
-    (nomis/outline-c/back-to-heading?)
+    (nomis/outline/c/back-to-heading?)
     (let* ((has-body?
             (-norg/has-body?/must-be-at-boh/leaving-cursor-at-end-of-heading))
            (has-visible-body? (and has-body?
@@ -244,7 +244,7 @@ Return the nesting depth of the headline in the outline."
 (defun -norg/in-body? ()
   (> (point)
      (save-excursion
-       (nomis/outline-c/back-to-heading?)
+       (nomis/outline/c/back-to-heading?)
        (norg/w/end-of-heading)
        (point))))
 
@@ -253,7 +253,7 @@ Return the nesting depth of the headline in the outline."
 of the current heading in the outline. Otherwise return one more than that
 value."
   (+ (save-excursion
-       (nomis/outline-c/back-to-heading?)
+       (nomis/outline/c/back-to-heading?)
        (norg/w/level/must-be-at-boh))
      (if (and norg/show-bodies?
               inc-if-in-body?
@@ -304,9 +304,9 @@ value."
                 (when (funcall pred-of-no-args)
                   (funcall fun))))
       (goto-char (point-min))
-      (unless (nomis/outline-c/on-heading?)
+      (unless (nomis/outline/c/on-heading?)
         (norg/w/next-heading))
-      (when (nomis/outline-c/on-heading?)
+      (when (nomis/outline/c/on-heading?)
         (call-fun-when-pred-is-satisfied)
         (while (progn
                  (norg/w/next-heading)
@@ -534,7 +534,7 @@ headline."
 (defun -norg/grab-heading-text ()
   (save-excursion
     ;; Jump to first word of heading
-    (nomis/outline-c/back-to-heading?)
+    (nomis/outline/c/back-to-heading?)
     (forward-word)
     (backward-word)
     ;; Grab text of heading
@@ -568,7 +568,7 @@ headline."
                                nil
                                t)))
     (when again?
-      (nomis/outline-c/back-to-heading?))
+      (nomis/outline/c/back-to-heading?))
     (or (search-for-text)
         (progn
           (goto-char (point-max))
@@ -602,7 +602,7 @@ headline."
 Like `org-forward-heading-same-level` but:
 - when the target is invisible, make it visible
 - if this is the first subheading within its parent, display a popup message."
-  (when (nomis/outline-c/prev-or-next-heading 1 :forward :sibling)
+  (when (nomis/outline/c/prev-or-next-heading 1 :forward :sibling)
     (norg/show-point)))
 
 (defun norg/previous-sibling ()
@@ -610,7 +610,7 @@ Like `org-forward-heading-same-level` but:
 Like `org-backward-heading-same-level` but:
 - when the target is invisible, make it visible
 - if this is the first subheading within its parent, display a popup message."
-  (when (nomis/outline-c/prev-or-next-heading 1 :backward :sibling)
+  (when (nomis/outline/c/prev-or-next-heading 1 :backward :sibling)
     (norg/show-point)))
 
 ;;;;; Forward and backward at same level, sibling or peer
@@ -621,7 +621,7 @@ Like `org-forward-heading-same-level` but:
 - when the target is invisible, make it visible
 - if this is the first subheading within its parent, move to the first
   subheading at this level in the next parent."
-  (when (nomis/outline-c/prev-or-next-heading 1 :forward :peer)
+  (when (nomis/outline/c/prev-or-next-heading 1 :forward :peer)
     (norg/show-point)))
 
 (defun norg/previous-peer ()
@@ -630,7 +630,7 @@ Like `org-backward-heading-same-level` but:
 - when the target is invisible, make it visible
 - if this is the first subheading within its parent, move to the last
 subheading at this level in the previous parent."
-  (when (nomis/outline-c/prev-or-next-heading 1 :backward :peer)
+  (when (nomis/outline/c/prev-or-next-heading 1 :backward :peer)
     (norg/show-point)))
 
 ;;;;; Forward and backward at any level
@@ -668,13 +668,13 @@ Same for the `backward` commands.")
 (defun norg/on-first-child?/must-be-at-boh ()
   (save-excursion
     (let ((starting-point (point)))
-      (nomis/outline-c/prev-or-next-heading 1 :backward :sibling t)
+      (nomis/outline/c/prev-or-next-heading 1 :backward :sibling t)
       (= (point) starting-point))))
 
 (defun norg/on-last-child?/must-be-at-boh ()
   (save-excursion
     (let ((starting-point (point)))
-      (nomis/outline-c/prev-or-next-heading 1 :forward :sibling t)
+      (nomis/outline/c/prev-or-next-heading 1 :forward :sibling t)
       (= (point) starting-point))))
 
 ;;;; Stepping TODO This uses `norg/fully-expanded?`, and so belongs later in the file
@@ -765,7 +765,7 @@ Same for the `backward` commands.")
                            n-levels-or-nil)))))
                 (try-to-move
                   ()
-                  (nomis/outline-c/prev-or-next-heading 1
+                  (nomis/outline/c/prev-or-next-heading 1
                                                         (if (< n 0)
                                                             :backward
                                                           :forward)
@@ -785,7 +785,7 @@ Same for the `backward` commands.")
                   (if (null n-levels-or-nil)
                       (norg/expand-fully)
                     (norg/expand n-levels-or-nil t))))
-        (nomis/outline-c/back-to-heading?)
+        (nomis/outline/c/back-to-heading?)
         (if (not (or (-norg/stepping-forward-on-last-but-not-first-child/must-be-at-boh)
                      (-norg/stepping-backward-on-first-but-not-last-child/must-be-at-boh)
                      ;; If we very recently did a `norg/step-xxxx-sibling` which

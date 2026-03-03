@@ -13,7 +13,7 @@
 ;;;; ---- Per-buffer ----
 
 (defun -nomis/logview-setup ()
-  ;; Elsewhere (eg in `nomis/org-mode`) we're using `visual-line-mode`, but
+  ;; Elsewhere (eg in `nomis/org/mode`) we're using `visual-line-mode`, but
   ;; that doesn't work here.  So use `truncate-lines` (which I guess we'd
   ;; decided against before).
   (setq truncate-lines t)

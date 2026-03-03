@@ -13,16 +13,16 @@
 
 ;;;; Temporary keybindings to train myself for change of Projectile keybindings
 
-(defun -nomis/outline/projectile-keybinding-error ()
+(defun -nomis/tree-key-bindings/projectile-keybinding-error ()
   (interactive)
   (nomis/msg/pulse-buffer-error)
   (nomis/temporarily-disable-keys t) ; avoid accidental input
   (error "Nope, Projectile is M-o now"))
 
-(define-key projectile-mode-map (kbd "H-o d") '-nomis/outline/projectile-keybinding-error)
+(define-key projectile-mode-map (kbd "H-o d") '-nomis/tree-key-bindings/projectile-keybinding-error)
 ;; We are using this for `outline-minor-faces-mode` now:
-;; (define-key projectile-mode-map (kbd "H-o f") 'nomis/outline/projectile-keybinding-error)
-(define-key projectile-mode-map (kbd "H-o g") '-nomis/outline/projectile-keybinding-error)
+;; (define-key projectile-mode-map (kbd "H-o f") '-nomis/tree-key-bindings/projectile-keybinding-error)
+(define-key projectile-mode-map (kbd "H-o g") '-nomis/tree-key-bindings/projectile-keybinding-error)
 
 ;;;; nomis/tree/pop-up-help
 
@@ -139,7 +139,7 @@ H-q H-q H-/  Show this help")
   (nomis/define-key-with-filter nomis/tree-mode-map
                                 key
                                 'nomis/tree/show-children-from-point/incremental/more
-                                (nomis/outline-c/on-heading?)))
+                                (nomis/outline/c/on-heading?)))
 
 ;;;;; Shifttab
 
@@ -159,7 +159,7 @@ H-q H-q H-/  Show this help")
   (nomis/define-key-with-filter nomis/tree-mode-map
                                 key
                                 'nomis/tree/show-children-from-point/incremental/less
-                                (nomis/outline-c/on-heading?)))
+                                (nomis/outline/c/on-heading?)))
 
 ;;;; `bicycle-cycle-global`
 
