@@ -598,31 +598,21 @@ headline."
 
 ;;;;; Forward and backward at same level
 
-(defun -norg/heading-same-level-helper (move-fun
-                                        error-message)
-  (nomis/scrolling/with-maybe-maintain-line-no-in-window
-    (nomis/outline/back-to-heading?)
-    (let* ((starting-point (point)))
-      (funcall move-fun 1 t)
-      (norg/show-point)
-      (when (= (point) starting-point)
-        (nomis/popup/error-message "%s" error-message)))))
-
 (defun norg/next-sibling ()
   "Move forward one subheading at same level as this one.
 Like `org-forward-heading-same-level` but:
 - when the target is invisible, make it visible
 - if this is the first subheading within its parent, display a popup message."
-  (-norg/heading-same-level-helper #'norg/w/forward-heading-same-level
-                                   "No next heading at this level"))
+  (when (nomis/outline/prev-or-next-heading 1 :forward :sibling)
+    (norg/show-point)))
 
 (defun norg/previous-sibling ()
   "Move backward one subheading at same level as this one.
 Like `org-backward-heading-same-level` but:
 - when the target is invisible, make it visible
 - if this is the first subheading within its parent, display a popup message."
-  (-norg/heading-same-level-helper #'norg/w/backward-heading-same-level
-                                   "No previous heading at this level"))
+  (when (nomis/outline/prev-or-next-heading 1 :backward :sibling)
+    (norg/show-point)))
 
 ;;;;; Forward and backward at same level, sibling or peer
 
