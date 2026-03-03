@@ -284,10 +284,15 @@
             ;;    no prev/next heading.
             (point)))))))
 
-(defun -nomis/outline/prev-or-next-heading (lineage-spec
-                                            n
+(defun -nomis/outline/prev-or-next-heading (n
                                             direction
                                             kind)
+  "Go to the N'th-next heading of kind KIND in direction DIRECTION.
+If such a heading exists, return `t`.
+If no such heading exists, return `nil', leave point unchanged and
+display a popup message.
+KIND is one of `:sibling`, `:peer` and `:any-level`.
+DIRECTION is one or `:forward` and `:backward`."
   (let* ((pos (->> (-iterate (lambda (start)
                                (-nomis/outline/prev-or-next-heading-pos
                                 start
@@ -301,7 +306,7 @@
     (if pos
         (progn
           (goto-char pos)
-          (-nomis/outline/show-lineage lineage-spec))
+          t)
       (let* ((direction-word (cl-ecase direction
                                (:backward "previous")
                                (:forward "next")))
@@ -314,7 +319,15 @@
          (if (= n 1) "" (concat (-nomis/outline/ordinal n)
                                 "-"))
          direction-word
-         kind-word)))))
+         kind-word))
+      nil)))
+
+(defun -nomis/outline/prev-or-next-heading-and-show-lineage (lineage-spec
+                                                             n
+                                                             direction
+                                                             kind)
+  (when (-nomis/outline/prev-or-next-heading n direction kind)
+    (-nomis/outline/show-lineage lineage-spec)))
 
 ;;;; API
 
@@ -409,90 +422,90 @@
 ;;;;; Previous
 
 (defun nomis/outline/previous-heading (n)
-  (-nomis/outline/prev-or-next-heading navigation-lineage-spec
-                                       n
-                                       :backward
-                                       :any-level))
+  (-nomis/outline/prev-or-next-heading-and-show-lineage navigation-lineage-spec
+                                                        n
+                                                        :backward
+                                                        :any-level))
 
 (defun nomis/outline/previous-sibling (n)
   "Move backward to the N'th heading at same level as this one.
 Stop at the first and last headings of a superior heading."
   (interactive "p")
-  (-nomis/outline/prev-or-next-heading navigation-lineage-spec
-                                       n
-                                       :backward
-                                       :sibling))
+  (-nomis/outline/prev-or-next-heading-and-show-lineage navigation-lineage-spec
+                                                        n
+                                                        :backward
+                                                        :sibling))
 
 (defun nomis/outline/previous-peer (n)
   "Move backward to the N'th heading at same level as this one.
 Can pass by a superior heading."
   (interactive "p")
-  (-nomis/outline/prev-or-next-heading navigation-lineage-spec
-                                       n
-                                       :backward
-                                       :peer))
+  (-nomis/outline/prev-or-next-heading-and-show-lineage navigation-lineage-spec
+                                                        n
+                                                        :backward
+                                                        :peer))
 
 (defun nomis/outline/step-backward-sibling (n)
   "Move backward to the N'th heading at same level as this one, then show
 fat parents and all children.
 Stop at the first and last headings of a superior heading."
-  (-nomis/outline/prev-or-next-heading step-lineage-spec
-                                       (or n 1)
-                                       :backward
-                                       :sibling))
+  (-nomis/outline/prev-or-next-heading-and-show-lineage step-lineage-spec
+                                                        (or n 1)
+                                                        :backward
+                                                        :sibling))
 
 (defun nomis/outline/step-backward-peer (n)
   "Move backward to the N'th heading at same level as this one, then show
 fat parents and all children.
 Can pass by a superior heading."
-  (-nomis/outline/prev-or-next-heading step-lineage-spec
-                                       (or n 1)
-                                       :backward
-                                       :peer))
+  (-nomis/outline/prev-or-next-heading-and-show-lineage step-lineage-spec
+                                                        (or n 1)
+                                                        :backward
+                                                        :peer))
 
 ;;;;; Next
 
 (defun nomis/outline/next-heading (n)
-  (-nomis/outline/prev-or-next-heading navigation-lineage-spec
-                                       n
-                                       :forward
-                                       :any-level))
+  (-nomis/outline/prev-or-next-heading-and-show-lineage navigation-lineage-spec
+                                                        n
+                                                        :forward
+                                                        :any-level))
 
 (defun nomis/outline/next-sibling (n)
   "Move forward to the N'th heading at same level as this one.
 Stop at the first and last headings of a superior heading."
   (interactive "p")
-  (-nomis/outline/prev-or-next-heading navigation-lineage-spec
-                                       n
-                                       :forward
-                                       :sibling))
+  (-nomis/outline/prev-or-next-heading-and-show-lineage navigation-lineage-spec
+                                                        n
+                                                        :forward
+                                                        :sibling))
 
 (defun nomis/outline/next-peer (n)
   "Move forward to the N'th heading at same level as this one.
 Can pass by a superior heading."
   (interactive "p")
-  (-nomis/outline/prev-or-next-heading navigation-lineage-spec
-                                       n
-                                       :forward
-                                       :peer))
+  (-nomis/outline/prev-or-next-heading-and-show-lineage navigation-lineage-spec
+                                                        n
+                                                        :forward
+                                                        :peer))
 
 (defun nomis/outline/step-forward-sibling (n)
   "Move forward to the N'th heading at same level as this one, then show
 fat parents and all children.
 Stop at the first and last headings of a superior heading."
-  (-nomis/outline/prev-or-next-heading step-lineage-spec
-                                       (or n 1)
-                                       :forward
-                                       :sibling))
+  (-nomis/outline/prev-or-next-heading-and-show-lineage step-lineage-spec
+                                                        (or n 1)
+                                                        :forward
+                                                        :sibling))
 
 (defun nomis/outline/step-forward-peer (n)
   "Move forward to the N'th heading at same level as this one, then show
 fat parents and all children.
 Can pass by a superior heading."
-  (-nomis/outline/prev-or-next-heading step-lineage-spec
-                                       (or n 1)
-                                       :forward
-                                       :peer))
+  (-nomis/outline/prev-or-next-heading-and-show-lineage step-lineage-spec
+                                                        (or n 1)
+                                                        :forward
+                                                        :peer))
 
 ;;; End
 
