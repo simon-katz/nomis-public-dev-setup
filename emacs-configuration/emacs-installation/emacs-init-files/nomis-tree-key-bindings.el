@@ -5,7 +5,7 @@
 ;;;; Requires
 
 (require 'nomis-msg)
-(require 'nomis-outline-uber)
+(require 'noutline)
 (require 'nomis-tree)
 (require 'nomis-very-general-stuff-new-lexical)
 (require 'org)

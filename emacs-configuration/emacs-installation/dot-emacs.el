@@ -332,7 +332,7 @@
 (require 'nomis-eca)
 
 (require 'nomis-outline)
-(require 'nomis-outline-uber)
+(require 'noutline)
 (require 'nomis-outline-key-bindings)
 
 (require 'nomis-bicycle)

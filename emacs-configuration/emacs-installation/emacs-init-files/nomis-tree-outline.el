@@ -5,7 +5,7 @@
 ;;;; Requires
 
 (require 'cl-lib)
-(require 'nomis-outline-uber)
+(require 'noutline)
 (require 'nomis-tree)
 
 ;;;; `nomis/tree` methods

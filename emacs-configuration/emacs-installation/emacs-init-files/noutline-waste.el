@@ -1,8 +1,8 @@
-;;; nomis-outline-uber-waste.el --- Junk  -*- lexical-binding: t; -*-
+;;; noutline-waste.el --- Junk  -*- lexical-binding: t; -*-
 
 ;;; Code:
 
-(error "nomis-outline-uber-waste is not for loading")
+(error "noutline-waste is not for loading")
 
 ;;;; Requires
 
@@ -80,4 +80,4 @@
 
 ;;; End
 
-(provide 'nomis-outline-uber-waste)
+(provide 'noutline-waste)

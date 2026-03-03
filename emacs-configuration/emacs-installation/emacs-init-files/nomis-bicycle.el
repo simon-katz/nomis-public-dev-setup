@@ -6,7 +6,7 @@
 
 (require 'bicycle)
 (require 'nomis-msg)
-(require 'nomis-outline-uber)
+(require 'noutline)
 
 ;;;; Thoughts on bicycle
 

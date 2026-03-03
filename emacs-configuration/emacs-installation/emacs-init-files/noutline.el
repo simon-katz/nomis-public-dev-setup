@@ -1,4 +1,4 @@
-;;; nomis-outline-uber.el ---  -*- lexical-binding: t; -*-
+;;; noutline.el ---  -*- lexical-binding: t; -*-
 
 ;;; Code:
 
@@ -515,4 +515,4 @@ Can pass by a superior heading."
 
 ;;; End
 
-(provide 'nomis-outline-uber)
+(provide 'noutline)
