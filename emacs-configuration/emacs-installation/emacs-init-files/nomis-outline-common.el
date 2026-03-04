@@ -24,6 +24,13 @@
 
 ;;;; Simple outline wrappers
 
+(defalias 'nomis/outline/c/next-heading     'outline-next-heading)
+(defalias 'nomis/outline/c/end-of-heading   'outline-end-of-heading)
+(defalias 'nomis/outline/c/next-preface     'outline-next-preface)
+(defalias 'nomis/outline/c/previous-heading 'outline-previous-heading)
+(defalias 'nomis/outline/c/show-entry       'outline-show-entry)
+(defalias 'nomis/outline/c/hide-entry       'outline-hide-entry)
+
 (defun nomis/outline/c/on-heading? ()
   (outline-on-heading-p t))
 

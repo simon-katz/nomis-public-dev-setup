@@ -161,14 +161,6 @@ message and in case adding org level messes things up.")
 Return the nesting depth of the headline in the outline."
   (funcall outline-level))
 
-(defalias 'norg/w/next-heading 'outline-next-heading)
-(defalias 'norg/w/end-of-heading 'outline-end-of-heading)
-(defalias 'norg/w/next-preface 'outline-next-preface)
-
-(defalias 'norg/w/previous-heading 'outline-previous-heading)
-
-(defalias 'norg/w/show-entry 'outline-show-entry)
-(defalias 'norg/w/hide-entry 'outline-hide-entry)
 (defalias 'norg/w/cycle 'org-cycle)
 (defalias 'norg/w/overview 'org-overview)
 
@@ -198,9 +190,9 @@ Return the nesting depth of the headline in the outline."
   (not (norg/w/invisible-p)))
 
 (defun -norg/has-body?/must-be-at-boh/leaving-cursor-at-end-of-heading ()
-  (let* ((_ (norg/w/end-of-heading))
+  (let* ((_ (nomis/outline/c/end-of-heading))
          (end-of-heading-position (point))
-         (_ (norg/w/next-preface))
+         (_ (nomis/outline/c/next-preface))
          (end-of-preface-position (point))
          (has-body? (not (= end-of-heading-position
                             end-of-preface-position))))
@@ -243,7 +235,7 @@ Return the nesting depth of the headline in the outline."
   (> (point)
      (save-excursion
        (nomis/outline/c/back-to-heading?)
-       (norg/w/end-of-heading)
+       (nomis/outline/c/end-of-heading)
        (point))))
 
 (defun norg/current-level (&optional inc-if-in-body?)
@@ -303,11 +295,11 @@ value."
                   (funcall fun))))
       (goto-char (point-min))
       (unless (nomis/outline/c/on-heading?)
-        (norg/w/next-heading))
+        (nomis/outline/c/next-heading))
       (when (nomis/outline/c/on-heading?)
         (call-fun-when-pred-is-satisfied)
         (while (progn
-                 (norg/w/next-heading)
+                 (nomis/outline/c/next-heading)
                  (not (eobp)))
           (call-fun-when-pred-is-satisfied)))))
   nil)
@@ -398,7 +390,7 @@ headline."
                                         (when (< (- (norg/w/level/must-be-at-boh)
                                                     level)
                                                  n)
-                                          (norg/w/show-entry)))))))
+                                          (nomis/outline/c/show-entry)))))))
 
 (defun norg/expand-fully ()
   (norg/expand 1000) ; TODO magic number
@@ -501,7 +493,7 @@ headline."
           (nth new-pos-or-nil
                -norg/visibility-span/detail-values)
         (norg/collapse-all-and-set-visibility-span detail)
-        (if show? (norg/w/show-entry) (norg/w/hide-entry))
+        (if show? (nomis/outline/c/show-entry) (nomis/outline/c/hide-entry))
         (unless no-message?
           (nomis/popup/message "%s" msg))))))
 
@@ -525,7 +517,7 @@ headline."
                          :test #'equal)))
     (cl-assert (not (null v)))
     (-norg/visibility-span/set-level/numeric v nil t))
-  (norg/w/show-entry))
+  (nomis/outline/c/show-entry))
 
 ;;;; Search heading text
 
@@ -640,23 +632,23 @@ Same for the `backward` commands.")
 
 (defun norg/next-heading ()
   (nomis/scrolling/with-maybe-maintain-line-no-in-window
-    (norg/w/next-heading)
+    (nomis/outline/c/next-heading)
     (if -norg/heading-any-level-show-entry?
-        (norg/w/show-entry)
+        (nomis/outline/c/show-entry)
       (norg/show-point))))
 
 (defun norg/previous-heading ()
   (nomis/scrolling/with-maybe-maintain-line-no-in-window
-    (norg/w/previous-heading)
+    (nomis/outline/c/previous-heading)
     (if -norg/heading-any-level-show-entry?
-        (norg/w/show-entry)
+        (nomis/outline/c/show-entry)
       (norg/show-point))))
 
 (defun norg/step-forward-any-level (n-levels-to-show-or-nil)
   ;; We should use `-norg/step/impl` here (or whatever we replace it with).
   ;; We want to show fat parents instead of thin.
   (nomis/scrolling/with-maybe-maintain-line-no-in-window
-    (norg/w/next-heading)
+    (nomis/outline/c/next-heading)
     (norg/collapse-all-and-set-visibility-span 'ancestors)
     (let* ((n-levels-or-nil (or n-levels-to-show-or-nil
                                 norg/step-n-levels-to-show)))
@@ -668,7 +660,7 @@ Same for the `backward` commands.")
   ;; We should use `-norg/step/impl` here (or whatever we replace it with).
   ;; We want to show fat parents instead of thin.
   (nomis/scrolling/with-maybe-maintain-line-no-in-window
-    (norg/w/previous-heading)
+    (nomis/outline/c/previous-heading)
     (norg/collapse-all-and-set-visibility-span 'ancestors)
     (let* ((n-levels-or-nil (or n-levels-to-show-or-nil
                                 norg/step-n-levels-to-show)))
