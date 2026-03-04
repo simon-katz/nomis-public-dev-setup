@@ -95,8 +95,14 @@
 (defun nomis/outline/c/level ()
   ;; TODO: Broken. This returns weird numbers in some modes. /eg/ In Clojure
   ;;       it's one too large (for me).
-  (cl-assert (-nomis/outline/c/at-beginning-of-heading?))
-  (funcall outline-level))
+  (cl-flet ((do-it () (funcall outline-level)))
+    (if (nomis/outline/c/on-heading?)
+        (if (bolp)
+            (do-it)
+          (save-excursion (nomis/outline/c/back-to-heading)
+                          (do-it)))
+      (1+ (save-excursion (nomis/outline/c/back-to-heading)
+                          (do-it))))))
 
 (defun -nomis/outline/c/on-top-level-heading? ()
   "Are we on a top-level heading?"
