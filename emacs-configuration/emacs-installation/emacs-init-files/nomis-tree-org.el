@@ -126,6 +126,14 @@
 
 ;;;;; Movement
 
+(cl-defmethod nomis/tree/previous-heading--aux ((k (eql :org)) n)
+  ;; TODO: We are ignoring `n`.
+  (norg/previous-heading))
+
+(cl-defmethod nomis/tree/next-heading--aux ((k (eql :org)) n)
+  ;; TODO: We are ignoring `n`.
+  (norg/next-heading))
+
 (cl-defmethod nomis/tree/previous-sibling--aux ((k (eql :org)))
   (norg/previous-sibling))
 
@@ -140,6 +148,12 @@
 
 ;;;;; Movement + expand/collapse
 
+(cl-defmethod nomis/tree/step-backward-any-level--aux ((k (eql :org)) n)
+  (norg/step-backward-any-level n))
+
+(cl-defmethod nomis/tree/step-forward-any-level--aux ((k (eql :org)) n)
+  (norg/step-forward-any-level n))
+
 (cl-defmethod nomis/tree/step-backward-sibling--aux ((k (eql :org)) n-levels-to-show-or-nil)
   (norg/step-backward-sibling n-levels-to-show-or-nil))
 
@@ -151,20 +165,6 @@
 
 (cl-defmethod nomis/tree/step-forward-peer--aux ((k (eql :org)) n-levels-to-show-or-nil)
   (norg/step-forward-peer n-levels-to-show-or-nil))
-
-(cl-defmethod nomis/tree/previous-heading--aux ((k (eql :org)) n)
-  ;; TODO: We are ignoring `n`.
-  (norg/previous-heading))
-
-(cl-defmethod nomis/tree/next-heading--aux ((k (eql :org)) n)
-  ;; TODO: We are ignoring `n`.
-  (norg/next-heading))
-
-(cl-defmethod nomis/tree/step-backward-any-level--aux ((k (eql :org)) n)
-  (norg/step-backward-any-level n))
-
-(cl-defmethod nomis/tree/step-forward-any-level--aux ((k (eql :org)) n)
-  (norg/step-forward-any-level n))
 
 ;;; End
 

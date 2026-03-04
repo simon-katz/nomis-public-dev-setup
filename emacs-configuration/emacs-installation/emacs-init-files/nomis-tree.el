@@ -366,10 +366,24 @@ With a numeric prefix `N`, set the number of visible levels to exactly `N`."
 
 ;;;;; Movement
 
+(cl-defgeneric nomis/tree/previous-heading--aux (k n))
+(cl-defgeneric nomis/tree/next-heading--aux (k n))
 (cl-defgeneric nomis/tree/previous-sibling--aux (k))
 (cl-defgeneric nomis/tree/next-sibling--aux (k))
 (cl-defgeneric nomis/tree/previous-peer--aux (k))
 (cl-defgeneric nomis/tree/next-peer--aux (k))
+
+(defun nomis/tree/previous-heading (n)
+  (interactive "p")
+  (-nomis/tree/command
+      nil
+    (nomis/tree/previous-heading--aux (-nomis/tree/mode) n)))
+
+(defun nomis/tree/next-heading (n)
+  (interactive "p")
+  (-nomis/tree/command
+      nil
+    (nomis/tree/next-heading--aux (-nomis/tree/mode) n)))
 
 (defun nomis/tree/previous-sibling ()
   "Move backward one heading at the same level as this one."
@@ -409,14 +423,24 @@ With a numeric prefix `N`, set the number of visible levels to exactly `N`."
 ;;       For the latter it's `n-levels-to-show-or-nil`, and we convert `nil` to
 ;;       `norg/step-n-levels-to-show`.
 
+(cl-defgeneric nomis/tree/step-backward-any-level--aux (k n))
+(cl-defgeneric nomis/tree/step-forward-any-level--aux (k n))
 (cl-defgeneric nomis/tree/step-backward-sibling--aux (k n))
 (cl-defgeneric nomis/tree/step-forward-sibling--aux (k n))
 (cl-defgeneric nomis/tree/step-backward-peer--aux (k n))
 (cl-defgeneric nomis/tree/step-forward-peer--aux (k n))
-(cl-defgeneric nomis/tree/previous-heading--aux (k n))
-(cl-defgeneric nomis/tree/next-heading--aux (k n))
-(cl-defgeneric nomis/tree/step-backward-any-level--aux (k n))
-(cl-defgeneric nomis/tree/step-forward-any-level--aux (k n))
+
+(defun nomis/tree/step-backward-any-level (n)
+  (interactive "P")
+  (-nomis/tree/command
+      nil
+    (nomis/tree/step-backward-any-level--aux (-nomis/tree/mode) n)))
+
+(defun nomis/tree/step-forward-any-level (n)
+  (interactive "P")
+  (-nomis/tree/command
+      nil
+    (nomis/tree/step-forward-any-level--aux (-nomis/tree/mode) n)))
 
 (defun nomis/tree/step-backward-sibling (n)
   (interactive "P")
@@ -441,30 +465,6 @@ With a numeric prefix `N`, set the number of visible levels to exactly `N`."
   (-nomis/tree/command
       nil
     (nomis/tree/step-forward-peer--aux (-nomis/tree/mode) n)))
-
-(defun nomis/tree/previous-heading (n)
-  (interactive "p")
-  (-nomis/tree/command
-      nil
-    (nomis/tree/previous-heading--aux (-nomis/tree/mode) n)))
-
-(defun nomis/tree/next-heading (n)
-  (interactive "p")
-  (-nomis/tree/command
-      nil
-    (nomis/tree/next-heading--aux (-nomis/tree/mode) n)))
-
-(defun nomis/tree/step-backward-any-level (n)
-  (interactive "P")
-  (-nomis/tree/command
-      nil
-    (nomis/tree/step-backward-any-level--aux (-nomis/tree/mode) n)))
-
-(defun nomis/tree/step-forward-any-level (n)
-  (interactive "P")
-  (-nomis/tree/command
-      nil
-    (nomis/tree/step-forward-any-level--aux (-nomis/tree/mode) n)))
 
 ;;; End
 

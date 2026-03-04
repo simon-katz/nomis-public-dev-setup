@@ -170,6 +170,8 @@ H-q H-q H-/  Show this help")
 
 ;;;; Movement
 
+(define-key nomis/tree-mode-map (kbd "C-H-,")     'nomis/tree/previous-heading)
+(define-key nomis/tree-mode-map (kbd "C-H-.")     'nomis/tree/next-heading)
 (define-key nomis/tree-mode-map (kbd "H-,")       'nomis/tree/previous-sibling)
 (define-key nomis/tree-mode-map (kbd "H-.")       'nomis/tree/next-sibling)
 (define-key nomis/tree-mode-map (kbd "H-<")       'nomis/tree/previous-peer)
@@ -177,16 +179,12 @@ H-q H-q H-/  Show this help")
 
 ;;;; Movement + expand/collapse
 
+(define-key nomis/tree-mode-map (kbd "C-H-M-,")   'nomis/tree/step-backward-any-level)
+(define-key nomis/tree-mode-map (kbd "C-H-M-.")   'nomis/tree/step-forward-any-level)
 (define-key nomis/tree-mode-map (kbd "H-M-,")     'nomis/tree/step-backward-sibling)
 (define-key nomis/tree-mode-map (kbd "H-M-.")     'nomis/tree/step-forward-sibling)
 (define-key nomis/tree-mode-map (kbd "H-M-<")     'nomis/tree/step-backward-peer)
 (define-key nomis/tree-mode-map (kbd "H-M->")     'nomis/tree/step-forward-peer)
-
-(define-key nomis/tree-mode-map (kbd "C-H-,")     'nomis/tree/previous-heading)
-(define-key nomis/tree-mode-map (kbd "C-H-.")     'nomis/tree/next-heading)
-
-(define-key nomis/tree-mode-map (kbd "C-H-M-,")   'nomis/tree/step-backward-any-level)
-(define-key nomis/tree-mode-map (kbd "C-H-M-.")   'nomis/tree/step-forward-any-level)
 
 ;; The following key bindings have no good meaning in our scheme -- Shift means
 ;; "navigat to peer", and we are already doing that without the Shift.
