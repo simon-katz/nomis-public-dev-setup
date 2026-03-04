@@ -33,11 +33,11 @@
 Use H with various other keys:
 
     Move forward or backward headings
-        , .
-        < > (add S to , . on my keyboard) to cross the parent level
-        Add M to step (ie collapse then move then expand)
-        Add C to visit headings at any level
-        Add C-M to visit headings at any level collapsing to current tree
+        , .     -- Navigate to siblings
+        < >     -- Cross the parent level (add S to , . on my keyboard)
+        Add M   -- Step (ie collapse then move then expand)
+        Add C   -- Visit headings at any level
+        Add C-M -- Step + visit headings at any level
 
     Expand and collapse from current point
         ' \\
@@ -185,8 +185,8 @@ H-q H-q H-/  Show this help")
 (define-key nomis/tree-mode-map (kbd "C-H-,")     'nomis/tree/previous-heading)
 (define-key nomis/tree-mode-map (kbd "C-H-.")     'nomis/tree/next-heading)
 
-(define-key nomis/tree-mode-map (kbd "C-H-M-,")   'nomis/tree/previous-heading/set-tree+body)
-(define-key nomis/tree-mode-map (kbd "C-H-M-.")   'nomis/tree/next-heading/set-tree+body)
+(define-key nomis/tree-mode-map (kbd "C-H-M-,")   'nomis/tree/step-backward-any-level)
+(define-key nomis/tree-mode-map (kbd "C-H-M-.")   'nomis/tree/step-forward-any-level)
 
 ;; The following key bindings have no good meaning in our scheme -- Shift means
 ;; "navigat to peer", and we are already doing that without the Shift.

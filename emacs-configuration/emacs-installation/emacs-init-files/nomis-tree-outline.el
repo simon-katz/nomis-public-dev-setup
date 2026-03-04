@@ -161,10 +161,10 @@
 (cl-defmethod nomis/tree/next-heading--aux ((_k (eql :outline)) n)
   (nomis/tree/outline/next-heading n))
 
-(cl-defmethod nomis/tree/previous-heading/set-tree+body--aux ((k (eql :outline)))
+(cl-defmethod nomis/tree/step-backward-any-level--aux ((k (eql :outline)) n)
   (nomis/tree/unimplemented-method k))
 
-(cl-defmethod nomis/tree/next-heading/set-tree+body--aux ((k (eql :outline)))
+(cl-defmethod nomis/tree/step-forward-any-level--aux ((k (eql :outline)) n)
   (nomis/tree/unimplemented-method k))
 
 ;;; End

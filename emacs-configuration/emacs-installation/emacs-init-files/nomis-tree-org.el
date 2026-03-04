@@ -160,11 +160,11 @@
   ;; TODO: We are ignoring `n`.
   (norg/next-heading))
 
-(cl-defmethod nomis/tree/previous-heading/set-tree+body--aux ((k (eql :org)))
-  (norg/previous-heading/set-tree+body))
+(cl-defmethod nomis/tree/step-backward-any-level--aux ((k (eql :org)) n)
+  (norg/step-backward-any-level n))
 
-(cl-defmethod nomis/tree/next-heading/set-tree+body--aux ((k (eql :org)))
-  (norg/next-heading/set-tree+body))
+(cl-defmethod nomis/tree/step-forward-any-level--aux ((k (eql :org)) n)
+  (norg/step-forward-any-level n))
 
 ;;; End
 

@@ -654,13 +654,29 @@ Same for the `backward` commands.")
         (norg/w/show-entry)
       (norg/show-point))))
 
-(defun norg/next-heading/set-tree+body ()
-  (norg/next-heading)
-  (norg/visibility-span/set-tree+body))
+(defun norg/step-forward-any-level (n-levels-to-show-or-nil)
+  ;; We should use `-norg/step/impl` here (or whatever we replace it with).
+  ;; We want to show fat parents instead of thin.
+  (nomis/scrolling/with-maybe-maintain-line-no-in-window
+    (norg/w/next-heading)
+    (norg/collapse-all-and-set-visibility-span 'ancestors)
+    (let* ((n-levels-or-nil (or n-levels-to-show-or-nil
+                                norg/step-n-levels-to-show)))
+      (if (null n-levels-or-nil)
+          (norg/expand-fully)
+        (norg/expand n-levels-or-nil t)))))
 
-(defun norg/previous-heading/set-tree+body ()
-  (norg/previous-heading)
-  (norg/visibility-span/set-tree+body))
+(defun norg/step-backward-any-level (n-levels-to-show-or-nil)
+  ;; We should use `-norg/step/impl` here (or whatever we replace it with).
+  ;; We want to show fat parents instead of thin.
+  (nomis/scrolling/with-maybe-maintain-line-no-in-window
+    (norg/w/previous-heading)
+    (norg/collapse-all-and-set-visibility-span 'ancestors)
+    (let* ((n-levels-or-nil (or n-levels-to-show-or-nil
+                                norg/step-n-levels-to-show)))
+      (if (null n-levels-or-nil)
+          (norg/expand-fully)
+        (norg/expand n-levels-or-nil t)))))
 
 ;;;; Info that relies on our navigation stuff
 

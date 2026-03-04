@@ -415,8 +415,8 @@ With a numeric prefix `N`, set the number of visible levels to exactly `N`."
 (cl-defgeneric nomis/tree/step-forward-peer--aux (k n))
 (cl-defgeneric nomis/tree/previous-heading--aux (k n))
 (cl-defgeneric nomis/tree/next-heading--aux (k n))
-(cl-defgeneric nomis/tree/previous-heading/set-tree+body--aux (k))
-(cl-defgeneric nomis/tree/next-heading/set-tree+body--aux (k))
+(cl-defgeneric nomis/tree/step-backward-any-level--aux (k n))
+(cl-defgeneric nomis/tree/step-forward-any-level--aux (k n))
 
 (defun nomis/tree/step-backward-sibling (n)
   (interactive "P")
@@ -454,17 +454,17 @@ With a numeric prefix `N`, set the number of visible levels to exactly `N`."
       nil
     (nomis/tree/next-heading--aux (-nomis/tree/mode) n)))
 
-(defun nomis/tree/previous-heading/set-tree+body ()
-  (interactive)
+(defun nomis/tree/step-backward-any-level (n)
+  (interactive "P")
   (-nomis/tree/command
       nil
-    (nomis/tree/previous-heading/set-tree+body--aux (-nomis/tree/mode))))
+    (nomis/tree/step-backward-any-level--aux (-nomis/tree/mode) n)))
 
-(defun nomis/tree/next-heading/set-tree+body ()
-  (interactive)
+(defun nomis/tree/step-forward-any-level (n)
+  (interactive "P")
   (-nomis/tree/command
       nil
-    (nomis/tree/next-heading/set-tree+body--aux (-nomis/tree/mode))))
+    (nomis/tree/step-forward-any-level--aux (-nomis/tree/mode) n)))
 
 ;;; End
 
