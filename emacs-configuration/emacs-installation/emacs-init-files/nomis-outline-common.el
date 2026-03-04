@@ -8,6 +8,7 @@
 (require 'cl-format)
 (require 'dash)
 (require 'nomis-popup)
+(require 'org)
 (require 'outline)
 
 ;;;; nomis/outline/c/mode
@@ -40,7 +41,7 @@
              (let ((x (cl-format nil "~:r" n)))
                (cl-subseq x (- (length x) 2)))))
 
-;;;; Simple outline wrappers
+;;;; Simple outline and org wrappers
 
 (defalias 'nomis/outline/c/next-heading     'outline-next-heading)
 (defalias 'nomis/outline/c/end-of-heading   'outline-end-of-heading)
@@ -48,6 +49,15 @@
 (defalias 'nomis/outline/c/previous-heading 'outline-previous-heading)
 (defalias 'nomis/outline/c/show-entry       'outline-show-entry)
 (defalias 'nomis/outline/c/hide-entry       'outline-hide-entry)
+
+(defun nomis/outline/c/invisible? (&optional pos)
+  (cl-ecase (nomis/outline/c/mode)
+    (:outline (outline-invisible-p pos))
+    (:org     (org-invisible-p pos t) ; TODO: Is this `folding-only` arg right?
+              )))
+
+(defun nomis/outline/c/visible? (&optional pos)
+  (not (nomis/outline/c/invisible? pos)))
 
 (defun nomis/outline/c/on-heading? ()
   (outline-on-heading-p t))
@@ -98,7 +108,7 @@
     (nomis/outline/c/level)))
 
 (defun -nomis/outline/c/ensure-heading-shown ()
-  (when (outline-invisible-p)
+  (when (nomis/outline/c/invisible?)
     ;; Is there a simpler way to show the heading but not the body?
     (outline-show-entry)
     (outline-hide-entry)))

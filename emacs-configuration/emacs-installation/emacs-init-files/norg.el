@@ -161,7 +161,6 @@ message and in case adding org level messes things up.")
 
 (defalias 'norg/w/map-tree 'org-map-tree)
 
-(defalias 'norg/w/invisible-p 'org-invisible-p)
 (defalias 'norg/w/fold-subtree 'org-fold-subtree)
 
 (defalias 'norg/w/check-before-invisible-edit 'org-check-before-invisible-edit)
@@ -180,9 +179,6 @@ message and in case adding org level messes things up.")
 ;;;; Some wrappers for org functionality
 
 ;;;;; Basic stuff
-
-(defun norg/point-is-visible? ()
-  (not (norg/w/invisible-p)))
 
 (defun -norg/has-body?/must-be-at-boh/leaving-cursor-at-end-of-heading ()
   (let* ((_ (nomis/outline/c/end-of-heading))
@@ -210,8 +206,7 @@ message and in case adding org level messes things up.")
     (let* ((has-body?
             (-norg/has-body?/must-be-at-boh/leaving-cursor-at-end-of-heading))
            (has-visible-body? (and has-body?
-                                   (not
-                                    (norg/w/invisible-p (point)))))
+                                   (nomis/outline/c/visible? (point))))
            (has-invisible-body? (and has-body?
                                      (not has-visible-body?))))
       (list has-body?
@@ -265,7 +260,7 @@ value."
   (interactive)
   (cl-case 1
     (1
-     (unless (norg/point-is-visible?)
+     (when (nomis/outline/c/invisible?)
        ;; Make point visible and leave subtree collapsed
        (dotimes (_ 3) (norg/w/cycle))))
     (2
@@ -860,7 +855,7 @@ When in a body, \"current headline\" means the current body's parent headline."
   (- (norg/reduce-entries-from-point
       -norg/plus-infinity
       #'(lambda ()
-          (let* ((point-visible? (norg/point-is-visible?))
+          (let* ((point-visible? (nomis/outline/c/visible?))
                  (level (nomis/outline/c/level)))
             (if (not point-visible?)
                 (1- level)
@@ -896,7 +891,7 @@ When in a body, \"current headline\" means the current body's parent headline."
          (basic-info
           (norg/map-entries-from-point (lambda ()
                                          (list* (nomis/outline/c/level)
-                                                (norg/point-is-visible?)
+                                                (nomis/outline/c/visible?)
                                                 (-norg/body-info)))))
          (just-did-a-body? nil))
     (cl-loop for ((prev-level prev-visible? . _)
