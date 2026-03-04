@@ -159,8 +159,6 @@ message and in case adding org level messes things up.")
 (defalias 'norg/w/cycle 'org-cycle)
 (defalias 'norg/w/overview 'org-overview)
 
-(defalias 'norg/w/map-tree 'org-map-tree)
-
 (defalias 'norg/w/fold-subtree 'org-fold-subtree)
 
 (defalias 'norg/w/check-before-invisible-edit 'org-check-before-invisible-edit)
@@ -309,7 +307,7 @@ value."
 headline.
 When in a body, \"current headline\" means the current body's parent headline."
   (save-excursion
-    (norg/w/map-tree fun))
+    (nomis/outline/c/map-tree fun))
   nil)
 
 (defun norg/mapc-entries-from-root (fun)

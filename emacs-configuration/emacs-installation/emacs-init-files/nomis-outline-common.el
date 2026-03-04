@@ -121,6 +121,19 @@
     (:backward (outline-previous-heading))
     (:forward (outline-next-heading))))
 
+(defun nomis/outline/c/map-tree (fun)
+  ;; Copy-and-edit of `org-map-tree`.
+  "Call FUN for the current heading and all headings underneath it."
+  (nomis/outline/c/back-to-heading)
+  (let ((level (nomis/outline/c/level)))
+    (save-excursion
+      (funcall fun)
+      (while (and (progn
+		    (nomis/outline/c/next-heading)
+		    (> (nomis/outline/c/level) level))
+		  (not (eobp)))
+	(funcall fun)))))
+
 ;;;; Previous/next helpers
 
 (defun -nomis/outline/c/prev-next-same-level (direction sibling-or-peer)
