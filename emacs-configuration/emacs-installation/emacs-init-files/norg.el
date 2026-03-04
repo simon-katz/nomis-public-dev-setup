@@ -88,6 +88,7 @@
 
 ;;;; Require things
 
+(require 'a)
 (require 'cl-lib)
 (require 'dash)
 (require 'nomis-org) ; noflycheck
@@ -868,50 +869,54 @@ When in a body, \"current headline\" means the current body's parent headline."
                                                    (<= level prev-level)))
 
              when prev-was-visible-leaf?
-             collect (list (1+ prev-level)
-                           nil
-                           t) ; dummy invisible entry
+             collect (a-hash-table :tree-info/level   (1+ prev-level)
+                                   :tree-info/visible? nil
+                                   :tree-info/dummy?   t)
 
              when (not last?)
-             collect (list level
-                           visible?
-                           nil)
+             collect (a-hash-table :tree-info/level   level
+                                   :tree-info/visible? visible?
+                                   :tree-info/dummy?   nil)
 
              when has-body?
-             collect (list (1+ level)
-                           has-visible-body?
-                           nil)
+             collect (a-hash-table :tree-info/level   (1+ level)
+                                   :tree-info/visible? has-visible-body?
+                                   :tree-info/dummy?   nil)
 
              when has-visible-body?
-             collect (list (+ 2 level)
-                           nil
-                           t) ; dummy invisible entry
+             collect (a-hash-table :tree-info/level   (+ 2 level)
+                                   :tree-info/visible? nil
+                                   :tree-info/dummy?   t)
 
              do (setq just-did-a-body? has-body?))))
 
 (defun norg/fully-expanded? ()
   "Is the tree beneath the current headline fully expanded?
 When in a body, \"current headline\" means the current body's parent headline."
-  (cl-loop for (level visible? dummy?)
-           in (-norg/tree-info)
-           when (not dummy?)
-           always visible?))
+  (cl-loop for entry in (-norg/tree-info)
+           when (not (a-get entry :tree-info/dummy?))
+           always (a-get entry :tree-info/visible?)))
 
 (defun norg/start-level-for-incremental-contract ()
   "The level to use when incrementally collapsing the current headline.
 When in a body, \"current headline\" means the current body's parent headline."
   ;; Collapse the most-deeply-nested expanded level, and expand everything
   ;; else to that level.
-  (let* ((v (let* ((deepest-visible-levels
-                    (cl-loop for ((prev-level prev-visible?)
-                                  . ((level visible?) . _))
-                             on (cons '(most-negative-fixnum t)
-                                      (-norg/tree-info))
-                             when (and prev-visible?
-                                       (not visible?)
-                                       (> level prev-level))
-                             collect prev-level)))
-              (apply #'max deepest-visible-levels))))
+  (let* ((deepest-visible-levels
+          (cl-loop for (prev-entry entry . _rest)
+                   on (cons (a-hash-table :tree-info/level   most-negative-fixnum
+                                          :tree-info/visible? t)
+                            (-norg/tree-info))
+                   while entry
+                   for prev-level    = (a-get prev-entry :tree-info/level)
+                   for prev-visible? = (a-get prev-entry :tree-info/visible?)
+                   for level         = (a-get entry :tree-info/level)
+                   for visible?      = (a-get entry :tree-info/visible?)
+                   when (and prev-visible?
+                             (not visible?)
+                             (> level prev-level))
+                   collect prev-level))
+         (v (apply #'max deepest-visible-levels)))
     (- v (norg/current-level))))
 
 ;;;; Operations on root
