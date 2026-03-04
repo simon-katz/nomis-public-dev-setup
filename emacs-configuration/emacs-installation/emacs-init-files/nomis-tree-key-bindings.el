@@ -92,6 +92,8 @@ H-q H-q H-/  Show this help")
 
 ;;;; nomis/tree/show-tree-only and nomis/tree/max-lineage
 
+;; TODO: Reconsider what we want here.
+
 (define-key nomis/tree-mode-map (kbd "H-M-m")     'nomis/tree/show-tree-only)
 (define-key nomis/tree-mode-map (kbd "H-M-M")     'nomis/tree/max-lineage)
 

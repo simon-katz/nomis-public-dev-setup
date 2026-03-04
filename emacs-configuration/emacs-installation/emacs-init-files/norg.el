@@ -348,16 +348,16 @@ headline."
 
 ;;;;; Visibility span -- part 1
 
+;; TODO: Get rid of visiblity span stuff and use lineage specs directly.
+
 (defun norg/collapse-all-and-set-visibility-span (detail)
-  (cl-flet ((collapse
-              ()
-              (cl-case 1
-                (1 (org-overview))
-                (2 (save-excursion
-                     (norg/goto-root)
-                     (nomis/outline/c/collapse))))))
-    (collapse)
-    (org-fold-show-set-visibility detail)))
+  (let* ((lineage-spec (cl-ecase detail
+                         (minimal   min-lineage-spec)
+                         (ancestors thin-parents-lineage-spec)
+                         (lineage   fat-parents-lineage-spec)
+                         (tree      fat-parents-immediate-children-lineage-spec)
+                         (canonical max-lineage-spec))))
+    (-nomis/tree/outline/show-lineage lineage-spec)))
 
 (defun norg/show-tree-only ()
   (norg/collapse-all-and-set-visibility-span 'tree))

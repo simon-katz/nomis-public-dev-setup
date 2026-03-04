@@ -66,9 +66,18 @@
 ;;   - `1` / `2` / `3` / `4`
 ;;     - Show body/children/branches/subtree.
 
+;; TODO: None of this shows bodies. Should it?
+
 ;; TODO: See `org-show-context-detail` for ideas for more lineage specs.
 
 (defconst -nomis/tree/outline/children-approach-max 4)
+
+(defconst min-lineage-spec
+  (a-hash-table :spec/pre-hide-all? t))
+
+(defconst thin-parents-lineage-spec
+  (a-hash-table :spec/pre-hide-all? t
+                :spec/parents-approach :parents/thin))
 
 (defconst fat-parents-lineage-spec
   (a-hash-table :spec/pre-hide-all? t
@@ -78,6 +87,11 @@
   (a-hash-table :spec/pre-hide-all? t
                 :spec/parents-approach :parents/fat
                 :spec/children-approach 1))
+
+(defconst fat-parents-immediate-children-lineage-spec
+  (a-hash-table :spec/pre-hide-all? t
+                :spec/parents-approach :parents/fat
+                :spec/children-approach 2))
 
 (defconst max-lineage-spec
   (a-hash-table :spec/pre-hide-all? t
