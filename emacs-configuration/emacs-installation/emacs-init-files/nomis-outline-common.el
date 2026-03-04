@@ -72,9 +72,8 @@
     (outline-show-entry)
     (outline-hide-entry)))
 
-(defun -nomis/outline/c/show-children ()
-  ;; The `1` is important; otherwise we get bodies of children.
-  (outline-show-children 1))
+(defun nomis/outline/c/show-children (n)
+  (outline-show-children n))
 
 (defun -nomis/outline/c/prev-or-next (direction)
   (cl-ecase direction

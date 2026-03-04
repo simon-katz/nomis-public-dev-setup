@@ -169,7 +169,6 @@ Return the nesting depth of the headline in the outline."
 
 (defalias 'norg/w/show-entry 'outline-show-entry)
 (defalias 'norg/w/hide-entry 'outline-hide-entry)
-(defalias 'norg/w/show-children 'outline-show-children) ; Not `org-show-children`, because that shows first level when n is 0
 (defalias 'norg/w/cycle 'org-cycle)
 (defalias 'norg/w/overview 'org-overview)
 
@@ -392,7 +391,7 @@ collapse the tree first so that only N levels are shown. When in
 a body, \"current headline\" means the current body's parent
 headline."
   (when collapse-first? (norg/collapse))
-  (norg/w/show-children n)
+  (nomis/outline/c/show-children n)
   (when norg/show-bodies?
     (let* ((level (norg/current-level)))
       (norg/mapc-entries-from-point #'(lambda ()

@@ -127,7 +127,7 @@
                 (-nomis/outline/c/ensure-heading-shown)
                 (cl-ecase parents-approach
                   (:parents/thin nil)
-                  (:parents/fat (-nomis/outline/c/show-children))))))))))
+                  (:parents/fat (nomis/outline/c/show-children 1))))))))))
 
 (defun -nomis/tree/outline/hsl-show-children (lineage-spec)
   (when (a-get lineage-spec :spec/pre-hide-children?)
@@ -137,7 +137,7 @@
     (0 nil)
     (1 (outline-show-entry))
     (2 (outline-show-entry)
-       (-nomis/outline/c/show-children))
+       (nomis/outline/c/show-children 1))
     (3 (outline-show-entry)
        (outline-show-branches))
     (4 (outline-show-subtree))))
