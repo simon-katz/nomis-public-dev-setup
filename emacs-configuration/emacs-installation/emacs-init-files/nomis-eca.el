@@ -8,6 +8,8 @@
 
 (setq eca-chat-use-side-window nil)
 
+(set-face-attribute 'eca-chat-user-messages-face nil :background "red3")
+
 ;;;; ___________________________________________________________________________
 
 (defun nomis/setup-eca-chat-mode ()
