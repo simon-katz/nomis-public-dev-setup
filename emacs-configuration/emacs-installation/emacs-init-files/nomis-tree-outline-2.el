@@ -66,6 +66,8 @@
 ;;   - `1` / `2` / `3` / `4`
 ;;     - Show body/children/branches/subtree.
 
+;; TODO: See `org-show-context-detail` for ideas for more lineage specs.
+
 (defconst -nomis/tree/outline/children-approach-max 4)
 
 (defconst fat-parents-lineage-spec
