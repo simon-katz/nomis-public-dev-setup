@@ -116,7 +116,7 @@
                 (save-excursion
                   (while (and (nomis/outline/c/on-heading?)
                               (not (-nomis/outline/c/on-top-level-heading?)))
-                    (-nomis/outline/c/up-heading 1)
+                    (nomis/outline/c/up-heading 1)
                     (push (point) ps)))
                 ps)))
         (save-excursion

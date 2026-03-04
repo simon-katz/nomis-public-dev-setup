@@ -165,7 +165,6 @@ Return the nesting depth of the headline in the outline."
 (defalias 'norg/w/end-of-heading 'outline-end-of-heading)
 (defalias 'norg/w/next-preface 'outline-next-preface)
 
-(defalias 'norg/w/up-heading 'outline-up-heading)
 (defalias 'norg/w/previous-heading 'outline-previous-heading)
 
 (defalias 'norg/w/show-entry 'outline-show-entry)
@@ -268,7 +267,7 @@ value."
 
 (defun norg/goto-root ()
   (interactive)
-  (while (ignore-errors (norg/w/up-heading 1))))
+  (while (ignore-errors (nomis/outline/c/up-heading 1))))
 
 (cl-defmacro norg/save-excursion-to-root (&body body)
   (declare (indent 0))
@@ -292,7 +291,7 @@ value."
 (cl-defmacro norg/save-excursion-to-parent (&body body)
   (declare (indent 0))
   `(save-excursion
-     (norg/w/up-heading 1)
+     (nomis/outline/c/up-heading 1)
      ,@body))
 
 ;;;;; Support for do-ing and mapping
@@ -824,7 +823,7 @@ Same for the `backward` commands.")
                       (goto-char starting-point)
                       (when start-on-first-or-last-child?
                         ;; We've moved across a parent, so collapse that.
-                        (norg/w/up-heading 1))
+                        (nomis/outline/c/up-heading 1))
                       (norg/collapse))
                     ;; Expand.
                     (expand))

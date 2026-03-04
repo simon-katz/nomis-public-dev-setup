@@ -36,7 +36,7 @@
 (defun -nomis/outline/c/back-to-visible-heading? ()
   (outline-back-to-heading))
 
-(defun -nomis/outline/c/up-heading (n)
+(defun nomis/outline/c/up-heading (n)
   (outline-up-heading n t))
 
 (defun -nomis/outline/c/up-visible-heading (n)
@@ -55,7 +55,7 @@
       (let* ((olevel (funcall outline-level)))
         (ignore-errors
           ;; `ignore-errors` is needed when before first heading.
-          (-nomis/outline/c/up-heading 1))
+          (nomis/outline/c/up-heading 1))
         (or (not (nomis/outline/c/on-heading?)) ; blank lines at top of file?
             (= olevel (funcall outline-level)))))))
 
