@@ -95,14 +95,11 @@
 (defun nomis/outline/c/level ()
   ;; TODO: Broken. This returns weird numbers in some modes. /eg/ In Clojure
   ;;       it's one too large (for me).
-  (cl-flet ((do-it () (funcall outline-level)))
+  (let* ((v (save-excursion (nomis/outline/c/back-to-heading)
+                            (funcall outline-level))))
     (if (nomis/outline/c/on-heading?)
-        (if (bolp)
-            (do-it)
-          (save-excursion (nomis/outline/c/back-to-heading)
-                          (do-it)))
-      (1+ (save-excursion (nomis/outline/c/back-to-heading)
-                          (do-it))))))
+        v
+      (1+ v))))
 
 (defun -nomis/outline/c/on-top-level-heading? ()
   "Are we on a top-level heading?"
