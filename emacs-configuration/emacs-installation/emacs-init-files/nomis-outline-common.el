@@ -10,6 +10,24 @@
 (require 'nomis-popup)
 (require 'outline)
 
+;;;; nomis/outline/c/mode
+
+(defun -nomis/outline/c/org-mode? ()
+  (derived-mode-p 'org-mode))
+
+(defun -nomis/outline/c/outline-mode? ()
+  (and (not (-nomis/outline/c/org-mode?))
+       (or (derived-mode-p 'outline-mode)
+           outline-minor-mode)))
+
+(defun nomis/outline/c/mode ()
+  (cond ((-nomis/outline/c/outline-mode?)
+         :outline)
+        ((-nomis/outline/c/org-mode?)
+         :org)
+        (t
+         (error "Unexpected: None of outline-mode, outline-minor-mode or org-mode is active"))))
+
 ;;;; Misc
 
 (defun nomis/outline/c/last-command ()
