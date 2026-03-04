@@ -53,25 +53,29 @@
   (and (bolp)
        (nomis/outline/c/on-heading?)))
 
+(defun nomis/outline/c/level ()
+  (cl-assert (-nomis/outline/c/at-beginning-of-heading?))
+  (funcall outline-level))
+
 (defun -nomis/outline/c/on-top-level-heading? ()
   "Are we on a top-level heading?"
-  ;; `(outline-level)` and `(funcall outline-level)` return weird numbers in
+  ;; `(outline-level)` and `(nomis/outline/c/level)` return weird numbers in
   ;; some modes. This, we hope, is bulletproof.
   (save-excursion
     (when (nomis/outline/c/on-heading?)
-      (let* ((olevel (funcall outline-level)))
+      (let* ((olevel (nomis/outline/c/level)))
         (ignore-errors
           ;; `ignore-errors` is needed when before first heading.
           (nomis/outline/c/up-heading 1))
         (or (not (nomis/outline/c/on-heading?)) ; blank lines at top of file?
-            (= olevel (funcall outline-level)))))))
+            (= olevel (nomis/outline/c/level)))))))
 
 (defun -nomis/outline/c/top-level-level ()
   (cl-assert (nomis/outline/c/on-heading?))
   (save-excursion
     (goto-char (point-min))
     (unless (nomis/outline/c/on-heading?) (outline-next-heading))
-    (funcall outline-level)))
+    (nomis/outline/c/level)))
 
 (defun -nomis/outline/c/ensure-heading-shown ()
   (when (outline-invisible-p)
@@ -91,7 +95,7 @@
 
 (defun -nomis/outline/c/prev-next-same-level (direction sibling-or-peer)
   (let* ((opoint (point))
-         (level (funcall outline-level))
+         (level (nomis/outline/c/level))
          (npoint  (save-excursion
                     ;; The logic here is a copy-and-edit of
                     ;; `outline-get-last-sibling` and
@@ -107,7 +111,7 @@
                                   (funcall (cl-ecase sibling-or-peer
                                              (:sibling #'>)
                                              (:peer #'/=))
-                                           (funcall outline-level)
+                                           (nomis/outline/c/level)
                                            level)
                                   (cl-ecase direction
                                     (:backward (not (bobp)))
@@ -116,9 +120,9 @@
                       (if (or (cl-ecase direction
                                 (:backward nil)
                                 (:forward (eobp)))
-                              (< (funcall outline-level) level))
+                              (< (nomis/outline/c/level) level))
                           nil
-                        (cl-assert (= level (funcall outline-level)))
+                        (cl-assert (= level (nomis/outline/c/level)))
                         (point))))))
     (when npoint
       (goto-char npoint))))

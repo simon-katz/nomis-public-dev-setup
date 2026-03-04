@@ -156,11 +156,6 @@ message and in case adding org level messes things up.")
 ;; be safe.
 ;; Besides, it's useful to isolate how we use `outline` and `org`.
 
-(defun norg/w/level/must-be-at-boh ()
-  "Point must be at the beginning of a headline.
-Return the nesting depth of the headline in the outline."
-  (funcall outline-level))
-
 (defalias 'norg/w/cycle 'org-cycle)
 (defalias 'norg/w/overview 'org-overview)
 
@@ -224,7 +219,7 @@ Return the nesting depth of the headline in the outline."
             has-invisible-body?))))
 
 (defun norg/level-incl-body/must-be-at-boh ()
-  (let* ((heading-level (norg/w/level/must-be-at-boh)))
+  (let* ((heading-level (nomis/outline/c/level)))
     (+ heading-level
        (if (and norg/show-bodies?
                 (-norg/has-body?/must-be-at-boh))
@@ -244,7 +239,7 @@ of the current heading in the outline. Otherwise return one more than that
 value."
   (+ (save-excursion
        (nomis/outline/c/back-to-heading?)
-       (norg/w/level/must-be-at-boh))
+       (nomis/outline/c/level))
      (if (and norg/show-bodies?
               inc-if-in-body?
               (-norg/in-body?))
@@ -328,7 +323,7 @@ When in a body, \"current headline\" means the current body's parent headline."
 
 (defun norg/mapc-roots (fun)
   (-norg/mapc-headlines-satisfying (lambda ()
-                                     (= (norg/w/level/must-be-at-boh)
+                                     (= (nomis/outline/c/level)
                                         1))
                                    fun))
 
@@ -387,7 +382,7 @@ headline."
   (when norg/show-bodies?
     (let* ((level (norg/current-level)))
       (norg/mapc-entries-from-point #'(lambda ()
-                                        (when (< (- (norg/w/level/must-be-at-boh)
+                                        (when (< (- (nomis/outline/c/level)
                                                     level)
                                                  n)
                                           (nomis/outline/c/show-entry)))))))
@@ -863,7 +858,7 @@ When in a body, \"current headline\" means the current body's parent headline."
       -norg/plus-infinity
       #'(lambda ()
           (let* ((point-visible? (norg/point-is-visible?))
-                 (level (norg/w/level/must-be-at-boh)))
+                 (level (nomis/outline/c/level)))
             (if (not point-visible?)
                 (1- level)
               (cl-destructuring-bind (has-body?
@@ -897,7 +892,7 @@ When in a body, \"current headline\" means the current body's parent headline."
           '(:dummy-first t :dummy-first :dummy-first :dummy-first))
          (basic-info
           (norg/map-entries-from-point (lambda ()
-                                         (list* (norg/w/level/must-be-at-boh)
+                                         (list* (nomis/outline/c/level)
                                                 (norg/point-is-visible?)
                                                 (-norg/body-info)))))
          (just-did-a-body? nil))
