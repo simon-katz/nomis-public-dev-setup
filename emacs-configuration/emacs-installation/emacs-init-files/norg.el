@@ -102,12 +102,6 @@
 
 ;;;; Tailor other functionality
 
-;;;;; last-command
-
-(defun norg/last-command ()
-  (or (bound-and-true-p *nomis/smex/last-command*)
-      last-command))
-
 ;;;;; what-cursor-position
 
 ;; Add org level to the output of `what-cursor-position`.
@@ -420,7 +414,7 @@ headline."
 (defun -norg/visibility-span/set-level/numeric (n delta?
                                                   &optional no-message?)
   (let* ((prev-command-was-not-visibility-span?
-          (not (member (norg/last-command)
+          (not (member (nomis/outline/c/last-command)
                        -norg/visibility-span/commands)))
          (prev-action-index -norg/visibility-span/prev-action-index)
          (action-index (cond
@@ -662,7 +656,7 @@ Same for the `backward` commands.")
   (message "n-levels-to-show set to %s" norg/step-n-levels-to-show))
 
 (defun -norg/step-sibling-then-step-peer? ()
-  (let ((cmds (list (norg/last-command)
+  (let ((cmds (list (nomis/outline/c/last-command)
                     this-command)))
     (member cmds
             '((nomis/tree/step-forward-sibling
@@ -1020,7 +1014,7 @@ When in a body, \"current headline\" means the current body's parent headline."
             ;; Don't cycle if we moved to another position that also
             ;; happens to be fully-expanded.
             ;; Don't cycle if we moved away and came back.
-            (if (not (eq this-command (norg/last-command)))
+            (if (not (eq this-command (nomis/outline/c/last-command)))
                 (normal-behaviour)
               (cycled-behaviour))))))))
 
