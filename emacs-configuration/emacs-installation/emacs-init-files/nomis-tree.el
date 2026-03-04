@@ -102,12 +102,13 @@
 
 ;;;;; -nomis/tree/mode
 
-(defun -nomis/tree/outline-mode? ()
-  (or (eq major-mode 'outline-mode)
-      outline-minor-mode))
-
 (defun -nomis/tree/org-mode? ()
-  (eq major-mode 'org-mode))
+  (derived-mode-p 'org-mode))
+
+(defun -nomis/tree/outline-mode? ()
+  (and (not (-nomis/tree/org-mode?))
+       (or (derived-mode-p 'outline-mode)
+           outline-minor-mode)))
 
 (defun -nomis/tree/mode ()
   (cond ((-nomis/tree/outline-mode?)
