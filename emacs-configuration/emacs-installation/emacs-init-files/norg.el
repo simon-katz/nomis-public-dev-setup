@@ -881,21 +881,30 @@ When in a body, \"current headline\" means the current body's parent headline."
              when has-body?
              collect (a-hash-table :tree-info/level   (1+ level)
                                    :tree-info/visible? has-visible-body?
-                                   :tree-info/dummy?   nil)
+                                   :tree-info/dummy?   nil
+                                   :tree-info/body?    t)
 
              when has-visible-body?
-             collect (a-hash-table :tree-info/level   (+ 2 level)
-                                   :tree-info/visible? nil
-                                   :tree-info/dummy?   t)
+             collect (a-hash-table :tree-info/level       (+ 2 level)
+                                   :tree-info/visible?    nil
+                                   :tree-info/dummy?      t
+                                   :tree-info/body-extra? t)
 
              do (setq just-did-a-body? has-body?))))
 
 (defun norg/fully-expanded? ()
   "Is the tree beneath the current headline fully expanded?
-When in a body, \"current headline\" means the current body's parent headline."
+
+When in a body, \"current headline\" means the current body's parent headline.
+
+If `norg/show-bodies?' is truthy, this returns truthy only if all bodies
+are visible. Otherwise body visibiity is not taken into account."
   (cl-loop for entry in (-norg/tree-info)
            when (not (a-get entry :tree-info/dummy?))
-           always (a-get entry :tree-info/visible?)))
+           always (if norg/show-bodies?
+                      (a-get entry :tree-info/visible?)
+                    (or (a-get entry :tree-info/visible?)
+                        (a-get entry :tree-info/body?)))))
 
 (defun norg/start-level-for-incremental-contract ()
   "The level to use when incrementally collapsing the current headline.
