@@ -157,7 +157,6 @@ message and in case adding org level messes things up.")
 ;; Besides, it's useful to isolate how we use `outline` and `org`.
 
 (defalias 'norg/w/cycle 'org-cycle)
-(defalias 'norg/w/overview 'org-overview)
 
 (defalias 'norg/w/fold-subtree 'org-fold-subtree)
 
