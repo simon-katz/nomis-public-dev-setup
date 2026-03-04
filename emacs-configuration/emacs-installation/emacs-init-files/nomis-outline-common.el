@@ -65,7 +65,7 @@
 (defun -nomis/outline/c/on-visible-heading? ()
   (outline-on-heading-p))
 
-(defun nomis/outline/c/back-to-heading? ()
+(defun nomis/outline/c/back-to-heading ()
   (outline-back-to-heading t))
 
 (defun -nomis/outline/c/back-to-visible-heading? ()
@@ -167,11 +167,11 @@
         (if (and (eq direction :backward)
                  (not boh?))
             (progn
-              (nomis/outline/c/back-to-heading?)
+              (nomis/outline/c/back-to-heading)
               (point))
           (when (and (eq direction :forward)
                      (not boh?))
-            (nomis/outline/c/back-to-heading?))
+            (nomis/outline/c/back-to-heading))
           (cl-ecase kind
             (:any-level
              (-nomis/outline/c/prev-or-next direction))

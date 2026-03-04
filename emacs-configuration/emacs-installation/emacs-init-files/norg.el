@@ -202,7 +202,7 @@ message and in case adding org level messes things up.")
 
 (defun -norg/body-info ()
   (save-excursion
-    (nomis/outline/c/back-to-heading?)
+    (nomis/outline/c/back-to-heading)
     (let* ((has-body?
             (-norg/has-body?/must-be-at-boh/leaving-cursor-at-end-of-heading))
            (has-visible-body? (and has-body?
@@ -224,7 +224,7 @@ message and in case adding org level messes things up.")
 (defun -norg/in-body? ()
   (> (point)
      (save-excursion
-       (nomis/outline/c/back-to-heading?)
+       (nomis/outline/c/back-to-heading)
        (nomis/outline/c/end-of-heading)
        (point))))
 
@@ -233,7 +233,7 @@ message and in case adding org level messes things up.")
 of the current heading in the outline. Otherwise return one more than that
 value."
   (+ (save-excursion
-       (nomis/outline/c/back-to-heading?)
+       (nomis/outline/c/back-to-heading)
        (nomis/outline/c/level))
      (if (and norg/show-bodies?
               inc-if-in-body?
@@ -517,7 +517,7 @@ headline."
 (defun -norg/grab-heading-text ()
   (save-excursion
     ;; Jump to first word of heading
-    (nomis/outline/c/back-to-heading?)
+    (nomis/outline/c/back-to-heading)
     (forward-word)
     (backward-word)
     ;; Grab text of heading
@@ -551,7 +551,7 @@ headline."
                                nil
                                t)))
     (when again?
-      (nomis/outline/c/back-to-heading?))
+      (nomis/outline/c/back-to-heading))
     (or (search-for-text)
         (progn
           (goto-char (point-max))
@@ -783,7 +783,7 @@ Same for the `backward` commands.")
                   (if (null n-levels-or-nil)
                       (norg/expand-fully)
                     (norg/expand n-levels-or-nil t))))
-        (nomis/outline/c/back-to-heading?)
+        (nomis/outline/c/back-to-heading)
         (if (not (or (-norg/stepping-forward-on-last-but-not-first-child/must-be-at-boh)
                      (-norg/stepping-backward-on-first-but-not-last-child/must-be-at-boh)
                      ;; If we very recently did a `norg/step-xxxx-sibling` which
