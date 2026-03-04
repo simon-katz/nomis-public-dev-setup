@@ -139,11 +139,6 @@ message and in case adding org level messes things up.")
                 (apply orig-fun args)))
             '((name . norg/add-level-info)))
 
-;;;; Infinity
-
-(defconst -norg/plus-infinity   1.0e+INF)
-(defconst -norg/minus-infinity -1.0e+INF)
-
 ;;;; Whether to show bodies
 
 (defvar norg/show-bodies? t)
@@ -711,7 +706,7 @@ Same for the `backward` commands.")
                     (let* ((n-levels-being-shown-or-infinity
                             (norg/n-levels-being-shown-or-infinity)))
                       (if (= n-levels-being-shown-or-infinity
-                             -norg/plus-infinity)
+                             nomis/outline/c/plus-infinity)
                           ;; The tree is fully expanded at point. This is truthy if
                           ;; the number of levels below is less than or equal to
                           ;; the desired number of levels to show.
@@ -814,7 +809,7 @@ is 2."
 infinity if it is fully expanded.
 When in a body, \"current headline\" means the current body's parent headline."
   (- (norg/reduce-entries-from-point
-      -norg/plus-infinity
+      nomis/outline/c/plus-infinity
       #'(lambda ()
           (let* ((point-visible? (nomis/outline/c/visible?))
                  (level (nomis/outline/c/level)))
@@ -827,7 +822,7 @@ When in a body, \"current headline\" means the current body's parent headline."
                 (if (or (not norg/show-bodies?)
                         (not has-body?)
                         has-visible-body?)
-                    -norg/plus-infinity
+                    nomis/outline/c/plus-infinity
                   level)))))
       #'min)
      (norg/current-level)))
@@ -969,7 +964,7 @@ When in a body, \"current headline\" means the current body's parent headline."
       (:setting-min
        (= current-value min-allowed-value))
       (:setting-max
-       (= current-value -norg/plus-infinity)))))
+       (= current-value nomis/outline/c/plus-infinity)))))
 
 (defvar *norg/wrap-expand-collapse? nil)
 (defvar *-norg/allow-cycle-wrap-now?* nil)
@@ -1004,7 +999,7 @@ When in a body, \"current headline\" means the current body's parent headline."
         (-norg/cancel-cycle-to-zero-timer)
         (if (or (= maximum 0)
                 (not (or (= v (1- min-allowed-value))
-                         (= v -norg/plus-infinity))))
+                         (= v nomis/outline/c/plus-infinity))))
             (normal-behaviour)
           (if (not allow-cycle-wrap-now?)
               (progn

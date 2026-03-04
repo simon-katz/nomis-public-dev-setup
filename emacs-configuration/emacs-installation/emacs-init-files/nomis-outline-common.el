@@ -41,6 +41,11 @@
              (let ((x (cl-format nil "~:r" n)))
                (cl-subseq x (- (length x) 2)))))
 
+;;;; Infinity
+
+(defconst nomis/outline/c/plus-infinity   1.0e+INF)
+(defconst nomis/outline/c/minus-infinity -1.0e+INF)
+
 ;;;; Simple outline and org wrappers
 
 ;; TODO: When ready, check that the only uses of `org-xxxx` and `outline-xxxx`
