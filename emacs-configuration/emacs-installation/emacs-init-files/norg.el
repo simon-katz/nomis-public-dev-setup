@@ -150,14 +150,6 @@ message and in case adding org level messes things up.")
 (defconst -norg/plus-infinity   1.0e+INF)
 (defconst -norg/minus-infinity -1.0e+INF)
 
-;;;; Wrappers for `outline` and `org`
-
-;; I'm not clear about the public API of `outline` and `org`, so let's
-;; be safe.
-;; Besides, it's useful to isolate how we use `outline` and `org`.
-
-(defalias 'norg/w/fold-subtree 'org-fold-subtree)
-
 ;;;; Whether to show bodies
 
 (defvar norg/show-bodies? t)
@@ -345,15 +337,12 @@ When in a body, \"current headline\" means the current body's parent headline."
 
 ;;;;; Expanding and collapsing
 
-(defun norg/collapse ()
-  (norg/w/fold-subtree t))
-
 (defun norg/expand (n &optional collapse-first?)
   "Expand N levels below the current headline. If COLLAPSE-FIRST? is non-nil,
 collapse the tree first so that only N levels are shown. When in
 a body, \"current headline\" means the current body's parent
 headline."
-  (when collapse-first? (norg/collapse))
+  (when collapse-first? (nomis/outline/c/collapse))
   (nomis/outline/c/show-children n)
   (when norg/show-bodies?
     (let* ((level (norg/current-level)))
@@ -376,7 +365,7 @@ headline."
                 (1 (org-overview))
                 (2 (save-excursion
                      (norg/goto-root)
-                     (norg/collapse))))))
+                     (nomis/outline/c/collapse))))))
     (collapse)
     (org-fold-show-set-visibility detail)))
 
@@ -786,11 +775,11 @@ Same for the `backward` commands.")
                       (when start-on-first-or-last-child?
                         ;; We've moved across a parent, so collapse that.
                         (nomis/outline/c/up-heading 1))
-                      (norg/collapse))
+                      (nomis/outline/c/collapse))
                     ;; Expand.
                     (expand))
                 (progn
-                  (norg/collapse)
+                  (nomis/outline/c/collapse)
                   (tried-to-go-too-far))))))))
     (setq -norg/most-recent-step-time (float-time))
     (message "n-levels = %s" (or n-levels-or-nil "all"))))
@@ -1092,7 +1081,7 @@ that is already being displayed."
   (let* ((collapse? (>= n 0))
          (n (abs n)))
     (when collapse?
-      (norg/collapse))
+      (nomis/outline/c/collapse))
     (norg/expand n)))
 
 (defun -norg/show-children-from-point/set-level-etc (level

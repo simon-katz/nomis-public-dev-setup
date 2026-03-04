@@ -53,6 +53,9 @@
 (defalias 'nomis/outline/c/show-entry       'outline-show-entry)
 (defalias 'nomis/outline/c/hide-entry       'outline-hide-entry)
 
+(defun nomis/outline/c/collapse ()
+  (outline-hide-subtree))
+
 (defun nomis/outline/c/invisible? (&optional pos)
   (cl-ecase (nomis/outline/c/mode)
     (:outline (outline-invisible-p pos))
