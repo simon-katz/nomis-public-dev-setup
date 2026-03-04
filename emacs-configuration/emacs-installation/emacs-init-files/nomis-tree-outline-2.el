@@ -124,7 +124,7 @@
            for p in parent-points
            do (progn
                 (goto-char p)
-                (-nomis/outline/c/ensure-heading-shown)
+                (nomis/outline/c/ensure-heading-shown)
                 (cl-ecase parents-approach
                   (:parents/thin nil)
                   (:parents/fat (nomis/outline/c/show-children 1))))))))))
@@ -145,7 +145,7 @@
 (defun -nomis/tree/outline/show-lineage (lineage-spec)
   (-nomis/tree/outline/hsl-hide lineage-spec)
   (-nomis/tree/outline/hsl-show-parents lineage-spec)
-  (-nomis/outline/c/ensure-heading-shown)
+  (nomis/outline/c/ensure-heading-shown)
   (-nomis/tree/outline/hsl-show-children lineage-spec)
   (when (and (a-get lineage-spec :spec/pulse-max-children?)
              (= (a-get lineage-spec :spec/children-approach)

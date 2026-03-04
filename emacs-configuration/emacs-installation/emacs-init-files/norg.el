@@ -156,8 +156,6 @@ message and in case adding org level messes things up.")
 ;; be safe.
 ;; Besides, it's useful to isolate how we use `outline` and `org`.
 
-(defalias 'norg/w/cycle 'org-cycle)
-
 (defalias 'norg/w/fold-subtree 'org-fold-subtree)
 
 (defalias 'norg/w/check-before-invisible-edit 'org-check-before-invisible-edit)
@@ -252,19 +250,6 @@ value."
   `(save-excursion
      (norg/goto-root)
      ,@body))
-
-(defun norg/show-point ()
-  (interactive)
-  (cl-case 1
-    (1
-     (when (nomis/outline/c/invisible?)
-       ;; Make point visible and leave subtree collapsed
-       (dotimes (_ 3) (norg/w/cycle))))
-    (2
-     ;; This makes lots of stuff visible, but seems to be the "official" way.
-     ;; Leave this here as a point of interest.
-     (let ((norg/w/catch-invisible-edits 'show))
-       (norg/w/check-before-invisible-edit 'insert)))))
 
 (cl-defmacro norg/save-excursion-to-parent (&body body)
   (declare (indent 0))
@@ -553,7 +538,7 @@ headline."
         (progn
           (goto-char (point-max))
           (search-for-text))))
-  (norg/show-point))
+  (nomis/outline/c/ensure-heading-shown))
 
 (defun norg/search-heading-text ()
   (setq -norg/search-heading-text/text (-norg/grab-heading-text))
@@ -583,7 +568,7 @@ Like `org-forward-heading-same-level` but:
 - when the target is invisible, make it visible
 - if this is the first subheading within its parent, display a popup message."
   (when (nomis/outline/c/prev-or-next-heading 1 :forward :sibling)
-    (norg/show-point)))
+    (nomis/outline/c/ensure-heading-shown)))
 
 (defun norg/previous-sibling ()
   "Move backward one subheading at same level as this one.
@@ -591,7 +576,7 @@ Like `org-backward-heading-same-level` but:
 - when the target is invisible, make it visible
 - if this is the first subheading within its parent, display a popup message."
   (when (nomis/outline/c/prev-or-next-heading 1 :backward :sibling)
-    (norg/show-point)))
+    (nomis/outline/c/ensure-heading-shown)))
 
 ;;;;; Forward and backward at same level, sibling or peer
 
@@ -602,7 +587,7 @@ Like `org-forward-heading-same-level` but:
 - if this is the first subheading within its parent, move to the first
   subheading at this level in the next parent."
   (when (nomis/outline/c/prev-or-next-heading 1 :forward :peer)
-    (norg/show-point)))
+    (nomis/outline/c/ensure-heading-shown)))
 
 (defun norg/previous-peer ()
   "Move backward one subheading at same level as this one.
@@ -611,7 +596,7 @@ Like `org-backward-heading-same-level` but:
 - if this is the first subheading within its parent, move to the last
 subheading at this level in the previous parent."
   (when (nomis/outline/c/prev-or-next-heading 1 :backward :peer)
-    (norg/show-point)))
+    (nomis/outline/c/ensure-heading-shown)))
 
 ;;;;; Forward and backward at any level
 
@@ -625,14 +610,14 @@ Same for the `backward` commands.")
     (nomis/outline/c/next-heading)
     (if -norg/heading-any-level-show-entry?
         (nomis/outline/c/show-entry)
-      (norg/show-point))))
+      (nomis/outline/c/ensure-heading-shown))))
 
 (defun norg/previous-heading ()
   (nomis/scrolling/with-maybe-maintain-line-no-in-window
     (nomis/outline/c/previous-heading)
     (if -norg/heading-any-level-show-entry?
         (nomis/outline/c/show-entry)
-      (norg/show-point))))
+      (nomis/outline/c/ensure-heading-shown))))
 
 (defun norg/step-forward-any-level (n-levels-to-show-or-nil)
   ;; We should use `-norg/step/impl` here (or whatever we replace it with).
@@ -1107,7 +1092,7 @@ will be collapsed.
 
 If N is negative, expand to show (abs N) levels, but do not hide anything
 that is already being displayed."
-  (norg/show-point)
+  (nomis/outline/c/ensure-heading-shown)
   (let* ((collapse? (>= n 0))
          (n (abs n)))
     (when collapse?
@@ -1175,7 +1160,7 @@ When in a body, \"current headline\" means the current body's parent headline."
   (prog1
       (let* ((*expanding-parent?* t))
         (norg/save-excursion-to-parent (funcall f)))
-    (norg/show-point)))
+    (nomis/outline/c/ensure-heading-shown)))
 
 (cl-defmacro norg/save-excursion-to-parent-and-then-show-point (&body body)
   (declare (indent 0))

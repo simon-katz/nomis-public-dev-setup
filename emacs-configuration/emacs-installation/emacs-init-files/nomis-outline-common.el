@@ -110,7 +110,8 @@
     (unless (nomis/outline/c/on-heading?) (outline-next-heading))
     (nomis/outline/c/level)))
 
-(defun -nomis/outline/c/ensure-heading-shown ()
+(defun nomis/outline/c/ensure-heading-shown ()
+  (interactive)
   (when (nomis/outline/c/invisible?)
     ;; Is there a simpler way to show the heading but not the body?
     (outline-show-entry)
