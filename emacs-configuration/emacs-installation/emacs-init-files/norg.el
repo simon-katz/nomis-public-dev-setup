@@ -158,10 +158,6 @@ message and in case adding org level messes things up.")
 
 (defalias 'norg/w/fold-subtree 'org-fold-subtree)
 
-(defalias 'norg/w/check-before-invisible-edit 'org-check-before-invisible-edit)
-
-(defvaralias 'norg/w/catch-invisible-edits 'org-catch-invisible-edits)
-
 ;;;; Whether to show bodies
 
 (defvar norg/show-bodies? t)
