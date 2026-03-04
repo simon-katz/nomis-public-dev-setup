@@ -118,7 +118,6 @@
             (= olevel (nomis/outline/c/level)))))))
 
 (defun -nomis/outline/c/top-level-level ()
-  (cl-assert (nomis/outline/c/on-heading?))
   (save-excursion
     (goto-char (point-min))
     (unless (nomis/outline/c/on-heading?) (outline-next-heading))
