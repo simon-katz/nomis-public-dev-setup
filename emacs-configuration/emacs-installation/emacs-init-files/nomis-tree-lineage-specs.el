@@ -242,14 +242,6 @@
   (let* ((v nomis/tree/ls/spec-sequence-max-value))
     (-nomis/tree/ls/lineage/set-level/numeric v nil)))
 
-(defun nomis/tree/ls/lineage/set-tree+body ()
-  ;; We can delete this. It's a near-duplicate of `nomis/tree/show-tree-only`.
-  (interactive)
-  (-nomis/tree/ls/lineage/set-level/numeric -nomis/tree/ls/tree+body-value
-                                            nil
-                                            t)
-  (nomis/outline/c/show-entry))
-
 ;;; End
 
 (provide 'nomis-tree-lineage-specs)
