@@ -42,7 +42,7 @@ Use H with various other keys:
     Expand and collapse from current point
         ' \\
         Add M to fully expand or collapse
-        Add C for visibility cycling of spans
+        Add C for cycling of lineage levels
 
     Expand and collapse from root of current point
         \" | (that's S-' and S-\ on my keyboard.)
@@ -83,12 +83,12 @@ H-q H-q H-/  Show this help")
 (define-key nomis/tree-mode-map (kbd "H-S")      'nomis/tree/search-heading-text)
 (define-key nomis/tree-mode-map (kbd "H-s")      'nomis/tree/search-heading-text-again)
 
-;;;; Visibility span
+;;;; Lineage
 
-(define-key nomis/tree-mode-map (kbd "C-H-'")    'nomis/tree/visibility-span/less)
-(define-key nomis/tree-mode-map (kbd "C-H-\\")   'nomis/tree/visibility-span/more)
-(define-key nomis/tree-mode-map (kbd "C-H-M-'")  'nomis/tree/visibility-span/set-min)
-(define-key nomis/tree-mode-map (kbd "C-H-M-\\") 'nomis/tree/visibility-span/set-max)
+(define-key nomis/tree-mode-map (kbd "C-H-'")    'nomis/tree/lineage/less)
+(define-key nomis/tree-mode-map (kbd "C-H-\\")   'nomis/tree/lineage/more)
+(define-key nomis/tree-mode-map (kbd "C-H-M-'")  'nomis/tree/lineage/set-min)
+(define-key nomis/tree-mode-map (kbd "C-H-M-\\") 'nomis/tree/lineage/set-max)
 
 ;;;; nomis/tree/show-tree-only and nomis/tree/max-lineage
 

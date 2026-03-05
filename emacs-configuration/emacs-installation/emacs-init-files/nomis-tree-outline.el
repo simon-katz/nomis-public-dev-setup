@@ -18,19 +18,19 @@
 (cl-defmethod nomis/tree/search-heading-text-again--aux ((k (eql :outline)))
   (nomis/tree/unimplemented-method k))
 
-;;;;; Visibility span
+;;;;; Lineage
 
-(cl-defmethod nomis/tree/visibility-span/less--aux ((k (eql :outline)))
+(cl-defmethod nomis/tree/lineage/less--aux ((k (eql :outline)))
   (nomis/tree/unimplemented-method k))
 
-(cl-defmethod nomis/tree/visibility-span/more--aux ((k (eql :outline)))
+(cl-defmethod nomis/tree/lineage/more--aux ((k (eql :outline)))
   (nomis/tree/unimplemented-method k))
 
-(cl-defmethod nomis/tree/visibility-span/set-min--aux ((k (eql :outline)))
+(cl-defmethod nomis/tree/lineage/set-min--aux ((k (eql :outline)))
   (nomis/tree/unimplemented-method k))
 
-(cl-defmethod nomis/tree/visibility-span/set-max--aux ((_k (eql :outline)))
-  (nomis/tree/outline/visibility-span/set-max))
+(cl-defmethod nomis/tree/lineage/set-max--aux ((_k (eql :outline)))
+  (nomis/tree/outline/lineage/set-max))
 
 ;;;;; nomis/tree/show-tree-only and nomis/tree/max-lineage
 

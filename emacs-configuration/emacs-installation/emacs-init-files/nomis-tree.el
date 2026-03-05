@@ -119,36 +119,36 @@
       nil
     (nomis/tree/search-heading-text-again--aux (nomis/outline/c/mode))))
 
-;;;;; Visibility span
+;;;;; Lineage
 
-(cl-defgeneric nomis/tree/visibility-span/less--aux (k))
-(cl-defgeneric nomis/tree/visibility-span/more--aux (k))
-(cl-defgeneric nomis/tree/visibility-span/set-min--aux (k))
-(cl-defgeneric nomis/tree/visibility-span/set-max--aux (k))
+(cl-defgeneric nomis/tree/lineage/less--aux (k))
+(cl-defgeneric nomis/tree/lineage/more--aux (k))
+(cl-defgeneric nomis/tree/lineage/set-min--aux (k))
+(cl-defgeneric nomis/tree/lineage/set-max--aux (k))
 
-(defun nomis/tree/visibility-span/less ()
+(defun nomis/tree/lineage/less ()
   (interactive)
   (-nomis/tree/command
       nil
-    (nomis/tree/visibility-span/less--aux (nomis/outline/c/mode))))
+    (nomis/tree/lineage/less--aux (nomis/outline/c/mode))))
 
-(defun nomis/tree/visibility-span/more ()
+(defun nomis/tree/lineage/more ()
   (interactive)
   (-nomis/tree/command
       nil
-    (nomis/tree/visibility-span/more--aux (nomis/outline/c/mode))))
+    (nomis/tree/lineage/more--aux (nomis/outline/c/mode))))
 
-(defun nomis/tree/visibility-span/set-min ()
+(defun nomis/tree/lineage/set-min ()
   (interactive)
   (-nomis/tree/command
       nil
-    (nomis/tree/visibility-span/set-min--aux (nomis/outline/c/mode))))
+    (nomis/tree/lineage/set-min--aux (nomis/outline/c/mode))))
 
-(defun nomis/tree/visibility-span/set-max ()
+(defun nomis/tree/lineage/set-max ()
   (interactive)
   (-nomis/tree/command
       nil
-    (nomis/tree/visibility-span/set-max--aux (nomis/outline/c/mode))))
+    (nomis/tree/lineage/set-max--aux (nomis/outline/c/mode))))
 
 ;;;;; nomis/tree/show-tree-only and nomis/tree/max-lineage
 

@@ -17,19 +17,19 @@
 (cl-defmethod nomis/tree/search-heading-text-again--aux ((k (eql :org))) ()
   (norg/search-heading-text-again))
 
-;;;;; Visibility span
+;;;;; Lineage
 
-(cl-defmethod nomis/tree/visibility-span/less--aux ((k (eql :org)))
-  (norg/visibility-span/less))
+(cl-defmethod nomis/tree/lineage/less--aux ((k (eql :org)))
+  (norg/lineage/less))
 
-(cl-defmethod nomis/tree/visibility-span/more--aux ((k (eql :org)))
-  (norg/visibility-span/more))
+(cl-defmethod nomis/tree/lineage/more--aux ((k (eql :org)))
+  (norg/lineage/more))
 
-(cl-defmethod nomis/tree/visibility-span/set-min--aux ((k (eql :org)))
-  (norg/visibility-span/set-min))
+(cl-defmethod nomis/tree/lineage/set-min--aux ((k (eql :org)))
+  (norg/lineage/set-min))
 
-(cl-defmethod nomis/tree/visibility-span/set-max--aux ((k (eql :org)))
-  (norg/visibility-span/set-max))
+(cl-defmethod nomis/tree/lineage/set-max--aux ((k (eql :org)))
+  (norg/lineage/set-max))
 
 ;;;;; nomis/tree/show-tree-only and nomis/tree/max-lineage
 

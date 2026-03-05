@@ -57,7 +57,7 @@
 
 ;; XXXX Idea of treating level -1 as show only parents, and not siblings.
 ;;      But first:
-;;      - The visibility-span stuff is global, but you have things that work
+;;      - The lineage stuff is global, but you have things that work
 ;;        from point and from root. So you might have to roll your own to o
 ;;        this.
 ;;      - Can you detect a parents-not-siblings state? (Remember: you are
@@ -346,33 +346,31 @@ headline."
   (norg/expand 1000) ; TODO magic number
   )
 
-;;;;; Visibility span -- part 1
-
-;; TODO: Get rid of visiblity span stuff and use lineage specs directly.
+;;;;; Lineage -- part 1
 
 (defun norg/show-tree-only ()
   (nomis/tree/ls/show-lineage nomis/tree/ls/spec/fat-parents-immediate-children-lineage))
 
-;;;;; Visibility span -- part 2
+;;;;; Lineage -- part 2
 
-(defconst -norg/visibility-span/commands
-  '(nomis/tree/visibility-span/less
-    nomis/tree/visibility-span/more
-    nomis/tree/visibility-span/set-min
-    nomis/tree/visibility-span/set-max))
+(defconst -norg/lineage/commands
+  '(nomis/tree/lineage/less
+    nomis/tree/lineage/more
+    nomis/tree/lineage/set-min
+    nomis/tree/lineage/set-max))
 
-(defvar -norg/visibility-span/prev-action-index -1)
+(defvar -norg/lineage/prev-action-index -1)
 
-(defun -norg/visibility-span/set-level/numeric (n delta?
-                                                  &optional no-message?)
-  (let* ((prev-command-was-not-visibility-span?
+(defun -norg/lineage/set-level/numeric (n delta?
+                                          &optional no-message?)
+  (let* ((prev-command-was-not-lineage?
           (not (member (nomis/outline/c/last-command)
-                       -norg/visibility-span/commands)))
-         (prev-action-index -norg/visibility-span/prev-action-index)
+                       -norg/lineage/commands)))
+         (prev-action-index -norg/lineage/prev-action-index)
          (action-index (cond
                         ((not delta?)
                          n)
-                        (prev-command-was-not-visibility-span?
+                        (prev-command-was-not-lineage?
                          -nomis/tree/ls/initial-numeric-value)
                         (t
                          (+ n prev-action-index))))
@@ -380,11 +378,11 @@ headline."
                   (<= 0
                       action-index
                       nomis/tree/ls/spec-sequence-max-value)
-                (or prev-command-was-not-visibility-span?
+                (or prev-command-was-not-lineage?
                     (not (= n prev-action-index)))))
          (new-pos-or-nil (if ok?
                              (progn
-                               (setq -norg/visibility-span/prev-action-index
+                               (setq -norg/lineage/prev-action-index
                                      action-index)
                                action-index)
                            nil)))
@@ -401,24 +399,24 @@ headline."
         (unless no-message?
           (nomis/popup/message "%s" msg))))))
 
-(defun norg/visibility-span/more ()
-  (-norg/visibility-span/set-level/numeric 1 t))
+(defun norg/lineage/more ()
+  (-norg/lineage/set-level/numeric 1 t))
 
-(defun norg/visibility-span/less ()
-  (-norg/visibility-span/set-level/numeric -1 t))
+(defun norg/lineage/less ()
+  (-norg/lineage/set-level/numeric -1 t))
 
-(defun norg/visibility-span/set-min ()
-  (-norg/visibility-span/set-level/numeric 0 nil))
+(defun norg/lineage/set-min ()
+  (-norg/lineage/set-level/numeric 0 nil))
 
-(defun norg/visibility-span/set-max ()
+(defun norg/lineage/set-max ()
   (let* ((v nomis/tree/ls/spec-sequence-max-value))
-    (-norg/visibility-span/set-level/numeric v nil)))
+    (-norg/lineage/set-level/numeric v nil)))
 
-(defun norg/visibility-span/set-tree+body ()
+(defun norg/lineage/set-tree+body ()
   (interactive)
-  (-norg/visibility-span/set-level/numeric -nomis/tree/ls/tree+body-value
-                                           nil
-                                           t)
+  (-norg/lineage/set-level/numeric -nomis/tree/ls/tree+body-value
+                                   nil
+                                   t)
   (nomis/outline/c/show-entry))
 
 ;;;; Search heading text

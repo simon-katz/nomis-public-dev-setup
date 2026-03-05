@@ -98,15 +98,15 @@
           (-nomis/tree/outline/increments-children-approach/set new-approach
                                                                 nil))))))
 
-;;;;; nomis/tree/outline/visibility-span
+;;;;; nomis/tree/outline/lineage
 
-(defun nomis/tree/outline/visibility-span/set-max ()
-  (nomis/tree/ls/show-lineage nomis/tree/ls/spec/max-visibility-span-lineage))
+(defun nomis/tree/outline/lineage/set-max ()
+  (nomis/tree/ls/show-lineage nomis/tree/ls/spec/fat-parents-one-child-lineage))
 
 ;;;;; nomis/tree/outline/show-max-lineage
 
 (defun nomis/tree/outline/show-max-lineage ()
-  (nomis/tree/ls/show-lineage nomis/tree/ls/spec/max-lineage))
+  (nomis/tree/ls/show-lineage nomis/tree/ls/spec/fat-parents-all-children-lineage))
 
 ;;;;; nomis/tree/outline/show-tree-only
 
