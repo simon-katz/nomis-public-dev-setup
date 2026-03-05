@@ -48,6 +48,7 @@
 
 (require 'nomis-scrolling)
 (require 'outline)
+(require 'nomis-outline-common)
 
 ;;;; nomis/tree-mode
 
