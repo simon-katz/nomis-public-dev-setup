@@ -331,14 +331,15 @@
 
 (require 'nomis-eca)
 
+;; Note that we have the require of `nomis-org` earlier. That was needed in
+;; 2014. I wonder if it still is.
 (require 'nomis-outline)
-(require 'nomis-tree-outline-2)
-(require 'nomis-outline-key-bindings)
 
 (require 'nomis-bicycle)
-(require 'nomis-tree)
 (require 'nomis-tree-org)
 (require 'nomis-tree-outline)
+
+(require 'nomis-outline-key-bindings)
 (require 'nomis-tree-key-bindings)
 
 ;; (eval-after-load "isearch" '(require 'isearch+))
