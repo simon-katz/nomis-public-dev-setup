@@ -7,7 +7,9 @@
 (require 'a)
 (require 'nomis-outline-common)
 
-;;;; Lineage spec
+;;;; Lineage specs
+
+;;;;; Preamble
 
 ;; A lineage-spec controls how lineages are displayed and has the following
 ;; entries (with permitted values nested):
@@ -36,6 +38,8 @@
 
 ;; TODO: See `org-show-context-detail` for ideas for more lineage specs.
 
+;;;;; Lineage spec sequence
+
 (defconst nomis/tree/ls/children-approach-max 4)
 
 (defconst nomis/tree/ls/spec/min-lineage
@@ -49,11 +53,6 @@
   (a-hash-table :spec/pre-hide-all? t
                 :spec/parents-approach :parents/fat))
 
-(defconst nomis/tree/ls/spec/max-visibility-span-lineage
-  (a-hash-table :spec/pre-hide-all? t
-                :spec/parents-approach :parents/fat
-                :spec/children-approach 1))
-
 (defconst nomis/tree/ls/spec/fat-parents-immediate-children-lineage
   (a-hash-table :spec/pre-hide-all? t
                 :spec/parents-approach :parents/fat
@@ -63,6 +62,13 @@
   (a-hash-table :spec/pre-hide-all? t
                 :spec/parents-approach :parents/fat
                 :spec/children-approach nomis/tree/ls/children-approach-max))
+
+;;;;; Other lineage specs
+
+(defconst nomis/tree/ls/spec/max-visibility-span-lineage
+  (a-hash-table :spec/pre-hide-all? t
+                :spec/parents-approach :parents/fat
+                :spec/children-approach 1))
 
 (defconst nomis/tree/ls/spec/step-lineage
   (a-hash-table :spec/pre-hide-all? t
