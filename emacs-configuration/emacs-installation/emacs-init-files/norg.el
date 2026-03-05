@@ -906,7 +906,7 @@ When in a body, \"current headline\" means the current body's parent headline."
                   ;; have to compute the value twice.
                   maximum
                 new-level/maybe-out-of-range)))
-      (cl-multiple-value-bind (new-level do-cycling?)
+      (cl-destructuring-bind (new-level do-cycling?)
           (-norg/bring-within-range v maximum)
         (let* ((out-of-range? (and (not do-cycling?)
                                    (-norg/out-of-range v
