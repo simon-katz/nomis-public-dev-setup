@@ -48,6 +48,7 @@
 
 (require 'nomis-scrolling)
 (require 'outline)
+(require 'nomis-msg)
 (require 'nomis-outline-common)
 
 ;;;; nomis/tree-mode
@@ -102,6 +103,21 @@
   (error "Not supported: %s %s" k this-command))
 
 ;;;; API
+
+;;;;; Temp -- for switching everything to the `norg` algorithms
+
+(defconst -nomis/tree/use-org-impl-for-outline? t)
+
+(defun -nomis/tree/hacked-mode ()
+  (let* ((mode (nomis/outline/c/mode)))
+    (cl-ecase mode
+      (:outline (if -nomis/tree/use-org-impl-for-outline?
+                    (progn (message "Using org impl for outline for %s"
+                                    this-command)
+                           (nomis/msg/grab-user-attention/low 0.25)
+                           :org)
+                  :outline))
+      (:org :org))))
 
 ;;;;; Search heading text
 
@@ -192,7 +208,7 @@ When in a body, \"current heading\" means the current body's parent heading."
   (interactive "P")
   (-nomis/tree/command
       nil
-    (nomis/tree/show-children-from-point/incremental/less--aux (nomis/outline/c/mode)
+    (nomis/tree/show-children-from-point/incremental/less--aux (-nomis/tree/hacked-mode)
                                                                n)))
 
 (defun nomis/tree/show-children-from-point/incremental/more (n)
