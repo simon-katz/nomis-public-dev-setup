@@ -6,7 +6,7 @@
 
 (require 'bicycle)
 (require 'nomis-msg)
-(require 'nomis-tree-outline-2)
+(require 'nomis-outline-common)
 
 ;;;; Thoughts on bicycle
 
@@ -35,7 +35,7 @@
             :around
             (lambda (orig-fun &rest args)
               (when *-nomis/bicycle/in-bicycle-cycle-local?*
-                (nomis/tree/outline/pulse-current-section))
+                (nomis/outline/c/pulse-current-section))
               (apply orig-fun args))
             '((name . -nomis/bicycle/bicycle-feedback)))
 

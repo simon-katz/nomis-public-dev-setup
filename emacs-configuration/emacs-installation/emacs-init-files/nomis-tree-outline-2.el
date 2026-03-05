@@ -19,28 +19,6 @@
 
 ;;;; Utilities
 
-;;;;; nomis/tree/outline/pulse-current-section
-
-(defun nomis/tree/outline/pulse-current-section ()
-  (let ((start (point)))
-    (cl-flet ((next-same-level-heading ()
-                (save-excursion (ignore-errors
-                                  (outline-forward-same-level 1)
-                                  (point))))
-              (next-up-one-level-heading ()
-                (save-excursion (ignore-errors
-                                  (outline-up-heading 1)
-                                  (outline-forward-same-level 1)
-                                  (unless (= (point) start)
-                                    ;; We have this guard because
-                                    ;; `outline-up-heading` is broken when
-                                    ;; there's no up-one-level heading.
-                                    (point))))))
-      (let* ((end (or (next-same-level-heading)
-                      (next-up-one-level-heading)
-                      (point-max))))
-        (pulse-momentary-highlight-region start end)))))
-
 ;;;;; Lineage spec
 
 ;; A lineage-spec controls how lineages are displayed and has the following
@@ -166,7 +144,7 @@
   (when (and (a-get lineage-spec :spec/pulse-max-children?)
              (= (a-get lineage-spec :spec/children-approach)
                 -nomis/tree/outline/children-approach-max))
-    (nomis/tree/outline/pulse-current-section)))
+    (nomis/outline/c/pulse-current-section)))
 
 ;;;;; Previous/next helpers
 
