@@ -95,6 +95,9 @@
 
 ;;;;; Other lineage specs
 
+(defconst nomis/tree/ls/spec/no-hide-fat-parents ; TODO: => we want to rename others to say "hide"
+  (a-hash-table :spec/parents-approach :parents/fat))
+
 (defconst nomis/tree/ls/spec/fat-parents-one-child
   (a-hash-table :spec/pre-hide-all? t
                 :spec/parents-approach :parents/fat
