@@ -4,7 +4,6 @@
 
 ;;;; Requires
 
-(require 'nomis-org) ; noflycheck
 (require 'norg)
 
 ;;;; `nomis/tree` methods
