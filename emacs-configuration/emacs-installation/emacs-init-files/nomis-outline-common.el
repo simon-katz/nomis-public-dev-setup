@@ -84,10 +84,11 @@
   (outline-hide-subtree))
 
 (defun nomis/outline/c/invisible? (&optional pos)
-  (cl-ecase (nomis/outline/c/mode)
-    (:outline (outline-invisible-p pos))
-    (:org     (org-invisible-p pos t) ; TODO: Is this `folding-only` arg right?
-              )))
+  (let* ((pos (or pos (point))))
+    (cl-ecase (nomis/outline/c/mode)
+      (:outline (outline-invisible-p pos))
+      (:org     (org-invisible-p pos t) ; TODO: Is this `folding-only` arg right?
+                ))))
 
 (defun nomis/outline/c/visible? (&optional pos)
   (not (nomis/outline/c/invisible? pos)))
