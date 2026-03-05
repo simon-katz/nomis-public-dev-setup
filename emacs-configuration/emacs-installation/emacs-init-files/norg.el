@@ -92,6 +92,7 @@
 (require 'cl-lib)
 (require 'dash)
 (require 'nomis-outline-common) ; TODO: Check the require chains (and not all needed at top level).
+(require 'nomis-tree-lineage-specs)
 (require 'org)
 
 ;; Things that you might want to make into packages if you make norg into a
@@ -350,13 +351,14 @@ headline."
 ;; TODO: Get rid of visiblity span stuff and use lineage specs directly.
 
 (defun norg/collapse-all-and-set-visibility-span (detail)
-  (let* ((lineage-spec (cl-ecase detail
-                         (minimal   min-lineage-spec)
-                         (ancestors thin-parents-lineage-spec)
-                         (lineage   fat-parents-lineage-spec)
-                         (tree      fat-parents-immediate-children-lineage-spec)
-                         (canonical max-lineage-spec))))
-    (-nomis/tree/outline/show-lineage lineage-spec)))
+  (let* ((lineage-spec
+          (cl-ecase detail
+            (minimal   nomis/tree/ls/spec/min-lineage)
+            (ancestors nomis/tree/ls/spec/thin-parents-lineage)
+            (lineage   nomis/tree/ls/spec/fat-parents-lineage)
+            (tree      nomis/tree/ls/spec/fat-parents-immediate-children-lineage)
+            (canonical nomis/tree/ls/spec/max-lineage))))
+    (nomis/tree/ls/show-lineage lineage-spec)))
 
 (defun norg/show-tree-only ()
   (norg/collapse-all-and-set-visibility-span 'tree))
