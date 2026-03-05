@@ -172,6 +172,84 @@
                 nomis/tree/ls/children-approach-max))
     (nomis/outline/c/pulse-current-section)))
 
+;;;; Functionality moved from `norg` -- for integration here
+
+;; TODO: Integrate this functionality that was moved from `norg`.
+
+;;;;; Lineage -- part 1
+
+(defun nomis/tree/ls/show-tree-only ()
+  (nomis/tree/ls/show-lineage nomis/tree/ls/spec/fat-parents-immediate-children-lineage))
+
+;;;;; Lineage -- part 2
+
+(defconst -nomis/tree/ls/lineage/commands
+  '(nomis/tree/lineage/less
+    nomis/tree/lineage/more
+    nomis/tree/lineage/set-min
+    nomis/tree/lineage/set-max))
+
+(defvar -nomis/tree/ls/lineage/prev-action-index -1)
+
+(defun -nomis/tree/ls/lineage/set-level/numeric (n delta?
+                                          &optional no-message?)
+  (let* ((prev-command-was-not-lineage?
+          (not (member (nomis/outline/c/last-command)
+                       -nomis/tree/ls/lineage/commands)))
+         (prev-action-index -nomis/tree/ls/lineage/prev-action-index)
+         (action-index (cond
+                        ((not delta?)
+                         n)
+                        (prev-command-was-not-lineage?
+                         -nomis/tree/ls/initial-numeric-value)
+                        (t
+                         (+ n prev-action-index))))
+         (ok? (if delta?
+                  (<= 0
+                      action-index
+                      nomis/tree/ls/spec-sequence-max-value)
+                (or prev-command-was-not-lineage?
+                    (not (= n prev-action-index)))))
+         (new-pos-or-nil (if ok?
+                             (progn
+                               (setq -nomis/tree/ls/lineage/prev-action-index
+                                     action-index)
+                               action-index)
+                           nil)))
+    (if (null new-pos-or-nil)
+        (let* ((msg (cl-second
+                     (if (if delta? (< n 0) (= n 0))
+                         -nomis/tree/ls/spec-sequence-min-spec
+                       -nomis/tree/ls/spec-sequence-max-spec))))
+          (nomis/popup/error-message "%s" msg))
+      (cl-destructuring-bind (_ msg show? lineage-spec)
+          (nth new-pos-or-nil -nomis/tree/ls/spec-sequence)
+        (nomis/tree/ls/show-lineage lineage-spec)
+        (if show? (nomis/outline/c/show-entry) (nomis/outline/c/hide-entry))
+        (unless no-message?
+          (nomis/popup/message "%s" msg))))))
+
+(defun nomis/tree/ls/lineage/more ()
+  (-nomis/tree/ls/lineage/set-level/numeric 1 t))
+
+(defun nomis/tree/ls/lineage/less ()
+  (-nomis/tree/ls/lineage/set-level/numeric -1 t))
+
+(defun nomis/tree/ls/lineage/set-min ()
+  (-nomis/tree/ls/lineage/set-level/numeric 0 nil))
+
+(defun nomis/tree/ls/lineage/set-max ()
+  (let* ((v nomis/tree/ls/spec-sequence-max-value))
+    (-nomis/tree/ls/lineage/set-level/numeric v nil)))
+
+(defun nomis/tree/ls/lineage/set-tree+body ()
+  ;; We can delete this. It's a near-duplicate of `nomis/tree/show-tree-only`.
+  (interactive)
+  (-nomis/tree/ls/lineage/set-level/numeric -nomis/tree/ls/tree+body-value
+                                            nil
+                                            t)
+  (nomis/outline/c/show-entry))
+
 ;;; End
 
 (provide 'nomis-tree-lineage-specs)

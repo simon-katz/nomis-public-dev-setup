@@ -20,21 +20,21 @@
 ;;;;; Lineage
 
 (cl-defmethod nomis/tree/lineage/less--aux ((k (eql :org)))
-  (norg/lineage/less))
+  (nomis/tree/ls/lineage/less))
 
 (cl-defmethod nomis/tree/lineage/more--aux ((k (eql :org)))
-  (norg/lineage/more))
+  (nomis/tree/ls/lineage/more))
 
 (cl-defmethod nomis/tree/lineage/set-min--aux ((k (eql :org)))
-  (norg/lineage/set-min))
+  (nomis/tree/ls/lineage/set-min))
 
 (cl-defmethod nomis/tree/lineage/set-max--aux ((k (eql :org)))
-  (norg/lineage/set-max))
+  (nomis/tree/ls/lineage/set-max))
 
 ;;;;; nomis/tree/show-tree-only and nomis/tree/max-lineage
 
 (cl-defmethod nomis/tree/show-tree-only--aux ((k (eql :org)))
-  (norg/show-tree-only))
+  (nomis/tree/ls/show-tree-only))
 
 (cl-defmethod nomis/tree/max-lineage--aux ((k (eql :org)))
   (nomis/tree/unimplemented-method k))
