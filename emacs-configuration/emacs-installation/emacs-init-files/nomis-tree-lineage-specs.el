@@ -5,6 +5,7 @@
 ;;;; Requires
 
 (require 'a)
+(require 'nomis-msg)
 (require 'nomis-outline-common)
 
 ;;;; Lineage specs
@@ -62,6 +63,34 @@
   (a-hash-table :spec/pre-hide-all? t
                 :spec/parents-approach :parents/fat
                 :spec/children-approach nomis/tree/ls/children-approach-max))
+
+(defconst -nomis/tree/ls/spec-sequence
+  ;; TODO: Change this so that the third item (`show?`) is part of a lineage
+  ;;       spec. So we'll need to replace `nomis/tree/ls/spec/max-lineage` with
+  ;;       two new ones.
+  `((:minimal   "Minimal"          nil ,nomis/tree/ls/spec/min-lineage)
+    (:ancestors "Ancestors"        nil ,nomis/tree/ls/spec/thin-parents-lineage)
+    (:lineage   "Lineage"          nil ,nomis/tree/ls/spec/fat-parents-lineage)
+    (:tree      "Tree"             nil ,nomis/tree/ls/spec/fat-parents-immediate-children-lineage)
+    (:canonical "Canonical"        nil ,nomis/tree/ls/spec/max-lineage)
+    (:canonical "Canonical + body" t   ,nomis/tree/ls/spec/max-lineage)))
+
+(defconst -nomis/tree/ls/spec-sequence-min-spec
+  (cl-first -nomis/tree/ls/spec-sequence))
+
+(defconst -nomis/tree/ls/spec-sequence-max-spec
+  (-> -nomis/tree/ls/spec-sequence last cl-first))
+
+(defconst nomis/tree/ls/spec-sequence-max-value
+  (1- (length -nomis/tree/ls/spec-sequence)))
+
+(defconst -nomis/tree/ls/initial-numeric-value
+  (or (cl-position :ancestors -nomis/tree/ls/spec-sequence :key #'cl-first)
+      (error "Didn't find :ancestors entry in -nomis/tree/ls/spec-sequence")))
+
+(defconst -nomis/tree/ls/tree+body-value
+  (or (cl-position :tree -nomis/tree/ls/spec-sequence :key #'cl-first)
+      (error "Didn't find :tree entry in -nomis/tree/ls/spec-sequence")))
 
 ;;;;; Other lineage specs
 

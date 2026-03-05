@@ -365,41 +365,6 @@ headline."
 
 ;;;;; Visibility span -- part 2
 
-(defconst -norg/visibility-span/detail-values
-  ;;  See `org-show-context-detail`.
-  '((minimal   nil "Minimal")
-    ;; (minimal   t   "Minimal + body")
-    ;; (local     nil "Local - body")
-    ;; (local     t   "Local (includes body)")
-    (ancestors nil "Ancestors")
-    ;; (ancestors t   "Ancestors + body")
-    (lineage   nil "Lineage")
-    ;; (lineage   t   "Lineage + body")
-    (tree      nil "Tree")
-    ;; (tree      t   "Tree + body")
-    (canonical nil "Canonical")
-    (canonical t   "Canonical + body")))
-
-(defconst -norg/visibility-span/min-detail
-  (cl-first -norg/visibility-span/detail-values))
-
-(defconst -norg/visibility-span/max-detail
-  (-> -norg/visibility-span/detail-values
-      last
-      cl-first))
-
-(defconst -norg/visibility-span/max-value
-  (1- (length -norg/visibility-span/detail-values)))
-
-(defun -norg/visibility-span/initial-incremental-value ()
-  (or (cl-position 'ancestors
-                   -norg/visibility-span/detail-values
-                   :key #'cl-first)
-      (progn
-        (message "Didn't find entry in -norg/visibility-span/detail-values")
-        (nomis/msg/grab-user-attention/low)
-        1)))
-
 (defconst -norg/visibility-span/commands
   '(nomis/tree/visibility-span/less
     nomis/tree/visibility-span/more
@@ -418,32 +383,30 @@ headline."
                         ((not delta?)
                          n)
                         (prev-command-was-not-visibility-span?
-                         (-norg/visibility-span/initial-incremental-value))
+                         -nomis/tree/ls/initial-numeric-value)
                         (t
                          (+ n prev-action-index))))
          (ok? (if delta?
                   (<= 0
                       action-index
-                      -norg/visibility-span/max-value)
+                      nomis/tree/ls/spec-sequence-max-value)
                 (or prev-command-was-not-visibility-span?
                     (not (= n prev-action-index)))))
-         (new-pos-or-nil
-          (if ok?
-              (progn
-                (setq -norg/visibility-span/prev-action-index
-                      action-index)
-                action-index)
-            nil)))
+         (new-pos-or-nil (if ok?
+                             (progn
+                               (setq -norg/visibility-span/prev-action-index
+                                     action-index)
+                               action-index)
+                           nil)))
     (if (null new-pos-or-nil)
-        (let* ((msg (cl-third
+        (let* ((msg (cl-second
                      (if (if delta? (< n 0) (= n 0))
-                         -norg/visibility-span/min-detail
-                       -norg/visibility-span/max-detail))))
+                         -nomis/tree/ls/spec-sequence-min-spec
+                       -nomis/tree/ls/spec-sequence-max-spec))))
           (nomis/popup/error-message "%s" msg))
-      (cl-multiple-value-bind (detail show? msg)
-          (nth new-pos-or-nil
-               -norg/visibility-span/detail-values)
-        (norg/collapse-all-and-set-visibility-span detail)
+      (cl-destructuring-bind (_ msg show? lineage-spec)
+          (nth new-pos-or-nil -nomis/tree/ls/spec-sequence)
+        (nomis/tree/ls/show-lineage lineage-spec)
         (if show? (nomis/outline/c/show-entry) (nomis/outline/c/hide-entry))
         (unless no-message?
           (nomis/popup/message "%s" msg))))))
@@ -458,16 +421,14 @@ headline."
   (-norg/visibility-span/set-level/numeric 0 nil))
 
 (defun norg/visibility-span/set-max ()
-  (let* ((v -norg/visibility-span/max-value))
+  (let* ((v nomis/tree/ls/spec-sequence-max-value))
     (-norg/visibility-span/set-level/numeric v nil)))
 
 (defun norg/visibility-span/set-tree+body ()
   (interactive)
-  (let* ((v (cl-position '(tree nil "Tree")
-                         -norg/visibility-span/detail-values
-                         :test #'equal)))
-    (cl-assert (not (null v)))
-    (-norg/visibility-span/set-level/numeric v nil t))
+  (-norg/visibility-span/set-level/numeric -nomis/tree/ls/tree+body-value
+                                           nil
+                                           t)
   (nomis/outline/c/show-entry))
 
 ;;;; Search heading text
