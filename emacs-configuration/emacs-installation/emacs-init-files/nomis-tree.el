@@ -218,7 +218,7 @@ When in a body, \"current heading\" means the current body's parent heading."
   (interactive "P")
   (-nomis/tree/command
       nil
-    (nomis/tree/show-children-from-point/incremental/more--aux (nomis/outline/c/mode)
+    (nomis/tree/show-children-from-point/incremental/more--aux (-nomis/tree/hacked-mode)
                                                                n)))
 
 (defun nomis/tree/show-children-from-point/set-min ()
