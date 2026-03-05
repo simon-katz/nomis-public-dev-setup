@@ -43,25 +43,23 @@
 
 (defconst nomis/tree/ls/children-approach-max 4)
 
-;; TODO: We don't need the `-lineage` suffixes.
-
-(defconst nomis/tree/ls/spec/min-lineage
+(defconst nomis/tree/ls/spec/min
   (a-hash-table :spec/pre-hide-all? t))
 
-(defconst nomis/tree/ls/spec/thin-parents-lineage
+(defconst nomis/tree/ls/spec/thin-parents
   (a-hash-table :spec/pre-hide-all? t
                 :spec/parents-approach :parents/thin))
 
-(defconst nomis/tree/ls/spec/fat-parents-lineage
+(defconst nomis/tree/ls/spec/fat-parents
   (a-hash-table :spec/pre-hide-all? t
                 :spec/parents-approach :parents/fat))
 
-(defconst nomis/tree/ls/spec/fat-parents-immediate-children-lineage
+(defconst nomis/tree/ls/spec/fat-parents-immediate-children
   (a-hash-table :spec/pre-hide-all? t
                 :spec/parents-approach :parents/fat
                 :spec/children-approach 2))
 
-(defconst nomis/tree/ls/spec/fat-parents-all-children-lineage
+(defconst nomis/tree/ls/spec/fat-parents-all-children
   (a-hash-table :spec/pre-hide-all? t
                 :spec/parents-approach :parents/fat
                 :spec/children-approach nomis/tree/ls/children-approach-max))
@@ -69,14 +67,14 @@
 (defconst -nomis/tree/ls/spec-sequence
   ;; TODO: Change this so that the third item (`show?`) is part of a lineage
   ;;       spec. So we'll need to replace
-  ;;       `nomis/tree/ls/spec/fat-parents-all-children-lineage` with two
+  ;;       `nomis/tree/ls/spec/fat-parents-all-children` with two
   ;;       new ones.
-  `((:minimal   "Minimal"          nil ,nomis/tree/ls/spec/min-lineage)
-    (:ancestors "Ancestors"        nil ,nomis/tree/ls/spec/thin-parents-lineage)
-    (:lineage   "Lineage"          nil ,nomis/tree/ls/spec/fat-parents-lineage)
-    (:tree      "Tree"             nil ,nomis/tree/ls/spec/fat-parents-immediate-children-lineage)
-    (:canonical "Canonical"        nil ,nomis/tree/ls/spec/fat-parents-all-children-lineage)
-    (:canonical "Canonical + body" t   ,nomis/tree/ls/spec/fat-parents-all-children-lineage)))
+  `((:minimal   "Minimal"          nil ,nomis/tree/ls/spec/min)
+    (:ancestors "Ancestors"        nil ,nomis/tree/ls/spec/thin-parents)
+    (:lineage   "Lineage"          nil ,nomis/tree/ls/spec/fat-parents)
+    (:tree      "Tree"             nil ,nomis/tree/ls/spec/fat-parents-immediate-children)
+    (:canonical "Canonical"        nil ,nomis/tree/ls/spec/fat-parents-all-children)
+    (:canonical "Canonical + body" t   ,nomis/tree/ls/spec/fat-parents-all-children)))
 
 (defconst -nomis/tree/ls/spec-sequence-min-spec
   (cl-first -nomis/tree/ls/spec-sequence))
@@ -97,20 +95,20 @@
 
 ;;;;; Other lineage specs
 
-(defconst nomis/tree/ls/spec/fat-parents-one-child-lineage
+(defconst nomis/tree/ls/spec/fat-parents-one-child
   (a-hash-table :spec/pre-hide-all? t
                 :spec/parents-approach :parents/fat
                 :spec/children-approach 1))
 
-(defconst nomis/tree/ls/spec/step-lineage
+(defconst nomis/tree/ls/spec/step
   (a-hash-table :spec/pre-hide-all? t
                 :spec/parents-approach :parents/fat
                 :spec/children-approach nomis/tree/ls/children-approach-max))
 
-(defconst nomis/tree/ls/spec/navigation-lineage
+(defconst nomis/tree/ls/spec/navigation
   (a-hash-table :spec/parents-approach :parents/thin))
 
-(defun nomis/tree/ls/spec/show-children-lineage (children-approach)
+(defun nomis/tree/ls/spec/show-children (children-approach)
   (a-hash-table :spec/pre-hide-children? t
                 :spec/children-approach children-approach
                 :spec/pulse-max-children? t))
@@ -179,7 +177,7 @@
 ;;;;; Lineage -- part 1
 
 (defun nomis/tree/ls/show-tree-only ()
-  (nomis/tree/ls/show-lineage nomis/tree/ls/spec/fat-parents-immediate-children-lineage))
+  (nomis/tree/ls/show-lineage nomis/tree/ls/spec/fat-parents-immediate-children))
 
 ;;;;; Lineage -- part 2
 

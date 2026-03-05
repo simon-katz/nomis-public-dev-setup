@@ -475,7 +475,7 @@ Same for the `backward` commands.")
   ;; We should use `-norg/step/impl` here (or whatever we replace it with).
   (nomis/scrolling/with-maybe-maintain-line-no-in-window
     (nomis/outline/c/next-heading)
-    (nomis/tree/ls/show-lineage nomis/tree/ls/spec/fat-parents-lineage)
+    (nomis/tree/ls/show-lineage nomis/tree/ls/spec/fat-parents)
     (let* ((n-levels-or-nil (or n-levels-to-show-or-nil
                                 norg/step-n-levels-to-show)))
       (if (null n-levels-or-nil)
@@ -486,7 +486,7 @@ Same for the `backward` commands.")
   ;; We should use `-norg/step/impl` here (or whatever we replace it with).
   (nomis/scrolling/with-maybe-maintain-line-no-in-window
     (nomis/outline/c/previous-heading)
-    (nomis/tree/ls/show-lineage nomis/tree/ls/spec/fat-parents-lineage)
+    (nomis/tree/ls/show-lineage nomis/tree/ls/spec/fat-parents)
     (let* ((n-levels-or-nil (or n-levels-to-show-or-nil
                                 norg/step-n-levels-to-show)))
       (if (null n-levels-or-nil)

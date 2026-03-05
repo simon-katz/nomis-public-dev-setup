@@ -63,7 +63,7 @@
 
 (defun -nomis/tree/outline/increments-children-approach/set (approach clamped?)
   (setq -nomis/tree/outline/increments-children-approach approach)
-  (nomis/tree/ls/show-lineage (nomis/tree/ls/spec/show-children-lineage approach))
+  (nomis/tree/ls/show-lineage (nomis/tree/ls/spec/show-children approach))
   (-nomis/tree/outline/inc-dec-message approach clamped?))
 
 (defun -nomis/tree/outline/set-n-children-from-point (n)
@@ -101,22 +101,22 @@
 ;;;;; nomis/tree/outline/lineage
 
 (defun nomis/tree/outline/lineage/set-max ()
-  (nomis/tree/ls/show-lineage nomis/tree/ls/spec/fat-parents-one-child-lineage))
+  (nomis/tree/ls/show-lineage nomis/tree/ls/spec/fat-parents-one-child))
 
 ;;;;; nomis/tree/outline/show-max-lineage
 
 (defun nomis/tree/outline/show-max-lineage ()
-  (nomis/tree/ls/show-lineage nomis/tree/ls/spec/fat-parents-all-children-lineage))
+  (nomis/tree/ls/show-lineage nomis/tree/ls/spec/fat-parents-all-children))
 
 ;;;;; nomis/tree/outline/show-tree-only
 
 (defun nomis/tree/outline/show-tree-only ()
-  (nomis/tree/ls/show-lineage nomis/tree/ls/spec/fat-parents-lineage))
+  (nomis/tree/ls/show-lineage nomis/tree/ls/spec/fat-parents))
 
 ;;;;; Previous
 
 (defun nomis/tree/outline/previous-heading (n)
-  (-nomis/tree/outline/prev-or-next-heading-and-show-lineage nomis/tree/ls/spec/navigation-lineage
+  (-nomis/tree/outline/prev-or-next-heading-and-show-lineage nomis/tree/ls/spec/navigation
                                                              n
                                                              :backward
                                                              :any-level))
@@ -125,7 +125,7 @@
   "Move backward to the N'th heading at same level as this one.
 Stop at the first and last headings of a superior heading."
   (interactive "p")
-  (-nomis/tree/outline/prev-or-next-heading-and-show-lineage nomis/tree/ls/spec/navigation-lineage
+  (-nomis/tree/outline/prev-or-next-heading-and-show-lineage nomis/tree/ls/spec/navigation
                                                              n
                                                              :backward
                                                              :sibling))
@@ -134,7 +134,7 @@ Stop at the first and last headings of a superior heading."
   "Move backward to the N'th heading at same level as this one.
 Can pass by a superior heading."
   (interactive "p")
-  (-nomis/tree/outline/prev-or-next-heading-and-show-lineage nomis/tree/ls/spec/navigation-lineage
+  (-nomis/tree/outline/prev-or-next-heading-and-show-lineage nomis/tree/ls/spec/navigation
                                                              n
                                                              :backward
                                                              :peer))
@@ -143,7 +143,7 @@ Can pass by a superior heading."
   "Move backward to the N'th heading at same level as this one, then show
 fat parents and all children.
 Stop at the first and last headings of a superior heading."
-  (-nomis/tree/outline/prev-or-next-heading-and-show-lineage nomis/tree/ls/spec/step-lineage
+  (-nomis/tree/outline/prev-or-next-heading-and-show-lineage nomis/tree/ls/spec/step
                                                              (or n 1)
                                                              :backward
                                                              :sibling))
@@ -152,7 +152,7 @@ Stop at the first and last headings of a superior heading."
   "Move backward to the N'th heading at same level as this one, then show
 fat parents and all children.
 Can pass by a superior heading."
-  (-nomis/tree/outline/prev-or-next-heading-and-show-lineage nomis/tree/ls/spec/step-lineage
+  (-nomis/tree/outline/prev-or-next-heading-and-show-lineage nomis/tree/ls/spec/step
                                                              (or n 1)
                                                              :backward
                                                              :peer))
@@ -160,7 +160,7 @@ Can pass by a superior heading."
 ;;;;; Next
 
 (defun nomis/tree/outline/next-heading (n)
-  (-nomis/tree/outline/prev-or-next-heading-and-show-lineage nomis/tree/ls/spec/navigation-lineage
+  (-nomis/tree/outline/prev-or-next-heading-and-show-lineage nomis/tree/ls/spec/navigation
                                                              n
                                                              :forward
                                                              :any-level))
@@ -169,7 +169,7 @@ Can pass by a superior heading."
   "Move forward to the N'th heading at same level as this one.
 Stop at the first and last headings of a superior heading."
   (interactive "p")
-  (-nomis/tree/outline/prev-or-next-heading-and-show-lineage nomis/tree/ls/spec/navigation-lineage
+  (-nomis/tree/outline/prev-or-next-heading-and-show-lineage nomis/tree/ls/spec/navigation
                                                              n
                                                              :forward
                                                              :sibling))
@@ -178,7 +178,7 @@ Stop at the first and last headings of a superior heading."
   "Move forward to the N'th heading at same level as this one.
 Can pass by a superior heading."
   (interactive "p")
-  (-nomis/tree/outline/prev-or-next-heading-and-show-lineage nomis/tree/ls/spec/navigation-lineage
+  (-nomis/tree/outline/prev-or-next-heading-and-show-lineage nomis/tree/ls/spec/navigation
                                                              n
                                                              :forward
                                                              :peer))
@@ -187,7 +187,7 @@ Can pass by a superior heading."
   "Move forward to the N'th heading at same level as this one, then show
 fat parents and all children.
 Stop at the first and last headings of a superior heading."
-  (-nomis/tree/outline/prev-or-next-heading-and-show-lineage nomis/tree/ls/spec/step-lineage
+  (-nomis/tree/outline/prev-or-next-heading-and-show-lineage nomis/tree/ls/spec/step
                                                              (or n 1)
                                                              :forward
                                                              :sibling))
@@ -196,7 +196,7 @@ Stop at the first and last headings of a superior heading."
   "Move forward to the N'th heading at same level as this one, then show
 fat parents and all children.
 Can pass by a superior heading."
-  (-nomis/tree/outline/prev-or-next-heading-and-show-lineage nomis/tree/ls/spec/step-lineage
+  (-nomis/tree/outline/prev-or-next-heading-and-show-lineage nomis/tree/ls/spec/step
                                                              (or n 1)
                                                              :forward
                                                              :peer))
