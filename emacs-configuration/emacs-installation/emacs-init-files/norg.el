@@ -93,7 +93,6 @@
 (require 'dash)
 (require 'nomis-outline-common) ; TODO: Check the require chains (and not all needed at top level).
 (require 'nomis-tree-lineage-specs)
-(require 'org)
 
 ;; Things that you might want to make into packages if you make norg into a
 ;; package.
@@ -357,7 +356,7 @@ headline."
     ;; Grab text of heading
     (let* ((beg (point))
            (end (progn
-                  (org-end-of-line)
+                  (nomis/outline/c/end-of-line)
                   (point))))
       (if (not (< beg end))
           (error "No heading here")
@@ -394,15 +393,7 @@ headline."
 
 (defun norg/search-heading-text ()
   (setq -norg/search-heading-text/text (-norg/grab-heading-text))
-  (unless (and org-mark-ring
-               (ignore-errors ; without this, we can get "Marker does not point anywhere" errors
-                 (= (cl-first org-mark-ring)
-                    (point))))
-    ;; Note: Ive tried customising `org-mark-ring-length` using
-    ;; `customize-variable`, but I can't get it to work. There's a comment in
-    ;; `org-mark-ring-length` saying "Changing this requires a restart of Emacs
-    ;; to work correctly", but even restarting doesn't work.
-    (org-mark-ring-push))
+  (push-mark)
   (-norg/search-heading-text/search nil))
 
 (defun norg/search-heading-text-again ()

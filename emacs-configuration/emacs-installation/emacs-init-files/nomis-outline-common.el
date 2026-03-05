@@ -114,6 +114,11 @@
   (and (bolp)
        (nomis/outline/c/on-heading?)))
 
+(defun nomis/outline/c/end-of-line ()
+  (cl-ecase (nomis/outline/c/mode)
+    (:outline (end-of-line))
+    (:org     (org-end-of-line))))
+
 (defun nomis/outline/c/level ()
   ;; TODO: Broken. This returns weird numbers in some modes. /eg/ In Clojure
   ;;       it's one too large (for me).
