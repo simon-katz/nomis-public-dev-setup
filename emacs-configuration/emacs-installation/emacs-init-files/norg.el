@@ -713,12 +713,14 @@ When in a body, \"current headline\" means the current body's parent headline."
           '(:dummy-first t :dummy-first :dummy-first :dummy-first))
          (basic-info
           (norg/map-entries-from-point (lambda ()
-                                         (list* (nomis/outline/c/level)
+                                         (list* (point)
+                                                (nomis/outline/c/level)
                                                 (nomis/outline/c/visible?)
                                                 (-norg/body-info)))))
          (just-did-a-body? nil))
     (cl-loop for ((prev-level prev-visible? . _)
-                  . ((level
+                  . ((pos
+                      level
                       visible?
                       has-body?
                       has-visible-body?
@@ -735,23 +737,27 @@ When in a body, \"current headline\" means the current body's parent headline."
                                                    (<= level prev-level)))
 
              when prev-was-visible-leaf?
-             collect (a-hash-table :tree-info/level   (1+ prev-level)
+             collect (a-hash-table :tree-info/pos     pos
+                                   :tree-info/level   (1+ prev-level)
                                    :tree-info/visible? nil
                                    :tree-info/dummy?   t)
 
              when (not last?)
-             collect (a-hash-table :tree-info/level   level
+             collect (a-hash-table :tree-info/pos     pos
+                                   :tree-info/level   level
                                    :tree-info/visible? visible?
                                    :tree-info/dummy?   nil)
 
              when has-body?
-             collect (a-hash-table :tree-info/level   (1+ level)
+             collect (a-hash-table :tree-info/pos     pos
+                                   :tree-info/level   (1+ level)
                                    :tree-info/visible? has-visible-body?
                                    :tree-info/dummy?   nil
                                    :tree-info/body?    t)
 
              when has-visible-body?
-             collect (a-hash-table :tree-info/level       (+ 2 level)
+             collect (a-hash-table :tree-info/pos         pos
+                                   :tree-info/level       (+ 2 level)
                                    :tree-info/visible?    nil
                                    :tree-info/dummy?      t
                                    :tree-info/body-extra? t)
