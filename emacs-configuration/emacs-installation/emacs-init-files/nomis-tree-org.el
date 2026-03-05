@@ -4,6 +4,7 @@
 
 ;;;; Requires
 
+(require 'nomis-tree)
 (require 'norg)
 
 ;;;; `nomis/tree` methods
