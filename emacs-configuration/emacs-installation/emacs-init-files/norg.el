@@ -350,18 +350,8 @@ headline."
 
 ;; TODO: Get rid of visiblity span stuff and use lineage specs directly.
 
-(defun norg/collapse-all-and-set-visibility-span (detail)
-  (let* ((lineage-spec
-          (cl-ecase detail
-            (minimal   nomis/tree/ls/spec/min-lineage)
-            (ancestors nomis/tree/ls/spec/thin-parents-lineage)
-            (lineage   nomis/tree/ls/spec/fat-parents-lineage)
-            (tree      nomis/tree/ls/spec/fat-parents-immediate-children-lineage)
-            (canonical nomis/tree/ls/spec/max-lineage))))
-    (nomis/tree/ls/show-lineage lineage-spec)))
-
 (defun norg/show-tree-only ()
-  (norg/collapse-all-and-set-visibility-span 'tree))
+  (nomis/tree/ls/show-lineage nomis/tree/ls/spec/fat-parents-immediate-children-lineage))
 
 ;;;;; Visibility span -- part 2
 
@@ -561,7 +551,7 @@ Same for the `backward` commands.")
   ;; We want to show fat parents instead of thin.
   (nomis/scrolling/with-maybe-maintain-line-no-in-window
     (nomis/outline/c/next-heading)
-    (norg/collapse-all-and-set-visibility-span 'ancestors)
+    (nomis/tree/ls/show-lineage nomis/tree/ls/spec/thin-parents-lineage)
     (let* ((n-levels-or-nil (or n-levels-to-show-or-nil
                                 norg/step-n-levels-to-show)))
       (if (null n-levels-or-nil)
@@ -573,7 +563,7 @@ Same for the `backward` commands.")
   ;; We want to show fat parents instead of thin.
   (nomis/scrolling/with-maybe-maintain-line-no-in-window
     (nomis/outline/c/previous-heading)
-    (norg/collapse-all-and-set-visibility-span 'ancestors)
+    (nomis/tree/ls/show-lineage nomis/tree/ls/spec/thin-parents-lineage)
     (let* ((n-levels-or-nil (or n-levels-to-show-or-nil
                                 norg/step-n-levels-to-show)))
       (if (null n-levels-or-nil)
