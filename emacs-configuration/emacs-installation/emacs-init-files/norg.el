@@ -696,7 +696,7 @@ When in a body, \"current headline\" means the current body's parent headline."
 
 ;;;; The idea of tree-info, and things that use it
 
-(defun -norg/tree-info ()
+(defun -norg/tree-info* ()
   "Tree info for the current headline.
 When in a body, \"current headline\" means the current body's parent headline."
   ;; This is rather expensive, because the value returned by
@@ -763,6 +763,18 @@ When in a body, \"current headline\" means the current body's parent headline."
                                    :tree-info/body-extra? t)
 
              do (setq just-did-a-body? has-body?))))
+
+(defun -norg/tree-info ()
+  (let* ((res (-norg/tree-info*)))
+    ;; (pp (mapcar (lambda (x)
+    ;;               (list :pos         (a-get x :tree-info/pos)
+    ;;                     :level       (a-get x :tree-info/level)
+    ;;                     :visible?    (a-get x :tree-info/visible?)
+    ;;                     :dummy?      (a-get x :tree-info/dummy?)
+    ;;                     :body?       (a-get x :tree-info/body?)
+    ;;                     :body-extra? (a-get x :tree-info/body-extra?)))
+    ;;             res))
+    res))
 
 (defun norg/fully-expanded? ()
   "Is the tree beneath the current headline fully expanded?
