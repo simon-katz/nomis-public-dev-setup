@@ -391,7 +391,7 @@
 ;;;; Auto-save on exit
 
 (defun -nomis/wc/auto-save-all-frames ()
-  (nomis/wc/save-all-frames (s-concat "no-commit-on-exit-"
+  (nomis/wc/save-all-frames (s-concat "_no-commit_on-exit-"
                                       (nomis/timestamp-yyyy-mm-dd--hh-mm-ss))))
 
 (add-hook 'kill-emacs-hook
