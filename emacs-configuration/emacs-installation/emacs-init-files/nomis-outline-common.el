@@ -105,6 +105,13 @@
 (defun -nomis/outline/c/back-to-visible-heading? ()
   (outline-back-to-heading))
 
+(defun nomis/outline/c/before-first-heading? ()
+  (save-excursion
+    (condition-case nil
+        (progn (nomis/outline/c/back-to-heading)
+               nil)
+      (error t))))
+
 (defun nomis/outline/c/up-heading (n)
   (outline-up-heading n t))
 
