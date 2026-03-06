@@ -64,6 +64,8 @@
 
 (setopt flycheck-emacs-lisp-load-path 'inherit)
 
+(setopt flycheck-temp-prefix "_no-commit_flycheck_")
+
 ;;;; ___________________________________________________________________________
 ;;;; Provide some easier-to-type key bindings than the built-in ones
 
