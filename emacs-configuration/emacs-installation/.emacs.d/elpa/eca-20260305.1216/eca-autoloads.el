@@ -11,8 +11,13 @@
 
 ;;; Generated autoloads from eca.el
 
+(autoload 'eca-show-errors "eca" "\
+Open the eca Emacs errors buffer if running." t)
 (autoload 'eca-debug-nrepl-connect "eca" "\
 Connect in eca nrepl port for development." t)
+(autoload 'eca-version "eca" "\
+Show ECA version information for debugging.
+Displays eca-emacs client version, server version, and Emacs version." t)
 (autoload 'eca "eca" "\
 Start or switch to a eca session.
 When ARG is current prefix, ask for workspace roots to use.
@@ -39,9 +44,11 @@ buffer visiting that path with `{}` pre-filled." t)
 ;;; Generated autoloads from eca-chat.el
 
 (autoload 'eca-chat-clear "eca-chat" "\
-Clear the eca chat." t)
+Clear the eca chat messages history on server and visually." t)
 (autoload 'eca-chat-select-model "eca-chat" "\
 Select which model to use in the chat from what server supports." t)
+(autoload 'eca-chat-select-variant "eca-chat" "\
+Select which variant to use for the current model." t)
 (autoload 'eca-chat-select-agent "eca-chat" "\
 Select which chat agent to use from what server supports." t)
 (autoload 'eca-chat-cycle-agent "eca-chat" "\
@@ -51,9 +58,11 @@ Accept all pending approval tool call in chat." t)
 (autoload 'eca-chat-tool-call-accept-all-and-remember "eca-chat" "\
 Accept all pending approval tool call in chat and remember for session." t)
 (autoload 'eca-chat-tool-call-accept-next "eca-chat" "\
-Search the next pending approval tool call in the buffer and approve it, starting from the beginning of the buffer." t)
+Search the next pending approval tool call in the buffer and approve it.
+Starting from the beginning of the buffer." t)
 (autoload 'eca-chat-tool-call-reject-next "eca-chat" "\
-Search the next pending approval tool call in the buffer and reject it, starting from the beginning of the buffer." t)
+Search the next pending approval tool call in the buffer and reject it.
+Starting from the beginning of the buffer." t)
 (autoload 'eca-chat-reset "eca-chat" "\
 Kill current chat (asking to keep or not history) and start a new." t)
 (autoload 'eca-chat-go-to-prev-user-message "eca-chat" "\
@@ -206,6 +215,11 @@ Apply diff between original text and rewrite overlay at point." t)
 (autoload 'eca-rewrite-merge "eca-rewrite" "\
 Merge between original text and rewrite overlay OV." t)
 (register-definition-prefixes "eca-rewrite" '("eca-rewrite-"))
+
+
+;;; Generated autoloads from eca-table.el
+
+(register-definition-prefixes "eca-table" '("eca-table-"))
 
 
 ;;; Generated autoloads from eca-util.el

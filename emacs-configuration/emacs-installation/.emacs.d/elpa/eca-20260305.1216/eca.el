@@ -2,8 +2,8 @@
 ;; Copyright (C) 2025 Eric Dallo
 ;; Author: Eric Dallo <ercdll1337@gmail.com>
 ;; Maintainer: Eric Dallo <ercdll1337@gmail.com>
-;; Package-Version: 20260219.1628
-;; Package-Revision: 32943e61016b
+;; Package-Version: 20260305.1216
+;; Package-Revision: ecdf8f3b20a3
 ;; Package-Requires: ((emacs "28.1") (dash "2.18.0") (f "0.20.0") (markdown-mode "2.3") (compat "30.1"))
 ;; Keywords: tools
 ;; Homepage: https://github.com/editor-code-assistant/eca-emacs
@@ -33,6 +33,38 @@
 (require 'eca-editor)
 (require 'eca-completion)
 (require 'eca-rewrite)
+
+(declare-function package-desc-version "package" (pkg-desc))
+(declare-function package-version-join "package" (vlist))
+
+(defun eca--client-version ()
+  "Return the eca-emacs client version string.
+Tries git info first, then package.el version, then file modification date."
+  (let ((lib-file (or load-file-name (locate-library "eca"))))
+    (when lib-file
+      (let ((lib-dir (file-name-directory lib-file)))
+        (or
+         ;; Try git: SHA + date
+         (when-let* ((git-dir (locate-dominating-file lib-dir ".git"))
+                     (default-directory git-dir)
+                     (sha (ignore-errors
+                            (string-trim
+                             (shell-command-to-string "git rev-parse --short HEAD 2>/dev/null"))))
+                     (date (ignore-errors
+                             (string-trim
+                              (shell-command-to-string "git log -1 --format=%cd --date=short 2>/dev/null")))))
+           (when (and (not (string-empty-p sha))
+                      (not (string-empty-p date))
+                      (not (string-match-p "fatal" sha)))
+             (format "%s (%s)" sha date)))
+         ;; Try package.el version
+         (when (bound-and-true-p package-alist)
+           (when-let* ((pkg-desc (cadr (assq 'eca package-alist))))
+             (package-version-join (package-desc-version pkg-desc))))
+         ;; Fallback: file modification date
+         (when-let* ((attrs (file-attributes lib-file))
+                     (mtime (file-attribute-modification-time attrs)))
+           (format "unknown (modified %s)" (format-time-string "%Y-%m-%d" mtime))))))))
 
 (defgroup eca nil
   "ECA group."
@@ -68,6 +100,56 @@
 ;; Internal
 
 (defvar eca-workspaces-buffer-name "*eca-workspaces*")
+
+(defun eca--emacs-errors-buffer-name (session)
+  "Return the Emacs errors buffer name for SESSION."
+  (format "<eca:emacs-errors:%s>" (eca--session-id session)))
+
+(defun eca--log-error (session err &optional context)
+  "Log error ERR to the Emacs errors buffer for SESSION.
+Optional CONTEXT is a string describing what was happening
+when the error occurred."
+  (let ((buffer (get-buffer-create (eca--emacs-errors-buffer-name session))))
+    (with-current-buffer buffer
+      (goto-char (point-max))
+      (insert (format "[%s] %s%s\n"
+                      (format-time-string "%Y-%m-%d %H:%M:%S")
+                      (if context (format "%s: " context) "")
+                      (error-message-string err))))))
+
+(defun eca-show-emacs-errors (session)
+  "Open the Emacs errors buffer for SESSION."
+  (let ((buffer (get-buffer (eca--emacs-errors-buffer-name session))))
+    (if buffer
+        (with-current-buffer buffer
+          (if (window-live-p (get-buffer-window (buffer-name)))
+              (select-window (get-buffer-window (buffer-name)))
+            (display-buffer (current-buffer))))
+      (eca-info "No emacs errors logged for this session"))))
+
+;;;###autoload
+(defun eca-show-errors ()
+  "Open the eca Emacs errors buffer if running."
+  (interactive)
+  (eca-show-emacs-errors (eca-session)))
+
+(defun eca--emacs-errors-exit (session)
+  "Clean up the Emacs errors buffer for SESSION on stop."
+  (let ((buffer (get-buffer (eca--emacs-errors-buffer-name session))))
+    (when buffer
+      (with-current-buffer buffer
+        (rename-buffer (concat (buffer-name) ":closed") t)
+        (setq-local mode-line-format '("*Closed session*"))
+        (when-let ((win (get-buffer-window (current-buffer))))
+          (quit-window nil win))
+        ;; Keep only the most recently closed errors buffer; kill older ones.
+        (let ((current (current-buffer)))
+          (dolist (b (buffer-list))
+            (when (and (not (eq b current))
+                       (or
+                        (string-match-p "^<eca:emacs-errors:.*>:closed$" (buffer-name b))
+                        (string-match-p "^<eca:emacs-errors:.*>$" (buffer-name b))))
+              (kill-buffer b))))))))
 
 (defun eca--get-message-type (json-data)
   "Get the message type from JSON-DATA."
@@ -127,7 +209,7 @@
   "Handle raw message JSON-DATA for SESSION."
   (let ((id (plist-get json-data :id))
         (result (plist-get json-data :result)))
-    (condition-case _err
+    (condition-case err
         (pcase (eca--get-message-type json-data)
           ('response (-let [(success-callback) (plist-get (eca--session-response-handlers session) id)]
                        (when success-callback
@@ -140,8 +222,7 @@
           ('notification (eca--handle-server-notification session json-data))
           ('request (let ((response (eca--handle-server-request session json-data)))
                       (eca-api-send-request-response session json-data response))))
-      ;; TODO handle errors
-      (error nil))))
+      (error (eca--log-error session err "handle-message")))))
 
 (defun eca--initialize (session)
   "Send the initialize request for SESSION."
@@ -223,6 +304,18 @@
                                    :port ,nrepl-port)))))))))
 
 ;;;###autoload
+(defun eca-version ()
+  "Show ECA version information for debugging.
+Displays eca-emacs client version, server version, and Emacs version."
+  (interactive)
+  (let* ((client-version (or (eca--client-version) "unknown"))
+         (server-version
+          (or (eca-process--server-version)
+              "not found")))
+    (message "eca-emacs: %s | server: %s | emacs: %s"
+             client-version server-version (emacs-version))))
+
+;;;###autoload
 (defun eca (&optional arg)
   "Start or switch to a eca session.
 When ARG is current prefix, ask for workspace roots to use."
@@ -252,6 +345,7 @@ When ARG is current prefix, ask for workspace roots to use."
       (eca-process-stop session)
       (eca-chat-exit session)
       (eca-mcp-details-exit session)
+      (eca--emacs-errors-exit session)
       (eca-delete-session session))))
 
 ;;;###autoload
