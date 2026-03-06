@@ -100,8 +100,6 @@
     (:org     (org-end-of-line))))
 
 (defun nomis/outline/c/level ()
-  ;; TODO: Broken. This returns weird numbers in some modes. /eg/ In Clojure
-  ;;       it's one too large (for me).
   (let* ((v (save-excursion (nomis/outline/c/back-to-heading)
                             (funcall outline-level))))
     (if (nomis/outline/c/on-heading?)

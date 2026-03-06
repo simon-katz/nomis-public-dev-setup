@@ -122,7 +122,13 @@
   ;;
   ;; Set `outline-regexp` to `;;;;` (and more semicolons) comments only, not
   ;; top-level forms.
-  (setq-local outline-regexp ";;;;;*"))
+  (setq-local outline-regexp ";;;;;*")
+  (setq-local outline-level (lambda ()
+                              (save-excursion
+                                (looking-at outline-regexp)
+                                (- (match-end 0)
+                                   (match-beginning 0)
+                                   3)))))
 
 (add-hook 'clojure-mode-hook '-nomis/set-clojure-outline)
 

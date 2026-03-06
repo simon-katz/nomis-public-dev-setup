@@ -200,6 +200,7 @@ message and in case adding org level messes things up.")
        (nomis/outline/c/end-of-heading)
        (point))))
 
+;; TODO: We have this and `(nomis/outline/c/level)`. Maybe don't need both.
 (defun norg/current-level (&optional inc-if-in-body?)
   "If in a heading or if `inc-if-in-body?` is falsey, return the nesting depth
 of the current heading in the outline. Otherwise return one more than that
