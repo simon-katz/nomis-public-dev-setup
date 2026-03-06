@@ -34,10 +34,10 @@
 ;;;;; nomis/tree/show-tree-only and nomis/tree/max-lineage
 
 (cl-defmethod nomis/tree/show-tree-only--aux ((k (eql :org)))
-  (nomis/tree/ls/show-tree-only))
+  (nomis/tree/ls/show-lineage nomis/tree/ls/spec/fat-parents-immediate-children))
 
 (cl-defmethod nomis/tree/max-lineage--aux ((k (eql :org)))
-  (nomis/tree/unimplemented-method k))
+  (nomis/tree/ls/show-lineage nomis/tree/ls/spec/fat-parents-all-children))
 
 ;;;;; nomis/tree/set-step-n-levels-to-show
 

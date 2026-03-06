@@ -74,7 +74,7 @@
     (-nomis/tree/outline/increments-children-approach/set new-approach
                                                           clamped?)))
 
-(defun nomis/tree/outline/show-children-from-point/incremental/less (n)
+(defun nomis/tree/outline/show-children-from-point/incremental/less (n) ; unused-with-nomis/tree/hacked-mode
   (if n
       (-nomis/tree/outline/set-n-children-from-point n)
     (let* ((current-approach (-nomis/tree/outline/increments-children-approach/get)))
@@ -86,7 +86,7 @@
           (-nomis/tree/outline/increments-children-approach/set new-approach
                                                                 nil))))))
 
-(defun nomis/tree/outline/show-children-from-point/incremental/more (n)
+(defun nomis/tree/outline/show-children-from-point/incremental/more (n) ; unused-with-nomis/tree/hacked-mode
   (if n
       (-nomis/tree/outline/set-n-children-from-point n)
     (let* ((current-approach (-nomis/tree/outline/increments-children-approach/get)))
@@ -100,7 +100,7 @@
 
 ;;;;; nomis/tree/outline/lineage
 
-(defun nomis/tree/outline/lineage/set-max ()
+(defun nomis/tree/outline/lineage/set-max () ; unused-with-nomis/tree/hacked-mode
   (nomis/tree/ls/show-lineage nomis/tree/ls/spec/fat-parents-one-child))
 
 ;;;;; nomis/tree/outline/show-max-lineage
@@ -111,17 +111,17 @@
 ;;;;; nomis/tree/outline/show-tree-only
 
 (defun nomis/tree/outline/show-tree-only ()
-  (nomis/tree/ls/show-lineage nomis/tree/ls/spec/fat-parents))
+  (nomis/tree/ls/show-lineage nomis/tree/ls/spec/fat-parents-immediate-children))
 
 ;;;;; Previous
 
-(defun nomis/tree/outline/previous-heading (n)
+(defun nomis/tree/outline/previous-heading (n) ; unused-with-nomis/tree/hacked-mode
   (-nomis/tree/outline/prev-or-next-heading-and-show-lineage nomis/tree/ls/spec/navigation
                                                              n
                                                              :backward
                                                              :any-level))
 
-(defun nomis/tree/outline/previous-sibling (n)
+(defun nomis/tree/outline/previous-sibling (n) ; unused-with-nomis/tree/hacked-mode
   "Move backward to the N'th heading at same level as this one.
 Stop at the first and last headings of a superior heading."
   (interactive "p")
@@ -130,7 +130,7 @@ Stop at the first and last headings of a superior heading."
                                                              :backward
                                                              :sibling))
 
-(defun nomis/tree/outline/previous-peer (n)
+(defun nomis/tree/outline/previous-peer (n) ; unused-with-nomis/tree/hacked-mode
   "Move backward to the N'th heading at same level as this one.
 Can pass by a superior heading."
   (interactive "p")
@@ -139,7 +139,7 @@ Can pass by a superior heading."
                                                              :backward
                                                              :peer))
 
-(defun nomis/tree/outline/step-backward-sibling (n)
+(defun nomis/tree/outline/step-backward-sibling (n) ; unused-with-nomis/tree/hacked-mode
   "Move backward to the N'th heading at same level as this one, then show
 fat parents and all children.
 Stop at the first and last headings of a superior heading."
@@ -148,7 +148,7 @@ Stop at the first and last headings of a superior heading."
                                                              :backward
                                                              :sibling))
 
-(defun nomis/tree/outline/step-backward-peer (n)
+(defun nomis/tree/outline/step-backward-peer (n) ; unused-with-nomis/tree/hacked-mode
   "Move backward to the N'th heading at same level as this one, then show
 fat parents and all children.
 Can pass by a superior heading."
@@ -159,13 +159,13 @@ Can pass by a superior heading."
 
 ;;;;; Next
 
-(defun nomis/tree/outline/next-heading (n)
+(defun nomis/tree/outline/next-heading (n) ; unused-with-nomis/tree/hacked-mode
   (-nomis/tree/outline/prev-or-next-heading-and-show-lineage nomis/tree/ls/spec/navigation
                                                              n
                                                              :forward
                                                              :any-level))
 
-(defun nomis/tree/outline/next-sibling (n)
+(defun nomis/tree/outline/next-sibling (n) ; unused-with-nomis/tree/hacked-mode
   "Move forward to the N'th heading at same level as this one.
 Stop at the first and last headings of a superior heading."
   (interactive "p")
@@ -174,7 +174,7 @@ Stop at the first and last headings of a superior heading."
                                                              :forward
                                                              :sibling))
 
-(defun nomis/tree/outline/next-peer (n)
+(defun nomis/tree/outline/next-peer (n) ; unused-with-nomis/tree/hacked-mode
   "Move forward to the N'th heading at same level as this one.
 Can pass by a superior heading."
   (interactive "p")
@@ -183,7 +183,7 @@ Can pass by a superior heading."
                                                              :forward
                                                              :peer))
 
-(defun nomis/tree/outline/step-forward-sibling (n)
+(defun nomis/tree/outline/step-forward-sibling (n) ; unused-with-nomis/tree/hacked-mode
   "Move forward to the N'th heading at same level as this one, then show
 fat parents and all children.
 Stop at the first and last headings of a superior heading."
@@ -192,7 +192,7 @@ Stop at the first and last headings of a superior heading."
                                                              :forward
                                                              :sibling))
 
-(defun nomis/tree/outline/step-forward-peer (n)
+(defun nomis/tree/outline/step-forward-peer (n) ; unused-with-nomis/tree/hacked-mode
   "Move forward to the N'th heading at same level as this one, then show
 fat parents and all children.
 Can pass by a superior heading."
