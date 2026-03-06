@@ -112,12 +112,6 @@
                nil)
       (error t))))
 
-(defun nomis/outline/c/up-heading (n)
-  (outline-up-heading n t))
-
-(defun -nomis/outline/c/up-visible-heading (n)
-  (outline-up-heading n))
-
 (defun -nomis/outline/c/at-beginning-of-heading? ()
   (and (bolp)
        (nomis/outline/c/on-heading?)))
@@ -136,18 +130,60 @@
         v
       (1+ v))))
 
+(defun nomis/outline/c/up-heading (n
+                                   &optional
+                                   no-error-if-before-first-heading?
+                                   fewer-ok?)
+  ;; `outline-up-heading` behaves differently in `outline` and `org`.
+  ;; This gives us the same behaviour in both.
+  "Move to the heading line N levels above the present line.
+
+If point is not at the beginning of a heading, moving to the beginning of
+the heading counts as 1 of the N.
+
+Return new point if we moved, nil otherwise.
+
+Signal an error if point is before the first heading, unless
+NO-ERROR-IF-BEFORE-FIRST-HEADING? is truthy.
+
+Signal an error if there are not N levels of parent, unless
+FEWER-OK? is truthy."
+  (cl-assert (>= n 0))
+  (if (nomis/outline/c/before-first-heading?)
+      (unless no-error-if-before-first-heading?
+        (error "Before first heading"))
+    (let* ((opoint (point))
+           (n (if (-nomis/outline/c/at-beginning-of-heading?) n (1- n)))
+           (npoint
+            (save-excursion
+              (nomis/outline/c/back-to-heading)
+              (cl-loop
+               for i from 1 to n
+               for opoint2 = (point)
+               for olevel = (nomis/outline/c/level)
+               do (ignore-errors (outline-up-heading 1 t))
+               for no-can-do? = (or (not (nomis/outline/c/on-heading?))
+                                    (= olevel (nomis/outline/c/level)))
+               when (and no-can-do? fewer-ok?)
+               return opoint2
+               when no-can-do?
+               do (if (= i 1)
+                      (error "Already at top level")
+                    (error "There are only %s parent levels, but needed %s"
+                           (1- i)
+                           n))
+               finally return (point)))))
+      (if (= opoint npoint)
+          nil
+        (goto-char npoint)
+        npoint))))
+
 (defun -nomis/outline/c/on-top-level-heading? ()
   "Are we on a top-level heading?"
-  ;; `(outline-level)` and `(nomis/outline/c/level)` return weird numbers in
-  ;; some modes. This, we hope, is bulletproof.
   (save-excursion
     (when (nomis/outline/c/on-heading?)
-      (let* ((olevel (nomis/outline/c/level)))
-        (ignore-errors
-          ;; `ignore-errors` is needed when before first heading.
-          (nomis/outline/c/up-heading 1))
-        (or (not (nomis/outline/c/on-heading?)) ; blank lines at top of file?
-            (= olevel (nomis/outline/c/level)))))))
+      (beginning-of-line)
+      (not (nomis/outline/c/up-heading 1 t t)))))
 
 (defun -nomis/outline/c/top-level-level ()
   (save-excursion

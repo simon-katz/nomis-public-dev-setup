@@ -135,9 +135,8 @@
       (let* ((parent-points
               (let* ((ps '()))
                 (save-excursion
-                  (while (and (nomis/outline/c/on-heading?)
-                              (not (-nomis/outline/c/on-top-level-heading?)))
-                    (nomis/outline/c/up-heading 1)
+                  (beginning-of-line)
+                  (while (nomis/outline/c/up-heading 1 t t)
                     (push (point) ps)))
                 ps)))
         (save-excursion

@@ -220,7 +220,7 @@ value."
 
 (defun norg/goto-root ()
   (interactive)
-  (while (ignore-errors (nomis/outline/c/up-heading 1))))
+  (while (nomis/outline/c/up-heading 1 nil t)))
 
 (cl-defmacro norg/save-excursion-to-root (&body body)
   (declare (indent 0))
