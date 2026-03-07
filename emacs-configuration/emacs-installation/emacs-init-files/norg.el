@@ -434,6 +434,7 @@ subheading at this level in the previous parent."
 Same for the `backward` commands.")
 
 (defun norg/next-heading ()
+  "Move forward to the next heading at any level."
   (nomis/scrolling/with-maybe-maintain-line-no-in-window
     (nomis/outline/c/next-heading)
     (if -norg/heading-any-level-show-entry?
@@ -441,6 +442,7 @@ Same for the `backward` commands.")
       (nomis/outline/c/ensure-heading-shown))))
 
 (defun norg/previous-heading ()
+  "Move backward to the previous heading at any level."
   (nomis/scrolling/with-maybe-maintain-line-no-in-window
     (nomis/outline/c/previous-heading)
     (if -norg/heading-any-level-show-entry?
@@ -448,6 +450,8 @@ Same for the `backward` commands.")
       (nomis/outline/c/ensure-heading-shown))))
 
 (defun norg/step-forward-any-level (n-levels-to-show-or-nil)
+  "Move forward to the next heading at any level, then expand it.
+N-LEVELS-TO-SHOW-OR-NIL controls how many levels to expand; nil means fully."
   ;; We should use `-norg/step/impl` here (or whatever we replace it with).
   (nomis/scrolling/with-maybe-maintain-line-no-in-window
     (nomis/outline/c/next-heading)
@@ -459,6 +463,8 @@ Same for the `backward` commands.")
         (norg/expand n-levels-or-nil t)))))
 
 (defun norg/step-backward-any-level (n-levels-to-show-or-nil)
+  "Move backward to the previous heading at any level, then expand it.
+N-LEVELS-TO-SHOW-OR-NIL controls how many levels to expand; nil means fully."
   ;; We should use `-norg/step/impl` here (or whatever we replace it with).
   (nomis/scrolling/with-maybe-maintain-line-no-in-window
     (nomis/outline/c/previous-heading)
@@ -626,15 +632,27 @@ Same for the `backward` commands.")
     (message "n-levels = %s" (or n-levels-or-nil "all"))))
 
 (defun norg/step-forward-sibling (n-levels-to-show-or-nil)
+  "Move forward to the next heading at the same level, then expand it.
+Stops at parent boundaries.
+N-LEVELS-TO-SHOW-OR-NIL controls how many levels to expand; nil means fully."
   (-norg/step/impl 1 :sibling n-levels-to-show-or-nil))
 
 (defun norg/step-backward-sibling (n-levels-to-show-or-nil)
+  "Move backward to the previous heading at the same level, then expand it.
+Stops at parent boundaries.
+N-LEVELS-TO-SHOW-OR-NIL controls how many levels to expand; nil means fully."
   (-norg/step/impl -1 :sibling n-levels-to-show-or-nil))
 
 (defun norg/step-forward-peer (n-levels-to-show-or-nil)
+  "Move forward to the next heading at the same level, then expand it.
+Can cross parent boundaries.
+N-LEVELS-TO-SHOW-OR-NIL controls how many levels to expand; nil means fully."
   (-norg/step/impl 1 :peer n-levels-to-show-or-nil))
 
 (defun norg/step-backward-peer (n-levels-to-show-or-nil)
+  "Move backward to the previous heading at the same level, then expand it.
+Can cross parent boundaries.
+N-LEVELS-TO-SHOW-OR-NIL controls how many levels to expand; nil means fully."
   (-norg/step/impl -1 :peer n-levels-to-show-or-nil))
 
 ;;;; Info about trees

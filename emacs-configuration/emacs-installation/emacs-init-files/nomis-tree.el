@@ -220,12 +220,14 @@ the current entry's parent."
 ;;;;; Expand/collapse from root -- to current level, and from all roots -- to current level
 
 (defun nomis/tree/show-children-from-root/to-current-level ()
+  "Expand the root of the current heading to the current heading's level."
   (interactive)
   (-nomis/tree/command
       nil
     (norg/show-children-from-root/to-current-level)))
 
 (defun nomis/tree/show-children-from-all-roots/to-current-level ()
+  "Expand all roots to the current heading's level."
   (interactive)
   (-nomis/tree/command
       nil
@@ -250,12 +252,14 @@ With a numeric prefix `N`, set the number of visible levels to exactly `N`."
     (norg/show-children-from-all-roots/incremental/more n)))
 
 (defun nomis/tree/show-children-from-all-roots/set-min ()
+  "Fully collapse all roots."
   (interactive)
   (-nomis/tree/command
       nil
     (norg/show-children-from-all-roots/set-min)))
 
 (defun nomis/tree/show-children-from-all-roots/fully-expand ()
+  "Fully expand all roots."
   (interactive)
   (-nomis/tree/command
       nil
@@ -280,12 +284,14 @@ With a numeric prefix `N`, set the number of visible levels to exactly `N`."
     (norg/show-children-from-root/incremental/more n)))
 
 (defun nomis/tree/show-children-from-root/set-min ()
+  "Fully collapse the root of the current heading."
   (interactive)
   (-nomis/tree/command
       nil
     (norg/show-children-from-root/set-min)))
 
 (defun nomis/tree/show-children-from-root/fully-expand ()
+  "Fully expand the root of the current heading."
   (interactive)
   (-nomis/tree/command
       nil
@@ -294,6 +300,7 @@ With a numeric prefix `N`, set the number of visible levels to exactly `N`."
 ;;;;; Movement
 
 (defun nomis/tree/previous-heading (_n)
+  "Move backward to the previous heading at any level."
   (interactive "p")
   (-nomis/tree/command
       nil
@@ -301,6 +308,7 @@ With a numeric prefix `N`, set the number of visible levels to exactly `N`."
     (norg/previous-heading)))
 
 (defun nomis/tree/next-heading (_n)
+  "Move forward to the next heading at any level."
   (interactive "p")
   (-nomis/tree/command
       nil
@@ -338,36 +346,46 @@ With a numeric prefix `N`, set the number of visible levels to exactly `N`."
 ;;;;; Movement + expand/collapse
 
 (defun nomis/tree/step-backward-any-level (n)
+  "Move backward to the previous heading at any level, then expand it."
   (interactive "P")
   (-nomis/tree/command
       nil
     (norg/step-backward-any-level n)))
 
 (defun nomis/tree/step-forward-any-level (n)
+  "Move forward to the next heading at any level, then expand it."
   (interactive "P")
   (-nomis/tree/command
       nil
     (norg/step-forward-any-level n)))
 
 (defun nomis/tree/step-backward-sibling (n-levels-to-show-or-nil)
+  "Move backward to the previous heading at the same level, then expand it.
+Stops at parent boundaries."
   (interactive "P")
   (-nomis/tree/command
       nil
     (norg/step-backward-sibling n-levels-to-show-or-nil)))
 
 (defun nomis/tree/step-forward-sibling (n-levels-to-show-or-nil)
+  "Move forward to the next heading at the same level, then expand it.
+Stops at parent boundaries."
   (interactive "P")
   (-nomis/tree/command
       nil
     (norg/step-forward-sibling n-levels-to-show-or-nil)))
 
 (defun nomis/tree/step-backward-peer (n-levels-to-show-or-nil)
+  "Move backward to the previous heading at the same level, then expand it.
+Can cross parent boundaries."
   (interactive "P")
   (-nomis/tree/command
       nil
     (norg/step-backward-peer n-levels-to-show-or-nil)))
 
 (defun nomis/tree/step-forward-peer (n-levels-to-show-or-nil)
+  "Move forward to the next heading at the same level, then expand it.
+Can cross parent boundaries."
   (interactive "P")
   (-nomis/tree/command
       nil
