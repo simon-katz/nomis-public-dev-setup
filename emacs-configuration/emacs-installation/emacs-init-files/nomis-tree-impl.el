@@ -375,7 +375,7 @@ headline."
         (progn
           (goto-char (point-max))
           (search-for-text))))
-  (nomis/tree/ls/show-lineage nomis/tree/ls/spec/no-hide-fat-parents))
+  (nomis/outline/w/ensure-heading-shown))
 
 (defun nomis/tree/impl/search-heading-text ()
   (setq -nomis/tree/impl/search-heading-text/text (-nomis/tree/impl/grab-heading-text))
