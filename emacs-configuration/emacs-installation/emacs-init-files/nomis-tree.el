@@ -300,20 +300,18 @@ With a numeric prefix `N`, set the number of visible levels to exactly `N`."
 
 ;;;;; Movement
 
-(defun nomis/tree/previous-heading (_n)
+(defun nomis/tree/previous-heading ()
   "Move backward to the previous heading at any level."
-  (interactive "p")
+  (interactive)
   (-nomis/tree/command
       nil
-    ;; TODO: We are ignoring `n`.
     (nomis/tree/impl/previous-heading)))
 
-(defun nomis/tree/next-heading (_n)
+(defun nomis/tree/next-heading ()
   "Move forward to the next heading at any level."
-  (interactive "p")
+  (interactive)
   (-nomis/tree/command
       nil
-    ;; TODO: We are ignoring `n`.
     (nomis/tree/impl/next-heading)))
 
 (defun nomis/tree/previous-sibling ()
