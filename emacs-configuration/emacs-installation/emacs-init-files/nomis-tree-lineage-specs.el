@@ -90,10 +90,6 @@
   (or (cl-position :ancestors -nomis/tree/ls/spec-sequence :key #'cl-first)
       (error "Didn't find :ancestors entry in -nomis/tree/ls/spec-sequence")))
 
-(defconst -nomis/tree/ls/tree+body-value
-  (or (cl-position :tree -nomis/tree/ls/spec-sequence :key #'cl-first)
-      (error "Didn't find :tree entry in -nomis/tree/ls/spec-sequence")))
-
 ;;;; Hide/show lineage
 
 (defun -nomis/tree/ls/hsl-hide (lineage-spec)
