@@ -12,7 +12,7 @@
                 (dotimes (_ 10)
                   (when (= p (point))
                     (apply orig-fun args)))))
-            '((name . norg/add-level-info)))
+            '((name . nomis/mark//add-level-info)))
 
 ;;; End
 
