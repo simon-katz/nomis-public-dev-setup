@@ -32,7 +32,8 @@
     "N\\OCOMMIT"
     "Q\\UESTION/ACTION"
     "L\\EARNING-NOW"
-    "S\\K-COMMENT"))
+    "S\\K-COMMENT"
+    "unused-with-nomis/tree/hacked-mode"))
 
 (defconst nomis/ww/low-priority-regexp-prefix "x")
 
