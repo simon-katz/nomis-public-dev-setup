@@ -266,7 +266,7 @@ When in a body, \"current headline\" means the current body's parent headline."
 (defun norg/mapc-roots (fun)
   (-norg/mapc-headlines-satisfying (lambda ()
                                      (= (nomis/outline/c/level)
-                                        (-nomis/outline/c/top-level-level)))
+                                        (nomis/outline/c/top-level-level)))
                                    fun))
 
 (defun norg/mapc-entries-from-all-roots (fun)

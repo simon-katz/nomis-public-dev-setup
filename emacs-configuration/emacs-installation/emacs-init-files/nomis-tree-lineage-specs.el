@@ -122,7 +122,7 @@
   (let* ((pre-hide-all? (a-get lineage-spec :spec/pre-hide-all?))
          (parents-approach (a-get lineage-spec :spec/parents-approach)))
     (when pre-hide-all?
-      (let* ((top-level-level (-nomis/outline/c/top-level-level))
+      (let* ((top-level-level (nomis/outline/c/top-level-level))
              (hide-level (cl-ecase parents-approach
                            ((nil :parents/thin) (1- top-level-level))
                            (:parents/fat top-level-level))))

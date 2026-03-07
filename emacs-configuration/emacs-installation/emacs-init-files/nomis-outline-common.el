@@ -162,7 +162,7 @@ FEWER-OK? is truthy."
       (beginning-of-line)
       (not (nomis/outline/c/up-heading 1 t t)))))
 
-(defun -nomis/outline/c/top-level-level ()
+(defun nomis/outline/c/top-level-level ()
   (save-excursion
     (goto-char (point-min))
     (unless (nomis/outline/c/on-heading?) (outline-next-heading))
