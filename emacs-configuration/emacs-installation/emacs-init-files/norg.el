@@ -125,10 +125,11 @@ message and in case adding org level messes things up.")
             :around
             (lambda (orig-fun &rest args)
               (if (and norg/add-info-to-what-cursor-position?
-                       (eq major-mode 'org-mode)
+                       (or (-nomis/outline/c/org-mode?)
+                           (-nomis/outline/c/outline-mode?))
                        *-norg/in-what-cursor-position?*)
                   (let* ((format-string
-                          (concat "org-level=%s  " (cl-first args)))
+                          (concat "Level: %s  " (cl-first args)))
                          (format-args
                           (append
                            (list (norg/current-level-or-error-string t))
