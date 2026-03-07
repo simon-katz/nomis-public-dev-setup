@@ -172,6 +172,7 @@ H-q H-q H-/  Show this help")
 
 ;;;; Movement
 
+(define-key nomis/tree-mode-map (kbd "H-o u")     'nomis/tree/up-heading)
 (define-key nomis/tree-mode-map (kbd "C-H-,")     'nomis/tree/previous-heading)
 (define-key nomis/tree-mode-map (kbd "C-H-.")     'nomis/tree/next-heading)
 (define-key nomis/tree-mode-map (kbd "H-,")       'nomis/tree/previous-sibling)

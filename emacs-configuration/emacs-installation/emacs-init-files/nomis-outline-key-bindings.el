@@ -21,7 +21,6 @@
 (define-key outline-minor-mode-map (kbd "H-o h")       'outline-show-only-headings)
 (define-key outline-minor-mode-map (kbd "H-o p")       'outline-previous-visible-heading)
 (define-key outline-minor-mode-map (kbd "H-o n")       'outline-next-visible-heading)
-(define-key outline-minor-mode-map (kbd "H-o u")       'outline-up-heading)
 
 ;; These key bindings match the equivalent `org-mode` built-in key bindings.
 (define-key outline-minor-mode-map (kbd "M-S-<right>") 'outline-demote)
