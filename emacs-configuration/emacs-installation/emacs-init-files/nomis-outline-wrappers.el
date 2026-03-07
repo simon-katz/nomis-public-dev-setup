@@ -48,9 +48,6 @@
 
 ;;;; Simple outline and org wrappers
 
-;; TODO: When ready, check that the only uses of `org-xxxx` and `outline-xxxx`
-;;       are here.
-
 (defalias 'nomis/outline/w/next-heading     'outline-next-heading)
 (defalias 'nomis/outline/w/end-of-heading   'outline-end-of-heading)
 (defalias 'nomis/outline/w/next-preface     'outline-next-preface)
