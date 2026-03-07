@@ -119,8 +119,12 @@ H-q H-q H-/  Show this help")
 (define-key nomis/tree-mode-map (kbd "H-=")       'nomis/tree/show-children-from-all-roots/incremental/more)
 (define-key nomis/tree-mode-map (kbd "H-M--")     'nomis/tree/show-children-from-all-roots/set-min)
 (define-key nomis/tree-mode-map (kbd "H-M-=")     'nomis/tree/show-children-from-all-roots/fully-expand)
+
 (define-key nomis/tree-mode-map (kbd "H-q H-q H-]") 'nomis/tree/show-children-from-root/to-current-level)
 (define-key nomis/tree-mode-map (kbd "H-q H-q H-=") 'nomis/tree/show-children-from-all-roots/to-current-level)
+(define-key nomis/tree-mode-map (kbd "H-o h")     'outline-show-only-headings)
+
+;; TODO: outline-todo: We don't need both `H-q H-q xxxx` and `H-o xxxx`.
 
 ;;;; Tab and shifttab
 
