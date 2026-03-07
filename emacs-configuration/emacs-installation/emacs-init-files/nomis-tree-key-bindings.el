@@ -59,13 +59,13 @@ Use H with various other keys:
 
 H-M-m        nomis/tree/show-tree-only
 
-H-q H-q H-s  nomis/tree/set-step-n-levels-to-show
-H-q H-q H-m  nomis/scrolling/toggle-maintain-line-no-in-window
+H-o s  nomis/tree/set-step-n-levels-to-show
+H-o m  nomis/scrolling/toggle-maintain-line-no-in-window
 
-H-q H-q H-]  nomis/tree/show-children-from-root/to-current-level
-H-q H-q H-=  nomis/tree/show-children-from-all-roots/to-current-level
+H-o ]  nomis/tree/show-children-from-root/to-current-level
+H-o =  nomis/tree/show-children-from-all-roots/to-current-level
 
-H-q H-q H-/  Show this help")
+H-o ?  Show this help")
 
 (defun nomis/tree/pop-up-help ()
   (interactive)
@@ -75,7 +75,7 @@ H-q H-q H-/  Show this help")
     (2 (with-help-window (help-buffer)
          (princ -nomis/tree/help)))))
 
-(define-key nomis/tree-mode-map (kbd "H-q H-q H-/") 'nomis/tree/pop-up-help)
+(define-key nomis/tree-mode-map (kbd "H-o ?") 'nomis/tree/pop-up-help)
 
 
 ;;;; Search heading text
@@ -99,7 +99,7 @@ H-q H-q H-/  Show this help")
 
 ;;;; nomis/tree/set-step-n-levels-to-show
 
-(define-key nomis/tree-mode-map (kbd "H-q H-q H-s") 'nomis/tree/set-step-n-levels-to-show)
+(define-key nomis/tree-mode-map (kbd "H-o s") 'nomis/tree/set-step-n-levels-to-show)
 
 ;;;; Expand/collapse
 
@@ -120,11 +120,9 @@ H-q H-q H-/  Show this help")
 (define-key nomis/tree-mode-map (kbd "H-M--")     'nomis/tree/show-children-from-all-roots/set-min)
 (define-key nomis/tree-mode-map (kbd "H-M-=")     'nomis/tree/show-children-from-all-roots/fully-expand)
 
-(define-key nomis/tree-mode-map (kbd "H-q H-q H-]") 'nomis/tree/show-children-from-root/to-current-level)
-(define-key nomis/tree-mode-map (kbd "H-q H-q H-=") 'nomis/tree/show-children-from-all-roots/to-current-level)
-(define-key nomis/tree-mode-map (kbd "H-o h")     'outline-show-only-headings)
-
-;; TODO: outline-todo: We don't need both `H-q H-q xxxx` and `H-o xxxx`.
+(define-key nomis/tree-mode-map (kbd "H-o ]") 'nomis/tree/show-children-from-root/to-current-level)
+(define-key nomis/tree-mode-map (kbd "H-o =") 'nomis/tree/show-children-from-all-roots/to-current-level)
+(define-key nomis/tree-mode-map (kbd "H-o h") 'outline-show-only-headings)
 
 ;;;; Tab and shifttab
 
@@ -203,10 +201,7 @@ H-q H-q H-/  Show this help")
 
 ;;;; nomis/scrolling/toggle-maintain-line-no-in-window
 
-(dolist (key `(,(kbd "H-q H-q H-m")
-               ,(kbd "H-q H-q <f17>") ; H-m via Karabiner Elements
-               ))
-  (define-key nomis/tree-mode-map key 'nomis/scrolling/toggle-maintain-line-no-in-window))
+(define-key nomis/tree-mode-map (kbd "H-o m") 'nomis/scrolling/toggle-maintain-line-no-in-window)
 
 ;;; End
 
