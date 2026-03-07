@@ -33,7 +33,7 @@
 (require 'nomis-tree-impl)
 (require 'outline)
 (require 'nomis-msg)
-(require 'nomis-outline-common)
+(require 'nomis-outline-wrappers)
 
 ;;;; nomis/tree-mode
 

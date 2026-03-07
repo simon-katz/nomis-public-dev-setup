@@ -91,7 +91,7 @@
 (require 'a)
 (require 'cl-lib)
 (require 'dash)
-(require 'nomis-outline-common) ; TODO: Check the require chains (and not all needed at top level).
+(require 'nomis-outline-wrappers) ; TODO: Check the require chains (and not all needed at top level).
 (require 'nomis-tree-lineage-specs)
 
 ;; Things that you might want to make into packages if you make

@@ -1,4 +1,4 @@
-;;; nomis-outline-common.el --- Outline wrappers we can use for outline and org -*- lexical-binding: t; -*-
+;;; nomis-outline-wrappers.el --- Outline wrappers we can use for outline and org -*- lexical-binding: t; -*-
 
 ;;; Code:
 
@@ -339,4 +339,4 @@ DIRECTION is one or `:forward` and `:backward`."
 
 ;;; End
 
-(provide 'nomis-outline-common)
+(provide 'nomis-outline-wrappers)
