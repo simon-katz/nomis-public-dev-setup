@@ -10,8 +10,6 @@
 
 ;;;; Lineage specs
 
-;;;;; Preamble
-
 ;; A lineage-spec controls how lineages are displayed and has the following
 ;; entries (with permitted values nested):
 ;;
@@ -38,8 +36,6 @@
 ;; TODO: None of this shows bodies. Should it?
 
 ;; TODO: See `org-show-context-detail` for ideas for more lineage specs.
-
-;;;;; Lineage spec sequence
 
 (defconst nomis/tree/ls/children-approach-max 4)
 
@@ -92,29 +88,6 @@
 (defconst -nomis/tree/ls/tree+body-value
   (or (cl-position :tree -nomis/tree/ls/spec-sequence :key #'cl-first)
       (error "Didn't find :tree entry in -nomis/tree/ls/spec-sequence")))
-
-;;;;; Other lineage specs
-
-(defconst nomis/tree/ls/spec/no-hide-fat-parents ; TODO: => we want to rename others to say "hide"
-  (a-hash-table :spec/parents-approach :parents/fat))
-
-(defconst nomis/tree/ls/spec/fat-parents-one-child
-  (a-hash-table :spec/pre-hide-all? t
-                :spec/parents-approach :parents/fat
-                :spec/children-approach 1))
-
-(defconst nomis/tree/ls/spec/step
-  (a-hash-table :spec/pre-hide-all? t
-                :spec/parents-approach :parents/fat
-                :spec/children-approach nomis/tree/ls/children-approach-max))
-
-(defconst nomis/tree/ls/spec/navigation
-  (a-hash-table :spec/parents-approach :parents/thin))
-
-(defun nomis/tree/ls/spec/show-children (children-approach)
-  (a-hash-table :spec/pre-hide-children? t
-                :spec/children-approach children-approach
-                :spec/pulse-max-children? t))
 
 ;;;; Hide/show lineage
 
@@ -171,12 +144,6 @@
              (= (a-get lineage-spec :spec/children-approach)
                 nomis/tree/ls/children-approach-max))
     (nomis/outline/w/pulse-current-section)))
-
-;;;; Functionality moved from `nomis-tree-impl` -- for integration here
-
-;; TODO: Integrate this functionality that was moved from `nomis-tree-impl`.
-
-;;;;; Lineage
 
 (defconst -nomis/tree/ls/lineage/commands
   '(nomis/tree/lineage/less
