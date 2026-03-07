@@ -128,7 +128,8 @@
                                 (looking-at outline-regexp)
                                 (- (match-end 0)
                                    (match-beginning 0)
-                                   3)))))
+                                   3 ; 4 semicolons is level 1, so subtract 3
+                                   )))))
 
 (add-hook 'clojure-mode-hook '-nomis/set-clojure-outline)
 
