@@ -30,6 +30,7 @@
 
 (require 'a)
 (require 'nomis-scrolling)
+(require 'norg)
 (require 'outline)
 (require 'nomis-msg)
 (require 'nomis-outline-common)
@@ -83,102 +84,69 @@
 
 ;;;; API
 
-;;;;; Temp -- for switching everything to the `norg` algorithms
-
-(defconst -nomis/tree/use-org-impl-for-outline? t)
-
-(defun -nomis/tree/hacked-mode ()
-  (let* ((mode (nomis/outline/c/mode)))
-    (cl-ecase mode
-      (:outline (if -nomis/tree/use-org-impl-for-outline?
-                    (progn (message "Using org impl for outline for %s"
-                                    this-command)
-                           (nomis/msg/grab-user-attention/low 0.25)
-                           :org)
-                  :outline))
-      (:org :org))))
-
 ;;;;; Search heading text
-
-(cl-defgeneric nomis/tree/search-heading-text--aux (k))
-(cl-defgeneric nomis/tree/search-heading-text-again--aux (k))
 
 (defun nomis/tree/search-heading-text ()
   (interactive)
   (-nomis/tree/command
       nil
-    (nomis/tree/search-heading-text--aux (-nomis/tree/hacked-mode))))
+    (norg/search-heading-text)))
 
 (defun nomis/tree/search-heading-text-again ()
   (interactive)
   (-nomis/tree/command
       (a-list :no-push-mark t)
-    (nomis/tree/search-heading-text-again--aux (-nomis/tree/hacked-mode))))
+    (norg/search-heading-text-again)))
 
 ;;;;; Lineage
-
-(cl-defgeneric nomis/tree/lineage/less--aux (k))
-(cl-defgeneric nomis/tree/lineage/more--aux (k))
-(cl-defgeneric nomis/tree/lineage/set-min--aux (k))
-(cl-defgeneric nomis/tree/lineage/set-max--aux (k))
 
 (defun nomis/tree/lineage/less ()
   (interactive)
   (-nomis/tree/command
       nil
-    (nomis/tree/lineage/less--aux (-nomis/tree/hacked-mode))))
+    (nomis/tree/ls/lineage/less)))
 
 (defun nomis/tree/lineage/more ()
   (interactive)
   (-nomis/tree/command
       nil
-    (nomis/tree/lineage/more--aux (-nomis/tree/hacked-mode))))
+    (nomis/tree/ls/lineage/more)))
 
 (defun nomis/tree/lineage/set-min ()
   (interactive)
   (-nomis/tree/command
       nil
-    (nomis/tree/lineage/set-min--aux (-nomis/tree/hacked-mode))))
+    (nomis/tree/ls/lineage/set-min)))
 
 (defun nomis/tree/lineage/set-max ()
   (interactive)
   (-nomis/tree/command
       nil
-    (nomis/tree/lineage/set-max--aux (-nomis/tree/hacked-mode))))
+    (nomis/tree/ls/lineage/set-max)))
 
 ;;;;; nomis/tree/show-tree-only and nomis/tree/max-lineage
-
-(cl-defgeneric nomis/tree/show-tree-only--aux (k))
-(cl-defgeneric nomis/tree/max-lineage--aux (k))
 
 (defun nomis/tree/show-tree-only ()
   (interactive)
   (-nomis/tree/command
       nil
-    (nomis/tree/show-tree-only--aux (-nomis/tree/hacked-mode))))
+    (nomis/tree/ls/show-lineage nomis/tree/ls/spec/fat-parents-immediate-children)))
 
 (defun nomis/tree/max-lineage ()
   (interactive)
   (-nomis/tree/command
       nil
-    (nomis/tree/max-lineage--aux (-nomis/tree/hacked-mode))))
+    (nomis/tree/ls/show-lineage nomis/tree/ls/spec/fat-parents-all-children)))
 
 ;;;;; nomis/tree/set-step-n-levels-to-show
-
-(cl-defgeneric nomis/tree/set-step-n-levels-to-show--aux (k n))
 
 (defun nomis/tree/set-step-n-levels-to-show (n)
   (interactive "P")
   (-nomis/tree/command
       nil
-    (nomis/tree/set-step-n-levels-to-show--aux (-nomis/tree/hacked-mode) n)))
+    (norg/set-step-n-levels-to-show n)))
 
 ;;;;; Expand/collapse from point
-
-(cl-defgeneric nomis/tree/show-children-from-point/incremental/less--aux (k n))
-(cl-defgeneric nomis/tree/show-children-from-point/incremental/more--aux (k n))
-(cl-defgeneric nomis/tree/show-children-from-point/set-min--aux (k))
-(cl-defgeneric nomis/tree/show-children-from-point/fully-expand--aux (k))
 
 (defun nomis/tree/show-children-from-point/incremental/less (n)
   "Incrementally collapse the current heading by 1 level.
@@ -187,8 +155,7 @@ When in a body, \"current heading\" means the current body's parent heading."
   (interactive "P")
   (-nomis/tree/command
       nil
-    (nomis/tree/show-children-from-point/incremental/less--aux (-nomis/tree/hacked-mode)
-                                                               n)))
+    (norg/show-children-from-point/incremental/less n)))
 
 (defun nomis/tree/show-children-from-point/incremental/more (n)
   "Incrementally expand the current heading by 1 level.
@@ -197,8 +164,7 @@ When in a body, \"current heading\" means the current body's parent heading."
   (interactive "P")
   (-nomis/tree/command
       nil
-    (nomis/tree/show-children-from-point/incremental/more--aux (-nomis/tree/hacked-mode)
-                                                               n)))
+    (norg/show-children-from-point/incremental/more n)))
 
 (defun nomis/tree/show-children-from-point/set-min ()
   "Fully collapse the current heading.
@@ -206,7 +172,7 @@ When in a body, \"current heading\" means the current body's parent heading."
   (interactive)
   (-nomis/tree/command
       nil
-    (nomis/tree/show-children-from-point/set-min--aux (-nomis/tree/hacked-mode))))
+    (norg/show-children-from-point/set-min)))
 
 (defun nomis/tree/show-children-from-point/fully-expand ()
   "Fully expand the current heading.
@@ -214,14 +180,9 @@ When in a body, \"current heading\" means the current body's parent heading."
   (interactive)
   (-nomis/tree/command
       nil
-    (nomis/tree/show-children-from-point/fully-expand--aux (-nomis/tree/hacked-mode))))
+    (norg/show-children-from-point/fully-expand)))
 
 ;;;;; Expand/collapse from parent
-
-(cl-defgeneric nomis/tree/show-children-from-parent/incremental/less--aux (k n))
-(cl-defgeneric nomis/tree/show-children-from-parent/incremental/more--aux (k n))
-(cl-defgeneric nomis/tree/show-children-from-parent/set-min--aux (k))
-(cl-defgeneric nomis/tree/show-children-from-parent/fully-expand--aux (k))
 
 (defun nomis/tree/show-children-from-parent/incremental/less (n)
   "Like `nomis/tree/show-children-from-point/incremental/less`, but from
@@ -230,7 +191,7 @@ one level."
   (interactive "P")
   (-nomis/tree/command
       nil
-    (nomis/tree/show-children-from-parent/incremental/less--aux (-nomis/tree/hacked-mode) n)))
+    (norg/show-children-from-parent/incremental/less n)))
 
 (defun nomis/tree/show-children-from-parent/incremental/more (n)
   "Like `nomis/tree/show-children-from-point/incremental/more`, but from
@@ -238,7 +199,7 @@ the current entry's parent."
   (interactive "P")
   (-nomis/tree/command
       nil
-    (nomis/tree/show-children-from-parent/incremental/more--aux (-nomis/tree/hacked-mode) n)))
+    (norg/show-children-from-parent/incremental/more n)))
 
 (defun nomis/tree/show-children-from-parent/set-min ()
   "Like `nomis/tree/show-children-from-point/set-min`, but from the
@@ -246,7 +207,7 @@ current entry's parent and showing one level."
   (interactive)
   (-nomis/tree/command
       nil
-    (nomis/tree/show-children-from-parent/set-min--aux (-nomis/tree/hacked-mode))))
+    (norg/show-children-from-parent/set-min)))
 
 (defun nomis/tree/show-children-from-parent/fully-expand ()
   "Like `nomis/tree/show-children-from-point/fully-expand`, but from
@@ -254,31 +215,23 @@ the current entry's parent."
   (interactive)
   (-nomis/tree/command
       nil
-    (nomis/tree/show-children-from-parent/fully-expand--aux (-nomis/tree/hacked-mode))))
+    (norg/show-children-from-parent/fully-expand)))
 
 ;;;;; Expand/collapse from root -- to current level, and from all roots -- to current level
-
-(cl-defgeneric nomis/tree/show-children-from-root/to-current-level--aux (k))
-(cl-defgeneric nomis/tree/show-children-from-all-roots/to-current-level--aux (k))
 
 (defun nomis/tree/show-children-from-root/to-current-level ()
   (interactive)
   (-nomis/tree/command
       nil
-    (nomis/tree/show-children-from-root/to-current-level--aux (-nomis/tree/hacked-mode))))
+    (norg/show-children-from-root/to-current-level)))
 
 (defun nomis/tree/show-children-from-all-roots/to-current-level ()
   (interactive)
   (-nomis/tree/command
       nil
-    (nomis/tree/show-children-from-all-roots/to-current-level--aux (-nomis/tree/hacked-mode))))
+    (norg/show-children-from-all-roots/to-current-level)))
 
 ;;;;; Expand/collapse from all roots
-
-(cl-defgeneric nomis/tree/show-children-from-all-roots/incremental/less--aux (k n))
-(cl-defgeneric nomis/tree/show-children-from-all-roots/incremental/more--aux (k n))
-(cl-defgeneric nomis/tree/show-children-from-all-roots/set-min--aux (k))
-(cl-defgeneric nomis/tree/show-children-from-all-roots/fully-expand--aux (k))
 
 (defun nomis/tree/show-children-from-all-roots/incremental/less (n)
   "Incrementally collapse all roots by 1 level.
@@ -286,7 +239,7 @@ With a numeric prefix `N`, set the number of visible levels to exactly `N`."
   (interactive "P")
   (-nomis/tree/command
       nil
-    (nomis/tree/show-children-from-all-roots/incremental/less--aux (-nomis/tree/hacked-mode) n)))
+    (norg/show-children-from-all-roots/incremental/less n)))
 
 (defun nomis/tree/show-children-from-all-roots/incremental/more (n)
   "Incrementally expand all roots by 1 level.
@@ -294,26 +247,21 @@ With a numeric prefix `N`, set the number of visible levels to exactly `N`."
   (interactive "P")
   (-nomis/tree/command
       nil
-    (nomis/tree/show-children-from-all-roots/incremental/more--aux (-nomis/tree/hacked-mode) n)))
+    (norg/show-children-from-all-roots/incremental/more n)))
 
 (defun nomis/tree/show-children-from-all-roots/set-min ()
   (interactive)
   (-nomis/tree/command
       nil
-    (nomis/tree/show-children-from-all-roots/set-min--aux (-nomis/tree/hacked-mode))))
+    (norg/show-children-from-all-roots/set-min)))
 
 (defun nomis/tree/show-children-from-all-roots/fully-expand ()
   (interactive)
   (-nomis/tree/command
       nil
-    (nomis/tree/show-children-from-all-roots/fully-expand--aux (-nomis/tree/hacked-mode))))
+    (norg/show-children-from-all-roots/fully-expand)))
 
 ;;;;; Expand/collapse from root
-
-(cl-defgeneric nomis/tree/show-children-from-root/incremental/less--aux (k n))
-(cl-defgeneric nomis/tree/show-children-from-root/incremental/more--aux (k n))
-(cl-defgeneric nomis/tree/show-children-from-root/set-min--aux (k))
-(cl-defgeneric nomis/tree/show-children-from-root/fully-expand--aux (k))
 
 (defun nomis/tree/show-children-from-root/incremental/less (n)
   "Incrementally collapse the current root by 1 level.
@@ -321,7 +269,7 @@ With a numeric prefix `N`, set the number of visible levels to exactly `N`."
   (interactive "P")
   (-nomis/tree/command
       nil
-    (nomis/tree/show-children-from-root/incremental/less--aux (-nomis/tree/hacked-mode) n)))
+    (norg/show-children-from-root/incremental/less n)))
 
 (defun nomis/tree/show-children-from-root/incremental/more (n)
   "Incrementally expand the current root by 1 level.
@@ -329,113 +277,101 @@ With a numeric prefix `N`, set the number of visible levels to exactly `N`."
   (interactive "P")
   (-nomis/tree/command
       nil
-    (nomis/tree/show-children-from-root/incremental/more--aux (-nomis/tree/hacked-mode) n)))
+    (norg/show-children-from-root/incremental/more n)))
 
 (defun nomis/tree/show-children-from-root/set-min ()
   (interactive)
   (-nomis/tree/command
       nil
-    (nomis/tree/show-children-from-root/set-min--aux (-nomis/tree/hacked-mode))))
+    (norg/show-children-from-root/set-min)))
 
 (defun nomis/tree/show-children-from-root/fully-expand ()
   (interactive)
   (-nomis/tree/command
       nil
-    (nomis/tree/show-children-from-root/fully-expand--aux (-nomis/tree/hacked-mode))))
+    (norg/show-children-from-root/fully-expand)))
 
 ;;;;; Movement
 
-(cl-defgeneric nomis/tree/previous-heading--aux (k n))
-(cl-defgeneric nomis/tree/next-heading--aux (k n))
-(cl-defgeneric nomis/tree/previous-sibling--aux (k))
-(cl-defgeneric nomis/tree/next-sibling--aux (k))
-(cl-defgeneric nomis/tree/previous-peer--aux (k))
-(cl-defgeneric nomis/tree/next-peer--aux (k))
-
-(defun nomis/tree/previous-heading (n)
+(defun nomis/tree/previous-heading (_n)
   (interactive "p")
   (-nomis/tree/command
       nil
-    (nomis/tree/previous-heading--aux (-nomis/tree/hacked-mode) n)))
+    ;; TODO: We are ignoring `n`.
+    (norg/previous-heading)))
 
-(defun nomis/tree/next-heading (n)
+(defun nomis/tree/next-heading (_n)
   (interactive "p")
   (-nomis/tree/command
       nil
-    (nomis/tree/next-heading--aux (-nomis/tree/hacked-mode) n)))
+    ;; TODO: We are ignoring `n`.
+    (norg/next-heading)))
 
 (defun nomis/tree/previous-sibling ()
   "Move backward one heading at the same level as this one."
   (interactive)
   (-nomis/tree/command
       nil
-    (nomis/tree/previous-sibling--aux (-nomis/tree/hacked-mode))))
+    (norg/previous-sibling)))
 
 (defun nomis/tree/next-sibling ()
   "Move forward one heading at the same level as this one."
   (interactive)
   (-nomis/tree/command
       nil
-    (nomis/tree/next-sibling--aux (-nomis/tree/hacked-mode))))
+    (norg/next-sibling)))
 
 (defun nomis/tree/previous-peer ()
   "Move backward one heading at the same level, crossing parent boundaries."
   (interactive)
   (-nomis/tree/command
       nil
-    (nomis/tree/previous-peer--aux (-nomis/tree/hacked-mode))))
+    (norg/previous-peer)))
 
 (defun nomis/tree/next-peer ()
   "Move forward one heading at the same level, crossing parent boundaries."
   (interactive)
   (-nomis/tree/command
       nil
-    (nomis/tree/next-peer--aux (-nomis/tree/hacked-mode))))
+    (norg/next-peer)))
 
 ;;;;; Movement + expand/collapse
-
-(cl-defgeneric nomis/tree/step-backward-any-level--aux (k n))
-(cl-defgeneric nomis/tree/step-forward-any-level--aux (k n))
-(cl-defgeneric nomis/tree/step-backward-sibling--aux (k n))
-(cl-defgeneric nomis/tree/step-forward-sibling--aux (k n))
-(cl-defgeneric nomis/tree/step-backward-peer--aux (k n))
-(cl-defgeneric nomis/tree/step-forward-peer--aux (k n))
 
 (defun nomis/tree/step-backward-any-level (n)
   (interactive "P")
   (-nomis/tree/command
       nil
-    (nomis/tree/step-backward-any-level--aux (-nomis/tree/hacked-mode) n)))
+    (norg/step-backward-any-level n)))
 
 (defun nomis/tree/step-forward-any-level (n)
   (interactive "P")
   (-nomis/tree/command
       nil
-    (nomis/tree/step-forward-any-level--aux (-nomis/tree/hacked-mode) n)))
+    (norg/step-forward-any-level n)))
 
-(defun nomis/tree/step-backward-sibling (n)
+(defun nomis/tree/step-backward-sibling (n-levels-to-show-or-nil)
   (interactive "P")
   (-nomis/tree/command
       nil
-    (nomis/tree/step-backward-sibling--aux (-nomis/tree/hacked-mode) n)))
+    (norg/step-backward-sibling n-levels-to-show-or-nil)))
 
-(defun nomis/tree/step-forward-sibling (n)
+(defun nomis/tree/step-forward-sibling (n-levels-to-show-or-nil)
   (interactive "P")
   (-nomis/tree/command
       nil
-    (nomis/tree/step-forward-sibling--aux (-nomis/tree/hacked-mode) n)))
+    (norg/step-forward-sibling n-levels-to-show-or-nil)))
 
-(defun nomis/tree/step-backward-peer (n)
+(defun nomis/tree/step-backward-peer (n-levels-to-show-or-nil)
   (interactive "P")
   (-nomis/tree/command
       nil
-    (nomis/tree/step-backward-peer--aux (-nomis/tree/hacked-mode) n)))
+    (norg/step-backward-peer n-levels-to-show-or-nil)))
 
-(defun nomis/tree/step-forward-peer (n)
+(defun nomis/tree/step-forward-peer (n-levels-to-show-or-nil)
   (interactive "P")
   (-nomis/tree/command
       nil
-    (nomis/tree/step-forward-peer--aux (-nomis/tree/hacked-mode) n)))
+    (norg/step-forward-peer n-levels-to-show-or-nil)))
 
 ;;; End
 
