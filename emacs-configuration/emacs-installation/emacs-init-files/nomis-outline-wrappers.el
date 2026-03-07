@@ -62,7 +62,7 @@
   (let* ((pos (or pos (point))))
     (cl-ecase (nomis/outline/w/mode)
       (:outline (outline-invisible-p pos))
-      (:org     (org-invisible-p pos t) ; TODO: Is this `folding-only` arg right?
+      (:org     (org-invisible-p pos t) ; TODO: outline-todo: Is this `folding-only` arg right?
                 ))))
 
 (defun nomis/outline/w/visible? (&optional pos)
@@ -97,7 +97,8 @@
     (:org     (org-end-of-line))))
 
 (defun nomis/outline/w/level (&optional inc-if-in-body?)
-  ;; TODO: Use of levels may be a bit messed up. Several things:
+  ;; TODO: outline-todo:
+  ;;       Use of levels may be a bit messed up. Several things:
   ;;       - The old `nomis/tree/impl/current-level` had a guard, only
   ;;         incrementing after checking `nomis/tree/impl/show-bodies?`.
   ;;       - We have `nomis/tree/impl/level-incl-body/must-be-at-boh`. What's

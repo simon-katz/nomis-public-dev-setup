@@ -15,7 +15,7 @@
 
 ;;;; Other outline-minor-mode key bindings
 
-;; TODO: Which of these is still needed?
+;; TODO: outline-todo: Which of these is still needed?
 
 (define-key outline-minor-mode-map (kbd "H-o f")       'outline-minor-faces-mode)
 (define-key outline-minor-mode-map (kbd "H-o h")       'outline-show-only-headings)
