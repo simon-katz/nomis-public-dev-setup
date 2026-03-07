@@ -263,7 +263,8 @@ With a numeric prefix `N`, set the number of visible levels to exactly `N`."
   (interactive)
   (-nomis/tree/command
       nil
-    (nomis/tree/impl/show-children-from-all-roots/fully-expand)))
+    (nomis/tree/impl/show-children-from-all-roots/fully-expand)
+    (nomis/msg/pulse-buffer)))
 
 ;;;;; Expand/collapse from root
 

@@ -29,10 +29,6 @@
 
 (define-key outline-minor-mode-map (kbd "M-RET")       'outline-insert-heading)
 
-;; TODO: Temporary, until we have `H-M-=` for
-;;       `nomis/tree/show-children-from-all-roots/fully-expand`.
-(define-key outline-minor-mode-map (kbd "H-o a")       'nomis/tree/outline/show-all)
-
 ;; TODO: Maybe add key bindings for the following, and maybe for some other
 ;;       `outline` commands.
 
