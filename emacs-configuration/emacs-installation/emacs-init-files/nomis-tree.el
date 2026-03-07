@@ -73,7 +73,7 @@
             (do-it)
           (let* ((end-point (point)))
             (unless (= start-point end-point)
-              (push-mark (point)
+              (push-mark start-point
                          ;; Use `nomsg` arg in case `f` has displayed
                          ;; a message already.
                          t))))))))
