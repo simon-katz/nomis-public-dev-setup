@@ -29,8 +29,8 @@
 
 (define-key outline-minor-mode-map (kbd "M-RET")       'outline-insert-heading)
 
-;; TODO: Maybe add key bindings for the following, and maybe for some other
-;;       `outline` commands.
+;; TODO: outline-todo: Maybe add key bindings for the following, and maybe for
+;;       some other `outline` commands.
 
 ;; | outline-hide-sublevels                    | H-o C-q |             |
 ;; | outline-show-branches                     | H-o C-k |             |
