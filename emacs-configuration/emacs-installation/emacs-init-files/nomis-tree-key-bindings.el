@@ -69,7 +69,8 @@ Use H with various other keys:
 Other commands
 --------------
 
-H-M-m  nomis/tree/show-tree-only
+H-M-m  Show fat parents
+H-M-M  Show fat parents and fully expand children
 
 H-o u  Move up one heading level
 
@@ -218,11 +219,11 @@ H-o ?  Show this help")
 
 (define-key nomis/tree-mode-map (kbd "H-o ?") 'nomis/tree/pop-up-help)
 
-;;;; nomis/tree/show-tree-only and nomis/tree/max-lineage
+;;;; nomis/tree/fat-parents-no-children and nomis/tree/max-lineage
 
 ;; TODO: outline-todo: Reconsider what we want here.
 
-(define-key nomis/tree-mode-map (kbd "H-M-m")     'nomis/tree/show-tree-only)
+(define-key nomis/tree-mode-map (kbd "H-M-m")     'nomis/tree/fat-parents-no-children)
 (define-key nomis/tree-mode-map (kbd "H-M-M")     'nomis/tree/max-lineage)
 
 ;;; End
