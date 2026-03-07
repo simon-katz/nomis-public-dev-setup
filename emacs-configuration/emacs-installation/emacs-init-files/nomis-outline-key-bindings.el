@@ -15,11 +15,7 @@
 
 ;;;; Other outline-minor-mode key bindings
 
-;; TODO: outline-todo: Which of these is still needed?
-
 (define-key outline-minor-mode-map (kbd "H-o f")       'outline-minor-faces-mode)
-(define-key outline-minor-mode-map (kbd "H-o p")       'outline-previous-visible-heading)
-(define-key outline-minor-mode-map (kbd "H-o n")       'outline-next-visible-heading)
 
 ;; These key bindings match the equivalent `org-mode` built-in key bindings.
 (define-key outline-minor-mode-map (kbd "M-S-<right>") 'outline-demote)
