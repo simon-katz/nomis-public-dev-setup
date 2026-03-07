@@ -97,7 +97,7 @@
 
 (cl-defmacro -nomis/tree/command (opts &body body)
   (declare (indent 1))
-  `(-nomis/tree/command* ,opts (lambda () ,@body) ))
+  `(-nomis/tree/command* ,opts (lambda () ,@body)))
 
 ;;;;; nomis/tree/unimplemented-method
 
