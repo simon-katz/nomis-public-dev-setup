@@ -147,7 +147,7 @@ message and in case adding org level messes things up.")
 (defun nomis/tree/impl/toggle-show-bodies ()
   (interactive)
   (setq nomis/tree/impl/show-bodies? (not nomis/tree/impl/show-bodies?))
-  (message "nomis/tree/impl/show-bodies? set to %s" nomis/tree/impl/show-bodies?))
+  (message "show-bodies? set to %s" nomis/tree/impl/show-bodies?))
 
 ;;;; Some wrappers for org functionality
 
