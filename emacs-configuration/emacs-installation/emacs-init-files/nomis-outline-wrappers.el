@@ -297,9 +297,6 @@ FEWER-OK? is truthy."
                                              direction
                                              kind
                                              &optional
-                                             ;; TODO: I don't like this.
-                                             ;;       Refactor and make outline
-                                             ;;       and org callers consistent.
                                              no-msg?)
   "Go to the N'th-next heading of kind KIND in direction DIRECTION.
 If such a heading exists, return `t`.
