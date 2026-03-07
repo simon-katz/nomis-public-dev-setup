@@ -337,7 +337,7 @@
 
 (require 'nomis-bicycle)
 (require 'nomis-tree-org)
-(require 'nomis-tree-outline)
+(require 'nomis-tree-outline-2)
 
 (require 'nomis-outline-key-bindings)
 (require 'nomis-tree-key-bindings)

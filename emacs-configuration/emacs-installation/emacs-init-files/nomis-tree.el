@@ -12,24 +12,6 @@
 ;; TODO: Have we decided that we don't want `bicycle`? (I think we have.)
 ;;       - See `nomis-bicycle`.
 
-;;;; Fill out the implementation for `:outline`
-
-;; TODO: Replace uses of `nomis/tree/unimplemented-method` with implementations.
-
-;; TODO: Compare `nomis-tree-outline-2` commands with `norg` commands.
-;;       - Indefinite number of levels.
-;;       - Behaviour when reaching last sibling
-;;       - Implement more commands here.
-;;       - Make a shared low-level API around org and outline, and
-;;         make higher-level functions use that.
-;;       - Hmmmm, it might be non-trivial. I see that `norg` uses a mix of
-;;         `outline` and `org` functionality as its base layer. The `org`
-;;         stuff won't be available for outlines.
-
-;; TODO: Extract common functionality from `:outline` and `:org` methods, where
-;;       possible. (Especially when replacing some of the current uses of
-;;       `nomis/tree/unimplemented-method`.
-
 ;;;; Hide-show
 
 ;; TODO: We could integrate hide-show -- so eg
@@ -98,11 +80,6 @@
 (cl-defmacro -nomis/tree/command (opts &body body)
   (declare (indent 1))
   `(-nomis/tree/command* ,opts (lambda () ,@body)))
-
-;;;;; nomis/tree/unimplemented-method
-
-(defun nomis/tree/unimplemented-method (k)
-  (error "Not supported: %s %s" k this-command))
 
 ;;;; API
 
@@ -416,14 +393,6 @@ With a numeric prefix `N`, set the number of visible levels to exactly `N`."
     (nomis/tree/next-peer--aux (-nomis/tree/hacked-mode))))
 
 ;;;;; Movement + expand/collapse
-
-;; TODO: The prefix arg here has different meanings for `:outline` and `:org`.
-;;
-;;       For the former it's the number of headings to move, and we convert
-;;       `nil` to 1. See uses of `(or n 1)` in `nomis-tree-outline-2`.
-;;
-;;       For the latter it's `n-levels-to-show-or-nil`, and we convert `nil` to
-;;       `norg/step-n-levels-to-show`.
 
 (cl-defgeneric nomis/tree/step-backward-any-level--aux (k n))
 (cl-defgeneric nomis/tree/step-forward-any-level--aux (k n))

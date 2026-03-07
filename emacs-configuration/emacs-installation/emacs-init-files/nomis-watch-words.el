@@ -32,8 +32,7 @@
     "N\\OCOMMIT"
     "Q\\UESTION/ACTION"
     "L\\EARNING-NOW"
-    "S\\K-COMMENT"
-    "unused-with-nomis/tree/hacked-mode"))
+    "S\\K-COMMENT"))
 
 (defconst nomis/ww/low-priority-regexp-prefix "x")
 
@@ -41,7 +40,6 @@
   ;; Use \\ in the strings below so you don't get the highlighting here.
   (append '("N\\OTE")
           '("N\\OMIS-NOTE")
-          '("nomis/tree/unimplemented-method") ; TODO: temporary
           (mapcar #'(lambda (string)
                       (concat nomis/ww/low-priority-regexp-prefix
                               string))

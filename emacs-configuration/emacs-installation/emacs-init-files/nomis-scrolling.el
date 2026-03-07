@@ -75,8 +75,7 @@
 (defvar nomis/scrolling/-old-line-no nil)
 
 (defun nomis/scrolling/maybe-restore-scroll-position ()
-  "Unused. Was needed when we had a `run-at-time` before expanding parents
-in `nomis-tree-outline-2`."
+  "Unused. Was needed when we had a `run-at-time` before expanding parents."
   (when (and nomis/scrolling/maintain-line-no-in-window?
              nomis/scrolling/-old-line-no)
     (nomis/scrolling/restore-scroll-position nomis/scrolling/-old-line-no)))

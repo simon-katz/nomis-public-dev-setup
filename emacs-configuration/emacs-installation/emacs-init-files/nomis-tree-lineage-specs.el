@@ -176,12 +176,7 @@
 
 ;; TODO: Integrate this functionality that was moved from `norg`.
 
-;;;;; Lineage -- part 1
-
-(defun nomis/tree/ls/show-tree-only () ; unused-with-nomis/tree/hacked-mode
-  (nomis/tree/ls/show-lineage nomis/tree/ls/spec/fat-parents-immediate-children))
-
-;;;;; Lineage -- part 2
+;;;;; Lineage
 
 (defconst -nomis/tree/ls/lineage/commands
   '(nomis/tree/lineage/less
