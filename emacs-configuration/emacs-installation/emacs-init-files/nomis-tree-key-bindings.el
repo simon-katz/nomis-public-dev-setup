@@ -26,7 +26,7 @@
 
 ;;;; nomis/tree/pop-up-help
 
-(defconst -nomis/tree/help
+(defconst -nomis/tree/help ; TODO: outline-todo: Add new things to help.
   "Nomis Tree Help
 ===============
 
