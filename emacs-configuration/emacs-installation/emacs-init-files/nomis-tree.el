@@ -46,6 +46,7 @@
 
 ;;;; Requires
 
+(require 'a)
 (require 'nomis-scrolling)
 (require 'outline)
 (require 'nomis-msg)
@@ -78,10 +79,11 @@
 
 ;;;;; -nomis/tree/command
 
-(defun -nomis/tree/command* (f)
+(defun -nomis/tree/command* (opts f)
   (cl-flet* ((do-it () (nomis/scrolling/with-maybe-maintain-line-no-in-window
                          (funcall f))))
-    (if mark-active
+    (if (or mark-active
+            (a-get opts :no-push-mark))
         (do-it)
       (let* ((start-point (point)))
         (prog1
@@ -93,9 +95,9 @@
                          ;; a message already.
                          t))))))))
 
-(cl-defmacro -nomis/tree/command (_opts &body body)
+(cl-defmacro -nomis/tree/command (opts &body body)
   (declare (indent 1))
-  `(-nomis/tree/command* (lambda () ,@body) ))
+  `(-nomis/tree/command* ,opts (lambda () ,@body) ))
 
 ;;;;; nomis/tree/unimplemented-method
 
@@ -133,7 +135,7 @@
 (defun nomis/tree/search-heading-text-again ()
   (interactive)
   (-nomis/tree/command
-      nil
+      (a-list :no-push-mark t)
     (nomis/tree/search-heading-text-again--aux (nomis/outline/c/mode))))
 
 ;;;;; Lineage
