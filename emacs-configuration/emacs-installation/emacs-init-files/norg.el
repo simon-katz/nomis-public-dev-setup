@@ -200,24 +200,10 @@ message and in case adding org level messes things up.")
        (nomis/outline/c/end-of-heading)
        (point))))
 
-;; TODO: We have this and `(nomis/outline/c/level)`. Maybe don't need both.
-(defun norg/current-level (&optional inc-if-in-body?)
-  "If in a heading or if `inc-if-in-body?` is falsey, return the nesting depth
-of the current heading in the outline. Otherwise return one more than that
-value."
-  (+ (save-excursion
-       (nomis/outline/c/back-to-heading)
-       (nomis/outline/c/level))
-     (if (and norg/show-bodies?
-              inc-if-in-body?
-              (-norg/in-body?))
-         1
-       0)))
-
 (defun norg/current-level-or-error-string (&optional inc-if-in-body?)
-  (condition-case err
-      (norg/current-level inc-if-in-body?)
-    (error (cdr err))))
+  (condition-case _
+      (nomis/outline/c/level inc-if-in-body?)
+    (error "Before first heading")))
 
 (defun norg/goto-root ()
   (interactive)
@@ -332,7 +318,7 @@ headline."
   (when collapse-first? (nomis/outline/c/collapse))
   (nomis/outline/c/show-children n)
   (when norg/show-bodies?
-    (let* ((level (norg/current-level)))
+    (let* ((level (nomis/outline/c/level)))
       (norg/mapc-entries-from-point #'(lambda ()
                                         (when (< (- (nomis/outline/c/level)
                                                     level)
@@ -667,7 +653,7 @@ When in a body, \"current headline\" means the current body's parent headline.
 Example: If we are at level 5 and there are 2 further levels below, the result
 is 2."
   (- (norg/deepest-level-below)
-     (norg/current-level)))
+     (nomis/outline/c/level)))
 
 (defun norg/n-levels-being-shown-or-infinity ()
   "The number of levels being shown from the current headline, or
@@ -690,7 +676,7 @@ When in a body, \"current headline\" means the current body's parent headline."
                     nomis/outline/c/plus-infinity
                   level)))))
       #'min)
-     (norg/current-level)))
+     (nomis/outline/c/level)))
 
 ;;;; The idea of tree-info, and things that use it
 
@@ -808,7 +794,7 @@ When in a body, \"current headline\" means the current body's parent headline."
                              (> level prev-level))
                    collect prev-level))
          (v (apply #'max deepest-visible-levels)))
-    (- v (norg/current-level))))
+    (- v (nomis/outline/c/level))))
 
 ;;;; Operations on root
 
@@ -1119,7 +1105,7 @@ If `N` is provided, set the number of child levels to `N`."
      (1+ (norg/n-levels-being-shown-or-infinity/root)) :more :dummy)))
 
 (defun norg/show-children-from-root/to-current-level ()
-  (let* ((v (1- (norg/current-level t))))
+  (let* ((v (1- (nomis/outline/c/level t))))
     (-norg/show-children-from-root/set-level-etc v :no-check :dummy)))
 
 ;;;;; norg/show-children-from-all-roots/xxxx support
@@ -1172,7 +1158,7 @@ If `N` is provided, set the number of child levels to `N`."
      (1+ (norg/n-levels-being-shown-or-infinity/buffer)) :more :dummy)))
 
 (defun norg/show-children-from-all-roots/to-current-level ()
-  (let* ((v (1- (norg/current-level t))))
+  (let* ((v (1- (nomis/outline/c/level t))))
     (-norg/show-children-from-all-roots/set-level-etc v :no-check :dummy)))
 
 ;;; End

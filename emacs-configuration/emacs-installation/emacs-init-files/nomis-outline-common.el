@@ -99,12 +99,13 @@
     (:outline (end-of-line))
     (:org     (org-end-of-line))))
 
-(defun nomis/outline/c/level ()
+(defun nomis/outline/c/level (&optional inc-if-in-body?)
   (let* ((v (save-excursion (nomis/outline/c/back-to-heading)
                             (funcall outline-level))))
-    (if (nomis/outline/c/on-heading?)
-        v
-      (1+ v))))
+    (if (and inc-if-in-body?
+             (not (nomis/outline/c/on-heading?)))
+        (1+ v)
+      v)))
 
 (defun nomis/outline/c/up-heading (n
                                    &optional
