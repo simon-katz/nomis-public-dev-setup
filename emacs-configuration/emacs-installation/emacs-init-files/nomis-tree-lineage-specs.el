@@ -122,7 +122,7 @@
   (let* ((pre-hide-all? (a-get lineage-spec :spec/pre-hide-all?))
          (parents-approach (a-get lineage-spec :spec/parents-approach)))
     (when pre-hide-all?
-      (let* ((top-level-level (nomis/outline/c/top-level-level))
+      (let* ((top-level-level (nomis/outline/w/top-level-level))
              (hide-level (cl-ecase parents-approach
                            ((nil :parents/thin) (1- top-level-level))
                            (:parents/fat top-level-level))))
@@ -136,7 +136,7 @@
               (let* ((ps '()))
                 (save-excursion
                   (beginning-of-line)
-                  (while (nomis/outline/c/up-heading 1 t t)
+                  (while (nomis/outline/w/up-heading 1 t t)
                     (push (point) ps)))
                 ps)))
         (save-excursion
@@ -144,10 +144,10 @@
            for p in parent-points
            do (progn
                 (goto-char p)
-                (nomis/outline/c/ensure-heading-shown)
+                (nomis/outline/w/ensure-heading-shown)
                 (cl-ecase parents-approach
                   (:parents/thin nil)
-                  (:parents/fat (nomis/outline/c/show-children 1))))))))))
+                  (:parents/fat (nomis/outline/w/show-children 1))))))))))
 
 (defun -nomis/tree/ls/hsl-show-children (lineage-spec)
   (when (a-get lineage-spec :spec/pre-hide-children?)
@@ -157,7 +157,7 @@
     (0 nil)
     (1 (outline-show-entry))
     (2 (outline-show-entry)
-       (nomis/outline/c/show-children 1))
+       (nomis/outline/w/show-children 1))
     (3 (outline-show-entry)
        (outline-show-branches))
     (4 (outline-show-subtree))))
@@ -165,12 +165,12 @@
 (defun nomis/tree/ls/show-lineage (lineage-spec)
   (-nomis/tree/ls/hsl-hide lineage-spec)
   (-nomis/tree/ls/hsl-show-parents lineage-spec)
-  (nomis/outline/c/ensure-heading-shown)
+  (nomis/outline/w/ensure-heading-shown)
   (-nomis/tree/ls/hsl-show-children lineage-spec)
   (when (and (a-get lineage-spec :spec/pulse-max-children?)
              (= (a-get lineage-spec :spec/children-approach)
                 nomis/tree/ls/children-approach-max))
-    (nomis/outline/c/pulse-current-section)))
+    (nomis/outline/w/pulse-current-section)))
 
 ;;;; Functionality moved from `nomis-tree-impl` -- for integration here
 
@@ -189,7 +189,7 @@
 (defun -nomis/tree/ls/lineage/set-level/numeric (n delta?
                                           &optional no-message?)
   (let* ((prev-command-was-not-lineage?
-          (not (member (nomis/outline/c/last-command)
+          (not (member (nomis/outline/w/last-command)
                        -nomis/tree/ls/lineage/commands)))
          (prev-action-index -nomis/tree/ls/lineage/prev-action-index)
          (action-index (cond
@@ -220,7 +220,7 @@
       (cl-destructuring-bind (_ msg show? lineage-spec)
           (nth new-pos-or-nil -nomis/tree/ls/spec-sequence)
         (nomis/tree/ls/show-lineage lineage-spec)
-        (if show? (nomis/outline/c/show-entry) (nomis/outline/c/hide-entry))
+        (if show? (nomis/outline/w/show-entry) (nomis/outline/w/hide-entry))
         (unless no-message?
           (nomis/popup/message "%s" msg))))))
 

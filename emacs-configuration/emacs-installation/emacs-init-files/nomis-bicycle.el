@@ -35,7 +35,7 @@
             :around
             (lambda (orig-fun &rest args)
               (when *-nomis/bicycle/in-bicycle-cycle-local?*
-                (nomis/outline/c/pulse-current-section))
+                (nomis/outline/w/pulse-current-section))
               (apply orig-fun args))
             '((name . -nomis/bicycle/bicycle-feedback)))
 

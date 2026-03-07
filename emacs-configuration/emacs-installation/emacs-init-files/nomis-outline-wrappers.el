@@ -11,31 +11,31 @@
 (require 'org)
 (require 'outline)
 
-;;;; nomis/outline/c/mode
+;;;; nomis/outline/w/mode
 
-(defun -nomis/outline/c/org-mode? ()
+(defun -nomis/outline/w/org-mode? ()
   (derived-mode-p 'org-mode))
 
-(defun -nomis/outline/c/outline-mode? ()
-  (and (not (-nomis/outline/c/org-mode?))
+(defun -nomis/outline/w/outline-mode? ()
+  (and (not (-nomis/outline/w/org-mode?))
        (or (derived-mode-p 'outline-mode)
            outline-minor-mode)))
 
-(defun nomis/outline/c/mode ()
-  (cond ((-nomis/outline/c/outline-mode?)
+(defun nomis/outline/w/mode ()
+  (cond ((-nomis/outline/w/outline-mode?)
          :outline)
-        ((-nomis/outline/c/org-mode?)
+        ((-nomis/outline/w/org-mode?)
          :org)
         (t
          (error "Unexpected: None of outline-mode, outline-minor-mode or org-mode is active"))))
 
 ;;;; Misc
 
-(defun nomis/outline/c/last-command ()
+(defun nomis/outline/w/last-command ()
   (or (bound-and-true-p *nomis/smex/last-command*)
       last-command))
 
-(defun -nomis/outline/c/ordinal (n)
+(defun -nomis/outline/w/ordinal (n)
   (cl-format nil "~a~a"
              n
              (let ((x (cl-format nil "~:r" n)))
@@ -43,77 +43,77 @@
 
 ;;;; Infinity
 
-(defconst nomis/outline/c/plus-infinity   1.0e+INF)
-(defconst nomis/outline/c/minus-infinity -1.0e+INF)
+(defconst nomis/outline/w/plus-infinity   1.0e+INF)
+(defconst nomis/outline/w/minus-infinity -1.0e+INF)
 
 ;;;; Simple outline and org wrappers
 
 ;; TODO: When ready, check that the only uses of `org-xxxx` and `outline-xxxx`
 ;;       are here.
 
-(defalias 'nomis/outline/c/next-heading     'outline-next-heading)
-(defalias 'nomis/outline/c/end-of-heading   'outline-end-of-heading)
-(defalias 'nomis/outline/c/next-preface     'outline-next-preface)
-(defalias 'nomis/outline/c/previous-heading 'outline-previous-heading)
-(defalias 'nomis/outline/c/show-entry       'outline-show-entry)
-(defalias 'nomis/outline/c/hide-entry       'outline-hide-entry)
+(defalias 'nomis/outline/w/next-heading     'outline-next-heading)
+(defalias 'nomis/outline/w/end-of-heading   'outline-end-of-heading)
+(defalias 'nomis/outline/w/next-preface     'outline-next-preface)
+(defalias 'nomis/outline/w/previous-heading 'outline-previous-heading)
+(defalias 'nomis/outline/w/show-entry       'outline-show-entry)
+(defalias 'nomis/outline/w/hide-entry       'outline-hide-entry)
 
-(defun nomis/outline/c/collapse ()
+(defun nomis/outline/w/collapse ()
   (outline-hide-subtree))
 
-(defun nomis/outline/c/invisible? (&optional pos)
+(defun nomis/outline/w/invisible? (&optional pos)
   (let* ((pos (or pos (point))))
-    (cl-ecase (nomis/outline/c/mode)
+    (cl-ecase (nomis/outline/w/mode)
       (:outline (outline-invisible-p pos))
       (:org     (org-invisible-p pos t) ; TODO: Is this `folding-only` arg right?
                 ))))
 
-(defun nomis/outline/c/visible? (&optional pos)
-  (not (nomis/outline/c/invisible? pos)))
+(defun nomis/outline/w/visible? (&optional pos)
+  (not (nomis/outline/w/invisible? pos)))
 
-(defun nomis/outline/c/on-heading? ()
+(defun nomis/outline/w/on-heading? ()
   (outline-on-heading-p t))
 
-(defun -nomis/outline/c/on-visible-heading? ()
+(defun -nomis/outline/w/on-visible-heading? ()
   (outline-on-heading-p))
 
-(defun nomis/outline/c/back-to-heading ()
+(defun nomis/outline/w/back-to-heading ()
   (outline-back-to-heading t))
 
-(defun -nomis/outline/c/back-to-visible-heading? ()
+(defun -nomis/outline/w/back-to-visible-heading? ()
   (outline-back-to-heading))
 
-(defun nomis/outline/c/before-first-heading? ()
+(defun nomis/outline/w/before-first-heading? ()
   (save-excursion
     (condition-case nil
-        (progn (nomis/outline/c/back-to-heading)
+        (progn (nomis/outline/w/back-to-heading)
                nil)
       (error t))))
 
-(defun -nomis/outline/c/at-beginning-of-heading? ()
+(defun -nomis/outline/w/at-beginning-of-heading? ()
   (and (bolp)
-       (nomis/outline/c/on-heading?)))
+       (nomis/outline/w/on-heading?)))
 
-(defun nomis/outline/c/end-of-line ()
-  (cl-ecase (nomis/outline/c/mode)
+(defun nomis/outline/w/end-of-line ()
+  (cl-ecase (nomis/outline/w/mode)
     (:outline (end-of-line))
     (:org     (org-end-of-line))))
 
-(defun nomis/outline/c/level (&optional inc-if-in-body?)
+(defun nomis/outline/w/level (&optional inc-if-in-body?)
   ;; TODO: Use of levels may be a bit messed up. Several things:
   ;;       - The old `nomis/tree/impl/current-level` had a guard, only
   ;;         incrementing after checking `nomis/tree/impl/show-bodies?`.
   ;;       - We have `nomis/tree/impl/level-incl-body/must-be-at-boh`. What's
   ;;         that for? How does its use of `nomis/tree/impl/show-bodies?`
   ;;         interact with this?
-  (let* ((v (save-excursion (nomis/outline/c/back-to-heading)
+  (let* ((v (save-excursion (nomis/outline/w/back-to-heading)
                             (funcall outline-level))))
     (if (and inc-if-in-body?
-             (not (nomis/outline/c/on-heading?)))
+             (not (nomis/outline/w/on-heading?)))
         (1+ v)
       v)))
 
-(defun nomis/outline/c/up-heading (n
+(defun nomis/outline/w/up-heading (n
                                    &optional
                                    no-error-if-before-first-heading?
                                    fewer-ok?)
@@ -132,21 +132,21 @@ NO-ERROR-IF-BEFORE-FIRST-HEADING? is truthy.
 Signal an error if there are not N levels of parent, unless
 FEWER-OK? is truthy."
   (cl-assert (>= n 0))
-  (if (nomis/outline/c/before-first-heading?)
+  (if (nomis/outline/w/before-first-heading?)
       (unless no-error-if-before-first-heading?
         (error "Before first heading"))
     (let* ((opoint (point))
-           (n (if (-nomis/outline/c/at-beginning-of-heading?) n (1- n)))
+           (n (if (-nomis/outline/w/at-beginning-of-heading?) n (1- n)))
            (npoint
             (save-excursion
-              (nomis/outline/c/back-to-heading)
+              (nomis/outline/w/back-to-heading)
               (cl-loop
                for i from 1 to n
                for opoint2 = (point)
-               for olevel = (nomis/outline/c/level)
+               for olevel = (nomis/outline/w/level)
                do (ignore-errors (outline-up-heading 1 t))
-               for no-can-do? = (or (not (nomis/outline/c/on-heading?))
-                                    (= olevel (nomis/outline/c/level)))
+               for no-can-do? = (or (not (nomis/outline/w/on-heading?))
+                                    (= olevel (nomis/outline/w/level)))
                when (and no-can-do? fewer-ok?)
                return opoint2
                when no-can-do?
@@ -161,53 +161,53 @@ FEWER-OK? is truthy."
         (goto-char npoint)
         npoint))))
 
-(defun -nomis/outline/c/on-top-level-heading? ()
+(defun -nomis/outline/w/on-top-level-heading? ()
   "Are we on a top-level heading?"
   (save-excursion
-    (when (nomis/outline/c/on-heading?)
+    (when (nomis/outline/w/on-heading?)
       (beginning-of-line)
-      (not (nomis/outline/c/up-heading 1 t t)))))
+      (not (nomis/outline/w/up-heading 1 t t)))))
 
-(defun nomis/outline/c/top-level-level ()
+(defun nomis/outline/w/top-level-level ()
   (save-excursion
     (goto-char (point-min))
-    (unless (nomis/outline/c/on-heading?) (outline-next-heading))
-    (nomis/outline/c/level)))
+    (unless (nomis/outline/w/on-heading?) (outline-next-heading))
+    (nomis/outline/w/level)))
 
-(defun nomis/outline/c/ensure-heading-shown ()
+(defun nomis/outline/w/ensure-heading-shown ()
   (interactive)
-  (when (nomis/outline/c/invisible?)
+  (when (nomis/outline/w/invisible?)
     ;; Is there a simpler way to show the heading but not the body?
     (outline-show-entry)
     (outline-hide-entry)))
 
-(defun nomis/outline/c/show-children (n)
+(defun nomis/outline/w/show-children (n)
   (outline-show-children n))
 
-(defun -nomis/outline/c/prev-or-next (direction)
+(defun -nomis/outline/w/prev-or-next (direction)
   (cl-ecase direction
     (:backward (outline-previous-heading))
     (:forward (outline-next-heading))))
 
-(defun nomis/outline/c/map-tree (fun)
+(defun nomis/outline/w/map-tree (fun)
   ;; Copy-and-edit of `org-map-tree`.
   "Call FUN for the current heading and all headings underneath it."
-  (nomis/outline/c/back-to-heading)
-  (let ((level (nomis/outline/c/level)))
+  (nomis/outline/w/back-to-heading)
+  (let ((level (nomis/outline/w/level)))
     (save-excursion
       (funcall fun)
       (while (and (progn
-		    (nomis/outline/c/next-heading)
-		    (> (nomis/outline/c/level) level))
+		    (nomis/outline/w/next-heading)
+		    (> (nomis/outline/w/level) level))
 		  (not (eobp)))
 	(funcall fun)))))
 
-;;;; nomis/outline/c/pulse-current-section
+;;;; nomis/outline/w/pulse-current-section
 
-(defun nomis/outline/c/pulse-current-section ()
+(defun nomis/outline/w/pulse-current-section ()
   (save-excursion
-    (if (nomis/outline/c/before-first-heading?)
-        (let* ((end (nomis/outline/c/next-heading)))
+    (if (nomis/outline/w/before-first-heading?)
+        (let* ((end (nomis/outline/w/next-heading)))
           (pulse-momentary-highlight-region (point-min) end))
       (let ((start (point)))
         (cl-flet ((next-same-level-heading ()
@@ -230,14 +230,14 @@ FEWER-OK? is truthy."
 
 ;;;; Previous/next helpers
 
-(defun -nomis/outline/c/prev-next-same-level (direction sibling-or-peer)
+(defun -nomis/outline/w/prev-next-same-level (direction sibling-or-peer)
   (let* ((opoint (point))
-         (level (nomis/outline/c/level))
+         (level (nomis/outline/w/level))
          (npoint  (save-excursion
                     ;; The logic here is a copy-and-edit of
                     ;; `outline-get-last-sibling` and
                     ;; `outline-get-next-sibling`.
-                    (-nomis/outline/c/prev-or-next direction)
+                    (-nomis/outline/w/prev-or-next direction)
                     (when (cl-ecase direction
                             (:backward (and (/= (point) opoint)
                                             (outline-on-heading-p t)))
@@ -248,52 +248,52 @@ FEWER-OK? is truthy."
                                   (funcall (cl-ecase sibling-or-peer
                                              (:sibling #'>)
                                              (:peer #'/=))
-                                           (nomis/outline/c/level)
+                                           (nomis/outline/w/level)
                                            level)
                                   (cl-ecase direction
                                     (:backward (not (bobp)))
                                     (:forward t)))
-                        (-nomis/outline/c/prev-or-next direction))
+                        (-nomis/outline/w/prev-or-next direction))
                       (if (or (cl-ecase direction
                                 (:backward nil)
                                 (:forward (eobp)))
-                              (< (nomis/outline/c/level) level))
+                              (< (nomis/outline/w/level) level))
                           nil
-                        (cl-assert (= level (nomis/outline/c/level)))
+                        (cl-assert (= level (nomis/outline/w/level)))
                         (point))))))
     (when npoint
       (goto-char npoint))))
 
-(defun -nomis/outline/c/prev-or-next-heading-pos (start
+(defun -nomis/outline/w/prev-or-next-heading-pos (start
                                                   direction
                                                   kind)
   (when start
     (save-excursion
       (goto-char start)
-      (let* ((boh? (-nomis/outline/c/at-beginning-of-heading?)))
+      (let* ((boh? (-nomis/outline/w/at-beginning-of-heading?)))
         (if (and (eq direction :backward)
                  (not boh?))
             (progn
-              (nomis/outline/c/back-to-heading)
+              (nomis/outline/w/back-to-heading)
               (point))
           (when (and (eq direction :forward)
                      (not boh?))
-            (nomis/outline/c/back-to-heading))
+            (nomis/outline/w/back-to-heading))
           (cl-ecase kind
             (:any-level
-             (-nomis/outline/c/prev-or-next direction))
+             (-nomis/outline/w/prev-or-next direction))
             (:sibling
-             (-nomis/outline/c/prev-next-same-level direction :sibling))
+             (-nomis/outline/w/prev-next-same-level direction :sibling))
             (:peer
-             (-nomis/outline/c/prev-next-same-level direction :peer)))
+             (-nomis/outline/w/prev-next-same-level direction :peer)))
           (when (and (/= (point) start)
-                     (nomis/outline/c/on-heading?))
-            ;; ^^ Check of `(nomis/outline/c/on-heading?)` needed because
-            ;;    `-nomis/outline/c/prev-or-next` goes to BOF or EOF when there's
+                     (nomis/outline/w/on-heading?))
+            ;; ^^ Check of `(nomis/outline/w/on-heading?)` needed because
+            ;;    `-nomis/outline/w/prev-or-next` goes to BOF or EOF when there's
             ;;    no prev/next heading.
             (point)))))))
 
-(defun nomis/outline/c/prev-or-next-heading (n
+(defun nomis/outline/w/prev-or-next-heading (n
                                              direction
                                              kind
                                              &optional
@@ -308,7 +308,7 @@ display a popup message.
 KIND is one of `:sibling`, `:peer` and `:any-level`.
 DIRECTION is one or `:forward` and `:backward`."
   (let* ((pos (->> (-iterate (lambda (start)
-                               (-nomis/outline/c/prev-or-next-heading-pos
+                               (-nomis/outline/w/prev-or-next-heading-pos
                                 start
                                 direction
                                 kind))
@@ -331,7 +331,7 @@ DIRECTION is one or `:forward` and `:backward`."
                             (:peer "same-level"))))
           (nomis/popup/error-message
            "No %s%s %s"
-           (if (= n 1) "" (concat (-nomis/outline/c/ordinal n)
+           (if (= n 1) "" (concat (-nomis/outline/w/ordinal n)
                                   "-"))
            direction-word
            kind-word)))
