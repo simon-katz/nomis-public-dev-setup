@@ -77,7 +77,7 @@
     (backward-char)))
 
 (defun k•• (k)
-  ;; The `(k•• ...)` key bindings match your norg key bindings.
+  ;; The `(k•• ...)` key bindings match your `nomis-tree` key bindings.
   ;; Work would be needed on nomis-hide-show if you wanted to make things more
   ;; consistent.
   (kbd k))

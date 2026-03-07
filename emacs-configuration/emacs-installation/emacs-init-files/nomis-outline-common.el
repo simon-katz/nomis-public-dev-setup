@@ -101,10 +101,11 @@
 
 (defun nomis/outline/c/level (&optional inc-if-in-body?)
   ;; TODO: Use of levels may be a bit messed up. Several things:
-  ;;       - The old `norg/current-level` had a guard, only incrementing
-  ;;         after checking `norg/show-bodies?`.
-  ;;       - We have `norg/level-incl-body/must-be-at-boh`. What's that for?
-  ;;         How does its use of `norg/show-bodies?` interact with this?
+  ;;       - The old `nomis/tree/impl/current-level` had a guard, only
+  ;;         incrementing after checking `nomis/tree/impl/show-bodies?`.
+  ;;       - We have `nomis/tree/impl/level-incl-body/must-be-at-boh`. What's
+  ;;         that for? How does its use of `nomis/tree/impl/show-bodies?`
+  ;;         interact with this?
   (let* ((v (save-excursion (nomis/outline/c/back-to-heading)
                             (funcall outline-level))))
     (if (and inc-if-in-body?

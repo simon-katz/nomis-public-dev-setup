@@ -172,9 +172,9 @@
                 nomis/tree/ls/children-approach-max))
     (nomis/outline/c/pulse-current-section)))
 
-;;;; Functionality moved from `norg` -- for integration here
+;;;; Functionality moved from `nomis-tree-impl` -- for integration here
 
-;; TODO: Integrate this functionality that was moved from `norg`.
+;; TODO: Integrate this functionality that was moved from `nomis-tree-impl`.
 
 ;;;;; Lineage
 

@@ -3,7 +3,7 @@
 ;; TODO: The names in this file should be `nomis/tree-outline-2/xxxx`.
 
 ;; TODO: Maybe move all this to `nomis-tree`. And similarly maybe move
-;;       contents of `norg` to `nomis-tree`.
+;;       contents of `nomis-tree-impl` to `nomis-tree`.
 
 ;;; Code:
 
