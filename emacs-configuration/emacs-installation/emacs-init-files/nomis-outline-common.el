@@ -202,7 +202,7 @@ FEWER-OK? is truthy."
   (save-excursion
     (if (nomis/outline/c/before-first-heading?)
         (let* ((end (nomis/outline/c/next-heading)))
-          (pulse-momentary-highlight-region 0 end))
+          (pulse-momentary-highlight-region (point-min) end))
       (let ((start (point)))
         (cl-flet ((next-same-level-heading ()
                     (save-excursion (ignore-errors
