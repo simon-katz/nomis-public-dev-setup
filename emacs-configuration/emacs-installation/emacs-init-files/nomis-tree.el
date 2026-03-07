@@ -30,7 +30,7 @@
 
 (require 'a)
 (require 'nomis-scrolling)
-(require 'norg)
+(require 'nomis-tree-impl)
 (require 'outline)
 (require 'nomis-msg)
 (require 'nomis-outline-common)

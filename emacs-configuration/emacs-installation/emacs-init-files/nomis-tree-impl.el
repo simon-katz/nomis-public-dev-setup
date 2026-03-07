@@ -1,4 +1,4 @@
-;;; norg.el --- A layer on top of Org mode  -*- lexical-binding: t; -*-
+;;; nomis-tree-impl.el --- A layer on top of outline mode  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2019-2021 Simon Katz.
 
@@ -1182,6 +1182,6 @@ If `N` is provided, set the number of child levels to `N`."
 
 ;;; End
 
-(provide 'norg)
+(provide 'nomis-tree-impl)
 
 ;;; norg.el ends here
