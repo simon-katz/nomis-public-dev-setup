@@ -83,13 +83,6 @@ H-o ?  Show this help")
 (define-key nomis/tree-mode-map (kbd "C-H-M-'")  'nomis/tree/lineage/set-min)
 (define-key nomis/tree-mode-map (kbd "C-H-M-\\") 'nomis/tree/lineage/set-max)
 
-;;;; nomis/tree/show-tree-only and nomis/tree/max-lineage
-
-;; TODO: outline-todo: Reconsider what we want here.
-
-(define-key nomis/tree-mode-map (kbd "H-M-m")     'nomis/tree/show-tree-only)
-(define-key nomis/tree-mode-map (kbd "H-M-M")     'nomis/tree/max-lineage)
-
 ;;;; Expand/collapse
 
 (define-key nomis/tree-mode-map (kbd "H-'")       'nomis/tree/show-children-from-point/incremental/less)
@@ -207,6 +200,13 @@ H-o ?  Show this help")
 (define-key nomis/tree-mode-map (kbd "H-o s") 'nomis/tree/search-heading-text-again)
 
 (define-key nomis/tree-mode-map (kbd "H-o ?") 'nomis/tree/pop-up-help)
+
+;;;; nomis/tree/show-tree-only and nomis/tree/max-lineage
+
+;; TODO: outline-todo: Reconsider what we want here.
+
+(define-key nomis/tree-mode-map (kbd "H-M-m")     'nomis/tree/show-tree-only)
+(define-key nomis/tree-mode-map (kbd "H-M-M")     'nomis/tree/max-lineage)
 
 ;;; End
 
