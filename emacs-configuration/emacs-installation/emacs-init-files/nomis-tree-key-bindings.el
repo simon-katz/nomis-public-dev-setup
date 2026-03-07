@@ -19,11 +19,6 @@
   (nomis/temporarily-disable-keys t) ; avoid accidental input
   (error "Nope, Projectile is M-o now"))
 
-(define-key projectile-mode-map (kbd "H-o d") '-nomis/tree-key-bindings/projectile-keybinding-error)
-;; We are using this for `outline-minor-faces-mode` now:
-;; (define-key projectile-mode-map (kbd "H-o f") '-nomis/tree-key-bindings/projectile-keybinding-error)
-(define-key projectile-mode-map (kbd "H-o g") '-nomis/tree-key-bindings/projectile-keybinding-error)
-
 ;;;; nomis/tree/pop-up-help
 
 (defconst -nomis/tree/help ; TODO: outline-todo: Add new things to help.
@@ -57,13 +52,19 @@ Use H with various other keys:
         Add M to fully expand or collapse
 
 
-H-M-m        nomis/tree/show-tree-only
+H-M-m  nomis/tree/show-tree-only
 
-H-o s  nomis/tree/set-step-n-levels-to-show
-H-o m  nomis/scrolling/toggle-maintain-line-no-in-window
+H-o u  Move up one heading level
 
-H-o ]  nomis/tree/show-children-from-root/to-current-level
-H-o =  nomis/tree/show-children-from-all-roots/to-current-level
+H-o h  Show only headings
+H-o ]  Show children from root to current level
+H-o =  Show children from all roots to current level
+
+H-o l  Set # levels to show when stepping
+H-o m  Toggle maintain-line-no-in-window when scrolling
+
+H-o S  Search heading text for the text of this heading
+H-o s  Repeat search heading text
 
 H-o ?  Show this help")
 
@@ -74,14 +75,6 @@ H-o ?  Show this help")
          (nomis/popup/message "%s" -nomis/tree/help)))
     (2 (with-help-window (help-buffer)
          (princ -nomis/tree/help)))))
-
-(define-key nomis/tree-mode-map (kbd "H-o ?") 'nomis/tree/pop-up-help)
-
-
-;;;; Search heading text
-
-(define-key nomis/tree-mode-map (kbd "H-S")      'nomis/tree/search-heading-text)
-(define-key nomis/tree-mode-map (kbd "H-s")      'nomis/tree/search-heading-text-again)
 
 ;;;; Lineage
 
@@ -96,10 +89,6 @@ H-o ?  Show this help")
 
 (define-key nomis/tree-mode-map (kbd "H-M-m")     'nomis/tree/show-tree-only)
 (define-key nomis/tree-mode-map (kbd "H-M-M")     'nomis/tree/max-lineage)
-
-;;;; nomis/tree/set-step-n-levels-to-show
-
-(define-key nomis/tree-mode-map (kbd "H-o s") 'nomis/tree/set-step-n-levels-to-show)
 
 ;;;; Expand/collapse
 
@@ -119,10 +108,6 @@ H-o ?  Show this help")
 (define-key nomis/tree-mode-map (kbd "H-=")       'nomis/tree/show-children-from-all-roots/incremental/more)
 (define-key nomis/tree-mode-map (kbd "H-M--")     'nomis/tree/show-children-from-all-roots/set-min)
 (define-key nomis/tree-mode-map (kbd "H-M-=")     'nomis/tree/show-children-from-all-roots/fully-expand)
-
-(define-key nomis/tree-mode-map (kbd "H-o ]") 'nomis/tree/show-children-from-root/to-current-level)
-(define-key nomis/tree-mode-map (kbd "H-o =") 'nomis/tree/show-children-from-all-roots/to-current-level)
-(define-key nomis/tree-mode-map (kbd "H-o h") 'outline-show-only-headings)
 
 ;;;; Tab and shifttab
 
@@ -165,16 +150,8 @@ H-o ?  Show this help")
                                 'nomis/tree/show-children-from-point/incremental/less
                                 (nomis/outline/w/on-heading?)))
 
-;;;; `bicycle-cycle-global`
-
-;; Keep this until we implement
-;; `nomis/tree/show-children-from-all-roots/incremental/less--aux` and
-;; `nomis/tree/show-children-from-all-roots/incremental/more--aux`.
-(define-key nomis/tree-mode-map (kbd "H-o <tab>")   'bicycle-cycle-global)
-
 ;;;; Movement
 
-(define-key nomis/tree-mode-map (kbd "H-o u")     'nomis/tree/up-heading)
 (define-key nomis/tree-mode-map (kbd "C-H-,")     'nomis/tree/previous-heading)
 (define-key nomis/tree-mode-map (kbd "C-H-.")     'nomis/tree/next-heading)
 (define-key nomis/tree-mode-map (kbd "H-,")       'nomis/tree/previous-sibling)
@@ -199,9 +176,37 @@ H-o ?  Show this help")
 ;; `(kbd "C-H-M-<")`
 ;; `(kbd "C-H-M->")`
 
-;;;; nomis/scrolling/toggle-maintain-line-no-in-window
+;;;; H-o comands
 
+;;;;; Projectile commands are no longer here
+
+(define-key projectile-mode-map (kbd "H-o d") '-nomis/tree-key-bindings/projectile-keybinding-error)
+;; We are using this for `outline-minor-faces-mode` now:
+;; (define-key projectile-mode-map (kbd "H-o f") '-nomis/tree-key-bindings/projectile-keybinding-error)
+(define-key projectile-mode-map (kbd "H-o g") '-nomis/tree-key-bindings/projectile-keybinding-error)
+
+;;;;; `bicycle-cycle-global`
+
+;; Keep this until we implement
+;; `nomis/tree/show-children-from-all-roots/incremental/less--aux` and
+;; `nomis/tree/show-children-from-all-roots/incremental/more--aux`.
+(define-key nomis/tree-mode-map (kbd "H-o <tab>")   'bicycle-cycle-global)
+
+;;;;; The main collection of H-o commands
+
+(define-key nomis/tree-mode-map (kbd "H-o u") 'nomis/tree/up-heading)
+
+(define-key nomis/tree-mode-map (kbd "H-o h") 'outline-show-only-headings)
+(define-key nomis/tree-mode-map (kbd "H-o ]") 'nomis/tree/show-children-from-root/to-current-level)
+(define-key nomis/tree-mode-map (kbd "H-o =") 'nomis/tree/show-children-from-all-roots/to-current-level)
+
+(define-key nomis/tree-mode-map (kbd "H-o l") 'nomis/tree/set-step-n-levels-to-show)
 (define-key nomis/tree-mode-map (kbd "H-o m") 'nomis/scrolling/toggle-maintain-line-no-in-window)
+
+(define-key nomis/tree-mode-map (kbd "H-o S") 'nomis/tree/search-heading-text)
+(define-key nomis/tree-mode-map (kbd "H-o s") 'nomis/tree/search-heading-text-again)
+
+(define-key nomis/tree-mode-map (kbd "H-o ?") 'nomis/tree/pop-up-help)
 
 ;;; End
 
