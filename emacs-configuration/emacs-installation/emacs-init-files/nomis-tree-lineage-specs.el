@@ -10,8 +10,12 @@
 
 ;;;; Lineage specs
 
-;; A lineage-spec controls how lineages are displayed and has the following
-;; entries (with permitted values nested):
+;; A lineage spec controls how lineages are displayed. They are inspired by
+;; `org`s visibility spans.
+
+;; We could see `org-show-context-detail` for ideas for more lineage specs.
+
+;; A lineages spec has the following entries (with permitted values nested):
 ;;
 ;; - `:spec/pre-hide-all?`
 ;;   - boolean
@@ -33,29 +37,25 @@
 ;;   - `1` / `2` / `3` / `4`
 ;;     - Show body/children/branches/subtree.
 
-;; TODO: None of this shows bodies. Should it?
-
-;; TODO: See `org-show-context-detail` for ideas for more lineage specs.
-
 (defconst nomis/tree/ls/children-approach-max 4)
 
-(defconst nomis/tree/ls/spec/min
+(defconst nomis/tree/ls/spec/hide-all--no-parents--no-children
   (a-hash-table :spec/pre-hide-all? t))
 
-(defconst nomis/tree/ls/spec/thin-parents
+(defconst nomis/tree/ls/spec/hide-all--thin-parents--no-children
   (a-hash-table :spec/pre-hide-all? t
                 :spec/parents-approach :parents/thin))
 
-(defconst nomis/tree/ls/spec/fat-parents
+(defconst nomis/tree/ls/spec/hide-all--fat-parents--no-children
   (a-hash-table :spec/pre-hide-all? t
                 :spec/parents-approach :parents/fat))
 
-(defconst nomis/tree/ls/spec/fat-parents-immediate-children
+(defconst nomis/tree/ls/spec/hide-all--fat-parents--immediate-children
   (a-hash-table :spec/pre-hide-all? t
                 :spec/parents-approach :parents/fat
                 :spec/children-approach 2))
 
-(defconst nomis/tree/ls/spec/fat-parents-all-children
+(defconst nomis/tree/ls/spec/hide-all--fat-parents--all-children
   (a-hash-table :spec/pre-hide-all? t
                 :spec/parents-approach :parents/fat
                 :spec/children-approach nomis/tree/ls/children-approach-max))
@@ -63,14 +63,14 @@
 (defconst -nomis/tree/ls/spec-sequence
   ;; TODO: Change this so that the third item (`show?`) is part of a lineage
   ;;       spec. So we'll need to replace
-  ;;       `nomis/tree/ls/spec/fat-parents-all-children` with two
+  ;;       `nomis/tree/ls/spec/hide-all--fat-parents--all-children` with two
   ;;       new ones.
-  `((:minimal   "Minimal"          nil ,nomis/tree/ls/spec/min)
-    (:ancestors "Ancestors"        nil ,nomis/tree/ls/spec/thin-parents)
-    (:lineage   "Lineage"          nil ,nomis/tree/ls/spec/fat-parents)
-    (:tree      "Tree"             nil ,nomis/tree/ls/spec/fat-parents-immediate-children)
-    (:canonical "Canonical"        nil ,nomis/tree/ls/spec/fat-parents-all-children)
-    (:canonical "Canonical + body" t   ,nomis/tree/ls/spec/fat-parents-all-children)))
+  `((:minimal   "Minimal"          nil ,nomis/tree/ls/spec/hide-all--no-parents--no-children)
+    (:ancestors "Ancestors"        nil ,nomis/tree/ls/spec/hide-all--thin-parents--no-children)
+    (:lineage   "Lineage"          nil ,nomis/tree/ls/spec/hide-all--fat-parents--no-children)
+    (:tree      "Tree"             nil ,nomis/tree/ls/spec/hide-all--fat-parents--immediate-children)
+    (:canonical "Canonical"        nil ,nomis/tree/ls/spec/hide-all--fat-parents--all-children)
+    (:canonical "Canonical + body" t   ,nomis/tree/ls/spec/hide-all--fat-parents--all-children)))
 
 (defconst -nomis/tree/ls/spec-sequence-min-spec
   (cl-first -nomis/tree/ls/spec-sequence))

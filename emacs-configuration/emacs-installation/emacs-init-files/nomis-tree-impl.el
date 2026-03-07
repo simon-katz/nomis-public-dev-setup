@@ -457,7 +457,7 @@ N-LEVELS-TO-SHOW-OR-NIL controls how many levels to expand; nil means fully."
   ;; with).
   (nomis/scrolling/with-maybe-maintain-line-no-in-window
     (nomis/outline/w/next-heading)
-    (nomis/tree/ls/show-lineage nomis/tree/ls/spec/fat-parents)
+    (nomis/tree/ls/show-lineage nomis/tree/ls/spec/hide-all--fat-parents--no-children)
     (let* ((n-levels-or-nil (or n-levels-to-show-or-nil
                                 nomis/tree/impl/step-n-levels-to-show)))
       (if (null n-levels-or-nil)
@@ -471,7 +471,7 @@ N-LEVELS-TO-SHOW-OR-NIL controls how many levels to expand; nil means fully."
   ;; with).
   (nomis/scrolling/with-maybe-maintain-line-no-in-window
     (nomis/outline/w/previous-heading)
-    (nomis/tree/ls/show-lineage nomis/tree/ls/spec/fat-parents)
+    (nomis/tree/ls/show-lineage nomis/tree/ls/spec/hide-all--fat-parents--no-children)
     (let* ((n-levels-or-nil (or n-levels-to-show-or-nil
                                 nomis/tree/impl/step-n-levels-to-show)))
       (if (null n-levels-or-nil)
