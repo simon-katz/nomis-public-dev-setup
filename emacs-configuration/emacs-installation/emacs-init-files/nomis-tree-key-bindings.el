@@ -21,23 +21,37 @@
 
 ;;;; nomis/tree/pop-up-help
 
-(defconst -nomis/tree/help ; TODO: outline-todo: Add new things to help.
+(defconst -nomis/tree/help
   "Nomis Tree Help
 ===============
+
+Escape hatch to Org mode
+------------------------
+
+H-TAB    org-cycle
+H-S-TAB  org-shifttab
+
+
+The main commands
+-----------------
 
 Use H with various other keys:
 
     Move forward or backward headings
-        , .     -- Navigate to siblings
-        < >     -- Cross the parent level (add S to , . on my keyboard)
-        Add M   -- Step (ie collapse then move then expand)
-        Add C   -- Visit headings at any level
-        Add C-M -- Step + visit headings at any level
+        H-, H-.  -- Navigate to siblings
+        H-< H->  -- Cross the parent level (add S to , . on my keyboard)
+        Add M    -- Step (ie collapse then move then expand)
+        Add C    -- Visit headings at any level
+        Add C-M  -- Step + visit headings at any level
 
     Expand and collapse from current point
-        ' \\
-        Add M to fully expand or collapse
-        Add C for cycling of lineage levels
+        H-' H-\\
+        Add M    -- Fully expand or collapse
+        Add C    -- Cycle lineage levels
+
+    When on a heading
+        Tab is the same as H-\\, but can't be used with M and C
+        Shittab is the same as H-', but can't be used with M and C
 
     Expand and collapse from root of current point
         \" | (that's S-' and S-\ on my keyboard.)
@@ -51,6 +65,9 @@ Use H with various other keys:
         - =
         Add M to fully expand or collapse
 
+
+Other commands
+--------------
 
 H-M-m  nomis/tree/show-tree-only
 
