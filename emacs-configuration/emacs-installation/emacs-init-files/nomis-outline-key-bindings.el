@@ -4,6 +4,7 @@
 
 ;;;; Requires
 
+(require 'nomis-tree-key-bindings)
 (require 'outline)
 
 ;;;; Make RET give us a newline
@@ -15,7 +16,7 @@
 
 ;;;; Other outline-minor-mode key bindings
 
-(define-key outline-minor-mode-map (kbd "H-o f")       'outline-minor-faces-mode)
+(define-key nomis/tree/kb/map (kbd "f") 'outline-minor-faces-mode)
 
 ;; These key bindings match the equivalent `org-mode` built-in key bindings.
 (define-key outline-minor-mode-map (kbd "M-S-<right>") 'outline-demote)

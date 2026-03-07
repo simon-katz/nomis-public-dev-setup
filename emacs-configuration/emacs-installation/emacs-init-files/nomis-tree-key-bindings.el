@@ -187,37 +187,40 @@ H-o ?  Show this help")
 ;; `(kbd "C-H-M-<")`
 ;; `(kbd "C-H-M->")`
 
-;;;; H-o comands
-
-;;;;; Projectile commands are no longer here
+;;;; Projectile commands are no longer here
 
 (define-key projectile-mode-map (kbd "H-o d") '-nomis/tree-key-bindings/projectile-keybinding-error)
 ;; We are using this for `outline-minor-faces-mode` now:
 ;; (define-key projectile-mode-map (kbd "H-o f") '-nomis/tree-key-bindings/projectile-keybinding-error)
 (define-key projectile-mode-map (kbd "H-o g") '-nomis/tree-key-bindings/projectile-keybinding-error)
 
-;;;;; `bicycle-cycle-global`
+;;;; nomis/tree/search-heading-text
 
-;; Keep this until we implement
+(define-key nomis/tree-mode-map (kbd "H-S") 'nomis/tree/search-heading-text)
+(define-key nomis/tree-mode-map (kbd "H-s") 'nomis/tree/search-heading-text-again)
+
+;;;; nomis/tree/kb/map
+
+(defvar-keymap nomis/tree/kb/map
+  :doc "Keymap for nomis/tree commands.")
+
+(define-key nomis/tree-mode-map (kbd "H-o") nomis/tree/kb/map)
+
+;; TODO: Keep this until we implement
 ;; `nomis/tree/show-children-from-all-roots/incremental/less--aux` and
 ;; `nomis/tree/show-children-from-all-roots/incremental/more--aux`.
-(define-key nomis/tree-mode-map (kbd "H-o <tab>")   'bicycle-cycle-global)
+(define-key nomis/tree/kb/map (kbd "<tab>") 'bicycle-cycle-global)
 
-;;;;; The main collection of H-o commands
+(define-key nomis/tree/kb/map (kbd "u") 'nomis/tree/up-heading)
 
-(define-key nomis/tree-mode-map (kbd "H-o u") 'nomis/tree/up-heading)
+(define-key nomis/tree/kb/map (kbd "h") 'outline-show-only-headings)
+(define-key nomis/tree/kb/map (kbd "]") 'nomis/tree/show-children-from-root/to-current-level)
+(define-key nomis/tree/kb/map (kbd "=") 'nomis/tree/show-children-from-all-roots/to-current-level)
 
-(define-key nomis/tree-mode-map (kbd "H-o h") 'outline-show-only-headings)
-(define-key nomis/tree-mode-map (kbd "H-o ]") 'nomis/tree/show-children-from-root/to-current-level)
-(define-key nomis/tree-mode-map (kbd "H-o =") 'nomis/tree/show-children-from-all-roots/to-current-level)
+(define-key nomis/tree/kb/map (kbd "l") 'nomis/tree/set-step-n-levels-to-show)
+(define-key nomis/tree/kb/map (kbd "m") 'nomis/scrolling/toggle-maintain-line-no-in-window)
 
-(define-key nomis/tree-mode-map (kbd "H-o l") 'nomis/tree/set-step-n-levels-to-show)
-(define-key nomis/tree-mode-map (kbd "H-o m") 'nomis/scrolling/toggle-maintain-line-no-in-window)
-
-(define-key nomis/tree-mode-map (kbd "H-o S") 'nomis/tree/search-heading-text)
-(define-key nomis/tree-mode-map (kbd "H-o s") 'nomis/tree/search-heading-text-again)
-
-(define-key nomis/tree-mode-map (kbd "H-o ?") 'nomis/tree/pop-up-help)
+(define-key nomis/tree/kb/map (kbd "?") 'nomis/tree/pop-up-help)
 
 ;;;; nomis/tree/fat-parents-no-children and nomis/tree/max-lineage
 
