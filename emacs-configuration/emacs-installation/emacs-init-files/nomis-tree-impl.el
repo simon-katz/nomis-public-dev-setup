@@ -1184,4 +1184,4 @@ If `N` is provided, set the number of child levels to `N`."
 
 (provide 'nomis-tree-impl)
 
-;;; norg.el ends here
+;;; nomis-tree-impl.el ends here
