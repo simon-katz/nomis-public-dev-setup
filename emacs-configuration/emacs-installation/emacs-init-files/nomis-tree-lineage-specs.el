@@ -36,6 +36,9 @@
 ;;     - Do nothing.
 ;;   - `1` / `2` / `3` / `4`
 ;;     - Show body/children/branches/subtree.
+;;
+;; - `:spec/show-body?`
+;;   - boolean
 
 (defconst nomis/tree/ls/children-approach-max 4)
 
@@ -60,17 +63,19 @@
                 :spec/parents-approach :parents/fat
                 :spec/children-approach nomis/tree/ls/children-approach-max))
 
+(defconst nomis/tree/ls/spec/hide-all--fat-parents--all-children--show-body
+  (a-hash-table :spec/pre-hide-all? t
+                :spec/parents-approach :parents/fat
+                :spec/children-approach nomis/tree/ls/children-approach-max
+                :spec/show-body?        t))
+
 (defconst -nomis/tree/ls/spec-sequence
-  ;; TODO: Change this so that the third item (`show?`) is part of a lineage
-  ;;       spec. So we'll need to replace
-  ;;       `nomis/tree/ls/spec/hide-all--fat-parents--all-children` with two
-  ;;       new ones.
-  `((:minimal   "Minimal"          nil ,nomis/tree/ls/spec/hide-all--no-parents--no-children)
-    (:ancestors "Ancestors"        nil ,nomis/tree/ls/spec/hide-all--thin-parents--no-children)
-    (:lineage   "Lineage"          nil ,nomis/tree/ls/spec/hide-all--fat-parents--no-children)
-    (:tree      "Tree"             nil ,nomis/tree/ls/spec/hide-all--fat-parents--immediate-children)
-    (:canonical "Canonical"        nil ,nomis/tree/ls/spec/hide-all--fat-parents--all-children)
-    (:canonical "Canonical + body" t   ,nomis/tree/ls/spec/hide-all--fat-parents--all-children)))
+  `((:minimal   "Minimal"          ,nomis/tree/ls/spec/hide-all--no-parents--no-children)
+    (:ancestors "Ancestors"        ,nomis/tree/ls/spec/hide-all--thin-parents--no-children)
+    (:lineage   "Lineage"          ,nomis/tree/ls/spec/hide-all--fat-parents--no-children)
+    (:tree      "Tree"             ,nomis/tree/ls/spec/hide-all--fat-parents--immediate-children)
+    (:canonical "Canonical"        ,nomis/tree/ls/spec/hide-all--fat-parents--all-children)
+    (:canonical "Canonical + body" ,nomis/tree/ls/spec/hide-all--fat-parents--all-children--show-body)))
 
 (defconst -nomis/tree/ls/spec-sequence-min-spec
   (cl-first -nomis/tree/ls/spec-sequence))
@@ -184,10 +189,12 @@
                          -nomis/tree/ls/spec-sequence-min-spec
                        -nomis/tree/ls/spec-sequence-max-spec))))
           (nomis/popup/error-message "%s" msg))
-      (cl-destructuring-bind (_ msg show? lineage-spec)
+      (cl-destructuring-bind (_ msg lineage-spec)
           (nth new-pos-or-nil -nomis/tree/ls/spec-sequence)
         (nomis/tree/ls/show-lineage lineage-spec)
-        (if show? (nomis/outline/w/show-entry) (nomis/outline/w/hide-entry))
+        (if (a-get lineage-spec :spec/show-body?)
+            (nomis/outline/w/show-entry)
+          (nomis/outline/w/hide-entry))
         (unless no-message?
           (nomis/popup/message "%s" msg))))))
 
