@@ -7,11 +7,6 @@
 ;;       So for now do nothing apart from (a) mull things over, and (b) look at
 ;;       existing code.
 
-;;;; Bicycle
-
-;; TODO: Have we decided that we don't want `bicycle`? (I think we have.)
-;;       - See `nomis-bicycle`.
-
 ;;;; Hide-show
 
 ;; TODO: We could integrate hide-show -- so eg

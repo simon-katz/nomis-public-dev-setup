@@ -335,7 +335,6 @@
 ;; 2014. I wonder if it still is.
 (require 'nomis-outline)
 
-(require 'nomis-bicycle)
 (require 'nomis-tree)
 
 (require 'nomis-outline-key-bindings)

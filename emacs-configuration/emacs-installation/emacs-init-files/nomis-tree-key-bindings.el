@@ -206,11 +206,6 @@ H-o ?  Show this help")
 
 (define-key nomis/tree-mode-map (kbd "H-o") nomis/tree/kb/map)
 
-;; TODO: Keep this until we implement
-;; `nomis/tree/show-children-from-all-roots/incremental/less--aux` and
-;; `nomis/tree/show-children-from-all-roots/incremental/more--aux`.
-(define-key nomis/tree/kb/map (kbd "<tab>") 'bicycle-cycle-global)
-
 (define-key nomis/tree/kb/map (kbd "u") 'nomis/tree/up-heading)
 
 (define-key nomis/tree/kb/map (kbd "h") 'outline-show-only-headings)

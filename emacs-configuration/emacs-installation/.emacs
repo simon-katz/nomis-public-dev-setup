@@ -33,7 +33,6 @@
      auto-dim-other-buffers
      backline
      beacon
-     bicycle
      bind-key
      cider
      cider-eval-sexp-fu
