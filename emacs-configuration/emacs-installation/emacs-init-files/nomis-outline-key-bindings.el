@@ -23,10 +23,11 @@
 (define-key outline-minor-mode-map (kbd "M-S-<down>")  'outline-move-subtree-down)
 ;;;; Other outline-minor-mode key bindings
 
+(define-key outline-minor-mode-map (kbd "M-RET") 'outline-insert-heading)
+
 (define-key nomis/tree/kb/map (kbd "f") 'outline-minor-faces-mode)
 
-
-(define-key outline-minor-mode-map (kbd "M-RET")       'outline-insert-heading)
+;;;; nomis/outline/kb/map
 
 (defvar-keymap nomis/outline/kb/map
   :doc "Keymap for nomis/outline commands.")
