@@ -51,7 +51,7 @@ Use H with various other keys:
 
     When on a heading
         Tab is the same as H-\\, but can't be used with M and C
-        Shittab is the same as H-', but can't be used with M and C
+        Shifttab is the same as H-', but can't be used with M and C
 
     Expand and collapse from root of current point
         \" | (that's S-' and S-\ on my keyboard.)
