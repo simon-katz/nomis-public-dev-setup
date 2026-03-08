@@ -154,8 +154,7 @@
 
 (defvar -nomis/tree/ls/lineage/prev-action-index -1)
 
-(defun -nomis/tree/ls/lineage/set-level/numeric (n delta?
-                                          &optional no-message?)
+(defun -nomis/tree/ls/lineage/set-level/numeric (n delta?)
   (let* ((prev-command-was-not-lineage?
           (not (member (nomis/outline/w/last-command)
                        -nomis/tree/ls/lineage/commands)))
@@ -191,8 +190,7 @@
         (if (a-get lineage-spec :spec/show-body?)
             (nomis/outline/w/show-entry)
           (nomis/outline/w/hide-entry))
-        (unless no-message?
-          (nomis/popup/message "%s" msg))))))
+        (nomis/popup/message "%s" msg)))))
 
 (defun nomis/tree/ls/lineage/more ()
   (-nomis/tree/ls/lineage/set-level/numeric 1 t))
