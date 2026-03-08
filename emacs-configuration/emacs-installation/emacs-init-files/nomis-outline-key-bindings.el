@@ -26,25 +26,25 @@
 
 (define-key outline-minor-mode-map (kbd "M-RET")       'outline-insert-heading)
 
-;; TODO: outline-todo: Maybe add key bindings for the following, and maybe for
-;;       some other `outline` commands.
+(defvar-keymap nomis/outline/kb/map
+  :doc "Keymap for nomis/outline commands.")
 
-;; | outline-hide-sublevels                    | H-o C-q |             |
-;; | outline-show-branches                     | H-o C-k |             |
-;; | outline-hide-leaves                       | H-o C-l |             |
-;; | outline-show-entry                        | H-o C-e |             |
-;; | outline-hide-entry                        | H-o C-c |             |
-;; | outline-hide-body                         | H-o C-t |             |
-;; | outline-hide-subtree                      | H-o C-d |             |
-;; | outline-show-subtree                      | H-o C-s |             |
-;; | outline-show-children                     | H-o TAB |             |
-;; | outline-hide-by-heading-regexp            | H-o / h |             |
-;; | outline-show-by-heading-regexp            | H-o / s |             |
+(define-key nomis/tree/kb/map (kbd "H-o") nomis/outline/kb/map)
 
-;; | outline-mark-subtree                      | H-o @   |             |
-;; | outline-headers-as-kill                   |         |             |
-;; | outline-cycle                             |         |             |
-;; | outline-cycle-buffer                      |         |             |
+(define-key nomis/outline/kb/map (kbd "c")   'outline-hide-entry)
+(define-key nomis/outline/kb/map (kbd "e")   'outline-show-entry)
+(define-key nomis/outline/kb/map (kbd "d")   'outline-hide-subtree)
+(define-key nomis/outline/kb/map (kbd "s")   'outline-show-subtree)
+(define-key nomis/outline/kb/map (kbd "l")   'outline-hide-leaves)
+(define-key nomis/outline/kb/map (kbd "k")   'outline-show-branches)
+(define-key nomis/outline/kb/map (kbd "i")   'outline-show-children)
+(define-key nomis/outline/kb/map (kbd "t")   'outline-hide-body)
+(define-key nomis/outline/kb/map (kbd "a")   'outline-show-all)
+(define-key nomis/outline/kb/map (kbd "q")   'outline-hide-sublevels)
+(define-key nomis/outline/kb/map (kbd "o")   'outline-hide-other)
+(define-key nomis/outline/kb/map (kbd "/ h") 'outline-hide-by-heading-regexp)
+(define-key nomis/outline/kb/map (kbd "/ s") 'outline-show-by-heading-regexp)
+(define-key nomis/outline/kb/map (kbd "@")   'outline-mark-subtree)
 
 ;;; End
 
