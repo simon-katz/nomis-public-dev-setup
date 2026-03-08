@@ -69,6 +69,9 @@ Use H with various other keys:
 Other commands
 --------------
 
+H-S    Search heading text for the text of this heading
+H-s    Repeat search heading text
+
 H-M-m  Show fat parents
 H-M-M  Show fat parents and fully expand children
 
@@ -80,9 +83,6 @@ H-o =  Show children from all roots to current level
 
 H-o l  Set # levels to show when stepping
 H-o m  Toggle maintain-line-no-in-window when scrolling
-
-H-o S  Search heading text for the text of this heading
-H-o s  Repeat search heading text
 
 H-o ?  Show this help")
 
