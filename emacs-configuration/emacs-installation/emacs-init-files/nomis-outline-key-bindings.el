@@ -14,15 +14,17 @@
 
 (keymap-unset outline-overlay-button-map "RET" t)
 
-;;;; Other outline-minor-mode key bindings
-
-(define-key nomis/tree/kb/map (kbd "f") 'outline-minor-faces-mode)
+;;;; Add some org-like key bindings
 
 ;; These key bindings match the equivalent `org-mode` built-in key bindings.
 (define-key outline-minor-mode-map (kbd "M-S-<right>") 'outline-demote)
 (define-key outline-minor-mode-map (kbd "M-S-<left>")  'outline-promote)
 (define-key outline-minor-mode-map (kbd "M-S-<up>")    'outline-move-subtree-up)
 (define-key outline-minor-mode-map (kbd "M-S-<down>")  'outline-move-subtree-down)
+;;;; Other outline-minor-mode key bindings
+
+(define-key nomis/tree/kb/map (kbd "f") 'outline-minor-faces-mode)
+
 
 (define-key outline-minor-mode-map (kbd "M-RET")       'outline-insert-heading)
 
