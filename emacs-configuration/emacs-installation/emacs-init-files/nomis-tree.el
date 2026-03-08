@@ -119,20 +119,6 @@
       nil
     (nomis/tree/ls/lineage/set-max)))
 
-;;;;; nomis/tree/fat-parents-no-children and nomis/tree/max-lineage
-
-(defun nomis/tree/fat-parents-no-children ()
-  (interactive)
-  (-nomis/tree/command
-      nil
-    (nomis/tree/ls/show-lineage nomis/tree/ls/spec/hide-all--fat-parents--no-children)))
-
-(defun nomis/tree/max-lineage ()
-  (interactive)
-  (-nomis/tree/command
-      nil
-    (nomis/tree/ls/show-lineage nomis/tree/ls/spec/hide-all--fat-parents--all-children)))
-
 ;;;;; nomis/tree/set-step-n-levels-to-show
 
 (defun nomis/tree/set-step-n-levels-to-show (n)

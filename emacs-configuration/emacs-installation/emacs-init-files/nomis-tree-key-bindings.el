@@ -72,9 +72,6 @@ Other commands
 H-S    Search heading text for the text of this heading
 H-s    Repeat search heading text
 
-H-M-m  Show fat parents
-H-M-M  Show fat parents and fully expand children
-
 H-o u  Move up one heading level
 
 H-o h  Show only headings
@@ -216,13 +213,6 @@ H-o ?  Show this help")
 (define-key nomis/tree/kb/map (kbd "m") 'nomis/scrolling/toggle-maintain-line-no-in-window)
 
 (define-key nomis/tree/kb/map (kbd "?") 'nomis/tree/pop-up-help)
-
-;;;; nomis/tree/fat-parents-no-children and nomis/tree/max-lineage
-
-;; TODO: outline-todo: Reconsider what we want here.
-
-(define-key nomis/tree-mode-map (kbd "H-M-m")     'nomis/tree/fat-parents-no-children)
-(define-key nomis/tree-mode-map (kbd "H-M-M")     'nomis/tree/max-lineage)
 
 ;;; End
 
