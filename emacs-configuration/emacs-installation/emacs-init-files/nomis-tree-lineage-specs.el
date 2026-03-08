@@ -72,10 +72,10 @@
 (defconst -nomis/tree/ls/spec-sequence
   `((:minimal   "Minimal"          ,nomis/tree/ls/spec/hide-all--no-parents--no-children)
     (:ancestors "Ancestors"        ,nomis/tree/ls/spec/hide-all--thin-parents--no-children)
-    (:lineage   "Lineage"          ,nomis/tree/ls/spec/hide-all--fat-parents--no-children)
-    (:tree      "Tree"             ,nomis/tree/ls/spec/hide-all--fat-parents--immediate-children)
-    (:canonical "Canonical"        ,nomis/tree/ls/spec/hide-all--fat-parents--all-children)
-    (:canonical "Canonical + body" ,nomis/tree/ls/spec/hide-all--fat-parents--all-children--show-body)))
+    (:lineage   "Fat parents"      ,nomis/tree/ls/spec/hide-all--fat-parents--no-children)
+    (:tree      "Fat parents + immediate children" ,nomis/tree/ls/spec/hide-all--fat-parents--immediate-children)
+    (:canonical "Fat parents + all children" ,nomis/tree/ls/spec/hide-all--fat-parents--all-children)
+    (:canonical "Fat parents + all children + body" ,nomis/tree/ls/spec/hide-all--fat-parents--all-children--show-body)))
 
 (defconst -nomis/tree/ls/spec-sequence-min-spec
   (cl-first -nomis/tree/ls/spec-sequence))
