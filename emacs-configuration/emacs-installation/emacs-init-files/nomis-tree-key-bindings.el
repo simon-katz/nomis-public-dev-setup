@@ -28,8 +28,8 @@
 Escape hatch to Org mode
 ------------------------
 
-H-TAB    org-cycle
-H-S-TAB  org-shifttab
+H-TAB        org-cycle
+H-<backtab>  org-shifttab
 
 
 The main commands
@@ -50,8 +50,8 @@ Use H with various other keys:
         Add C    -- Cycle lineage levels
 
     When on a heading
-        Tab is the same as H-\\, but can't be used with M and C
-        Shifttab is the same as H-', but can't be used with M and C
+        TAB is the same as H-\\, but can't be used with M and C
+        <backtab> is the same as H-', but can't be used with M and C
 
     Expand and collapse from root of current point
         \" | (that's S-' and S-\ on my keyboard.)
@@ -120,11 +120,11 @@ H-o ?  Show this help")
 (define-key nomis/tree-mode-map (kbd "H-M--")     'nomis/tree/show-children-from-all-roots/set-min)
 (define-key nomis/tree-mode-map (kbd "H-M-=")     'nomis/tree/show-children-from-all-roots/fully-expand)
 
-;;;; Tab and shifttab
+;;;; TAB and <backtab>
 
-;;;;; Tab
+;;;;; TAB
 
-;; Preserve access to built-in `tab` functionality. Arguably this
+;; Preserve access to built-in `TAB` functionality. Arguably this
 ;; belongs in `nomis-org-key-bindings`, but perhaps having it here is clearer.
 
 (dolist (key `(,(kbd "H-TAB")
@@ -132,7 +132,7 @@ H-o ?  Show this help")
                ))
   (define-key org-mode-map key 'org-cycle))
 
-;; Override the `tab` key binding.
+;; Override the `TAB` key binding.
 
 (dolist (key `(;; These keys are copied from `org`.
                ,(kbd "TAB")))
@@ -141,17 +141,17 @@ H-o ?  Show this help")
                                 'nomis/tree/show-children-from-point/incremental/more
                                 (nomis/outline/w/on-heading?)))
 
-;;;;; Shifttab
+;;;;; <backtab>
 
-;; Preserve access to built-in `shifttab` functionality. See the comment for
-;; `Tab`.
+;; Preserve access to built-in `<backtab>` functionality. See the comment for
+;; `TAB`.
 
 (dolist (key `(,(kbd "H-S-TAB")
                ,(kbd "<f19>") ; H-S-TAB via Karabiner Elements
                ))
   (define-key org-mode-map key 'org-shifttab))
 
-;; Override the `shifttab` key binding.
+;; Override the `<backtab>` key binding.
 
 (dolist (key `(;; These keys are copied from `org`.
                ,(kbd "S-TAB")
