@@ -99,6 +99,7 @@
 
 (require 'nomis-popup)
 (require 'nomis-scrolling)
+(require 's)
 
 ;;;; Tailor other functionality
 
@@ -431,8 +432,11 @@ subheading at this level in the previous parent."
 
 (defvar -nomis/tree/impl/heading-any-level-show-entry?
   t
-  "Truthy if `nomis/tree/impl/next-heading` and `nomis/tree/impl/previous-heading` should show bodies.
-Same for the `backward` commands.")
+  "Truthy if next/prev heading commands should show bodies.
+
+These commands:
+  • `nomis/tree/impl/next-heading'
+  • `nomis/tree/impl/previous-heading'")
 
 (defun nomis/tree/impl/next-heading ()
   "Move forward to the next heading at any level."
@@ -449,34 +453,6 @@ Same for the `backward` commands.")
     (if -nomis/tree/impl/heading-any-level-show-entry?
         (nomis/outline/w/show-entry)
       (nomis/outline/w/ensure-heading-shown))))
-
-(defun nomis/tree/impl/step-forward-any-level (n-levels-to-show-or-nil)
-  "Move forward to the next heading at any level, then expand it.
-N-LEVELS-TO-SHOW-OR-NIL controls how many levels to expand; nil means fully."
-  ;; We should use `-nomis/tree/impl/step/impl` here (or whatever we replace it
-  ;; with).
-  (nomis/scrolling/with-maybe-maintain-line-no-in-window
-    (nomis/outline/w/next-heading)
-    (nomis/tree/ls/show-lineage nomis/tree/ls/spec/hide-all--fat-parents--no-children)
-    (let* ((n-levels-or-nil (or n-levels-to-show-or-nil
-                                nomis/tree/impl/step-n-levels-to-show)))
-      (if (null n-levels-or-nil)
-          (nomis/tree/impl/expand-fully)
-        (nomis/tree/impl/expand n-levels-or-nil t)))))
-
-(defun nomis/tree/impl/step-backward-any-level (n-levels-to-show-or-nil)
-  "Move backward to the previous heading at any level, then expand it.
-N-LEVELS-TO-SHOW-OR-NIL controls how many levels to expand; nil means fully."
-  ;; We should use `-nomis/tree/impl/step/impl` here (or whatever we replace it
-  ;; with).
-  (nomis/scrolling/with-maybe-maintain-line-no-in-window
-    (nomis/outline/w/previous-heading)
-    (nomis/tree/ls/show-lineage nomis/tree/ls/spec/hide-all--fat-parents--no-children)
-    (let* ((n-levels-or-nil (or n-levels-to-show-or-nil
-                                nomis/tree/impl/step-n-levels-to-show)))
-      (if (null n-levels-or-nil)
-          (nomis/tree/impl/expand-fully)
-        (nomis/tree/impl/expand n-levels-or-nil t)))))
 
 ;;;; Info that relies on our navigation stuff
 
@@ -636,6 +612,36 @@ N-LEVELS-TO-SHOW-OR-NIL controls how many levels to expand; nil means fully."
     (setq -nomis/tree/impl/most-recent-step-time (float-time))
     (message "n-levels = %s" (or n-levels-or-nil "all"))))
 
+(defun nomis/tree/impl/step-forward-any-level (n-levels-to-show-or-nil)
+  "Move forward to the next heading at any level, then expand it.
+N-LEVELS-TO-SHOW-OR-NIL controls how many levels to expand; nil means fully."
+  ;; Maybe we should use `-nomis/tree/impl/step/impl` here (or whatever we
+  ;; replace it with). Or maybe that's got too much stuff that's not
+  ;; needed here.
+  (nomis/scrolling/with-maybe-maintain-line-no-in-window
+    (nomis/outline/w/next-heading)
+    (nomis/tree/ls/show-lineage nomis/tree/ls/spec/hide-all--fat-parents--no-children)
+    (let* ((n-levels-or-nil (or n-levels-to-show-or-nil
+                                nomis/tree/impl/step-n-levels-to-show)))
+      (if (null n-levels-or-nil)
+          (nomis/tree/impl/expand-fully)
+        (nomis/tree/impl/expand n-levels-or-nil t)))))
+
+(defun nomis/tree/impl/step-backward-any-level (n-levels-to-show-or-nil)
+  "Move backward to the previous heading at any level, then expand it.
+N-LEVELS-TO-SHOW-OR-NIL controls how many levels to expand; nil means fully."
+  ;; Maybe we should use `-nomis/tree/impl/step/impl` here (or whatever we
+  ;; replace it with). Or maybe that's got too much stuff that's not
+  ;; needed here.
+  (nomis/scrolling/with-maybe-maintain-line-no-in-window
+    (nomis/outline/w/previous-heading)
+    (nomis/tree/ls/show-lineage nomis/tree/ls/spec/hide-all--fat-parents--no-children)
+    (let* ((n-levels-or-nil (or n-levels-to-show-or-nil
+                                nomis/tree/impl/step-n-levels-to-show)))
+      (if (null n-levels-or-nil)
+          (nomis/tree/impl/expand-fully)
+        (nomis/tree/impl/expand n-levels-or-nil t)))))
+
 (defun nomis/tree/impl/step-forward-sibling (n-levels-to-show-or-nil)
   "Move forward to the next heading at the same level, then expand it.
 Stops at parent boundaries.
@@ -692,7 +698,7 @@ When in a body, \"current headline\" means the current body's parent headline."
                 (1- level)
               (cl-destructuring-bind (has-body?
                                       has-visible-body?
-                                      has-invisible-body?)
+                                      _has-invisible-body?)
                   (-nomis/tree/impl/body-info)
                 (if (or (not nomis/tree/impl/show-bodies?)
                         (not has-body?)
@@ -719,12 +725,12 @@ When in a body, \"current headline\" means the current body's parent headline."
   ;;   entry when the final item is visible.
   (let* ((dummy-initial-entry
           '(:dummy-first t :dummy-first :dummy-first :dummy-first))
-         (basic-info
-          (nomis/tree/impl/map-entries-from-point (lambda ()
-                                                    (list* (point)
-                                                           (nomis/outline/w/level)
-                                                           (nomis/outline/w/visible?)
-                                                           (-nomis/tree/impl/body-info)))))
+         (basic-info (nomis/tree/impl/map-entries-from-point
+                      (lambda ()
+                        (cl-list* (point)
+                                  (nomis/outline/w/level)
+                                  (nomis/outline/w/visible?)
+                                  (-nomis/tree/impl/body-info)))))
          (just-did-a-body? nil))
     (cl-loop for ((prev-level prev-visible? . _)
                   . ((pos
@@ -732,7 +738,7 @@ When in a body, \"current headline\" means the current body's parent headline."
                       visible?
                       has-body?
                       has-visible-body?
-                      has-invisible-body?)
+                      _has-invisible-body?)
                      . _))
              on (cons dummy-initial-entry
                       basic-info)
@@ -789,8 +795,8 @@ When in a body, \"current headline\" means the current body's parent headline."
 
 When in a body, \"current headline\" means the current body's parent headline.
 
-If `nomis/tree/impl/show-bodies?' is truthy, this returns truthy only if all bodies
-are visible. Otherwise body visibiity is not taken into account."
+If `nomis/tree/impl/show-bodies?' is truthy, this returns truthy only if all
+bodies are visible. Otherwise body visibiity is not taken into account."
   (cl-loop for entry in (-nomis/tree/impl/tree-info)
            when (not (a-get entry :tree-info/dummy?))
            always (if nomis/tree/impl/show-bodies?
@@ -856,6 +862,10 @@ When in a body, \"current headline\" means the current body's parent headline."
        (apply #'min)))
 
 ;;;; Expanding and collapsing
+
+;;;;; *expanding-parent?*
+
+(defvar *expanding-parent?* nil)
 
 ;;;;; -nomis/tree/impl/set-level-etc
 
@@ -1035,8 +1045,6 @@ When in a body, \"current headline\" means the current body's parent headline."
 
 ;;;;; nomis/tree/impl/show-children-from-parent/xxxx support
 
-(defvar *expanding-parent?* nil)
-
 (defun nomis/tree/impl/save-excursion-to-parent-and-then-show-point* (f)
   (prog1
       (let* ((*expanding-parent?* t))
@@ -1050,7 +1058,8 @@ When in a body, \"current headline\" means the current body's parent headline."
 ;;;;; nomis/tree/impl/show-children-from-parent/xxxx
 
 (defun nomis/tree/impl/show-children-from-parent (n)
-  "Like `nomis/tree/impl/show-children-from-point`, but from the current entry's parent."
+  "Like `nomis/tree/impl/show-children-from-point`, but from the
+current entry's parent."
   (nomis/tree/impl/save-excursion-to-parent-and-then-show-point
    (nomis/tree/impl/show-children-from-point n)))
 
@@ -1136,8 +1145,8 @@ If `N` is provided, set the number of child levels to `N`."
 ;;;;; nomis/tree/impl/show-children-from-all-roots/xxxx support
 
 (defun nomis/tree/impl/show-children-from-all-roots* (n)
-  "Call `nomis/tree/impl/show-children-from-point*` on all root headlines, with N as
-the parameter."
+  "Call `nomis/tree/impl/show-children-from-point*` on all root headlines,
+with N as the parameter."
   (nomis/tree/impl/mapc-roots (lambda () (nomis/tree/impl/show-children-from-point* n))))
 
 (defun -nomis/tree/impl/show-children-from-all-roots/set-level-etc (level
