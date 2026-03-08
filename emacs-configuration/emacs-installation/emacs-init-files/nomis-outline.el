@@ -133,6 +133,25 @@
 
 (add-hook 'clojure-mode-hook '-nomis/set-clojure-outline)
 
+;;;; Fix `outline-mark-subtree` so that selection goes to next heading
+
+(defun nomis/outline/mark-subtree/extend (&rest _)
+  "If appropriate, extend region if mark is not on a heading."
+  (when (use-region-p)
+    (save-excursion
+      (goto-char (mark))
+      (while (and (not (outline-on-heading-p))
+                  (not (eobp)))
+        (forward-char 1))
+      (set-mark (point)))))
+
+(advice-add 'outline-mark-subtree
+            :after
+            #'nomis/outline/mark-subtree/extend
+            '((name . -nomis/outline/mark-subtree/extend)))
+
+;; (advice-remove 'outline-mark-subtree '-nomis/outline/mark-subtree/extend)
+
 ;;; End
 
 (provide 'nomis-outline)
