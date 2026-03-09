@@ -733,13 +733,12 @@ When in a body, \"current headline\" means the current body's parent headline."
                                   (-nomis/tree/impl/body-info)))))
          (just-did-a-body? nil))
     (cl-loop for ((prev-level prev-visible? . _)
-                  . ((pos
-                      level
-                      visible?
-                      has-body?
-                      has-visible-body?
-                      _has-invisible-body?)
-                     . _))
+                  (pos
+                   level
+                   visible?
+                   has-body?
+                   has-visible-body?
+                   _has-invisible-body?))
              on (cons dummy-initial-entry
                       basic-info)
              for first? = (eq prev-level :dummy-first)
