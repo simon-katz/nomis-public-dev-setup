@@ -62,8 +62,7 @@
   (let* ((pos (or pos (point))))
     (cl-ecase (nomis/outline/w/mode)
       (:outline (outline-invisible-p pos))
-      (:org     (org-invisible-p pos t) ; TODO: outline-todo: Is this `folding-only` arg right?
-                ))))
+      (:org     (org-invisible-p pos t)))))
 
 (defun nomis/outline/w/on-heading? ()
   (outline-on-heading-p t))
