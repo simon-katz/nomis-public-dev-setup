@@ -724,7 +724,7 @@ When in a body, \"current headline\" means the current body's parent headline."
   ;; - You'd need to do some fixing up at the end to add that final dummy
   ;;   entry when the final item is visible.
   (let* ((dummy-initial-entry
-          '(:dummy-first t :dummy-first :dummy-first :dummy-first))
+          '(:dummy-first :dummy-first t :dummy-first :dummy-first :dummy-first))
          (basic-info (nomis/tree/impl/map-entries-from-point
                       (lambda ()
                         (cl-list* (point)
