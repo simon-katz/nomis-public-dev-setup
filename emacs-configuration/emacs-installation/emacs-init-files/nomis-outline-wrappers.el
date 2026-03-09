@@ -84,7 +84,7 @@
                nil)
       (error t))))
 
-(defun -nomis/outline/w/at-beginning-of-heading? ()
+(defun nomis/outline/w/at-beginning-of-heading? ()
   (and (bolp)
        (nomis/outline/w/on-heading?)))
 
@@ -131,7 +131,7 @@ FEWER-OK? is truthy."
       (unless no-error-if-before-first-heading?
         (error "Before first heading"))
     (let* ((opoint (point))
-           (n (if (-nomis/outline/w/at-beginning-of-heading?) n (1- n)))
+           (n (if (nomis/outline/w/at-beginning-of-heading?) n (1- n)))
            (npoint
             (save-excursion
               (nomis/outline/w/back-to-heading)
@@ -265,7 +265,7 @@ FEWER-OK? is truthy."
   (when start
     (save-excursion
       (goto-char start)
-      (let* ((boh? (-nomis/outline/w/at-beginning-of-heading?)))
+      (let* ((boh? (nomis/outline/w/at-beginning-of-heading?)))
         (if (and (eq direction :backward)
                  (not boh?))
             (progn
