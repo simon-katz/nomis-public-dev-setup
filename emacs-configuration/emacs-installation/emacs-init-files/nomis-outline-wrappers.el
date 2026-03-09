@@ -65,9 +65,6 @@
       (:org     (org-invisible-p pos t) ; TODO: outline-todo: Is this `folding-only` arg right?
                 ))))
 
-(defun nomis/outline/w/visible? (&optional pos)
-  (not (nomis/outline/w/invisible? pos)))
-
 (defun nomis/outline/w/on-heading? ()
   (outline-on-heading-p t))
 

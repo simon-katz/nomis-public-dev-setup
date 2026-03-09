@@ -179,10 +179,11 @@ message and in case adding org level messes things up.")
     (nomis/outline/w/back-to-heading)
     (let* ((has-body?
             (-nomis/tree/impl/has-body?/must-be-at-boh/leaving-cursor-at-end-of-heading))
+           (point-invisible? (nomis/outline/w/invisible?))
            (has-visible-body? (and has-body?
-                                   (nomis/outline/w/visible? (point))))
+                                   (not point-invisible?)))
            (has-invisible-body? (and has-body?
-                                     (not has-visible-body?))))
+                                     point-invisible?)))
       (list has-body?
             has-visible-body?
             has-invisible-body?))))
@@ -692,9 +693,9 @@ When in a body, \"current headline\" means the current body's parent headline."
   (- (nomis/tree/impl/reduce-entries-from-point
       nomis/outline/w/plus-infinity
       #'(lambda ()
-          (let* ((point-visible? (nomis/outline/w/visible?))
+          (let* ((point-invisible? (nomis/outline/w/invisible?))
                  (level (nomis/outline/w/level)))
-            (if (not point-visible?)
+            (if point-invisible?
                 (1- level)
               (cl-destructuring-bind (has-body?
                                       has-visible-body?
@@ -729,7 +730,7 @@ When in a body, \"current headline\" means the current body's parent headline."
                       (lambda ()
                         (cl-list* (point)
                                   (nomis/outline/w/level)
-                                  (nomis/outline/w/visible?)
+                                  (not (nomis/outline/w/invisible?))
                                   (-nomis/tree/impl/body-info)))))
          (just-did-a-body? nil))
     (cl-loop for ((prev-level prev-visible? . _)
