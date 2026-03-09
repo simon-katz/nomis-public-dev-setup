@@ -724,6 +724,9 @@ When in a body, \"current headline\" means the current body's parent headline."
   ;; - You'd need to do some fixing up at the end to add that final dummy
   ;;   entry when the final item is visible.
   (let* ((just-did-a-body? nil))
+    ;; We're using this `cl-loop` pattern:
+    ;;   `(cl-loop for (x y) on (cons nil (list 1 2 3)) collect (list x y))`
+    ;;   => `((nil 1) (1 2) (2 3) (3 nil))`
     (cl-loop for (prev-entry entry)
              on (cons nil ; dummy initial entry
                       (nomis/tree/impl/map-entries-from-point
@@ -734,7 +737,7 @@ When in a body, \"current headline\" means the current body's parent headline."
                                    (-nomis/tree/impl/body-info)))))
 
              for first? = t then nil
-             for last-iteration? = (null entry)
+             for post-last-tidy-up? = (null entry)
              for (_ prev-level prev-visible? . _) = prev-entry
              for (pos
                   level
@@ -745,7 +748,7 @@ When in a body, \"current headline\" means the current body's parent headline."
              for prev-was-visible-leaf? = (and (not first?)
                                                (not just-did-a-body?)
                                                prev-visible?
-                                               (or last-iteration?
+                                               (or post-last-tidy-up?
                                                    (<= level prev-level)))
 
              when prev-was-visible-leaf?
@@ -754,7 +757,7 @@ When in a body, \"current headline\" means the current body's parent headline."
                                    :tree-info/visible? nil
                                    :tree-info/dummy?   t)
 
-             while (not last-iteration?)
+             while (not post-last-tidy-up?)
 
              collect (a-hash-table :tree-info/pos     pos
                                    :tree-info/level   level
