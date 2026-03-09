@@ -56,6 +56,12 @@
 
 ;;;; API
 
+;;;;; Whether to show bodies
+
+(defun nomis/tree/toggle-show-bodies ()
+  (interactive)
+  (nomis/tree/impl/toggle-show-bodies))
+
 ;;;;; Search heading text
 
 (defun nomis/tree/search-heading-text ()

@@ -75,6 +75,7 @@ H-s    Repeat search heading text
 H-o u  Move up one heading level
 
 H-o h  Show only headings
+H-o b  Toggle showing of bodies when expanding/collapsing
 H-o ]  Show children from root to current level
 H-o =  Show children from all roots to current level
 
@@ -206,6 +207,8 @@ H-o ?  Show this help")
 (define-key nomis/tree/kb/map (kbd "u") 'nomis/tree/up-heading)
 
 (define-key nomis/tree/kb/map (kbd "h") 'outline-show-only-headings)
+(define-key nomis/tree/kb/map (kbd "b") 'nomis/tree/toggle-show-bodies)
+
 (define-key nomis/tree/kb/map (kbd "]") 'nomis/tree/show-children-from-root/to-current-level)
 (define-key nomis/tree/kb/map (kbd "=") 'nomis/tree/show-children-from-all-roots/to-current-level)
 

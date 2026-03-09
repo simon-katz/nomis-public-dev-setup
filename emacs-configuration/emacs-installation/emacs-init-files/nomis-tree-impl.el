@@ -143,10 +143,9 @@ message and in case adding org level messes things up.")
 
 ;;;; Whether to show bodies
 
-(defvar nomis/tree/impl/show-bodies? t) ; TODO: outline-todo: Think about this.
+(defvar nomis/tree/impl/show-bodies? t)
 
 (defun nomis/tree/impl/toggle-show-bodies ()
-  (interactive)
   (setq nomis/tree/impl/show-bodies? (not nomis/tree/impl/show-bodies?))
   (message "show-bodies? set to %s" nomis/tree/impl/show-bodies?))
 
