@@ -739,12 +739,8 @@ When in a body, \"current headline\" means the current body's parent headline."
              for first? = t then nil
              for post-last-tidy-up? = (null entry)
              for (_ prev-level prev-visible? . _) = prev-entry
-             for (pos
-                  level
-                  visible?
-                  has-body?
-                  has-visible-body?
-                  _has-invisible-body?) = entry
+             for (pos level visible? has-body?
+                  has-visible-body? _has-invisible-body?) = entry
              for prev-was-visible-leaf? = (and (not first?)
                                                (not just-did-a-body?)
                                                prev-visible?
