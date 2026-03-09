@@ -1,24 +1,5 @@
 ;;; nomis-tree.el --- A protocol for navigating trees in files  -*- lexical-binding: t; -*-
 
-
-;;; To dos
-
-;; TODO: There's lots of potential work here and it's not straightforward.
-;;       So for now do nothing apart from (a) mull things over, and (b) look at
-;;       existing code.
-
-;;;; Hide-show
-
-;; TODO: We could integrate hide-show -- so eg
-;;       `nomis/tree/show-children-from-point/incremental/more` `:outline`
-;;       method could do `nomis/hs/adjust/more` for children that are code.
-
-;; TODO: The key bindings for hide-show will need to be made different (because
-;;       they duplicate our `nomis-tree` key bindings, which we want for outline
-;;       stuff). Maybe a prefix in front of the existing bindings. Oh, or maybe
-;;       a modal UI.
-;;       - Done (different key bindings.)
-
 ;;; Code:
 
 ;;;; Requires
@@ -48,10 +29,6 @@
 
 (add-hook 'org-mode-hook 'nomis/tree-mode)
 (add-hook 'outline-minor-mode-hook 'nomis/tree-mode)
-
-;; TODO: Do we want this? Or should we be testing whether `hs-minor-mode` is
-;;       active when deciding what to do?
-;; (add-hook 'hs-minor-mode-hook 'nomis/tree-mode)
 
 ;;;; Utilities
 
