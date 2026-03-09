@@ -53,11 +53,11 @@ Use H with various other keys:
         TAB is the same as H-\\, but can't be used with M and C
         <backtab> is the same as H-', but can't be used with M and C
 
-    Expand and collapse from root of current point
+    Expand and collapse from parent of current point
         \" | (that's S-' and S-\ on my keyboard.)
         Add M to fully expand or collapse
 
-    Expand and collapse from parent of current point
+    Expand and collapse from root of current point
         [ ]
         Add M to fully expand or collapse
 
@@ -105,14 +105,17 @@ H-o ?  Show this help")
 (define-key nomis/tree-mode-map (kbd "H-\\")      'nomis/tree/show-children-from-point/incremental/more)
 (define-key nomis/tree-mode-map (kbd "H-M-'")     'nomis/tree/show-children-from-point/set-min)
 (define-key nomis/tree-mode-map (kbd "H-M-\\")    'nomis/tree/show-children-from-point/fully-expand)
-(define-key nomis/tree-mode-map (kbd "H-\"")      'nomis/tree/show-children-from-root/incremental/less)
-(define-key nomis/tree-mode-map (kbd "H-|")       'nomis/tree/show-children-from-root/incremental/more)
-(define-key nomis/tree-mode-map (kbd "H-M-\"")    'nomis/tree/show-children-from-root/set-min)
-(define-key nomis/tree-mode-map (kbd "H-M-|")     'nomis/tree/show-children-from-root/fully-expand)
-(define-key nomis/tree-mode-map (kbd "H-[")       'nomis/tree/show-children-from-parent/incremental/less)
-(define-key nomis/tree-mode-map (kbd "H-]")       'nomis/tree/show-children-from-parent/incremental/more)
-(define-key nomis/tree-mode-map (kbd "H-M-[")     'nomis/tree/show-children-from-parent/set-min)
-(define-key nomis/tree-mode-map (kbd "H-M-]")     'nomis/tree/show-children-from-parent/fully-expand)
+
+(define-key nomis/tree-mode-map (kbd "H-\"")      'nomis/tree/show-children-from-parent/incremental/less)
+(define-key nomis/tree-mode-map (kbd "H-|")       'nomis/tree/show-children-from-parent/incremental/more)
+(define-key nomis/tree-mode-map (kbd "H-M-\"")    'nomis/tree/show-children-from-parent/set-min)
+(define-key nomis/tree-mode-map (kbd "H-M-|")     'nomis/tree/show-children-from-parent/fully-expand)
+
+(define-key nomis/tree-mode-map (kbd "H-[")       'nomis/tree/show-children-from-root/incremental/less)
+(define-key nomis/tree-mode-map (kbd "H-]")       'nomis/tree/show-children-from-root/incremental/more)
+(define-key nomis/tree-mode-map (kbd "H-M-[")     'nomis/tree/show-children-from-root/set-min)
+(define-key nomis/tree-mode-map (kbd "H-M-]")     'nomis/tree/show-children-from-root/fully-expand)
+
 (define-key nomis/tree-mode-map (kbd "H--")       'nomis/tree/show-children-from-all-roots/incremental/less)
 (define-key nomis/tree-mode-map (kbd "H-=")       'nomis/tree/show-children-from-all-roots/incremental/more)
 (define-key nomis/tree-mode-map (kbd "H-M--")     'nomis/tree/show-children-from-all-roots/set-min)
