@@ -695,17 +695,19 @@ When in a body, \"current headline\" means the current body's parent headline."
       #'(lambda ()
           (let* ((point-invisible? (nomis/outline/w/invisible?))
                  (level (nomis/outline/w/level)))
-            (if point-invisible?
-                (1- level)
-              (cl-destructuring-bind (has-body?
-                                      has-visible-body?
-                                      _has-invisible-body?)
-                  (-nomis/tree/impl/body-info)
-                (if (or (not nomis/tree/impl/show-bodies?)
-                        (not has-body?)
-                        has-visible-body?)
-                    nomis/outline/w/plus-infinity
-                  level)))))
+            (cond (point-invisible?
+                   (1- level))
+                  ((not nomis/tree/impl/show-bodies?)
+                   nomis/outline/w/plus-infinity)
+                  (t
+                   (cl-destructuring-bind (has-body?
+                                           has-visible-body?
+                                           _has-invisible-body?)
+                       (-nomis/tree/impl/body-info)
+                     (if (and has-body?
+                              (not has-visible-body?))
+                         level
+                       nomis/outline/w/plus-infinity))))))
       #'min)
      (nomis/outline/w/level)))
 
