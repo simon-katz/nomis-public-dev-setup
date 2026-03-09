@@ -20,7 +20,7 @@
 ;; projectile-switch-project-action
 
 (define-key projectile-mode-map (kbd "M-o d") 'projectile-find-dir)
-;; (define-key projectile-mode-map (kbd "H-o p") 'projectile-switch-project)
+;; (define-key projectile-mode-map (kbd "M-o p") 'projectile-switch-project)
 (define-key projectile-mode-map (kbd "M-o f") 'projectile-find-file)
 (define-key projectile-mode-map (kbd "M-o g") 'projectile-grep)
 
