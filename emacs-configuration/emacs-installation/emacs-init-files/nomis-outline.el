@@ -83,15 +83,6 @@
 ;; (nomis/outline/colors/set-rainbow-8)
 (nomis/outline/colors/set-rainbow-4)
 
-;;;; backline
-
-;; I'm not sure I want this with my heading styling, but it might be useful if
-;; I change things.
-
-;; (use-package backline
-;;   :after outline
-;;   :config (advice-add 'outline-flag-region :after 'backline-update))
-
 ;;;; Show point and entry when jumping to grep results
 
 (advice-add 'compilation-next-error-function

@@ -31,7 +31,6 @@
      applescript-mode
      auto-complete
      auto-dim-other-buffers
-     backline
      beacon
      bind-key
      cider
