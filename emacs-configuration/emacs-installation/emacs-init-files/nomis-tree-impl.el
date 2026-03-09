@@ -723,18 +723,18 @@ When in a body, \"current headline\" means the current body's parent headline."
   ;;   (Solution: record previous item in a piece of mutable state.)
   ;; - You'd need to do some fixing up at the end to add that final dummy
   ;;   entry when the final item is visible.
-  (let* ((basic-info (nomis/tree/impl/map-entries-from-point
-                      (lambda ()
-                        (cl-list* (point)
-                                  (nomis/outline/w/level)
-                                  (not (nomis/outline/w/invisible?))
-                                  (-nomis/tree/impl/body-info)))))
-         (just-did-a-body? nil))
-    (cl-loop for (prev-entry entry) on (cons nil ; dummy initial entry
-                                             basic-info)
+  (let* ((just-did-a-body? nil))
+    (cl-loop for (prev-entry entry)
+             on (cons nil ; dummy initial entry
+                      (nomis/tree/impl/map-entries-from-point
+                       (lambda ()
+                         (cl-list* (point)
+                                   (nomis/outline/w/level)
+                                   (not (nomis/outline/w/invisible?))
+                                   (-nomis/tree/impl/body-info)))))
 
              for first? = t then nil
-             for last? = (null entry)
+             for last-iteration? = (null entry)
              for (_ prev-level prev-visible? . _) = prev-entry
              for (pos
                   level
@@ -745,7 +745,7 @@ When in a body, \"current headline\" means the current body's parent headline."
              for prev-was-visible-leaf? = (and (not first?)
                                                (not just-did-a-body?)
                                                prev-visible?
-                                               (or last?
+                                               (or last-iteration?
                                                    (<= level prev-level)))
 
              when prev-was-visible-leaf?
@@ -754,7 +754,8 @@ When in a body, \"current headline\" means the current body's parent headline."
                                    :tree-info/visible? nil
                                    :tree-info/dummy?   t)
 
-             when (not last?)
+             while (not last-iteration?)
+
              collect (a-hash-table :tree-info/pos     pos
                                    :tree-info/level   level
                                    :tree-info/visible? visible?
