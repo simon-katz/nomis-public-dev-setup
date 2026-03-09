@@ -723,28 +723,27 @@ When in a body, \"current headline\" means the current body's parent headline."
   ;;   (Solution: record previous item in a piece of mutable state.)
   ;; - You'd need to do some fixing up at the end to add that final dummy
   ;;   entry when the final item is visible.
-  (let* ((dummy-initial-entry
-          '(:dummy-first :dummy-first t :dummy-first :dummy-first :dummy-first))
-         (basic-info (nomis/tree/impl/map-entries-from-point
+  (let* ((basic-info (nomis/tree/impl/map-entries-from-point
                       (lambda ()
                         (cl-list* (point)
                                   (nomis/outline/w/level)
                                   (not (nomis/outline/w/invisible?))
                                   (-nomis/tree/impl/body-info)))))
          (just-did-a-body? nil))
-    (cl-loop for ((prev-level prev-visible? . _)
-                  (pos
-                   level
-                   visible?
-                   has-body?
-                   has-visible-body?
-                   _has-invisible-body?))
-             on (cons dummy-initial-entry
-                      basic-info)
-             for first? = (eq prev-level :dummy-first)
-             for last? = (null level)
-             for prev-was-visible-leaf? = (and (not just-did-a-body?)
-                                               (not first?)
+    (cl-loop for (prev-entry entry) on (cons nil ; dummy initial entry
+                                             basic-info)
+
+             for first? = t then nil
+             for last? = (null entry)
+             for (_ prev-level prev-visible? . _) = prev-entry
+             for (pos
+                  level
+                  visible?
+                  has-body?
+                  has-visible-body?
+                  _has-invisible-body?) = entry
+             for prev-was-visible-leaf? = (and (not first?)
+                                               (not just-did-a-body?)
                                                prev-visible?
                                                (or last?
                                                    (<= level prev-level)))
