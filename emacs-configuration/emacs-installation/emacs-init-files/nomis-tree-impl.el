@@ -204,9 +204,9 @@ message and in case adding org level messes things up.")
        (point))))
 
 (defun nomis/tree/impl/current-level-or-error-string ()
-  (condition-case _
-      (nomis/outline/w/level/inc-if-in-body)
-    (error "Before first heading")))
+  (if (nomis/outline/w/before-first-heading?)
+      "Before first heading"
+    (nomis/outline/w/level/inc-if-in-body)))
 
 (defun nomis/tree/impl/goto-root ()
   (interactive)
