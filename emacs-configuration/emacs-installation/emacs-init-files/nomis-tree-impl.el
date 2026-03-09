@@ -187,7 +187,8 @@ message and in case adding org level messes things up.")
             has-visible-body?
             has-invisible-body?))))
 
-(defun nomis/tree/impl/level-incl-body/must-be-at-boh ()
+(defun nomis/tree/impl/level-incl-any-body ()
+  (cl-assert (nomis/outline/w/at-beginning-of-heading?))
   (let* ((heading-level (nomis/outline/w/level)))
     (+ heading-level
        (if (and nomis/tree/impl/show-bodies?
@@ -674,7 +675,7 @@ When in a body, \"current headline\" means the current body's parent headline.
 Example: If we are at level 5 and there are 2 further levels below, the result
 is 7."
   (nomis/tree/impl/reduce-entries-from-point 0
-                                             #'nomis/tree/impl/level-incl-body/must-be-at-boh
+                                             #'nomis/tree/impl/level-incl-any-body
                                              #'max))
 
 (defun nomis/tree/impl/n-levels-below ()
@@ -843,7 +844,7 @@ When in a body, \"current headline\" means the current body's parent headline."
   (let* ((sofar 0))
     (nomis/tree/impl/mapc-entries-from-all-roots
      (lambda ()
-       (setq sofar (max (nomis/tree/impl/level-incl-body/must-be-at-boh)
+       (setq sofar (max (nomis/tree/impl/level-incl-any-body)
                         sofar))))
     sofar))
 
