@@ -799,11 +799,10 @@ When in a body, \"current headline\" means the current body's parent headline.
 If `nomis/tree/impl/show-bodies?' is truthy, this returns truthy only if all
 bodies are visible. Otherwise body visibiity is not taken into account."
   (cl-loop for entry in (-nomis/tree/impl/tree-info)
-           when (not (a-get entry :tree-info/dummy?))
-           always (if nomis/tree/impl/show-bodies?
+           always (or (a-get entry :tree-info/dummy?)
                       (a-get entry :tree-info/visible?)
-                    (or (a-get entry :tree-info/visible?)
-                        (a-get entry :tree-info/body?)))))
+                      (and (a-get entry :tree-info/body?)
+                           (not nomis/tree/impl/show-bodies?)))))
 
 (defun nomis/tree/impl/start-level-for-incremental-contract ()
   "The level to use when incrementally collapsing the current headline.
