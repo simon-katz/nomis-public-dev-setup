@@ -191,11 +191,11 @@ FEWER-OK? is truthy."
     (save-excursion
       (funcall fun)
       (while (and (progn
-		    (nomis/outline/w/next-heading)
+                    (nomis/outline/w/next-heading)
                     (and (nomis/outline/w/on-heading?) ; might be after last heading
-		         (> (nomis/outline/w/level/boh) level)))
-		  (not (eobp)))
-	(funcall fun)))))
+                         (> (nomis/outline/w/level/boh) level)))
+                  (not (eobp)))
+        (funcall fun)))))
 
 ;;;; nomis/outline/w/pulse-current-section
 

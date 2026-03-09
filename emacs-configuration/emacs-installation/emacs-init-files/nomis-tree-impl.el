@@ -263,7 +263,7 @@ When in a body, \"current headline\" means the current body's parent headline."
 
 (defun nomis/tree/impl/mapc-entries-from-root (fun)
   (nomis/tree/impl/save-excursion-to-root
-   (nomis/tree/impl/mapc-entries-from-point fun)))
+    (nomis/tree/impl/mapc-entries-from-point fun)))
 
 (defun nomis/tree/impl/mapc-roots (fun)
   (-nomis/tree/impl/mapc-headlines-satisfying (lambda ()
@@ -743,7 +743,7 @@ When in a body, \"current headline\" means the current body's parent headline."
              for post-last-tidy-up? = (null entry)
              for (_ prev-level prev-visible? . _) = prev-entry
              for (pos level visible? has-body?
-                  has-visible-body? _has-invisible-body?) = entry
+                      has-visible-body? _has-invisible-body?) = entry
              for prev-was-visible-leaf? = (and (not first?)
                                                (not just-did-a-body?)
                                                prev-visible?
@@ -830,15 +830,15 @@ When in a body, \"current headline\" means the current body's parent headline."
 
 (defun nomis/tree/impl/n-levels-below/root ()
   (nomis/tree/impl/save-excursion-to-root
-   (nomis/tree/impl/n-levels-below)))
+    (nomis/tree/impl/n-levels-below)))
 
 (defun nomis/tree/impl/start-level-for-incremental-contract/root ()
   (nomis/tree/impl/save-excursion-to-root
-   (nomis/tree/impl/start-level-for-incremental-contract)))
+    (nomis/tree/impl/start-level-for-incremental-contract)))
 
 (defun nomis/tree/impl/n-levels-being-shown-or-infinity/root ()
   (nomis/tree/impl/save-excursion-to-root
-   (nomis/tree/impl/n-levels-being-shown-or-infinity)))
+    (nomis/tree/impl/n-levels-being-shown-or-infinity)))
 
 ;;;; Operations on buffer
 
@@ -1061,32 +1061,32 @@ When in a body, \"current headline\" means the current body's parent headline."
   "Like `nomis/tree/impl/show-children-from-point`, but from the
 current entry's parent."
   (nomis/tree/impl/save-excursion-to-parent-and-then-show-point
-   (nomis/tree/impl/show-children-from-point n)))
+    (nomis/tree/impl/show-children-from-point n)))
 
 (defun nomis/tree/impl/show-children-from-parent/set-min ()
   "Like `nomis/tree/impl/show-children-from-point/set-min`, but from the
 current entry's parent and showing one level."
   (nomis/tree/impl/save-excursion-to-parent-and-then-show-point
-   (nomis/tree/impl/show-children-from-point/set-min)))
+    (nomis/tree/impl/show-children-from-point/set-min)))
 
 (defun nomis/tree/impl/show-children-from-parent/fully-expand ()
   "Like `nomis/tree/impl/show-children-from-point/fully-expand`, but from
 the current entry's parent."
   (nomis/tree/impl/save-excursion-to-parent-and-then-show-point
-   (nomis/tree/impl/show-children-from-point/fully-expand)))
+    (nomis/tree/impl/show-children-from-point/fully-expand)))
 
 (defun nomis/tree/impl/show-children-from-parent/incremental/less (n)
   "If `N` is not provided, collapse the current headline's parent by one level.
 Keep the parent expanded by at least one level.
 If `N` is provided, set the number of child levels to `N`."
   (nomis/tree/impl/save-excursion-to-parent-and-then-show-point
-   (nomis/tree/impl/show-children-from-point/incremental/less n)))
+    (nomis/tree/impl/show-children-from-point/incremental/less n)))
 
 (defun nomis/tree/impl/show-children-from-parent/incremental/more (n)
   "If `N` is not provided, expand the current headline's parent by one level.
 If `N` is provided, set the number of child levels to `N`."
   (nomis/tree/impl/save-excursion-to-parent-and-then-show-point
-   (nomis/tree/impl/show-children-from-point/incremental/more n)))
+    (nomis/tree/impl/show-children-from-point/incremental/more n)))
 
 ;;;;; nomis/tree/impl/show-children-from-root/xxxx support
 
@@ -1094,7 +1094,7 @@ If `N` is provided, set the number of child levels to `N`."
   "Call `nomis/tree/impl/show-children-from-point*` on the current root
 headline, with N as the parameter."
   (nomis/tree/impl/save-excursion-to-root
-   (nomis/tree/impl/show-children-from-point* n)))
+    (nomis/tree/impl/show-children-from-point* n)))
 
 (defun -nomis/tree/impl/show-children-from-root/set-level-etc (level
                                                                setting-kind
