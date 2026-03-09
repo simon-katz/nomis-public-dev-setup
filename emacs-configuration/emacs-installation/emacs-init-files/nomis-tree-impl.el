@@ -133,7 +133,7 @@ message and in case adding org level messes things up.")
                           (concat "Level: %s  " (cl-first args)))
                          (format-args
                           (append
-                           (list (nomis/tree/impl/current-level-or-error-string t))
+                           (list (nomis/tree/impl/current-level-or-error-string))
                            (cl-rest args)))
                          (s (apply #'format format-string format-args)))
                     (funcall orig-fun "%s" s)
@@ -189,7 +189,7 @@ message and in case adding org level messes things up.")
 
 (defun nomis/tree/impl/level-incl-any-body ()
   (cl-assert (nomis/outline/w/at-beginning-of-heading?))
-  (let* ((heading-level (nomis/outline/w/level)))
+  (let* ((heading-level (nomis/outline/w/level/boh)))
     (+ heading-level
        (if (and nomis/tree/impl/show-bodies?
                 (-nomis/tree/impl/has-body?/must-be-at-boh))
@@ -203,9 +203,9 @@ message and in case adding org level messes things up.")
        (nomis/outline/w/end-of-heading)
        (point))))
 
-(defun nomis/tree/impl/current-level-or-error-string (&optional inc-if-in-body?)
+(defun nomis/tree/impl/current-level-or-error-string ()
   (condition-case _
-      (nomis/outline/w/level inc-if-in-body?)
+      (nomis/outline/w/level/inc-if-in-body)
     (error "Before first heading")))
 
 (defun nomis/tree/impl/goto-root ()
@@ -267,7 +267,7 @@ When in a body, \"current headline\" means the current body's parent headline."
 
 (defun nomis/tree/impl/mapc-roots (fun)
   (-nomis/tree/impl/mapc-headlines-satisfying (lambda ()
-                                                (= (nomis/outline/w/level)
+                                                (= (nomis/outline/w/level/boh)
                                                    (nomis/outline/w/top-level-level)))
                                               fun))
 
@@ -321,10 +321,10 @@ headline."
   (when collapse-first? (nomis/outline/w/collapse))
   (nomis/outline/w/show-children n)
   (when nomis/tree/impl/show-bodies?
-    (let* ((level (nomis/outline/w/level)))
+    (let* ((level (nomis/outline/w/level/no-inc-if-in-body)))
       (nomis/tree/impl/mapc-entries-from-point
        #'(lambda ()
-           (when (< (- (nomis/outline/w/level)
+           (when (< (- (nomis/outline/w/level/boh)
                        level)
                     n)
              (nomis/outline/w/show-entry)))))))
@@ -684,7 +684,7 @@ When in a body, \"current headline\" means the current body's parent headline.
 Example: If we are at level 5 and there are 2 further levels below, the result
 is 2."
   (- (nomis/tree/impl/deepest-level-below)
-     (nomis/outline/w/level)))
+     (nomis/outline/w/level/no-inc-if-in-body)))
 
 (defun nomis/tree/impl/n-levels-being-shown-or-infinity ()
   "The number of levels being shown from the current headline, or
@@ -694,7 +694,7 @@ When in a body, \"current headline\" means the current body's parent headline."
       nomis/outline/w/plus-infinity
       #'(lambda ()
           (let* ((point-invisible? (nomis/outline/w/invisible?))
-                 (level (nomis/outline/w/level)))
+                 (level (nomis/outline/w/level/boh)))
             (cond (point-invisible?
                    (1- level))
                   ((not nomis/tree/impl/show-bodies?)
@@ -709,7 +709,7 @@ When in a body, \"current headline\" means the current body's parent headline."
                          level
                        nomis/outline/w/plus-infinity))))))
       #'min)
-     (nomis/outline/w/level)))
+     (nomis/outline/w/level/no-inc-if-in-body)))
 
 ;;;; The idea of tree-info, and things that use it
 
@@ -735,7 +735,7 @@ When in a body, \"current headline\" means the current body's parent headline."
                       (nomis/tree/impl/map-entries-from-point
                        (lambda ()
                          (cl-list* (point)
-                                   (nomis/outline/w/level)
+                                   (nomis/outline/w/level/boh)
                                    (not (nomis/outline/w/invisible?))
                                    (-nomis/tree/impl/body-info)))))
 
@@ -824,7 +824,7 @@ When in a body, \"current headline\" means the current body's parent headline."
                              (> level prev-level))
                    collect prev-level))
          (v (apply #'max deepest-visible-levels)))
-    (- v (nomis/outline/w/level))))
+    (- v (nomis/outline/w/level/no-inc-if-in-body))))
 
 ;;;; Operations on root
 
@@ -1139,7 +1139,7 @@ If `N` is provided, set the number of child levels to `N`."
      (1+ (nomis/tree/impl/n-levels-being-shown-or-infinity/root)) :more :dummy)))
 
 (defun nomis/tree/impl/show-children-from-root/to-current-level ()
-  (let* ((v (1- (nomis/outline/w/level t))))
+  (let* ((v (1- (nomis/outline/w/level/inc-if-in-body))))
     (-nomis/tree/impl/show-children-from-root/set-level-etc v :no-check :dummy)))
 
 ;;;;; nomis/tree/impl/show-children-from-all-roots/xxxx support
@@ -1192,7 +1192,7 @@ If `N` is provided, set the number of child levels to `N`."
      (1+ (nomis/tree/impl/n-levels-being-shown-or-infinity/buffer)) :more :dummy)))
 
 (defun nomis/tree/impl/show-children-from-all-roots/to-current-level ()
-  (let* ((v (1- (nomis/outline/w/level t))))
+  (let* ((v (1- (nomis/outline/w/level/inc-if-in-body))))
     (-nomis/tree/impl/show-children-from-all-roots/set-level-etc v :no-check :dummy)))
 
 ;;; End

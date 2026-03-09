@@ -93,18 +93,17 @@
     (:outline (end-of-line))
     (:org     (org-end-of-line))))
 
-(defun nomis/outline/w/level (&optional inc-if-in-body?)
-  ;; TODO: outline-todo:
-  ;;       Use of levels may be a bit messed up. Several things:
-  ;;       - The old `nomis/tree/impl/current-level` had a guard, only
-  ;;         incrementing after checking `nomis/tree/impl/show-bodies?`.
-  ;;       - We have `nomis/tree/impl/level-incl-any-body`. What's
-  ;;         that for? How does its use of `nomis/tree/impl/show-bodies?`
-  ;;         interact with this?
-  (let* ((v (save-excursion (nomis/outline/w/back-to-heading)
-                            (funcall outline-level))))
-    (if (and inc-if-in-body?
-             (not (nomis/outline/w/on-heading?)))
+(defun nomis/outline/w/level/boh ()
+  (cl-assert (nomis/outline/w/at-beginning-of-heading?))
+  (funcall outline-level))
+
+(defun nomis/outline/w/level/no-inc-if-in-body ()
+  (save-excursion (nomis/outline/w/back-to-heading)
+                  (nomis/outline/w/level/boh)))
+
+(defun nomis/outline/w/level/inc-if-in-body ()
+  (let* ((v (nomis/outline/w/level/no-inc-if-in-body)))
+    (if (not (nomis/outline/w/on-heading?))
         (1+ v)
       v)))
 
@@ -138,10 +137,10 @@ FEWER-OK? is truthy."
               (cl-loop
                for i from 1 to n
                for opoint2 = (point)
-               for olevel = (nomis/outline/w/level)
+               for olevel = (nomis/outline/w/level/boh)
                do (ignore-errors (outline-up-heading 1 t))
                for no-can-do? = (or (not (nomis/outline/w/on-heading?))
-                                    (= olevel (nomis/outline/w/level)))
+                                    (= olevel (nomis/outline/w/level/boh)))
                when (and no-can-do? fewer-ok?)
                return opoint2
                when no-can-do?
@@ -167,7 +166,7 @@ FEWER-OK? is truthy."
   (save-excursion
     (goto-char (point-min))
     (unless (nomis/outline/w/on-heading?) (outline-next-heading))
-    (nomis/outline/w/level)))
+    (nomis/outline/w/level/boh)))
 
 (defun nomis/outline/w/ensure-heading-shown ()
   (interactive)
@@ -188,12 +187,13 @@ FEWER-OK? is truthy."
   ;; Copy-and-edit of `org-map-tree`.
   "Call FUN for the current heading and all headings underneath it."
   (nomis/outline/w/back-to-heading)
-  (let ((level (nomis/outline/w/level)))
+  (let ((level (nomis/outline/w/level/boh)))
     (save-excursion
       (funcall fun)
       (while (and (progn
 		    (nomis/outline/w/next-heading)
-		    (> (nomis/outline/w/level) level))
+                    (and (nomis/outline/w/on-heading?) ; might be after last heading
+		         (> (nomis/outline/w/level/boh) level)))
 		  (not (eobp)))
 	(funcall fun)))))
 
@@ -227,7 +227,7 @@ FEWER-OK? is truthy."
 
 (defun -nomis/outline/w/prev-next-same-level (direction sibling-or-peer)
   (let* ((opoint (point))
-         (level (nomis/outline/w/level))
+         (level (nomis/outline/w/level/boh))
          (npoint  (save-excursion
                     ;; The logic here is a copy-and-edit of
                     ;; `outline-get-last-sibling` and
@@ -243,7 +243,7 @@ FEWER-OK? is truthy."
                                   (funcall (cl-ecase sibling-or-peer
                                              (:sibling #'>)
                                              (:peer #'/=))
-                                           (nomis/outline/w/level)
+                                           (nomis/outline/w/level/boh)
                                            level)
                                   (cl-ecase direction
                                     (:backward (not (bobp)))
@@ -252,9 +252,9 @@ FEWER-OK? is truthy."
                       (if (or (cl-ecase direction
                                 (:backward nil)
                                 (:forward (eobp)))
-                              (< (nomis/outline/w/level) level))
+                              (< (nomis/outline/w/level/boh) level))
                           nil
-                        (cl-assert (= level (nomis/outline/w/level)))
+                        (cl-assert (= level (nomis/outline/w/level/boh)))
                         (point))))))
     (when npoint
       (goto-char npoint))))
