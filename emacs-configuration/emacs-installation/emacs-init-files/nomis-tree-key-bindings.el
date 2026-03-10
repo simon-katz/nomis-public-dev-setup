@@ -69,20 +69,22 @@ Use H with various other keys:
 Other commands
 --------------
 
-H-S    Search heading text for the text of this heading
-H-s    Repeat search heading text
+H-S      Search heading text for the text of this heading
+H-s      Repeat search heading text
 
-H-o u  Move up one heading level
+H-o u    Move up one heading level
 
-H-o h  Show only headings
-H-o b  Toggle showing of bodies when expanding/collapsing
-H-o ]  Show children from root to current level
-H-o =  Show children from all roots to current level
+H-o h    Show only headings
+H-o b    Toggle showing of bodies when expanding/collapsing
+H-o ]    Show children from root to current level
+H-o =    Show children from all roots to current level
 
-H-o l  Set # levels to show when stepping
-H-o m  Toggle maintain-line-no-in-window when scrolling
+H-o l    Set # levels to show when stepping
+H-o m    Toggle maintain-line-no-in-window when scrolling
 
-H-o ?  Show this help")
+H-o H-o  Prefix providing access to the standard set of outline commands
+
+H-o ?    Show this help")
 
 (defun nomis/tree/pop-up-help ()
   (interactive)
