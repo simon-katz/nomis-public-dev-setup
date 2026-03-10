@@ -33,8 +33,6 @@
 
 ;;; Code:
 
-(progn) ; this stops `hs-hide-all` from hiding the next comment
-
 ;;;; Some rejected (at least for now) ideas
 
 ;; XXXX (Too hard! Park this for now.)
