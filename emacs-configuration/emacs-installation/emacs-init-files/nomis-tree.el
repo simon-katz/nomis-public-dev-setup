@@ -591,6 +591,14 @@ These commands:
   (and (-nomis/tree/small-time-gap-since-prev-step-command?)
        (-nomis/tree/step-sibling-then-step-peer?)))
 
+(defun -nomis/tree/show-post-step-lineage (n-levels-to-show-or-nil)
+  (nomis/tree/ls/show-lineage nomis/tree/ls/spec/hide-all--fat-parents--no-children)
+  (let* ((n-levels-or-nil (or n-levels-to-show-or-nil
+                              nomis/tree/step-n-levels-to-show)))
+    (if (null n-levels-or-nil)
+        (nomis/tree/expand-fully)
+      (nomis/tree/expand n-levels-or-nil t))))
+
 (defun -nomis/tree/step/impl (n sibling-or-peer n-levels-to-show-or-nil)
   (let* ((n-levels-or-nil (or n-levels-to-show-or-nil
                               nomis/tree/step-n-levels-to-show)))
@@ -680,12 +688,7 @@ N-LEVELS-TO-SHOW-OR-NIL controls how many levels to expand; nil means fully."
       nil
     (nomis/scrolling/with-maybe-maintain-line-no-in-window
       (nomis/outline/w/next-heading)
-      (nomis/tree/ls/show-lineage nomis/tree/ls/spec/hide-all--fat-parents--no-children)
-      (let* ((n-levels-or-nil (or n-levels-to-show-or-nil
-                                  nomis/tree/step-n-levels-to-show)))
-        (if (null n-levels-or-nil)
-            (nomis/tree/expand-fully)
-          (nomis/tree/expand n-levels-or-nil t))))))
+      (-nomis/tree/show-post-step-lineage n-levels-to-show-or-nil))))
 
 (defun nomis/tree/step-backward-any-level (n-levels-to-show-or-nil)
   "Move backward to the previous heading at any level, then expand it.
@@ -697,12 +700,7 @@ N-LEVELS-TO-SHOW-OR-NIL controls how many levels to expand; nil means fully."
       nil
     (nomis/scrolling/with-maybe-maintain-line-no-in-window
       (nomis/outline/w/previous-heading)
-      (nomis/tree/ls/show-lineage nomis/tree/ls/spec/hide-all--fat-parents--no-children)
-      (let* ((n-levels-or-nil (or n-levels-to-show-or-nil
-                                  nomis/tree/step-n-levels-to-show)))
-        (if (null n-levels-or-nil)
-            (nomis/tree/expand-fully)
-          (nomis/tree/expand n-levels-or-nil t))))))
+      (-nomis/tree/show-post-step-lineage n-levels-to-show-or-nil))))
 
 (defun nomis/tree/step-forward-sibling (n-levels-to-show-or-nil)
   "Move forward to the next sibling, then expand it.
