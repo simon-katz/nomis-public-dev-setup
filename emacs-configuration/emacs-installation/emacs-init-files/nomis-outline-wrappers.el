@@ -297,8 +297,8 @@ FEWER-OK? is truthy."
                                              no-msg?)
   "Go to the N'th-next heading of kind KIND in direction DIRECTION.
 If such a heading exists, return `t`.
-If no such heading exists, return `nil', leave point unchanged and
-display a popup message.
+If no such heading exists, return `nil', leave point unchanged and.
+when NO-MSG? is nil, display a popup message.
 KIND is one of `:sibling`, `:peer` and `:any-level`.
 DIRECTION is one or `:forward` and `:backward`."
   (let* ((pos (->> (-iterate (lambda (start)
