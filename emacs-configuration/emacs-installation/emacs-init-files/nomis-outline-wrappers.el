@@ -154,6 +154,9 @@ FEWER-OK? is truthy."
         (goto-char npoint)
         npoint))))
 
+(defun nomis/outline/w/up-heading (n)
+  (nomis/outline/w/up-heading* n))
+
 (defun -nomis/outline/w/on-top-level-heading? ()
   "Are we on a top-level heading?"
   (save-excursion
