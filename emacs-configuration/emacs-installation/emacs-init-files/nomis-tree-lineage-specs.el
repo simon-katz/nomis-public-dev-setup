@@ -110,7 +110,7 @@
               (let* ((ps '()))
                 (save-excursion
                   (beginning-of-line)
-                  (while (nomis/outline/w/up-heading 1 t t)
+                  (while (nomis/outline/w/up-heading* 1 t t)
                     (push (point) ps)))
                 ps)))
         (save-excursion

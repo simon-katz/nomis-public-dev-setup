@@ -207,7 +207,7 @@ message and in case adding org level messes things up.")
     (nomis/outline/w/level/inc-if-in-body)))
 
 (defun nomis/tree/impl/goto-root ()
-  (while (nomis/outline/w/up-heading 1 nil t)))
+  (while (nomis/outline/w/up-heading* 1 nil t)))
 
 (cl-defmacro nomis/tree/impl/save-excursion-to-root (&body body)
   (declare (indent 0))
@@ -218,7 +218,7 @@ message and in case adding org level messes things up.")
 (cl-defmacro nomis/tree/impl/save-excursion-to-parent (&body body)
   (declare (indent 0))
   `(save-excursion
-     (nomis/outline/w/up-heading 1)
+     (nomis/outline/w/up-heading* 1)
      ,@body))
 
 ;;;;; Support for do-ing and mapping
@@ -600,7 +600,7 @@ These commands:
                       (goto-char starting-point)
                       (when start-on-first-or-last-child?
                         ;; We've moved across a parent, so collapse that.
-                        (nomis/outline/w/up-heading 1))
+                        (nomis/outline/w/up-heading* 1))
                       (nomis/outline/w/collapse))
                     ;; Expand.
                     (expand))

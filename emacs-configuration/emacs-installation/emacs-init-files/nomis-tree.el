@@ -268,7 +268,7 @@ With a numeric prefix `N`, set the number of visible levels to exactly `N`."
   (interactive)
   (-nomis/tree/command
       nil
-    (nomis/outline/w/up-heading 1)))
+    (nomis/outline/w/up-heading* 1)))
 
 (defun nomis/tree/previous-heading ()
   "Move backward to the previous heading at any level."

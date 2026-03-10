@@ -106,10 +106,10 @@
         (1+ v)
       v)))
 
-(defun nomis/outline/w/up-heading (n
-                                   &optional
-                                   no-error-if-before-first-heading?
-                                   fewer-ok?)
+(defun nomis/outline/w/up-heading* (n
+                                    &optional
+                                    no-error-if-before-first-heading?
+                                    fewer-ok?)
   ;; `outline-up-heading` behaves differently in `outline` and `org`.
   ;; This gives us the same behaviour in both.
   "Move to the heading line N levels above the present line.
@@ -159,7 +159,7 @@ FEWER-OK? is truthy."
   (save-excursion
     (when (nomis/outline/w/on-heading?)
       (beginning-of-line)
-      (not (nomis/outline/w/up-heading 1 t t)))))
+      (not (nomis/outline/w/up-heading* 1 t t)))))
 
 (defun nomis/outline/w/top-level-level ()
   (save-excursion
