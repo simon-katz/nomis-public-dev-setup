@@ -283,7 +283,7 @@ When in a body, \"current headline\" means the current body's parent headline."
 
 (defun nomis/tree/mapc-entries-from-root (fun)
   (nomis/tree/save-excursion-to-root
-   (nomis/tree/mapc-entries-from-point fun)))
+    (nomis/tree/mapc-entries-from-point fun)))
 
 (defun nomis/tree/mapc-roots (fun)
   (-nomis/tree/mapc-headlines-satisfying (lambda ()
@@ -899,15 +899,15 @@ When in a body, \"current headline\" means the current body's parent headline."
 
 (defun nomis/tree/n-levels-below/root ()
   (nomis/tree/save-excursion-to-root
-   (nomis/tree/n-levels-below)))
+    (nomis/tree/n-levels-below)))
 
 (defun nomis/tree/start-level-for-incremental-contract/root ()
   (nomis/tree/save-excursion-to-root
-   (nomis/tree/start-level-for-incremental-contract)))
+    (nomis/tree/start-level-for-incremental-contract)))
 
 (defun nomis/tree/n-levels-being-shown-or-infinity/root ()
   (nomis/tree/save-excursion-to-root
-   (nomis/tree/n-levels-being-shown-or-infinity)))
+    (nomis/tree/n-levels-being-shown-or-infinity)))
 
 ;;;; Operations on buffer
 
@@ -1142,7 +1142,7 @@ When in a body, \"current headline\" means the current body's parent headline."
   "Like `nomis/tree/show-children-from-point`, but from the
 current entry's parent."
   (nomis/tree/save-excursion-to-parent-and-then-show-point
-   (nomis/tree/show-children-from-point n)))
+    (nomis/tree/show-children-from-point n)))
 
 (defun nomis/tree/show-children-from-parent/set-min ()
   "Like `nomis/tree/show-children-from-point/set-min`, but from the
@@ -1151,7 +1151,7 @@ current entry's parent and showing one level."
   (-nomis/tree/command
       nil
     (nomis/tree/save-excursion-to-parent-and-then-show-point
-     (nomis/tree/show-children-from-point/set-min))))
+      (nomis/tree/show-children-from-point/set-min))))
 
 (defun nomis/tree/show-children-from-parent/fully-expand ()
   "Like `nomis/tree/show-children-from-point/fully-expand`, but from
@@ -1160,7 +1160,7 @@ the current entry's parent."
   (-nomis/tree/command
       nil
     (nomis/tree/save-excursion-to-parent-and-then-show-point
-     (nomis/tree/show-children-from-point/fully-expand))))
+      (nomis/tree/show-children-from-point/fully-expand))))
 
 (defun nomis/tree/show-children-from-parent/incremental/less (n)
   "If `N` is not provided, collapse the current headline's parent by one level.
@@ -1170,7 +1170,7 @@ If `N` is provided, set the number of child levels to `N`."
   (-nomis/tree/command
       nil
     (nomis/tree/save-excursion-to-parent-and-then-show-point
-     (nomis/tree/show-children-from-point/incremental/less n))))
+      (nomis/tree/show-children-from-point/incremental/less n))))
 
 (defun nomis/tree/show-children-from-parent/incremental/more (n)
   "If `N` is not provided, expand the current headline's parent by one level.
@@ -1179,7 +1179,7 @@ If `N` is provided, set the number of child levels to `N`."
   (-nomis/tree/command
       nil
     (nomis/tree/save-excursion-to-parent-and-then-show-point
-     (nomis/tree/show-children-from-point/incremental/more n))))
+      (nomis/tree/show-children-from-point/incremental/more n))))
 
 ;;;;; nomis/tree/show-children-from-root/xxxx support
 
@@ -1187,7 +1187,7 @@ If `N` is provided, set the number of child levels to `N`."
   "Call `nomis/tree/show-children-from-point*` on the current root
 headline, with N as the parameter."
   (nomis/tree/save-excursion-to-root
-   (nomis/tree/show-children-from-point* n)))
+    (nomis/tree/show-children-from-point* n)))
 
 (defun -nomis/tree/show-children-from-root/set-level-etc (level
                                                           setting-kind
