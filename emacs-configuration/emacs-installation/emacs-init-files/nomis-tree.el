@@ -637,12 +637,7 @@ These commands:
                                       (cl-ecase sibling-or-peer
                                         (:sibling "")
                                         (:peer ", even across parents")))))
-                    (nomis/popup/error-message msg)))
-                (expand
-                  ()
-                  (if (null n-levels-or-nil)
-                      (nomis/tree/expand-fully)
-                    (nomis/tree/expand n-levels-or-nil t))))
+                    (nomis/popup/error-message msg))))
         (nomis/outline/w/back-to-heading)
         (if (not (or (-nomis/tree/stepping-forward-on-last-but-not-first-child/must-be-at-boh)
                      (-nomis/tree/stepping-backward-on-first-but-not-last-child/must-be-at-boh)
@@ -653,25 +648,12 @@ These commands:
                      ;; across the parent.
                      (-nomis/tree/step-sibling-then-step-peer-with-small-time-gap?)
                      (expanded-to-desired-level?)))
-            (expand)
-          (let* ((starting-point (point))
-                 (start-on-first-or-last-child?
-                  (if (< n 0)
-                      (nomis/tree/on-first-child?/must-be-at-boh)
-                    (nomis/tree/on-last-child?/must-be-at-boh))))
+            (-nomis/tree/show-post-step-lineage n-levels-to-show-or-nil)
+          (let* ((starting-point (point)))
             (try-to-move)
             (let* ((moved? (not (= (point) starting-point))))
               (if moved?
-                  (progn
-                    ;; Collapse the headline where we started.
-                    (save-excursion
-                      (goto-char starting-point)
-                      (when start-on-first-or-last-child?
-                        ;; We've moved across a parent, so collapse that.
-                        (nomis/outline/w/up-heading* 1))
-                      (nomis/outline/w/collapse))
-                    ;; Expand.
-                    (expand))
+                  (-nomis/tree/show-post-step-lineage n-levels-to-show-or-nil)
                 (progn
                   (nomis/outline/w/collapse)
                   (tried-to-go-too-far))))))))
