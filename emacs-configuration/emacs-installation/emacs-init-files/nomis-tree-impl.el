@@ -209,7 +209,6 @@ message and in case adding org level messes things up.")
     (nomis/outline/w/level/inc-if-in-body)))
 
 (defun nomis/tree/impl/goto-root ()
-  (interactive)
   (while (nomis/outline/w/up-heading 1 nil t)))
 
 (cl-defmacro nomis/tree/impl/save-excursion-to-root (&body body)
