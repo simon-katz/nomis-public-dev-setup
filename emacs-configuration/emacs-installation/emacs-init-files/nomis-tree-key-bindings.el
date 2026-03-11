@@ -42,9 +42,9 @@ Use H with various other keys:
         Add S    -- Navigate to prev/next peer
                     (add S on my keyboard, at least; it's actually H-< and H->)
         Add C    -- Navigate to prev/next heading at any level
-        Add M    -- Show lineage after navigating
-        Add S-M  -- Next peer + show lineage
-        Add C-M  -- Next any level + show lineage
+        Add M    -- Nav+lineage: show lineage after navigating
+        Add S-M  -- Nav+lineage for next peer
+        Add C-M  -- Nav+lineage for next-any-level
 
     Expand and collapse from current point
         H-' H-\\
@@ -81,8 +81,8 @@ H-o b    Toggle showing of bodies when expanding/collapsing
 H-o ]    Show children from root to current level
 H-o =    Show children from all roots to current level
 
-H-o p    Toggle fat/thin parents when showing lineage after navigating
-H-o c    Set # levels to show lineage after navigating
+H-o p    Toggle fat/thin parents for nav+lineage
+H-o c    Set # child levels for nav+lineage
 H-o m    Toggle maintain-line-no-in-window when scrolling
 
 H-o H-o  Prefix providing access to the standard set of outline commands
