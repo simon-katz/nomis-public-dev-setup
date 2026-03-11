@@ -555,23 +555,23 @@ These commands:
               (nomis/tree/step-backward-sibling
                nomis/tree/step-backward-peer)))))
 
-(defun -nomis/tree/doing-one-of-the-step-forward-commands? ()
+(defun -nomis/tree/doing-step-forward-same-level? ()
   (member this-command
           '(nomis/tree/step-forward-sibling
             nomis/tree/step-forward-peer)))
 
-(defun -nomis/tree/doing-one-of-the-step-backward-commands? ()
+(defun -nomis/tree/doing-step-backward-same-level? ()
   (member this-command
           '(nomis/tree/step-backward-sibling
             nomis/tree/step-backward-peer)))
 
-(defun -nomis/tree/stepping-forward-on-last-but-not-first-child/must-be-at-boh ()
-  (and (-nomis/tree/doing-one-of-the-step-forward-commands?)
+(defun -nomis/tree/doing-step-forward-same-level-on-last-but-not-first-child/must-be-at-boh ()
+  (and (-nomis/tree/doing-step-forward-same-level?)
        (nomis/tree/on-last-child?/must-be-at-boh)
        (not (nomis/tree/on-first-child?/must-be-at-boh))))
 
-(defun -nomis/tree/stepping-backward-on-first-but-not-last-child/must-be-at-boh ()
-  (and (-nomis/tree/doing-one-of-the-step-backward-commands?)
+(defun -nomis/tree/doing-step-backward-same-level-on-first-but-not-last-child/must-be-at-boh ()
+  (and (-nomis/tree/doing-step-backward-same-level?)
        (nomis/tree/on-first-child?/must-be-at-boh)
        (not (nomis/tree/on-last-child?/must-be-at-boh))))
 
@@ -629,8 +629,8 @@ These commands:
                                                           :forward)
                                                         sibling-or-peer)))
         (nomis/outline/w/back-to-heading)
-        (if (not (or (-nomis/tree/stepping-forward-on-last-but-not-first-child/must-be-at-boh)
-                     (-nomis/tree/stepping-backward-on-first-but-not-last-child/must-be-at-boh)
+        (if (not (or (-nomis/tree/doing-step-forward-same-level-on-last-but-not-first-child/must-be-at-boh)
+                     (-nomis/tree/doing-step-backward-same-level-on-first-but-not-last-child/must-be-at-boh)
                      ;; If we very recently did a `nomis/tree/step-xxxx-sibling`
                      ;; which tried to go too far and which so collapsed the
                      ;; current heading, and if now we're doing
