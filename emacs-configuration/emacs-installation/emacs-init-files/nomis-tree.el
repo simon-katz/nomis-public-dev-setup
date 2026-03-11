@@ -599,7 +599,7 @@ These commands:
         (nomis/tree/expand-fully)
       (nomis/tree/expand n-levels-or-nil t))))
 
-(defun -nomis/tree/step/impl (n sibling-or-peer n-levels-to-show-or-nil)
+(defun -nomis/tree/step/impl (n kind n-levels-to-show-or-nil)
   (let* ((n-levels-or-nil (or n-levels-to-show-or-nil
                               nomis/tree/step-n-levels-to-show)))
     (nomis/scrolling/with-maybe-maintain-line-no-in-window
@@ -627,7 +627,7 @@ These commands:
                                                         (if (< n 0)
                                                             :backward
                                                           :forward)
-                                                        sibling-or-peer))
+                                                        kind))
                 (show-message ()
                   (message "n-levels = %s" (or n-levels-or-nil "all"))))
         (nomis/outline/w/back-to-heading)
@@ -657,25 +657,17 @@ These commands:
   "Move forward to the next heading at any level, then expand it.
 N-LEVELS-TO-SHOW-OR-NIL controls how many levels to expand; nil means fully."
   (interactive "P")
-  ;; Maybe we should use `-nomis/tree/step/impl` here (or whatever we replace it
-  ;; with). Or maybe that's got too much stuff that's not needed here.
   (-nomis/tree/command
       nil
-    (nomis/scrolling/with-maybe-maintain-line-no-in-window
-      (nomis/outline/w/next-heading)
-      (-nomis/tree/show-post-step-lineage n-levels-to-show-or-nil))))
+    (-nomis/tree/step/impl 1 :any-level n-levels-to-show-or-nil)))
 
 (defun nomis/tree/step-backward-any-level (n-levels-to-show-or-nil)
   "Move backward to the previous heading at any level, then expand it.
 N-LEVELS-TO-SHOW-OR-NIL controls how many levels to expand; nil means fully."
   (interactive "P")
-  ;; Maybe we should use `-nomis/tree/step/impl` here (or whatever we replace it
-  ;; with). Or maybe that's got too much stuff that's not needed here.
   (-nomis/tree/command
       nil
-    (nomis/scrolling/with-maybe-maintain-line-no-in-window
-      (nomis/outline/w/previous-heading)
-      (-nomis/tree/show-post-step-lineage n-levels-to-show-or-nil))))
+    (-nomis/tree/step/impl -1 :any-level n-levels-to-show-or-nil)))
 
 (defun nomis/tree/step-forward-sibling (n-levels-to-show-or-nil)
   "Move forward to the next sibling, then expand it.
