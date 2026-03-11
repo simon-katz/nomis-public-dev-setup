@@ -627,7 +627,9 @@ These commands:
                                                         (if (< n 0)
                                                             :backward
                                                           :forward)
-                                                        sibling-or-peer)))
+                                                        sibling-or-peer))
+                (show-message ()
+                  (message "n-levels = %s" (or n-levels-or-nil "all"))))
         (nomis/outline/w/back-to-heading)
         (if (not (or (-nomis/tree/doing-step-forward-same-level-on-last-but-not-first-child/must-be-at-boh)
                      (-nomis/tree/doing-step-backward-same-level-on-first-but-not-last-child/must-be-at-boh)
@@ -638,15 +640,18 @@ These commands:
                      ;; across the parent.
                      (-nomis/tree/step-sibling-then-step-peer-with-small-time-gap?)
                      (expanded-to-desired-level?)))
-            (-nomis/tree/show-post-step-lineage n-levels-to-show-or-nil)
+            (progn
+              (-nomis/tree/show-post-step-lineage n-levels-to-show-or-nil)
+              (show-message))
           (let* ((starting-point (point)))
             (try-to-move)
             (let* ((moved? (not (= (point) starting-point))))
               (if moved?
-                  (-nomis/tree/show-post-step-lineage n-levels-to-show-or-nil)
+                  (progn
+                    (-nomis/tree/show-post-step-lineage n-levels-to-show-or-nil)
+                    (show-message))
                 (nomis/outline/w/collapse)))))))
-    (setq -nomis/tree/most-recent-step-time (float-time))
-    (message "n-levels = %s" (or n-levels-or-nil "all"))))
+    (setq -nomis/tree/most-recent-step-time (float-time))))
 
 (defun nomis/tree/step-forward-any-level (n-levels-to-show-or-nil)
   "Move forward to the next heading at any level, then expand it.
