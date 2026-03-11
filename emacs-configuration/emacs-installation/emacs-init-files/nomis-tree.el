@@ -528,9 +528,9 @@ These commands:
 ;; TODO This uses `nomis/tree/fully-expanded?`, and so belongs later in
 ;;      the file.
 
-;;;;; nomis/tree/step-n-levels-to-show
+;;;;; -nomis/tree/step/n-child-levels-to-show
 
-(defvar nomis/tree/step-n-levels-to-show nil)
+(defvar -nomis/tree/step/n-child-levels-to-show nil)
 
 (defun nomis/tree/set-step-n-levels-to-show (n)
   (interactive "P")
@@ -543,12 +543,13 @@ These commands:
                                   "Number of levels to show ~
                                  (empty string for all children) ~
                                  (currently ~s): "
-                                  nomis/tree/step-n-levels-to-show))))
+                                  -nomis/tree/step/n-child-levels-to-show))))
               (if (member (s-trim s) '("" "nil"))
                   nil
                 (string-to-number s))))))
-  (setq nomis/tree/step-n-levels-to-show (if (null n) n (max 0 (floor n))))
-  (message "step-n-levels-to-show set to %s" nomis/tree/step-n-levels-to-show))
+  (setq -nomis/tree/step/n-child-levels-to-show (if (null n) n (max 0 (floor n))))
+  (message "step-n-child-levels-to-show set to %s"
+           -nomis/tree/step/n-child-levels-to-show))
 
 ;;;;; -nomis/tree/step-thin-parents?
 
@@ -619,14 +620,14 @@ These commands:
        nomis/tree/ls/spec/hide-all--thin-parents--no-children
        nomis/tree/ls/spec/hide-all--fat-parents--no-children))
   (let* ((n-levels-or-nil (or n-levels-to-show-or-nil
-                              nomis/tree/step-n-levels-to-show)))
+                              -nomis/tree/step/n-child-levels-to-show)))
     (if (null n-levels-or-nil)
         (nomis/tree/expand-fully)
       (nomis/tree/expand n-levels-or-nil t))))
 
 (defun -nomis/tree/step/impl (n kind n-levels-to-show-or-nil)
   (let* ((n-levels-or-nil (or n-levels-to-show-or-nil
-                              nomis/tree/step-n-levels-to-show)))
+                              -nomis/tree/step/n-child-levels-to-show)))
     (nomis/scrolling/with-maybe-maintain-line-no-in-window
       (cl-flet ((expanded-to-desired-level?
                   ()
