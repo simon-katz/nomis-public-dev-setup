@@ -569,12 +569,12 @@ These commands:
                                   -nomis/tree/nav+lineage/n-child-levels-to-show))))
               (if (member (s-trim s) '("" "nil"))
                   nil
-                (string-to-number s))))))
-  (setq -nomis/tree/nav+lineage/n-child-levels-to-show
-        (if (null n) n (max 0 (floor n))))
-  (-nomis/tree/nav+lineage/show-lineage)
-  (message "nav+lineage n-child-levels-to-show set to %s"
-           -nomis/tree/nav+lineage/n-child-levels-to-show))
+                (string-to-number s)))))
+    (setq -nomis/tree/nav+lineage/n-child-levels-to-show
+          (if (null n) n (max 0 (floor n))))
+    (-nomis/tree/nav+lineage/show-lineage)
+    (message "nav+lineage n-child-levels-to-show set to %s"
+             -nomis/tree/nav+lineage/n-child-levels-to-show)))
 
 ;;;;; nomis/tree/nav+lineage/toggle-parents-approach
 
