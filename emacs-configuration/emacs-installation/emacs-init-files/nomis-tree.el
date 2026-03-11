@@ -628,7 +628,8 @@ These commands:
                                                             :backward
                                                           :forward)
                                                         kind))
-                (show-message ()
+                (show-post-step-lineage ()
+                  (-nomis/tree/show-post-step-lineage n-levels-to-show-or-nil)
                   (message "n-levels = %s" (or n-levels-or-nil "all"))))
         (nomis/outline/w/back-to-heading)
         (if (not (or (-nomis/tree/doing-step-forward-same-level-on-last-but-not-first-child/must-be-at-boh)
@@ -640,16 +641,12 @@ These commands:
                      ;; across the parent.
                      (-nomis/tree/step-sibling-then-step-peer-with-small-time-gap?)
                      (expanded-to-desired-level?)))
-            (progn
-              (-nomis/tree/show-post-step-lineage n-levels-to-show-or-nil)
-              (show-message))
+            (show-post-step-lineage)
           (let* ((starting-point (point)))
             (try-to-move)
             (let* ((moved? (not (= (point) starting-point))))
               (if moved?
-                  (progn
-                    (-nomis/tree/show-post-step-lineage n-levels-to-show-or-nil)
-                    (show-message))
+                  (show-post-step-lineage)
                 (nomis/outline/w/collapse)))))))
     (setq -nomis/tree/most-recent-step-time (float-time))))
 
