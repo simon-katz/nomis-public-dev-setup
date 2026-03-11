@@ -567,6 +567,19 @@ These commands:
     (message "step-parents-approach set to %s"
              (-nomis/tree/thin-parents-text))))
 
+;;;;; -nomis/tree/show-post-step-lineage
+
+(defun -nomis/tree/show-post-step-lineage (n-levels-to-show-or-nil)
+  (nomis/tree/ls/show-lineage
+   (if -nomis/tree/step-thin-parents?
+       nomis/tree/ls/spec/hide-all--thin-parents--no-children
+       nomis/tree/ls/spec/hide-all--fat-parents--no-children))
+  (let* ((n-levels-or-nil (or n-levels-to-show-or-nil
+                              -nomis/tree/step/n-child-levels-to-show)))
+    (if (null n-levels-or-nil)
+        (nomis/tree/expand-fully)
+      (nomis/tree/expand n-levels-or-nil t))))
+
 ;;;;; Step algorithm
 
 (defun -nomis/tree/step-sibling-then-step-peer? ()
@@ -613,17 +626,6 @@ These commands:
 (defun -nomis/tree/step-sibling-then-step-peer-with-small-time-gap? ()
   (and (-nomis/tree/small-time-gap-since-prev-step-command?)
        (-nomis/tree/step-sibling-then-step-peer?)))
-
-(defun -nomis/tree/show-post-step-lineage (n-levels-to-show-or-nil)
-  (nomis/tree/ls/show-lineage
-   (if -nomis/tree/step-thin-parents?
-       nomis/tree/ls/spec/hide-all--thin-parents--no-children
-       nomis/tree/ls/spec/hide-all--fat-parents--no-children))
-  (let* ((n-levels-or-nil (or n-levels-to-show-or-nil
-                              -nomis/tree/step/n-child-levels-to-show)))
-    (if (null n-levels-or-nil)
-        (nomis/tree/expand-fully)
-      (nomis/tree/expand n-levels-or-nil t))))
 
 (defun -nomis/tree/step/impl (n kind n-levels-to-show-or-nil)
   (let* ((n-levels-or-nil (or n-levels-to-show-or-nil
