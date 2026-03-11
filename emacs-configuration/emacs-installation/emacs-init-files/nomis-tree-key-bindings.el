@@ -38,11 +38,13 @@ The main commands
 Use H with various other keys:
 
     Move forward or backward headings
-        H-, H-.  -- Navigate to siblings
-        H-< H->  -- Cross the parent level (add S to , . on my keyboard)
-        Add M    -- Step (ie collapse then move then expand)
-        Add C    -- Visit headings at any level
-        Add C-M  -- Step + visit headings at any level
+        H-, H-.  -- Navigate to prev/next sibling
+        Add S    -- Navigate to prev/next peer
+                    (add S on my keyboard, at least; it's actually H-< and H->)
+        Add C    -- Navigate to prev/next heading at any level
+        Add M    -- Show lineage after navigating
+        Add S-M  -- Next peer + show lineage
+        Add C-M  -- Next any level + show lineage
 
     Expand and collapse from current point
         H-' H-\\
@@ -79,7 +81,8 @@ H-o b    Toggle showing of bodies when expanding/collapsing
 H-o ]    Show children from root to current level
 H-o =    Show children from all roots to current level
 
-H-o l    Set # levels to show when stepping
+H-o p    Toggle fat/thin parents when showing lineage after navigating
+H-o c    Set # levels to show lineage after navigating
 H-o m    Toggle maintain-line-no-in-window when scrolling
 
 H-o H-o  Prefix providing access to the standard set of outline commands
