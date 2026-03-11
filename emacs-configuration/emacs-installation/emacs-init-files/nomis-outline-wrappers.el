@@ -322,7 +322,7 @@ DIRECTION is one or `:forward` and `:backward`."
                (kind-word (cl-ecase kind
                             (:any-level "heading")
                             (:sibling "sibling")
-                            (:peer "same-level"))))
+                            (:peer "peer"))))
           (nomis/popup/error-message
            "No %s%s %s"
            (if (= n 1) "" (concat (-nomis/outline/w/ordinal n)
