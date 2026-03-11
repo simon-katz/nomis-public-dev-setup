@@ -548,7 +548,7 @@ These commands:
                   nil
                 (string-to-number s))))))
   (setq nomis/tree/step-n-levels-to-show (if (null n) n (max 0 (floor n))))
-  (message "n-levels-to-show set to %s" nomis/tree/step-n-levels-to-show))
+  (message "step-n-levels-to-show set to %s" nomis/tree/step-n-levels-to-show))
 
 ;;;;; -nomis/tree/step-thin-parents?
 
