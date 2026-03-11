@@ -543,7 +543,7 @@ These commands:
               (if (member (s-trim s) '("" "nil"))
                   nil
                 (string-to-number s))))))
-  (setq nomis/tree/step-n-levels-to-show (if (null n) n (max 1 (floor n))))
+  (setq nomis/tree/step-n-levels-to-show (if (null n) n (max 0 (floor n))))
   (message "n-levels-to-show set to %s" nomis/tree/step-n-levels-to-show))
 
 (defun -nomis/tree/step-sibling-then-step-peer? ()
