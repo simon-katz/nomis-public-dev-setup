@@ -627,17 +627,7 @@ These commands:
                                                         (if (< n 0)
                                                             :backward
                                                           :forward)
-                                                        sibling-or-peer
-                                                        t))
-                (tried-to-go-too-far
-                  ()
-                  (let* ((msg (concat (if (< n 0)
-                                          "No previous heading at this level"
-                                        "No next heading at this level")
-                                      (cl-ecase sibling-or-peer
-                                        (:sibling "")
-                                        (:peer ", even across parents")))))
-                    (nomis/popup/error-message msg))))
+                                                        sibling-or-peer)))
         (nomis/outline/w/back-to-heading)
         (if (not (or (-nomis/tree/stepping-forward-on-last-but-not-first-child/must-be-at-boh)
                      (-nomis/tree/stepping-backward-on-first-but-not-last-child/must-be-at-boh)
@@ -654,9 +644,7 @@ These commands:
             (let* ((moved? (not (= (point) starting-point))))
               (if moved?
                   (-nomis/tree/show-post-step-lineage n-levels-to-show-or-nil)
-                (progn
-                  (nomis/outline/w/collapse)
-                  (tried-to-go-too-far))))))))
+                (nomis/outline/w/collapse)))))))
     (setq -nomis/tree/most-recent-step-time (float-time))
     (message "n-levels = %s" (or n-levels-or-nil "all"))))
 
