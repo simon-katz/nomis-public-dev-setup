@@ -532,7 +532,7 @@ These commands:
 
 (defvar -nomis/tree/step/n-child-levels-to-show nil)
 
-(defun nomis/tree/set-step-n-levels-to-show (n)
+(defun nomis/tree/step/set-n-child-levels-to-show (n)
   (interactive "P")
   (-nomis/tree/command
       nil
