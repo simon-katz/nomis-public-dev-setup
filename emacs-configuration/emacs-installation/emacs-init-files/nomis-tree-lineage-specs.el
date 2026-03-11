@@ -141,9 +141,8 @@
   (-nomis/tree/ls/hsl-show-parents lineage-spec)
   (nomis/outline/w/ensure-heading-shown)
   (-nomis/tree/ls/hsl-show-children lineage-spec)
-  (when (and (a-get lineage-spec :spec/pulse-max-children?)
-             (= (a-get lineage-spec :spec/children-approach)
-                nomis/tree/ls/children-approach-max))
+  (when (eql lineage-spec
+             nomis/tree/ls/spec/hide-all--fat-parents--all-children--show-body)
     (nomis/outline/w/pulse-current-section)))
 
 (defconst -nomis/tree/ls/lineage/commands
