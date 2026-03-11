@@ -75,7 +75,7 @@
     (:lineage   "Fat parents"      ,nomis/tree/ls/spec/hide-all--fat-parents--no-children)
     (:tree      "Fat parents + immediate children" ,nomis/tree/ls/spec/hide-all--fat-parents--immediate-children)
     (:canonical "Fat parents + all children" ,nomis/tree/ls/spec/hide-all--fat-parents--all-children)
-    (:canonical "Fat parents + all children + body" ,nomis/tree/ls/spec/hide-all--fat-parents--all-children--show-body)))
+    (:canonical+body "Fat parents + all children + body" ,nomis/tree/ls/spec/hide-all--fat-parents--all-children--show-body)))
 
 (defconst -nomis/tree/ls/spec-sequence-min-spec
   (cl-first -nomis/tree/ls/spec-sequence))
