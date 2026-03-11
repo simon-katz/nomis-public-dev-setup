@@ -490,22 +490,20 @@ These commands:
   (interactive)
   (-nomis/tree/command
       nil
-    (nomis/scrolling/with-maybe-maintain-line-no-in-window
-      (nomis/outline/w/next-heading)
-      (if -nomis/tree/heading-any-level-show-entry?
-          (nomis/outline/w/show-entry)
-        (nomis/outline/w/ensure-heading-shown)))))
+    (nomis/outline/w/next-heading)
+    (if -nomis/tree/heading-any-level-show-entry?
+        (nomis/outline/w/show-entry)
+      (nomis/outline/w/ensure-heading-shown))))
 
 (defun nomis/tree/previous-heading ()
   "Move backward to the previous heading at any level."
   (interactive)
   (-nomis/tree/command
       nil
-    (nomis/scrolling/with-maybe-maintain-line-no-in-window
-      (nomis/outline/w/previous-heading)
-      (if -nomis/tree/heading-any-level-show-entry?
-          (nomis/outline/w/show-entry)
-        (nomis/outline/w/ensure-heading-shown)))))
+    (nomis/outline/w/previous-heading)
+    (if -nomis/tree/heading-any-level-show-entry?
+        (nomis/outline/w/show-entry)
+      (nomis/outline/w/ensure-heading-shown))))
 
 ;;;; Info that relies on our navigation stuff
 
@@ -638,52 +636,51 @@ These commands:
 (defun -nomis/tree/nav+lineage/impl (n kind n-levels-to-show-or-nil)
   (let* ((n-levels-or-nil (or n-levels-to-show-or-nil
                               -nomis/tree/nav+lineage/n-child-levels-to-show)))
-    (nomis/scrolling/with-maybe-maintain-line-no-in-window
-      (cl-flet ((expanded-to-desired-level?
-                  ()
-                  (if (null n-levels-or-nil)
-                      (nomis/tree/fully-expanded?)
-                    (let* ((n-levels-being-shown-or-infinity
-                            (nomis/tree/n-levels-being-shown-or-infinity)))
-                      (if (= n-levels-being-shown-or-infinity
-                             nomis/outline/w/plus-infinity)
-                          ;; The tree is fully expanded at point. This is truthy if
-                          ;; the number of levels below is less than or equal to
-                          ;; the desired number of levels to show.
-                          (<= (nomis/tree/n-levels-below)
-                              n-levels-or-nil)
-                        ;; The tree is not fully expanded at point. This is truthy
-                        ;; if the number of levels being shown is the same as the
-                        ;; desired number of levels.
-                        (= n-levels-being-shown-or-infinity
-                           n-levels-or-nil)))))
-                (try-to-move
-                  ()
-                  (nomis/outline/w/prev-or-next-heading 1
-                                                        (if (< n 0)
-                                                            :backward
-                                                          :forward)
-                                                        kind))
-                (show-lineage ()
-                  (-nomis/tree/nav+lineage/show-lineage n-levels-to-show-or-nil)))
-        (nomis/outline/w/back-to-heading)
-        (if (not (or (-nomis/tree/nav+lineage/doing-forward-same-level-on-last-but-not-first-child/must-be-at-boh)
-                     (-nomis/tree/nav+lineage/doing-backward-same-level-on-first-but-not-last-child/must-be-at-boh)
-                     ;; If we very recently did
-                     ;; a `nomis/tree/nav+lineage/xxxx-sibling` which tried to
-                     ;; go too far and which so collapsed the current heading,
-                     ;; and if now we're doing
-                     ;; a `nomis/tree/nav+lineage/xxxx-peer`, we're happy to do
-                     ;; a nav+lineage across the parent.
-                     (-nomis/tree/nav+lineage/sibling-then-peer-with-small-time-gap?)
-                     (expanded-to-desired-level?)))
-            (show-lineage)
-          (let* ((starting-point (point)))
-            (try-to-move)
-            (let* ((moved? (not (= (point) starting-point))))
-              (if moved?
-                  (show-lineage)
-                (nomis/outline/w/collapse)))))))
+    (cl-flet ((expanded-to-desired-level?
+                ()
+                (if (null n-levels-or-nil)
+                    (nomis/tree/fully-expanded?)
+                  (let* ((n-levels-being-shown-or-infinity
+                          (nomis/tree/n-levels-being-shown-or-infinity)))
+                    (if (= n-levels-being-shown-or-infinity
+                           nomis/outline/w/plus-infinity)
+                        ;; The tree is fully expanded at point. This is truthy if
+                        ;; the number of levels below is less than or equal to
+                        ;; the desired number of levels to show.
+                        (<= (nomis/tree/n-levels-below)
+                            n-levels-or-nil)
+                      ;; The tree is not fully expanded at point. This is truthy
+                      ;; if the number of levels being shown is the same as the
+                      ;; desired number of levels.
+                      (= n-levels-being-shown-or-infinity
+                         n-levels-or-nil)))))
+              (try-to-move
+                ()
+                (nomis/outline/w/prev-or-next-heading 1
+                                                      (if (< n 0)
+                                                          :backward
+                                                        :forward)
+                                                      kind))
+              (show-lineage ()
+                (-nomis/tree/nav+lineage/show-lineage n-levels-to-show-or-nil)))
+      (nomis/outline/w/back-to-heading)
+      (if (not (or (-nomis/tree/nav+lineage/doing-forward-same-level-on-last-but-not-first-child/must-be-at-boh)
+                   (-nomis/tree/nav+lineage/doing-backward-same-level-on-first-but-not-last-child/must-be-at-boh)
+                   ;; If we very recently did
+                   ;; a `nomis/tree/nav+lineage/xxxx-sibling` which tried to
+                   ;; go too far and which so collapsed the current heading,
+                   ;; and if now we're doing
+                   ;; a `nomis/tree/nav+lineage/xxxx-peer`, we're happy to do
+                   ;; a nav+lineage across the parent.
+                   (-nomis/tree/nav+lineage/sibling-then-peer-with-small-time-gap?)
+                   (expanded-to-desired-level?)))
+          (show-lineage)
+        (let* ((starting-point (point)))
+          (try-to-move)
+          (let* ((moved? (not (= (point) starting-point))))
+            (if moved?
+                (show-lineage)
+              (nomis/outline/w/collapse))))))
     (setq -nomis/tree/nav+lineage/most-recent-timestamp (float-time))))
 
 ;;;;; Nav+lineage commands
