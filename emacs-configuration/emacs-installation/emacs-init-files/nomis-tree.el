@@ -607,15 +607,19 @@ These commands:
           '(nomis/tree/nav+lineage/backward-sibling
             nomis/tree/nav+lineage/backward-peer)))
 
-(defun -nomis/tree/nav+lineage/doing-forward-same-level-on-last-but-not-first-child/must-be-at-boh ()
+(defun -nomis/tree/nav+lineage/forward-same-level-on-last-but-not-first-child/must-be-at-boh ()
   (and (-nomis/tree/nav+lineage/doing-forward-same-level?)
        (nomis/tree/on-last-child?/must-be-at-boh)
        (not (nomis/tree/on-first-child?/must-be-at-boh))))
 
-(defun -nomis/tree/nav+lineage/doing-backward-same-level-on-first-but-not-last-child/must-be-at-boh ()
+(defun -nomis/tree/nav+lineage/backward-same-level-on-first-but-not-last-child/must-be-at-boh ()
   (and (-nomis/tree/nav+lineage/doing-backward-same-level?)
        (nomis/tree/on-first-child?/must-be-at-boh)
        (not (nomis/tree/on-last-child?/must-be-at-boh))))
+
+(defun -nomis/tree/nav+lineage/same-level-not-lone-sibling-no-more-entries?/must-be-at-boh ()
+  (or (-nomis/tree/nav+lineage/forward-same-level-on-last-but-not-first-child/must-be-at-boh)
+      (-nomis/tree/nav+lineage/backward-same-level-on-first-but-not-last-child/must-be-at-boh)))
 
 (defvar -nomis/tree/nav+lineage/most-recent-timestamp -9999)
 
@@ -669,18 +673,20 @@ These commands:
                          (show-lineage)
                        (nomis/outline/w/collapse))))))
       (nomis/outline/w/back-to-heading)
-      (if (or (-nomis/tree/nav+lineage/doing-forward-same-level-on-last-but-not-first-child/must-be-at-boh)
-              (-nomis/tree/nav+lineage/doing-backward-same-level-on-first-but-not-last-child/must-be-at-boh)
-              ;; If we very recently did
-              ;; a `nomis/tree/nav+lineage/xxxx-sibling` which tried to
-              ;; go too far and which so collapsed the current heading,
-              ;; and if now we're doing
-              ;; a `nomis/tree/nav+lineage/xxxx-peer`, we're happy to do
-              ;; a nav+lineage across the parent.
-              (-nomis/tree/nav+lineage/sibling-then-peer-with-small-time-gap?)
-              (expanded-to-desired-level?))
-          (try-to-move-etc)
-        (show-lineage)))
+      (cond ((-nomis/tree/nav+lineage/same-level-not-lone-sibling-no-more-entries?/must-be-at-boh)
+             (try-to-move-etc))
+            ((-nomis/tree/nav+lineage/sibling-then-peer-with-small-time-gap?)
+             ;; If we very recently did
+             ;; a `nomis/tree/nav+lineage/xxxx-sibling` which tried to
+             ;; go too far and which so collapsed the current heading,
+             ;; and if now we're doing
+             ;; a `nomis/tree/nav+lineage/xxxx-peer`, we're happy to do
+             ;; a nav+lineage across the parent.
+             (try-to-move-etc))
+            ((expanded-to-desired-level?)
+             (try-to-move-etc))
+            (t
+             (show-lineage))))
     (setq -nomis/tree/nav+lineage/most-recent-timestamp (float-time))))
 
 ;;;;; Nav+lineage commands
