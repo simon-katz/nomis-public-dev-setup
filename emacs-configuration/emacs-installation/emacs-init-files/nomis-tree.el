@@ -521,29 +521,29 @@ These commands:
       (nomis/outline/w/prev-or-next-heading 1 :forward :sibling t)
       (= (point) starting-point))))
 
-;;;; Stepping
+;;;; Nav+lineage
 
 ;;;;; Preamble
 
 ;; TODO This uses `nomis/tree/fully-expanded?`, and so belongs later in
 ;;      the file.
 
-;;;;; Stepping settings
+;;;;; Nav+lineage settings
 
-(defvar -nomis/tree/step/n-child-levels-to-show nil)
+(defvar -nomis/tree/nav+lineage/n-child-levels-to-show nil)
 
-(defvar -nomis/tree/step-thin-parents? nil)
+(defvar -nomis/tree/nav+lineage/thin-parents? nil)
 
 (defun -nomis/tree/thin-parents-text ()
-  (if -nomis/tree/step-thin-parents? "thin" "fat"))
+  (if -nomis/tree/nav+lineage/thin-parents? "thin" "fat"))
 
-;;;;; -nomis/tree/show-post-step-lineage
+;;;;; -nomis/tree/nav+lineage/show-lineage
 
-(defun -nomis/tree/show-post-step-lineage (&optional n-levels-to-show-or-nil)
+(defun -nomis/tree/nav+lineage/show-lineage (&optional n-levels-to-show-or-nil)
   (let* ((n-levels-or-nil (or n-levels-to-show-or-nil
-                              -nomis/tree/step/n-child-levels-to-show)))
+                              -nomis/tree/nav+lineage/n-child-levels-to-show)))
     (nomis/tree/ls/show-lineage
-     (if -nomis/tree/step-thin-parents?
+     (if -nomis/tree/nav+lineage/thin-parents?
          nomis/tree/ls/spec/hide-all--thin-parents--no-children
        nomis/tree/ls/spec/hide-all--fat-parents--no-children))
     (if (null n-levels-or-nil)
@@ -553,9 +553,9 @@ These commands:
                          (-nomis/tree/thin-parents-text)
                          (or n-levels-or-nil "all"))))
 
-;;;;; nomis/tree/step/set-n-child-levels-to-show
+;;;;; nomis/tree/nav+lineage/set-n-child-levels-to-show
 
-(defun nomis/tree/step/set-n-child-levels-to-show (n)
+(defun nomis/tree/nav+lineage/set-n-child-levels-to-show (n)
   (interactive "P")
   (-nomis/tree/command
       nil
@@ -566,77 +566,78 @@ These commands:
                                   "Number of levels to show ~
                                  (empty string for all children) ~
                                  (currently ~s): "
-                                  -nomis/tree/step/n-child-levels-to-show))))
+                                  -nomis/tree/nav+lineage/n-child-levels-to-show))))
               (if (member (s-trim s) '("" "nil"))
                   nil
                 (string-to-number s))))))
-  (setq -nomis/tree/step/n-child-levels-to-show (if (null n) n (max 0 (floor n))))
-  (-nomis/tree/show-post-step-lineage)
-  (message "step-n-child-levels-to-show set to %s"
-           -nomis/tree/step/n-child-levels-to-show))
+  (setq -nomis/tree/nav+lineage/n-child-levels-to-show
+        (if (null n) n (max 0 (floor n))))
+  (-nomis/tree/nav+lineage/show-lineage)
+  (message "nav+lineage n-child-levels-to-show set to %s"
+           -nomis/tree/nav+lineage/n-child-levels-to-show))
 
-;;;;; nomis/tree/step/toggle-parents-approach
+;;;;; nomis/tree/nav+lineage/toggle-parents-approach
 
-(defun nomis/tree/step/toggle-parents-approach ()
+(defun nomis/tree/nav+lineage/toggle-parents-approach ()
   (interactive)
   (-nomis/tree/command
       nil
-    (setq -nomis/tree/step-thin-parents?
-          (not -nomis/tree/step-thin-parents?))
-    (-nomis/tree/show-post-step-lineage)
-    (message "step-parents-approach set to %s"
+    (setq -nomis/tree/nav+lineage/thin-parents?
+          (not -nomis/tree/nav+lineage/thin-parents?))
+    (-nomis/tree/nav+lineage/show-lineage)
+    (message "nav+lineage parents-approach set to %s"
              (-nomis/tree/thin-parents-text))))
 
-;;;;; Step algorithm
+;;;;; Nav+lineage algorithm
 
-(defun -nomis/tree/step-sibling-then-step-peer? ()
+(defun -nomis/tree/nav+lineage/sibling-then-peer? ()
   (let ((cmds (list (nomis/outline/w/last-command)
                     this-command)))
     (member cmds
-            '((nomis/tree/step-forward-sibling
-               nomis/tree/step-forward-peer)
-              (nomis/tree/step-backward-sibling
-               nomis/tree/step-backward-peer)))))
+            '((nomis/tree/nav+lineage/forward-sibling
+               nomis/tree/nav+lineage/forward-peer)
+              (nomis/tree/nav+lineage/backward-sibling
+               nomis/tree/nav+lineage/backward-peer)))))
 
-(defun -nomis/tree/doing-step-forward-same-level? ()
+(defun -nomis/tree/nav+lineage/doing-forward-same-level? ()
   (member this-command
-          '(nomis/tree/step-forward-sibling
-            nomis/tree/step-forward-peer)))
+          '(nomis/tree/nav+lineage/forward-sibling
+            nomis/tree/nav+lineage/forward-peer)))
 
-(defun -nomis/tree/doing-step-backward-same-level? ()
+(defun -nomis/tree/nav+lineage/doing-backward-same-level? ()
   (member this-command
-          '(nomis/tree/step-backward-sibling
-            nomis/tree/step-backward-peer)))
+          '(nomis/tree/nav+lineage/backward-sibling
+            nomis/tree/nav+lineage/backward-peer)))
 
-(defun -nomis/tree/doing-step-forward-same-level-on-last-but-not-first-child/must-be-at-boh ()
-  (and (-nomis/tree/doing-step-forward-same-level?)
+(defun -nomis/tree/nav+lineage/doing-forward-same-level-on-last-but-not-first-child/must-be-at-boh ()
+  (and (-nomis/tree/nav+lineage/doing-forward-same-level?)
        (nomis/tree/on-last-child?/must-be-at-boh)
        (not (nomis/tree/on-first-child?/must-be-at-boh))))
 
-(defun -nomis/tree/doing-step-backward-same-level-on-first-but-not-last-child/must-be-at-boh ()
-  (and (-nomis/tree/doing-step-backward-same-level?)
+(defun -nomis/tree/nav+lineage/doing-backward-same-level-on-first-but-not-last-child/must-be-at-boh ()
+  (and (-nomis/tree/nav+lineage/doing-backward-same-level?)
        (nomis/tree/on-first-child?/must-be-at-boh)
        (not (nomis/tree/on-last-child?/must-be-at-boh))))
 
-(defvar -nomis/tree/most-recent-step-time -9999)
+(defvar -nomis/tree/nav+lineage/most-recent-timestamp -9999)
 
-(defvar nomis/tree/step-quick-repeat-delay
+(defvar nomis/tree/nav+lineage/quick-repeat-delay
   (if (boundp '*nomis/popup/duration*)
       *nomis/popup/duration*
     1))
 
-(defun -nomis/tree/small-time-gap-since-prev-step-command? ()
+(defun -nomis/tree/nav+lineage/small-time-gap-since-prev-command? ()
   (< (float-time)
-     (+ -nomis/tree/most-recent-step-time
-        nomis/tree/step-quick-repeat-delay)))
+     (+ -nomis/tree/nav+lineage/most-recent-timestamp
+        nomis/tree/nav+lineage/quick-repeat-delay)))
 
-(defun -nomis/tree/step-sibling-then-step-peer-with-small-time-gap? ()
-  (and (-nomis/tree/small-time-gap-since-prev-step-command?)
-       (-nomis/tree/step-sibling-then-step-peer?)))
+(defun -nomis/tree/nav+lineage/sibling-then-peer-with-small-time-gap? ()
+  (and (-nomis/tree/nav+lineage/small-time-gap-since-prev-command?)
+       (-nomis/tree/nav+lineage/sibling-then-peer?)))
 
-(defun -nomis/tree/step/impl (n kind n-levels-to-show-or-nil)
+(defun -nomis/tree/nav+lineage/impl (n kind n-levels-to-show-or-nil)
   (let* ((n-levels-or-nil (or n-levels-to-show-or-nil
-                              -nomis/tree/step/n-child-levels-to-show)))
+                              -nomis/tree/nav+lineage/n-child-levels-to-show)))
     (nomis/scrolling/with-maybe-maintain-line-no-in-window
       (cl-flet ((expanded-to-desired-level?
                   ()
@@ -663,76 +664,77 @@ These commands:
                                                             :backward
                                                           :forward)
                                                         kind))
-                (show-post-step-lineage ()
-                  (-nomis/tree/show-post-step-lineage n-levels-to-show-or-nil)))
+                (show-lineage ()
+                  (-nomis/tree/nav+lineage/show-lineage n-levels-to-show-or-nil)))
         (nomis/outline/w/back-to-heading)
-        (if (not (or (-nomis/tree/doing-step-forward-same-level-on-last-but-not-first-child/must-be-at-boh)
-                     (-nomis/tree/doing-step-backward-same-level-on-first-but-not-last-child/must-be-at-boh)
-                     ;; If we very recently did a `nomis/tree/step-xxxx-sibling`
-                     ;; which tried to go too far and which so collapsed the
-                     ;; current heading, and if now we're doing
-                     ;; a `nomis/tree/step-xxxx-peer`, we're happy to do a step
-                     ;; across the parent.
-                     (-nomis/tree/step-sibling-then-step-peer-with-small-time-gap?)
+        (if (not (or (-nomis/tree/nav+lineage/doing-forward-same-level-on-last-but-not-first-child/must-be-at-boh)
+                     (-nomis/tree/nav+lineage/doing-backward-same-level-on-first-but-not-last-child/must-be-at-boh)
+                     ;; If we very recently did
+                     ;; a `nomis/tree/nav+lineage/xxxx-sibling` which tried to
+                     ;; go too far and which so collapsed the current heading,
+                     ;; and if now we're doing
+                     ;; a `nomis/tree/nav+lineage/xxxx-peer`, we're happy to do
+                     ;; a nav+lineage across the parent.
+                     (-nomis/tree/nav+lineage/sibling-then-peer-with-small-time-gap?)
                      (expanded-to-desired-level?)))
-            (show-post-step-lineage)
+            (show-lineage)
           (let* ((starting-point (point)))
             (try-to-move)
             (let* ((moved? (not (= (point) starting-point))))
               (if moved?
-                  (show-post-step-lineage)
+                  (show-lineage)
                 (nomis/outline/w/collapse)))))))
-    (setq -nomis/tree/most-recent-step-time (float-time))))
+    (setq -nomis/tree/nav+lineage/most-recent-timestamp (float-time))))
 
-;;;;; Step commands
+;;;;; Nav+lineage commands
 
-(defun nomis/tree/step-forward-any-level (n-levels-to-show-or-nil)
+(defun nomis/tree/nav+lineage/forward-any-level (n-levels-to-show-or-nil)
   "Move forward to the next heading at any level, then expand it.
 N-LEVELS-TO-SHOW-OR-NIL controls how many levels to expand; nil means fully."
   (interactive "P")
   (-nomis/tree/command
       nil
-    (-nomis/tree/step/impl 1 :any-level n-levels-to-show-or-nil)))
+    (-nomis/tree/nav+lineage/impl 1 :any-level n-levels-to-show-or-nil)))
 
-(defun nomis/tree/step-backward-any-level (n-levels-to-show-or-nil)
+(defun nomis/tree/nav+lineage/backward-any-level (n-levels-to-show-or-nil)
   "Move backward to the previous heading at any level, then expand it.
 N-LEVELS-TO-SHOW-OR-NIL controls how many levels to expand; nil means fully."
   (interactive "P")
   (-nomis/tree/command
       nil
-    (-nomis/tree/step/impl -1 :any-level n-levels-to-show-or-nil)))
+    (-nomis/tree/nav+lineage/impl -1 :any-level n-levels-to-show-or-nil)))
 
-(defun nomis/tree/step-forward-sibling (n-levels-to-show-or-nil)
+(defun nomis/tree/nav+lineage/forward-sibling (n-levels-to-show-or-nil)
   "Move forward to the next sibling, then expand it.
 N-LEVELS-TO-SHOW-OR-NIL controls how many levels to expand; nil means fully."
   (interactive "P")
   (-nomis/tree/command
       nil
-    (-nomis/tree/step/impl 1 :sibling n-levels-to-show-or-nil)))
+    (-nomis/tree/nav+lineage/impl 1 :sibling n-levels-to-show-or-nil)))
 
-(defun nomis/tree/step-backward-sibling (n-levels-to-show-or-nil)
+(defun nomis/tree/nav+lineage/backward-sibling (n-levels-to-show-or-nil)
   "Move backward to the previous sibling, then expand it.
 N-LEVELS-TO-SHOW-OR-NIL controls how many levels to expand; nil means fully."
   (interactive "P")
   (-nomis/tree/command
       nil
-    (-nomis/tree/step/impl -1 :sibling n-levels-to-show-or-nil)))
+    (-nomis/tree/nav+lineage/impl -1 :sibling n-levels-to-show-or-nil)))
 
-(defun nomis/tree/step-forward-peer (n-levels-to-show-or-nil)
+(defun nomis/tree/nav+lineage/forward-peer (n-levels-to-show-or-nil)
   "Move forward to the next peer, then expand it.
 N-LEVELS-TO-SHOW-OR-NIL controls how many levels to expand; nil means fully."
   (interactive "P")
   (-nomis/tree/command
       nil
-    (-nomis/tree/step/impl 1 :peer n-levels-to-show-or-nil)))
+    (-nomis/tree/nav+lineage/impl 1 :peer n-levels-to-show-or-nil)))
 
-(defun nomis/tree/step-backward-peer (n-levels-to-show-or-nil)
+(defun nomis/tree/nav+lineage/backward-peer (n-levels-to-show-or-nil)
   "Move backward to the previous peer, then expand it.
 N-LEVELS-TO-SHOW-OR-NIL controls how many levels to expand; nil means fully."
   (interactive "P")
   (-nomis/tree/command
       nil
-    (-nomis/tree/step/impl -1 :peer n-levels-to-show-or-nil)))
+    (-nomis/tree/nav+lineage/impl -1 :peer n-levels-to-show-or-nil)))
 
 ;;;; Info about trees
 

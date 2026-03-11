@@ -178,12 +178,12 @@ H-o ?    Show this help")
 
 ;;;; Movement + expand/collapse
 
-(define-key nomis/tree-mode-map (kbd "C-H-M-,")   'nomis/tree/step-backward-any-level)
-(define-key nomis/tree-mode-map (kbd "C-H-M-.")   'nomis/tree/step-forward-any-level)
-(define-key nomis/tree-mode-map (kbd "H-M-,")     'nomis/tree/step-backward-sibling)
-(define-key nomis/tree-mode-map (kbd "H-M-.")     'nomis/tree/step-forward-sibling)
-(define-key nomis/tree-mode-map (kbd "H-M-<")     'nomis/tree/step-backward-peer)
-(define-key nomis/tree-mode-map (kbd "H-M->")     'nomis/tree/step-forward-peer)
+(define-key nomis/tree-mode-map (kbd "C-H-M-,")   'nomis/tree/nav+lineage/backward-any-level)
+(define-key nomis/tree-mode-map (kbd "C-H-M-.")   'nomis/tree/nav+lineage/forward-any-level)
+(define-key nomis/tree-mode-map (kbd "H-M-,")     'nomis/tree/nav+lineage/backward-sibling)
+(define-key nomis/tree-mode-map (kbd "H-M-.")     'nomis/tree/nav+lineage/forward-sibling)
+(define-key nomis/tree-mode-map (kbd "H-M-<")     'nomis/tree/nav+lineage/backward-peer)
+(define-key nomis/tree-mode-map (kbd "H-M->")     'nomis/tree/nav+lineage/forward-peer)
 
 ;; The following key bindings have no good meaning in our scheme -- Shift means
 ;; "navigate to peer", and we are already doing that without the Shift.
@@ -220,8 +220,8 @@ H-o ?    Show this help")
 (define-key nomis/tree/kb/map (kbd "]") 'nomis/tree/show-children-from-root/to-current-level)
 (define-key nomis/tree/kb/map (kbd "=") 'nomis/tree/show-children-from-all-roots/to-current-level)
 
-(define-key nomis/tree/kb/map (kbd "c") 'nomis/tree/step/set-n-child-levels-to-show)
-(define-key nomis/tree/kb/map (kbd "p") 'nomis/tree/step/toggle-parents-approach)
+(define-key nomis/tree/kb/map (kbd "c") 'nomis/tree/nav+lineage/set-n-child-levels-to-show)
+(define-key nomis/tree/kb/map (kbd "p") 'nomis/tree/nav+lineage/toggle-parents-approach)
 (define-key nomis/tree/kb/map (kbd "m") 'nomis/scrolling/toggle-maintain-line-no-in-window)
 
 (define-key nomis/tree/kb/map (kbd "?") 'nomis/tree/pop-up-help)
