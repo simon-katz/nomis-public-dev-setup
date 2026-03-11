@@ -550,6 +550,22 @@ These commands:
   (setq nomis/tree/step-n-levels-to-show (if (null n) n (max 0 (floor n))))
   (message "n-levels-to-show set to %s" nomis/tree/step-n-levels-to-show))
 
+;;;;; -nomis/tree/step-thin-parents?
+
+(defvar -nomis/tree/step-thin-parents? nil)
+
+(defun -nomis/tree/thin-parents-text ()
+  (if -nomis/tree/step-thin-parents? "thin" "fat"))
+
+(defun nomis/tree/step/toggle-parents-approach ()
+  (interactive)
+  (-nomis/tree/command
+      nil
+    (setq -nomis/tree/step-thin-parents?
+          (not -nomis/tree/step-thin-parents?))
+    (message "step-parents-approach set to %s"
+             (-nomis/tree/thin-parents-text))))
+
 ;;;;; Step algorithm
 
 (defun -nomis/tree/step-sibling-then-step-peer? ()
@@ -598,7 +614,10 @@ These commands:
        (-nomis/tree/step-sibling-then-step-peer?)))
 
 (defun -nomis/tree/show-post-step-lineage (n-levels-to-show-or-nil)
-  (nomis/tree/ls/show-lineage nomis/tree/ls/spec/hide-all--fat-parents--no-children)
+  (nomis/tree/ls/show-lineage
+   (if -nomis/tree/step-thin-parents?
+       nomis/tree/ls/spec/hide-all--thin-parents--no-children
+       nomis/tree/ls/spec/hide-all--fat-parents--no-children))
   (let* ((n-levels-or-nil (or n-levels-to-show-or-nil
                               nomis/tree/step-n-levels-to-show)))
     (if (null n-levels-or-nil)
@@ -636,7 +655,9 @@ These commands:
                                                         kind))
                 (show-post-step-lineage ()
                   (-nomis/tree/show-post-step-lineage n-levels-to-show-or-nil)
-                  (message "n-levels = %s" (or n-levels-or-nil "all"))))
+                  (message "parents: %s    # children: %s"
+                           (-nomis/tree/thin-parents-text)
+                           (or n-levels-or-nil "all"))))
         (nomis/outline/w/back-to-heading)
         (if (not (or (-nomis/tree/doing-step-forward-same-level-on-last-but-not-first-child/must-be-at-boh)
                      (-nomis/tree/doing-step-backward-same-level-on-first-but-not-last-child/must-be-at-boh)
