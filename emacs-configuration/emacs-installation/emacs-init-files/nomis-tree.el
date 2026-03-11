@@ -523,8 +523,12 @@ These commands:
 
 ;;;; Stepping
 
+;;;;; Preamble
+
 ;; TODO This uses `nomis/tree/fully-expanded?`, and so belongs later in
 ;;      the file.
+
+;;;;; nomis/tree/step-n-levels-to-show
 
 (defvar nomis/tree/step-n-levels-to-show nil)
 
@@ -545,6 +549,8 @@ These commands:
                 (string-to-number s))))))
   (setq nomis/tree/step-n-levels-to-show (if (null n) n (max 0 (floor n))))
   (message "n-levels-to-show set to %s" nomis/tree/step-n-levels-to-show))
+
+;;;;; Step algorithm
 
 (defun -nomis/tree/step-sibling-then-step-peer? ()
   (let ((cmds (list (nomis/outline/w/last-command)
@@ -649,6 +655,8 @@ These commands:
                   (show-post-step-lineage)
                 (nomis/outline/w/collapse)))))))
     (setq -nomis/tree/most-recent-step-time (float-time))))
+
+;;;;; Step commands
 
 (defun nomis/tree/step-forward-any-level (n-levels-to-show-or-nil)
   "Move forward to the next heading at any level, then expand it.
