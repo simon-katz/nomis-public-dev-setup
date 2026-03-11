@@ -246,7 +246,7 @@ message and in case adding org level messes things up.")
 
 ;;;;; Support for do-ing and mapping
 
-(defun -nomis/tree/mapc-headlines-satisfying (pred-of-no-args fun)
+(defun -nomis/tree/mapc-headings-satisfying (pred-of-no-args fun)
   (save-excursion
     (cl-flet ((call-fun-when-pred-is-satisfied
                 ()
@@ -274,9 +274,9 @@ message and in case adding org level messes things up.")
 ;;;;; Do-ing
 
 (defun nomis/tree/mapc-entries-from-point (fun)
-  "Call FUN for the current headline and for each headline below the current
-headline.
-When in a body, \"current headline\" means the current body's parent headline."
+  "Call FUN for the current heading and for each heading below the current
+heading.
+When in a body, \"current heading\" means the current body's parent heading."
   (save-excursion
     (nomis/outline/w/map-tree fun))
   nil)
@@ -286,14 +286,14 @@ When in a body, \"current headline\" means the current body's parent headline."
     (nomis/tree/mapc-entries-from-point fun)))
 
 (defun nomis/tree/mapc-roots (fun)
-  (-nomis/tree/mapc-headlines-satisfying (lambda ()
-                                           (= (nomis/outline/w/level/boh)
-                                              (nomis/outline/w/top-level-level)))
-                                         fun))
+  (-nomis/tree/mapc-headings-satisfying (lambda ()
+                                          (= (nomis/outline/w/level/boh)
+                                             (nomis/outline/w/top-level-level)))
+                                        fun))
 
 (defun nomis/tree/mapc-entries-from-all-roots (fun)
-  (-nomis/tree/mapc-headlines-satisfying (lambda () t)
-                                         fun)
+  (-nomis/tree/mapc-headings-satisfying (lambda () t)
+                                        fun)
   nil)
 
 ;;;;; Mapping
@@ -334,10 +334,10 @@ When in a body, \"current headline\" means the current body's parent headline."
 ;;;;; Expanding and collapsing
 
 (defun nomis/tree/expand (n &optional collapse-first?)
-  "Expand N levels below the current headline. If COLLAPSE-FIRST? is non-nil,
+  "Expand N levels below the current heading. If COLLAPSE-FIRST? is non-nil,
 collapse the tree first so that only N levels are shown. When in
-a body, \"current headline\" means the current body's parent
-headline."
+a body, \"current heading\" means the current body's parent
+heading."
   (when collapse-first? (nomis/outline/w/collapse))
   (nomis/outline/w/show-children n)
   (when nomis/tree/show-bodies?
@@ -704,8 +704,8 @@ N-LEVELS-TO-SHOW-OR-NIL controls how many levels to expand; nil means fully."
 ;;;; Info about trees
 
 (defun nomis/tree/deepest-level-below ()
-  "The deepest level that exists below the current headline.
-When in a body, \"current headline\" means the current body's parent headline.
+  "The deepest level that exists below the current heading.
+When in a body, \"current heading\" means the current body's parent heading.
 Example: If we are at level 5 and there are 2 further levels below, the result
 is 7."
   (nomis/tree/reduce-entries-from-point 0
@@ -713,17 +713,17 @@ is 7."
                                         #'max))
 
 (defun nomis/tree/n-levels-below ()
-  "The number of levels that exist below the current headline.
-When in a body, \"current headline\" means the current body's parent headline.
+  "The number of levels that exist below the current heading.
+When in a body, \"current heading\" means the current body's parent heading.
 Example: If we are at level 5 and there are 2 further levels below, the result
 is 2."
   (- (nomis/tree/deepest-level-below)
      (nomis/outline/w/level/no-inc-if-in-body)))
 
 (defun nomis/tree/n-levels-being-shown-or-infinity ()
-  "The number of levels being shown from the current headline, or
+  "The number of levels being shown from the current heading, or
 infinity if it is fully expanded.
-When in a body, \"current headline\" means the current body's parent headline."
+When in a body, \"current heading\" means the current body's parent heading."
   (- (nomis/tree/reduce-entries-from-point
       nomis/outline/w/plus-infinity
       #'(lambda ()
@@ -748,15 +748,15 @@ When in a body, \"current headline\" means the current body's parent headline."
 ;;;; The idea of tree-info, and things that use it
 
 (defun -nomis/tree/tree-info* ()
-  "Tree info for the current headline.
-When in a body, \"current headline\" means the current body's parent headline."
+  "Tree info for the current heading.
+When in a body, \"current heading\" means the current body's parent heading."
   ;; This is rather expensive, because the value returned by
   ;; `nomis/tree/map-entries-from-point` is processed further and
   ;; discarded. You could do more in the fun passed to
   ;; `nomis/tree/map-entries-from-point`, but it's fiddly because:
   ;; - You want to collect multiple items per iteration.
   ;;   (Solution: use nconc on lists.)
-  ;; - You want to look at two headlines at a time.
+  ;; - You want to look at two headings at a time.
   ;;   (Solution: record previous item in a piece of mutable state.)
   ;; - You'd need to do some fixing up at the end to add that final dummy
   ;;   entry when the final item is visible.
@@ -826,9 +826,9 @@ When in a body, \"current headline\" means the current body's parent headline."
     res))
 
 (defun nomis/tree/fully-expanded? ()
-  "Is the tree beneath the current headline fully expanded?
+  "Is the tree beneath the current heading fully expanded?
 
-When in a body, \"current headline\" means the current body's parent headline.
+When in a body, \"current heading\" means the current body's parent heading.
 
 If `nomis/tree/show-bodies?' is truthy, this returns truthy only if all
 bodies are visible. Otherwise body visibiity is not taken into account."
@@ -839,8 +839,8 @@ bodies are visible. Otherwise body visibiity is not taken into account."
                            (not nomis/tree/show-bodies?)))))
 
 (defun nomis/tree/start-level-for-incremental-contract ()
-  "The level to use when incrementally collapsing the current headline.
-When in a body, \"current headline\" means the current body's parent headline."
+  "The level to use when incrementally collapsing the current heading.
+When in a body, \"current heading\" means the current body's parent heading."
   ;; Collapse the most-deeply-nested expanded level, and expand everything
   ;; else to that level.
   (let* ((deepest-visible-levels
@@ -1007,12 +1007,12 @@ When in a body, \"current headline\" means the current body's parent headline."
 ;;;;; nomis/tree/show-children-from-point/xxxx support
 
 (defun nomis/tree/show-children-from-point* (n) ; TODO You don't use the special negative arg thing. Simplify or get back that functionality.
-  "Make point visible if it isn't already, and expand current headline to
+  "Make point visible if it isn't already, and expand current heading to
 n levels.
 
 Details:
 
-If N is not negative, expand to show N levels. Any headlines at level N
+If N is not negative, expand to show N levels. Any headings at level N
 will be collapsed.
 
 If N is negative, expand to show (abs N) levels, but do not hide anything
@@ -1039,15 +1039,15 @@ that is already being displayed."
 ;;;;; nomis/tree/show-children-from-point/xxxx
 
 (defun nomis/tree/show-children-from-point (n)
-  "Show N levels from the current headline, and collapse anything that's
+  "Show N levels from the current heading, and collapse anything that's
 at a higher level.
-When in a body, \"current headline\" means the current body's parent headline."
+When in a body, \"current heading\" means the current body's parent heading."
   (let* ((v n))
     (-nomis/tree/show-children-from-point/set-level-etc v :no-check :dummy)))
 
 (defun nomis/tree/show-children-from-point/set-min ()
-  "Fully collapse the current headline.
-When in a body, \"current headline\" means the current body's parent headline."
+  "Fully collapse the current heading.
+When in a body, \"current heading\" means the current body's parent heading."
   (interactive)
   (-nomis/tree/command
       nil
@@ -1056,8 +1056,8 @@ When in a body, \"current headline\" means the current body's parent headline."
       (-nomis/tree/show-children-from-point/set-level-etc v :setting-min current-value))))
 
 (defun nomis/tree/show-children-from-point/fully-expand ()
-  "Fully expand the current headline.
-When in a body, \"current headline\" means the current body's parent headline."
+  "Fully expand the current heading.
+When in a body, \"current heading\" means the current body's parent heading."
   (interactive)
   (-nomis/tree/command
       nil
@@ -1066,9 +1066,9 @@ When in a body, \"current headline\" means the current body's parent headline."
       (-nomis/tree/show-children-from-point/set-level-etc v :setting-max current-value))))
 
 (defun nomis/tree/show-children-from-point/incremental/less (n)
-  "If `N` is not provided, collapse the current headline by one level.
+  "If `N` is not provided, collapse the current heading by one level.
 If `N` is provided, set the number of child levels to `N`.
-When in a body, \"current headline\" means the current body's parent headline."
+When in a body, \"current heading\" means the current body's parent heading."
   (interactive "P")
   (-nomis/tree/command
       nil
@@ -1078,9 +1078,9 @@ When in a body, \"current headline\" means the current body's parent headline."
        (1- (nomis/tree/start-level-for-incremental-contract)) :less :dummy))))
 
 (defun nomis/tree/show-children-from-point/incremental/more (n)
-  "If `N` is not provided, expand the current headline by one level.
+  "If `N` is not provided, expand the current heading by one level.
 If `N` is provided, set the number of child levels to `N`.
-When in a body, \"current headline\" means the current body's parent headline."
+When in a body, \"current heading\" means the current body's parent heading."
   (interactive "P")
   (-nomis/tree/command
       nil
@@ -1128,7 +1128,7 @@ the current entry's parent."
       (nomis/tree/show-children-from-point/fully-expand))))
 
 (defun nomis/tree/show-children-from-parent/incremental/less (n)
-  "If `N` is not provided, collapse the current headline's parent by one level.
+  "If `N` is not provided, collapse the current heading's parent by one level.
 Keep the parent expanded by at least one level.
 If `N` is provided, set the number of child levels to `N`."
   (interactive "P")
@@ -1138,7 +1138,7 @@ If `N` is provided, set the number of child levels to `N`."
       (nomis/tree/show-children-from-point/incremental/less n))))
 
 (defun nomis/tree/show-children-from-parent/incremental/more (n)
-  "If `N` is not provided, expand the current headline's parent by one level.
+  "If `N` is not provided, expand the current heading's parent by one level.
 If `N` is provided, set the number of child levels to `N`."
   (interactive "P")
   (-nomis/tree/command
@@ -1150,7 +1150,7 @@ If `N` is provided, set the number of child levels to `N`."
 
 (defun nomis/tree/show-children-from-root* (n)
   "Call `nomis/tree/show-children-from-point*` on the current root
-headline, with N as the parameter."
+heading, with N as the parameter."
   (nomis/tree/save-excursion-to-root
     (nomis/tree/show-children-from-point* n)))
 
@@ -1189,7 +1189,7 @@ headline, with N as the parameter."
       (-nomis/tree/show-children-from-root/set-level-etc v :setting-max current-value))))
 
 (defun nomis/tree/show-children-from-root/incremental/less (n)
-  "If `N` is not provided, collapse the current headline's root by one level.
+  "If `N` is not provided, collapse the current heading's root by one level.
 If `N` is provided, set the number of child levels to `N`."
   (interactive "P")
   (-nomis/tree/command
@@ -1200,7 +1200,7 @@ If `N` is provided, set the number of child levels to `N`."
        (1- (nomis/tree/start-level-for-incremental-contract/root)) :less :dummy))))
 
 (defun nomis/tree/show-children-from-root/incremental/more (n)
-  "If `N` is not provided, expand the current headline's root by one level.
+  "If `N` is not provided, expand the current heading's root by one level.
 If `N` is provided, set the number of child levels to `N`."
   (interactive "P")
   (-nomis/tree/command
@@ -1221,7 +1221,7 @@ If `N` is provided, set the number of child levels to `N`."
 ;;;;; nomis/tree/show-children-from-all-roots/xxxx support
 
 (defun nomis/tree/show-children-from-all-roots* (n)
-  "Call `nomis/tree/show-children-from-point*` on all root headlines,
+  "Call `nomis/tree/show-children-from-point*` on all root headings,
 with N as the parameter."
   (nomis/tree/mapc-roots (lambda () (nomis/tree/show-children-from-point* n))))
 
