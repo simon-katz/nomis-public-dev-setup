@@ -658,9 +658,9 @@ These commands:
                                                         kind))
                 (show-post-step-lineage ()
                   (-nomis/tree/show-post-step-lineage n-levels-to-show-or-nil)
-                  (message "parents: %s    # children: %s"
-                           (-nomis/tree/thin-parents-text)
-                           (or n-levels-or-nil "all"))))
+                  (nomis/popup/message "parents: %s    # children: %s"
+                                       (-nomis/tree/thin-parents-text)
+                                       (or n-levels-or-nil "all"))))
         (nomis/outline/w/back-to-heading)
         (if (not (or (-nomis/tree/doing-step-forward-same-level-on-last-but-not-first-child/must-be-at-boh)
                      (-nomis/tree/doing-step-backward-same-level-on-first-but-not-last-child/must-be-at-boh)
