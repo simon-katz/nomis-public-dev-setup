@@ -548,6 +548,7 @@ These commands:
                   nil
                 (string-to-number s))))))
   (setq -nomis/tree/step/n-child-levels-to-show (if (null n) n (max 0 (floor n))))
+  (-nomis/tree/show-post-step-lineage)
   (message "step-n-child-levels-to-show set to %s"
            -nomis/tree/step/n-child-levels-to-show))
 
@@ -564,21 +565,25 @@ These commands:
       nil
     (setq -nomis/tree/step-thin-parents?
           (not -nomis/tree/step-thin-parents?))
+    (-nomis/tree/show-post-step-lineage)
     (message "step-parents-approach set to %s"
              (-nomis/tree/thin-parents-text))))
 
 ;;;;; -nomis/tree/show-post-step-lineage
 
-(defun -nomis/tree/show-post-step-lineage (n-levels-to-show-or-nil)
-  (nomis/tree/ls/show-lineage
-   (if -nomis/tree/step-thin-parents?
-       nomis/tree/ls/spec/hide-all--thin-parents--no-children
-       nomis/tree/ls/spec/hide-all--fat-parents--no-children))
+(defun -nomis/tree/show-post-step-lineage (&optional n-levels-to-show-or-nil)
   (let* ((n-levels-or-nil (or n-levels-to-show-or-nil
                               -nomis/tree/step/n-child-levels-to-show)))
+    (nomis/tree/ls/show-lineage
+     (if -nomis/tree/step-thin-parents?
+         nomis/tree/ls/spec/hide-all--thin-parents--no-children
+       nomis/tree/ls/spec/hide-all--fat-parents--no-children))
     (if (null n-levels-or-nil)
         (nomis/tree/expand-fully)
-      (nomis/tree/expand n-levels-or-nil t))))
+      (nomis/tree/expand n-levels-or-nil t))
+    (nomis/popup/message "parents: %s  n-children: %s"
+                         (-nomis/tree/thin-parents-text)
+                         (or n-levels-or-nil "all"))))
 
 ;;;;; Step algorithm
 
@@ -657,10 +662,7 @@ These commands:
                                                           :forward)
                                                         kind))
                 (show-post-step-lineage ()
-                  (-nomis/tree/show-post-step-lineage n-levels-to-show-or-nil)
-                  (nomis/popup/message "parents: %s  n-children: %s"
-                                       (-nomis/tree/thin-parents-text)
-                                       (or n-levels-or-nil "all"))))
+                  (-nomis/tree/show-post-step-lineage n-levels-to-show-or-nil)))
         (nomis/outline/w/back-to-heading)
         (if (not (or (-nomis/tree/doing-step-forward-same-level-on-last-but-not-first-child/must-be-at-boh)
                      (-nomis/tree/doing-step-backward-same-level-on-first-but-not-last-child/must-be-at-boh)
