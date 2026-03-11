@@ -183,7 +183,7 @@ H-o ?    Show this help")
 (define-key nomis/tree-mode-map (kbd "H-M->")     'nomis/tree/step-forward-peer)
 
 ;; The following key bindings have no good meaning in our scheme -- Shift means
-;; "navigat to peer", and we are already doing that without the Shift.
+;; "navigate to peer", and we are already doing that without the Shift.
 ;;
 ;; `(kbd "C-H-<")`
 ;; `(kbd "C-H->")`
