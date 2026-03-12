@@ -206,13 +206,14 @@ message and in case adding outline level messes things up.")
               has-invisible-body?)))))
 
 (defun nomis/tree/level-incl-any-body ()
-  (cl-assert (nomis/outline/w/at-beginning-of-heading?))
-  (let* ((heading-level (nomis/outline/w/level/boh)))
-    (+ heading-level
-       (if (and -nomis/tree/show-bodies?
-                (-nomis/outine/w/has-body?))
-           1
-         0))))
+  (save-excursion
+    (nomis/outline/w/back-to-heading)
+    (let* ((heading-level (nomis/outline/w/level/boh)))
+      (+ heading-level
+         (if (and -nomis/tree/show-bodies?
+                  (-nomis/outine/w/has-body?))
+             1
+           0)))))
 
 (defun -nomis/tree/in-body? ()
   (> (point)
