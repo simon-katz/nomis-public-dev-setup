@@ -521,6 +521,20 @@ These commands:
       (nomis/outline/w/prev-or-next-heading 1 :forward :sibling t)
       (= (point) starting-point))))
 
+(defun nomis/tree/on-first-peer?/must-be-at-boh ()
+  "Truthy if on first or only peer."
+  (save-excursion
+    (let ((starting-point (point)))
+      (nomis/outline/w/prev-or-next-heading 1 :backward :peer t)
+      (= (point) starting-point))))
+
+(defun nomis/tree/on-last-peer?/must-be-at-boh ()
+  "Truthy if on last or only peer."
+  (save-excursion
+    (let ((starting-point (point)))
+      (nomis/outline/w/prev-or-next-heading 1 :forward :peer t)
+      (= (point) starting-point))))
+
 ;;;; Nav+lineage
 
 ;;;;; Preamble
@@ -590,16 +604,28 @@ These commands:
 
 ;;;;; Nav+lineage algorithm
 
-(defun -nomis/tree/nav+lineage/doing-same-level-not-lone-no-more-entries?/must-be-at-boh ()
-  ;; TODO: Fix doc string.
-  ;; "Return non-nil if moving forward at the last child or backward at the first child (if not a lone child)."
+(defun -nomis/tree/nav+lineage/doing-sibling-final-not-lone?/must-be-at-boh ()
+  "Return non-nil if doing sibling nav+lineage from \"final\" non-lone sibling.
+
+\"Final\" means \"last\" for a forward navigation and \"first\" for a
+backward navigation."
   (let* ((last? (nomis/tree/on-last-sibling?/must-be-at-boh))
          (first? (nomis/tree/on-first-sibling?/must-be-at-boh)))
-    (cond ((member this-command '(nomis/tree/nav+lineage/forward-sibling
-                                  nomis/tree/nav+lineage/forward-peer))
+    (cond ((eq this-command 'nomis/tree/nav+lineage/forward-sibling)
            (and last? (not first?)))
-          ((member this-command '(nomis/tree/nav+lineage/backward-sibling
-                                  nomis/tree/nav+lineage/backward-peer))
+          ((eq this-command 'nomis/tree/nav+lineage/backward-sibling)
+           (and first? (not last?))))))
+
+(defun -nomis/tree/nav+lineage/doing-peer-final-not-lone?/must-be-at-boh ()
+  "Return non-nil if doing peer nav+lineage from \"final\" non-lone peer.
+
+\"Final\" means \"last\" for a forward navigation and \"first\" for a
+backward navigation."
+  (let* ((last? (nomis/tree/on-last-peer?/must-be-at-boh))
+         (first? (nomis/tree/on-first-peer?/must-be-at-boh)))
+    (cond ((eq this-command 'nomis/tree/nav+lineage/forward-peer)
+           (and last? (not first?)))
+          ((eq this-command 'nomis/tree/nav+lineage/backward-peer)
            (and first? (not last?))))))
 
 (defvar -nomis/tree/nav+lineage/most-recent-timestamp -9999)
@@ -656,7 +682,8 @@ These commands:
               (show-lineage ()
                 (-nomis/tree/nav+lineage/show-lineage n-levels-to-show-or-nil)))
       (nomis/outline/w/back-to-heading)
-      (if (not (or (-nomis/tree/nav+lineage/doing-same-level-not-lone-no-more-entries?/must-be-at-boh)
+      (if (not (or (-nomis/tree/nav+lineage/doing-sibling-final-not-lone?/must-be-at-boh)
+                   (-nomis/tree/nav+lineage/doing-peer-final-not-lone?/must-be-at-boh)
                    ;; If we very recently did
                    ;; a `nomis/tree/nav+lineage/xxxx-sibling` which tried to
                    ;; go too far and which so collapsed the current heading,
