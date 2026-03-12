@@ -598,24 +598,24 @@ If there is no next peer, display a popup message."
 
 \"Final\" means \"last\" for a forward navigation and \"first\" for a
 backward navigation."
-  (let* ((last? (nomis/tree/on-last-sibling?/boh))
-         (first? (nomis/tree/on-first-sibling?/boh)))
-    (cond ((eq this-command 'nomis/tree/nav+lineage/forward-sibling)
-           (and last? (not first?)))
-          ((eq this-command 'nomis/tree/nav+lineage/backward-sibling)
-           (and first? (not last?))))))
+  (let* ((first? (nomis/tree/on-first-sibling?/boh))
+         (last? (nomis/tree/on-last-sibling?/boh)))
+    (cond ((eq this-command 'nomis/tree/nav+lineage/backward-sibling)
+           (and first? (not last?)))
+          ((eq this-command 'nomis/tree/nav+lineage/forward-sibling)
+           (and last? (not first?))))))
 
 (defun -nomis/tree/nav+lineage/doing-peer-final-not-lone?/boh ()
   "Return non-nil if doing peer nav+lineage from \"final\" non-lone peer.
 
 \"Final\" means \"last\" for a forward navigation and \"first\" for a
 backward navigation."
-  (let* ((last? (nomis/tree/on-last-peer?/boh))
-         (first? (nomis/tree/on-first-peer?/boh)))
-    (cond ((eq this-command 'nomis/tree/nav+lineage/forward-peer)
-           (and last? (not first?)))
-          ((eq this-command 'nomis/tree/nav+lineage/backward-peer)
-           (and first? (not last?))))))
+  (let* ((first? (nomis/tree/on-first-peer?/boh))
+         (last? (nomis/tree/on-last-peer?/boh)))
+    (cond ((eq this-command 'nomis/tree/nav+lineage/backward-peer)
+           (and first? (not last?)))
+          ((eq this-command 'nomis/tree/nav+lineage/forward-peer)
+           (and last? (not first?))))))
 
 (defun -nomis/tree/nav+lineage/doing-same-level-final-not-lone?/boh ()
   "Return non-nil if doing same-level nav+lineage from \"final\" non-lone item.
