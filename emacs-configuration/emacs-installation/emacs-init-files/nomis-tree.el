@@ -550,9 +550,9 @@ If there is no next peer, display a popup message."
 
 ;;;;; Nav+lineage settings
 
-(defvar -nomis/tree/nav+lineage/n-child-levels-to-show nil)
+(defvar -nomis/tree/nav+lineage/n-child-levels-to-show nil) ; Buffer-local? No.
 
-(defvar -nomis/tree/nav+lineage/thin-parents? nil)
+(defvar -nomis/tree/nav+lineage/thin-parents? nil) ; Buffer-local? No.
 
 (defun -nomis/tree/thin-parents-text ()
   (if -nomis/tree/nav+lineage/thin-parents? "thin" "fat"))
