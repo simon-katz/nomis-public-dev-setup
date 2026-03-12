@@ -432,9 +432,10 @@ heading."
 
 (defun nomis/tree/next-sibling ()
   "Move forward one sibling.
-Like `org-forward-heading-same-level` but:
-- when the target is invisible, make it visible
-- if this is the first heading within its parent, display a popup message."
+
+When the target is invisible, make it visible.
+
+If there is no next sibling, display a popup message."
   (interactive)
   (-nomis/tree/command
       nil
@@ -443,9 +444,10 @@ Like `org-forward-heading-same-level` but:
 
 (defun nomis/tree/previous-sibling ()
   "Move backward one sibling.
-Like `org-backward-heading-same-level` but:
-- when the target is invisible, make it visible
-- if this is the first heading within its parent, display a popup message."
+
+When the target is invisible, make it visible.
+
+If there is no previous sibling, display a popup message."
   (interactive)
   (-nomis/tree/command
       nil
@@ -456,10 +458,10 @@ Like `org-backward-heading-same-level` but:
 
 (defun nomis/tree/next-peer ()
   "Move forward one peer.
-Like `org-forward-heading-same-level` but:
-- when the target is invisible, make it visible
-- if this is the first heading within its parent, move to the first
-  heading at this level in the next parent."
+
+When the target is invisible, make it visible.
+
+If there is no next peer, display a popup message."
   (interactive)
   (-nomis/tree/command
       nil
@@ -468,10 +470,10 @@ Like `org-forward-heading-same-level` but:
 
 (defun nomis/tree/previous-peer ()
   "Move backward one peer.
-Like `org-backward-heading-same-level` but:
-- when the target is invisible, make it visible
-- if this is the first heading within its parent, move to the last
-heading at this level in the previous parent."
+
+When the target is invisible, make it visible
+
+If there is no previous peer, display a popup message."
   (interactive)
   (-nomis/tree/command
       nil
@@ -489,7 +491,11 @@ These commands:
   • `nomis/tree/previous-heading'")
 
 (defun nomis/tree/next-heading ()
-  "Move forward to the next heading at any level."
+  "Move forward to the next heading at any level.
+
+When the target is invisible, make it visible.
+
+If there is no next heading, display a popup message."
   (interactive)
   (-nomis/tree/command
       nil
@@ -499,7 +505,11 @@ These commands:
       (nomis/outline/w/ensure-heading-shown))))
 
 (defun nomis/tree/previous-heading ()
-  "Move backward to the previous heading at any level."
+  "Move backward to the previous heading at any level.
+
+When the target is invisible, make it visible.
+
+If there is no previous heading, display a popup message."
   (interactive)
   (-nomis/tree/command
       nil
