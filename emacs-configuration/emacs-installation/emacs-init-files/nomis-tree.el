@@ -689,7 +689,7 @@ backward navigation."
                                                        kind))
                (show-lineage ()
                  (-nomis/tree/nav+lineage/show-lineage n-levels-to-show-or-nil))
-               (nav-then-show-lineage ()
+               (try-to-nav-then-show-lineage ()
                  (let* ((starting-point (point)))
                    (try-to-nav)
                    (let* ((moved? (not (= (point) starting-point))))
@@ -697,16 +697,24 @@ backward navigation."
                          (show-lineage)
                        (nomis/outline/w/collapse))))))
       (nomis/outline/w/back-to-heading)
-      (if (or (-nomis/tree/nav+lineage/doing-same-level-final-not-lone?/must-be-at-boh)
-              ;; If we very recently did a `nomis/tree/nav+lineage/xxxx-sibling`
-              ;; which tried to go too far and which so collapsed the current
-              ;; heading, and if now we're doing
-              ;; a `nomis/tree/nav+lineage/xxxx-peer`, we're happy to do
-              ;; a nav+lineage across the parent.
-              (-nomis/tree/nav+lineage/sibling-then-peer-with-small-time-gap?)
-              (expanded-to-desired-level?))
-          (nav-then-show-lineage)
-        (show-lineage)))
+      (cond ((-nomis/tree/nav+lineage/doing-same-level-final-not-lone?/must-be-at-boh)
+             ;; This will display a can't-move message, then collapse:
+             (try-to-nav-then-show-lineage))
+            ((-nomis/tree/nav+lineage/sibling-then-peer-with-small-time-gap?)
+             ;; If we very recently did a `nomis/tree/nav+lineage/xxxx-sibling`
+             ;; which tried to go too far and which so collapsed the current
+             ;; heading, and if now we're doing
+             ;; a `nomis/tree/nav+lineage/xxxx-peer`, we're happy to do
+             ;; a nav+lineage/peer -- we'll forego the normal
+             ;; expand-before-navigating:
+             (try-to-nav-then-show-lineage))
+            (t
+             ;; Expand-before-navigating: If expanded, do nav+lineage.
+             ;; Otherwise expand (and repeating the command will do
+             ;; nav+lineage).
+             (if (expanded-to-desired-level?)
+                 (try-to-nav-then-show-lineage)
+               (show-lineage)))))
     (setq -nomis/tree/nav+lineage/most-recent-timestamp (float-time))))
 
 ;;;;; Nav+lineage commands
