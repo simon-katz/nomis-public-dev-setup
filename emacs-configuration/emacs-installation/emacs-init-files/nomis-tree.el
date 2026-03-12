@@ -507,13 +507,15 @@ These commands:
 
 ;;;; Info that relies on our navigation stuff
 
-(defun nomis/tree/on-first-child?/must-be-at-boh ()
+(defun nomis/tree/on-first-sibling?/must-be-at-boh ()
+  "Truthy if on first or only sibling."
   (save-excursion
     (let ((starting-point (point)))
       (nomis/outline/w/prev-or-next-heading 1 :backward :sibling t)
       (= (point) starting-point))))
 
-(defun nomis/tree/on-last-child?/must-be-at-boh ()
+(defun nomis/tree/on-last-sibling?/must-be-at-boh ()
+  "Truthy if on last or only sibling."
   (save-excursion
     (let ((starting-point (point)))
       (nomis/outline/w/prev-or-next-heading 1 :forward :sibling t)
@@ -591,8 +593,8 @@ These commands:
 (defun -nomis/tree/nav+lineage/doing-same-level-not-lone-no-more-entries?/must-be-at-boh ()
   ;; TODO: Fix doc string.
   ;; "Return non-nil if moving forward at the last child or backward at the first child (if not a lone child)."
-  (let* ((last? (nomis/tree/on-last-child?/must-be-at-boh))
-         (first? (nomis/tree/on-first-child?/must-be-at-boh)))
+  (let* ((last? (nomis/tree/on-last-sibling?/must-be-at-boh))
+         (first? (nomis/tree/on-first-sibling?/must-be-at-boh)))
     (cond ((member this-command '(nomis/tree/nav+lineage/forward-sibling
                                   nomis/tree/nav+lineage/forward-peer))
            (and last? (not first?)))
