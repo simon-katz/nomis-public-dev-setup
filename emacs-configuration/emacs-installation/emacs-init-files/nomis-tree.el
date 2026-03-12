@@ -186,46 +186,29 @@ message and in case adding outline level messes things up.")
 
 ;;;;; Basic stuff
 
-(defun -nomis/tree/has-body?/boh/leaving-cursor-at-end-of-heading ()
-  (let* ((_ (nomis/outline/w/end-of-heading))
-         (end-of-heading-position (point))
-         (_ (nomis/outline/w/next-preface))
-         (end-of-preface-position (point))
-         (has-body? (not (= end-of-heading-position
-                            end-of-preface-position))))
-    (prog1
-        has-body?
+(defun -nomis/tree/body-info/boh ()
+  (save-excursion
+    (let* ((has-body? (-nomis/outline/w/has-body?/boh)))
       ;; Go to end of heading rather than end of preface.
       ;; Without this, if we have a link at the end of the body (and if links
       ;; are being displayed in the usual way so that the actual link text is
       ;; invisible), we don't know whether the body is being displayed.
       ;; This newline char being visible or not tells us what we want to know.
-      (goto-char end-of-heading-position))))
+      (nomis/outline/w/end-of-heading)
+      (let* ((point-invisible? (nomis/outline/w/invisible?))
+             (has-visible-body? (and has-body?
+                                     (not point-invisible?)))
+             (has-invisible-body? (and has-body?
+                                       point-invisible?)))
+        (list has-body?
+              has-visible-body?
+              has-invisible-body?)))))
 
-(defun -nomis/tree/has-body?/boh ()
-  (save-excursion
-    (-nomis/tree/has-body?/boh/leaving-cursor-at-end-of-heading)))
-
-(defun -nomis/tree/body-info ()
-  (save-excursion
-    (nomis/outline/w/back-to-heading)
-    (let* ((has-body?
-            (-nomis/tree/has-body?/boh/leaving-cursor-at-end-of-heading))
-           (point-invisible? (nomis/outline/w/invisible?))
-           (has-visible-body? (and has-body?
-                                   (not point-invisible?)))
-           (has-invisible-body? (and has-body?
-                                     point-invisible?)))
-      (list has-body?
-            has-visible-body?
-            has-invisible-body?))))
-
-(defun nomis/tree/level-incl-any-body ()
-  (cl-assert (nomis/outline/w/at-beginning-of-heading?))
+(defun nomis/tree/level-incl-any-body/boh ()
   (let* ((heading-level (nomis/outline/w/level/boh)))
     (+ heading-level
        (if (and -nomis/tree/show-bodies?
-                (-nomis/tree/has-body?/boh))
+                (-nomis/outline/w/has-body?/boh))
            1
          0))))
 
@@ -781,7 +764,7 @@ When in a body, \"current heading\" means the current body's parent heading.
 Example: If we are at level 5 and there are 2 further levels below, the result
 is 7."
   (nomis/tree/reduce-entries-from-point 0
-                                        #'nomis/tree/level-incl-any-body
+                                        #'nomis/tree/level-incl-any-body/boh
                                         #'max))
 
 (defun nomis/tree/n-levels-below ()
@@ -809,7 +792,7 @@ When in a body, \"current heading\" means the current body's parent heading."
                    (cl-destructuring-bind (has-body?
                                            has-visible-body?
                                            _has-invisible-body?)
-                       (-nomis/tree/body-info)
+                       (-nomis/tree/body-info/boh)
                      (if (and has-body?
                               (not has-visible-body?))
                          level
@@ -843,7 +826,7 @@ When in a body, \"current heading\" means the current body's parent heading."
                          (cl-list* (point)
                                    (nomis/outline/w/level/boh)
                                    (not (nomis/outline/w/invisible?))
-                                   (-nomis/tree/body-info)))))
+                                   (-nomis/tree/body-info/boh)))))
 
              for first? = t then nil
              for post-last-tidy-up? = (null entry)
@@ -952,7 +935,7 @@ When in a body, \"current heading\" means the current body's parent heading."
   (let* ((sofar 0))
     (nomis/tree/mapc-entries-from-all-roots
      (lambda ()
-       (setq sofar (max (nomis/tree/level-incl-any-body)
+       (setq sofar (max (nomis/tree/level-incl-any-body/boh)
                         sofar))))
     sofar))
 

@@ -73,6 +73,13 @@
 (defun nomis/outline/w/back-to-heading ()
   (outline-back-to-heading t))
 
+(defun -nomis/outline/w/has-body?/boh ()
+  (save-excursion
+    (/= (progn (nomis/outline/w/end-of-heading)
+               (point))
+        (progn (nomis/outline/w/next-preface)
+               (point)))))
+
 (defun -nomis/outline/w/back-to-visible-heading? ()
   (outline-back-to-heading))
 
