@@ -186,46 +186,31 @@ message and in case adding outline level messes things up.")
 
 ;;;;; Basic stuff
 
-(defun -nomis/tree/has-body?/must-be-at-boh/leaving-cursor-at-end-of-heading ()
-  (let* ((_ (nomis/outline/w/end-of-heading))
-         (end-of-heading-position (point))
-         (_ (nomis/outline/w/next-preface))
-         (end-of-preface-position (point))
-         (has-body? (not (= end-of-heading-position
-                            end-of-preface-position))))
-    (prog1
-        has-body?
+(defun -nomis/tree/body-info ()
+  (save-excursion
+    (nomis/outline/w/back-to-heading)
+    (let* ((has-body? (-nomis/outine/w/has-body?)))
       ;; Go to end of heading rather than end of preface.
       ;; Without this, if we have a link at the end of the body (and if links
       ;; are being displayed in the usual way so that the actual link text is
       ;; invisible), we don't know whether the body is being displayed.
       ;; This newline char being visible or not tells us what we want to know.
-      (goto-char end-of-heading-position))))
-
-(defun -nomis/tree/has-body?/must-be-at-boh ()
-  (save-excursion
-    (-nomis/tree/has-body?/must-be-at-boh/leaving-cursor-at-end-of-heading)))
-
-(defun -nomis/tree/body-info ()
-  (save-excursion
-    (nomis/outline/w/back-to-heading)
-    (let* ((has-body?
-            (-nomis/tree/has-body?/must-be-at-boh/leaving-cursor-at-end-of-heading))
-           (point-invisible? (nomis/outline/w/invisible?))
-           (has-visible-body? (and has-body?
-                                   (not point-invisible?)))
-           (has-invisible-body? (and has-body?
-                                     point-invisible?)))
-      (list has-body?
-            has-visible-body?
-            has-invisible-body?))))
+      (nomis/outline/w/end-of-heading)
+      (let* ((point-invisible? (nomis/outline/w/invisible?))
+             (has-visible-body? (and has-body?
+                                     (not point-invisible?)))
+             (has-invisible-body? (and has-body?
+                                       point-invisible?)))
+        (list has-body?
+              has-visible-body?
+              has-invisible-body?)))))
 
 (defun nomis/tree/level-incl-any-body ()
   (cl-assert (nomis/outline/w/at-beginning-of-heading?))
   (let* ((heading-level (nomis/outline/w/level/boh)))
     (+ heading-level
        (if (and -nomis/tree/show-bodies?
-                (-nomis/tree/has-body?/must-be-at-boh))
+                (-nomis/outine/w/has-body?))
            1
          0))))
 
