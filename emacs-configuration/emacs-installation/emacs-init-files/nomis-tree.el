@@ -384,7 +384,7 @@ heading."
           (set-text-properties 0 (length text) nil text)
           text)))))
 
-(defvar -nomis/tree/search-heading-text/text nil)
+(defvar-local -nomis/tree/search-heading-text/text nil)
 
 (defun -nomis/tree/search-heading-text/search (again?)
   (cl-assert (not (null -nomis/tree/search-heading-text/text)))
