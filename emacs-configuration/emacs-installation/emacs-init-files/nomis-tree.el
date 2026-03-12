@@ -494,36 +494,6 @@ If there is no next peer, display a popup message."
     (when (nomis/outline/w/prev-or-next-heading 1 :forward :peer)
       (nomis/outline/w/ensure-heading-shown))))
 
-;;;; Info that relies on our navigation stuff
-
-(defun nomis/tree/on-first-sibling?/boh ()
-  "Truthy if on first or only sibling."
-  (save-excursion
-    (let ((starting-point (point)))
-      (nomis/outline/w/prev-or-next-heading 1 :backward :sibling t)
-      (= (point) starting-point))))
-
-(defun nomis/tree/on-last-sibling?/boh ()
-  "Truthy if on last or only sibling."
-  (save-excursion
-    (let ((starting-point (point)))
-      (nomis/outline/w/prev-or-next-heading 1 :forward :sibling t)
-      (= (point) starting-point))))
-
-(defun nomis/tree/on-first-peer?/boh ()
-  "Truthy if on first or only peer."
-  (save-excursion
-    (let ((starting-point (point)))
-      (nomis/outline/w/prev-or-next-heading 1 :backward :peer t)
-      (= (point) starting-point))))
-
-(defun nomis/tree/on-last-peer?/boh ()
-  "Truthy if on last or only peer."
-  (save-excursion
-    (let ((starting-point (point)))
-      (nomis/outline/w/prev-or-next-heading 1 :forward :peer t)
-      (= (point) starting-point))))
-
 ;;;; Nav+lineage
 
 ;;;;; Preamble
@@ -590,6 +560,36 @@ If there is no next peer, display a popup message."
     (-nomis/tree/nav+lineage/show-lineage)
     (message "nav+lineage parents-approach set to %s"
              (-nomis/tree/thin-parents-text))))
+
+;;;;; On first/last sibling/peer
+
+(defun nomis/tree/on-first-sibling?/boh ()
+  "Truthy if on first or only sibling."
+  (save-excursion
+    (let ((starting-point (point)))
+      (nomis/outline/w/prev-or-next-heading 1 :backward :sibling t)
+      (= (point) starting-point))))
+
+(defun nomis/tree/on-last-sibling?/boh ()
+  "Truthy if on last or only sibling."
+  (save-excursion
+    (let ((starting-point (point)))
+      (nomis/outline/w/prev-or-next-heading 1 :forward :sibling t)
+      (= (point) starting-point))))
+
+(defun nomis/tree/on-first-peer?/boh ()
+  "Truthy if on first or only peer."
+  (save-excursion
+    (let ((starting-point (point)))
+      (nomis/outline/w/prev-or-next-heading 1 :backward :peer t)
+      (= (point) starting-point))))
+
+(defun nomis/tree/on-last-peer?/boh ()
+  "Truthy if on last or only peer."
+  (save-excursion
+    (let ((starting-point (point)))
+      (nomis/outline/w/prev-or-next-heading 1 :forward :peer t)
+      (= (point) starting-point))))
 
 ;;;;; Nav+lineage algorithm
 
