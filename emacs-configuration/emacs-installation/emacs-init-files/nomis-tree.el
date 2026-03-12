@@ -430,52 +430,16 @@ heading."
 
 ;;;;; Forward and backward
 
-(defun nomis/tree/next-sibling ()
-  "Move forward one sibling.
+(defun nomis/tree/previous-heading ()
+  "Move backward to the previous heading at any level.
 
 When the target is invisible, make it visible.
 
-If there is no next sibling, display a popup message."
+If there is no previous heading, display a popup message."
   (interactive)
   (-nomis/tree/command
       nil
-    (when (nomis/outline/w/prev-or-next-heading 1 :forward :sibling)
-      (nomis/outline/w/ensure-heading-shown))))
-
-(defun nomis/tree/previous-sibling ()
-  "Move backward one sibling.
-
-When the target is invisible, make it visible.
-
-If there is no previous sibling, display a popup message."
-  (interactive)
-  (-nomis/tree/command
-      nil
-    (when (nomis/outline/w/prev-or-next-heading 1 :backward :sibling)
-      (nomis/outline/w/ensure-heading-shown))))
-
-(defun nomis/tree/next-peer ()
-  "Move forward one peer.
-
-When the target is invisible, make it visible.
-
-If there is no next peer, display a popup message."
-  (interactive)
-  (-nomis/tree/command
-      nil
-    (when (nomis/outline/w/prev-or-next-heading 1 :forward :peer)
-      (nomis/outline/w/ensure-heading-shown))))
-
-(defun nomis/tree/previous-peer ()
-  "Move backward one peer.
-
-When the target is invisible, make it visible
-
-If there is no previous peer, display a popup message."
-  (interactive)
-  (-nomis/tree/command
-      nil
-    (when (nomis/outline/w/prev-or-next-heading 1 :backward :peer)
+    (when (nomis/outline/w/prev-or-next-heading 1 :backward :any-level)
       (nomis/outline/w/ensure-heading-shown))))
 
 (defun nomis/tree/next-heading ()
@@ -490,16 +454,52 @@ If there is no next heading, display a popup message."
     (when (nomis/outline/w/prev-or-next-heading 1 :forward :any-level)
       (nomis/outline/w/ensure-heading-shown))))
 
-(defun nomis/tree/previous-heading ()
-  "Move backward to the previous heading at any level.
+(defun nomis/tree/previous-sibling ()
+  "Move backward one sibling.
 
 When the target is invisible, make it visible.
 
-If there is no previous heading, display a popup message."
+If there is no previous sibling, display a popup message."
   (interactive)
   (-nomis/tree/command
       nil
-    (when (nomis/outline/w/prev-or-next-heading 1 :backward :any-level)
+    (when (nomis/outline/w/prev-or-next-heading 1 :backward :sibling)
+      (nomis/outline/w/ensure-heading-shown))))
+
+(defun nomis/tree/next-sibling ()
+  "Move forward one sibling.
+
+When the target is invisible, make it visible.
+
+If there is no next sibling, display a popup message."
+  (interactive)
+  (-nomis/tree/command
+      nil
+    (when (nomis/outline/w/prev-or-next-heading 1 :forward :sibling)
+      (nomis/outline/w/ensure-heading-shown))))
+
+(defun nomis/tree/previous-peer ()
+  "Move backward one peer.
+
+When the target is invisible, make it visible
+
+If there is no previous peer, display a popup message."
+  (interactive)
+  (-nomis/tree/command
+      nil
+    (when (nomis/outline/w/prev-or-next-heading 1 :backward :peer)
+      (nomis/outline/w/ensure-heading-shown))))
+
+(defun nomis/tree/next-peer ()
+  "Move forward one peer.
+
+When the target is invisible, make it visible.
+
+If there is no next peer, display a popup message."
+  (interactive)
+  (-nomis/tree/command
+      nil
+    (when (nomis/outline/w/prev-or-next-heading 1 :forward :peer)
       (nomis/outline/w/ensure-heading-shown))))
 
 ;;;; Info that relies on our navigation stuff
@@ -716,14 +716,6 @@ backward navigation."
 
 ;;;;; Nav+lineage commands
 
-(defun nomis/tree/nav+lineage/forward-any-level (n-levels-to-show-or-nil)
-  "Move forward to the next heading at any level, then expand it.
-N-LEVELS-TO-SHOW-OR-NIL controls how many levels to expand; nil means fully."
-  (interactive "P")
-  (-nomis/tree/command
-      nil
-    (-nomis/tree/nav+lineage/impl 1 :any-level n-levels-to-show-or-nil)))
-
 (defun nomis/tree/nav+lineage/backward-any-level (n-levels-to-show-or-nil)
   "Move backward to the previous heading at any level, then expand it.
 N-LEVELS-TO-SHOW-OR-NIL controls how many levels to expand; nil means fully."
@@ -732,13 +724,13 @@ N-LEVELS-TO-SHOW-OR-NIL controls how many levels to expand; nil means fully."
       nil
     (-nomis/tree/nav+lineage/impl -1 :any-level n-levels-to-show-or-nil)))
 
-(defun nomis/tree/nav+lineage/forward-sibling (n-levels-to-show-or-nil)
-  "Move forward to the next sibling, then expand it.
+(defun nomis/tree/nav+lineage/forward-any-level (n-levels-to-show-or-nil)
+  "Move forward to the next heading at any level, then expand it.
 N-LEVELS-TO-SHOW-OR-NIL controls how many levels to expand; nil means fully."
   (interactive "P")
   (-nomis/tree/command
       nil
-    (-nomis/tree/nav+lineage/impl 1 :sibling n-levels-to-show-or-nil)))
+    (-nomis/tree/nav+lineage/impl 1 :any-level n-levels-to-show-or-nil)))
 
 (defun nomis/tree/nav+lineage/backward-sibling (n-levels-to-show-or-nil)
   "Move backward to the previous sibling, then expand it.
@@ -748,13 +740,13 @@ N-LEVELS-TO-SHOW-OR-NIL controls how many levels to expand; nil means fully."
       nil
     (-nomis/tree/nav+lineage/impl -1 :sibling n-levels-to-show-or-nil)))
 
-(defun nomis/tree/nav+lineage/forward-peer (n-levels-to-show-or-nil)
-  "Move forward to the next peer, then expand it.
+(defun nomis/tree/nav+lineage/forward-sibling (n-levels-to-show-or-nil)
+  "Move forward to the next sibling, then expand it.
 N-LEVELS-TO-SHOW-OR-NIL controls how many levels to expand; nil means fully."
   (interactive "P")
   (-nomis/tree/command
       nil
-    (-nomis/tree/nav+lineage/impl 1 :peer n-levels-to-show-or-nil)))
+    (-nomis/tree/nav+lineage/impl 1 :sibling n-levels-to-show-or-nil)))
 
 (defun nomis/tree/nav+lineage/backward-peer (n-levels-to-show-or-nil)
   "Move backward to the previous peer, then expand it.
@@ -763,6 +755,14 @@ N-LEVELS-TO-SHOW-OR-NIL controls how many levels to expand; nil means fully."
   (-nomis/tree/command
       nil
     (-nomis/tree/nav+lineage/impl -1 :peer n-levels-to-show-or-nil)))
+
+(defun nomis/tree/nav+lineage/forward-peer (n-levels-to-show-or-nil)
+  "Move forward to the next peer, then expand it.
+N-LEVELS-TO-SHOW-OR-NIL controls how many levels to expand; nil means fully."
+  (interactive "P")
+  (-nomis/tree/command
+      nil
+    (-nomis/tree/nav+lineage/impl 1 :peer n-levels-to-show-or-nil)))
 
 ;;;; Info about trees
 
