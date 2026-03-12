@@ -428,7 +428,7 @@ heading."
       nil
     (nomis/outline/w/up-heading n)))
 
-;;;;; Forward and backward at same level
+;;;;; Forward and backward
 
 (defun nomis/tree/next-sibling ()
   "Move forward one sibling.
@@ -454,8 +454,6 @@ If there is no previous sibling, display a popup message."
     (when (nomis/outline/w/prev-or-next-heading 1 :backward :sibling)
       (nomis/outline/w/ensure-heading-shown))))
 
-;;;;; Forward and backward at same level, sibling or peer
-
 (defun nomis/tree/next-peer ()
   "Move forward one peer.
 
@@ -479,8 +477,6 @@ If there is no previous peer, display a popup message."
       nil
     (when (nomis/outline/w/prev-or-next-heading 1 :backward :peer)
       (nomis/outline/w/ensure-heading-shown))))
-
-;;;;; Forward and backward at any level
 
 (defun nomis/tree/next-heading ()
   "Move forward to the next heading at any level.
