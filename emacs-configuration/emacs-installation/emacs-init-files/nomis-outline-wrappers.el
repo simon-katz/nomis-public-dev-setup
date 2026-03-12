@@ -177,6 +177,20 @@ FEWER-OK? is truthy."
     (outline-show-entry)
     (outline-hide-entry)))
 
+(defun nomis/outline/w/hide-bodies ()
+  "Hide the bodies of all headings."
+  (outline-hide-body) ; misnomer -- applies to all headings
+  )
+
+(defun nomis/outline/w/show-bodies ()
+  "Show the bodies of all currently-visible headings."
+  (save-excursion
+    (goto-char (point-min))
+    (while (not (eobp))
+      (when (-nomis/outline/w/on-visible-heading?)
+        (nomis/outline/w/show-entry))
+      (nomis/outline/w/next-heading))))
+
 (defun nomis/outline/w/show-children (n)
   (outline-show-children n))
 
