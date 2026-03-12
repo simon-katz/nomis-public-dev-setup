@@ -698,10 +698,9 @@ backward navigation."
                        (nomis/outline/w/collapse))))))
       (nomis/outline/w/back-to-heading)
       (if (or (-nomis/tree/nav+lineage/doing-same-level-final-not-lone?/must-be-at-boh)
-              ;; If we very recently did
-              ;; a `nomis/tree/nav+lineage/xxxx-sibling` which tried to
-              ;; go too far and which so collapsed the current heading,
-              ;; and if now we're doing
+              ;; If we very recently did a `nomis/tree/nav+lineage/xxxx-sibling`
+              ;; which tried to go too far and which so collapsed the current
+              ;; heading, and if now we're doing
               ;; a `nomis/tree/nav+lineage/xxxx-peer`, we're happy to do
               ;; a nav+lineage across the parent.
               (-nomis/tree/nav+lineage/sibling-then-peer-with-small-time-gap?)
