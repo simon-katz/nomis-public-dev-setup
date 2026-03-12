@@ -163,15 +163,15 @@ message and in case adding outline level messes things up.")
 
 ;;;; Whether to show bodies
 
-(defvar nomis/tree/show-bodies? t)
+(defvar -nomis/tree/show-bodies? t)
 
 (defun nomis/tree/toggle-show-bodies ()
   (interactive)
-  (setq nomis/tree/show-bodies? (not nomis/tree/show-bodies?))
-  (if nomis/tree/show-bodies?
+  (setq -nomis/tree/show-bodies? (not -nomis/tree/show-bodies?))
+  (if -nomis/tree/show-bodies?
       (nomis/outline/w/show-bodies)
     (nomis/outline/w/hide-bodies))
-  (message "show-bodies? set to %s" nomis/tree/show-bodies?))
+  (message "show-bodies? set to %s" -nomis/tree/show-bodies?))
 
 ;;;; Some wrappers for outline functionality
 
@@ -215,7 +215,7 @@ message and in case adding outline level messes things up.")
   (cl-assert (nomis/outline/w/at-beginning-of-heading?))
   (let* ((heading-level (nomis/outline/w/level/boh)))
     (+ heading-level
-       (if (and nomis/tree/show-bodies?
+       (if (and -nomis/tree/show-bodies?
                 (-nomis/tree/has-body?/must-be-at-boh))
            1
          0))))
@@ -343,7 +343,7 @@ a body, \"current heading\" means the current body's parent
 heading."
   (when collapse-first? (nomis/outline/w/collapse))
   (nomis/outline/w/show-children n)
-  (when nomis/tree/show-bodies?
+  (when -nomis/tree/show-bodies?
     (let* ((level (nomis/outline/w/level/no-inc-if-in-body)))
       (nomis/tree/mapc-entries-from-point
        #'(lambda ()
@@ -794,7 +794,7 @@ When in a body, \"current heading\" means the current body's parent heading."
                  (level (nomis/outline/w/level/boh)))
             (cond (point-invisible?
                    (1- level))
-                  ((not nomis/tree/show-bodies?)
+                  ((not -nomis/tree/show-bodies?)
                    nomis/outline/w/plus-infinity)
                   (t
                    (cl-destructuring-bind (has-body?
@@ -893,13 +893,13 @@ When in a body, \"current heading\" means the current body's parent heading."
 
 When in a body, \"current heading\" means the current body's parent heading.
 
-If `nomis/tree/show-bodies?' is truthy, this returns truthy only if all
+If `-nomis/tree/show-bodies?' is truthy, this returns truthy only if all
 bodies are visible. Otherwise body visibiity is not taken into account."
   (cl-loop for entry in (-nomis/tree/tree-info)
            always (or (a-get entry :tree-info/dummy?)
                       (a-get entry :tree-info/visible?)
                       (and (a-get entry :tree-info/body?)
-                           (not nomis/tree/show-bodies?)))))
+                           (not -nomis/tree/show-bodies?)))))
 
 (defun nomis/tree/start-level-for-incremental-contract ()
   "The level to use when incrementally collapsing the current heading.
@@ -1056,7 +1056,7 @@ When in a body, \"current heading\" means the current body's parent heading."
                      (concat message-format-string "%s%s")
                      new-level
                      maximum
-                     (if nomis/tree/show-bodies?
+                     (if -nomis/tree/show-bodies?
                          ""
                        " (not showing bodies)")
                      (if out-of-range?
