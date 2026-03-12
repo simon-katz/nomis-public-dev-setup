@@ -588,15 +588,6 @@ These commands:
 
 ;;;;; Nav+lineage algorithm
 
-(defun -nomis/tree/nav+lineage/sibling-then-peer? ()
-  (let ((cmds (list (nomis/outline/w/last-command)
-                    this-command)))
-    (member cmds
-            '((nomis/tree/nav+lineage/forward-sibling
-               nomis/tree/nav+lineage/forward-peer)
-              (nomis/tree/nav+lineage/backward-sibling
-               nomis/tree/nav+lineage/backward-peer)))))
-
 (defun -nomis/tree/nav+lineage/doing-forward-same-level? ()
   (member this-command
           '(nomis/tree/nav+lineage/forward-sibling
@@ -628,6 +619,15 @@ These commands:
   (< (float-time)
      (+ -nomis/tree/nav+lineage/most-recent-timestamp
         nomis/tree/nav+lineage/quick-repeat-delay)))
+
+(defun -nomis/tree/nav+lineage/sibling-then-peer? ()
+  (let ((cmds (list (nomis/outline/w/last-command)
+                    this-command)))
+    (member cmds
+            '((nomis/tree/nav+lineage/forward-sibling
+               nomis/tree/nav+lineage/forward-peer)
+              (nomis/tree/nav+lineage/backward-sibling
+               nomis/tree/nav+lineage/backward-peer)))))
 
 (defun -nomis/tree/nav+lineage/sibling-then-peer-with-small-time-gap? ()
   (and (-nomis/tree/nav+lineage/small-time-gap-since-prev-command?)
