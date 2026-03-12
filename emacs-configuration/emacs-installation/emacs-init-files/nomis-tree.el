@@ -630,8 +630,7 @@ These commands:
 (defun -nomis/tree/nav+lineage/impl (n kind n-levels-to-show-or-nil)
   (let* ((n-levels-or-nil (or n-levels-to-show-or-nil
                               -nomis/tree/nav+lineage/n-child-levels-to-show)))
-    (cl-flet ((expanded-to-desired-level?
-                ()
+    (cl-flet ((expanded-to-desired-level? ()
                 (if (null n-levels-or-nil)
                     (nomis/tree/fully-expanded?)
                   (let* ((n-levels-being-shown-or-infinity
@@ -648,8 +647,7 @@ These commands:
                       ;; desired number of levels.
                       (= n-levels-being-shown-or-infinity
                          n-levels-or-nil)))))
-              (try-to-move
-                ()
+              (try-to-nav ()
                 (nomis/outline/w/prev-or-next-heading 1
                                                       (if (< n 0)
                                                           :backward
@@ -669,7 +667,7 @@ These commands:
                    (expanded-to-desired-level?)))
           (show-lineage)
         (let* ((starting-point (point)))
-          (try-to-move)
+          (try-to-nav)
           (let* ((moved? (not (= (point) starting-point))))
             (if moved?
                 (show-lineage)
