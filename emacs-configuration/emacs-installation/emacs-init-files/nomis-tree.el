@@ -125,13 +125,13 @@
 
 ;;;;; what-cursor-position
 
-;; Add org level to the output of `what-cursor-position`.
+;; Add outline level to the output of `what-cursor-position`.
 
 (defvar nomis/tree/add-info-to-what-cursor-position?
   t
   "Control whether we add additional info to the message produced by
 `what-cursor-position`. This is here just in case someone might be parsing the
-message and in case adding org level messes things up.")
+message and in case adding outline level messes things up.")
 
 (defvar *-nomis/tree/in-what-cursor-position?* nil)
 
@@ -173,7 +173,7 @@ message and in case adding org level messes things up.")
     (nomis/outline/w/hide-bodies))
   (message "show-bodies? set to %s" nomis/tree/show-bodies?))
 
-;;;; Some wrappers for org functionality
+;;;; Some wrappers for outline functionality
 
 ;;;;; Basic stuff
 
