@@ -588,29 +588,17 @@ These commands:
 
 ;;;;; Nav+lineage algorithm
 
-(defun -nomis/tree/nav+lineage/doing-forward-same-level? ()
-  (member this-command
-          '(nomis/tree/nav+lineage/forward-sibling
-            nomis/tree/nav+lineage/forward-peer)))
-
-(defun -nomis/tree/nav+lineage/doing-backward-same-level? ()
-  (member this-command
-          '(nomis/tree/nav+lineage/backward-sibling
-            nomis/tree/nav+lineage/backward-peer)))
-
-(defun -nomis/tree/nav+lineage/doing-forward-same-level-on-last-but-not-first-child/must-be-at-boh ()
-  (and (-nomis/tree/nav+lineage/doing-forward-same-level?)
-       (nomis/tree/on-last-child?/must-be-at-boh)
-       (not (nomis/tree/on-first-child?/must-be-at-boh))))
-
-(defun -nomis/tree/nav+lineage/doing-backward-same-level-on-first-but-not-last-child/must-be-at-boh ()
-  (and (-nomis/tree/nav+lineage/doing-backward-same-level?)
-       (nomis/tree/on-first-child?/must-be-at-boh)
-       (not (nomis/tree/on-last-child?/must-be-at-boh))))
-
 (defun -nomis/tree/nav+lineage/doing-same-level-not-lone-no-more-entries?/must-be-at-boh ()
-  (or (-nomis/tree/nav+lineage/doing-forward-same-level-on-last-but-not-first-child/must-be-at-boh)
-      (-nomis/tree/nav+lineage/doing-backward-same-level-on-first-but-not-last-child/must-be-at-boh)))
+  ;; TODO: Fix doc string.
+  ;; "Return non-nil if moving forward at the last child or backward at the first child (if not a lone child)."
+  (let* ((last? (nomis/tree/on-last-child?/must-be-at-boh))
+         (first? (nomis/tree/on-first-child?/must-be-at-boh)))
+    (cond ((member this-command '(nomis/tree/nav+lineage/forward-sibling
+                                  nomis/tree/nav+lineage/forward-peer))
+           (and last? (not first?)))
+          ((member this-command '(nomis/tree/nav+lineage/backward-sibling
+                                  nomis/tree/nav+lineage/backward-peer))
+           (and first? (not last?))))))
 
 (defvar -nomis/tree/nav+lineage/most-recent-timestamp -9999)
 
