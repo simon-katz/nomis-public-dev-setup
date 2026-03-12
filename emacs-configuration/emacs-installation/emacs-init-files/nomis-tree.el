@@ -482,14 +482,6 @@ If there is no previous peer, display a popup message."
 
 ;;;;; Forward and backward at any level
 
-(defvar -nomis/tree/heading-any-level-show-entry?
-  t
-  "Truthy if next/prev heading commands should show bodies.
-
-These commands:
-  • `nomis/tree/next-heading'
-  • `nomis/tree/previous-heading'")
-
 (defun nomis/tree/next-heading ()
   "Move forward to the next heading at any level.
 
@@ -499,9 +491,7 @@ If there is no next heading, display a popup message."
   (interactive)
   (-nomis/tree/command
       nil
-    (nomis/outline/w/next-heading)
-    (if -nomis/tree/heading-any-level-show-entry?
-        (nomis/outline/w/show-entry)
+    (when (nomis/outline/w/prev-or-next-heading 1 :forward :any-level)
       (nomis/outline/w/ensure-heading-shown))))
 
 (defun nomis/tree/previous-heading ()
@@ -513,9 +503,7 @@ If there is no previous heading, display a popup message."
   (interactive)
   (-nomis/tree/command
       nil
-    (nomis/outline/w/previous-heading)
-    (if -nomis/tree/heading-any-level-show-entry?
-        (nomis/outline/w/show-entry)
+    (when (nomis/outline/w/prev-or-next-heading 1 :backward :any-level)
       (nomis/outline/w/ensure-heading-shown))))
 
 ;;;; Info that relies on our navigation stuff
