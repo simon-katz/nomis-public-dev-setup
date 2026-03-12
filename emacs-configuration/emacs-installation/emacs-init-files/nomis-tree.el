@@ -628,6 +628,14 @@ backward navigation."
           ((eq this-command 'nomis/tree/nav+lineage/backward-peer)
            (and first? (not last?))))))
 
+(defun -nomis/tree/nav+lineage/doing-same-level-final-not-lone?/must-be-at-boh ()
+  "Return non-nil if doing same-level nav+lineage from \"final\" non-lone item.
+
+\"Final\" means \"last\" for a forward navigation and \"first\" for a
+backward navigation."
+  (or (-nomis/tree/nav+lineage/doing-sibling-final-not-lone?/must-be-at-boh)
+      (-nomis/tree/nav+lineage/doing-peer-final-not-lone?/must-be-at-boh)))
+
 (defvar -nomis/tree/nav+lineage/most-recent-timestamp -9999)
 
 (defvar nomis/tree/nav+lineage/quick-repeat-delay
@@ -682,8 +690,7 @@ backward navigation."
               (show-lineage ()
                 (-nomis/tree/nav+lineage/show-lineage n-levels-to-show-or-nil)))
       (nomis/outline/w/back-to-heading)
-      (if (not (or (-nomis/tree/nav+lineage/doing-sibling-final-not-lone?/must-be-at-boh)
-                   (-nomis/tree/nav+lineage/doing-peer-final-not-lone?/must-be-at-boh)
+      (if (not (or (-nomis/tree/nav+lineage/doing-same-level-final-not-lone?/must-be-at-boh)
                    ;; If we very recently did
                    ;; a `nomis/tree/nav+lineage/xxxx-sibling` which tried to
                    ;; go too far and which so collapsed the current heading,
