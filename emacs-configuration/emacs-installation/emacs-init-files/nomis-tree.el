@@ -608,6 +608,10 @@ These commands:
        (nomis/tree/on-first-child?/must-be-at-boh)
        (not (nomis/tree/on-last-child?/must-be-at-boh))))
 
+(defun -nomis/tree/nav+lineage/doing-same-level-not-lone-no-more-entries?/must-be-at-boh ()
+  (or (-nomis/tree/nav+lineage/doing-forward-same-level-on-last-but-not-first-child/must-be-at-boh)
+      (-nomis/tree/nav+lineage/doing-backward-same-level-on-first-but-not-last-child/must-be-at-boh)))
+
 (defvar -nomis/tree/nav+lineage/most-recent-timestamp -9999)
 
 (defvar nomis/tree/nav+lineage/quick-repeat-delay
@@ -664,8 +668,7 @@ These commands:
               (show-lineage ()
                 (-nomis/tree/nav+lineage/show-lineage n-levels-to-show-or-nil)))
       (nomis/outline/w/back-to-heading)
-      (if (not (or (-nomis/tree/nav+lineage/doing-forward-same-level-on-last-but-not-first-child/must-be-at-boh)
-                   (-nomis/tree/nav+lineage/doing-backward-same-level-on-first-but-not-last-child/must-be-at-boh)
+      (if (not (or (-nomis/tree/nav+lineage/doing-same-level-not-lone-no-more-entries?/must-be-at-boh)
                    ;; If we very recently did
                    ;; a `nomis/tree/nav+lineage/xxxx-sibling` which tried to
                    ;; go too far and which so collapsed the current heading,
