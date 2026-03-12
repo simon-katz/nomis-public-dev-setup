@@ -186,7 +186,7 @@ message and in case adding outline level messes things up.")
 
 ;;;;; Basic stuff
 
-(defun -nomis/tree/has-body?/must-be-at-boh/leaving-cursor-at-end-of-heading ()
+(defun -nomis/tree/has-body?/boh/leaving-cursor-at-end-of-heading ()
   (let* ((_ (nomis/outline/w/end-of-heading))
          (end-of-heading-position (point))
          (_ (nomis/outline/w/next-preface))
@@ -202,15 +202,15 @@ message and in case adding outline level messes things up.")
       ;; This newline char being visible or not tells us what we want to know.
       (goto-char end-of-heading-position))))
 
-(defun -nomis/tree/has-body?/must-be-at-boh ()
+(defun -nomis/tree/has-body?/boh ()
   (save-excursion
-    (-nomis/tree/has-body?/must-be-at-boh/leaving-cursor-at-end-of-heading)))
+    (-nomis/tree/has-body?/boh/leaving-cursor-at-end-of-heading)))
 
 (defun -nomis/tree/body-info ()
   (save-excursion
     (nomis/outline/w/back-to-heading)
     (let* ((has-body?
-            (-nomis/tree/has-body?/must-be-at-boh/leaving-cursor-at-end-of-heading))
+            (-nomis/tree/has-body?/boh/leaving-cursor-at-end-of-heading))
            (point-invisible? (nomis/outline/w/invisible?))
            (has-visible-body? (and has-body?
                                    (not point-invisible?)))
@@ -225,7 +225,7 @@ message and in case adding outline level messes things up.")
   (let* ((heading-level (nomis/outline/w/level/boh)))
     (+ heading-level
        (if (and -nomis/tree/show-bodies?
-                (-nomis/tree/has-body?/must-be-at-boh))
+                (-nomis/tree/has-body?/boh))
            1
          0))))
 
@@ -513,28 +513,28 @@ If there is no next peer, display a popup message."
 
 ;;;; Info that relies on our navigation stuff
 
-(defun nomis/tree/on-first-sibling?/must-be-at-boh ()
+(defun nomis/tree/on-first-sibling?/boh ()
   "Truthy if on first or only sibling."
   (save-excursion
     (let ((starting-point (point)))
       (nomis/outline/w/prev-or-next-heading 1 :backward :sibling t)
       (= (point) starting-point))))
 
-(defun nomis/tree/on-last-sibling?/must-be-at-boh ()
+(defun nomis/tree/on-last-sibling?/boh ()
   "Truthy if on last or only sibling."
   (save-excursion
     (let ((starting-point (point)))
       (nomis/outline/w/prev-or-next-heading 1 :forward :sibling t)
       (= (point) starting-point))))
 
-(defun nomis/tree/on-first-peer?/must-be-at-boh ()
+(defun nomis/tree/on-first-peer?/boh ()
   "Truthy if on first or only peer."
   (save-excursion
     (let ((starting-point (point)))
       (nomis/outline/w/prev-or-next-heading 1 :backward :peer t)
       (= (point) starting-point))))
 
-(defun nomis/tree/on-last-peer?/must-be-at-boh ()
+(defun nomis/tree/on-last-peer?/boh ()
   "Truthy if on last or only peer."
   (save-excursion
     (let ((starting-point (point)))
@@ -610,37 +610,37 @@ If there is no next peer, display a popup message."
 
 ;;;;; Nav+lineage algorithm
 
-(defun -nomis/tree/nav+lineage/doing-sibling-final-not-lone?/must-be-at-boh ()
+(defun -nomis/tree/nav+lineage/doing-sibling-final-not-lone?/boh ()
   "Return non-nil if doing sibling nav+lineage from \"final\" non-lone sibling.
 
 \"Final\" means \"last\" for a forward navigation and \"first\" for a
 backward navigation."
-  (let* ((last? (nomis/tree/on-last-sibling?/must-be-at-boh))
-         (first? (nomis/tree/on-first-sibling?/must-be-at-boh)))
+  (let* ((last? (nomis/tree/on-last-sibling?/boh))
+         (first? (nomis/tree/on-first-sibling?/boh)))
     (cond ((eq this-command 'nomis/tree/nav+lineage/forward-sibling)
            (and last? (not first?)))
           ((eq this-command 'nomis/tree/nav+lineage/backward-sibling)
            (and first? (not last?))))))
 
-(defun -nomis/tree/nav+lineage/doing-peer-final-not-lone?/must-be-at-boh ()
+(defun -nomis/tree/nav+lineage/doing-peer-final-not-lone?/boh ()
   "Return non-nil if doing peer nav+lineage from \"final\" non-lone peer.
 
 \"Final\" means \"last\" for a forward navigation and \"first\" for a
 backward navigation."
-  (let* ((last? (nomis/tree/on-last-peer?/must-be-at-boh))
-         (first? (nomis/tree/on-first-peer?/must-be-at-boh)))
+  (let* ((last? (nomis/tree/on-last-peer?/boh))
+         (first? (nomis/tree/on-first-peer?/boh)))
     (cond ((eq this-command 'nomis/tree/nav+lineage/forward-peer)
            (and last? (not first?)))
           ((eq this-command 'nomis/tree/nav+lineage/backward-peer)
            (and first? (not last?))))))
 
-(defun -nomis/tree/nav+lineage/doing-same-level-final-not-lone?/must-be-at-boh ()
+(defun -nomis/tree/nav+lineage/doing-same-level-final-not-lone?/boh ()
   "Return non-nil if doing same-level nav+lineage from \"final\" non-lone item.
 
 \"Final\" means \"last\" for a forward navigation and \"first\" for a
 backward navigation."
-  (or (-nomis/tree/nav+lineage/doing-sibling-final-not-lone?/must-be-at-boh)
-      (-nomis/tree/nav+lineage/doing-peer-final-not-lone?/must-be-at-boh)))
+  (or (-nomis/tree/nav+lineage/doing-sibling-final-not-lone?/boh)
+      (-nomis/tree/nav+lineage/doing-peer-final-not-lone?/boh)))
 
 (defvar -nomis/tree/nav+lineage/most-recent-timestamp -9999)
 
@@ -703,7 +703,7 @@ backward navigation."
                          (show-lineage)
                        (nomis/outline/w/collapse))))))
       (nomis/outline/w/back-to-heading)
-      (cond ((-nomis/tree/nav+lineage/doing-same-level-final-not-lone?/must-be-at-boh)
+      (cond ((-nomis/tree/nav+lineage/doing-same-level-final-not-lone?/boh)
              ;; This will display a can't-move message, then collapse:
              (try-to-nav-then-show-lineage))
             ((-nomis/tree/nav+lineage/sibling-then-peer-with-small-time-gap?)
