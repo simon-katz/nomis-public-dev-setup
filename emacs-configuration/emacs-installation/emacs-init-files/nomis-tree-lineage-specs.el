@@ -147,13 +147,15 @@
     (4 (outline-show-subtree))))
 
 (defun nomis/tree/ls/show-lineage (lineage-spec)
-  (-nomis/tree/ls/hsl-hide lineage-spec)
-  (-nomis/tree/ls/hsl-show-parents lineage-spec)
-  (nomis/outline/w/ensure-heading-shown)
-  (-nomis/tree/ls/hsl-show-children lineage-spec)
-  (when (eql lineage-spec
-             nomis/tree/ls/spec/hide-all--fat-parents--all-children--show-body)
-    (nomis/outline/w/pulse-current-section)))
+  (save-excursion
+    (nomis/outline/w/back-to-heading) ; not sure we need this, but it can't harm
+    (-nomis/tree/ls/hsl-hide lineage-spec)
+    (-nomis/tree/ls/hsl-show-parents lineage-spec)
+    (nomis/outline/w/ensure-heading-shown)
+    (-nomis/tree/ls/hsl-show-children lineage-spec)
+    (when (eql lineage-spec
+               nomis/tree/ls/spec/hide-all--fat-parents--all-children--show-body)
+      (nomis/outline/w/pulse-current-section))))
 
 (defconst -nomis/tree/ls/lineage/commands
   '(nomis/tree/lineage/less
