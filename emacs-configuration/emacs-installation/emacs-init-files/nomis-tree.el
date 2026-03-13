@@ -473,7 +473,7 @@ If there is no next sibling, display a popup message."
 (defun nomis/tree/previous-peer ()
   "Move backward one peer.
 
-When the target is invisible, make it visible
+When the target is invisible, make it visible.
 
 If there is no previous peer, display a popup message."
   (interactive)
