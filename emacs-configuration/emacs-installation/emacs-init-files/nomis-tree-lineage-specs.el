@@ -10,6 +10,8 @@
 
 ;;;; Lineage specs
 
+;;;;; Preamble
+
 ;; A lineage spec controls how lineages are displayed. They are inspired by
 ;; `org`s visibility spans.
 
@@ -39,6 +41,8 @@
 ;;
 ;; - `:spec/show-body?`
 ;;   - boolean
+
+;;;;; The sequence of lineage specs for less/more
 
 (defconst nomis/tree/ls/children-approach-max 4)
 
@@ -89,6 +93,12 @@
 (defconst -nomis/tree/ls/initial-numeric-value
   (or (cl-position :ancestors -nomis/tree/ls/spec-sequence :key #'cl-first)
       (error "Didn't find :ancestors entry in -nomis/tree/ls/spec-sequence")))
+
+;;;;; Other lineage specs
+
+(defconst nomis/tree/ls/spec/no-hide--fat-parents--all-children
+  (a-hash-table :spec/parents-approach :parents/fat
+                :spec/children-approach nomis/tree/ls/children-approach-max))
 
 ;;;; Hide/show lineage
 

@@ -161,6 +161,16 @@ message and in case adding outline level messes things up.")
                 (apply orig-fun args)))
             '((name . nomis/tree/add-level-info)))
 
+;;;;; Show entry after `xref-find-definitions` (`M-.`)
+
+(defun nomis/tree/xref-find-definition-show-entry (&rest _)
+  "Ensure entry is visible."
+  (when nomis/tree-mode
+    (nomis/tree/ls/show-lineage
+     nomis/tree/ls/spec/no-hide--fat-parents--all-children)))
+
+(advice-add 'xref-find-definitions :after 'nomis/tree/xref-find-definition-show-entry)
+
 ;;;; Whether to show bodies
 
 ;;;;; `-nomis/tree/show-bodies?`
