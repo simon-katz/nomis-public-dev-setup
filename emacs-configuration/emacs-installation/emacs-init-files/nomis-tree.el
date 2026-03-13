@@ -173,8 +173,6 @@ message and in case adding outline level messes things up.")
 
 ;;;; Whether to show bodies
 
-;;;;; `-nomis/tree/show-bodies?`
-
 (defvar-local -nomis/tree/show-bodies? t)
 
 (defun nomis/tree/toggle-show-bodies ()
@@ -184,13 +182,6 @@ message and in case adding outline level messes things up.")
       (nomis/outline/w/show-bodies)
     (nomis/outline/w/hide-bodies))
   (message "show-bodies? set to %s" -nomis/tree/show-bodies?))
-
-;;;;; Tailoring for org mode
-
-(defun -nomis/tree/set-show-bodies-for-org-mode ()
-  (setq -nomis/tree/show-bodies? (not org-startup-folded)))
-
-(add-hook 'org-mode-hook #'-nomis/tree/set-show-bodies-for-org-mode)
 
 ;;;; Some wrappers for outline functionality
 
