@@ -246,6 +246,7 @@ message and in case adding outline level messes things up.")
 (cl-defmacro nomis/tree/save-excursion-to-parent (&body body)
   (declare (indent 0))
   `(save-excursion
+     (nomis/outline/w/back-to-heading)
      (nomis/outline/w/up-heading* 1)
      ,@body))
 
