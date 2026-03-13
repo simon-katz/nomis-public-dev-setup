@@ -5,6 +5,7 @@
 ;;;; Requires
 
 (require 'nomis-msg)
+(require 'nomis-tree-lineage-specs)
 (require 'outline)
 
 ;;;; Ellipses
@@ -83,16 +84,20 @@
 ;; (nomis/outline/colors/set-rainbow-8)
 (nomis/outline/colors/set-rainbow-4)
 
-;;;; Show point and entry when jumping to grep results
+;;;; Show entry when jumping from other places
+
+(defun -nomis/outline/show-after-find/after-advice (&rest _)
+  (when (or (derived-mode-p 'outline-mode)
+            (bound-and-true-p outline-minor-mode))
+    (nomis/tree/ls/show-after-find)))
 
 (advice-add 'compilation-next-error-function
             :after
-            (lambda (&rest _)
-              (when (or (derived-mode-p 'outline-mode)
-                        (bound-and-true-p outline-minor-mode))
-                (outline-show-entry)))
-            '((name . nomis/outline-show-entry-when-going-to-grep-results)))
+            #'-nomis/outline/show-after-find/after-advice)
 
+(advice-add 'xref-find-definitions
+            :after
+            #'-nomis/outline/show-after-find/after-advice)
 
 ;;;; `outline-regexp`
 

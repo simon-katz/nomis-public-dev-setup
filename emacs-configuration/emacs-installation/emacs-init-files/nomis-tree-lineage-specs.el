@@ -216,6 +216,13 @@
   (let* ((v nomis/tree/ls/spec-sequence-max-value))
     (-nomis/tree/ls/lineage/set-level/numeric v nil)))
 
+;;;; nomis/tree/ls/show-after-find
+
+(defun nomis/tree/ls/show-after-find ()
+  (unless (nomis/outline/w/before-first-heading?)
+    (nomis/tree/ls/show-lineage
+     nomis/tree/ls/spec/no-hide--fat-parents--all-children)))
+
 ;;; End
 
 (provide 'nomis-tree-lineage-specs)
