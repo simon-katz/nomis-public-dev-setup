@@ -55,6 +55,9 @@ Use H with various other keys:
         TAB is the same as H-\\, but can't be used with M and C
         <backtab> is the same as H-', but can't be used with M and C
 
+        Note that <backtab> does nothing when in a body.
+        If you want `org-shifttab`, use the escape hatch -- `H-<backtab>`.
+
     Expand and collapse from parent of current point
         \" | (that's S-' and S-\ on my keyboard.)
         Add M to fully expand or collapse
@@ -162,10 +165,9 @@ H-o ?    Show this help")
 (dolist (key `(;; These keys are copied from `org`.
                ,(kbd "S-TAB")
                ,(kbd "<backtab>")))
-  (nomis/define-key-with-filter nomis/tree-mode-map
-                                key
-                                'nomis/tree/show-children-from-point/incremental/less
-                                (nomis/outline/w/on-heading?)))
+  ;; We don't use a filter here (like we do for for TAB), because invoking
+  ;; `org-shifttab` when in a body is unpleasant for the user.
+  (define-key nomis/tree-mode-map key #'nomis/tree/backtab))
 
 ;;;; Movement
 

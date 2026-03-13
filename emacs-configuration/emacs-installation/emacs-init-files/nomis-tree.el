@@ -1143,6 +1143,12 @@ When in a body, \"current heading\" means the current body's parent heading."
       (-nomis/tree/show-children-from-point/set-level-etc
        (1- (nomis/tree/start-level-for-incremental-contract)) :less :dummy))))
 
+(defun nomis/tree/backtab (n)
+  (interactive "P")
+  (if (nomis/outline/w/on-heading?)
+      (nomis/tree/show-children-from-point/incremental/less n)
+    (error "Can't do <backtab> when in a body")))
+
 (defun nomis/tree/show-children-from-point/incremental/more (n)
   "If `N` is not provided, expand the current heading by one level.
 If `N` is provided, set the number of child levels to `N`.
