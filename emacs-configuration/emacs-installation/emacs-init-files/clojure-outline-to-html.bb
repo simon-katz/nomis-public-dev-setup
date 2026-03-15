@@ -81,14 +81,73 @@
         (assoc :para-lines []))
     state))
 
+(defn parse-bullet-entries [lines]
+  "Convert raw indented bullet lines to [{:indent :bullet? :text}]."
+  (->> lines
+       (remove str/blank?)
+       (map (fn [line]
+              (let [indent  (count (re-find #"^ *" line))
+                    trimmed (str/triml line)
+                    bullet? (str/starts-with? trimmed "- ")]
+                {:indent  indent
+                 :bullet? bullet?
+                 :text    (if bullet? (subs trimmed 2) trimmed)})))))
+
+(defn build-bullet-tree [entries]
+  "Convert flat entries to a tree [{:text :children}]."
+  (loop [entries entries
+         items   []
+         current nil]
+    (if (empty? entries)
+      (if current (conj items current) items)
+      (let [{:keys [indent bullet? text]} (first entries)]
+        (cond
+          ;; New top-level bullet
+          (and bullet? (zero? indent))
+          (recur (rest entries)
+                 (if current (conj items current) items)
+                 {:text text :children []})
+
+          ;; New nested bullet
+          (and bullet? (pos? indent))
+          (recur (rest entries)
+                 items
+                 (update current :children conj {:text text :children []}))
+
+          ;; Continuation of last nested bullet
+          (and (not bullet?) (pos? indent) (seq (:children current)))
+          (recur (rest entries)
+                 items
+                 (update-in current [:children (dec (count (:children current))) :text]
+                            str " " text))
+
+          ;; Continuation of current top-level bullet
+          :else
+          (recur (rest entries)
+                 items
+                 (update current :text str " " text)))))))
+
+(defn render-bullet-tree [items]
+  "Render a bullet tree to an HTML <ul> string."
+  (str "<ul>\n"
+       (str/join
+        (map (fn [{:keys [text children]}]
+               (str "<li>"
+                    (apply-styles (html-escape text))
+                    (when (seq children)
+                      (str "\n" (render-bullet-tree children)))
+                    "</li>\n"))
+             items))
+       "</ul>\n"))
+
 (defn flush-bullets [{:keys [bullet-lines] :as state}]
   (if (seq bullet-lines)
-    (let [lis (->> bullet-lines
-                   (map (comp apply-styles html-escape))
-                   (map #(str "  <li>" % "</li>\n")))]
+    (let [html (-> bullet-lines
+                   parse-bullet-entries
+                   build-bullet-tree
+                   render-bullet-tree)]
       (-> state
-          (update :section-parts conj
-                  (str "<ul>\n" (str/join lis) "</ul>\n"))
+          (update :section-parts conj html)
           (assoc :bullet-lines [])))
     state))
 
@@ -174,15 +233,27 @@
   (let [state (flush-code state)
         text  (strip-comment-prefix line)]
     (cond
+      ;; Blank ;; line: skip silently if inside a bullet list (inter-bullet
+      ;; spacing), otherwise treat as a paragraph break.
       (str/blank? text)
-      (-> state flush-para flush-bullets (assoc :mode :prose))
+      (if (seq (:bullet-lines state))
+        (assoc state :mode :prose)
+        (-> state flush-para (assoc :mode :prose)))
 
-      (str/starts-with? text "- ")
+      ;; Bullet at any indent level (top-level or nested).
+      (re-find #"^\s*- " text)
       (-> state
           flush-para
-          (update :bullet-lines conj (subs text 2))
+          (update :bullet-lines conj text)
           (assoc :mode :prose))
 
+      ;; Continuation line (leading spaces) while collecting bullets.
+      (and (seq (:bullet-lines state)) (str/starts-with? text " "))
+      (-> state
+          (update :bullet-lines conj text)
+          (assoc :mode :prose))
+
+      ;; Normal prose line.
       :else
       (-> state
           flush-bullets
