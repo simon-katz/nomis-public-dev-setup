@@ -1,15 +1,48 @@
 #!/usr/bin/env bb
 
-;; Usage: bb clojure-outline-to-html.bb <input.clj>
+;; Usage: bb outline-to-html.bb <input-file> [options]
 ;;
-;; Converts a Clojure outline file to HTML, writing <input>.html next to it.
+;; Options:
+;;   --output-dir DIR         Directory for the output HTML file
+;;   --prose-prefix STR       Comment prefix for prose lines    (default: ;;)
+;;   --heading-prefix STR     Comment prefix for H1 headings   (default: ;;;;)
+;;   --heading-increment CHAR Character appended per heading level (default: ;)
 ;;
-;; Heading conventions:  ;;;;  => H1,  ;;;;; => H2,  ;;;;;; => H3, etc.
+;; Heading conventions (Clojure defaults):  ;;;;  => H1,  ;;;;; => H2, etc.
 ;; Comment lines (^;;):  grouped into prose sections / paragraphs.
 ;; Everything else:      rendered as <pre><code> blocks.
 
-(ns clojure-outline-to-html
+(ns outline-to-html
   (:require [clojure.string :as str]))
+
+;;; ── Config ──────────────────────────────────────────────────────────────────
+
+(defn make-config [prose-prefix heading-prefix heading-increment]
+  (let [qpp (java.util.regex.Pattern/quote prose-prefix)
+        qhp (java.util.regex.Pattern/quote heading-prefix)
+        qhi (java.util.regex.Pattern/quote heading-increment)]
+    {:prose-prefix      prose-prefix
+     :heading-prefix    heading-prefix
+     :heading-increment heading-increment
+     :heading-re        (re-pattern (str "^" qhp "(?:" qhi ")*"))
+     :prose-re          (re-pattern (str "^" qpp))
+     :strip-re          (re-pattern (str "^" qpp "(?:" qhi ")* ?"))}))
+
+(defn parse-args [args]
+  (loop [args   args
+         result {:input-file        nil
+                 :output-dir        nil
+                 :prose-prefix      ";;"
+                 :heading-prefix    ";;;;"
+                 :heading-increment ";"}]
+    (if (empty? args)
+      result
+      (case (first args)
+        "--output-dir"        (recur (drop 2 args) (assoc result :output-dir        (second args)))
+        "--prose-prefix"      (recur (drop 2 args) (assoc result :prose-prefix      (second args)))
+        "--heading-prefix"    (recur (drop 2 args) (assoc result :heading-prefix    (second args)))
+        "--heading-increment" (recur (drop 2 args) (assoc result :heading-increment (second args)))
+        (recur (rest args)    (assoc result :input-file (first args)))))))
 
 ;;; ── Pure helpers ────────────────────────────────────────────────────────────
 
@@ -27,15 +60,15 @@
        reverse
        vec))
 
-(defn classify [line]
+(defn classify [line {:keys [heading-re prose-re]}]
   (cond
-    (re-find #"^;;;;+" line) :heading
-    (re-find #"^;;"    line) :prose
-    (str/blank?        line) :blank
-    :else                    :code))
+    (re-find heading-re line) :heading
+    (re-find prose-re   line) :prose
+    (str/blank?         line) :blank
+    :else                     :code))
 
-(defn strip-comment-prefix [line]
-  (str/replace line #"^;;+ ?" ""))
+(defn strip-comment-prefix [line {:keys [strip-re]}]
+  (str/replace line strip-re ""))
 
 ;;; ── Inline text styling ─────────────────────────────────────────────────────
 
@@ -208,9 +241,11 @@
 
 (defn process-heading [state line]
   (let [state    (-> state flush-code flush-section)
-        semis    (re-find #"^;;;;+" line)
-        text     (str/replace line #"^;;;;+\s*" "")
-        level    (- (count semis) 3)
+        {:keys [heading-prefix heading-increment heading-re]} (:config state)
+        prefix   (re-find heading-re line)
+        level    (inc (/ (- (count prefix) (count heading-prefix))
+                         (count heading-increment)))
+        text     (str/triml (subs line (count prefix)))
         tag      (str "h" level)
         counters (-> (:counters state)
                      (update (dec level) inc)
@@ -239,7 +274,7 @@
 
 (defn process-prose [state line]
   (let [state (flush-code state)
-        text  (strip-comment-prefix line)]
+        text  (strip-comment-prefix line (:config state))]
     (cond
       ;; Blank ;; line: skip silently if inside a bullet list (inter-bullet
       ;; spacing), otherwise treat as a paragraph break.
@@ -280,7 +315,7 @@
       (assoc :mode :code)))
 
 (defn process-line [state line]
-  (case (classify line)
+  (case (classify line (:config state))
     :heading (process-heading   state line)
     :prose   (process-prose     state line)
     :blank   (process-blank     state)
@@ -431,12 +466,16 @@
 
 ;;; ── Main ────────────────────────────────────────────────────────────────────
 
-(let [input-file  (first *command-line-args*)
-      output-file (if-let [dir (second *command-line-args*)]
+(let [args        (parse-args *command-line-args*)
+      input-file  (:input-file args)
+      output-file (if-let [dir (:output-dir args)]
                     (str/replace input-file
                                  #"^(.*/)?([^/]+)\.[^.]+$"
                                  (str dir "/$2.html"))
                     (str/replace input-file #"\.[^.]+$" ".html"))
+      config      (make-config (:prose-prefix      args)
+                               (:heading-prefix    args)
+                               (:heading-increment args))
       title       (-> input-file
                       (str/replace #".*/" "")
                       (str/replace #"\.[^.]+$" "")
@@ -444,6 +483,7 @@
                       (as-> s (str/join " " (map str/capitalize (str/split s #" ")))))
       lines       (str/split-lines (slurp input-file))
       initial     {:mode          :code
+                   :config        config
                    :counters      (vec (repeat 6 0))
                    :toc-entries   []
                    :open-levels   []
