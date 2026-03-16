@@ -49,6 +49,32 @@
 
 ;;;; Pure helpers
 
+(defn indices [pred coll]
+  (keep-indexed #(when (pred %2) %1) coll))
+
+(def numeric-char? #{\1 \2 \3 \4 \5 \6 \7 \8 \9 \0})
+
+(def ^:private apa-minor-words
+  "Words lowercased in APA title case unless they are the first word."
+  #{"a" "an" "the"
+    "and" "as" "but" "for" "if" "nor" "or" "so" "yet"
+    "at" "by" "in" "of" "off" "on" "per" "to" "up" "via"})
+
+(defn apa-title-case [s]
+  "Apply APA 7th-edition title case to string S."
+  (let [words (str/split s #" ")
+        first-non-number-pos (or (first (indices (fn [s]
+                                                   (not-every? numeric-char? s))
+                                                 words))
+                                 0)]
+    (str/join " "
+              (map-indexed (fn [i word]
+                             (if (and  (> i first-non-number-pos)
+                                       (contains? apa-minor-words (str/lower-case word)))
+                               (str/lower-case word)
+                               (str/capitalize word)))
+                           words))))
+
 (defn html-escape [s]
   (-> s
       (str/replace "&" "&amp;")
@@ -496,7 +522,7 @@
                       (str/replace #"\.[^.]+$" "")
                       (str/replace (:title-strip-prefix args) "")
                       (str/replace "_" " ")
-                      (as-> s (str/join " " (map str/capitalize (str/split s #" ")))))
+                      apa-title-case)
       lines       (str/split-lines (slurp input-file))
       initial     {:mode          :code
                    :config        config
