@@ -15,15 +15,19 @@ Delegates all work to the Babashka script at
          (output-dir  (expand-file-name "_no-commit_"
                                         (file-name-directory input-file))))
     (make-directory output-dir t)
-    (shell-command
-     (format "bb %s %s --output-dir %s --prose-prefix %s --heading-prefix %s --heading-increment %s --title-strip-prefix %s"
-             (shell-quote-argument -nomis/outline-to-html-script)
-             (shell-quote-argument input-file)
-             (shell-quote-argument output-dir)
-             (shell-quote-argument ";;")
-             (shell-quote-argument ";;;;")
-             (shell-quote-argument ";")
-             (shell-quote-argument "nomis_")))
-    (message "Exported to %s" output-dir)))
+    (let ((exit-code
+           (shell-command
+            (format "bb %s %s --output-dir %s --prose-prefix %s --heading-prefix %s --heading-increment %s --title-strip-prefix %s"
+                    (shell-quote-argument -nomis/outline-to-html-script)
+                    (shell-quote-argument input-file)
+                    (shell-quote-argument output-dir)
+                    (shell-quote-argument ";;")
+                    (shell-quote-argument ";;;;")
+                    (shell-quote-argument ";")
+                    (shell-quote-argument "nomis_")))))
+      (if (zerop exit-code)
+          (message "Exported to %s" output-dir)
+        (error "Export failed (exit code %d) — see *Shell Command Output* buffer"
+               exit-code)))))
 
 (provide 'nomis-outline-export)
