@@ -222,9 +222,12 @@
         (update :html-parts conj
                 (str "<details open>\n"
                      "<summary>"
+                     "<span class=\"toggle\"></span>"
+                     "<span class=\"heading-text\">"
                      "<" tag " id=\"" sec-num "\">"
                      sec-num " " styled
                      "</" tag ">"
+                     "</span>"
                      "</summary>\n"))
         (update :open-levels conj level)
         (assoc :mode :code))))
@@ -324,30 +327,33 @@
       border-width: thin;
     }
     details > summary {
-      cursor: pointer;
+      cursor: default;
       display: block;
       list-style: none;
     }
     details > summary::-webkit-details-marker {
       display: none;
     }
-    details > summary::before {
-      content: '▶';
+    .toggle {
       display: inline-block;
       font-size: 0.65em;
       vertical-align: middle;
       margin-right: 0.4em;
       color: #888;
+      cursor: pointer;
+      user-select: none;
     }
-    details[open] > summary::before {
-      content: '▼';
+    .toggle::before { content: '▶'; }
+    details[open] > summary .toggle::before { content: '▼'; }
+    .heading-text {
+      display: inline;
     }
-    details > summary > h1,
-    details > summary > h2,
-    details > summary > h3,
-    details > summary > h4,
-    details > summary > h5,
-    details > summary > h6 {
+    details > summary h1,
+    details > summary h2,
+    details > summary h3,
+    details > summary h4,
+    details > summary h5,
+    details > summary h6 {
       display: inline;
     }
     details {
@@ -408,6 +414,13 @@
        "</head>\n"
        "<body>\n"
        body
+       "<script>\n"
+       "document.querySelectorAll('details > summary').forEach(s => {\n"
+       "  s.addEventListener('click', e => {\n"
+       "    if (e.target.closest('.heading-text')) e.preventDefault();\n"
+       "  });\n"
+       "});\n"
+       "</script>\n"
        "</body>\n"
        "</html>\n"))
 
