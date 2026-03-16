@@ -365,10 +365,10 @@
       margin-top: 1em;
     }
     .prose-section + .prose-section::before {
-      content: '✦ ✦ ✦';
+      content: '✦';
       display: block;
       text-align: center;
-      color: #888;
+      color: #404040;
     }
     .concept {
       font-weight: bold;
@@ -392,7 +392,7 @@
       font-size: 0.65em;
       vertical-align: middle;
       margin-right: 0.4em;
-      color: #888;
+      color: #404040;
       cursor: pointer;
       user-select: none;
     }
