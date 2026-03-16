@@ -16,7 +16,7 @@
 (ns outline-to-html
   (:require [clojure.string :as str]))
 
-;;; ── Config ──────────────────────────────────────────────────────────────────
+;;;; Config
 
 (defn make-config [prose-prefix heading-prefix heading-increment]
   (let [qpp (java.util.regex.Pattern/quote prose-prefix)
@@ -47,7 +47,7 @@
         "--title-strip-prefix" (recur (drop 2 args) (assoc result :title-strip-prefix (second args)))
         (recur (rest args)    (assoc result :input-file (first args)))))))
 
-;;; ── Pure helpers ────────────────────────────────────────────────────────────
+;;;; Pure helpers
 
 (defn html-escape [s]
   (-> s
@@ -73,7 +73,7 @@
 (defn strip-comment-prefix [line {:keys [strip-re]}]
   (str/replace line strip-re ""))
 
-;;; ── Inline text styling ─────────────────────────────────────────────────────
+;;;; Inline text styling
 
 (defn style-italics [s]
   ;; Require whitespace or start-of-string before the opening / so that
@@ -110,7 +110,7 @@
       style-inline-code
       style-links))
 
-;;; ── State flushers ──────────────────────────────────────────────────────────
+;;;; State flushers
 
 (defn flush-para [{:keys [para-lines] :as state}]
   (if (seq para-lines)
@@ -215,7 +215,7 @@
         state))
     state))
 
-;;; ── Table of contents ───────────────────────────────────────────────────────
+;;;; Table of contents
 
 (defn build-toc [toc-entries]
   (let [rows (map (fn [{:keys [level sec-num styled]}]
@@ -229,7 +229,7 @@
          (str/join rows)
          "</nav>\n")))
 
-;;; ── Per-line dispatch ───────────────────────────────────────────────────────
+;;;; Per-line dispatch
 
 (defn close-details
   "Close all open <details> whose level is >= min-level."
@@ -324,7 +324,7 @@
     :blank   (process-blank     state)
     :code    (process-code-line state line)))
 
-;;; ── HTML template ───────────────────────────────────────────────────────────
+;;;; HTML template
 
 (def css
   "    body {
@@ -477,7 +477,7 @@
        "</body>\n"
        "</html>\n"))
 
-;;; ── Main ────────────────────────────────────────────────────────────────────
+;;;; Main
 
 (let [args        (parse-args *command-line-args*)
       input-file  (:input-file args)
