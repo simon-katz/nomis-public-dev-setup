@@ -3,10 +3,11 @@
 ;; Usage: bb outline-to-html.bb <input-file> [options]
 ;;
 ;; Options:
-;;   --output-dir DIR         Directory for the output HTML file
-;;   --prose-prefix STR       Comment prefix for prose lines    (default: ;;)
-;;   --heading-prefix STR     Comment prefix for H1 headings   (default: ;;;;)
-;;   --heading-increment CHAR Character appended per heading level (default: ;)
+;;   --output-dir DIR          Directory for the output HTML file
+;;   --prose-prefix STR        Comment prefix for prose lines    (default: ;;)
+;;   --heading-prefix STR      Comment prefix for H1 headings   (default: ;;;;)
+;;   --heading-increment CHAR  Character appended per heading level (default: ;)
+;;   --title-strip-prefix STR  Prefix stripped from filename for page title (default: "")
 ;;
 ;; Heading conventions (Clojure defaults):  ;;;;  => H1,  ;;;;; => H2, etc.
 ;; Comment lines (^;;):  grouped into prose sections / paragraphs.
@@ -30,18 +31,20 @@
 
 (defn parse-args [args]
   (loop [args   args
-         result {:input-file        nil
-                 :output-dir        nil
-                 :prose-prefix      ";;"
-                 :heading-prefix    ";;;;"
-                 :heading-increment ";"}]
+         result {:input-file          nil
+                 :output-dir          nil
+                 :prose-prefix        ";;"
+                 :heading-prefix      ";;;;"
+                 :heading-increment   ";"
+                 :title-strip-prefix  ""}]
     (if (empty? args)
       result
       (case (first args)
-        "--output-dir"        (recur (drop 2 args) (assoc result :output-dir        (second args)))
-        "--prose-prefix"      (recur (drop 2 args) (assoc result :prose-prefix      (second args)))
-        "--heading-prefix"    (recur (drop 2 args) (assoc result :heading-prefix    (second args)))
-        "--heading-increment" (recur (drop 2 args) (assoc result :heading-increment (second args)))
+        "--output-dir"         (recur (drop 2 args) (assoc result :output-dir         (second args)))
+        "--prose-prefix"       (recur (drop 2 args) (assoc result :prose-prefix       (second args)))
+        "--heading-prefix"     (recur (drop 2 args) (assoc result :heading-prefix     (second args)))
+        "--heading-increment"  (recur (drop 2 args) (assoc result :heading-increment  (second args)))
+        "--title-strip-prefix" (recur (drop 2 args) (assoc result :title-strip-prefix (second args)))
         (recur (rest args)    (assoc result :input-file (first args)))))))
 
 ;;; ── Pure helpers ────────────────────────────────────────────────────────────
@@ -489,6 +492,7 @@
       title       (-> input-file
                       (str/replace #".*/" "")
                       (str/replace #"\.[^.]+$" "")
+                      (str/replace (:title-strip-prefix args) "")
                       (str/replace "_" " ")
                       (as-> s (str/join " " (map str/capitalize (str/split s #" ")))))
       lines       (str/split-lines (slurp input-file))
