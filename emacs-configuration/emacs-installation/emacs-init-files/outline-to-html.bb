@@ -12,6 +12,9 @@
 ;; Heading conventions (Clojure defaults):  ;;;;  => H1,  ;;;;; => H2, etc.
 ;; Comment lines (^;;):  grouped into prose sections / paragraphs.
 ;; Everything else:      rendered as <pre><code> blocks.
+;;
+;; Special markers:
+;;   ;; --new-section--        Force a prose-section break (useful after a code block).
 
 (ns outline-to-html
   (:require [clojure.string :as str]))
@@ -305,6 +308,13 @@
   (let [state (flush-code state)
         text  (strip-comment-prefix line (:config state))]
     (cond
+      ;; New-section marker: flush current section and emit an explicit separator.
+      (= (str/trim text) "--new-section--")
+      (-> state
+          flush-section
+          (update :html-parts conj "<div class=\"prose-section-separator\"></div>\n")
+          (assoc :mode :prose))
+
       ;; Blank ;; line: skip silently if inside a bullet list (inter-bullet
       ;; spacing), otherwise treat as a paragraph break.
       (str/blank? text)
@@ -395,6 +405,14 @@
       display: block;
       text-align: center;
       color: #404040;
+    }
+    .prose-section-separator {
+      text-align: center;
+      color: #404040;
+      margin-top: 1em;
+    }
+    .prose-section-separator::before {
+      content: '✦';
     }
     .concept {
       font-weight: bold;
