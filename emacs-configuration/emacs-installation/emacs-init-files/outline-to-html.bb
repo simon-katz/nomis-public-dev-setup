@@ -123,6 +123,11 @@
                    match
                    "\u2014"))))
 
+(defn style-todos [s]
+  ;; Match "TODO:" preceded by whitespace/start, or "TODO" surrounded by whitespace/boundaries.
+  (str/replace s #"(?:(?<=\s)|^)TODO(?::|(?=\s|$))"
+               (fn [match] (str "<span class=\"todo\">" match "</span>"))))
+
 (defn style-links [s]
   (str/replace s #"https?://\S+"
                (fn [url]
@@ -137,6 +142,7 @@
       style-concepts
       style-dashes
       style-inline-code
+      style-todos
       style-links))
 
 ;;;; State flushers
@@ -239,7 +245,7 @@
       (if (seq trimmed)
         (update state :html-parts conj
                 (str "<pre><code>"
-                     (str/join "\n" (map html-escape trimmed))
+                     (str/join "\n" (map (comp style-todos html-escape) trimmed))
                      "</code></pre>\n"))
         state))
     state))
@@ -413,6 +419,10 @@
     }
     .prose-section-separator::before {
       content: '✦';
+    }
+    .todo {
+      color: red;
+      font-weight: bold;
     }
     .concept {
       font-weight: bold;
