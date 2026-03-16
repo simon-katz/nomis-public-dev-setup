@@ -260,7 +260,7 @@
                                    :sec-num sec-num
                                    :styled  styled})
         (update :html-parts conj
-                (str "<details open>\n"
+                (str "<details open class=\"heading-level-" level "\">\n"
                      "<summary>"
                      "<span class=\"toggle\"></span>"
                      "<span class=\"heading-text\">"
@@ -337,9 +337,19 @@
       margin-top: 1.4em;
       margin-bottom: 0.3em;
     }
-    h1 { font-size: 1.8em; border-bottom: 2px solid #ccc; padding-bottom: 0.2em; }
+    h1 { font-size: 1.8em; }
     h1.page-title { font-size: 2.2em; border-bottom: 3px solid #aaa; margin-bottom: 0.6em; }
-    h2 { font-size: 1.4em; border-bottom: 1px solid #eee; padding-bottom: 0.1em; }
+    h2 { font-size: 1.4em; }
+    details.heading-level-1 {
+      border-top: 2px solid #aaa;
+      margin-top: 1.5em;
+      padding-top: 0.4em;
+    }
+    details.heading-level-2 {
+      border-top: 1px solid #ddd;
+      margin-top: 0.8em;
+      padding-top: 0.2em;
+    }
     h3 { font-size: 1.2em; }
     h4 { font-size: 1.1em; }
     h5 { font-size: 1.0em; }
