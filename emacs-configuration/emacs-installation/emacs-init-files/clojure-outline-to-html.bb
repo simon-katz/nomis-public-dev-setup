@@ -51,7 +51,12 @@
   (str/replace s #"`([^`]+)`" "<code>$1</code>"))
 
 (defn style-dashes [s]
-  (str/replace s "--" "\u2014"))
+  ;; Replace -- with an em dash, but leave backtick-wrapped spans untouched.
+  (str/replace s #"`[^`]+`|--"
+               (fn [match]
+                 (if (str/starts-with? match "`")
+                   match
+                   "\u2014"))))
 
 (defn style-links [s]
   (str/replace s #"https?://\S+"
@@ -65,8 +70,8 @@
   (-> s
       style-italics
       style-concepts
-      style-inline-code
       style-dashes
+      style-inline-code
       style-links))
 
 ;;; ── State flushers ──────────────────────────────────────────────────────────
