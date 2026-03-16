@@ -449,11 +449,13 @@
       background: #f0f0f0;
       padding: 1px 4px;
       border-radius: 3px;
+      white-space: nowrap;
     }
     pre code {
       background: none;
       padding: 0;
       border-radius: 0;
+      white-space: pre;
     }")
 
 (defn html-page [title body]
