@@ -359,10 +359,10 @@
     }
     .concept {
       font-weight: bold;
-      background: #f0fff0;
+      background: #f8fff8;
       border-radius: 4px;
       border-color: darkgreen;
-      padding: 1px 4px;
+      padding: 0px 4px;
       border-style: solid;
       border-width: thin;
     }
