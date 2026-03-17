@@ -223,7 +223,7 @@ H-o ?    Show this help")
 (define-key nomis/tree/kb/map (kbd "=") 'nomis/tree/show-children-from-all-roots/to-current-level)
 
 (define-key nomis/tree/kb/map (kbd "c") 'nomis/tree/nav+lineage/set-n-child-levels-to-show)
-(define-key nomis/tree/kb/map (kbd "p") 'nomis/tree/nav+lineage/toggle-parents-approach)
+(define-key nomis/tree/kb/map (kbd "p") 'nomis/tree/nav+lineage/set-parents-approach)
 (define-key nomis/tree/kb/map (kbd "m") 'nomis/scrolling/toggle-maintain-line-no-in-window)
 
 (define-key nomis/tree/kb/map (kbd "?") 'nomis/tree/pop-up-help)

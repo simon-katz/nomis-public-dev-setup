@@ -497,27 +497,56 @@ If there is no next peer, display a popup message."
 
 ;;;;; Nav+lineage settings
 
+;;;;;; Parents
+
+(defvar -nomis/tree/nav+lineage/parents-approach ; Buffer-local? No.
+  :nav+lineage/parents/all-roots-to-current-level
+  "What to do with parents in `-nomis/tree/nav+lineage/show-lineage'.
+
+One of:
+- `:nav+lineage/parents/leave-as-is` (but show ancestors if hidden)
+- `:nav+lineage/parents/all-roots-to-current-level`
+- `:nav+lineage/parents/fat'
+- `:nav+lineage/parents/thin`.")
+
+(defconst -nomis/tree/nav+lineage/parents-approach/pairs
+  '((:nav+lineage/parents/leave-as-is                . "leave-as-is")
+    (:nav+lineage/parents/all-roots-to-current-level . "all roots to current level")
+    (:nav+lineage/parents/fat                        . "fat")
+    (:nav+lineage/parents/thin                       . "thin")))
+
+(defun -nomis/tree/nav+lineage/parents-approach-text ()
+  (cl-loop for (sym . text) in -nomis/tree/nav+lineage/parents-approach/pairs
+           when (eq sym -nomis/tree/nav+lineage/parents-approach)
+           return text))
+
+;;;;;; Children
+
 (defvar -nomis/tree/nav+lineage/n-child-levels-to-show nil) ; Buffer-local? No.
-
-(defvar -nomis/tree/nav+lineage/thin-parents? nil) ; Buffer-local? No.
-
-(defun -nomis/tree/thin-parents-text ()
-  (if -nomis/tree/nav+lineage/thin-parents? "thin" "fat"))
 
 ;;;;; -nomis/tree/nav+lineage/show-lineage
 
 (defun -nomis/tree/nav+lineage/show-lineage (&optional n-levels-to-show-or-nil)
   (let* ((n-levels-or-nil (or n-levels-to-show-or-nil
                               -nomis/tree/nav+lineage/n-child-levels-to-show)))
-    (nomis/tree/ls/show-lineage
-     (if -nomis/tree/nav+lineage/thin-parents?
-         nomis/tree/ls/spec/hide-all--thin-parents--no-children
-       nomis/tree/ls/spec/hide-all--fat-parents--no-children))
+    (cl-ecase -nomis/tree/nav+lineage/parents-approach
+      (:nav+lineage/parents/leave-as-is
+       ;; Show self and ancestors to provide context.
+       (nomis/outline/w/make-self-and-ancestors-visible))
+      (:nav+lineage/parents/all-roots-to-current-level
+       (let* ((*-nomis/tree/inhibit-set-level-etc-message?* t))
+         (nomis/tree/show-children-from-all-roots/to-current-level)))
+      (:nav+lineage/parents/fat
+       (nomis/tree/ls/show-lineage
+        nomis/tree/ls/spec/hide-all--fat-parents--no-children))
+      (:nav+lineage/parents/thin
+       (nomis/tree/ls/show-lineage
+        nomis/tree/ls/spec/hide-all--thin-parents--no-children)))
     (if (null n-levels-or-nil)
         (nomis/tree/expand-fully)
       (nomis/tree/expand n-levels-or-nil t))
     (message "parents: %s  n-children: %s"
-             (-nomis/tree/thin-parents-text)
+             (-nomis/tree/nav+lineage/parents-approach-text)
              (or n-levels-or-nil "all"))))
 
 ;;;;; nomis/tree/nav+lineage/set-n-child-levels-to-show
@@ -543,17 +572,33 @@ If there is no next peer, display a popup message."
     (message "nav+lineage n-child-levels-to-show set to %s"
              -nomis/tree/nav+lineage/n-child-levels-to-show)))
 
-;;;;; nomis/tree/nav+lineage/toggle-parents-approach
+;;;;; nomis/tree/nav+lineage/set-parents-approach
 
-(defun nomis/tree/nav+lineage/toggle-parents-approach ()
+(defun -nomis/tree/nav+lineage/set-parents-approach* (v)
+  (setq -nomis/tree/nav+lineage/parents-approach v)
+  (-nomis/tree/nav+lineage/show-lineage)
+  (message "nav+lineage parents-approach set to %s"
+           (-nomis/tree/nav+lineage/parents-approach-text)))
+
+(defun nomis/tree/nav+lineage/set-parents-approach ()
   (interactive)
   (-nomis/tree/command
       nil
-    (setq -nomis/tree/nav+lineage/thin-parents?
-          (not -nomis/tree/nav+lineage/thin-parents?))
-    (-nomis/tree/nav+lineage/show-lineage)
-    (message "nav+lineage parents-approach set to %s"
-             (-nomis/tree/thin-parents-text))))
+    (let* ((curr-string (-nomis/tree/nav+lineage/parents-approach-text))
+           (prompt (format "Choose parents approach — currently %S: "
+                           curr-string))
+           (response
+            (ido-completing-read
+             prompt
+             (-map #'cdr -nomis/tree/nav+lineage/parents-approach/pairs)
+             nil
+             t
+             nil
+             'nomis/tree/nav+lineage/set-parents-approach/prompt-history
+             curr-string))
+           (v (car (rassoc response
+                           -nomis/tree/nav+lineage/parents-approach/pairs))))
+      (-nomis/tree/nav+lineage/set-parents-approach* v))))
 
 ;;;;; On first/last sibling/peer
 
@@ -674,11 +719,11 @@ backward navigation."
                  (-nomis/tree/nav+lineage/show-lineage n-levels-to-show-or-nil))
                (try-to-nav-then-show-lineage ()
                  (let* ((starting-point (point)))
+                   (nomis/outline/w/collapse)
                    (try-to-nav)
                    (let* ((moved? (not (= (point) starting-point))))
-                     (if moved?
-                         (show-lineage)
-                       (nomis/outline/w/collapse))))))
+                     (when moved?
+                       (show-lineage))))))
       (nomis/outline/w/back-to-heading)
       (cond ((-nomis/tree/nav+lineage/doing-same-level-final-not-lone?/boh)
              ;; This will display a can't-move message, then collapse:
