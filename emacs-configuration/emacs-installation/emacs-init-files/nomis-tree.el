@@ -964,24 +964,25 @@ When in a body, \"current heading\" means the current body's parent heading."
       (:setting-max
        (= current-value nomis/outline/w/plus-infinity)))))
 
-(defvar *nomis/tree/wrap-expand-collapse? t)
-(defvar *-nomis/tree/allow-cycle-wrap-now?* nil)
-(defvar *-nomis/tree/allow-cycle-wrap-timer* nil)
-(defvar -nomis/tree/prev-keypress-timestamp 0)
+(defconst -nomis/tree/wrap-expand-collapse? t)
 (defconst -nomis/tree/repeat-key-assumed-interval-s 0.1)
 
+(defvar -nomis/tree/allow-cycle-wrap-now? nil)
+(defvar -nomis/tree/allow-cycle-wrap-timer nil)
+(defvar -nomis/tree/prev-keypress-timestamp 0)
+
 (defun -nomis/tree/cancel-cycle-to-zero-timer ()
-  (when *-nomis/tree/allow-cycle-wrap-timer*
-    (cancel-timer *-nomis/tree/allow-cycle-wrap-timer*)
-    (setq *-nomis/tree/allow-cycle-wrap-timer* nil)
-    (setq *-nomis/tree/allow-cycle-wrap-now?* nil)))
+  (when -nomis/tree/allow-cycle-wrap-timer
+    (cancel-timer -nomis/tree/allow-cycle-wrap-timer)
+    (setq -nomis/tree/allow-cycle-wrap-timer nil)
+    (setq -nomis/tree/allow-cycle-wrap-now? nil)))
 
 (defun -nomis/tree/allow-cycle-to-zero-for-a-while ()
-  (setq *-nomis/tree/allow-cycle-wrap-now?* t)
+  (setq -nomis/tree/allow-cycle-wrap-now? t)
   (let ((secs (if (boundp '*nomis/popup/duration*)
                   *nomis/popup/duration*
                 1)))
-    (setq *-nomis/tree/allow-cycle-wrap-timer*
+    (setq -nomis/tree/allow-cycle-wrap-timer
           (run-at-time secs
                        nil
                        '-nomis/tree/cancel-cycle-to-zero-timer))))
@@ -997,7 +998,7 @@ When in a body, \"current heading\" means the current body's parent heading."
                                                min-allowed-value)
                                              t)))
           (let* ((allow-cycle-wrap-now?
-                  (and *-nomis/tree/allow-cycle-wrap-now?*
+                  (and -nomis/tree/allow-cycle-wrap-now?
                        ;; Don't allow if user is likely using repeat key.
                        (> (float-time)
                           (+ -nomis/tree/prev-keypress-timestamp
@@ -1009,7 +1010,7 @@ When in a body, \"current heading\" means the current body's parent heading."
                 (normal-behaviour)
               (if (not allow-cycle-wrap-now?)
                   (progn
-                    (when *nomis/tree/wrap-expand-collapse?
+                    (when -nomis/tree/wrap-expand-collapse?
                       (-nomis/tree/allow-cycle-to-zero-for-a-while))
                     (normal-behaviour))
                 ;; Don't cycle if we moved to another position that also
