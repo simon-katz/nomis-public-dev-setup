@@ -55,6 +55,10 @@
 (defalias 'nomis/outline/w/show-entry       'outline-show-entry)
 (defalias 'nomis/outline/w/hide-entry       'outline-hide-entry)
 
+(defun nomis/outline/w/show-heading ()
+  (save-excursion
+    (outline-show-heading)))
+
 (defun nomis/outline/w/collapse ()
   (outline-hide-subtree))
 
