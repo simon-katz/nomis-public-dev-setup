@@ -964,9 +964,11 @@ When in a body, \"current heading\" means the current body's parent heading."
       (:setting-max
        (= current-value nomis/outline/w/plus-infinity)))))
 
-(defvar *nomis/tree/wrap-expand-collapse? nil)
+(defvar *nomis/tree/wrap-expand-collapse? t)
 (defvar *-nomis/tree/allow-cycle-wrap-now?* nil)
 (defvar *-nomis/tree/allow-cycle-wrap-timer* nil)
+(defvar -nomis/tree/prev-keypress-timestamp 0)
+(defconst -nomis/tree/repeat-key-assumed-interval-s 0.1)
 
 (defun -nomis/tree/cancel-cycle-to-zero-timer ()
   (when *-nomis/tree/allow-cycle-wrap-timer*
@@ -985,31 +987,38 @@ When in a body, \"current heading\" means the current body's parent heading."
                        '-nomis/tree/cancel-cycle-to-zero-timer))))
 
 (defun -nomis/tree/bring-within-range (v maximum)
-  (let* ((min-allowed-value (if *expanding-parent?* 1 0)))
-    (cl-flet ((normal-behaviour () (list (min (max min-allowed-value v)
-                                              maximum)
-                                         nil))
-              (cycled-behaviour () (list (if (= v (1- min-allowed-value))
-                                             maximum
-                                           min-allowed-value)
-                                         t)))
-      (let* ((allow-cycle-wrap-now? *-nomis/tree/allow-cycle-wrap-now?*))
-        (-nomis/tree/cancel-cycle-to-zero-timer)
-        (if (or (= maximum 0)
-                (not (or (= v (1- min-allowed-value))
-                         (= v nomis/outline/w/plus-infinity))))
-            (normal-behaviour)
-          (if (not allow-cycle-wrap-now?)
-              (progn
-                (when *nomis/tree/wrap-expand-collapse?
-                  (-nomis/tree/allow-cycle-to-zero-for-a-while))
-                (normal-behaviour))
-            ;; Don't cycle if we moved to another position that also
-            ;; happens to be fully-expanded.
-            ;; Don't cycle if we moved away and came back.
-            (if (not (eq this-command (nomis/outline/w/last-command)))
+  (prog1
+      (let* ((min-allowed-value (if *expanding-parent?* 1 0)))
+        (cl-flet ((normal-behaviour () (list (min (max min-allowed-value v)
+                                                  maximum)
+                                             nil))
+                  (cycled-behaviour () (list (if (= v (1- min-allowed-value))
+                                                 maximum
+                                               min-allowed-value)
+                                             t)))
+          (let* ((allow-cycle-wrap-now?
+                  (and *-nomis/tree/allow-cycle-wrap-now?*
+                       ;; Don't allow if user is likely using repeat key.
+                       (> (float-time)
+                          (+ -nomis/tree/prev-keypress-timestamp
+                             -nomis/tree/repeat-key-assumed-interval-s)))))
+            (-nomis/tree/cancel-cycle-to-zero-timer)
+            (if (or (= maximum 0)
+                    (not (or (= v (1- min-allowed-value))
+                             (= v nomis/outline/w/plus-infinity))))
                 (normal-behaviour)
-              (cycled-behaviour))))))))
+              (if (not allow-cycle-wrap-now?)
+                  (progn
+                    (when *nomis/tree/wrap-expand-collapse?
+                      (-nomis/tree/allow-cycle-to-zero-for-a-while))
+                    (normal-behaviour))
+                ;; Don't cycle if we moved to another position that also
+                ;; happens to be fully-expanded.
+                ;; Don't cycle if we moved away and came back.
+                (if (not (eq this-command (nomis/outline/w/last-command)))
+                    (normal-behaviour)
+                  (cycled-behaviour)))))))
+    (setq -nomis/tree/prev-keypress-timestamp (float-time))))
 
 (defun -nomis/tree/set-level-etc (new-value-action-fun
                                   new-level/maybe-out-of-range
