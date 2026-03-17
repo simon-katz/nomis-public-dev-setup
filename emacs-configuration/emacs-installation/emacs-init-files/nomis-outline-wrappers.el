@@ -224,6 +224,13 @@ FEWER-OK? is truthy."
                   (not (eobp)))
         (funcall fun)))))
 
+(defun nomis/outline/w/do-to-self-and-ancestors (f)
+  "Call the function `f' on current heading, then parent heading, etc."
+  (save-excursion
+    (funcall f)
+    (while (nomis/outline/w/up-heading* 1 t t)
+      (funcall f))))
+
 ;;;; nomis/outline/w/pulse-current-section
 
 (defun nomis/outline/w/pulse-current-section ()
