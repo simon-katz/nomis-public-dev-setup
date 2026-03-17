@@ -514,9 +514,9 @@ If there is no next peer, display a popup message."
     (if (null n-levels-or-nil)
         (nomis/tree/expand-fully)
       (nomis/tree/expand n-levels-or-nil t))
-    (nomis/popup/message "parents: %s  n-children: %s"
-                         (-nomis/tree/thin-parents-text)
-                         (or n-levels-or-nil "all"))))
+    (message "parents: %s  n-children: %s"
+             (-nomis/tree/thin-parents-text)
+             (or n-levels-or-nil "all"))))
 
 ;;;;; nomis/tree/nav+lineage/set-n-child-levels-to-show
 
