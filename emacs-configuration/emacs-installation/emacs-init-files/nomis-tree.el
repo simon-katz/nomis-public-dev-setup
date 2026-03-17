@@ -1379,6 +1379,18 @@ If `N` is provided, set the number of child levels to `N`."
       nil
     (nomis/tree/ls/lineage/set-max)))
 
+;;;; Beacon
+
+(when (featurep 'beacon)
+  (dolist (cmd '(nomis/tree/nav+lineage/backward-any-level
+                 nomis/tree/nav+lineage/forward-any-level
+                 nomis/tree/nav+lineage/backward-sibling
+                 nomis/tree/nav+lineage/forward-sibling
+                 nomis/tree/nav+lineage/backward-peer
+                 nomis/tree/nav+lineage/forward-peer))
+    (add-to-list 'beacon-dont-blink-commands cmd) ; noflycheck
+    ))
+
 ;;; End
 
 (provide 'nomis-tree)
