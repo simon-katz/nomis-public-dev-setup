@@ -231,6 +231,11 @@ FEWER-OK? is truthy."
     (while (nomis/outline/w/up-heading* 1 t t)
       (funcall f))))
 
+(defun nomis/outline/w/make-self-and-ancestors-visible ()
+  (unless (nomis/outline/w/on-heading?)
+    (nomis/outline/w/show-entry))
+  (nomis/outline/w/do-to-self-and-ancestors #'nomis/outline/w/show-heading))
+
 ;;;; nomis/outline/w/pulse-current-section
 
 (defun nomis/outline/w/pulse-current-section ()
