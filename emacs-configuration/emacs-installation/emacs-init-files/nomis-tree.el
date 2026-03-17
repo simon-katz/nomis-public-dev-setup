@@ -493,6 +493,8 @@ If there is no next peer, display a popup message."
 ;; TODO This uses `nomis/tree/fully-expanded?`, and so belongs later in
 ;;      the file.
 
+(defvar *-nomis/tree/inhibit-set-level-etc-message?* nil)
+
 ;;;;; Nav+lineage settings
 
 (defvar -nomis/tree/nav+lineage/n-child-levels-to-show nil) ; Buffer-local? No.
@@ -1044,22 +1046,23 @@ When in a body, \"current heading\" means the current body's parent heading."
           (prog1
               (progn ; nomis/scrolling/with-force-maintain-line-no-in-window ; Is this needed? Presumably it is, but why? (Or maybe it was needed, but isn't now.) -- 2021-06-22 I've removed it. It was causing one-line scrolling in certain situations.
                 (funcall new-value-action-fun new-level))
-            (funcall (if out-of-range?
-                         #'nomis/popup/error-message
-                       #'nomis/popup/message)
-                     (concat message-format-string "%s%s")
-                     new-level
-                     maximum
-                     (if -nomis/tree/show-bodies?
-                         ""
-                       " (not showing bodies)")
-                     (if out-of-range?
-                         (cl-ecase setting-kind
-                           ((:less :setting-min)
-                            " —- already fully collapsed")
-                           ((:more :setting-max)
-                            " —- already fully expanded"))
-                       ""))))))))
+            (unless *-nomis/tree/inhibit-set-level-etc-message?*
+              (funcall (if out-of-range?
+                           #'nomis/popup/error-message
+                         #'nomis/popup/message)
+                       (concat message-format-string "%s%s")
+                       new-level
+                       maximum
+                       (if -nomis/tree/show-bodies?
+                           ""
+                         " (not showing bodies)")
+                       (if out-of-range?
+                           (cl-ecase setting-kind
+                             ((:less :setting-min)
+                              " —- already fully collapsed")
+                             ((:more :setting-max)
+                              " —- already fully expanded"))
+                         "")))))))))
 
 ;;;;; nomis/tree/show-children-from-point/xxxx support
 
