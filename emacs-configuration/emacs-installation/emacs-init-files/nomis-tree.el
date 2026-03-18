@@ -1030,17 +1030,14 @@ When in a body, \"current heading\" means the current body's parent heading."
 ;; "wrapex" means "wrap-expand-collapse".
 
 (defconst -nomis/tree/wrapex? t)
-(defvar -nomis/tree/allow-wrapex-now? nil)
 (defvar -nomis/tree/allow-wrapex-timer nil)
 
 (defun -nomis/tree/cancel-wrapex-timer ()
   (when -nomis/tree/allow-wrapex-timer
     (cancel-timer -nomis/tree/allow-wrapex-timer)
-    (setq -nomis/tree/allow-wrapex-timer nil)
-    (setq -nomis/tree/allow-wrapex-now? nil)))
+    (setq -nomis/tree/allow-wrapex-timer nil)))
 
 (defun -nomis/tree/allow-wrapex-for-a-while ()
-  (setq -nomis/tree/allow-wrapex-now? t)
   (setq -nomis/tree/allow-wrapex-timer
         (run-at-time -nomis/tree/allow-wrap-duration
                      nil
@@ -1057,7 +1054,7 @@ When in a body, \"current heading\" means the current body's parent heading."
                                              min-allowed-value)
                                            t)))
       (let* ((allow-wrapex-now?
-              (and -nomis/tree/allow-wrapex-now?
+              (and -nomis/tree/allow-wrapex-timer
                    (not repeat-key-likely-used?))))
         (-nomis/tree/cancel-wrapex-timer)
         (if (or (= maximum 0)
