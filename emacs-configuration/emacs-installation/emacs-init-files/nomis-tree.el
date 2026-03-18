@@ -54,10 +54,6 @@
 ;;        - Observe that point has changed.
 ;;      So, it seems that after running a M-x command, point gets changed.
 
-;; XXXX When getting to 0 or max, first flash then cycle.
-;;      REJECTED
-;;      This would give a modal UI. An invisibly-modal UI.
-
 ;;;; Require things
 
 (require 'a)
@@ -1031,23 +1027,24 @@ When in a body, \"current heading\" means the current body's parent heading."
       (:setting-max
        (= current-value nomis/outline/w/plus-infinity)))))
 
-(defconst -nomis/tree/wrap-expand-collapse? t)
+;; "wrapex" means "wrap-expand-collapse".
 
-(defvar -nomis/tree/allow-cycle-wrap-now? nil)
-(defvar -nomis/tree/allow-cycle-wrap-timer nil)
+(defconst -nomis/tree/wrapex? t)
+(defvar -nomis/tree/allow-wrapex-now? nil)
+(defvar -nomis/tree/allow-wrapex-timer nil)
 
-(defun -nomis/tree/cancel-cycle-to-zero-timer ()
-  (when -nomis/tree/allow-cycle-wrap-timer
-    (cancel-timer -nomis/tree/allow-cycle-wrap-timer)
-    (setq -nomis/tree/allow-cycle-wrap-timer nil)
-    (setq -nomis/tree/allow-cycle-wrap-now? nil)))
+(defun -nomis/tree/cancel-wrapex-timer ()
+  (when -nomis/tree/allow-wrapex-timer
+    (cancel-timer -nomis/tree/allow-wrapex-timer)
+    (setq -nomis/tree/allow-wrapex-timer nil)
+    (setq -nomis/tree/allow-wrapex-now? nil)))
 
-(defun -nomis/tree/allow-cycle-to-zero-for-a-while ()
-  (setq -nomis/tree/allow-cycle-wrap-now? t)
-  (setq -nomis/tree/allow-cycle-wrap-timer
+(defun -nomis/tree/allow-wrapex-for-a-while ()
+  (setq -nomis/tree/allow-wrapex-now? t)
+  (setq -nomis/tree/allow-wrapex-timer
         (run-at-time -nomis/tree/allow-wrap-duration
                      nil
-                     '-nomis/tree/cancel-cycle-to-zero-timer)))
+                     '-nomis/tree/cancel-wrapex-timer)))
 
 (defun -nomis/tree/bring-within-range (v maximum)
   (let* ((repeat-key-likely-used? (-nomis/tree/repeat-key-likely-used?))
@@ -1055,28 +1052,29 @@ When in a body, \"current heading\" means the current body's parent heading."
     (cl-flet ((normal-behaviour () (list (min (max min-allowed-value v)
                                               maximum)
                                          nil))
-              (cycled-behaviour () (list (if (= v (1- min-allowed-value))
-                                             maximum
-                                           min-allowed-value)
-                                         t)))
-      (let* ((allow-cycle-wrap-now? (and -nomis/tree/allow-cycle-wrap-now?
-                                         (not repeat-key-likely-used?))))
-        (-nomis/tree/cancel-cycle-to-zero-timer)
+              (wrapping-behaviour () (list (if (= v (1- min-allowed-value))
+                                               maximum
+                                             min-allowed-value)
+                                           t)))
+      (let* ((allow-wrapex-now?
+              (and -nomis/tree/allow-wrapex-now?
+                   (not repeat-key-likely-used?))))
+        (-nomis/tree/cancel-wrapex-timer)
         (if (or (= maximum 0)
                 (not (or (= v (1- min-allowed-value))
                          (= v nomis/outline/w/plus-infinity))))
             (normal-behaviour)
-          (if (not allow-cycle-wrap-now?)
+          (if (not allow-wrapex-now?)
               (progn
-                (when (and -nomis/tree/wrap-expand-collapse?
+                (when (and -nomis/tree/wrapex?
                            (not repeat-key-likely-used?))
-                  (-nomis/tree/allow-cycle-to-zero-for-a-while))
+                  (-nomis/tree/allow-wrapex-for-a-while))
                 (normal-behaviour))
-            ;; Don't cycle if we moved to another position that also happens to
-            ;; be fully-expanded. Don't cycle if we moved away and came back.
+            ;; Don't wrap if we moved to another position that also happens to
+            ;; be fully-expanded. Don't wrap if we moved away and came back.
             (if (not (eq this-command (nomis/outline/w/last-command)))
                 (normal-behaviour)
-              (cycled-behaviour))))))))
+              (wrapping-behaviour))))))))
 
 (defun -nomis/tree/set-level-etc (new-value-action-fun
                                   new-level/maybe-out-of-range
