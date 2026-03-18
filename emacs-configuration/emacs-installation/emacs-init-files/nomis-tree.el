@@ -1037,7 +1037,15 @@ When in a body, \"current heading\" means the current body's parent heading."
 
 (defun -nomis/tree/bring-within-range (v maximum)
   (prog1
-      (let* ((min-allowed-value (if *expanding-parent?* 1 0)))
+      (let* ((repeat-key-likely-used?
+              ;; Unfortunately there's no good way to determine whether this is
+              ;; a first repeat (after the long initial delay). This means that
+              ;; if we are already fully expanded when the user starts, we will
+              ;; allow cycling.
+              (< (float-time)
+                 (+ -nomis/tree/prev-keypress-timestamp
+                    -nomis/tree/repeat-key-assumed-interval-s)))
+             (min-allowed-value (if *expanding-parent?* 1 0)))
         (cl-flet ((normal-behaviour () (list (min (max min-allowed-value v)
                                                   maximum)
                                              nil))
@@ -1045,12 +1053,8 @@ When in a body, \"current heading\" means the current body's parent heading."
                                                  maximum
                                                min-allowed-value)
                                              t)))
-          (let* ((allow-cycle-wrap-now?
-                  (and -nomis/tree/allow-cycle-wrap-now?
-                       ;; Don't allow if user is likely using repeat key.
-                       (> (float-time)
-                          (+ -nomis/tree/prev-keypress-timestamp
-                             -nomis/tree/repeat-key-assumed-interval-s)))))
+          (let* ((allow-cycle-wrap-now? (and -nomis/tree/allow-cycle-wrap-now?
+                                             (not repeat-key-likely-used?))))
             (-nomis/tree/cancel-cycle-to-zero-timer)
             (if (or (= maximum 0)
                     (not (or (= v (1- min-allowed-value))
@@ -1058,7 +1062,8 @@ When in a body, \"current heading\" means the current body's parent heading."
                 (normal-behaviour)
               (if (not allow-cycle-wrap-now?)
                   (progn
-                    (when -nomis/tree/wrap-expand-collapse?
+                    (when (and -nomis/tree/wrap-expand-collapse?
+                               (not repeat-key-likely-used?))
                       (-nomis/tree/allow-cycle-to-zero-for-a-while))
                     (normal-behaviour))
                 ;; Don't cycle if we moved to another position that also
