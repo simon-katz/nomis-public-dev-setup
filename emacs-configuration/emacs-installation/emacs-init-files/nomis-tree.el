@@ -1053,9 +1053,8 @@ When in a body, \"current heading\" means the current body's parent heading."
                                                maximum
                                              min-allowed-value)
                                            t)))
-      (let* ((allow-wrapex-now?
-              (and -nomis/tree/allow-wrapex-timer
-                   (not repeat-key-likely-used?))))
+      (let* ((allow-wrapex-now? (and -nomis/tree/allow-wrapex-timer
+                                     (not repeat-key-likely-used?))))
         (-nomis/tree/cancel-wrapex-timer)
         (if (or (= maximum 0)
                 (not (or (= v (1- min-allowed-value))
