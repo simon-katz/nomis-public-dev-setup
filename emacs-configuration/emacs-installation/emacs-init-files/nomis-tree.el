@@ -125,6 +125,32 @@
   (declare (indent 1))
   `(-nomis/tree/command* ,opts (lambda () ,@body)))
 
+;;;;; Time values
+
+(defconst -nomis/tree/nav+lineage/sibling-then-peer-small-delay-s
+  (if (boundp '*nomis/popup/duration*)
+      *nomis/popup/duration*
+    1))
+
+(defconst -nomis/tree/allow-wrap-duration
+  ;; This should be smaller than the OS's initial-delay-for-repeat-key value,
+  ;; otherwise we get wrapping when pressing-and-holding the TAB key on
+  ;; an already-fully-expanded heading.
+  0.25)
+
+(defconst -nomis/tree/repeat-key-assumed-interval-s 0.1)
+
+(defun -nomis/tree/repeat-key-likely-used? ()
+  ;; Unfortunately there's no good way to determine whether this is a first
+  ;; repeat (after the long initial delay). This means that if we are already
+  ;; fully expanded when the user starts, we will allow cycling.
+  ;;
+  ;; Ah, it's OK if we make `-nomis/tree/allow-wrap-duration` smaller
+  ;; than the repeat-initial-delay value.
+  (< (float-time)
+     (+ -nomis/tree/prev-command-timestamp
+        -nomis/tree/repeat-key-assumed-interval-s)))
+
 ;;;; Tailor other functionality
 
 ;;;;; what-cursor-position
@@ -669,16 +695,6 @@ backward navigation."
   (or (-nomis/tree/nav+lineage/doing-sibling-final-not-lone?/boh)
       (-nomis/tree/nav+lineage/doing-peer-final-not-lone?/boh)))
 
-(defvar nomis/tree/nav+lineage/quick-repeat-delay
-  (if (boundp '*nomis/popup/duration*)
-      *nomis/popup/duration*
-    1))
-
-(defun -nomis/tree/nav+lineage/small-time-gap-since-prev-command? ()
-  (< (float-time)
-     (+ -nomis/tree/prev-command-timestamp
-        nomis/tree/nav+lineage/quick-repeat-delay)))
-
 (defun -nomis/tree/nav+lineage/sibling-then-peer? ()
   (let ((cmds (list (nomis/outline/w/last-command)
                     this-command)))
@@ -689,8 +705,10 @@ backward navigation."
                nomis/tree/nav+lineage/backward-peer)))))
 
 (defun -nomis/tree/nav+lineage/sibling-then-peer-with-small-time-gap? ()
-  (and (-nomis/tree/nav+lineage/small-time-gap-since-prev-command?)
-       (-nomis/tree/nav+lineage/sibling-then-peer?)))
+  (and (-nomis/tree/nav+lineage/sibling-then-peer?)
+       (< (float-time)
+          (+ -nomis/tree/prev-command-timestamp
+             -nomis/tree/nav+lineage/sibling-then-peer-small-delay-s))))
 
 (defun -nomis/tree/nav+lineage/impl (n kind n-levels-to-show-or-nil)
   (let* ((n-levels-or-nil (or n-levels-to-show-or-nil
@@ -1014,7 +1032,6 @@ When in a body, \"current heading\" means the current body's parent heading."
        (= current-value nomis/outline/w/plus-infinity)))))
 
 (defconst -nomis/tree/wrap-expand-collapse? t)
-(defconst -nomis/tree/repeat-key-assumed-interval-s 0.1)
 
 (defvar -nomis/tree/allow-cycle-wrap-now? nil)
 (defvar -nomis/tree/allow-cycle-wrap-timer nil)
@@ -1028,23 +1045,12 @@ When in a body, \"current heading\" means the current body's parent heading."
 (defun -nomis/tree/allow-cycle-to-zero-for-a-while ()
   (setq -nomis/tree/allow-cycle-wrap-now? t)
   (setq -nomis/tree/allow-cycle-wrap-timer
-        (run-at-time 0.25
+        (run-at-time -nomis/tree/allow-wrap-duration
                      nil
                      '-nomis/tree/cancel-cycle-to-zero-timer)))
 
 (defun -nomis/tree/bring-within-range (v maximum)
-  (let* ((repeat-key-likely-used?
-          ;; Unfortunately there's no good way to determine whether this is
-          ;; a first repeat (after the long initial delay). This means that if
-          ;; we are already fully expanded when the user starts, we will allow
-          ;; cycling.
-          ;;
-          ;; Ah, it's OK if we make the time in
-          ;; `-nomis/tree/allow-cycle-to-zero-for-a-while` smaller than
-          ;; the repeat-initial-delay value.
-          (< (float-time)
-             (+ -nomis/tree/prev-command-timestamp
-                -nomis/tree/repeat-key-assumed-interval-s)))
+  (let* ((repeat-key-likely-used? (-nomis/tree/repeat-key-likely-used?))
          (min-allowed-value (if *expanding-parent?* 1 0)))
     (cl-flet ((normal-behaviour () (list (min (max min-allowed-value v)
                                               maximum)
