@@ -1429,7 +1429,7 @@ If `N` is provided, set the number of child levels to `N`."
 
 ;;;; Beacon
 
-(when (featurep 'beacon)
+(with-eval-after-load 'beacon
   (dolist (cmd '(nomis/tree/nav+lineage/backward-any-level
                  nomis/tree/nav+lineage/forward-any-level
                  nomis/tree/nav+lineage/backward-sibling
