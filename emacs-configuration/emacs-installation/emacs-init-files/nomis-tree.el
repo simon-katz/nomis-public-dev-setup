@@ -1027,20 +1027,21 @@ When in a body, \"current heading\" means the current body's parent heading."
 
 (defun -nomis/tree/allow-cycle-to-zero-for-a-while ()
   (setq -nomis/tree/allow-cycle-wrap-now? t)
-  (let ((secs (if (boundp '*nomis/popup/duration*)
-                  *nomis/popup/duration*
-                1)))
-    (setq -nomis/tree/allow-cycle-wrap-timer
-          (run-at-time secs
-                       nil
-                       '-nomis/tree/cancel-cycle-to-zero-timer))))
+  (setq -nomis/tree/allow-cycle-wrap-timer
+        (run-at-time 0.25
+                     nil
+                     '-nomis/tree/cancel-cycle-to-zero-timer)))
 
 (defun -nomis/tree/bring-within-range (v maximum)
   (let* ((repeat-key-likely-used?
           ;; Unfortunately there's no good way to determine whether this is
           ;; a first repeat (after the long initial delay). This means that if
-          ;; we are already fully expanded when the user starts, we will
-          ;; allow cycling.
+          ;; we are already fully expanded when the user starts, we will allow
+          ;; cycling.
+          ;;
+          ;; Ah, it's OK if we make the time in
+          ;; `-nomis/tree/allow-cycle-to-zero-for-a-while` smaller than
+          ;; the repeat-initial-delay value.
           (< (float-time)
              (+ -nomis/tree/prev-command-timestamp
                 -nomis/tree/repeat-key-assumed-interval-s)))
