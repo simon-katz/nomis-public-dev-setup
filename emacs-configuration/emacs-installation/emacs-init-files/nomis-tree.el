@@ -518,7 +518,8 @@ One of:
 (defun -nomis/tree/nav+lineage/parents-approach-text ()
   (cl-loop for (sym . text) in -nomis/tree/nav+lineage/parents-approach/pairs
            when (eq sym -nomis/tree/nav+lineage/parents-approach)
-           return text))
+           return text
+           finally (error "Unexpected value for -nomis/tree/nav+lineage/parents-approach")))
 
 ;;;;;; Children
 
