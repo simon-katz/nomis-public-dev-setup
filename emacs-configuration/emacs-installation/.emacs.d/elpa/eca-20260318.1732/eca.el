@@ -2,8 +2,8 @@
 ;; Copyright (C) 2025 Eric Dallo
 ;; Author: Eric Dallo <ercdll1337@gmail.com>
 ;; Maintainer: Eric Dallo <ercdll1337@gmail.com>
-;; Package-Version: 20260305.1216
-;; Package-Revision: ecdf8f3b20a3
+;; Package-Version: 20260318.1732
+;; Package-Revision: a26aa15cbbdb
 ;; Package-Requires: ((emacs "28.1") (dash "2.18.0") (f "0.20.0") (markdown-mode "2.3") (compat "30.1"))
 ;; Keywords: tools
 ;; Homepage: https://github.com/editor-code-assistant/eca-emacs
@@ -222,7 +222,9 @@ when the error occurred."
           ('notification (eca--handle-server-notification session json-data))
           ('request (let ((response (eca--handle-server-request session json-data)))
                       (eca-api-send-request-response session json-data response))))
-      (error (eca--log-error session err "handle-message")))))
+      (error
+       (eca--log-error session err "handle-message")
+       (signal (car err) (cdr err))))))
 
 (defun eca--initialize (session)
   "Send the initialize request for SESSION."

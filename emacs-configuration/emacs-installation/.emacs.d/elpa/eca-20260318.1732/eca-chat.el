@@ -13,6 +13,7 @@
 
 (require 'f)
 (require 'markdown-mode)
+(require 'tab-line)
 (require 'compat)
 
 (require 'eca-util)
@@ -20,6 +21,8 @@
 (require 'eca-mcp)
 (require 'eca-diff)
 (require 'eca-table)
+(require 'eca-chat-expandable)
+(require 'eca-chat-context)
 
 (require 'evil nil t)
 
@@ -76,20 +79,6 @@ ECA chat opens in a regular buffer that follows standard
   :type 'boolean
   :group 'eca)
 
-(defcustom eca-chat-auto-add-repomap nil
-  "Whether to auto include repoMap context when opening eca."
-  :type 'boolean
-  :group 'eca)
-
-(defcustom eca-chat-auto-add-cursor t
-  "Whether to auto track cursor opened files/position and add them to context."
-  :type 'boolean
-  :group 'eca)
-
-(defcustom eca-chat-cursor-context-debounce 0.3
-  "Seconds to debounce updates when tracking cursor to context."
-  :type 'number
-  :group 'eca)
 
 (defcustom eca-chat-prompt-separator "\n---"
   "The separator text between chat and prompt area."
@@ -104,42 +93,6 @@ ECA chat opens in a regular buffer that follows standard
 (defcustom eca-chat-prompt-prefix-loading "⏳ "
   "The prompt prefix string used in eca chat buffer when loading."
   :type 'string
-  :group 'eca)
-
-(defcustom eca-chat-context-prefix "@"
-  "The context prefix string used in eca chat buffer."
-  :type 'string
-  :group 'eca)
-
-(defcustom eca-chat-filepath-prefix "#"
-  "The filepath prefix string used in eca chat buffer."
-  :type 'string
-  :group 'eca)
-
-(defcustom eca-chat-expandable-block-open-symbol "⏵ "
-  "The string used in eca chat buffer for blocks in open mode like tool calls."
-  :type 'string
-  :group 'eca)
-
-(defcustom eca-chat-expandable-block-close-symbol "⏷ "
-  "The string used in eca chat buffer for blocks in close mode like tool calls."
-  :type 'string
-  :group 'eca)
-
-(defcustom eca-chat-expandable-block-bg-shift-1 5
-  "Percentage to shift the default background for level-1 expanded blocks.
-Higher values make the block background more distinct from the surrounding
-buffer.  The shift direction is automatic: lightens for dark themes and
-darkens for light themes."
-  :type 'number
-  :group 'eca)
-
-(defcustom eca-chat-expandable-block-bg-shift-2 20
-  "Percentage to shift the default background for level-2 (nested) expanded blocks.
-Higher values make the nested block background more distinct.
-The shift direction is automatic: lightens for dark themes and darkens
-for light themes."
-  :type 'number
   :group 'eca)
 
 (defcustom eca-chat-mcp-tool-call-loading-symbol "⏳"
@@ -172,6 +125,14 @@ for light themes."
   :type 'boolean
   :group 'eca)
 
+(defcustom eca-chat-tab-line t
+  "Whether to show a tab line with chat tabs at the top of each chat window.
+When non-nil, enables `tab-line-mode' in chat buffers with tabs
+for every open chat in the session.  Each tab shows the chat status
+\(pending approval, loading), title and elapsed time."
+  :type 'boolean
+  :group 'eca)
+
 (defcustom eca-chat-custom-model nil
   "Which model to use during chat, nil means use server's default.
 Must be a valid model supported by server, check `eca-chat-select-model`."
@@ -181,6 +142,11 @@ Must be a valid model supported by server, check `eca-chat-select-model`."
 (defcustom eca-chat-custom-agent nil
   "Which chat agent to use, if nil use server's default."
   :type 'string
+  :group 'eca)
+
+(defcustom eca-chat-trust-enable nil
+  "When non-nil, auto-accept all tool calls."
+  :type 'boolean
   :group 'eca)
 
 (defcustom eca-chat-usage-string-format '(:session-tokens " / " :context-limit " (" :session-cost ")")
@@ -193,6 +159,44 @@ Must be a valid model supported by server, check `eca-chat-select-model`."
            (const :tag "The context limit" :context-limit)
            (const :tag "The output limit" :output-limit)
            (const :tag "Last message cost" :last-message-cost)))
+  :group 'eca)
+
+(defcustom eca-chat-mode-line-format
+  '(:workspace-folders :add-workspace-button :spacer :elapsed-time "   " :usage " " :trust)
+  "Format for the ECA chat mode line.
+
+When set to a list, each element is a module keyword or a
+literal string.  Modules are rendered in order; use `:spacer'
+to separate left-aligned and right-aligned content.
+
+Available modules:
+  `:workspace-folders' - project root paths
+  `:add-workspace-button' - clickable [+] button
+  `:title' - chat title
+  `:elapsed-time' - turn duration timer
+  `:usage' - token/cost info (see `eca-chat-usage-string-format')
+  `:server-version' - shows \"ECA <version>\"
+  `:trust' - trust mode indicator (● red/gray)
+  `:spacer' - elastic space that right-aligns everything after it
+
+When set to a function, it receives the session as its sole
+argument and should return a valid `mode-line-format' value.
+The function is called once at buffer creation; include
+`:eval' forms in the result for dynamic content.
+This gives full control for powerline or doom-modeline users."
+  :type '(choice
+          (repeat
+           (choice
+            (string :tag "Literal string")
+            (const :tag "Workspace folders" :workspace-folders)
+            (const :tag "Add workspace button" :add-workspace-button)
+            (const :tag "Chat title" :title)
+            (const :tag "Elapsed time" :elapsed-time)
+            (const :tag "Usage info" :usage)
+            (const :tag "ECA server version" :server-version)
+            (const :tag "Trust mode indicator" :trust)
+            (const :tag "Right-align spacer" :spacer)))
+          (function :tag "Custom function (receives session)"))
   :group 'eca)
 
 (defcustom eca-chat-diff-tool 'smerge
@@ -212,12 +216,6 @@ Possible values: `all` or `smart` (default)."
   "When `smart`, process every Nth `toolCallPrepare` update.
 Must be a positive integer."
   :type 'integer
-  :group 'eca)
-
-(defcustom eca-chat-yank-image-context-location 'user
-  "Where to paste images from clipboard."
-  :type '(choice (const :tag "System context area" system)
-                 (const :tag "user context area" user))
   :group 'eca)
 
 (defvar-local eca-chat--tool-call-prepare-counters (make-hash-table :test 'equal)
@@ -260,6 +258,11 @@ works normally."
   "Face for the stop action when loading."
   :group 'eca)
 
+(defface eca-chat-queued-prompt-face
+  '((t :inherit font-lock-comment-face :slant italic :underline nil))
+  "Face for the queued prompt indicator."
+  :group 'eca)
+
 (defface eca-chat-tool-call-approval-content-face
   `((t :height ,eca-chat-tool-call-approval-content-size))
   "Face for the MCP tool calls approval content in chat."
@@ -294,36 +297,6 @@ works normally."
   '((((background dark))  (:foreground "dodger blue" :underline t :weight bold))
     (((background light)) (:foreground "blue3" :underline t :weight bold)))
   "Face for the diff view button."
-  :group 'eca)
-
-(defface eca-chat-context-unlinked-face
-  '((((background dark))  (:foreground "gold" :height 0.9))
-    (((background light)) (:foreground "dark goldenrod" :height 0.9)))
-  "Face for contexts to be added."
-  :group 'eca)
-
-(defface eca-chat-context-file-face
-  '((((background dark))  (:foreground "coral" :underline t :height 0.9))
-    (((background light)) (:foreground "firebrick" :underline t :height 0.9)))
-  "Face for contexts of file type."
-  :group 'eca)
-
-(defface eca-chat-context-repo-map-face
-  '((((background dark))  (:foreground "turquoise" :underline t :height 0.9))
-    (((background light)) (:foreground "dark cyan" :underline t :height 0.9)))
-  "Face for contexts of repoMap type."
-  :group 'eca)
-
-(defface eca-chat-context-mcp-resource-face
-  '((((background dark))  (:foreground "lime green" :underline t :height 0.9))
-    (((background light)) (:foreground "dark green" :underline t :height 0.9)))
-  "Face for contexts of mcpResource type."
-  :group 'eca)
-
-(defface eca-chat-context-cursor-face
-  '((((background dark))  (:foreground "gainsboro" :underline t :height 0.9))
-    (((background light)) (:foreground "dim gray" :underline t :height 0.9)))
-  "Face for contexts of cursor type."
   :group 'eca)
 
 (defface eca-chat-title-face
@@ -448,42 +421,30 @@ works normally."
   "Face for the option values in header-line of the chat."
   :group 'eca)
 
+(defface eca-chat-trust-on-face
+  '((t :weight bold :inherit 'error))
+  "Face for trust mode when on in mode-line."
+  :group 'eca)
+
+(defface eca-chat-trust-off-face
+  '((t :inherit default))
+  "Face for trust mode when off in mode-line."
+  :group 'eca)
+
 (defface eca-chat-usage-string-face
-  '((t :inherit font-lock-doc-face))
+  '((t :height 0.9 :inherit font-lock-doc-face))
   "Face for the strings segments in usage string in mode-line of the chat."
+  :group 'eca)
+
+(defface eca-chat-elapsed-time-face
+  '((t :height 0.9 :inherit font-lock-comment-face))
+  "Face for the elapsed time indicator in mode-line of the chat."
   :group 'eca)
 
 (defface eca-chat-command-description-face
   '((t :inherit font-lock-comment-face))
   "Face for the descriptions in chat command completion."
   :group 'eca)
-
-(defface eca-chat-expandable-block-1-face
-  '((t :extend t))
-  "Face for the background of top-level expanded blocks.
-Background is computed dynamically from the current theme by
-`eca-chat--update-expandable-block-faces'."
-  :group 'eca)
-
-(defface eca-chat-expandable-block-2-face
-  '((t :extend t))
-  "Face for the background of nested expanded blocks (level 2).
-Background is computed dynamically from the current theme by
-`eca-chat--update-expandable-block-faces'."
-  :group 'eca)
-
-(defun eca-chat--update-expandable-block-faces ()
-  "Recompute expandable-block background faces from the current theme.
-Shift percentages are controlled by `eca-chat-expandable-block-bg-shift-1'
-and `eca-chat-expandable-block-bg-shift-2'.  Lightens for dark themes,
-darkens for light themes."
-  (when-let* ((bg (face-background 'default nil t)))
-    (let* ((dark? (eq 'dark (frame-parameter nil 'background-mode)))
-           (fn (if dark? #'color-lighten-name #'color-darken-name))
-           (bg1 (funcall fn bg eca-chat-expandable-block-bg-shift-1))
-           (bg2 (funcall fn bg eca-chat-expandable-block-bg-shift-2)))
-      (set-face-attribute 'eca-chat-expandable-block-1-face nil :background bg1)
-      (set-face-attribute 'eca-chat-expandable-block-2-face nil :background bg2))))
 
 ;; Internal
 
@@ -496,13 +457,22 @@ darkens for light themes."
 (defvar-local eca-chat--selected-model nil)
 (defvar-local eca-chat--selected-agent nil)
 (defvar-local eca-chat--selected-variant nil)
+(defvar-local eca-chat--selected-trust nil)
 (defvar-local eca-chat--last-request-id 0)
-(defvar-local eca-chat--context-completion-cache (make-hash-table :test 'equal))
-(defvar-local eca-chat--file-completion-cache (make-hash-table :test 'equal))
-(defvar-local eca-chat--command-completion-cache (make-hash-table :test 'equal))
-(defvar-local eca-chat--context '())
 (defvar-local eca-chat--spinner-string "")
 (defvar-local eca-chat--spinner-timer nil)
+(defvar-local eca-chat--prompt-start-time nil
+  "Start time of the current prompt, from `current-time'.")
+(defvar-local eca-chat--turn-duration-secs nil
+  "Duration in seconds of the last completed turn.")
+(defvar-local eca-chat--modeline-timer nil
+  "Timer that refreshes the mode-line every second during loading.")
+
+(defvar-local eca-chat--tool-call-elapsed-times (make-hash-table :test 'equal)
+  "Mapping tool-call ID to `current-time' when toolCallRunning was received.")
+(defvar-local eca-chat--tool-call-elapsed-timer nil
+  "Repeating timer that updates elapsed-time display for running tool calls.")
+
 (defvar-local eca-chat--table-resize-timer nil)
 (defvar-local eca-chat--progress-text "")
 (defvar-local eca-chat--last-user-message-pos nil)
@@ -514,7 +484,6 @@ darkens for light themes."
 (defvar-local eca-chat--session-tokens nil)
 (defvar-local eca-chat--session-limit-context nil)
 (defvar-local eca-chat--session-limit-output nil)
-(defvar-local eca-chat--cursor-context nil)
 (defvar-local eca-chat--queued-prompt nil)
 (defvar-local eca-chat--subagent-chat-id->tool-call-id (make-hash-table :test 'equal)
   "Hash table mapping subagent chatId to the parent tool call expandable block id.")
@@ -522,19 +491,22 @@ darkens for light themes."
   "Hash table mapping tool-call-id to a plist (:session-tokens N :context-limit N).
 Stores the latest usage data received for each running subagent.")
 
+(defvar-local eca-chat--server-version nil
+  "Cached ECA server version string for mode-line display.")
+
 (defvar-local eca-chat--task-state nil
   "Current task state plist with :goal and :tasks.
 Each task is a plist with :id, :content, :status, :priority, etc.")
 
 
 
-;; Timer used to debounce post-command driven context updates
-(defvar eca-chat--cursor-context-timer nil)
 (defvar eca-chat--new-chat-id 0)
 (defvar eca-chat--last-known-model nil)
 (defvar eca-chat--last-known-agent nil)
 (defvar eca-chat--last-known-variant nil)
 
+(defvar eca--chat-init-session nil
+  "Dynamically bound session during `eca-chat-mode' initialization.")
 
 (defun eca-chat-new-buffer-name (session)
   "Return the chat buffer name for SESSION."
@@ -550,9 +522,11 @@ Each task is a plist with :id, :content, :status, :priority, etc.")
     (define-key map (kbd "RET") #'eca-chat--key-pressed-return)
     (define-key map (kbd "C-c C-<return>") #'eca-chat-send-prompt-at-chat)
     (define-key map (kbd "<tab>") #'eca-chat--key-pressed-tab)
+    (define-key map (kbd "TAB") #'eca-chat--key-pressed-tab)
     (define-key map (kbd "C-c C-k") #'eca-chat-reset)
     (define-key map (kbd "C-c C-l") #'eca-chat-clear)
-    (define-key map (kbd "C-c C-t") #'eca-chat-talk)
+    (define-key map (kbd "C-c C-t") #'eca-chat-toggle-trust)
+    (define-key map (kbd "C-c C-S-t") #'eca-chat-talk)
     (define-key map (kbd "C-c C-S-b") #'eca-chat-select-agent)
     (define-key map (kbd "C-c C-b") #'eca-chat-cycle-agent)
     (define-key map (kbd "C-c C-m") #'eca-chat-select-model)
@@ -607,7 +581,7 @@ Each task is a plist with :id, :content, :status, :priority, etc.")
                       (string-prefix-p "eca-" (symbol-name this-command))))
              eca-chat--id
              (not eca-chat--closed)
-             (yes-or-no-p "Also delete chat from server (this chat history will be lost and not acessible via /resume later)?"))
+             (yes-or-no-p "Delete chat from server side (otherwise it will just kill the buffer) ?"))
     (eca-api-request-sync (eca-session)
                           :method "chat/delete"
                           :params (list :chatId eca-chat--id))))
@@ -616,18 +590,6 @@ Each task is a plist with :id, :content, :status, :priority, etc.")
   "Insert CONTENTS reseting undo-list to avoid buffer inconsistencies."
   (apply #'insert contents)
   (setq-local buffer-undo-list nil))
-
-(defmacro eca-chat--allow-write (&rest body)
-  "Execute BODY allowing write to buffer."
-  `(let ((inhibit-read-only t))
-     ,@body))
-
-(defmacro eca-chat--with-current-buffer (buffer &rest body)
-  "Eval BODY inside chat BUFFER."
-  (declare (indent 1) (debug t))
-  `(with-current-buffer ,buffer
-     (let ((inhibit-read-only t))
-       ,@body)))
 
 (defun eca-chat--spinner-start (callback)
   "Start modeline spinner calling CALLBACK when updating."
@@ -651,9 +613,85 @@ Each task is a plist with :id, :content, :status, :priority, etc.")
   (setq eca-chat--spinner-string ""))
 
 (defun eca-chat--time->presentable-time (ms)
-  "Return a presentable time for MS."
-  (let ((secs (/ (float ms) 1000)))
-    (propertize (format "%.2f s" secs) 'font-lock-face 'eca-chat-time-face)))
+  "Return a propertized presentable time for MS."
+  (let ((secs (/ ms 1000)))
+    (propertize (eca-chat--format-duration secs)
+                'font-lock-face 'eca-chat-time-face)))
+
+(defun eca-chat--elapsed-time-string (start-time)
+  "Return a propertized elapsed-time string since START-TIME.
+Uses `eca-chat--format-duration' for display, with
+`eca-chat-time-face' and a `eca-chat--elapsed-time' text
+property so the timer can locate it."
+  (let* ((elapsed (floor (float-time (time-subtract (current-time) start-time))))
+         (str (concat " " (propertize (eca-chat--format-duration elapsed)
+                                      'font-lock-face 'eca-chat-time-face))))
+    (propertize str 'eca-chat--elapsed-time t)))
+
+(defun eca-chat--tool-call-elapsed-start (id)
+  "Start tracking elapsed time for tool call ID.
+Records current time (only on first call for ID) and ensures the shared
+update timer is running."
+  (unless (gethash id eca-chat--tool-call-elapsed-times)
+    (puthash id (current-time) eca-chat--tool-call-elapsed-times))
+  (unless eca-chat--tool-call-elapsed-timer
+    (let ((buf (current-buffer))
+          (timer nil))
+      (setq timer
+            (run-with-timer
+             1 1
+             (lambda ()
+               (if (buffer-live-p buf)
+                   (with-current-buffer buf
+                     (eca-chat--tool-call-elapsed-tick))
+                 ;; Buffer was killed — cancel ourselves to avoid leak
+                 (cancel-timer timer)))))
+      (setq eca-chat--tool-call-elapsed-timer timer))))
+
+(defun eca-chat--tool-call-elapsed-stop (id)
+  "Stop tracking elapsed time for tool call ID.
+Cancels the shared timer when no more tool calls are being tracked."
+  (remhash id eca-chat--tool-call-elapsed-times)
+  (when (and eca-chat--tool-call-elapsed-timer
+             (zerop (hash-table-count eca-chat--tool-call-elapsed-times)))
+    (cancel-timer eca-chat--tool-call-elapsed-timer)
+    (setq eca-chat--tool-call-elapsed-timer nil)))
+
+(defun eca-chat--tool-call-elapsed-tick ()
+  "Timer callback: update elapsed-time display for all running tool call."
+  (eca-chat--allow-write
+   (maphash
+    (lambda (id start-time)
+      (when-let* ((ov-label (eca-chat--get-expandable-content id)))
+        (let* ((label-start (overlay-start ov-label))
+               (ov-content (overlay-get ov-label 'eca-chat--expandable-content-ov-content))
+               (new-time (eca-chat--elapsed-time-string start-time)))
+          (when ov-content
+            (let ((label-end (1- (overlay-start ov-content))))
+              (save-excursion
+                ;; Find the text span with eca-chat--elapsed-time property
+                (goto-char label-start)
+                (let ((prop-start (text-property-any label-start label-end
+                                                     'eca-chat--elapsed-time t)))
+                  (when prop-start
+                    (let ((prop-end (next-single-property-change
+                                    prop-start 'eca-chat--elapsed-time nil label-end)))
+                      (goto-char prop-start)
+                      (delete-region prop-start prop-end)
+                      (insert new-time)))))))
+          ;; Keep the overlay property in sync so that functions which
+          ;; rebuild the label from stored properties (e.g.
+          ;; eca-chat--update-parent-subagent-status) use the latest value.
+          (when (overlay-get ov-label 'eca-chat--tool-call-time)
+            (overlay-put ov-label 'eca-chat--tool-call-time new-time)))))
+    eca-chat--tool-call-elapsed-times)))
+
+(defun eca-chat--tool-call-elapsed-stop-all ()
+  "Cancel the elapsed-time timer and clear all tracked tool call."
+  (when eca-chat--tool-call-elapsed-timer
+    (cancel-timer eca-chat--tool-call-elapsed-timer)
+    (setq eca-chat--tool-call-elapsed-timer nil))
+  (clrhash eca-chat--tool-call-elapsed-times))
 
 (defun eca-chat--agent ()
   "The chat agent considering default and user option."
@@ -672,6 +710,11 @@ Each task is a plist with :id, :content, :status, :priority, etc.")
   (or eca-chat--selected-variant
       eca-chat--last-known-variant))
 
+(defun eca-chat--trust ()
+  "Non-nil when trust mode is on, auto-accepts tool call."
+  (or eca-chat-trust-enable
+      eca-chat--selected-trust))
+
 (defun eca-chat--mcps-summary (session)
   "The summary of MCP servers for SESSION."
   (let* ((running 0) (starting 0) (failed 0)
@@ -688,6 +731,7 @@ Each task is a plist with :id, :content, :status, :priority, etc.")
           (pcase (plist-get mcp-server :status)
             ("running" (cl-incf running))
             ("starting" (cl-incf starting))
+            ("requires-auth" (cl-incf starting))
             ("failed" (cl-incf failed))))
         (concat (funcall propertize-fn failed 'error (or (> running 0) (> starting 0)))
                 (funcall propertize-fn starting 'warning (> running 0))
@@ -764,6 +808,8 @@ request, useful for subagent tool calls."
     (overlay-put progress-area-ov 'eca-chat-progress-area t)
     (eca-chat--insert "\n")
     (move-overlay progress-area-ov (overlay-start progress-area-ov) (1- (overlay-end progress-area-ov))))
+  (let ((queued-area-ov (make-overlay (line-beginning-position) (1+ (line-beginning-position)) (current-buffer))))
+    (overlay-put queued-area-ov 'eca-chat-queued-area t))
   (let ((context-area-ov (make-overlay (line-beginning-position) (line-end-position) (current-buffer) nil t)))
     (overlay-put context-area-ov 'eca-chat-context-area t)
     (eca-chat--insert (propertize eca-chat-context-prefix 'font-lock-face 'eca-chat-context-unlinked-face))
@@ -828,6 +874,24 @@ request, useful for subagent tool calls."
 Otherwise to a not loading state."
   (unless (eq eca-chat--chat-loading loading)
     (setq-local eca-chat--chat-loading loading)
+    (if loading
+        (progn
+          (setq-local eca-chat--prompt-start-time (current-time))
+          (let ((buf (current-buffer)))
+            (setq-local eca-chat--modeline-timer
+                        (run-with-timer 1 1
+                                        (lambda ()
+                                          (when (buffer-live-p buf)
+                                            (with-current-buffer buf
+                                              (eca-chat--force-tab-line-update))))))))
+      (when eca-chat--prompt-start-time
+        (setq-local eca-chat--turn-duration-secs
+                    (floor (float-time (time-subtract (current-time) eca-chat--prompt-start-time))))
+        (setq-local eca-chat--prompt-start-time nil))
+      (when eca-chat--modeline-timer
+        (cancel-timer eca-chat--modeline-timer)
+        (setq-local eca-chat--modeline-timer nil))
+      (eca-chat--force-tab-line-update))
     ;; (setq-local buffer-read-only loading)
     (let ((loading-area-ov (eca-chat--loading-area-ov))
           (stop-text (eca-buttonize
@@ -910,6 +974,11 @@ Otherwise to a not loading state."
   (-first (-lambda (ov) (eq t (overlay-get ov 'eca-chat-task-area)))
           (overlays-in (point-min) (point-max))))
 
+(defun eca-chat--queued-area-ov ()
+  "Return the overlay for the queued prompt area."
+  (-first (-lambda (ov) (eq t (overlay-get ov 'eca-chat-queued-area)))
+          (overlays-in (point-min) (point-max))))
+
 (defun eca-chat--prompt-area-start-point ()
   "Return the metadata overlay for the prompt area start point."
   (-some-> (eca-chat--prompt-area-ov)
@@ -922,6 +991,21 @@ Otherwise to a not loading state."
   "Return the point where new chat content should be inserted.
 Returns the position just before the prompt area start."
   (1- (eca-chat--prompt-area-start-point)))
+
+(defun eca-chat--ensure-prompt-visible ()
+  "Scroll the chat window so the prompt area stays visible.
+Only acts when the user is currently viewing the bottom of the
+buffer.  When the user has scrolled up to read earlier content,
+scrolling is suppressed so the view does not jump."
+  (when-let* ((win (get-buffer-window (current-buffer))))
+    (let* ((prompt-start (eca-chat--prompt-area-start-point))
+           (win-end (window-end win t)))
+      ;; Only auto-scroll when the prompt separator was already
+      ;; visible — meaning the user is at the bottom of the chat.
+      (when (and prompt-start (>= win-end prompt-start))
+        (with-selected-window win
+          (goto-char (point-max))
+          (recenter -1))))))
 
 (defun eca-chat--new-context-start-point ()
   "Return the metadata overlay for the new context area start point."
@@ -1061,22 +1145,66 @@ Resteps a list of context plists found in the prompt field."
                           :contexts (vconcat refined-contexts))
                      (when-let* ((variant (eca-chat--variant)))
                        (unless (string= variant "-")
-                         (list :variant variant))))
-     :success-callback (-lambda (res)
-                         (setq-local eca-chat--id (plist-get res :chatId))))))
+                         (list :variant variant)))
+                     (when (eca-chat--trust)
+                       (list :trust t)))
+     :success-callback (let ((chat-buffer (current-buffer)))
+                         (-lambda (res)
+                           (when (buffer-live-p chat-buffer)
+                             (with-current-buffer chat-buffer
+                               (setq-local eca-chat--id (plist-get res :chatId)))))))))
+
+(defun eca-chat--queued-prompt-display-string (text)
+  "Return a display string for queued prompt TEXT, truncated to 40 chars."
+  (let* ((single-line (replace-regexp-in-string "\n" " " text))
+         (truncated (if (> (length single-line) 40)
+                        (concat (substring single-line 0 40) "...")
+                      single-line)))
+    (propertize (concat "Queued: " truncated "\n")
+                'face 'eca-chat-queued-prompt-face)))
+
+(defun eca-chat--update-queued-area ()
+  "Update the queued-area overlay to reflect `eca-chat--queued-prompt'."
+  (when-let* ((ov (eca-chat--queued-area-ov)))
+    (overlay-put ov 'before-string
+                 (if eca-chat--queued-prompt
+                     (eca-chat--queued-prompt-display-string eca-chat--queued-prompt)
+                   ""))))
 
 (defun eca-chat--queue-prompt (prompt)
   "Queue PROMPT to be sent to SESSION when it finish current prompt."
   (setq-local eca-chat--queued-prompt (if eca-chat--queued-prompt
                                           (concat eca-chat--queued-prompt "\n" prompt)
                                         prompt))
+  (eca-chat--update-queued-area)
   (eca-chat--set-prompt ""))
 
 (defun eca-chat--send-queued-prompt (session)
   "Send any queued prompt for SESSION."
   (when eca-chat--queued-prompt
     (eca-chat--send-prompt session eca-chat--queued-prompt)
-    (setq-local eca-chat--queued-prompt nil)))
+    (setq-local eca-chat--queued-prompt nil)
+    (eca-chat--update-queued-area)))
+
+(defun eca-chat--completion-active-p ()
+  "Return non-nil if a completion popup is active."
+  (or (and (bound-and-true-p completion-in-region-mode))
+      (and (bound-and-true-p corfu--frame)
+           (frame-visible-p corfu--frame))
+      (bound-and-true-p company-candidates)))
+
+(defun eca-chat--completion-accept ()
+  "Accept the current completion candidate."
+  (cond
+   ((and (bound-and-true-p corfu--frame)
+         (frame-visible-p corfu--frame)
+         (fboundp 'corfu-insert))
+    (corfu-insert))
+   ((and (bound-and-true-p company-candidates)
+         (fboundp 'company-complete-selection))
+    (company-complete-selection))
+   ((bound-and-true-p completion-in-region-mode)
+    (completion-at-point))))
 
 (defun eca-chat--key-pressed-return ()
   "Send the current prompt to eca process if in prompt."
@@ -1085,6 +1213,10 @@ Resteps a list of context plists found in the prompt field."
    (let* ((session (eca-session))
           (prompt (eca-chat--prompt-content)))
      (cond
+      ;; check if completion popup is active
+      ((eca-chat--completion-active-p)
+       (eca-chat--completion-accept))
+
       ;; check it's an actionable text
       ((-some->> (thing-at-point 'symbol) (get-text-property 0 'eca-button-on-action))
        (-some->> (thing-at-point 'symbol)
@@ -1237,35 +1369,233 @@ Returns a string like \"31.5K / 200K\" or \"\" if no usage data."
             eca-chat--message-cost
             eca-chat--session-cost)
     (-> (-map (lambda (segment)
-                (pcase segment
-                  (:message-input-tokens (eca-chat--number->friendly-number eca-chat--message-input-tokens))
-                  (:message-output-tokens (eca-chat--number->friendly-number eca-chat--message-output-tokens))
-                  (:session-tokens (eca-chat--number->friendly-number eca-chat--session-tokens))
-                  (:message-cost (concat "$" eca-chat--message-cost))
-                  (:session-cost (concat "$" eca-chat--session-cost))
-                  (:context-limit (eca-chat--number->friendly-number eca-chat--session-limit-context))
-                  (:output-limit (eca-chat--number->friendly-number eca-chat--session-limit-output))
-                  (_ (propertize segment 'font-lock-face 'eca-chat-usage-string-face))))
+                (propertize
+                 (pcase segment
+                   (:message-input-tokens (eca-chat--number->friendly-number eca-chat--message-input-tokens))
+                   (:message-output-tokens (eca-chat--number->friendly-number eca-chat--message-output-tokens))
+                   (:session-tokens (eca-chat--number->friendly-number eca-chat--session-tokens))
+                   (:message-cost (concat "$" eca-chat--message-cost))
+                   (:session-cost (concat "$" eca-chat--session-cost))
+                   (:context-limit (eca-chat--number->friendly-number eca-chat--session-limit-context))
+                   (:output-limit (eca-chat--number->friendly-number eca-chat--session-limit-output))
+                   (_ segment))
+                 'font-lock-face 'eca-chat-usage-string-face))
               eca-chat-usage-string-format)
         (string-join ""))))
 
+(defun eca-chat--format-duration (secs)
+  "Format SECS into a human-readable duration string.
+Returns \"Xs\" for < 60s, \"Xm Ys\" for >= 60s,
+or \"Xm\" when seconds are zero."
+  (let ((mins (/ secs 60))
+        (remaining-secs (mod secs 60)))
+    (cond
+     ((< secs 60)          (format "%ds" secs))
+     ((zerop remaining-secs) (format "%dm" mins))
+     (t                      (format "%dm %ds" mins remaining-secs)))))
+
+(defun eca-chat--turn-duration-str ()
+  "Return formatted turn duration string, or nil."
+  (when-let* ((dur (cond
+                    (eca-chat--prompt-start-time
+                     (floor (float-time
+                             (time-subtract (current-time)
+                                            eca-chat--prompt-start-time))))
+                    (eca-chat--turn-duration-secs
+                     eca-chat--turn-duration-secs))))
+    (concat (eca-chat--format-duration dur)
+            (when eca-chat--prompt-start-time "…"))))
+
+(defun eca-chat--has-pending-approvals-p ()
+  "Return non-nil if current buffer has any pending approval tool call."
+  (save-excursion
+    (goto-char (point-min))
+    (not (null (text-property-search-forward
+                'eca-tool-call-pending-approval-accept t t)))))
+
+(defun eca-chat--chat-status-prefix ()
+  "Return a status prefix string for the current chat buffer.
+Returns \"🚧 \" for pending approvals, \"⏳ \" for loading, or \"\" otherwise."
+  (cond
+   ((eca-chat--has-pending-approvals-p) "🚧 ")
+   (eca-chat--chat-loading "⏳ ")
+   (t "")))
+
+(defun eca-chat--tab-line-tab-name (buffer)
+  "Return a formatted tab label for chat BUFFER.
+Shows 🚧 prefix for pending approvals."
+  (with-current-buffer buffer
+    (let* ((title (eca-chat-title))
+           (pending (eca-chat--has-pending-approvals-p)))
+      (concat " " (when pending "🚧 ") title " "))))
+
+(defun eca-chat--tab-line-face (tab _tabs face _selected-p _buffer)
+  "Apply warning face to loading chat tabs considering TAB.
+Merges `warning' with the default tab FACE via inheritance."
+  (let ((buf (cdr (assq 'buffer tab))))
+    (if (and buf (buffer-live-p buf)
+             (buffer-local-value 'eca-chat--chat-loading buf))
+        `(:inherit (warning ,face))
+      face)))
+
+(defun eca-chat--tab-line-tabs ()
+  "Return tab descriptors for all chats in the current session.
+Each tab is an alist with `name', `buffer', and `selected' entries.
+Tabs are ordered oldest-first so new chats appear on the right."
+  (when-let ((session (ignore-errors (eca-session))))
+    (let* ((current-buf (current-buffer))
+           (tabs (-keep
+                  (lambda (buf)
+                    (when (buffer-live-p buf)
+                      `(tab
+                        (name . ,(eca-chat--tab-line-tab-name buf))
+                        (buffer . ,buf)
+                        (selected . ,(eq buf current-buf)))))
+                  (eca-vals (eca--session-chats session)))))
+      (nreverse tabs))))
+
+(defun eca-chat--tab-line-close-tab (&optional e)
+  "Close the chat tab clicked on.
+If closing the current buffer, switch to another chat tab first.
+E is the mouse event."
+  (interactive "e")
+  (let* ((posnp (event-start e))
+         (window (posn-window posnp))
+         (tab-prop (get-pos-property 1 'tab (car (posn-string posnp))))
+         (buffer (if (bufferp tab-prop)
+                     tab-prop
+                   (cdr (assq 'buffer tab-prop)))))
+    (when (and buffer (buffer-live-p buffer))
+      (with-selected-window window
+        (when (eq buffer (current-buffer))
+          ;; Switch to another chat before killing
+          (let* ((session (ignore-errors (eca-session)))
+                 (other (-first (lambda (buf)
+                                  (and (buffer-live-p buf)
+                                       (not (eq buf buffer))))
+                                (eca-vals (eca--session-chats session)))))
+            (when other
+              (setf (eca--session-last-chat-buffer session) other)
+              (switch-to-buffer other))))
+        (kill-buffer buffer)))))
+
+(defvar eca-chat--tab-close-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map [tab-line mouse-1] #'eca-chat--tab-line-close-tab)
+    (define-key map [tab-line mouse-2] #'eca-chat--tab-line-close-tab)
+    map)
+  "Keymap for the tab-line close button in chat buffers.")
+
+(defun eca-chat--force-tab-line-update ()
+  "Force tab-line to redraw in all chat windows by clearing the render cache."
+  (walk-windows
+   (lambda (win)
+     (when (provided-mode-derived-p
+            (buffer-local-value 'major-mode (window-buffer win))
+            'eca-chat-mode)
+       (set-window-parameter win 'tab-line-cache nil)))
+   nil t)
+  (force-mode-line-update t))
+
+(defun eca-chat--sync-last-buffer ()
+  "Update session last-chat-buffer to track the current chat buffer."
+  (when-let ((session (ignore-errors (eca-session))))
+    (unless (eq (eca--session-last-chat-buffer session) (current-buffer))
+      (setf (eca--session-last-chat-buffer session) (current-buffer)))))
+
+(defun eca-chat-add-workspace-root ()
+  "Prompt for a directory and add it as workspace."
+  (interactive)
+  (when-let ((session (eca-session)))
+    (let ((folder (read-directory-name "Add workspace: ")))
+      (eca--session-add-workspace-folder session folder)
+      (force-mode-line-update))))
+
+(defvar eca-chat--add-workspace-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map [mode-line mouse-1]
+                #'eca-chat-add-workspace-root)
+    map)
+  "Keymap for the modeline [+] workspace button.")
+
+(defvar eca-chat--trust-toggle-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map [mode-line mouse-1]
+                #'eca-chat-toggle-trust)
+    map)
+  "Keymap for the modeline trust indicator.")
+
+(defun eca-chat--mode-line-module (session keyword)
+  "Return mode-line string segment for module KEYWORD in SESSION."
+  (pcase keyword
+    (:workspace-folders
+     (let ((home (expand-file-name "~")))
+       (string-join
+        (mapcar (lambda (f)
+                  (if (string-prefix-p home f)
+                      (concat "~" (substring f (length home)))
+                    f))
+                (eca--session-workspace-folders session))
+        ", ")))
+    (:add-workspace-button
+     (propertize " [+]"
+                 'face 'shadow
+                 'mouse-face 'highlight
+                 'help-echo "Add workspace folder"
+                 'local-map eca-chat--add-workspace-map))
+    (:title
+     (eca-chat-title))
+    (:elapsed-time
+     (when-let* ((str (eca-chat--turn-duration-str)))
+       (propertize (concat "⏱ " str) 'font-lock-face 'eca-chat-elapsed-time-face)))
+    (:usage
+     (eca-chat--usage-str))
+    (:server-version
+     (when eca-chat--server-version
+       (concat "ECA " eca-chat--server-version)))
+    (:trust
+     (propertize "⬤"
+                 'face (if (eca-chat--trust)
+                           'eca-chat-trust-on-face
+                         'eca-chat-trust-off-face)
+                 'mouse-face 'highlight
+                 'help-echo (if (eca-chat--trust)
+                                "Trust ON - auto-accepting tool calls"
+                              "Trust OFF")
+                 'local-map eca-chat--trust-toggle-map))
+    ((pred stringp) keyword)
+    (_ "")))
+
 (defun eca-chat--mode-line-string (session)
-  "Update chat mode line for SESSION."
-  (let* ((usage-str (eca-chat--usage-str))
-         (fill-space (propertize " "
-                                 'display `((space :align-to (- right ,(+ 1 (length usage-str)))))))
-         (title (cond
-                 (eca-chat--custom-title
-                  (propertize eca-chat--custom-title 'font-lock-face 'eca-chat-title-face))
-                 (eca-chat--title
-                  (propertize eca-chat--title 'font-lock-face 'eca-chat-title-face))))
-         (root (string-join (eca--session-workspace-folders session) ", ")))
-    (concat
-     (when eca-chat--closed
-       (propertize "*Closed session*" 'font-lock-face 'eca-chat-system-messages-face))
-     (or title root)
-     fill-space
-     usage-str)))
+  "Build mode-line string for SESSION from `eca-chat-mode-line-format'."
+  (if eca-chat--closed
+      (propertize "*Closed session*"
+                  'font-lock-face 'eca-chat-system-messages-face)
+    (let* ((fmt eca-chat-mode-line-format)
+           (spacer-pos (-elem-index :spacer fmt))
+           (left-modules (if spacer-pos (-take spacer-pos fmt) fmt))
+           (right-modules (when spacer-pos
+                            (-drop (1+ spacer-pos) fmt)))
+           (left (string-join
+                  (-non-nil
+                   (-map (lambda (m)
+                           (eca-chat--mode-line-module session m))
+                         left-modules))
+                  ""))
+           (right (string-trim
+                   (string-join
+                    (-non-nil
+                     (-map (lambda (m)
+                             (eca-chat--mode-line-module session m))
+                           right-modules))
+                    "")))
+           (fill (if (string-empty-p right)
+                     ""
+                   (propertize
+                    " " 'display
+                    `((space :align-to
+                             (- right ,(1+ (length right)))))))))
+      (concat left fill right))))
 
 (defun eca-chat--select-window ()
   "Select the Window."
@@ -1370,422 +1700,6 @@ Add a overlay before with OVERLAY-KEY = OVERLAY-VALUE if passed."
     (eca-chat--insert text)
     (point)))
 
-(defun eca-chat--expandable-content-at-point ()
-  "Return expandable content overlay at point, or nil if none."
-  (-first (-lambda (ov) (overlay-get ov 'eca-chat--expandable-content-id))
-          (overlays-in (line-beginning-position) (point))))
-
-(defun eca-chat--get-expandable-content (id)
-  "Return the overlay if there is a expandable content for ID."
-  (-first (-lambda (ov) (string= id (overlay-get ov 'eca-chat--expandable-content-id)))
-          (overlays-in (point-min) (point-max))))
-
-(defun eca-chat--propertize-only-first-word (str &rest properties)
-  "Return a new string propertizing PROPERTIES to the first word of STR.
-If STR is empty or PROPERTIES is nil, return STR unchanged. Existing
-text properties on STR are preserved; only the first word gets the
-additional PROPERTIES. The first word is the substring up to the first
-space, tab, or newline."
-  (if (or (string-empty-p str) (null properties))
-      str
-    (let* ((split-pos (or (string-match "[ \t\n]" str)
-                          (length str)))
-           (first (substring str 0 split-pos))
-           (rest (substring str split-pos)))
-      ;; Preserve existing properties on `first` (copied by `substring`)
-      ;; and add/override with the provided PROPERTIES only for the first word.
-      (add-text-properties 0 (length first) properties first)
-      (concat first rest))))
-
-(defconst eca-chat--expandable-content-base-indent (make-string 3 ?\s))
-(defconst eca-chat--expandable-content-nested-indent (make-string 6 ?\s))
-
-(defun eca-chat--make-expandable-icons (icon-face &optional label-prefix)
-  "Create open/close icons with ICON-FACE and optional LABEL-PREFIX.
-Uses the `face' property (not `font-lock-face') because these strings
-are used as `line-prefix' values, where `font-lock-face' is not rendered."
-  (let ((open-icon (if icon-face
-                       (propertize eca-chat-expandable-block-open-symbol 'face icon-face)
-                     eca-chat-expandable-block-open-symbol))
-        (close-icon (if icon-face
-                        (propertize eca-chat-expandable-block-close-symbol 'face icon-face)
-                      eca-chat-expandable-block-close-symbol)))
-    (if label-prefix
-        (cons (concat label-prefix open-icon) (concat label-prefix close-icon))
-      (cons open-icon close-icon))))
-
-(defun eca-chat--expandable-block-face (nested?)
-  "Return the appropriate background face for an expandable block.
-When NESTED? is non-nil, return the level-2 face; otherwise level-1."
-  (if nested?
-      'eca-chat-expandable-block-2-face
-    'eca-chat-expandable-block-1-face))
-
-(defun eca-chat--apply-face-to-line-prefixes (start end face)
-  "Add background of FACE to every `line-prefix' string between START and END.
-Only the `:background' attribute is applied so that existing foreground
-colors (e.g. icon faces via `font-lock-face') are preserved."
-  (when-let* ((bg (face-background face nil t)))
-    (let ((bg-plist `(:background ,bg))
-          (pos start))
-      (while (< pos end)
-        (let* ((next-change (or (next-single-property-change pos 'line-prefix nil end) end))
-               (prefix (get-text-property pos 'line-prefix)))
-          (when (and prefix (stringp prefix))
-            (let ((new-prefix (copy-sequence prefix)))
-              (add-face-text-property 0 (length new-prefix) bg-plist nil new-prefix)
-              (put-text-property pos next-change 'line-prefix new-prefix)))
-          (setq pos next-change))))))
-
-(defun eca-chat--paint-nested-label (ov-label)
-  "Paint OV-LABEL's `line-prefix` with the parent block's background face.
-Does nothing for top-level blocks or when parent has no face set."
-  (when (overlay-get ov-label 'eca-chat--expandable-content-nested)
-    (when-let* ((parent-id (overlay-get ov-label 'eca-chat--expandable-content-parent-id))
-                (parent-ov (eca-chat--get-expandable-content parent-id))
-                (parent-content-ov (overlay-get parent-ov 'eca-chat--expandable-content-ov-content))
-                (parent-face (overlay-get parent-content-ov 'face)))
-      (save-excursion
-        (goto-char (overlay-start ov-label))
-        (eca-chat--apply-face-to-line-prefixes (point) (line-end-position) parent-face)))))
-
-(defun eca-chat--insert-expandable-block (id label content open-icon close-icon content-indent &optional nested-props)
-  "Insert an expandable block with ID, LABEL, CONTENT, icons and indent.
-OPEN-ICON and CLOSE-ICON are the toggle icons.
-CONTENT-INDENT is the `line-prefix` for content.
-NESTED-PROPS is a plist with :parent-id and :label-indent for nested blocks."
-  (let ((ov-label (make-overlay (point) (point) (current-buffer)))
-        (label-indent (plist-get nested-props :label-indent)))
-    (overlay-put ov-label 'eca-chat--expandable-content-id id)
-    (overlay-put ov-label 'eca-chat--expandable-content-open-icon open-icon)
-    (overlay-put ov-label 'eca-chat--expandable-content-close-icon close-icon)
-    (overlay-put ov-label 'eca-chat--expandable-content-toggle nil)
-    (when nested-props
-      (overlay-put ov-label 'eca-chat--expandable-content-nested t)
-      (overlay-put ov-label 'eca-chat--expandable-content-parent-id (plist-get nested-props :parent-id)))
-    (unless nested-props
-      (overlay-put ov-label 'eca-chat--expandable-content-segments nil))
-    (eca-chat--insert (propertize (eca-chat--propertize-only-first-word label
-                                                                        'line-prefix (cond
-                                                                                      ((not (string-empty-p content)) open-icon)
-                                                                                      (label-indent (concat label-indent
-                                                                                                            (make-string (length eca-chat-expandable-block-open-symbol) ?\s)))))
-                                  'keymap (let ((km (make-sparse-keymap)))
-                                            (define-key km (kbd "<mouse-1>") (lambda () (interactive) (eca-chat--expandable-content-toggle id)))
-                                            (define-key km (kbd "<tab>") (lambda () (interactive) (eca-chat--expandable-content-toggle id)))
-                                            km)
-                                  'help-echo "mouse-1 / tab / RET: expand/collapse"))
-    (eca-chat--insert "\n")
-    (let* ((start-point (point))
-           (_ (eca-chat--insert "\n"))
-           (ov-content (make-overlay start-point start-point (current-buffer) nil t))
-           (nested? (plist-get nested-props :parent-id)))
-      (overlay-put ov-content 'eca-chat--expandable-content-content (propertize content 'line-prefix content-indent))
-      (overlay-put ov-content 'eca-chat--expandable-block-nested nested?)
-      (overlay-put ov-content 'priority (if nested? 1 0))
-      (overlay-put ov-label 'eca-chat--expandable-content-ov-content ov-content))))
-
-(defun eca-chat--render-nested-block (parent-ov child-spec)
-  "Render a nested block CHILD-SPEC within PARENT-OV's content area."
-  (-let* (((&plist :id id :label label :content content :icon-face icon-face) child-spec)
-          (parent-content-ov (overlay-get parent-ov 'eca-chat--expandable-content-ov-content))
-          (label-indent eca-chat--expandable-content-base-indent)
-          (icons (eca-chat--make-expandable-icons icon-face label-indent)))
-    (save-excursion
-      (goto-char (overlay-end parent-content-ov))
-      (unless (bolp) (eca-chat--insert "\n"))
-      (eca-chat--insert-expandable-block id label content
-                                         (car icons) (cdr icons)
-                                         eca-chat--expandable-content-nested-indent
-                                         (list :parent-id (overlay-get parent-ov 'eca-chat--expandable-content-id)
-                                               :label-indent label-indent))
-      ;; Paint label's line-prefix with parent's background when parent is open
-      (when-let* ((child-ov (eca-chat--get-expandable-content id)))
-        (eca-chat--paint-nested-label child-ov)))))
-
-(defun eca-chat--destroy-nested-blocks (parent-id)
-  "Remove all nested block overlays that belong to PARENT-ID."
-  (dolist (ov (overlays-in (point-min) (point-max)))
-    (when (string= parent-id (overlay-get ov 'eca-chat--expandable-content-parent-id))
-      (when-let* ((content-ov (overlay-get ov 'eca-chat--expandable-content-ov-content)))
-        (delete-overlay content-ov))
-      (delete-overlay ov))))
-
-(defun eca-chat--segments-total-text (segments)
-  "Return the concatenation of all text segment contents in SEGMENTS."
-  (mapconcat (lambda (seg)
-               (if (eq 'text (plist-get seg :type))
-                   (plist-get seg :content)
-                 ""))
-             segments
-             ""))
-
-(defun eca-chat--segments-children (segments)
-  "Return all child specs from SEGMENTS."
-  (-filter (lambda (seg) (eq 'child (plist-get seg :type))) segments))
-
-(defun eca-chat--add-expandable-content (id label content &optional parent-id at-point)
-  "Add LABEL to the chat current position for ID as a interactive text.
-When expanded, shows CONTENT.
-Applies ICON-FACE to open/close icons.
-If PARENT-ID is provided, adds as a nested block under that parent.
-If AT-POINT is provided, inserts at that buffer position instead of
-the default content insertion point."
-  (if parent-id
-      (when-let* ((parent-ov (eca-chat--get-expandable-content parent-id)))
-        (let* ((segments (overlay-get parent-ov 'eca-chat--expandable-content-segments))
-               (existing-spec (-first (lambda (s) (and (eq 'child (plist-get s :type))
-                                                       (string= id (plist-get s :id))))
-                                      segments)))
-          (if existing-spec
-              ;; Child spec already exists (e.g. parent was collapsed destroying
-              ;; the overlay but keeping the spec); delegate to update to avoid
-              ;; duplicating the entry.
-              (eca-chat--update-expandable-content id label content nil parent-id)
-            (let* ((icon-face (get-text-property 0 'font-lock-face label))
-                   (child-spec (list :type 'child :id id :label label :content content :icon-face icon-face))
-                   ;; Capture any unsegmented text that was appended to content
-                   ;; since the last segment, and add it as a text segment first
-                   (ov-content (overlay-get parent-ov 'eca-chat--expandable-content-ov-content))
-                   (full-content (overlay-get ov-content 'eca-chat--expandable-content-content))
-                   (segmented-text (eca-chat--segments-total-text segments))
-                   (unsegmented-text (when (> (length full-content) (length segmented-text))
-                                       (substring full-content (length segmented-text))))
-                   (new-segments (append segments
-                                         (when unsegmented-text
-                                           (list (list :type 'text :content unsegmented-text)))
-                                         (list child-spec))))
-              (overlay-put parent-ov 'eca-chat--expandable-content-segments new-segments)
-              (when (overlay-get parent-ov 'eca-chat--expandable-content-toggle)
-                (eca-chat--render-nested-block parent-ov child-spec))))))
-    (save-excursion
-      (let* ((start-point (or at-point (eca-chat--content-insertion-point)))
-             (icon-face (get-text-property 0 'font-lock-face label))
-             (icons (eca-chat--make-expandable-icons icon-face)))
-        (goto-char start-point)
-        (unless (bolp) (eca-chat--insert "\n"))
-        (eca-chat--insert-expandable-block id label content
-                                           (car icons) (cdr icons)
-                                           eca-chat--expandable-content-base-indent)))))
-
-(defun eca-chat--remove-expandable-content (id)
-  "Remove the expandable block with ID from the buffer.
-Deletes both the label overlay and its content overlay, along with
-any text they covered, including surrounding newlines added during insertion."
-  (when-let* ((ov-label (eca-chat--get-expandable-content id)))
-    (let* ((ov-content (overlay-get ov-label 'eca-chat--expandable-content-ov-content))
-           ;; Determine the full region: from label overlay start to content overlay end
-           (start (overlay-start ov-label))
-           (end (if ov-content
-                    (overlay-end ov-content)
-                  (overlay-end ov-label)))
-           ;; Include preceding newline (inserted by add-expandable-content)
-           (start (if (and (> start (point-min))
-                           (eq (char-before start) ?\n))
-                      (1- start)
-                    start))
-           ;; Include trailing newline (inserted between label/content in
-           ;; insert-expandable-block)
-           (end (if (and (< end (point-max))
-                         (eq (char-after end) ?\n))
-                    (1+ end)
-                  end)))
-      ;; Destroy any nested blocks first
-      (eca-chat--destroy-nested-blocks id)
-      ;; Delete overlays
-      (when ov-content (delete-overlay ov-content))
-      (delete-overlay ov-label)
-      ;; Remove the text region
-      (let ((inhibit-read-only t))
-        (delete-region start end)))))
-
-(defun eca-chat--update-expandable-content (id label content &optional append-content? parent-id)
-  "Update to LABEL and CONTENT the expandable content of id ID.
-If LABEL is nil, the existing label is preserved.
-If APPEND-CONTENT? is non-nil, append CONTENT to existing content.
-If PARENT-ID is provided and block doesn't exist yet, updates the spec
-in parent."
-  (if-let* ((ov-label (eca-chat--get-expandable-content id)))
-      ;; Block exists (rendered), update it directly
-      (let* ((ov-content (overlay-get ov-label 'eca-chat--expandable-content-ov-content))
-             (nested? (overlay-get ov-label 'eca-chat--expandable-content-nested))
-             (indent (if nested?
-                         eca-chat--expandable-content-nested-indent
-                       eca-chat--expandable-content-base-indent))
-             (existing (overlay-get ov-content 'eca-chat--expandable-content-content))
-             (delta (propertize content 'line-prefix indent))
-             (new-content (if append-content?
-                              (concat existing delta)
-                            delta))
-             (open? (overlay-get ov-label 'eca-chat--expandable-content-toggle)))
-        (overlay-put ov-content 'eca-chat--expandable-content-content new-content)
-        (save-excursion
-          (when label
-            ;; Update stored icons when the label face changes
-            (let* ((new-icon-face (get-text-property 0 'font-lock-face label))
-                   (label-indent (when nested? eca-chat--expandable-content-base-indent))
-                   (new-icons (eca-chat--make-expandable-icons new-icon-face label-indent)))
-              (overlay-put ov-label 'eca-chat--expandable-content-open-icon (car new-icons))
-              (overlay-put ov-label 'eca-chat--expandable-content-close-icon (cdr new-icons)))
-            (goto-char (overlay-start ov-label))
-            (delete-region (point) (1- (overlay-start ov-content)))
-            (let* ((children (eca-chat--segments-children
-                              (overlay-get ov-label 'eca-chat--expandable-content-segments)))
-                   (has-content? (or (not (string-empty-p new-content)) children))
-                   (label-prefix (cond
-                                  (has-content?
-                                   (if open?
-                                       (overlay-get ov-label 'eca-chat--expandable-content-close-icon)
-                                     (overlay-get ov-label 'eca-chat--expandable-content-open-icon)))
-                                  (nested?
-                                   (concat eca-chat--expandable-content-base-indent
-                                           (make-string (length eca-chat-expandable-block-open-symbol) ?\s))))))
-              (eca-chat--insert (propertize (eca-chat--propertize-only-first-word label
-                                                                                  'line-prefix label-prefix)
-                                            'help-echo "mouse-1 / RET / tab: expand/collapse")))
-            ;; Repaint nested label's line-prefix after label replacement
-            (eca-chat--paint-nested-label ov-label))
-          (when open?
-            (let ((block-face (overlay-get ov-content 'face)))
-              (if append-content?
-                  (let ((insert-start (overlay-end ov-content)))
-                    (goto-char insert-start)
-                    (eca-chat--insert delta)
-                    (when block-face
-                      (eca-chat--apply-face-to-line-prefixes
-                       insert-start (overlay-end ov-content) block-face)))
-                (progn
-                  (delete-region (overlay-start ov-content) (overlay-end ov-content))
-                  (goto-char (overlay-start ov-content))
-                  (eca-chat--insert new-content)
-                  (when block-face
-                    (eca-chat--apply-face-to-line-prefixes
-                     (overlay-start ov-content) (overlay-end ov-content) block-face)))))))
-        ;; When nested, sync updated label/content back to parent's child spec
-        ;; so that toggling the parent closed and reopened preserves latest state
-        (when nested?
-          (when-let* ((parent-id (overlay-get ov-label 'eca-chat--expandable-content-parent-id))
-                      (parent-ov (eca-chat--get-expandable-content parent-id))
-                      (segments (overlay-get parent-ov 'eca-chat--expandable-content-segments))
-                      (spec (-first (lambda (s) (and (eq 'child (plist-get s :type))
-                                                     (string= id (plist-get s :id))))
-                                    segments)))
-            (when label (plist-put spec :label label))
-            (plist-put spec :content new-content))))
-    ;; Block not rendered yet
-    (if parent-id
-        ;; Nested: update spec in parent
-        (when-let* ((parent-ov (eca-chat--get-expandable-content parent-id)))
-          (let* ((segments (overlay-get parent-ov 'eca-chat--expandable-content-segments))
-                 (existing-spec (-first (lambda (spec) (and (eq 'child (plist-get spec :type))
-                                                            (string= id (plist-get spec :id))))
-                                        segments)))
-            (if existing-spec
-                (let* ((old-content (plist-get existing-spec :content))
-                       (new-content (if append-content?
-                                        (concat old-content content)
-                                      content)))
-                  (when label
-                    (plist-put existing-spec :label label)
-                    (plist-put existing-spec :icon-face (get-text-property 0 'font-lock-face label)))
-                  (plist-put existing-spec :content new-content))
-              (let ((child-spec (list :type 'child :id id :label label :content content
-                                     :icon-face (get-text-property 0 'font-lock-face label))))
-                (overlay-put parent-ov 'eca-chat--expandable-content-segments
-                             (append segments (list child-spec)))
-                (when (overlay-get parent-ov 'eca-chat--expandable-content-toggle)
-                  (eca-chat--render-nested-block parent-ov child-spec))))))
-      ;; Top-level: create the block so toolCallRun et al. don't
-      ;; silently lose content when no toolCallPrepare preceded them.
-      (eca-chat--add-expandable-content id label (or content "")))))
-
-(defun eca-chat--expandable-content-toggle (id &optional force? close?)
-  "Toggle the expandable-content of ID.
-If FORCE? decide to CLOSE? or not."
-  (when-let* ((ov-label (-first (-lambda (ov) (string= id (overlay-get ov 'eca-chat--expandable-content-id)))
-                                (overlays-in (point-min) (point-max)))))
-    (let* ((ov-content (overlay-get ov-label 'eca-chat--expandable-content-ov-content))
-           (content (overlay-get ov-content 'eca-chat--expandable-content-content))
-           (segments (overlay-get ov-label 'eca-chat--expandable-content-segments))
-           (children (eca-chat--segments-children segments))
-           (has-content? (or (not (string-empty-p content)) children))
-           (currently-open? (overlay-get ov-label 'eca-chat--expandable-content-toggle))
-           (close? (if force?
-                       close?
-                     currently-open?))
-           ;; Skip when force-toggling to a state we're already in
-           (already-in-state? (and force?
-                                   (if close? (not currently-open?) currently-open?))))
-      (unless already-in-state?
-        (save-excursion
-          (goto-char (overlay-start ov-label))
-          (if (or close? (not has-content?))
-              (progn
-                (put-text-property (point) (line-end-position)
-                                   'line-prefix (when has-content?
-                                                  (overlay-get ov-label 'eca-chat--expandable-content-open-icon)))
-                (goto-char (1+ (line-end-position)))
-                ;; Destroy nested blocks first (they are within content region)
-                (eca-chat--destroy-nested-blocks id)
-                (delete-region (overlay-start ov-content) (overlay-end ov-content))
-                (overlay-put ov-content 'face nil)
-                (overlay-put ov-label 'eca-chat--expandable-content-toggle nil))
-            (progn
-              (put-text-property (point) (line-end-position)
-                                 'line-prefix (overlay-get ov-label 'eca-chat--expandable-content-close-icon))
-              (goto-char (overlay-start ov-content))
-              (if segments
-                  ;; Segments-aware rendering: interleave text and children in order
-                  (let* ((full-content content)
-                         (segmented-text (eca-chat--segments-total-text segments))
-                         (trailing-text (when (> (length full-content) (length segmented-text))
-                                          (substring full-content (length segmented-text)))))
-                    (dolist (seg segments)
-                      (pcase (plist-get seg :type)
-                        ('text (eca-chat--insert (plist-get seg :content)))
-                        ('child
-                         (eca-chat--render-nested-block ov-label seg)
-                         ;; render-nested-block uses save-excursion so point stays
-                         ;; before the child; advance past it to maintain order
-                         (goto-char (overlay-end ov-content)))))
-                    ;; Insert any trailing text not yet captured in segments
-                    (when (and trailing-text (not (string-empty-p trailing-text)))
-                      (eca-chat--insert trailing-text))
-                    (eca-chat--insert "\n"))
-                ;; Legacy path: no segments, insert content then children
-                (eca-chat--insert content "\n")
-                (dolist (child-spec children)
-                  (eca-chat--render-nested-block ov-label child-spec)))
-              (let ((block-face (eca-chat--expandable-block-face
-                                (overlay-get ov-content 'eca-chat--expandable-block-nested))))
-                (overlay-put ov-content 'face block-face)
-                (eca-chat--apply-face-to-line-prefixes
-                 (overlay-start ov-content) (overlay-end ov-content) block-face))
-              (overlay-put ov-label 'eca-chat--expandable-content-toggle t)))
-          ;; Repaint nested label's line-prefix after icon swap
-          (eca-chat--paint-nested-label ov-label)))
-      close?)))
-
-(defun eca-chat--content-table (key-vals)
-  "Return a string in table format for KEY-VALS."
-  (-reduce-from
-   (-lambda (a (k . v))
-     (concat a "\n" (propertize (concat k ":") 'font-lock-face 'eca-chat--tool-call-table-key-face) " "
-             (if (listp v)
-                 (concat "\n"
-                         (string-join (-map-indexed
-                                       (lambda (i item)
-                                         (if (cl-evenp i)
-                                             (propertize (concat "  " (substring (symbol-name item) 1) ": ")
-                                                         'font-lock-face 'eca-chat--tool-call-argument-key-face)
-                                           (propertize (concat (prin1-to-string item) "\n")
-                                                       'font-lock-face 'eca-chat--tool-call-argument-value-face)))
-                                       v)
-                                      ""))
-               v)))
-   ""
-   key-vals))
-
 (defun eca-chat--relativize-filename-for-workspace-root (filename roots &optional hide-filename?)
   "Relativize the FILENAME if a workspace root is found for ROOTS.
 Show parent upwards if HIDE-FILENAME? is non nil."
@@ -1819,12 +1733,6 @@ Show parent upwards if HIDE-FILENAME? is non nil."
             " "
             (propertize (concat "-" (number-to-string (or removed 0))) 'font-lock-face 'error))))
 
-(defun eca-chat--context-presentable-path (filename)
-  "Return the presentable string for FILENAME."
-  (or (when (-first (lambda (root) (f-ancestor-of? root filename))
-                    (eca--session-workspace-folders (eca-session)))
-        (f-filename filename))
-      filename))
 
 (defun eca-chat--refresh-progress (chat-buffer)
   "Refresh the progress TEXT for CHAT-BUFFER."
@@ -1840,224 +1748,6 @@ Show parent upwards if HIDE-FILENAME? is non nil."
                                       'font-lock-face 'eca-chat-system-messages-face)
                           eca-chat--spinner-string)))))
 
-(defun eca-chat--context->str (context &optional static?)
-  "Convert CONTEXT to a presentable str in buffer.
-If STATIC? return strs with no dynamic values."
-  (-let* (((&plist :type type) context)
-          (context-str
-           (pcase type
-             ("file" (let ((path (plist-get context :path))
-                           (lines-range (plist-get context :linesRange)))
-                       (propertize (concat eca-chat-context-prefix
-                                           (eca-chat--context-presentable-path path)
-                                           (-when-let ((&plist :start start :end end) lines-range)
-                                             (format "(%d-%d)" start end)))
-                                   'eca-chat-expanded-item-str (concat eca-chat-context-prefix path
-                                                                       (-when-let ((&plist :start start :end end) lines-range)
-                                                                         (format ":L%d-L%d" start end)))
-                                   'font-lock-face 'eca-chat-context-file-face)))
-             ("directory" (propertize (concat eca-chat-context-prefix (eca-chat--context-presentable-path (plist-get context :path)))
-                                      'eca-chat-expanded-item-str (concat eca-chat-context-prefix (plist-get context :path))
-                                      'font-lock-face 'eca-chat-context-file-face))
-             ("repoMap" (propertize (concat eca-chat-context-prefix "repoMap")
-                                    'eca-chat-expanded-item-str (concat eca-chat-context-prefix "repoMap")
-                                    'font-lock-face 'eca-chat-context-repo-map-face))
-             ("mcpResource" (propertize (concat eca-chat-context-prefix (plist-get context :server) ":" (plist-get context :name))
-                                        'eca-chat-expanded-item-str (concat eca-chat-context-prefix (plist-get context :server) ":" (plist-get context :name))
-                                        'font-lock-face 'eca-chat-context-mcp-resource-face))
-             ("cursor" (propertize (if static?
-                                       (concat eca-chat-context-prefix "cursor")
-                                     (concat eca-chat-context-prefix "cursor"
-                                             "("
-                                             (-some-> (plist-get eca-chat--cursor-context :path)
-                                               (f-filename))
-                                             " "
-                                             (-some->>
-                                                 (-> eca-chat--cursor-context
-                                                     (plist-get :position)
-                                                     (plist-get :start)
-                                                     (plist-get :line))
-                                               (funcall #'number-to-string))
-                                             ":"
-                                             (-some->>
-                                                 (-> eca-chat--cursor-context
-                                                     (plist-get :position)
-                                                     (plist-get :start)
-                                                     (plist-get :character))
-                                               (funcall #'number-to-string))
-                                             ")"))
-                                   'eca-chat-expanded-item-str (concat eca-chat-context-prefix "cursor")
-                                   'font-lock-face 'eca-chat-context-cursor-face))
-             (_ (concat eca-chat-context-prefix "unknown:" type)))))
-    (propertize context-str
-                'eca-chat-item-type 'context
-                'eca-chat-item-str-length (length context-str)
-                'eca-chat-context-item context)))
-
-(defun eca-chat--filepath->str (filepath lines-range)
-  "Convert FILEPATH and LINES-RANGE to a presentable str in buffer."
-  (let* ((item-str (concat eca-chat-filepath-prefix
-                           (eca-chat--context-presentable-path filepath)
-                           (-when-let ((&plist :start start :end end) lines-range)
-                             (format "(%d-%d)" start end)))))
-    (propertize item-str
-                'eca-chat-item-type 'filepath
-                'eca-chat-item-str-length (length item-str)
-                'eca-chat-expanded-item-str (concat eca-chat-filepath-prefix
-                                                    filepath
-                                                    (-when-let ((&plist :start start :end end) lines-range)
-                                                      (format ":L%d-L%d" start end)))
-                'font-lock-face 'eca-chat-context-file-face)))
-
-(defun eca-chat--refresh-context ()
-  "Refresh chat context."
-  (save-excursion
-    (-some-> (eca-chat--prompt-context-field-ov)
-      (overlay-start)
-      (goto-char))
-    (delete-region (point) (line-end-position))
-    (seq-doseq (context eca-chat--context)
-      (eca-chat--insert (eca-chat--context->str context))
-      (eca-chat--insert " "))
-    (eca-chat--insert (propertize eca-chat-context-prefix 'font-lock-face 'eca-chat-context-unlinked-face))))
-
-(defconst eca-chat--kind->symbol
-  '(("file" . file)
-    ("directory" . folder)
-    ("repoMap" . module)
-    ("cursor" . class)
-    ("mcpPrompt" . function)
-    ("mcpResource" . file)
-    ("native" . variable)
-    ("custom-prompt" . method)))
-
-(defun eca-chat--completion-item-kind (item)
-  "Return the kind for ITEM."
-  (alist-get (plist-get item :type)
-             eca-chat--kind->symbol
-             nil
-             nil
-             #'string=))
-
-(defun eca-chat--completion-item-label-kind (item-label)
-  "Return the kind for ITEM-LABEL."
-  (eca-chat--completion-item-kind (get-text-property 0 'eca-chat-completion-item item-label)))
-
-(defun eca-chat--completion-item-company-box-icon (item-label)
-  "Return the kind for ITEM-LABEL."
-  (let ((symbol (eca-chat--completion-item-label-kind item-label)))
-    (intern (capitalize (symbol-name symbol)))))
-
-(defun eca-chat--add-context (context)
-  "Add to chat CONTEXT."
-  (add-to-list 'eca-chat--context context t)
-  (eca-chat--refresh-context))
-
-(defun eca-chat--remove-context (context)
-  "Remove from chat CONTEXT."
-  (setq eca-chat--context (remove context eca-chat--context))
-  (eca-chat--refresh-context))
-
-(defun eca-chat--completion-context-annotate (roots item-label)
-  "Annonate ITEM-LABEL detail for ROOTS."
-  (-let (((&plist :type type :path path :description description) (get-text-property 0 'eca-chat-completion-item item-label)))
-    (pcase type
-      ("file" (eca-chat--relativize-filename-for-workspace-root path roots 'hide-filename))
-      ("directory" (eca-chat--relativize-filename-for-workspace-root path roots 'hide-filename))
-      ("repoMap" "Summary view of workspaces files")
-      ("cursor" "Current cursor file + position")
-      ("mcpResource" description)
-      (_ ""))))
-
-(defun eca-chat--completion-file-annotate (roots item-label)
-  "Annonate ITEM-LABEL detail for ROOTS."
-  (-let (((&plist :path path) (get-text-property 0 'eca-chat-completion-item item-label)))
-    (eca-chat--relativize-filename-for-workspace-root path roots 'hide-filename)))
-
-(defun eca-chat--completion-prompts-annotate (item-label)
-  "Annotate prompt ITEM-LABEL."
-  (-let (((&plist :description description :arguments args)
-          (get-text-property 0 'eca-chat-completion-item item-label)))
-    (concat "(" (string-join (--map (plist-get it :name) args) ", ")
-            ") "
-            (when description
-              (truncate-string-to-width description (* 100 eca-chat-window-width))))))
-
-(defun eca-chat--completion-context-from-new-context-exit-function (item _status)
-  "Add to context the selected ITEM."
-  (eca-chat--add-context (get-text-property 0 'eca-chat-completion-item item))
-  (end-of-line))
-
-(defun eca-chat--completion-context-from-prompt-exit-function (item _status)
-  "Add to context the selected ITEM.
-Add text property to prompt text to match context."
-  (let ((context (get-text-property 0 'eca-chat-completion-item item)))
-    (let ((start-pos (save-excursion
-                       (search-backward eca-chat-context-prefix (line-beginning-position) t)))
-          (end-pos (point)))
-      (delete-region start-pos end-pos)
-      (eca-chat--insert (eca-chat--context->str context 'static))))
-  (eca-chat--insert " "))
-
-(defun eca-chat--completion-file-from-prompt-exit-function (item _status)
-  "Add to files the selected ITEM."
-  (let* ((file (get-text-property 0 'eca-chat-completion-item item))
-         (start-pos (save-excursion
-                      (search-backward eca-chat-filepath-prefix (line-beginning-position) t)))
-         (end-pos (point)))
-    (delete-region start-pos end-pos)
-    (eca-chat--insert (eca-chat--filepath->str (plist-get file :path) nil)))
-  (eca-chat--insert " "))
-
-(defun eca-chat--completion-prompt-exit-function (item _status)
-  "Finish prompt completion for ITEM."
-  (-let* (((&plist :arguments arguments) (get-text-property 0 'eca-chat-completion-item item)))
-    (when (> (length arguments) 0)
-      (seq-doseq (arg arguments)
-        (-let (((&plist :name name :description description :required required) arg))
-          (eca-chat--insert " ")
-          (let ((arg-text (read-string (format "Arg: %s\nDescription: %s\nValue%s: "
-                                               name
-                                               description
-                                               (if required "" " (leave blank for default)")))))
-            (if (and arg-text (string-match-p " " arg-text))
-                (eca-chat--insert (format "\"%s\"" arg-text))
-              (eca-chat--insert arg-text)))))
-      (end-of-line))))
-
-(defun eca-chat--context-to-completion (context)
-  "Convert CONTEXT to a completion item."
-  (let* ((ctx-type (plist-get context :type))
-         (ctx-path (plist-get context :path))
-         (raw-label (pcase ctx-type
-                      ("file" (f-filename ctx-path))
-                      ("directory" (f-filename ctx-path))
-                      ("repoMap" "repoMap")
-                      ("cursor" "cursor")
-                      ("mcpResource" (concat (plist-get context :server) ":" (plist-get context :name)))
-                      (_ (concat "Unknown - " ctx-type))))
-         (face (pcase ctx-type
-                 ("file" 'eca-chat-context-file-face)
-                 ("directory" 'eca-chat-context-file-face)
-                 ("repoMap" 'eca-chat-context-repo-map-face)
-                 ("cursor" 'eca-chat-context-cursor-face)
-                 ("mcpResource" 'eca-chat-context-mcp-resource-face)
-                 (_ nil))))
-    (propertize raw-label
-                'eca-chat-completion-item context
-                'face face)))
-
-(defun eca-chat--file-to-completion (file)
-  "Convert FILE to a completion item."
-  (propertize (f-filename (plist-get file :path))
-              'eca-chat-completion-item file
-              'face 'eca-chat-context-file-face))
-
-(defun eca-chat--command-to-completion (command)
-  "Convert COMMAND to a completion item."
-  (propertize (plist-get command :name)
-              'eca-chat-completion-item command))
-
 (defun eca-chat--go-to-overlay (ov-key range-min range-max first?)
   "Go to overlay finding from RANGE-MIN to RANGE-MAX if matches OV-KEY."
   (eca-chat--with-current-buffer (eca-chat--get-last-buffer (eca-session))
@@ -2065,61 +1755,6 @@ Add text property to prompt text to match context."
       (when-let ((ov (funcall get-fn (-lambda (ov) (overlay-get ov ov-key))
                               (overlays-in range-min range-max))))
         (goto-char (overlay-start ov))))))
-
-(defun eca-chat--cur-position ()
-  "Return the start and end positions for current point.
-Resteps a cons cell (START . END) where START and END are cons cells
-of (LINE . CHARACTER) representing the current selection or cursor position."
-  (save-excursion
-    (let* ((start-pos (if (use-region-p) (region-beginning) (point)))
-           (end-pos (if (use-region-p) (region-end) (point)))
-           (start-line (line-number-at-pos start-pos))
-           (start-char (1+ (progn
-                             (goto-char start-pos)
-                             (current-column))))
-           (end-line (line-number-at-pos end-pos))
-           (end-char (1+ (progn
-                           (goto-char end-pos)
-                           (current-column)))))
-      (cons (cons start-line start-char)
-            (cons end-line end-char)))))
-
-(defun eca-chat--get-last-visited-buffer ()
-  "Return the last visited buffer which has a filename."
-  (-first (lambda (buff)
-            (when (buffer-live-p buff)
-              (with-current-buffer buff
-                (buffer-file-name))))
-          (buffer-list)))
-
-(defun eca-chat--track-cursor (&rest _args)
-  "Change chat context considering current open file and point."
-  (when-let ((session (eca-session)))
-    (when-let ((workspaces (eca--session-workspace-folders session)))
-      (when-let ((buffer (eca-chat--get-last-visited-buffer)))
-        (when-let ((path (buffer-file-name buffer)))
-          (when (--any? (and it (f-ancestor-of? it path))
-                        workspaces)
-            (with-current-buffer buffer
-              (when-let (chat-buffer (eca-chat--get-last-buffer session))
-                (when (buffer-live-p chat-buffer)
-                  (-let* (((start . end) (eca-chat--cur-position))
-                          ((start-line . start-character) start)
-                          ((end-line . end-character) end))
-                    (eca-chat--with-current-buffer chat-buffer
-                      (let ((new-context (list :path path
-                                               :position (list :start (list :line start-line :character start-character)
-                                                               :end (list :line end-line :character end-character)))))
-                        (when (not (eca-plist-equal eca-chat--cursor-context new-context))
-                          (setq eca-chat--cursor-context new-context)
-                          (eca-chat--refresh-context))))))))))))))
-
-(defun eca-chat--track-cursor-position-schedule ()
-  "Debounce `eca-chat--track-cursor' via an idle timer."
-  (unless eca-chat--cursor-context-timer
-    (setq eca-chat--cursor-context-timer
-          (run-with-idle-timer eca-chat-cursor-context-debounce t
-                               #'eca-chat--track-cursor))))
 
 (defun eca-chat--parse-unified-diff (diff-text)
   "Compatibility wrapper that delegates to `eca-diff-parse-unified-diff'.
@@ -2152,53 +1787,6 @@ restore the chat display after smerge quits."
     ('ediff (eca-chat--show-diff-ediff path diff))
     ('smerge (eca-chat--show-diff-smerge path diff))))
 
-(defun eca-chat--find-typed-query (prefix)
-  "Return the text typed after the last item after PREFIX (@ or #).
-For example: `@foo @bar @baz` => `baz`. If nothing is typed, resteps an empty
-string."
-  (when (eca-chat--point-at-new-context-p)
-    (save-excursion
-      (goto-char (eca-chat--new-context-start-point))
-      (end-of-line)))
-  (save-excursion
-    (let* ((start (line-beginning-position))
-           (end (point))
-           (last-prefix-pos (search-backward prefix start t)))
-      (if last-prefix-pos
-          (string-trim (buffer-substring-no-properties (+ last-prefix-pos (length prefix)) end))
-        ""))))
-
-(declare-function dired-get-marked-files "dired")
-(declare-function treemacs-node-at-point "treemacs")
-(declare-function treemacs-button-get "treemacs")
-
-(defun eca-chat--get-contexts-dwim ()
-  "Get contexts in a DWIM manner."
-  (cond
-   ((and (buffer-file-name)
-         (use-region-p))
-    (-let (((start . end) `(,(line-number-at-pos (region-beginning)) . ,(line-number-at-pos (region-end)))))
-      (list
-       (list :type "file"
-             :path (buffer-file-name)
-             :linesRange (list :start start :end end)))))
-
-   ((derived-mode-p 'dired-mode)
-    (--map (list :type (if (f-dir? it) "directory" "file")
-                 :path it)
-           (dired-get-marked-files)))
-
-   ((derived-mode-p 'treemacs-mode)
-    (when-let (path (-some-> (treemacs-node-at-point)
-                      (treemacs-button-get :path)))
-      (list
-       (list :type (if (f-dir? path) "directory" "file")
-             :path path))))
-
-   ((buffer-file-name)
-    (list
-     (list :type "file" :path (buffer-file-name))))))
-
 (defun eca-chat--insert-prompt (text)
   "Insert TEXT to latest chat prompt point unless point is already in prompt."
   (save-excursion
@@ -2219,74 +1807,6 @@ string."
 CHILD, NAME, DOCSTRING and BODY are passed down."
   (declare (indent defun))
   `(define-derived-mode ,child ,eca-chat-parent-mode ,name ,docstring ,@body))
-
-(defconst eca-chat-media--mime-extension-map
-  '(("image/png" . "png")
-    ("image/x-png" . "png")
-    ("image/jpeg" . "jpg")
-    ("image/jpg" . "jpg")
-    ("image/gif" . "gif")
-    ("image/webp" . "webp")
-    ("image/heic" . "heic")
-    ("image/heif" . "heif")
-    ("image/svg+xml" . "svg"))
-  "Mapping of mime types to screenshot file extensions.")
-
-(defun eca-chat-media--extension-for-type (type)
-  "Return file extension (without dot) for mime TYPE.
-TYPE can be a string or symbol."
-  (let* ((type-str (if (symbolp type) (symbol-name type) type))
-         (clean (and type-str (string-trim type-str))))
-    (or (cdr (assoc-string clean eca-chat-media--mime-extension-map t))
-        (when clean
-          (let* ((parts (split-string clean "/"))
-                 (raw-subtype (cadr parts))
-                 (subtype (car (split-string (or raw-subtype "") "\\+"))))
-            (unless (string-empty-p subtype)
-              subtype)))
-        "png")))
-
-(defun eca-chat--yank-image-handler (type data)
-  "Handler for `yank-media' to insert images from clipboard.
-TYPE is the MIME type (e.g., image/png).
-DATA is the binary image data as a string."
-  (when-let* ((session (eca-session))
-              (chat-buffer (eca-chat--get-last-buffer session))
-              (extension (eca-chat-media--extension-for-type type))
-              (output-path (make-temp-file "eca-screenshot-" nil (concat "." extension))))
-    (condition-case err
-        (progn
-          (let ((coding-system-for-write 'no-conversion))
-            (write-region data nil output-path nil 'silent))
-          (when (f-exists? output-path)
-            (eca-chat--with-current-buffer chat-buffer
-              (let ((context (list :type "file" :path output-path))
-                    (file-size (file-size-human-readable (file-attribute-size (file-attributes output-path)))))
-                (eca-chat--select-window)
-                (if (eq 'system eca-chat-yank-image-context-location)
-                    (eca-chat--add-context context)
-                  (progn
-                    (eca-chat--insert-prompt (concat (eca-chat--context->str context 'static) " "))
-                    (goto-char (+ (point) (+ 2 (length output-path))))))
-                (eca-info "Image added, size: %s" file-size)))))
-      (error
-       (eca-error "Failed to save yanked image: %s" (error-message-string err))))))
-
-(defun eca-chat--yank-considering-image (orig-fun &rest args)
-  "Around advice for paste commands to use `yank-media' for images.
-Call ORIG-FUN with ARGS if not media."
-  (if (and (display-graphic-p)
-           (derived-mode-p 'eca-chat-mode)
-           (fboundp 'yank-media)
-           (boundp 'yank-media--registered-handlers)
-           yank-media--registered-handlers
-           (when-let* ((targets (gui-get-selection 'CLIPBOARD 'TARGETS)))
-             (seq-some (lambda (type)
-                         (and (symbolp type)
-                              (string-match-p "^image/" (symbol-name type))))
-                       (if (vectorp targets) (append targets nil) targets))))
-      (call-interactively #'yank-media)
-    (apply orig-fun args)))
 
 ;; Public
 
@@ -2326,7 +1846,9 @@ Call ORIG-FUN with ARGS if not media."
   (when (featurep 'company-box)
     (add-to-list 'company-box-icons-functions #'eca-chat--completion-item-company-box-icon))
 
-  (let ((session (eca-session)))
+  (let ((session (or eca--chat-init-session (eca-session))))
+    (when session
+      (setq-local eca--session-id-cache (eca--session-id session)))
     (unless (listp header-line-format)
       (setq-local header-line-format (list header-line-format)))
     (add-to-list 'header-line-format `(t (:eval (eca-chat--header-line-string (eca-session)))))
@@ -2341,6 +1863,9 @@ Call ORIG-FUN with ARGS if not media."
 
     ;; TODO is there a better way to do that?
     (advice-add 'delete-char :around #'eca-chat--key-pressed-deletion)
+    (advice-add 'delete-backward-char :around #'eca-chat--key-pressed-deletion)
+    (advice-add 'backward-delete-char :around #'eca-chat--key-pressed-deletion)
+    (advice-add 'backward-delete-char-untabify :around #'eca-chat--key-pressed-deletion)
     (advice-add 'backward-kill-word :around #'eca-chat--key-pressed-deletion)
     (when (featurep 'evil)
       (advice-add 'evil-delete-backward-word :around #'eca-chat--key-pressed-deletion)
@@ -2382,7 +1907,33 @@ Call ORIG-FUN with ARGS if not media."
                          company-minimum-prefix-length 0))
            (when (fboundp 'corfu-mode)
              (setq-local corfu-auto-prefix 0))
-           (setq-local mode-line-format `(t (:eval (eca-chat--mode-line-string ,session))))
+           (setq-local eca-chat--server-version
+                        (eca-process--get-current-server-version))
+           (setq-local mode-line-format
+                        (if (functionp eca-chat-mode-line-format)
+                            (funcall eca-chat-mode-line-format session)
+                          `(t (:eval (eca-chat--mode-line-string ,session)))))
+
+           ;; Tab-line: show a tab for each open chat
+           (when eca-chat-tab-line
+             (setq-local tab-line-tabs-function #'eca-chat--tab-line-tabs)
+             (setq-local tab-line-new-button-show t)
+             (setq-local tab-line-close-button-show t)
+             (setq-local tab-line-new-tab-function #'eca-chat-new)
+             (setq-local tab-line-separator "")
+             (setq-local tab-line-tab-face-functions '(eca-chat--tab-line-face))
+             (face-remap-add-relative 'tab-line :height 0.9)
+             ;; Use text × instead of XPM image so it inherits the tab background
+             (setq-local tab-line-close-button
+                         (propertize " × "
+                                     'keymap eca-chat--tab-close-map
+                                     'mouse-face 'tab-line-close-highlight
+                                     'help-echo "Click to close tab"))
+             (tab-line-mode 1))
+
+           ;; Keep session last-chat-buffer in sync with the displayed chat
+           (add-hook 'post-command-hook #'eca-chat--sync-last-buffer nil t)
+
            (force-mode-line-update)
            (run-hooks 'eca-chat-mode-hook))))))
 
@@ -2415,145 +1966,7 @@ Returns the task plist or nil."
   (when-let* ((tasks (append (plist-get eca-chat--task-state :tasks) nil)))
     (-first (lambda (task) (equal id (plist-get task :id))) tasks)))
 
-(defun eca-chat-eldoc-function (cb &rest _ignored)
-  "Eldoc function to show details of context and prompt in eldoc.
-Calls CB with the resulting message."
-  (cond
-   ;; Task eldoc: show description and blocked-by
-   ((when-let* ((task (get-text-property (point) 'eca-chat-task)))
-      (let* ((subject (plist-get task :subject))
-             (description (plist-get task :description))
-             (blocked-by (append (plist-get task :blockedBy) nil))
-             (blocked-subjects
-              (when blocked-by
-                (mapcar (lambda (id)
-                          (if-let* ((tk (eca-chat--task-find-by-id id)))
-                              (plist-get tk :subject)
-                            (format "#%s" id)))
-                        blocked-by)))
-             (doc (concat
-                   (propertize subject 'face 'bold)
-                   (when description
-                     (concat "\n" description))
-                   (when blocked-subjects
-                     (concat "\n"
-                             (propertize "Blocked by: " 'face 'font-lock-keyword-face)
-                             (string-join blocked-subjects ", "))))))
-        (funcall cb doc)
-        t)))
-   ;; Context/filepath eldoc
-   ((when-let ((item-type (get-text-property (point) 'eca-chat-item-type)))
-      (when-let ((item-str (get-text-property (point) 'eca-chat-expanded-item-str)))
-        (when-let ((face (get-text-property (point) 'font-lock-face)))
-          (funcall cb (format "%s: %s"
-                              (pcase item-type
-                                ('context "Context")
-                                ('filepath "Filepath"))
-                              (propertize item-str 'face face)))
-          t))))))
 
-(defun eca-chat-completion-at-point ()
-  "Complete at point in the chat."
-  (let* ((full-text (buffer-substring-no-properties (line-beginning-position) (point)))
-         (type (cond
-                ;; completing contexts
-                ((eca-chat--point-at-new-context-p)
-                 'contexts-from-new-context)
-
-                ((when-let (last-word (car (last (string-split full-text "[\s]"))))
-                   (string-match-p (concat "^" eca-chat-context-prefix) last-word))
-                 'contexts-from-prompt)
-
-                ((when-let (last-word (car (last (string-split full-text "[\s]"))))
-                   (string-match-p (concat "^" eca-chat-filepath-prefix) last-word))
-                 'files-from-prompt)
-
-                ;; completing commands with `/`
-                ((and (eca-chat--point-at-prompt-field-p)
-                      (string-prefix-p "/" full-text))
-                 'prompts)
-
-                (t nil)))
-         (bounds-start (pcase type
-                         ('prompts (1+ (line-beginning-position)))
-                         (_ (or
-                             (cl-first (bounds-of-thing-at-point 'symbol))
-                             (point)))))
-         (candidates-fn (lambda ()
-                          (eca-api-catch 'input
-                              (eca-api-while-no-input
-                                (pcase type
-                                  ((or 'contexts-from-prompt
-                                       'contexts-from-new-context)
-                                   (let ((query (eca-chat--find-typed-query eca-chat-context-prefix)))
-                                     (or (gethash query eca-chat--context-completion-cache)
-                                         (-let* (((&plist :contexts contexts) (eca-api-request-while-no-input
-                                                                               (eca-session)
-                                                                               :method "chat/queryContext"
-                                                                               :params (list :chatId eca-chat--id
-                                                                                             :query query
-                                                                                             :contexts (vconcat eca-chat--context))))
-                                                 (items (-map #'eca-chat--context-to-completion contexts)))
-                                           (clrhash eca-chat--context-completion-cache)
-                                           (puthash query items eca-chat--context-completion-cache)
-                                           items))))
-
-                                  ('files-from-prompt
-                                   (let ((query (eca-chat--find-typed-query eca-chat-filepath-prefix)))
-                                     (or (gethash query eca-chat--file-completion-cache)
-                                         (-let* (((&plist :files files) (eca-api-request-while-no-input
-                                                                         (eca-session)
-                                                                         :method "chat/queryFiles"
-                                                                         :params (list :chatId eca-chat--id
-                                                                                       :query query)))
-                                                 (items (-map #'eca-chat--file-to-completion files)))
-                                           (clrhash eca-chat--file-completion-cache)
-                                           (puthash query items eca-chat--file-completion-cache)
-                                           items))))
-
-                                  ('prompts
-                                   (let ((query (substring full-text 1)))
-                                     (or (gethash query eca-chat--command-completion-cache)
-                                         (-let* (((&plist :commands commands) (eca-api-request-while-no-input
-                                                                               (eca-session)
-                                                                               :method "chat/queryCommands"
-                                                                               :params (list :chatId eca-chat--id
-                                                                                             :query query)))
-                                                 (items (-map #'eca-chat--command-to-completion commands)))
-                                           (clrhash eca-chat--command-completion-cache)
-                                           (puthash query items eca-chat--command-completion-cache)
-                                           items))))
-
-                                  (_ nil)))
-                            (:interrupted nil)
-                            (`,res res))))
-         (exit-fn (pcase type
-                    ('contexts-from-new-context #'eca-chat--completion-context-from-new-context-exit-function)
-                    ('contexts-from-prompt #'eca-chat--completion-context-from-prompt-exit-function)
-                    ('files-from-prompt #'eca-chat--completion-file-from-prompt-exit-function)
-                    ('prompts #'eca-chat--completion-prompt-exit-function)
-                    (_ nil)))
-         (annotation-fn (pcase type
-                          ((or 'contexts-from-prompt
-                               'contexts-from-new-context) (-partial #'eca-chat--completion-context-annotate (eca--session-workspace-folders (eca-session))))
-                          ('files-from-prompt (-partial #'eca-chat--completion-file-annotate (eca--session-workspace-folders (eca-session))))
-                          ('prompts #'eca-chat--completion-prompts-annotate))))
-    (list
-     bounds-start
-     (point)
-     (lambda (probe pred action)
-       (cond
-        ((eq action 'metadata)
-         '(metadata (category . eca-capf)
-                    (display-sort-function . identity)
-                    (cycle-sort-function . identity)))
-        ((eq (car-safe action) 'boundaries) nil)
-        (t
-         (complete-with-action action (funcall candidates-fn) probe pred))))
-     :company-kind #'eca-chat--completion-item-label-kind
-     :company-require-match 'never
-     :annotation-function annotation-fn
-     :exit-function exit-fn)))
 
 (defun eca-chat-title ()
   "Return the chat title."
@@ -2580,6 +1993,14 @@ the last chat buffer of SESSION."
   (eca-api-notify session
                   :method "chat/selectedAgentChanged"
                   :params (list :agent new-agent)))
+
+(defun eca-chat--set-trust (session value &optional buffer)
+  "Set trust mode to VALUE for SESSION.
+When BUFFER is provided, set in that buffer instead of
+the last chat buffer of SESSION."
+  (eca-chat--with-current-buffer (or buffer (eca-chat--get-last-buffer session))
+    (setq-local eca-chat--selected-trust value)
+    (force-mode-line-update)))
 
 (defun eca-chat--tool-call-file-change-details
     (content label approval-text time status tool-call-next-line-spacing roots &optional parent-id)
@@ -3000,7 +2421,8 @@ Must be called with `eca-chat--with-current-buffer' or equivalent."
            (when (and eca-chat-expand-pending-approval-tools manual?)
              (when parent-tool-call-id
                (eca-chat--expandable-content-toggle parent-tool-call-id t nil))
-             (eca-chat--expandable-content-toggle id t nil))
+             (eca-chat--expandable-content-toggle id t nil)
+             (eca-chat--ensure-prompt-visible))
            ;; Update parent subagent status to show pending approval
            (when (and manual? parent-tool-call-id)
              (eca-chat--update-parent-subagent-status
@@ -3014,7 +2436,11 @@ Must be called with `eca-chat--with-current-buffer' or equivalent."
                 (label (or (plist-get content :summary)
                            (format "Running tool: %s__%s" server name)))
                 (details (plist-get content :details))
-                (status eca-chat-mcp-tool-call-loading-symbol))
+                (status eca-chat-mcp-tool-call-loading-symbol)
+                (elapsed-time (progn
+                                (eca-chat--tool-call-elapsed-start id)
+                                (eca-chat--elapsed-time-string
+                                 (gethash id eca-chat--tool-call-elapsed-times)))))
            ;; Register subagent mapping only for top-level tool calls
            (when (and (not parent-tool-call-id)
                       (string= "subagent" (plist-get details :type)))
@@ -3022,12 +2448,12 @@ Must be called with `eca-chat--with-current-buffer' or equivalent."
                (unless (gethash subagent-chat-id eca-chat--subagent-chat-id->tool-call-id)
                  (puthash subagent-chat-id id eca-chat--subagent-chat-id->tool-call-id))))
            (pcase (plist-get details :type)
-             ("fileChange" (eca-chat--tool-call-file-change-details content label nil nil status tool-call-next-line-spacing roots parent-tool-call-id))
-             ("subagent" (eca-chat--tool-call-subagent-details id args label nil nil status parent-tool-call-id details))
+             ("fileChange" (eca-chat--tool-call-file-change-details content label nil elapsed-time status tool-call-next-line-spacing roots parent-tool-call-id))
+             ("subagent" (eca-chat--tool-call-subagent-details id args label nil elapsed-time status parent-tool-call-id details))
              (_ (eca-chat--update-expandable-content
                  id
                  (concat (propertize label 'font-lock-face 'eca-chat-mcp-tool-call-label-face)
-                         " " status)
+                         " " status elapsed-time)
                  (eca-chat--content-table
                   `(("Tool" . ,name)
                     ("Server" . ,server)
@@ -3060,6 +2486,8 @@ Must be called with `eca-chat--with-current-buffer' or equivalent."
            ;; Cleanup counters for this tool-call id to avoid unbounded growth
            (remhash id eca-chat--tool-call-prepare-counters)
            (remhash id eca-chat--tool-call-prepare-content-cache)
+           ;; Stop elapsed-time tracking for this tool call
+           (eca-chat--tool-call-elapsed-stop id)
            ;; Cleanup subagent mapping only for top-level tool calls
            (when (and (not parent-tool-call-id)
                       (string= "subagent" (plist-get details :type)))
@@ -3080,7 +2508,8 @@ Must be called with `eca-chat--with-current-buffer' or equivalent."
                  nil
                  parent-tool-call-id)))
            (when eca-chat-shrink-called-tools
-             (eca-chat--expandable-content-toggle id t t))
+             (eca-chat--expandable-content-toggle id t t)
+             (eca-chat--ensure-prompt-visible))
            ;; Restore parent subagent status back to loading
            (when parent-tool-call-id
              (eca-chat--update-parent-subagent-status
@@ -3133,6 +2562,7 @@ Must be called with `eca-chat--with-current-buffer' or equivalent."
            ("finished"
             (setq-local eca-chat--progress-text "")
             (eca-chat--spinner-stop)
+            (eca-chat--tool-call-elapsed-stop-all)
             (eca-chat--add-text-content "\n")
             (eca-chat--align-tables (point-min))
             (eca-chat--beautify-tables (point-min))
@@ -3220,7 +2650,8 @@ Must be called with `eca-chat--with-current-buffer' or equivalent."
     (eca-chat--create-buffer session))
   (eca-chat--with-current-buffer (eca-chat--get-last-buffer session)
     (unless (derived-mode-p 'eca-chat-mode)
-      (eca-chat-mode)
+      (let ((eca--chat-init-session session))
+        (eca-chat-mode))
       (setq-local eca-chat--selected-agent eca-chat--last-known-agent)
       (setq-local eca-chat--selected-model eca-chat--last-known-model)
       (setq-local eca-chat--selected-variant eca-chat--last-known-variant)
@@ -3240,10 +2671,19 @@ Must be called with `eca-chat--with-current-buffer' or equivalent."
 
 (defun eca-chat-exit (session)
   "Exit the ECA chat for SESSION."
+  ;; Cancel the global repeating idle timer that tracks cursor position.
+  (when (timerp eca-chat--cursor-context-timer)
+    (cancel-timer eca-chat--cursor-context-timer)
+    (setq eca-chat--cursor-context-timer nil))
+  ;; Remove the global window-size-change handler registered by eca-chat-mode.
+  (remove-hook 'window-size-change-functions #'eca-chat--on-window-size-change)
   (mapcar (lambda (title+buffer)
             (let ((chat-buffer (cdr title+buffer)))
               (when (buffer-live-p chat-buffer)
                 (eca-chat--with-current-buffer chat-buffer
+                  ;; Cancel spinner timer if chat was still loading.
+                  (eca-chat--spinner-stop)
+                  (eca-chat--tool-call-elapsed-stop-all)
                   (setq eca-chat--closed t)
                   (force-mode-line-update)
                   (goto-char (point-max))
@@ -3322,6 +2762,16 @@ Must be called with `eca-chat--with-current-buffer' or equivalent."
          (next-agent (or (nth (1+ current-agent-index) all-agents)
                          (nth 0 all-agents))))
     (eca-chat--set-agent session next-agent (current-buffer))))
+
+;;;###autoload
+(defun eca-chat-toggle-trust ()
+  "Toggle trust mode (auto-accept all tool call)."
+  (interactive)
+  (let ((new-value (not (eca-chat--trust))))
+    (eca-chat--set-trust (eca-session) new-value)
+    (eca-info (if new-value
+                  "Enabled trust-mode (Auto accept tool calls)"
+                "Disabled trust-mode (Auto accept tool calls)"))))
 
 ;;;###autoload
 (defun eca-chat-tool-call-accept-all ()
@@ -3415,9 +2865,9 @@ Just open if FORCE-OPEN? is non-nil."
   (interactive)
   (eca-assert-session-running (eca-session))
   (eca-chat--with-current-buffer (eca-chat--get-last-buffer (eca-session))
-    (unless (eca-chat--expandable-content-at-point)
+    (unless (eca-chat--expandable-content-at-point-dwim)
       (eca-chat-go-to-prev-expandable-block))
-    (when-let ((ov (eca-chat--expandable-content-at-point)))
+    (when-let ((ov (eca-chat--expandable-content-at-point-dwim)))
       (eca-chat--expandable-content-toggle (overlay-get ov 'eca-chat--expandable-content-id) (when force-open? t) (not force-open?)))))
 
 ;;;###autoload
@@ -3560,38 +3010,56 @@ if ARG is current prefix, ask for file, otherwise drop current file."
 
 ;;;###autoload
 (defun eca-chat-select ()
-  "Select a chat."
+  "Select a chat.
+Shows each chat with its status (🚧 pending approval, ⏳ loading),
+title, and elapsed time annotation."
   (interactive)
-  (let ((session (eca-session))
-        (get-title-fn (lambda ()
-                        (or eca-chat--custom-title
-                            eca-chat--title
-                            eca-chat--id))))
+  (let* ((session (eca-session))
+         (buf-by-label (make-hash-table :test 'equal))
+         (annotation-by-label (make-hash-table :test 'equal)))
     (eca-assert-session-running session)
+    ;; Build items oldest-first (same order as tab-line)
     (let ((items (append
-                  (sort
+                  (nreverse
                    (-keep (lambda (buffer)
                             (when (buffer-live-p buffer)
                               (with-current-buffer buffer
-                                (when-let ((item (funcall get-title-fn)))
-                                  (propertize item
-                                              'face (when eca-chat--chat-loading 'warning))))))
-                          (eca-vals (eca--session-chats session)))
-                   #'string<)
+                                (let* ((title (eca-chat-title))
+                                       (status (eca-chat--chat-status-prefix))
+                                       (label (concat status title))
+                                       ;; Disambiguate duplicate titles
+                                       (label (if (gethash label buf-by-label)
+                                                  (concat label " (" eca-chat--id ")")
+                                                label))
+                                       (face (cond
+                                              ((eca-chat--has-pending-approvals-p) 'warning)
+                                              (eca-chat--chat-loading 'shadow)
+                                              (t nil)))
+                                       (display (if face
+                                                    (propertize label 'face face)
+                                                  label))
+                                       (time-str (eca-chat--turn-duration-str)))
+                                  (puthash display buffer buf-by-label)
+                                  (when time-str
+                                    (puthash display
+                                             (propertize (concat "  " time-str)
+                                                         'face 'eca-chat-elapsed-time-face)
+                                             annotation-by-label))
+                                  display))))
+                          (eca-vals (eca--session-chats session))))
                   (list eca-chat-new-chat-label))))
-      (when-let (chosen-title (completing-read
-                               "Select the chat: "
-                               (lambda (string pred action)
-                                 (if (eq action 'metadata)
-                                     `(metadata (display-sort-function . ,#'identity))
-                                   (complete-with-action action items string pred)))
-                               nil
-                               t))
-        (if-let (buffer (-first (lambda (buffer)
-                                  (when (buffer-live-p buffer)
-                                    (with-current-buffer buffer
-                                      (string= chosen-title (funcall get-title-fn)))))
-                                (eca-vals (eca--session-chats session))))
+      (when-let (chosen (completing-read
+                         "Select the chat: "
+                         (lambda (string pred action)
+                           (if (eq action 'metadata)
+                               `(metadata
+                                 (display-sort-function . ,#'identity)
+                                 (annotation-function
+                                  . ,(lambda (candidate)
+                                       (gethash candidate annotation-by-label))))
+                             (complete-with-action action items string pred)))
+                         nil t))
+        (if-let (buffer (gethash chosen buf-by-label))
             (progn
               (setf (eca--session-last-chat-buffer session) buffer)
               (eca-chat-open session))

@@ -53,6 +53,8 @@ Select which variant to use for the current model." t)
 Select which chat agent to use from what server supports." t)
 (autoload 'eca-chat-cycle-agent "eca-chat" "\
 Cycle between existing chat agents to use." t)
+(autoload 'eca-chat-toggle-trust "eca-chat" "\
+Toggle trust mode (auto-accept all tool call)." t)
 (autoload 'eca-chat-tool-call-accept-all "eca-chat" "\
 Accept all pending approval tool call in chat." t)
 (autoload 'eca-chat-tool-call-accept-all-and-remember "eca-chat" "\
@@ -120,7 +122,9 @@ Send the prompt in chat if not empty." t)
 (autoload 'eca-chat-toggle-window "eca-chat" "\
 Toggle presenting ECA chat window." t)
 (autoload 'eca-chat-select "eca-chat" "\
-Select a chat." t)
+Select a chat.
+Shows each chat with its status (🚧 pending approval, ⏳ loading),
+title, and elapsed time annotation." t)
 (autoload 'eca-chat-rename "eca-chat" "\
 Rename last visited chat to a custom NEW-NAME." t)
 (autoload 'eca-chat-new "eca-chat" "\
@@ -137,7 +141,17 @@ Select a previous message and insert its text into the prompt." t)
 Export the current chat to a FILE.
 
 (fn &optional FILE)" t)
-(register-definition-prefixes "eca-chat" '("eca-chat-"))
+(register-definition-prefixes "eca-chat" '("eca-"))
+
+
+;;; Generated autoloads from eca-chat-context.el
+
+(register-definition-prefixes "eca-chat-context" '("eca-chat-"))
+
+
+;;; Generated autoloads from eca-chat-expandable.el
+
+(register-definition-prefixes "eca-chat-expandable" '("eca-chat-"))
 
 
 ;;; Generated autoloads from eca-completion.el
