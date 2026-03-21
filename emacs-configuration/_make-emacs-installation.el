@@ -95,6 +95,7 @@
     tldr
     treepy
     undo-tree
+    valign
     vterm
     which-key
     yafolding
