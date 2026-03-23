@@ -131,8 +131,9 @@
 (defn style-links [s]
   (str/replace s #"https?://\S+"
                (fn [url]
-                 (let [trimmed (str/replace url #"[.,;:!?)\"]+$" "")]
-                   (str "<a href=\"" trimmed "\">" trimmed "</a>")))))
+                 (let [trimmed  (str/replace url #"[.,;:!?)\"]+$" "")
+                       trailing (subs url (count trimmed))]
+                   (str "<a href=\"" trimmed "\">" trimmed "</a>" trailing)))))
 
 (defn apply-styles
   "Apply all inline transformations to an already-HTML-escaped string."
