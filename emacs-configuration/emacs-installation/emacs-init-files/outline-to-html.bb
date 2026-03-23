@@ -124,8 +124,9 @@
                    "\u2014"))))
 
 (defn style-todos [s]
-  ;; Match "TODO:" preceded by whitespace/start, or "TODO" surrounded by whitespace/boundaries.
-  (str/replace s #"(?:(?<=\s)|^)TODO(?::|(?=\s|$))"
+  ;; Match "TODO:" or "TODO" preceded by whitespace, opening punctuation, or
+  ;; start-of-string, so that e.g. "(TODO: ...)" is styled correctly.
+  (str/replace s #"(?:(?<=[\s(\[{])|^)TODO(?::|(?=\s|$))"
                (fn [match] (str "<span class=\"todo\">" match "</span>"))))
 
 (defn style-links [s]
