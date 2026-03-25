@@ -25,13 +25,13 @@
 ;; - `:spec/pre-hide-children?`
 ;;   - boolean
 ;;
-;; - `:spec/parents-approach` (doesn't hide anything, but can show things)
+;; - `:spec/ancestors-approach` (doesn't hide anything, but can show things)
 ;;   - `nil`
 ;;     - Do nothing.
-;;   - `:parents/thin`
-;;     - Show parents.
-;;   - `:parents/fat`
-;;     - Show parents, siblings of parents, and siblings.
+;;   - `:ancestors/thin`
+;;     - Show ancestors.
+;;   - `:ancestors/fat`
+;;     - Show ancestors, siblings of ancestors, and siblings.
 ;;
 ;; - `:spec/children-approach` (doesn't hide anything, but can show things)
 ;;   - `nil` or `0`
@@ -46,40 +46,40 @@
 
 (defconst nomis/tree/ls/children-approach-max 4)
 
-(defconst nomis/tree/ls/spec/hide-all--no-parents--no-children
+(defconst nomis/tree/ls/spec/hide-all--no-ancestors--no-children
   (a-hash-table :spec/pre-hide-all? t))
 
-(defconst nomis/tree/ls/spec/hide-all--thin-parents--no-children
+(defconst nomis/tree/ls/spec/hide-all--thin-ancestors--no-children
   (a-hash-table :spec/pre-hide-all? t
-                :spec/parents-approach :parents/thin))
+                :spec/ancestors-approach :ancestors/thin))
 
-(defconst nomis/tree/ls/spec/hide-all--fat-parents--no-children
+(defconst nomis/tree/ls/spec/hide-all--fat-ancestors--no-children
   (a-hash-table :spec/pre-hide-all? t
-                :spec/parents-approach :parents/fat))
+                :spec/ancestors-approach :ancestors/fat))
 
-(defconst nomis/tree/ls/spec/hide-all--fat-parents--immediate-children
+(defconst nomis/tree/ls/spec/hide-all--fat-ancestors--immediate-children
   (a-hash-table :spec/pre-hide-all? t
-                :spec/parents-approach :parents/fat
+                :spec/ancestors-approach :ancestors/fat
                 :spec/children-approach 2))
 
-(defconst nomis/tree/ls/spec/hide-all--fat-parents--all-children
+(defconst nomis/tree/ls/spec/hide-all--fat-ancestors--all-children
   (a-hash-table :spec/pre-hide-all? t
-                :spec/parents-approach :parents/fat
+                :spec/ancestors-approach :ancestors/fat
                 :spec/children-approach nomis/tree/ls/children-approach-max))
 
-(defconst nomis/tree/ls/spec/hide-all--fat-parents--all-children--show-body
+(defconst nomis/tree/ls/spec/hide-all--fat-ancestors--all-children--show-body
   (a-hash-table :spec/pre-hide-all? t
-                :spec/parents-approach :parents/fat
+                :spec/ancestors-approach :ancestors/fat
                 :spec/children-approach nomis/tree/ls/children-approach-max
                 :spec/show-body?        t))
 
 (defconst -nomis/tree/ls/spec-sequence
-  `((:minimal   "Minimal"          ,nomis/tree/ls/spec/hide-all--no-parents--no-children)
-    (:ancestors "Ancestors"        ,nomis/tree/ls/spec/hide-all--thin-parents--no-children)
-    (:lineage   "Fat parents"      ,nomis/tree/ls/spec/hide-all--fat-parents--no-children)
-    (:tree      "Fat parents + immediate children" ,nomis/tree/ls/spec/hide-all--fat-parents--immediate-children)
-    (:canonical "Fat parents + all children" ,nomis/tree/ls/spec/hide-all--fat-parents--all-children)
-    (:canonical+body "Fat parents + all children + body" ,nomis/tree/ls/spec/hide-all--fat-parents--all-children--show-body)))
+  `((:minimal   "Minimal"          ,nomis/tree/ls/spec/hide-all--no-ancestors--no-children)
+    (:ancestors "Ancestors"        ,nomis/tree/ls/spec/hide-all--thin-ancestors--no-children)
+    (:lineage   "Fat ancestors"      ,nomis/tree/ls/spec/hide-all--fat-ancestors--no-children)
+    (:tree      "Fat ancestors + immediate children" ,nomis/tree/ls/spec/hide-all--fat-ancestors--immediate-children)
+    (:canonical "Fat ancestors + all children" ,nomis/tree/ls/spec/hide-all--fat-ancestors--all-children)
+    (:canonical+body "Fat ancestors + all children + body" ,nomis/tree/ls/spec/hide-all--fat-ancestors--all-children--show-body)))
 
 (defconst -nomis/tree/ls/spec-sequence-min-spec
   (cl-first -nomis/tree/ls/spec-sequence))
@@ -96,27 +96,27 @@
 
 ;;;;; Other lineage specs
 
-(defconst nomis/tree/ls/spec/no-hide--fat-parents--all-children
-  (a-hash-table :spec/parents-approach :parents/fat
+(defconst nomis/tree/ls/spec/no-hide--fat-ancestors--all-children
+  (a-hash-table :spec/ancestors-approach :ancestors/fat
                 :spec/children-approach nomis/tree/ls/children-approach-max))
 
 ;;;; Hide/show lineage
 
 (defun -nomis/tree/ls/hsl-hide (lineage-spec)
   (let* ((pre-hide-all? (a-get lineage-spec :spec/pre-hide-all?))
-         (parents-approach (a-get lineage-spec :spec/parents-approach)))
+         (ancestors-approach (a-get lineage-spec :spec/ancestors-approach)))
     (when pre-hide-all?
       (let* ((top-level-level (nomis/outline/w/top-level-level))
-             (hide-level (cl-ecase parents-approach
-                           ((nil :parents/thin) (1- top-level-level))
-                           (:parents/fat top-level-level))))
+             (hide-level (cl-ecase ancestors-approach
+                           ((nil :ancestors/thin) (1- top-level-level))
+                           (:ancestors/fat top-level-level))))
         (outline-hide-sublevels (max 1 ; avoid error when < 1
                                      hide-level))))))
 
-(defun -nomis/tree/ls/hsl-show-parents (lineage-spec)
-  (let* ((parents-approach (a-get lineage-spec :spec/parents-approach)))
-    (when parents-approach
-      (let* ((parent-points
+(defun -nomis/tree/ls/hsl-show-ancestors (lineage-spec)
+  (let* ((ancestors-approach (a-get lineage-spec :spec/ancestors-approach)))
+    (when ancestors-approach
+      (let* ((ancestor-points
               (let* ((ps '()))
                 (save-excursion
                   (beginning-of-line)
@@ -125,13 +125,13 @@
                 ps)))
         (save-excursion
           (cl-loop
-           for p in parent-points
+           for p in ancestor-points
            do (progn
                 (goto-char p)
                 (nomis/outline/w/ensure-heading-shown)
-                (cl-ecase parents-approach
-                  (:parents/thin nil)
-                  (:parents/fat (nomis/outline/w/show-children 1))))))))))
+                (cl-ecase ancestors-approach
+                  (:ancestors/thin nil)
+                  (:ancestors/fat (nomis/outline/w/show-children 1))))))))))
 
 (defun -nomis/tree/ls/hsl-show-children (lineage-spec)
   (when (a-get lineage-spec :spec/pre-hide-children?)
@@ -150,11 +150,11 @@
   (save-excursion
     (nomis/outline/w/back-to-heading) ; not sure we need this, but it can't harm
     (-nomis/tree/ls/hsl-hide lineage-spec)
-    (-nomis/tree/ls/hsl-show-parents lineage-spec)
+    (-nomis/tree/ls/hsl-show-ancestors lineage-spec)
     (nomis/outline/w/ensure-heading-shown)
     (-nomis/tree/ls/hsl-show-children lineage-spec)
     (when (eql lineage-spec
-               nomis/tree/ls/spec/hide-all--fat-parents--all-children--show-body)
+               nomis/tree/ls/spec/hide-all--fat-ancestors--all-children--show-body)
       (nomis/outline/w/pulse-current-section))))
 
 (defconst -nomis/tree/ls/lineage/commands
@@ -221,7 +221,7 @@
 (defun nomis/tree/ls/show-after-find ()
   (unless (nomis/outline/w/before-first-heading?)
     (nomis/tree/ls/show-lineage
-     nomis/tree/ls/spec/no-hide--fat-parents--all-children)))
+     nomis/tree/ls/spec/no-hide--fat-ancestors--all-children)))
 
 ;;; End
 
