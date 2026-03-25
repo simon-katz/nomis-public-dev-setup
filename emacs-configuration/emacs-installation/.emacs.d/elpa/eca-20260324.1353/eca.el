@@ -2,8 +2,8 @@
 ;; Copyright (C) 2025 Eric Dallo
 ;; Author: Eric Dallo <ercdll1337@gmail.com>
 ;; Maintainer: Eric Dallo <ercdll1337@gmail.com>
-;; Package-Version: 20260318.1732
-;; Package-Revision: a26aa15cbbdb
+;; Package-Version: 20260324.1353
+;; Package-Revision: a18106b02bf7
 ;; Package-Requires: ((emacs "28.1") (dash "2.18.0") (f "0.20.0") (markdown-mode "2.3") (compat "30.1"))
 ;; Keywords: tools
 ;; Homepage: https://github.com/editor-code-assistant/eca-emacs
@@ -21,6 +21,7 @@
 ;;; Code:
 
 (require 'cl-lib)
+(require 'backtrace)
 (require 'hierarchy)
 (require 'tree-widget)
 (require 'smerge-mode)
@@ -105,17 +106,24 @@ Tries git info first, then package.el version, then file modification date."
   "Return the Emacs errors buffer name for SESSION."
   (format "<eca:emacs-errors:%s>" (eca--session-id session)))
 
-(defun eca--log-error (session err &optional context)
+(defun eca--log-error (session err &optional context backtrace)
   "Log error ERR to the Emacs errors buffer for SESSION.
 Optional CONTEXT is a string describing what was happening
-when the error occurred."
+when the error occurred.  Optional BACKTRACE is a list of
+frames captured via `backtrace-get-frames'."
   (let ((buffer (get-buffer-create (eca--emacs-errors-buffer-name session))))
     (with-current-buffer buffer
       (goto-char (point-max))
       (insert (format "[%s] %s%s\n"
                       (format-time-string "%Y-%m-%d %H:%M:%S")
                       (if context (format "%s: " context) "")
-                      (error-message-string err))))))
+                      (error-message-string err)))
+      (when backtrace
+        (dolist (frame backtrace)
+          (let ((fun (backtrace-frame-fun frame)))
+            (when fun
+              (insert (format "  at %s\n" fun)))))
+        (insert "\n")))))
 
 (defun eca-show-emacs-errors (session)
   "Open the Emacs errors buffer for SESSION."
@@ -192,6 +200,8 @@ when the error occurred."
       ("config/updated" (eca-config-updated session params))
       ("chat/contentReceived" (eca-chat-content-received session params))
       ("chat/cleared" (eca-chat-cleared session params))
+      ("chat/deleted" (eca-chat-deleted session params))
+      ("chat/statusChanged" (eca-chat-status-changed session params))
       ("rewrite/contentReceived" (eca-rewrite-content-received session params))
       ("tool/serverUpdated" (eca--tool-server-updated session params))
       ("$/showMessage" (eca--handle-show-message params))
@@ -208,23 +218,28 @@ when the error occurred."
 (defun eca--handle-message (session json-data)
   "Handle raw message JSON-DATA for SESSION."
   (let ((id (plist-get json-data :id))
-        (result (plist-get json-data :result)))
-    (condition-case err
-        (pcase (eca--get-message-type json-data)
-          ('response (-let [(success-callback) (plist-get (eca--session-response-handlers session) id)]
-                       (when success-callback
-                         (cl-remf (eca--session-response-handlers session) id)
-                         (funcall success-callback result))))
-          ('response-error (-let [(_ error-callback) (plist-get (eca--session-response-handlers session) id)]
-                             (when error-callback
-                               (cl-remf (eca--session-response-handlers session) id)
-                               (funcall error-callback (plist-get json-data :error)))))
-          ('notification (eca--handle-server-notification session json-data))
-          ('request (let ((response (eca--handle-server-request session json-data)))
-                      (eca-api-send-request-response session json-data response))))
-      (error
-       (eca--log-error session err "handle-message")
-       (signal (car err) (cdr err))))))
+        (result (plist-get json-data :result))
+        (backtrace nil))
+    (handler-bind
+        ((error (lambda (_err)
+                  (setq backtrace
+                        (backtrace-get-frames 'handler-bind)))))
+      (condition-case err
+          (pcase (eca--get-message-type json-data)
+            ('response (-let [(success-callback) (plist-get (eca--session-response-handlers session) id)]
+                         (when success-callback
+                           (cl-remf (eca--session-response-handlers session) id)
+                           (funcall success-callback result))))
+            ('response-error (-let [(_ error-callback) (plist-get (eca--session-response-handlers session) id)]
+                               (when error-callback
+                                 (cl-remf (eca--session-response-handlers session) id)
+                                 (funcall error-callback (plist-get json-data :error)))))
+            ('notification (eca--handle-server-notification session json-data))
+            ('request (let ((response (eca--handle-server-request session json-data)))
+                        (eca-api-send-request-response session json-data response))))
+        (error
+         (eca--log-error session err "handle-message" backtrace)
+         (signal (car err) (cdr err)))))))
 
 (defun eca--initialize (session)
   "Send the initialize request for SESSION."

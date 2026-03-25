@@ -13,7 +13,6 @@
 
 (require 'f)
 (require 'markdown-mode)
-(require 'tab-line)
 (require 'compat)
 
 (require 'eca-util)
@@ -427,7 +426,7 @@ works normally."
   :group 'eca)
 
 (defface eca-chat-trust-off-face
-  '((t :inherit default))
+  '((t nil))
   "Face for trust mode when off in mode-line."
   :group 'eca)
 
@@ -444,6 +443,12 @@ works normally."
 (defface eca-chat-command-description-face
   '((t :inherit font-lock-comment-face))
   "Face for the descriptions in chat command completion."
+  :group 'eca)
+
+(defface eca-chat-approval-modeline-face
+  '((((background dark))  :background "#4a4000")
+    (((background light)) :background "#fff8dc"))
+  "Face for modeline when approval is pending."
   :group 'eca)
 
 ;; Internal
@@ -497,7 +502,6 @@ Stores the latest usage data received for each running subagent.")
 (defvar-local eca-chat--task-state nil
   "Current task state plist with :goal and :tasks.
 Each task is a plist with :id, :content, :status, :priority, etc.")
-
 
 
 (defvar eca-chat--new-chat-id 0)
@@ -712,8 +716,7 @@ Cancels the shared timer when no more tool calls are being tracked."
 
 (defun eca-chat--trust ()
   "Non-nil when trust mode is on, auto-accepts tool call."
-  (or eca-chat-trust-enable
-      eca-chat--selected-trust))
+  eca-chat--selected-trust)
 
 (defun eca-chat--mcps-summary (session)
   "The summary of MCP servers for SESSION."
@@ -1223,6 +1226,13 @@ Resteps a list of context plists found in the prompt field."
          (get-text-property 0 'eca-button-on-action)
          (funcall)))
 
+      ;; follow markdown link [text](url)
+      ((let ((face (get-text-property (point) 'face)))
+         (or (eq face 'markdown-link-face)
+             (eq face 'markdown-url-face)
+             (eq face 'markdown-plain-url-face)))
+       (markdown-follow-thing-at-point nil))
+
       ;; check is inside a expandable text
       ((eca-chat--expandable-content-at-point)
        (let ((ov (eca-chat--expandable-content-at-point)))
@@ -1547,7 +1557,9 @@ E is the mouse event."
      (eca-chat-title))
     (:elapsed-time
      (when-let* ((str (eca-chat--turn-duration-str)))
-       (propertize (concat "⏱ " str) 'font-lock-face 'eca-chat-elapsed-time-face)))
+       (let ((icon (if (eca-chat--has-pending-approvals-p) "🚧" "⏱")))
+         (propertize (concat icon " " str)
+                     'font-lock-face 'eca-chat-elapsed-time-face))))
     (:usage
      (eca-chat--usage-str))
     (:server-version
@@ -1595,7 +1607,11 @@ E is the mouse event."
                     " " 'display
                     `((space :align-to
                              (- right ,(1+ (length right)))))))))
-      (concat left fill right))))
+      (let ((result (concat left fill right)))
+        (if (eca-chat--has-pending-approvals-p)
+            (propertize result 'face
+                        'eca-chat-approval-modeline-face)
+          result)))))
 
 (defun eca-chat--select-window ()
   "Select the Window."
@@ -1916,6 +1932,7 @@ CHILD, NAME, DOCSTRING and BODY are passed down."
 
            ;; Tab-line: show a tab for each open chat
            (when eca-chat-tab-line
+             (require 'tab-line)
              (setq-local tab-line-tabs-function #'eca-chat--tab-line-tabs)
              (setq-local tab-line-new-button-show t)
              (setq-local tab-line-close-button-show t)
@@ -1939,6 +1956,12 @@ CHILD, NAME, DOCSTRING and BODY are passed down."
 
   (face-remap-add-relative 'markdown-line-break-face
                            '(:underline nil))
+
+  ;; Ensure markdown links look clickable regardless of theme.
+  (face-remap-add-relative 'markdown-link-face
+                           '(:underline t))
+  (face-remap-add-relative 'markdown-plain-url-face
+                           '(:underline t))
 
   ;; Ensure tables use a monospace font for proper alignment.
   (face-remap-add-relative 'markdown-table-face
@@ -2629,19 +2652,50 @@ Must be called with `eca-chat--with-current-buffer' or equivalent."
   (when (plist-member chat-config :variants)
     (setf (eca--session-chat-variants session)
           (append (plist-get chat-config :variants) nil)))
-  (seq-doseq (chat-buffers (eca-vals (eca--session-chats session)))
-    (with-current-buffer chat-buffers
-      (when-let* ((new-model (plist-get chat-config :selectModel)))
-        (setq-local eca-chat--selected-model new-model)
-        (setq eca-chat--last-known-model new-model))
-      (when-let* ((new-agent (plist-get chat-config :selectAgent)))
-        (setq-local eca-chat--selected-agent new-agent)
-        (setq eca-chat--last-known-agent new-agent))
-      (when (plist-member chat-config :selectVariant)
-        (let ((new-variant (plist-get chat-config :selectVariant)))
-          (setq-local eca-chat--selected-variant new-variant)
-          (setq eca-chat--last-known-variant new-variant)))
-      (force-mode-line-update))))
+  (seq-doseq (chat-buffer (eca-vals (eca--session-chats session)))
+    (when (buffer-live-p chat-buffer)
+      (with-current-buffer chat-buffer
+        (when-let* ((new-model (plist-get chat-config :selectModel)))
+          (setq-local eca-chat--selected-model new-model)
+          (setq eca-chat--last-known-model new-model))
+        (when-let* ((new-agent (plist-get chat-config :selectAgent)))
+          (setq-local eca-chat--selected-agent new-agent)
+          (setq eca-chat--last-known-agent new-agent))
+        (when (plist-member chat-config :selectVariant)
+          (let ((new-variant (plist-get chat-config :selectVariant)))
+            (setq-local eca-chat--selected-variant new-variant)
+            (setq eca-chat--last-known-variant new-variant)))
+        (force-mode-line-update)))))
+
+(defun eca-chat-deleted (session params)
+  "Handle chat deleted notification for SESSION with PARAMS."
+  (let* ((chat-id (plist-get params :chatId))
+         (chat-buffer (eca-get (eca--session-chats session) chat-id)))
+    (when chat-buffer
+      (setf (eca--session-chats session)
+            (eca-dissoc (eca--session-chats session) chat-id))
+      (when (buffer-live-p chat-buffer)
+        (kill-buffer chat-buffer)))))
+
+(defun eca-chat-status-changed (session params)
+  "Handle chat status changed notification for SESSION with PARAMS.
+Synthesizes progress content-received events to update the
+spinner.  Subagent chats (which have no dedicated buffer) are
+silently ignored."
+  (let* ((chat-id (plist-get params :chatId))
+         (status (plist-get params :status))
+         (chat-buffer (eca-get (eca--session-chats session) chat-id)))
+    (when (and chat-buffer (buffer-live-p chat-buffer))
+      (pcase status
+        ("running"
+         (eca-chat--set-chat-loading session t)
+         (eca-chat-content-received session
+          (list :chatId chat-id :role "system"
+                :content (list :type "progress" :state "running" :text "Running..."))))
+        ("idle"
+         (eca-chat-content-received session
+          (list :chatId chat-id :role "system"
+                :content (list :type "progress" :state "finished"))))))))
 
 (defun eca-chat-open (session)
   "Open or create dedicated eca chat window for SESSION."
@@ -2655,6 +2709,7 @@ Must be called with `eca-chat--with-current-buffer' or equivalent."
       (setq-local eca-chat--selected-agent eca-chat--last-known-agent)
       (setq-local eca-chat--selected-model eca-chat--last-known-model)
       (setq-local eca-chat--selected-variant eca-chat--last-known-variant)
+      (setq-local eca-chat--selected-trust eca-chat-trust-enable)
       (eca-chat--track-cursor-position-schedule)
       (when eca-chat-auto-add-cursor
         (eca-chat--add-context (list :type "cursor")))
@@ -2768,7 +2823,7 @@ Must be called with `eca-chat--with-current-buffer' or equivalent."
   "Toggle trust mode (auto-accept all tool call)."
   (interactive)
   (let ((new-value (not (eca-chat--trust))))
-    (eca-chat--set-trust (eca-session) new-value)
+    (eca-chat--set-trust (eca-session) new-value (current-buffer))
     (eca-info (if new-value
                   "Enabled trust-mode (Auto accept tool calls)"
                 "Disabled trust-mode (Auto accept tool calls)"))))
