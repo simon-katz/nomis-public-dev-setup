@@ -124,9 +124,9 @@
 ;;;;; numerify-when-non-nil
 
 (defmacro numerify-when-non-nil (var)
-  "If VAR is non-nil, replace it with `(prefix-numeric-value VAR)`.
-Use this to normalise a raw `(interactive \"P\")` prefix argument, so that
-a bare `C-u` becomes 4, `C-u C-u` becomes 16, etc., while nil stays nil."
+  "If VAR is non-nil, replace it with `(prefix-numeric-value VAR)'.
+Use this to normalise a raw `(interactive \"P\")' prefix argument, so that
+a bare `C-u' becomes 4, `C-u C-u' becomes 16, etc., while nil stays nil."
   `(when ,var (setq ,var (prefix-numeric-value ,var))))
 
 ;;;;; Time values
@@ -159,12 +159,12 @@ a bare `C-u` becomes 4, `C-u C-u` becomes 16, etc., while nil stays nil."
 
 ;;;;; what-cursor-position
 
-;; Add outline level to the output of `what-cursor-position`.
+;; Add outline level to the output of `what-cursor-position'.
 
 (defvar nomis/tree/add-info-to-what-cursor-position?
   t
   "Control whether we add additional info to the message produced by
-`what-cursor-position`. This is here just in case someone might be parsing the
+`what-cursor-position'. This is here just in case someone might be parsing the
 message and in case adding outline level messes things up.")
 
 (defvar *-nomis/tree/in-what-cursor-position?* nil)
@@ -538,10 +538,10 @@ If there is no next peer, display a popup message."
   "What to do with ancestors in `-nomis/tree/nav+lineage/show-lineage'.
 
 One of:
-- `:nav+lineage/ancestors/leave-as-is` (but show ancestors if hidden)
-- `:nav+lineage/ancestors/all-roots-to-current-level`
+- `:nav+lineage/ancestors/leave-as-is' (but show ancestors if hidden)
+- `:nav+lineage/ancestors/all-roots-to-current-level'
 - `:nav+lineage/ancestors/fat'
-- `:nav+lineage/ancestors/thin`.")
+- `:nav+lineage/ancestors/thin'.")
 
 (defconst -nomis/tree/nav+lineage/ancestors-approach/pairs
   '((:nav+lineage/ancestors/leave-as-is                . "leave-as-is")
@@ -1237,13 +1237,13 @@ When in a body, \"current heading\" means the current body's parent heading."
 ;;;;; nomis/tree/show-children-from-parent/xxxx
 
 (defun nomis/tree/show-children-from-parent (n)
-  "Like `nomis/tree/show-children-from-point`, but from the
+  "Like `nomis/tree/show-children-from-point', but from the
 current entry's parent."
   (nomis/tree/save-excursion-to-parent-and-then-show-point
     (nomis/tree/show-children-from-point n)))
 
 (defun nomis/tree/show-children-from-parent/set-min ()
-  "Like `nomis/tree/show-children-from-point/set-min`, but from the
+  "Like `nomis/tree/show-children-from-point/set-min', but from the
 current entry's parent and showing one level."
   (interactive)
   (-nomis/tree/command
@@ -1252,7 +1252,7 @@ current entry's parent and showing one level."
       (nomis/tree/show-children-from-point/set-min))))
 
 (defun nomis/tree/show-children-from-parent/fully-expand ()
-  "Like `nomis/tree/show-children-from-point/fully-expand`, but from
+  "Like `nomis/tree/show-children-from-point/fully-expand', but from
 the current entry's parent."
   (interactive)
   (-nomis/tree/command
@@ -1284,7 +1284,7 @@ If N-OR-NIL is provided, set the number of child levels to N-OR-NIL."
 ;;;;; nomis/tree/show-children-from-root/xxxx support
 
 (defun nomis/tree/show-children-from-root* (n)
-  "Call `nomis/tree/show-children-from-point*` on the current root
+  "Call `nomis/tree/show-children-from-point*' on the current root
 heading, with N as the parameter."
   (nomis/tree/save-excursion-to-root
     (nomis/tree/show-children-from-point* n)))
@@ -1358,7 +1358,7 @@ If N-OR-NIL is provided, set the number of child levels to N-OR-NIL."
 ;;;;; nomis/tree/show-children-from-all-roots/xxxx support
 
 (defun nomis/tree/show-children-from-all-roots* (n)
-  "Call `nomis/tree/show-children-from-point*` on all root headings,
+  "Call `nomis/tree/show-children-from-point*' on all root headings,
 with N as the parameter."
   (nomis/tree/mapc-roots (lambda () (nomis/tree/show-children-from-point* n))))
 
