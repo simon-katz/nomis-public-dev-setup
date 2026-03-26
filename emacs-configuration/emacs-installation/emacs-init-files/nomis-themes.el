@@ -127,7 +127,8 @@
 (defconst nomis/themes/zenburn+altbg2              '(nomis-alternative-background-002                             nomis-common-dark  zenburn))
 
 (defconst -nomis/themes/pairs
-  `((,nomis/themes/standard-light+nomis        . "Standard-Light + Nomis         ")
+  `((()                                        . "▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲")
+    (,nomis/themes/standard-light+nomis        . "Standard-Light + Nomis         ")
     (,nomis/themes/dark-laptop+nomis           . "Dark Laptop    + Nomis         ")
     (,nomis/themes/deeper-blue+nomis           . "Deeper-Blue    + Nomis         ")
     (,nomis/themes/zenburn+nomis               . "Zenburn        + Nomis         ")
@@ -152,7 +153,7 @@
     (,nomis/themes/standard-light+altbg2       . "Standard-Light         + AltBg2")
     (,nomis/themes/deeper-blue+altbg2          . "Deeper-Blue            + AltBg2")
     (,nomis/themes/zenburn+altbg2              . "Zenburn                + AltBg2")
-    (()                                        . "===============================")))
+    (()                                        . "▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼")))
 
 (defun -nomis/themes/themes-text (input-themes)
   (cl-loop for (themes . text) in -nomis/themes/pairs
