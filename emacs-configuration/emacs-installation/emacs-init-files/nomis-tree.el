@@ -121,6 +121,14 @@
   (declare (indent 1))
   `(-nomis/tree/command* ,opts (lambda () ,@body)))
 
+;;;;; numerify-when-non-nil
+
+(defmacro numerify-when-non-nil (var)
+  "If VAR is non-nil, replace it with `(prefix-numeric-value VAR)`.
+Use this to normalise a raw `(interactive \"P\")` prefix argument, so that
+a bare `C-u` becomes 4, `C-u C-u` becomes 16, etc., while nil stays nil."
+  `(when ,var (setq ,var (prefix-numeric-value ,var))))
+
 ;;;;; Time values
 
 (defconst -nomis/tree/nav+lineage/sibling-then-peer-small-delay-s
@@ -580,6 +588,7 @@ One of:
 
 (defun nomis/tree/nav+lineage/set-n-child-levels-to-show (n-or-nil)
   (interactive "P")
+  (numerify-when-non-nil n-or-nil)
   (-nomis/tree/command
       nil
     (when (null n-or-nil)
@@ -767,6 +776,7 @@ backward navigation."
   "Move backward to the previous heading at any level, then expand it.
 N-OR-NIL controls how many levels to expand; nil means fully."
   (interactive "P")
+  (numerify-when-non-nil n-or-nil)
   (-nomis/tree/command
       nil
     (-nomis/tree/nav+lineage/impl -1 :any-level n-or-nil)))
@@ -775,6 +785,7 @@ N-OR-NIL controls how many levels to expand; nil means fully."
   "Move forward to the next heading at any level, then expand it.
 N-OR-NIL controls how many levels to expand; nil means fully."
   (interactive "P")
+  (numerify-when-non-nil n-or-nil)
   (-nomis/tree/command
       nil
     (-nomis/tree/nav+lineage/impl 1 :any-level n-or-nil)))
@@ -783,6 +794,7 @@ N-OR-NIL controls how many levels to expand; nil means fully."
   "Move backward to the previous sibling, then expand it.
 N-OR-NIL controls how many levels to expand; nil means fully."
   (interactive "P")
+  (numerify-when-non-nil n-or-nil)
   (-nomis/tree/command
       nil
     (-nomis/tree/nav+lineage/impl -1 :sibling n-or-nil)))
@@ -791,6 +803,7 @@ N-OR-NIL controls how many levels to expand; nil means fully."
   "Move forward to the next sibling, then expand it.
 N-OR-NIL controls how many levels to expand; nil means fully."
   (interactive "P")
+  (numerify-when-non-nil n-or-nil)
   (-nomis/tree/command
       nil
     (-nomis/tree/nav+lineage/impl 1 :sibling n-or-nil)))
@@ -799,6 +812,7 @@ N-OR-NIL controls how many levels to expand; nil means fully."
   "Move backward to the previous peer, then expand it.
 N-OR-NIL controls how many levels to expand; nil means fully."
   (interactive "P")
+  (numerify-when-non-nil n-or-nil)
   (-nomis/tree/command
       nil
     (-nomis/tree/nav+lineage/impl -1 :peer n-or-nil)))
@@ -807,6 +821,7 @@ N-OR-NIL controls how many levels to expand; nil means fully."
   "Move forward to the next peer, then expand it.
 N-OR-NIL controls how many levels to expand; nil means fully."
   (interactive "P")
+  (numerify-when-non-nil n-or-nil)
   (-nomis/tree/command
       nil
     (-nomis/tree/nav+lineage/impl 1 :peer n-or-nil)))
@@ -1179,6 +1194,7 @@ When in a body, \"current heading\" means the current body's parent heading."
 If `N-OR-NIL` is provided, set the number of child levels to `N-OR-NIL`.
 When in a body, \"current heading\" means the current body's parent heading."
   (interactive "P")
+  (numerify-when-non-nil n-or-nil)
   (-nomis/tree/command
       nil
     (if n-or-nil
@@ -1188,6 +1204,7 @@ When in a body, \"current heading\" means the current body's parent heading."
 
 (defun nomis/tree/backtab (n-or-nil)
   (interactive "P")
+  (numerify-when-non-nil n-or-nil)
   (if (nomis/outline/w/on-heading?)
       (nomis/tree/show-children-from-point/incremental/less n-or-nil)
     (error "Can't do <backtab> when in a body")))
@@ -1197,6 +1214,7 @@ When in a body, \"current heading\" means the current body's parent heading."
 If `N-OR-NIL` is provided, set the number of child levels to `N-OR-NIL`.
 When in a body, \"current heading\" means the current body's parent heading."
   (interactive "P")
+  (numerify-when-non-nil n-or-nil)
   (-nomis/tree/command
       nil
     (if n-or-nil
@@ -1247,6 +1265,7 @@ the current entry's parent."
 Keep the parent expanded by at least one level.
 If `N-OR-NIL` is provided, set the number of child levels to `N-OR-NIL`."
   (interactive "P")
+  (numerify-when-non-nil n-or-nil)
   (-nomis/tree/command
       nil
     (nomis/tree/save-excursion-to-parent-and-then-show-point
@@ -1256,6 +1275,7 @@ If `N-OR-NIL` is provided, set the number of child levels to `N-OR-NIL`."
   "If `N-OR-NIL` is not provided, expand current heading's parent by one level.
 If `N-OR-NIL` is provided, set the number of child levels to `N-OR-NIL`."
   (interactive "P")
+  (numerify-when-non-nil n-or-nil)
   (-nomis/tree/command
       nil
     (nomis/tree/save-excursion-to-parent-and-then-show-point
@@ -1307,6 +1327,7 @@ heading, with N as the parameter."
   "If `N-OR-NIL` is not provided, collapse the current heading's root by one level.
 If `N-OR-NIL` is provided, set the number of child levels to `N-OR-NIL`."
   (interactive "P")
+  (numerify-when-non-nil n-or-nil)
   (-nomis/tree/command
       nil
     (if n-or-nil
@@ -1318,6 +1339,7 @@ If `N-OR-NIL` is provided, set the number of child levels to `N-OR-NIL`."
   "If `N-OR-NIL` is not provided, expand the current heading's root by one level.
 If `N-OR-NIL` is provided, set the number of child levels to `N-OR-NIL`."
   (interactive "P")
+  (numerify-when-non-nil n-or-nil)
   (-nomis/tree/command
       nil
     (if n-or-nil
@@ -1379,6 +1401,7 @@ with N as the parameter."
   "If `N-OR-NIL` is not provided, collapse all roots by one level.
 If `N-OR-NIL` is provided, set the number of child levels to `N-OR-NIL`."
   (interactive "P")
+  (numerify-when-non-nil n-or-nil)
   (-nomis/tree/command
       nil
     (if n-or-nil
@@ -1390,6 +1413,7 @@ If `N-OR-NIL` is provided, set the number of child levels to `N-OR-NIL`."
   "If `N-OR-NIL` is not provided, expand all roots by one level.
 If `N-OR-NIL` is provided, set the number of child levels to `N-OR-NIL`."
   (interactive "P")
+  (numerify-when-non-nil n-or-nil)
   (-nomis/tree/command
       nil
     (if n-or-nil
