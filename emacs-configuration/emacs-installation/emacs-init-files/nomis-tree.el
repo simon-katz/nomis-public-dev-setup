@@ -578,12 +578,12 @@ One of:
 
 ;;;;; nomis/tree/nav+lineage/set-n-child-levels-to-show
 
-(defun nomis/tree/nav+lineage/set-n-child-levels-to-show (n)
+(defun nomis/tree/nav+lineage/set-n-child-levels-to-show (n-or-nil)
   (interactive "P")
   (-nomis/tree/command
       nil
-    (when (null n)
-      (setq n
+    (when (null n-or-nil)
+      (setq n-or-nil
             (let* ((s (read-string
                        (cl-format nil
                                   "Number of levels to show ~
@@ -594,7 +594,7 @@ One of:
                   nil
                 (string-to-number s)))))
     (setq -nomis/tree/nav+lineage/n-child-levels-to-show
-          (if (null n) n (max 0 (floor n))))
+          (if (null n-or-nil) n-or-nil (max 0 (floor n-or-nil))))
     (-nomis/tree/nav+lineage/show-lineage)
     (message "nav+lineage n-child-levels-to-show set to %s"
              -nomis/tree/nav+lineage/n-child-levels-to-show)))
@@ -1174,33 +1174,33 @@ When in a body, \"current heading\" means the current body's parent heading."
            (v :max))
       (-nomis/tree/show-children-from-point/set-level-etc v :setting-max current-value))))
 
-(defun nomis/tree/show-children-from-point/incremental/less (n)
-  "If `N` is not provided, collapse the current heading by one level.
-If `N` is provided, set the number of child levels to `N`.
+(defun nomis/tree/show-children-from-point/incremental/less (n-or-nil)
+  "If `N-OR-NIL` is not provided, collapse the current heading by one level.
+If `N-OR-NIL` is provided, set the number of child levels to `N-OR-NIL`.
 When in a body, \"current heading\" means the current body's parent heading."
   (interactive "P")
   (-nomis/tree/command
       nil
-    (if n
-        (nomis/tree/show-children-from-point n)
+    (if n-or-nil
+        (nomis/tree/show-children-from-point n-or-nil)
       (-nomis/tree/show-children-from-point/set-level-etc
        (1- (nomis/tree/start-level-for-incremental-contract)) :less :dummy))))
 
-(defun nomis/tree/backtab (n)
+(defun nomis/tree/backtab (n-or-nil)
   (interactive "P")
   (if (nomis/outline/w/on-heading?)
-      (nomis/tree/show-children-from-point/incremental/less n)
+      (nomis/tree/show-children-from-point/incremental/less n-or-nil)
     (error "Can't do <backtab> when in a body")))
 
-(defun nomis/tree/show-children-from-point/incremental/more (n)
-  "If `N` is not provided, expand the current heading by one level.
-If `N` is provided, set the number of child levels to `N`.
+(defun nomis/tree/show-children-from-point/incremental/more (n-or-nil)
+  "If `N-OR-NIL` is not provided, expand the current heading by one level.
+If `N-OR-NIL` is provided, set the number of child levels to `N-OR-NIL`.
 When in a body, \"current heading\" means the current body's parent heading."
   (interactive "P")
   (-nomis/tree/command
       nil
-    (if n
-        (nomis/tree/show-children-from-point n)
+    (if n-or-nil
+        (nomis/tree/show-children-from-point n-or-nil)
       (-nomis/tree/show-children-from-point/set-level-etc
        (1+ (nomis/tree/n-levels-being-shown-or-infinity)) :more :dummy))))
 
@@ -1242,24 +1242,24 @@ the current entry's parent."
     (nomis/tree/save-excursion-to-parent-and-then-show-point
       (nomis/tree/show-children-from-point/fully-expand))))
 
-(defun nomis/tree/show-children-from-parent/incremental/less (n)
-  "If `N` is not provided, collapse the current heading's parent by one level.
+(defun nomis/tree/show-children-from-parent/incremental/less (n-or-nil)
+  "If `N-OR-NIL` is not provided, collapse current heading's parent by one level.
 Keep the parent expanded by at least one level.
-If `N` is provided, set the number of child levels to `N`."
+If `N-OR-NIL` is provided, set the number of child levels to `N-OR-NIL`."
   (interactive "P")
   (-nomis/tree/command
       nil
     (nomis/tree/save-excursion-to-parent-and-then-show-point
-      (nomis/tree/show-children-from-point/incremental/less n))))
+      (nomis/tree/show-children-from-point/incremental/less n-or-nil))))
 
-(defun nomis/tree/show-children-from-parent/incremental/more (n)
-  "If `N` is not provided, expand the current heading's parent by one level.
-If `N` is provided, set the number of child levels to `N`."
+(defun nomis/tree/show-children-from-parent/incremental/more (n-or-nil)
+  "If `N-OR-NIL` is not provided, expand current heading's parent by one level.
+If `N-OR-NIL` is provided, set the number of child levels to `N-OR-NIL`."
   (interactive "P")
   (-nomis/tree/command
       nil
     (nomis/tree/save-excursion-to-parent-and-then-show-point
-      (nomis/tree/show-children-from-point/incremental/more n))))
+      (nomis/tree/show-children-from-point/incremental/more n-or-nil))))
 
 ;;;;; nomis/tree/show-children-from-root/xxxx support
 
@@ -1303,25 +1303,25 @@ heading, with N as the parameter."
            (v :max))
       (-nomis/tree/show-children-from-root/set-level-etc v :setting-max current-value))))
 
-(defun nomis/tree/show-children-from-root/incremental/less (n)
-  "If `N` is not provided, collapse the current heading's root by one level.
-If `N` is provided, set the number of child levels to `N`."
+(defun nomis/tree/show-children-from-root/incremental/less (n-or-nil)
+  "If `N-OR-NIL` is not provided, collapse the current heading's root by one level.
+If `N-OR-NIL` is provided, set the number of child levels to `N-OR-NIL`."
   (interactive "P")
   (-nomis/tree/command
       nil
-    (if n
-        (nomis/tree/show-children-from-root n)
+    (if n-or-nil
+        (nomis/tree/show-children-from-root n-or-nil)
       (-nomis/tree/show-children-from-root/set-level-etc
        (1- (nomis/tree/start-level-for-incremental-contract/root)) :less :dummy))))
 
-(defun nomis/tree/show-children-from-root/incremental/more (n)
-  "If `N` is not provided, expand the current heading's root by one level.
-If `N` is provided, set the number of child levels to `N`."
+(defun nomis/tree/show-children-from-root/incremental/more (n-or-nil)
+  "If `N-OR-NIL` is not provided, expand the current heading's root by one level.
+If `N-OR-NIL` is provided, set the number of child levels to `N-OR-NIL`."
   (interactive "P")
   (-nomis/tree/command
       nil
-    (if n
-        (nomis/tree/show-children-from-root n)
+    (if n-or-nil
+        (nomis/tree/show-children-from-root n-or-nil)
       (-nomis/tree/show-children-from-root/set-level-etc
        (1+ (nomis/tree/n-levels-being-shown-or-infinity/root)) :more :dummy))))
 
@@ -1375,25 +1375,25 @@ with N as the parameter."
       (-nomis/tree/show-children-from-all-roots/set-level-etc v :setting-max current-value))
     (nomis/msg/pulse-buffer)))
 
-(defun nomis/tree/show-children-from-all-roots/incremental/less (n)
-  "If `N` is not provided, collapse all roots by one level.
-If `N` is provided, set the number of child levels to `N`."
+(defun nomis/tree/show-children-from-all-roots/incremental/less (n-or-nil)
+  "If `N-OR-NIL` is not provided, collapse all roots by one level.
+If `N-OR-NIL` is provided, set the number of child levels to `N-OR-NIL`."
   (interactive "P")
   (-nomis/tree/command
       nil
-    (if n
-        (nomis/tree/show-children-from-all-roots n)
+    (if n-or-nil
+        (nomis/tree/show-children-from-all-roots n-or-nil)
       (-nomis/tree/show-children-from-all-roots/set-level-etc
        (1- (nomis/tree/start-level-for-incremental-contract/buffer)) :less :dummy))))
 
-(defun nomis/tree/show-children-from-all-roots/incremental/more (n)
-  "If `N` is not provided, expand all roots by one level.
-If `N` is provided, set the number of child levels to `N`."
+(defun nomis/tree/show-children-from-all-roots/incremental/more (n-or-nil)
+  "If `N-OR-NIL` is not provided, expand all roots by one level.
+If `N-OR-NIL` is provided, set the number of child levels to `N-OR-NIL`."
   (interactive "P")
   (-nomis/tree/command
       nil
-    (if n
-        (nomis/tree/show-children-from-all-roots n)
+    (if n-or-nil
+        (nomis/tree/show-children-from-all-roots n-or-nil)
       (-nomis/tree/show-children-from-all-roots/set-level-etc
        (1+ (nomis/tree/n-levels-being-shown-or-infinity/buffer)) :more :dummy))))
 
