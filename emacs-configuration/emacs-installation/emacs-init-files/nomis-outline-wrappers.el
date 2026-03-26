@@ -13,18 +13,18 @@
 
 ;;;; nomis/outline/w/mode
 
-(defun -nomis/outline/w/org-mode? ()
+(defun nomis/outline/w/org-mode? ()
   (derived-mode-p 'org-mode))
 
-(defun -nomis/outline/w/outline-mode? ()
-  (and (not (-nomis/outline/w/org-mode?))
+(defun nomis/outline/w/outline-mode? ()
+  (and (not (nomis/outline/w/org-mode?))
        (or (derived-mode-p 'outline-mode)
            outline-minor-mode)))
 
 (defun nomis/outline/w/mode ()
-  (cond ((-nomis/outline/w/outline-mode?)
+  (cond ((nomis/outline/w/outline-mode?)
          :outline)
-        ((-nomis/outline/w/org-mode?)
+        ((nomis/outline/w/org-mode?)
          :org)
         (t
          (error "Unexpected: None of outline-mode, outline-minor-mode or org-mode is active"))))

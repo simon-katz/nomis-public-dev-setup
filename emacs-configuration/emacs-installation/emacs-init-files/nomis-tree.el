@@ -172,8 +172,8 @@ message and in case adding outline level messes things up.")
             :around
             (lambda (orig-fun &rest args)
               (if (and nomis/tree/add-info-to-what-cursor-position?
-                       (or (-nomis/outline/w/org-mode?)
-                           (-nomis/outline/w/outline-mode?))
+                       (or (nomis/outline/w/org-mode?)
+                           (nomis/outline/w/outline-mode?))
                        *-nomis/tree/in-what-cursor-position?*)
                   (let* ((format-string
                           (concat "Level: %s  " (cl-first args)))
