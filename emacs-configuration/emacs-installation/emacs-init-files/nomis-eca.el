@@ -10,6 +10,8 @@
 
 (set-face-attribute 'eca-chat-user-messages-face nil :background "red3")
 
+(set-face-attribute 'eca-chat-approval-modeline-face nil :background "yellow")
+
 ;;;; ___________________________________________________________________________
 
 (defun nomis/setup-eca-chat-mode ()
