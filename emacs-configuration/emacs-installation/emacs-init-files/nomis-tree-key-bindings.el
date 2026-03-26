@@ -165,9 +165,18 @@ H-o ?    Show this help")
 (dolist (key `(;; These keys are copied from `org`.
                ,(kbd "S-TAB")
                ,(kbd "<backtab>")))
-  ;; We don't use a filter here (like we do for for TAB), because invoking
-  ;; `org-shifttab` when in a body is unpleasant for the user.
-  (define-key nomis/tree-mode-map key #'nomis/tree/backtab))
+  ;; As with TAB, when on a heading we want `nomis/tree/xxxx` functionality.
+  ;; We also need to:
+  ;; - Avoid org mode's visibility cycling, which would otherwise be easy to
+  ;;   accidentally invoke.
+  ;; - Allow org mode's table functionality.
+  ;; Note that `nomis/tree/backtab` gives an error when not on a heading.
+  (nomis/define-key-with-filter nomis/tree-mode-map
+                                key
+                                #'nomis/tree/backtab
+                                (or (nomis/outline/w/on-heading?)
+                                    (when (nomis/outline/w/org-mode?)
+                                      (not (org-at-table-p))))))
 
 ;;;; Movement
 
