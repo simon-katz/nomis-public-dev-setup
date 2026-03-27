@@ -49,7 +49,7 @@
                               string))
                   nomis/ww/regexps/high-priority)))
 
-(defface nomis/ww/face/no-priority
+(defface nomis/ww/face/bright
   `((((background dark)) ,(list :foreground "Yellow"
                                 :bold t
                                 :italic t))
@@ -125,7 +125,7 @@
 
 (defun nomis/ww/add-watches ()
   (cl-loop for (regexps face)
-           in `((,nomis/ww/regexps/finger-pointers nomis/ww/face/no-priority)
+           in `((,nomis/ww/regexps/finger-pointers nomis/ww/face/bright)
                 (,nomis/ww/regexps/standout        nomis/ww/face/standout)
                 (,nomis/ww/regexps/operators       nomis/ww/face/operator)
                 (,nomis/ww/regexps/low-priority    nomis/ww/face/low-priority )
