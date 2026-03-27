@@ -36,7 +36,8 @@
     "N\\OCOMMIT"
     "Q\\UESTION/ACTION"
     "L\\EARNING-NOW"
-    "S\\K-COMMENT"))
+    "S\\K-COMMENT"
+    "▶\\▶▶▶.*"))
 
 (defconst nomis/ww/low-priority-regexp-prefix "x")
 
@@ -164,6 +165,7 @@
 ;; - [REMAINING-ISSUE]aaa
 ;; - REMAINING-ISSUEaaa
 ;; - aaaREMAINING-ISSUEaaa   ---- no highlighting
+;; - aaa bbb ▶▶▶▶ ccc ddd
 
 ;; - [xQUESTION/ACTION]aaa
 ;; - xQUESTION/ACTIONaaa
@@ -186,6 +188,7 @@
 ;; - [xREMAINING-ISSUE]aaa
 ;; - xREMAINING-ISSUEaaa
 ;; - aaaxREMAINING-ISSUEaaa   ---- no highlighting
+;; - aaa bbb x▶▶▶▶ ccc ddd
 
 ;; - aaa[-▶]aaa
 ;; - aaa-▶aaa
