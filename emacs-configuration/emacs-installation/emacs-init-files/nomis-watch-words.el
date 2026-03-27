@@ -1,4 +1,8 @@
-;;;; Init stuff --- Watch words ---  -*- lexical-binding: t -*-
+;;; nomis-watch-words.el --- Watch words  -*- lexical-binding: t; -*-
+
+;;; Code:
+
+;;;; Prod code
 
 (defconst nomis/ww/regexps/finger-pointers
   ;; Use \\ in the strings below so you don't get the highlighting here.
@@ -137,82 +141,81 @@
     (remove-hook 'text-mode-hook 'nomis/ww/add-watches)
     (remove-hook 'prog-mode-hook 'nomis/ww/add-watches)))
 
-;;;; ___________________________________________________________________________
 ;;;; Stuff for testing the above:
 
-;;;; - [QUESTION/ACTION]aaa
-;;;; - QUESTION/ACTIONaaa
-;;;; - [FIXME]aaa
-;;;; - FIXMEaaa
-;;;; - [FIX]aaa
-;;;; - FIXaaa
-;;;; - [TODO-THINK]aaa
-;;;; - TODO-THINKaaa
-;;;; - [TODO]aaa
-;;;; - TODOaaa
-;;;; - [TODO-with-Picasso-on-site]aaa
-;;;; - TODO-with-Picasso-on-siteaaa
-;;;; - [HACK]aaa
-;;;; - HACKaaa
-;;;; - [REFACTOR]aaa
-;;;; - REFACTORaaa
-;;;; - [NOCOMMIT]aaa
-;;;; - NOCOMMITaaa
-;;;; - [REMAINING-ISSUE]aaa
-;;;; - REMAINING-ISSUEaaa
-;;;; - aaaREMAINING-ISSUEaaa   ---- no highlighting
+;; - [QUESTION/ACTION]aaa
+;; - QUESTION/ACTIONaaa
+;; - [FIXME]aaa
+;; - FIXMEaaa
+;; - [FIX]aaa
+;; - FIXaaa
+;; - [TODO-THINK]aaa
+;; - TODO-THINKaaa
+;; - [TODO]aaa
+;; - TODOaaa
+;; - [TODO-with-Picasso-on-site]aaa
+;; - TODO-with-Picasso-on-siteaaa
+;; - [HACK]aaa
+;; - HACKaaa
+;; - [REFACTOR]aaa
+;; - REFACTORaaa
+;; - [NOCOMMIT]aaa
+;; - NOCOMMITaaa
+;; - [REMAINING-ISSUE]aaa
+;; - REMAINING-ISSUEaaa
+;; - aaaREMAINING-ISSUEaaa   ---- no highlighting
 
-;;;; - [xQUESTION/ACTION]aaa
-;;;; - xQUESTION/ACTIONaaa
-;;;; - [xFIXME]aaa
-;;;; - xFIXMEaaa
-;;;; - [xFIX]aaa
-;;;; - xFIXaaa
-;;;; - [xTODO-THINK]aaa
-;;;; - xTODO-THINKaaa
-;;;; - [xTODO]aaa
-;;;; - xTODOaaa
-;;;; - [xTODO-with-Picasso-on-site]aaa
-;;;; - xTODO-with-Picasso-on-siteaaa
-;;;; - [xHACK]aaa
-;;;; - xHACKaaa
-;;;; - [xREFACTOR]aaa
-;;;; - xREFACTORaaa
-;;;; - [xNOCOMMIT]aaa
-;;;; - xNOCOMMITaaa
-;;;; - [xREMAINING-ISSUE]aaa
-;;;; - xREMAINING-ISSUEaaa
-;;;; - aaaxREMAINING-ISSUEaaa   ---- no highlighting
+;; - [xQUESTION/ACTION]aaa
+;; - xQUESTION/ACTIONaaa
+;; - [xFIXME]aaa
+;; - xFIXMEaaa
+;; - [xFIX]aaa
+;; - xFIXaaa
+;; - [xTODO-THINK]aaa
+;; - xTODO-THINKaaa
+;; - [xTODO]aaa
+;; - xTODOaaa
+;; - [xTODO-with-Picasso-on-site]aaa
+;; - xTODO-with-Picasso-on-siteaaa
+;; - [xHACK]aaa
+;; - xHACKaaa
+;; - [xREFACTOR]aaa
+;; - xREFACTORaaa
+;; - [xNOCOMMIT]aaa
+;; - xNOCOMMITaaa
+;; - [xREMAINING-ISSUE]aaa
+;; - xREMAINING-ISSUEaaa
+;; - aaaxREMAINING-ISSUEaaa   ---- no highlighting
 
-;;;; - aaa[-▶]aaa
-;;;; - aaa-▶aaa
-;;;; - aaa[--▶]aaa
-;;;; - aaa--▶aaa
-;;;; - aaa[---▶]aaa
-;;;; - aaa---▶aaa
-;;;; - aaa[----▶]aaa
-;;;; - aaa----▶aaa
-;;;; - aaa[--x-y-z--▶]aaa
-;;;; - aaa--x-y-z--▶aaa
-;;;; - aaa[-▶]aaa aaa[-▶]aaa
+;; - aaa[-▶]aaa
+;; - aaa-▶aaa
+;; - aaa[--▶]aaa
+;; - aaa--▶aaa
+;; - aaa[---▶]aaa
+;; - aaa---▶aaa
+;; - aaa[----▶]aaa
+;; - aaa----▶aaa
+;; - aaa[--x-y-z--▶]aaa
+;; - aaa--x-y-z--▶aaa
+;; - aaa[-▶]aaa aaa[-▶]aaa
 
-;;;; - •abc•
-;;;; - •abc•s
-;;;; - •abc•s and •def•
-;;;; - a•bc• and a•bc•s and a•bc•def• and a•bc•def•s
-;;;; - (and (• a b) (• d e)) ; Not caught by •...•.
+;; - •abc•
+;; - •abc•s
+;; - •abc•s and •def•
+;; - a•bc• and a•bc•s and a•bc•def• and a•bc•def•s
+;; - (and (• a b) (• d e)) ; Not caught by •...•.
 
-;;;; - aaa[--OR--]aaa
-;;;; - aaa--OR--aaa
-;;;; - aaa[--AND--]aaa
-;;;; - aaa--AND--aaa
-;;;; - aaa[--AND/OR--]aaa
-;;;; - aaa--AND/OR--aaa
-;;;; - aaa[--NOT--]aaa
-;;;; - aaa--NOT--aaa
-;;;; - aaa[--EQUIVALENT--]aaa
-;;;; - aaa--EQUIVALENT--aaa
+;; - aaa[--OR--]aaa
+;; - aaa--OR--aaa
+;; - aaa[--AND--]aaa
+;; - aaa--AND--aaa
+;; - aaa[--AND/OR--]aaa
+;; - aaa--AND/OR--aaa
+;; - aaa[--NOT--]aaa
+;; - aaa--NOT--aaa
+;; - aaa[--EQUIVALENT--]aaa
+;; - aaa--EQUIVALENT--aaa
 
-;;;; ___________________________________________________________________________
+;;; End
 
 (provide 'nomis-watch-words)
