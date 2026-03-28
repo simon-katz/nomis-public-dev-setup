@@ -1122,9 +1122,10 @@ command has changed since the timer was started."
     (:all-roots (-nomis/tree/n-levels-below/buffer))))
 
 (defun -nomis/tree/already-at-limit? (direction cv)
-  (cl-ecase direction
-    (:collapse (= cv (if *expanding-parent?* 1 0)))
-    (:expand   (eql cv nomis/outline/w/plus-infinity))))
+  (= cv
+     (cl-ecase direction
+       (:collapse (if *expanding-parent?* 1 0))
+       (:expand   nomis/outline/w/plus-infinity))))
 
 (defun -nomis/tree/new-level-action (scope n)
   (cl-ecase scope
