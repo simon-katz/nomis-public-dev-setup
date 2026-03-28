@@ -175,6 +175,15 @@ FEWER-OK? is truthy."
       (beginning-of-line)
       (not (nomis/outline/w/up-heading* 1 t t)))))
 
+(defun nomis/outline/w/next-current-or-higher-level ()
+  (interactive)
+  (nomis/outline/w/back-to-heading)
+  (let ((start-level (nomis/outline/w/level/boh)))
+    (while (and (not (eobp))
+                (nomis/outline/w/next-heading)
+                (> (nomis/outline/w/level/boh)
+                   start-level)))))
+
 (defun nomis/outline/w/top-level-level ()
   (save-excursion
     (goto-char (point-min))
