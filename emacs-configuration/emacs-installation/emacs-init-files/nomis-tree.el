@@ -722,13 +722,13 @@ backward navigation."
                  (if (null n-levels-or-nil)
                      (nomis/tree/fully-expanded?)
                    (let* ((n-levels-being-shown-or-infinity
-                           (nomis/tree/n-levels-being-shown-or-infinity)))
+                           (-nomis/tree/n-levels-being-shown-or-infinity/point)))
                      (if (= n-levels-being-shown-or-infinity
                             nomis/outline/w/plus-infinity)
                          ;; The tree is fully expanded at point. This is truthy
                          ;; if the number of levels below is less than or equal
                          ;; to the desired number of levels to show.
-                         (<= (nomis/tree/n-levels-below)
+                         (<= (-nomis/tree/n-levels-below/point)
                              n-levels-or-nil)
                        ;; The tree is not fully expanded at point. This is
                        ;; truthy if the number of levels being shown is the same
@@ -837,7 +837,7 @@ is 7."
                                         #'nomis/tree/level-incl-any-body/boh
                                         #'max))
 
-(defun nomis/tree/n-levels-below ()
+(defun -nomis/tree/n-levels-below/point ()
   "The number of levels that exist below the current heading.
 When in a body, \"current heading\" means the current body's parent heading.
 Example: If we are at level 5 and there are 2 further levels below, the result
@@ -845,7 +845,7 @@ is 2."
   (- (nomis/tree/deepest-level-below)
      (nomis/outline/w/level/no-inc-if-in-body)))
 
-(defun nomis/tree/n-levels-being-shown-or-infinity ()
+(defun -nomis/tree/n-levels-being-shown-or-infinity/point ()
   "The number of levels being shown from the current heading, or
 infinity if it is fully expanded.
 When in a body, \"current heading\" means the current body's parent heading."
@@ -963,7 +963,7 @@ bodies are visible. Otherwise body visibiity is not taken into account."
                       (and (a-get entry :tree-info/body?)
                            (not -nomis/tree/show-bodies?)))))
 
-(defun nomis/tree/start-level-for-incremental-contract ()
+(defun -nomis/tree/start-level-for-incremental-contract/point ()
   "The level to use when incrementally collapsing the current heading.
 When in a body, \"current heading\" means the current body's parent heading."
   ;; Collapse the most-deeply-nested expanded level, and expand everything
@@ -987,17 +987,17 @@ When in a body, \"current heading\" means the current body's parent heading."
 
 ;;;; Operations on root
 
-(defun nomis/tree/n-levels-below/root ()
+(defun -nomis/tree/n-levels-below/root ()
   (nomis/tree/save-excursion-to-root
-    (nomis/tree/n-levels-below)))
+    (-nomis/tree/n-levels-below/point)))
 
-(defun nomis/tree/start-level-for-incremental-contract/root ()
+(defun -nomis/tree/start-level-for-incremental-contract/root ()
   (nomis/tree/save-excursion-to-root
-    (nomis/tree/start-level-for-incremental-contract)))
+    (-nomis/tree/start-level-for-incremental-contract/point)))
 
-(defun nomis/tree/n-levels-being-shown-or-infinity/root ()
+(defun -nomis/tree/n-levels-being-shown-or-infinity/root ()
   (nomis/tree/save-excursion-to-root
-    (nomis/tree/n-levels-being-shown-or-infinity)))
+    (-nomis/tree/n-levels-being-shown-or-infinity/point)))
 
 ;;;; Operations on buffer
 
@@ -1009,15 +1009,15 @@ When in a body, \"current heading\" means the current body's parent heading."
                         sofar))))
     sofar))
 
-(defun nomis/tree/n-levels-below/buffer ()
+(defun -nomis/tree/n-levels-below/buffer ()
   (1- (nomis/tree/levels/max-in-buffer)))
 
-(defun nomis/tree/start-level-for-incremental-contract/buffer ()
-  (->> (nomis/tree/map-roots #'nomis/tree/start-level-for-incremental-contract)
+(defun -nomis/tree/start-level-for-incremental-contract/buffer ()
+  (->> (nomis/tree/map-roots #'-nomis/tree/start-level-for-incremental-contract/point)
        (apply #'max)))
 
-(defun nomis/tree/n-levels-being-shown-or-infinity/buffer ()
-  (->> (nomis/tree/map-roots #'nomis/tree/n-levels-being-shown-or-infinity)
+(defun -nomis/tree/n-levels-being-shown-or-infinity/buffer ()
+  (->> (nomis/tree/map-roots #'-nomis/tree/n-levels-being-shown-or-infinity/point)
        (apply #'min)))
 
 ;;;; Expanding and collapsing
@@ -1153,7 +1153,7 @@ that is already being displayed."
                                                            current-value)
   (-nomis/tree/set-level-etc #'nomis/tree/show-children-from-point*
                              level
-                             (nomis/tree/n-levels-below)
+                             (-nomis/tree/n-levels-below/point)
                              (if *expanding-parent?*
                                  "[%s / %s] from parent"
                                "[%s / %s]")
@@ -1175,7 +1175,7 @@ When in a body, \"current heading\" means the current body's parent heading."
   (interactive)
   (-nomis/tree/command
       nil
-    (let* ((current-value (nomis/tree/start-level-for-incremental-contract))
+    (let* ((current-value (-nomis/tree/start-level-for-incremental-contract/point))
            (v (if *expanding-parent?* 1 0)))
       (-nomis/tree/show-children-from-point/set-level-etc v :setting-min current-value))))
 
@@ -1185,7 +1185,7 @@ When in a body, \"current heading\" means the current body's parent heading."
   (interactive)
   (-nomis/tree/command
       nil
-    (let* ((current-value (nomis/tree/n-levels-being-shown-or-infinity))
+    (let* ((current-value (-nomis/tree/n-levels-being-shown-or-infinity/point))
            (v :max))
       (-nomis/tree/show-children-from-point/set-level-etc v :setting-max current-value))))
 
@@ -1200,7 +1200,7 @@ When in a body, \"current heading\" means the current body's parent heading."
     (if n-or-nil
         (nomis/tree/show-children-from-point n-or-nil)
       (-nomis/tree/show-children-from-point/set-level-etc
-       (1- (nomis/tree/start-level-for-incremental-contract)) :less :dummy))))
+       (1- (-nomis/tree/start-level-for-incremental-contract/point)) :less :dummy))))
 
 (defun nomis/tree/backtab (n-or-nil)
   (interactive "P")
@@ -1220,7 +1220,7 @@ When in a body, \"current heading\" means the current body's parent heading."
     (if n-or-nil
         (nomis/tree/show-children-from-point n-or-nil)
       (-nomis/tree/show-children-from-point/set-level-etc
-       (1+ (nomis/tree/n-levels-being-shown-or-infinity)) :more :dummy))))
+       (1+ (-nomis/tree/n-levels-being-shown-or-infinity/point)) :more :dummy))))
 
 ;;;;; nomis/tree/show-children-from-parent/xxxx support
 
@@ -1294,7 +1294,7 @@ heading, with N as the parameter."
                                                           current-value)
   (-nomis/tree/set-level-etc #'nomis/tree/show-children-from-root*
                              level
-                             (nomis/tree/n-levels-below/root)
+                             (-nomis/tree/n-levels-below/root)
                              "[%s of %s] from root"
                              setting-kind
                              current-value))
@@ -1310,7 +1310,7 @@ heading, with N as the parameter."
   (interactive)
   (-nomis/tree/command
       nil
-    (let* ((current-value (nomis/tree/start-level-for-incremental-contract/root))
+    (let* ((current-value (-nomis/tree/start-level-for-incremental-contract/root))
            (v 0))
       (-nomis/tree/show-children-from-root/set-level-etc v :setting-min current-value))))
 
@@ -1319,7 +1319,7 @@ heading, with N as the parameter."
   (interactive)
   (-nomis/tree/command
       nil
-    (let* ((current-value (nomis/tree/n-levels-being-shown-or-infinity/root))
+    (let* ((current-value (-nomis/tree/n-levels-being-shown-or-infinity/root))
            (v :max))
       (-nomis/tree/show-children-from-root/set-level-etc v :setting-max current-value))))
 
@@ -1333,7 +1333,7 @@ If N-OR-NIL is provided, set the number of child levels to N-OR-NIL."
     (if n-or-nil
         (nomis/tree/show-children-from-root n-or-nil)
       (-nomis/tree/show-children-from-root/set-level-etc
-       (1- (nomis/tree/start-level-for-incremental-contract/root)) :less :dummy))))
+       (1- (-nomis/tree/start-level-for-incremental-contract/root)) :less :dummy))))
 
 (defun nomis/tree/show-children-from-root/incremental/more (n-or-nil)
   "If N-OR-NIL is not provided, expand the current heading's root by one level.
@@ -1345,7 +1345,7 @@ If N-OR-NIL is provided, set the number of child levels to N-OR-NIL."
     (if n-or-nil
         (nomis/tree/show-children-from-root n-or-nil)
       (-nomis/tree/show-children-from-root/set-level-etc
-       (1+ (nomis/tree/n-levels-being-shown-or-infinity/root)) :more :dummy))))
+       (1+ (-nomis/tree/n-levels-being-shown-or-infinity/root)) :more :dummy))))
 
 (defun nomis/tree/show-children-from-root/to-current-level ()
   "Expand the root of the current heading to the current heading's level."
@@ -1367,7 +1367,7 @@ with N as the parameter."
                                                                current-value)
   (-nomis/tree/set-level-etc #'nomis/tree/show-children-from-all-roots*
                              level
-                             (nomis/tree/n-levels-below/buffer)
+                             (-nomis/tree/n-levels-below/buffer)
                              "[%s of %s] from all roots"
                              setting-kind
                              current-value))
@@ -1383,7 +1383,7 @@ with N as the parameter."
   (interactive)
   (-nomis/tree/command
       nil
-    (let* ((current-value (nomis/tree/start-level-for-incremental-contract/buffer))
+    (let* ((current-value (-nomis/tree/start-level-for-incremental-contract/buffer))
            (v 0))
       (-nomis/tree/show-children-from-all-roots/set-level-etc v :setting-min current-value))))
 
@@ -1392,7 +1392,7 @@ with N as the parameter."
   (interactive)
   (-nomis/tree/command
       nil
-    (let* ((current-value (nomis/tree/n-levels-being-shown-or-infinity/buffer))
+    (let* ((current-value (-nomis/tree/n-levels-being-shown-or-infinity/buffer))
            (v :max))
       (-nomis/tree/show-children-from-all-roots/set-level-etc v :setting-max current-value))
     (nomis/msg/pulse-buffer)))
@@ -1407,7 +1407,7 @@ If N-OR-NIL is provided, set the number of child levels to N-OR-NIL."
     (if n-or-nil
         (nomis/tree/show-children-from-all-roots n-or-nil)
       (-nomis/tree/show-children-from-all-roots/set-level-etc
-       (1- (nomis/tree/start-level-for-incremental-contract/buffer)) :less :dummy))))
+       (1- (-nomis/tree/start-level-for-incremental-contract/buffer)) :less :dummy))))
 
 (defun nomis/tree/show-children-from-all-roots/incremental/more (n-or-nil)
   "If N-OR-NIL is not provided, expand all roots by one level.
@@ -1419,7 +1419,7 @@ If N-OR-NIL is provided, set the number of child levels to N-OR-NIL."
     (if n-or-nil
         (nomis/tree/show-children-from-all-roots n-or-nil)
       (-nomis/tree/show-children-from-all-roots/set-level-etc
-       (1+ (nomis/tree/n-levels-being-shown-or-infinity/buffer)) :more :dummy))))
+       (1+ (-nomis/tree/n-levels-being-shown-or-infinity/buffer)) :more :dummy))))
 
 (defun nomis/tree/show-children-from-all-roots/to-current-level ()
   "Expand all roots to the current heading's level."
