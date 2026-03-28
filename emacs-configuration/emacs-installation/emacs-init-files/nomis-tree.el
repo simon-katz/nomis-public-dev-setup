@@ -1026,6 +1026,37 @@ When in a body, \"current heading\" means the current body's parent heading."
 
 (defvar *expanding-parent?* nil)
 
+;;;;; nomis/tree/show-children-from-xxxx/xxxx support
+
+(defun nomis/tree/show-children-from-point* (n) ; TODO You don't use the special negative arg thing. Simplify or get back that functionality.
+  "Make point visible if it isn't already, and expand current heading to
+n levels.
+
+Details:
+
+If N is not negative, expand to show N levels. Any headings at level N
+will be collapsed.
+
+If N is negative, expand to show (abs N) levels, but do not hide anything
+that is already being displayed."
+  (nomis/outline/w/ensure-heading-shown)
+  (let* ((collapse? (>= n 0))
+         (n (abs n)))
+    (when collapse?
+      (nomis/outline/w/collapse))
+    (nomis/tree/expand n)))
+
+(defun nomis/tree/show-children-from-root* (n)
+  "Call `nomis/tree/show-children-from-point*' on the current root
+heading, with N as the parameter."
+  (nomis/tree/save-excursion-to-root
+    (nomis/tree/show-children-from-point* n)))
+
+(defun nomis/tree/show-children-from-all-roots* (n)
+  "Call `nomis/tree/show-children-from-point*' on all root headings,
+with N as the parameter."
+  (nomis/tree/mapc-roots (lambda () (nomis/tree/show-children-from-point* n))))
+
 ;;;;; -nomis/tree/set-level-etc
 
 ;; "wrapex" means "wrap-expand-collapse".
@@ -1115,7 +1146,6 @@ command has changed since the timer was started."
 
 (defun -nomis/tree/new-level-action (scope n)
   (cl-ecase scope
-    ;; TODO: Move the called functions to be above here.
     (:point     (nomis/tree/show-children-from-point* n))
     (:root      (nomis/tree/show-children-from-root* n))
     (:all-roots (nomis/tree/show-children-from-all-roots* n))))
@@ -1179,26 +1209,6 @@ DIRECTION is one of `:expand', `:collapse', or nil."
                              (:collapse " —- already fully collapsed")
                              (:expand   " —- already fully expanded"))
                          "")))))))))
-
-;;;;; nomis/tree/show-children-from-point/xxxx support
-
-(defun nomis/tree/show-children-from-point* (n) ; TODO You don't use the special negative arg thing. Simplify or get back that functionality.
-  "Make point visible if it isn't already, and expand current heading to
-n levels.
-
-Details:
-
-If N is not negative, expand to show N levels. Any headings at level N
-will be collapsed.
-
-If N is negative, expand to show (abs N) levels, but do not hide anything
-that is already being displayed."
-  (nomis/outline/w/ensure-heading-shown)
-  (let* ((collapse? (>= n 0))
-         (n (abs n)))
-    (when collapse?
-      (nomis/outline/w/collapse))
-    (nomis/tree/expand n)))
 
 ;;;;; nomis/tree/show-children-from-point/xxxx
 
@@ -1317,14 +1327,6 @@ If N-OR-NIL is provided, set the number of child levels to N-OR-NIL."
     (nomis/tree/save-excursion-to-parent-and-then-show-point
       (nomis/tree/show-children-from-point/incremental/more n-or-nil))))
 
-;;;;; nomis/tree/show-children-from-root/xxxx support
-
-(defun nomis/tree/show-children-from-root* (n)
-  "Call `nomis/tree/show-children-from-point*' on the current root
-heading, with N as the parameter."
-  (nomis/tree/save-excursion-to-root
-    (nomis/tree/show-children-from-point* n)))
-
 ;;;;; nomis/tree/show-children-from-root/xxxx
 
 (defun nomis/tree/show-children-from-root (n)
@@ -1375,13 +1377,6 @@ If N-OR-NIL is provided, set the number of child levels to N-OR-NIL."
       nil
     (let* ((v (1- (nomis/outline/w/level/inc-if-in-body))))
       (-nomis/tree/set-level-etc :root v nil))))
-
-;;;;; nomis/tree/show-children-from-all-roots/xxxx support
-
-(defun nomis/tree/show-children-from-all-roots* (n)
-  "Call `nomis/tree/show-children-from-point*' on all root headings,
-with N as the parameter."
-  (nomis/tree/mapc-roots (lambda () (nomis/tree/show-children-from-point* n))))
 
 
 ;;;;; nomis/tree/show-children-from-all-roots/xxxx
