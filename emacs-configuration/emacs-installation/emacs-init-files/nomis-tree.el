@@ -1121,28 +1121,10 @@ command has changed since the timer was started."
     (:root      (-nomis/tree/n-levels-below/root))
     (:all-roots (-nomis/tree/n-levels-below/buffer))))
 
-(defun -nomis/tree/n-levels-being-shown-or-infinity/for-scope (scope)
-  (cl-ecase scope
-    (:point     (-nomis/tree/n-levels-being-shown-or-infinity/point))
-    (:root      (-nomis/tree/n-levels-being-shown-or-infinity/root))
-    (:all-roots (-nomis/tree/n-levels-being-shown-or-infinity/buffer))))
-
-(defun -nomis/tree/start-level-for-incremental-contract/for-scope (scope)
-  ;; TODO: We are computing these values twice, right? Maybe pass through
-  ;;       from caller.
-  (cl-ecase scope
-    (:point     (-nomis/tree/start-level-for-incremental-contract/point))
-    (:root      (-nomis/tree/start-level-for-incremental-contract/root))
-    (:all-roots (-nomis/tree/start-level-for-incremental-contract/buffer))))
-
-(defun -nomis/tree/already-at-limit? (scope direction)
+(defun -nomis/tree/already-at-limit? (direction cv)
   (cl-ecase direction
-    (:collapse
-     (= (-nomis/tree/start-level-for-incremental-contract/for-scope scope)
-        (if *expanding-parent?* 1 0)))
-    (:expand
-     (eql (-nomis/tree/n-levels-being-shown-or-infinity/for-scope scope)
-          nomis/outline/w/plus-infinity))))
+    (:collapse (= cv (if *expanding-parent?* 1 0)))
+    (:expand   (eql cv nomis/outline/w/plus-infinity))))
 
 (defun -nomis/tree/new-level-action (scope n)
   (cl-ecase scope
@@ -1165,7 +1147,7 @@ command has changed since the timer was started."
     (:root      "[%s of %s] from root")
     (:all-roots "[%s of %s] from all roots")))
 
-(defun -nomis/tree/set-level-etc (scope requested-value direction)
+(defun -nomis/tree/set-level-etc (scope requested-value direction &optional cv)
   "Clamp REQUESTED-VALUE to the valid range for SCOPE, apply it, then show a
 popup message and optionally pulse. The min-allowed value is 1 when
 `*expanding-parent?*' is non-nil, 0 otherwise.
@@ -1175,7 +1157,10 @@ SCOPE is one of `:point', `:root', or `:all-roots'.
 REQUESTED-VALUE is the desired number of levels to show, or `:max' to mean the
 maximum for the current scope. It is clamped to the valid range.
 
-DIRECTION is one of `:expand', `:collapse', or nil."
+DIRECTION is one of `:expand', `:collapse', or nil.
+
+CV is the current value used to check whether we are already at the limit.
+Required when DIRECTION is non-nil; ignored otherwise."
   (save-excursion ; sometimes position is lost when at an invisible pount-- a hacky fix
     (let* ((maximum-value (-nomis/tree/n-levels-below/for-scope scope))
            (requested-value (if (eql requested-value :max)
@@ -1185,7 +1170,7 @@ DIRECTION is one of `:expand', `:collapse', or nil."
           (-nomis/tree/bring-within-range requested-value maximum-value)
         (let* ((error? (and direction
                             (not do-cycling?)
-                            (-nomis/tree/already-at-limit? scope direction))))
+                            (-nomis/tree/already-at-limit? direction cv))))
           (prog1
               (-nomis/tree/new-level-action scope new-level)
             (when (and (not error?)
@@ -1246,7 +1231,7 @@ When in a body, \"current heading\" means the current body's parent heading."
     (if n-or-nil
         (nomis/tree/show-children-from-point n-or-nil)
       (let* ((cv (-nomis/tree/start-level-for-incremental-contract/point)))
-        (-nomis/tree/set-level-etc :point (1- cv) :collapse)))))
+        (-nomis/tree/set-level-etc :point (1- cv) :collapse cv)))))
 
 (defun nomis/tree/backtab (n-or-nil)
   (interactive "P")
@@ -1266,7 +1251,7 @@ When in a body, \"current heading\" means the current body's parent heading."
     (if n-or-nil
         (nomis/tree/show-children-from-point n-or-nil)
       (let* ((cv (-nomis/tree/n-levels-being-shown-or-infinity/point)))
-        (-nomis/tree/set-level-etc :point (1+ cv) :expand)))))
+        (-nomis/tree/set-level-etc :point (1+ cv) :expand cv)))))
 
 ;;;;; nomis/tree/show-children-from-parent/xxxx support
 
@@ -1356,7 +1341,7 @@ If N-OR-NIL is provided, set the number of child levels to N-OR-NIL."
     (if n-or-nil
         (nomis/tree/show-children-from-root n-or-nil)
       (let* ((cv (-nomis/tree/start-level-for-incremental-contract/root)))
-        (-nomis/tree/set-level-etc :root (1- cv) :collapse)))))
+        (-nomis/tree/set-level-etc :root (1- cv) :collapse cv)))))
 
 (defun nomis/tree/show-children-from-root/incremental/more (n-or-nil)
   "If N-OR-NIL is not provided, expand the current heading's root by one level.
@@ -1368,7 +1353,7 @@ If N-OR-NIL is provided, set the number of child levels to N-OR-NIL."
     (if n-or-nil
         (nomis/tree/show-children-from-root n-or-nil)
       (let* ((cv (-nomis/tree/n-levels-being-shown-or-infinity/root)))
-        (-nomis/tree/set-level-etc :root (1+ cv) :expand)))))
+        (-nomis/tree/set-level-etc :root (1+ cv) :expand cv)))))
 
 (defun nomis/tree/show-children-from-root/to-current-level ()
   "Expand the root of the current heading to the current heading's level."
@@ -1408,7 +1393,7 @@ If N-OR-NIL is provided, set the number of child levels to N-OR-NIL."
     (if n-or-nil
         (nomis/tree/show-children-from-all-roots n-or-nil)
       (let* ((cv (-nomis/tree/start-level-for-incremental-contract/buffer)))
-        (-nomis/tree/set-level-etc :all-roots (1- cv) :collapse)))))
+        (-nomis/tree/set-level-etc :all-roots (1- cv) :collapse cv)))))
 
 (defun nomis/tree/show-children-from-all-roots/incremental/more (n-or-nil)
   "If N-OR-NIL is not provided, expand all roots by one level.
@@ -1420,7 +1405,7 @@ If N-OR-NIL is provided, set the number of child levels to N-OR-NIL."
     (if n-or-nil
         (nomis/tree/show-children-from-all-roots n-or-nil)
       (let* ((cv (-nomis/tree/n-levels-being-shown-or-infinity/buffer)))
-        (-nomis/tree/set-level-etc :all-roots (1+ cv) :expand)))))
+        (-nomis/tree/set-level-etc :all-roots (1+ cv) :expand cv)))))
 
 (defun nomis/tree/show-children-from-all-roots/to-current-level ()
   "Expand all roots to the current heading's level."
