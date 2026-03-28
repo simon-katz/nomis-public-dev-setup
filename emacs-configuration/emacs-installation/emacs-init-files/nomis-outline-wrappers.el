@@ -252,24 +252,12 @@ FEWER-OK? is truthy."
     (if (nomis/outline/w/before-first-heading?)
         (let* ((end (nomis/outline/w/next-heading)))
           (pulse-momentary-highlight-region (point-min) end))
-      (let ((start (point)))
-        (cl-flet ((next-same-level-heading ()
-                    (save-excursion (ignore-errors
-                                      (outline-forward-same-level 1)
-                                      (point))))
-                  (next-up-one-level-heading ()
-                    (save-excursion (ignore-errors
-                                      (outline-up-heading 1)
-                                      (outline-forward-same-level 1)
-                                      (unless (= (point) start)
-                                        ;; We have this guard because
-                                        ;; `outline-up-heading` is broken when
-                                        ;; there's no up-one-level heading.
-                                        (point))))))
-          (let* ((end (or (next-same-level-heading)
-                          (next-up-one-level-heading)
-                          (point-max))))
-            (pulse-momentary-highlight-region start end)))))))
+      (nomis/outline/w/back-to-heading)
+      (let* ((start (point))
+             (end (save-excursion
+                    (nomis/outline/w/next-current-or-higher-level)
+                    (point))))
+        (pulse-momentary-highlight-region start end)))))
 
 ;;;; Previous/next helpers
 
