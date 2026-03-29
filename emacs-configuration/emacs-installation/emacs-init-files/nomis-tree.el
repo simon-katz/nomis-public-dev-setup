@@ -1092,33 +1092,35 @@ is outside of the valid range, wrap-around cycling may occur instead: on the
 first such invocation a timer is started and normal clamping applies; on the
 second (if the same command is repeated soon enough and a repeat key is not
 in use), V wraps to the opposite extreme and DO-CYCLING? is t. Cycling is
-suppressed if MAXIMUM is 0 or if the command has changed since the timer
-was started."
-  (let* ((repeat-key-likely-used? (-nomis/tree/repeat-key-likely-used?)))
-    (cl-flet ((normal-behaviour () (list (min (max minimum v)
-                                              maximum)
-                                         nil))
-              (wrapping-behaviour () (list (if (= v (1- minimum))
-                                               maximum
-                                             minimum)
-                                           t)))
-      (let* ((allow-wrapex-now? (and -nomis/tree/allow-wrapex-timer
-                                     (not repeat-key-likely-used?))))
-        (-nomis/tree/cancel-wrapex-timer)
-        (if (or (= maximum 0)
-                (<= minimum v maximum))
-            (normal-behaviour)
-          (if (not allow-wrapex-now?)
-              (progn
-                (when (and -nomis/tree/wrapex?
-                           (not repeat-key-likely-used?))
-                  (-nomis/tree/allow-wrapex-for-a-while))
-                (normal-behaviour))
-            ;; Don't wrap if we moved to another position that also happens to
-            ;; be fully-expanded. Don't wrap if we moved away and came back.
-            (if (not (eq this-command (nomis/outline/w/last-command)))
-                (normal-behaviour)
-              (wrapping-behaviour))))))))
+suppressed if MAXIMUM is 0 (in which case MINIMUM should alse be 0) or if
+the command has changed since the timer was started."
+  (if (zerop maximum)
+      (progn (cl-assert (zerop minimum))
+             '(0 nil))
+    (let* ((repeat-key-likely-used? (-nomis/tree/repeat-key-likely-used?)))
+      (cl-flet ((normal-behaviour () (list (min (max minimum v)
+                                                maximum)
+                                           nil))
+                (wrapping-behaviour () (list (if (= v (1- minimum))
+                                                 maximum
+                                               minimum)
+                                             t)))
+        (let* ((allow-wrapex-now? (and -nomis/tree/allow-wrapex-timer
+                                       (not repeat-key-likely-used?))))
+          (-nomis/tree/cancel-wrapex-timer)
+          (if (<= minimum v maximum)
+              (normal-behaviour)
+            (if (not allow-wrapex-now?)
+                (progn
+                  (when (and -nomis/tree/wrapex?
+                             (not repeat-key-likely-used?))
+                    (-nomis/tree/allow-wrapex-for-a-while))
+                  (normal-behaviour))
+              ;; Don't wrap if we moved to another position that also happens to
+              ;; be fully-expanded. Don't wrap if we moved away and came back.
+              (if (not (eq this-command (nomis/outline/w/last-command)))
+                  (normal-behaviour)
+                (wrapping-behaviour)))))))))
 
 (defun -nomis/tree/n-levels-below/for-scope (scope)
   (cl-ecase scope
