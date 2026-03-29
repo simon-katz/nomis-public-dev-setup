@@ -1156,6 +1156,33 @@ command has changed since the timer was started."
     (:root      "[%s of %s] from root")
     (:all-roots "[%s of %s] from all roots")))
 
+(defun -nomis/tree/set-level/give-feedback (new-level
+                                            direction
+                                            maximum-value
+                                            scope
+                                            error?)
+  (when (and (not error?)
+             (> maximum-value 0)
+             (= new-level maximum-value))
+    (-nomis/tree/new-level-pulse scope))
+  (unless *-nomis/tree/inhibit-set-level-etc-message?*
+    (funcall (if error?
+                 #'nomis/popup/error-message
+               #'nomis/popup/message)
+             (concat (-nomis/tree/new-level-message-format-string
+                      scope)
+                     "%s%s")
+             new-level
+             maximum-value
+             (if -nomis/tree/show-bodies?
+                 ""
+               " (not showing bodies)")
+             (if error?
+                 (cl-ecase direction
+                   (:collapse " —- already fully collapsed")
+                   (:expand   " —- already fully expanded"))
+               ""))))
+
 (defun -nomis/tree/set-level-etc (scope requested-value direction &optional cv)
   "Clamp REQUESTED-VALUE to the valid range for SCOPE, apply it, then show a
 popup message and optionally pulse. The min-allowed value is 1 when
@@ -1182,27 +1209,11 @@ Required when DIRECTION is non-nil; ignored otherwise."
                             (-nomis/tree/already-at-limit? direction cv))))
           (unless error?
             (-nomis/tree/new-level-action scope new-level))
-          (when (and (not error?)
-                     (> maximum-value 0)
-                     (= new-level maximum-value))
-            (-nomis/tree/new-level-pulse scope))
-          (unless *-nomis/tree/inhibit-set-level-etc-message?*
-            (funcall (if error?
-                         #'nomis/popup/error-message
-                       #'nomis/popup/message)
-                     (concat (-nomis/tree/new-level-message-format-string
-                              scope)
-                             "%s%s")
-                     new-level
-                     maximum-value
-                     (if -nomis/tree/show-bodies?
-                         ""
-                       " (not showing bodies)")
-                     (if error?
-                         (cl-ecase direction
-                           (:collapse " —- already fully collapsed")
-                           (:expand   " —- already fully expanded"))
-                       ""))))))))
+          (-nomis/tree/set-level/give-feedback new-level
+                                               direction
+                                               maximum-value
+                                               scope
+                                               error?))))))
 
 ;;;;; nomis/tree/show-children-from-point/xxxx
 
