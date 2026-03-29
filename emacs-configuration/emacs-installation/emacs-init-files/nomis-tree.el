@@ -1147,11 +1147,11 @@ command has changed since the timer was started."
       (-nomis/tree/start-level-for-incremental-contract/for-scope scope)
     (-nomis/tree/n-levels-being-shown-or-infinity/for-scope scope)))
 
-(defun -nomis/tree/already-at-limit? (direction
-                                      current-value)
-  (cl-ecase direction
-    (:collapse (<= current-value (if *expanding-parent?* 1 0)))
-    (:expand   (= current-value nomis/outline/w/plus-infinity))))
+(defun -nomis/tree/at-limit? (hacked-direction value maximum)
+  (cl-ecase hacked-direction
+    (:collapse (<= value (if *expanding-parent?* 1 0)))
+    (:expand   (>= value maximum) ; includes `nomis/outline/w/plus-infinity`
+               )))
 
 (defun -nomis/tree/set-level/do-action (scope n)
   (cl-ecase scope
@@ -1213,9 +1213,8 @@ non-negative integer, `:min'/`:max' to mean the minimum/maximum for the
 current scope, or `:dec'/`:inc' to mean one less/more than the current
 value. It is clamped to the valid range.
 
-DIRECTION controls whether \"already fully collapsed/expanded\" feedback is
-given. Use `:collapse' or `:expand' for incremental callers, `:set-to-n' for
-explicit-value callers, or nil for callers that want no limit-checking."
+DIRECTION should be `:collapse' or `:expand' for incremental callers, or
+`:set-to-n' for explicit-value callers."
   (save-excursion ; sometimes position is lost when at an invisible pount-- a hacky fix
     (thunk-let* ((current-value (-nomis/tree/current-expansion-level/for-scope
                                  direction
@@ -1235,11 +1234,16 @@ explicit-value callers, or nil for callers that want no limit-checking."
                                            :collapse
                                          :expand)
                                      direction))
-                 (error?
-                  (and direction
-                       (not do-cycling?)
-                       (-nomis/tree/already-at-limit? hacked-direction
-                                                      current-value))))
+                 (error? (and (not do-cycling?)
+                              (-nomis/tree/at-limit? hacked-direction
+                                                     current-value
+                                                     maximum-value)
+                              (cl-ecase direction
+                                ((:collapse :expand) t)
+                                (:set-to-n
+                                 (-nomis/tree/at-limit? hacked-direction
+                                                        new-value
+                                                        maximum-value))))))
             (unless error?
               (-nomis/tree/set-level/do-action scope new-value))
             (-nomis/tree/set-level/give-feedback new-value
@@ -1394,7 +1398,7 @@ If N-OR-NIL is provided, set the number of child levels to N-OR-NIL."
   (-nomis/tree/command
       nil
     (let* ((v (1- (nomis/outline/w/level/inc-if-in-body))))
-      (-nomis/tree/set-level-etc :root v nil))))
+      (-nomis/tree/set-level-etc :root v :set-to-n))))
 
 
 ;;;;; nomis/tree/show-children-from-all-roots/xxxx
@@ -1441,7 +1445,7 @@ If N-OR-NIL is provided, set the number of child levels to N-OR-NIL."
   (-nomis/tree/command
       nil
     (let* ((v (1- (nomis/outline/w/level/inc-if-in-body))))
-      (-nomis/tree/set-level-etc :all-roots v nil))))
+      (-nomis/tree/set-level-etc :all-roots v :set-to-n))))
 
 ;;;;; Lineage
 
