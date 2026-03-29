@@ -1084,7 +1084,7 @@ with N as the parameter."
                      '-nomis/tree/cancel-wrapex-timer)))
 
 (defun -nomis/tree/bring-within-range (v maximum)
-  "Clamp V to [min-allowed, MAXIMUM] and return a list (new-level do-cycling?).
+  "Clamp V to [min-allowed, MAXIMUM] and return a list (new-value do-cycling?).
 
 The min-allowed value is 1 when `*expanding-parent?*' is non-nil, 0 otherwise.
 
@@ -1168,14 +1168,14 @@ command has changed since the timer was started."
     (:root      "[%s of %s] from root")
     (:all-roots "[%s of %s] from all roots")))
 
-(defun -nomis/tree/set-level/give-feedback (new-level
+(defun -nomis/tree/set-level/give-feedback (new-value
                                             direction
                                             maximum-value
                                             scope
                                             error?)
   (when (and (not error?)
              (> maximum-value 0)
-             (= new-level maximum-value))
+             (= new-value maximum-value))
     (-nomis/tree/set-level/pulse scope))
   (unless *-nomis/tree/inhibit-set-level-etc-message?*
     (funcall (if error?
@@ -1184,7 +1184,7 @@ command has changed since the timer was started."
              (concat (-nomis/tree/new-level-message-format-string
                       scope)
                      "%s%s")
-             new-level
+             new-value
              maximum-value
              (if -nomis/tree/show-bodies?
                  ""
@@ -1223,7 +1223,7 @@ Ignored when DIRECTION is nil."
                                    maximum-value)
                                   (t
                                    requested-value))))
-      (cl-destructuring-bind (new-level do-cycling?)
+      (cl-destructuring-bind (new-value do-cycling?)
           (-nomis/tree/bring-within-range requested-value maximum-value)
         (let* ((hacked-direction (if (eq direction :set-to-n)
                                      (if (eq requested-value minimum-value)
@@ -1241,8 +1241,8 @@ Ignored when DIRECTION is nil."
                        (-nomis/tree/already-at-limit? hacked-direction
                                                       current-value)))))
           (unless error?
-            (-nomis/tree/set-level/do-action scope new-level))
-          (-nomis/tree/set-level/give-feedback new-level
+            (-nomis/tree/set-level/do-action scope new-value))
+          (-nomis/tree/set-level/give-feedback new-value
                                                hacked-direction
                                                maximum-value
                                                scope
