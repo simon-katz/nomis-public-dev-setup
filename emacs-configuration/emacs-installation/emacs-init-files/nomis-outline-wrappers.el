@@ -193,9 +193,7 @@ FEWER-OK? is truthy."
   (save-excursion
     (nomis/outline/w/back-to-heading)
     (and (-nomis/outline/w/has-body?/boh)
-         (save-excursion
-           (nomis/outline/w/back-to-heading)
-           (not (nomis/outline/w/invisible? (line-end-position)))))))
+         (not (nomis/outline/w/invisible? (line-end-position))))))
 
 (defun nomis/outline/w/top-level-level ()
   (save-excursion
