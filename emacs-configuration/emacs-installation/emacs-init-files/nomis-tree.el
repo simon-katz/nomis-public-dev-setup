@@ -1135,13 +1135,13 @@ command has changed since the timer was started."
        (:collapse (if *expanding-parent?* 1 0))
        (:expand   nomis/outline/w/plus-infinity))))
 
-(defun -nomis/tree/new-level-action (scope n)
+(defun -nomis/tree/set-level/do-action (scope n)
   (cl-ecase scope
     (:point     (nomis/tree/show-children-from-point* n))
     (:root      (nomis/tree/show-children-from-root* n))
     (:all-roots (nomis/tree/show-children-from-all-roots* n))))
 
-(defun -nomis/tree/new-level-pulse (scope)
+(defun -nomis/tree/set-level/pulse (scope)
   (cl-ecase scope
     (:point     (nomis/outline/w/pulse-current-section))
     (:root      (nomis/tree/save-excursion-to-root
@@ -1164,7 +1164,7 @@ command has changed since the timer was started."
   (when (and (not error?)
              (> maximum-value 0)
              (= new-level maximum-value))
-    (-nomis/tree/new-level-pulse scope))
+    (-nomis/tree/set-level/pulse scope))
   (unless *-nomis/tree/inhibit-set-level-etc-message?*
     (funcall (if error?
                  #'nomis/popup/error-message
@@ -1208,7 +1208,7 @@ Required when DIRECTION is non-nil; ignored otherwise."
                             (not do-cycling?)
                             (-nomis/tree/already-at-limit? direction cv))))
           (unless error?
-            (-nomis/tree/new-level-action scope new-level))
+            (-nomis/tree/set-level/do-action scope new-level))
           (-nomis/tree/set-level/give-feedback new-level
                                                direction
                                                maximum-value
