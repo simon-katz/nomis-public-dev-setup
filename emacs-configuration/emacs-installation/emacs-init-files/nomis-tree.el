@@ -1129,6 +1129,18 @@ command has changed since the timer was started."
     (:root      (-nomis/tree/n-levels-below/root))
     (:all-roots (-nomis/tree/n-levels-below/buffer))))
 
+(defun -nomis/tree/current-expansion-level/for-scope (direction scope)
+  (cl-ecase scope
+    (:point     (if (eq direction :collapse)
+                    (-nomis/tree/start-level-for-incremental-contract/point)
+                  (-nomis/tree/n-levels-being-shown-or-infinity/point)))
+    (:root      (if (eq direction :collapse)
+                    (-nomis/tree/start-level-for-incremental-contract/root)
+                  (-nomis/tree/n-levels-being-shown-or-infinity/root)))
+    (:all-roots (if (eq direction :collapse)
+                    (-nomis/tree/start-level-for-incremental-contract/buffer)
+                  (-nomis/tree/n-levels-being-shown-or-infinity/buffer)))))
+
 (defun -nomis/tree/already-at-limit? (direction cv)
   (= cv
      (cl-ecase direction
@@ -1183,23 +1195,28 @@ command has changed since the timer was started."
                    (:expand   " —- already fully expanded"))
                ""))))
 
-(defun -nomis/tree/set-level-etc (scope requested-value direction &optional cv)
+(defun -nomis/tree/set-level-etc (scope requested-value direction
+                                        &optional current-value)
   "Clamp REQUESTED-VALUE to the valid range for SCOPE, apply it, then show a
 popup message and optionally pulse. The min-allowed value is 1 when
 `*expanding-parent?*' is non-nil, 0 otherwise.
 
 SCOPE is one of `:point', `:root', or `:all-roots'.
 
-REQUESTED-VALUE is the desired number of levels to show, or `:max' to mean the
-maximum for the current scope. It is clamped to the valid range.
+REQUESTED-VALUE is the desired number of levels to show, or `:min'/`:max' to
+mean the minimum/maximum for the current scope. It is clamped to the valid
+range.
 
-DIRECTION is one of `:expand', `:collapse', or nil.
+DIRECTION controls whether \"already fully collapsed/expanded\" feedback is
+given. Use `:collapse' or `:expand' for incremental callers, `:set-to-n' for
+explicit-value callers, or nil for callers that want no limit-checking.
 
-CV is the current value used to check whether we are already at the limit.
-Required when DIRECTION is non-nil; ignored otherwise."
+CURRENT-VALUE is an optional optimisation: if the caller has already computed
+the current expansion level, it can be passed here to avoid recomputation.
+Ignored when DIRECTION is nil."
   (save-excursion ; sometimes position is lost when at an invisible pount-- a hacky fix
-    (let* ((maximum-value (-nomis/tree/n-levels-below/for-scope scope))
-           (minimum-value (if *expanding-parent?* 1 0))
+    (let* ((minimum-value (if *expanding-parent?* 1 0))
+           (maximum-value (-nomis/tree/n-levels-below/for-scope scope))
            (requested-value (cond ((eql requested-value :min)
                                    minimum-value)
                                   ((eql requested-value :max)
@@ -1208,13 +1225,25 @@ Required when DIRECTION is non-nil; ignored otherwise."
                                    requested-value))))
       (cl-destructuring-bind (new-level do-cycling?)
           (-nomis/tree/bring-within-range requested-value maximum-value)
-        (let* ((error? (and direction
-                            (not do-cycling?)
-                            (-nomis/tree/already-at-limit? direction cv))))
+        (let* ((hacked-direction (if (eq direction :set-to-n)
+                                     (if (eq requested-value minimum-value)
+                                         :collapse
+                                       :expand)
+                                   direction))
+               (error?
+                (and direction
+                     (not do-cycling?)
+                     (let* ((current-value
+                             (or current-value
+                                 (-nomis/tree/current-expansion-level/for-scope
+                                  direction
+                                  scope))))
+                       (-nomis/tree/already-at-limit? hacked-direction
+                                                      current-value)))))
           (unless error?
             (-nomis/tree/set-level/do-action scope new-level))
           (-nomis/tree/set-level/give-feedback new-level
-                                               direction
+                                               hacked-direction
                                                maximum-value
                                                scope
                                                error?))))))
@@ -1225,7 +1254,7 @@ Required when DIRECTION is non-nil; ignored otherwise."
   "Show N levels from the current heading, and collapse anything that's
 at a higher level.
 When in a body, \"current heading\" means the current body's parent heading."
-  (-nomis/tree/set-level-etc :point n nil))
+  (-nomis/tree/set-level-etc :point n :set-to-n))
 
 (defun nomis/tree/show-children-from-point/set-min ()
   "Fully collapse the current heading.
@@ -1233,7 +1262,7 @@ When in a body, \"current heading\" means the current body's parent heading."
   (interactive)
   (-nomis/tree/command
       nil
-    (-nomis/tree/set-level-etc :point :min nil)))
+    (-nomis/tree/set-level-etc :point :min :collapse)))
 
 (defun nomis/tree/show-children-from-point/fully-expand ()
   "Fully expand the current heading.
@@ -1241,7 +1270,7 @@ When in a body, \"current heading\" means the current body's parent heading."
   (interactive)
   (-nomis/tree/command
       nil
-    (-nomis/tree/set-level-etc :point :max nil)))
+    (-nomis/tree/set-level-etc :point :max :expand)))
 
 (defun nomis/tree/show-children-from-point/incremental/less (n-or-nil)
   "If N-OR-NIL is not provided, collapse the current heading by one level.
@@ -1338,21 +1367,21 @@ If N-OR-NIL is provided, set the number of child levels to N-OR-NIL."
 ;;;;; nomis/tree/show-children-from-root/xxxx
 
 (defun nomis/tree/show-children-from-root (n)
-  (-nomis/tree/set-level-etc :root n nil))
+  (-nomis/tree/set-level-etc :root n :set-to-n))
 
 (defun nomis/tree/show-children-from-root/set-min ()
   "Fully collapse the root of the current heading."
   (interactive)
   (-nomis/tree/command
       nil
-    (-nomis/tree/set-level-etc :root :min nil)))
+    (-nomis/tree/set-level-etc :root :min :collapse)))
 
 (defun nomis/tree/show-children-from-root/fully-expand ()
   "Fully expand the root of the current heading."
   (interactive)
   (-nomis/tree/command
       nil
-    (-nomis/tree/set-level-etc :root :max nil)))
+    (-nomis/tree/set-level-etc :root :max :expand)))
 
 (defun nomis/tree/show-children-from-root/incremental/less (n-or-nil)
   "If N-OR-NIL is not provided, collapse the current heading's root by one level.
@@ -1390,21 +1419,21 @@ If N-OR-NIL is provided, set the number of child levels to N-OR-NIL."
 ;;;;; nomis/tree/show-children-from-all-roots/xxxx
 
 (defun nomis/tree/show-children-from-all-roots (n)
-  (-nomis/tree/set-level-etc :all-roots n nil))
+  (-nomis/tree/set-level-etc :all-roots n :set-to-n))
 
 (defun nomis/tree/show-children-from-all-roots/set-min ()
   "Fully collapse all roots."
   (interactive)
   (-nomis/tree/command
       nil
-    (-nomis/tree/set-level-etc :all-roots :min nil)))
+    (-nomis/tree/set-level-etc :all-roots :min :collapse)))
 
 (defun nomis/tree/show-children-from-all-roots/fully-expand ()
   "Fully expand all roots."
   (interactive)
   (-nomis/tree/command
       nil
-    (-nomis/tree/set-level-etc :all-roots :max nil)))
+    (-nomis/tree/set-level-etc :all-roots :max :expand)))
 
 (defun nomis/tree/show-children-from-all-roots/incremental/less (n-or-nil)
   "If N-OR-NIL is not provided, collapse all roots by one level.
