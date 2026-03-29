@@ -1180,7 +1180,8 @@ Required when DIRECTION is non-nil; ignored otherwise."
         (let* ((error? (and direction
                             (not do-cycling?)
                             (-nomis/tree/already-at-limit? direction cv))))
-          (-nomis/tree/new-level-action scope new-level)
+          (unless error?
+            (-nomis/tree/new-level-action scope new-level))
           (when (and (not error?)
                      (> maximum-value 0)
                      (= new-level maximum-value))
