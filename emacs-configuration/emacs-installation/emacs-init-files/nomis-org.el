@@ -28,8 +28,10 @@
 (require 'cl-lib)
 (require 'dash)
 (require 'nomis-msg)
+(require 'nomis-outline-wrappers)
 (require 'nomis-popup)
 (require 'nomis-rx) ; noflycheck
+(require 'nomis-tree)
 (require 'org-bullets)
 (require 's)
 
@@ -96,6 +98,25 @@
   )
 
 (add-hook 'org-mode-hook 'nomis/org/mode)
+
+;;;; Initial display
+
+(defvar-local -nomis/org/initial-display-done? nil)
+
+(defun -nomis/org/window-buffer-change/initial-lineage (frame)
+  (dolist (window (window-list frame))
+    (with-current-buffer (window-buffer window)
+      (when (and (derived-mode-p 'org-mode)
+                 (not -nomis/org/initial-display-done?))
+        (setq -nomis/org/initial-display-done? t)
+        (unless (nomis/outline/w/before-first-heading?)
+          (nomis/tree/ls/show-lineage
+           nomis/tree/ls/spec/hide-all--fat-ancestors--no-children)
+          (when (nomis/outline/w/invisible? (point))
+            (nomis/outline/w/show-entry)))))))
+
+(add-hook 'window-buffer-change-functions
+          #'-nomis/org/window-buffer-change/initial-lineage)
 
 ;;;; Hacky fix for `org-table-header-set-header`
 
