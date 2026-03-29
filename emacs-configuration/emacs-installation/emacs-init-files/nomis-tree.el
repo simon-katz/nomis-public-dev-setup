@@ -1199,9 +1199,13 @@ CV is the current value used to check whether we are already at the limit.
 Required when DIRECTION is non-nil; ignored otherwise."
   (save-excursion ; sometimes position is lost when at an invisible pount-- a hacky fix
     (let* ((maximum-value (-nomis/tree/n-levels-below/for-scope scope))
-           (requested-value (if (eql requested-value :max)
-                                maximum-value
-                              requested-value)))
+           (minimum-value (if *expanding-parent?* 1 0))
+           (requested-value (cond ((eql requested-value :min)
+                                   minimum-value)
+                                  ((eql requested-value :max)
+                                   maximum-value)
+                                  (t
+                                   requested-value))))
       (cl-destructuring-bind (new-level do-cycling?)
           (-nomis/tree/bring-within-range requested-value maximum-value)
         (let* ((error? (and direction
@@ -1229,8 +1233,7 @@ When in a body, \"current heading\" means the current body's parent heading."
   (interactive)
   (-nomis/tree/command
       nil
-    (let* ((v (if *expanding-parent?* 1 0)))
-      (-nomis/tree/set-level-etc :point v nil))))
+    (-nomis/tree/set-level-etc :point :min nil)))
 
 (defun nomis/tree/show-children-from-point/fully-expand ()
   "Fully expand the current heading.
@@ -1342,7 +1345,7 @@ If N-OR-NIL is provided, set the number of child levels to N-OR-NIL."
   (interactive)
   (-nomis/tree/command
       nil
-    (-nomis/tree/set-level-etc :root 0 nil)))
+    (-nomis/tree/set-level-etc :root :min nil)))
 
 (defun nomis/tree/show-children-from-root/fully-expand ()
   "Fully expand the root of the current heading."
@@ -1394,7 +1397,7 @@ If N-OR-NIL is provided, set the number of child levels to N-OR-NIL."
   (interactive)
   (-nomis/tree/command
       nil
-    (-nomis/tree/set-level-etc :all-roots 0 nil)))
+    (-nomis/tree/set-level-etc :all-roots :min nil)))
 
 (defun nomis/tree/show-children-from-all-roots/fully-expand ()
   "Fully expand all roots."
