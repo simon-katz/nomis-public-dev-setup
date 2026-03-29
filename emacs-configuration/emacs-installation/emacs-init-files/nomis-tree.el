@@ -66,6 +66,7 @@
 (require 'nomis-tree-lineage-specs)
 (require 'outline)
 (require 's)
+(require 'thunk)
 
 ;;;; nomis/tree-mode
 
@@ -1200,58 +1201,52 @@ command has changed since the timer was started."
                    (:expand   " —- already fully expanded"))
                ""))))
 
-(defun -nomis/tree/set-level-etc (scope requested-value direction
-                                        &optional current-value)
+(defun -nomis/tree/set-level-etc (scope requested-value direction)
   "Clamp REQUESTED-VALUE to the valid range for SCOPE, apply it, then show a
 popup message and optionally pulse. The min-allowed value is 1 when
 `*expanding-parent?*' is non-nil, 0 otherwise.
 
 SCOPE is one of `:point', `:root', or `:all-roots'.
 
-REQUESTED-VALUE is the desired number of levels to show, or `:min'/`:max' to
-mean the minimum/maximum for the current scope. It is clamped to the valid
-range.
+REQUESTED-VALUE is the desired number of levels to show. It can be a
+non-negative integer, `:min'/`:max' to mean the minimum/maximum for the
+current scope, or `:dec'/`:inc' to mean one less/more than the current
+value. It is clamped to the valid range.
 
 DIRECTION controls whether \"already fully collapsed/expanded\" feedback is
 given. Use `:collapse' or `:expand' for incremental callers, `:set-to-n' for
-explicit-value callers, or nil for callers that want no limit-checking.
-
-CURRENT-VALUE is an optional optimisation: if the caller has already computed
-the current expansion level, it can be passed here to avoid recomputation.
-Ignored when DIRECTION is nil."
+explicit-value callers, or nil for callers that want no limit-checking."
   (save-excursion ; sometimes position is lost when at an invisible pount-- a hacky fix
-    (let* ((minimum-value (if *expanding-parent?* 1 0))
-           (maximum-value (-nomis/tree/n-levels-below/for-scope scope))
-           (requested-value (cond ((eql requested-value :min)
-                                   minimum-value)
-                                  ((eql requested-value :max)
-                                   maximum-value)
-                                  (t
-                                   requested-value))))
-      (cl-destructuring-bind (new-value do-cycling?)
-          (-nomis/tree/bring-within-range requested-value maximum-value)
-        (let* ((hacked-direction (if (eq direction :set-to-n)
-                                     (if (eq requested-value minimum-value)
-                                         :collapse
-                                       :expand)
-                                   direction))
-               (error?
-                (and direction
-                     (not do-cycling?)
-                     (let* ((current-value
-                             (or current-value
-                                 (-nomis/tree/current-expansion-level/for-scope
-                                  direction
-                                  scope))))
+    (thunk-let* ((current-value (-nomis/tree/current-expansion-level/for-scope
+                                 direction
+                                 scope)))
+      (let* ((minimum-value (if *expanding-parent?* 1 0))
+             (maximum-value (-nomis/tree/n-levels-below/for-scope scope))
+             (requested-value
+              (cond ((eq requested-value :dec)  (1- current-value))
+                    ((eq requested-value :inc)  (1+ current-value))
+                    ((eql requested-value :min) minimum-value)
+                    ((eql requested-value :max) maximum-value)
+                    (t                          requested-value))))
+        (cl-destructuring-bind (new-value do-cycling?)
+            (-nomis/tree/bring-within-range requested-value maximum-value)
+          (let* ((hacked-direction (if (eq direction :set-to-n)
+                                       (if (eq requested-value minimum-value)
+                                           :collapse
+                                         :expand)
+                                     direction))
+                 (error?
+                  (and direction
+                       (not do-cycling?)
                        (-nomis/tree/already-at-limit? hacked-direction
-                                                      current-value)))))
-          (unless error?
-            (-nomis/tree/set-level/do-action scope new-value))
-          (-nomis/tree/set-level/give-feedback new-value
-                                               hacked-direction
-                                               maximum-value
-                                               scope
-                                               error?))))))
+                                                      current-value))))
+            (unless error?
+              (-nomis/tree/set-level/do-action scope new-value))
+            (-nomis/tree/set-level/give-feedback new-value
+                                                 hacked-direction
+                                                 maximum-value
+                                                 scope
+                                                 error?)))))))
 
 ;;;;; nomis/tree/show-children-from-point/xxxx
 
@@ -1287,8 +1282,7 @@ When in a body, \"current heading\" means the current body's parent heading."
       nil
     (if n-or-nil
         (nomis/tree/show-children-from-point n-or-nil)
-      (let* ((cv (-nomis/tree/start-level-for-incremental-contract/point)))
-        (-nomis/tree/set-level-etc :point (1- cv) :collapse cv)))))
+      (-nomis/tree/set-level-etc :point :dec :collapse))))
 
 (defun nomis/tree/backtab (n-or-nil)
   (interactive "P")
@@ -1307,8 +1301,7 @@ When in a body, \"current heading\" means the current body's parent heading."
       nil
     (if n-or-nil
         (nomis/tree/show-children-from-point n-or-nil)
-      (let* ((cv (-nomis/tree/n-levels-being-shown-or-infinity/point)))
-        (-nomis/tree/set-level-etc :point (1+ cv) :expand cv)))))
+      (-nomis/tree/set-level-etc :point :inc :expand))))
 
 ;;;;; nomis/tree/show-children-from-parent/xxxx support
 
@@ -1397,8 +1390,7 @@ If N-OR-NIL is provided, set the number of child levels to N-OR-NIL."
       nil
     (if n-or-nil
         (nomis/tree/show-children-from-root n-or-nil)
-      (let* ((cv (-nomis/tree/start-level-for-incremental-contract/root)))
-        (-nomis/tree/set-level-etc :root (1- cv) :collapse cv)))))
+      (-nomis/tree/set-level-etc :root :dec :collapse))))
 
 (defun nomis/tree/show-children-from-root/incremental/more (n-or-nil)
   "If N-OR-NIL is not provided, expand the current heading's root by one level.
@@ -1409,8 +1401,7 @@ If N-OR-NIL is provided, set the number of child levels to N-OR-NIL."
       nil
     (if n-or-nil
         (nomis/tree/show-children-from-root n-or-nil)
-      (let* ((cv (-nomis/tree/n-levels-being-shown-or-infinity/root)))
-        (-nomis/tree/set-level-etc :root (1+ cv) :expand cv)))))
+      (-nomis/tree/set-level-etc :root :inc :expand))))
 
 (defun nomis/tree/show-children-from-root/to-current-level ()
   "Expand the root of the current heading to the current heading's level."
@@ -1449,8 +1440,7 @@ If N-OR-NIL is provided, set the number of child levels to N-OR-NIL."
       nil
     (if n-or-nil
         (nomis/tree/show-children-from-all-roots n-or-nil)
-      (let* ((cv (-nomis/tree/start-level-for-incremental-contract/buffer)))
-        (-nomis/tree/set-level-etc :all-roots (1- cv) :collapse cv)))))
+      (-nomis/tree/set-level-etc :all-roots :dec :collapse))))
 
 (defun nomis/tree/show-children-from-all-roots/incremental/more (n-or-nil)
   "If N-OR-NIL is not provided, expand all roots by one level.
@@ -1461,8 +1451,7 @@ If N-OR-NIL is provided, set the number of child levels to N-OR-NIL."
       nil
     (if n-or-nil
         (nomis/tree/show-children-from-all-roots n-or-nil)
-      (let* ((cv (-nomis/tree/n-levels-being-shown-or-infinity/buffer)))
-        (-nomis/tree/set-level-etc :all-roots (1+ cv) :expand cv)))))
+      (-nomis/tree/set-level-etc :all-roots :inc :expand))))
 
 (defun nomis/tree/show-children-from-all-roots/to-current-level ()
   "Expand all roots to the current heading's level."
