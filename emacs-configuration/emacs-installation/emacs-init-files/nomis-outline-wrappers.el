@@ -184,6 +184,11 @@ FEWER-OK? is truthy."
                 (> (nomis/outline/w/level/boh)
                    start-level)))))
 
+(defun nomis/outline/w/no-further-headings? ()
+  (save-excursion
+    (nomis/outline/w/next-heading)
+    (eobp)))
+
 (defun nomis/outline/w/top-level-level ()
   (save-excursion
     (goto-char (point-min))
