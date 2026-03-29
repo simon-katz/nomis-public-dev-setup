@@ -1317,12 +1317,6 @@ When in a body, \"current heading\" means the current body's parent heading."
 
 ;;;;; nomis/tree/show-children-from-parent/xxxx
 
-(defun nomis/tree/show-children-from-parent (n)
-  "Like `nomis/tree/show-children-from-point', but from the
-current entry's parent."
-  (nomis/tree/save-excursion-to-parent-and-then-show-point
-    (nomis/tree/show-children-from-point n)))
-
 (defun nomis/tree/show-children-from-parent/set-min ()
   "Like `nomis/tree/show-children-from-point/set-min', but from the
 current entry's parent and showing one level."
