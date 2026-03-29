@@ -1219,18 +1219,19 @@ DIRECTION should be `:collapse' or `:expand' for incremental callers, or
                                  scope)))
       (let* ((minimum-value (if *expanding-parent?* 1 0))
              (maximum-value (-nomis/tree/n-levels-below/for-scope scope))
-             (requested-value
+             (requested-value-num
               (cond ((eq requested-value :dec)  (1- current-value))
                     ((eq requested-value :inc)  (1+ current-value))
                     ((eql requested-value :min) minimum-value)
                     ((eql requested-value :max) maximum-value)
                     (t                          requested-value))))
         (cl-destructuring-bind (new-value do-cycling?)
-            (-nomis/tree/set-level/maybe-wrap requested-value
+            (-nomis/tree/set-level/maybe-wrap requested-value-num
                                               minimum-value
                                               maximum-value)
           (let* ((hacked-direction (if (eq direction :set-to-n)
-                                       (if (<= requested-value minimum-value)
+                                       (if (<= requested-value-num
+                                               minimum-value)
                                            :collapse
                                          :expand)
                                      direction))
