@@ -1084,10 +1084,8 @@ with N as the parameter."
                      nil
                      '-nomis/tree/cancel-wrapex-timer)))
 
-(defun -nomis/tree/bring-within-range (v maximum)
-  "Clamp V to [min-allowed, MAXIMUM] and return a list (new-value do-cycling?).
-
-The min-allowed value is 1 when `*expanding-parent?*' is non-nil, 0 otherwise.
+(defun -nomis/tree/bring-within-range (v minimum maximum)
+  "Clamp V to [MINIMUM, MAXIMUM] and return a list (new-value do-cycling?).
 
 Normally V is clamped to the valid range and DO-CYCLING? is nil. However, if V
 is at an extreme (one below min-allowed, or `nomis/outline/w/plus-infinity'),
@@ -1096,20 +1094,19 @@ is started and normal clamping applies; on the second (if the same command is
 repeated soon enough and a repeat key is not in use) V wraps to the opposite
 extreme and DO-CYCLING? is t. Cycling is suppressed if MAXIMUM is 0 or if the
 command has changed since the timer was started."
-  (let* ((repeat-key-likely-used? (-nomis/tree/repeat-key-likely-used?))
-         (minimum-value (if *expanding-parent?* 1 0)))
-    (cl-flet ((normal-behaviour () (list (min (max minimum-value v)
+  (let* ((repeat-key-likely-used? (-nomis/tree/repeat-key-likely-used?)))
+    (cl-flet ((normal-behaviour () (list (min (max minimum v)
                                               maximum)
                                          nil))
-              (wrapping-behaviour () (list (if (= v (1- minimum-value))
+              (wrapping-behaviour () (list (if (= v (1- minimum))
                                                maximum
-                                             minimum-value)
+                                             minimum)
                                            t)))
       (let* ((allow-wrapex-now? (and -nomis/tree/allow-wrapex-timer
                                      (not repeat-key-likely-used?))))
         (-nomis/tree/cancel-wrapex-timer)
         (if (or (= maximum 0)
-                (not (or (= v (1- minimum-value))
+                (not (or (= v (1- minimum))
                          (= v nomis/outline/w/plus-infinity))))
             (normal-behaviour)
           (if (not allow-wrapex-now?)
@@ -1228,9 +1225,11 @@ DIRECTION should be `:collapse' or `:expand' for incremental callers, or
                     ((eql requested-value :max) maximum-value)
                     (t                          requested-value))))
         (cl-destructuring-bind (new-value do-cycling?)
-            (-nomis/tree/bring-within-range requested-value maximum-value)
+            (-nomis/tree/bring-within-range requested-value
+                                            minimum-value
+                                            maximum-value)
           (let* ((hacked-direction (if (eq direction :set-to-n)
-                                       (if (eq requested-value minimum-value)
+                                       (if (<= requested-value minimum-value)
                                            :collapse
                                          :expand)
                                      direction))
