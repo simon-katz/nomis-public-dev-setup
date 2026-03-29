@@ -1129,17 +1129,22 @@ command has changed since the timer was started."
     (:root      (-nomis/tree/n-levels-below/root))
     (:all-roots (-nomis/tree/n-levels-below/buffer))))
 
-(defun -nomis/tree/current-expansion-level/for-scope (direction scope)
+(defun -nomis/tree/start-level-for-incremental-contract/for-scope (scope)
   (cl-ecase scope
-    (:point     (if (eq direction :collapse)
-                    (-nomis/tree/start-level-for-incremental-contract/point)
-                  (-nomis/tree/n-levels-being-shown-or-infinity/point)))
-    (:root      (if (eq direction :collapse)
-                    (-nomis/tree/start-level-for-incremental-contract/root)
-                  (-nomis/tree/n-levels-being-shown-or-infinity/root)))
-    (:all-roots (if (eq direction :collapse)
-                    (-nomis/tree/start-level-for-incremental-contract/buffer)
-                  (-nomis/tree/n-levels-being-shown-or-infinity/buffer)))))
+    (:point     (-nomis/tree/start-level-for-incremental-contract/point))
+    (:root      (-nomis/tree/start-level-for-incremental-contract/root))
+    (:all-roots (-nomis/tree/start-level-for-incremental-contract/buffer))))
+
+(defun -nomis/tree/n-levels-being-shown-or-infinity/for-scope (scope)
+  (cl-ecase scope
+    (:point     (-nomis/tree/n-levels-being-shown-or-infinity/point))
+    (:root      (-nomis/tree/n-levels-being-shown-or-infinity/root))
+    (:all-roots (-nomis/tree/n-levels-being-shown-or-infinity/buffer))))
+
+(defun -nomis/tree/current-expansion-level/for-scope (direction scope)
+  (if (eq direction :collapse)
+      (-nomis/tree/start-level-for-incremental-contract/for-scope scope)
+    (-nomis/tree/n-levels-being-shown-or-infinity/for-scope scope)))
 
 (defun -nomis/tree/already-at-limit? (direction cv)
   (= cv
