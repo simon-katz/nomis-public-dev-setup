@@ -1250,12 +1250,6 @@ explicit-value callers, or nil for callers that want no limit-checking."
 
 ;;;;; nomis/tree/show-children-from-point/xxxx
 
-(defun nomis/tree/show-children-from-point (n)
-  "Show N levels from the current heading, and collapse anything that's
-at a higher level.
-When in a body, \"current heading\" means the current body's parent heading."
-  (-nomis/tree/set-level-etc :point n :set-to-n))
-
 (defun nomis/tree/show-children-from-point/set-min ()
   "Fully collapse the current heading.
 When in a body, \"current heading\" means the current body's parent heading."
@@ -1281,7 +1275,7 @@ When in a body, \"current heading\" means the current body's parent heading."
   (-nomis/tree/command
       nil
     (if n-or-nil
-        (nomis/tree/show-children-from-point n-or-nil)
+        (-nomis/tree/set-level-etc :point n-or-nil :set-to-n)
       (-nomis/tree/set-level-etc :point :dec :collapse))))
 
 (defun nomis/tree/backtab (n-or-nil)
@@ -1300,7 +1294,7 @@ When in a body, \"current heading\" means the current body's parent heading."
   (-nomis/tree/command
       nil
     (if n-or-nil
-        (nomis/tree/show-children-from-point n-or-nil)
+        (-nomis/tree/set-level-etc :point n-or-nil :set-to-n)
       (-nomis/tree/set-level-etc :point :inc :expand))))
 
 ;;;;; nomis/tree/show-children-from-parent/xxxx support
@@ -1358,9 +1352,6 @@ If N-OR-NIL is provided, set the number of child levels to N-OR-NIL."
 
 ;;;;; nomis/tree/show-children-from-root/xxxx
 
-(defun nomis/tree/show-children-from-root (n)
-  (-nomis/tree/set-level-etc :root n :set-to-n))
-
 (defun nomis/tree/show-children-from-root/set-min ()
   "Fully collapse the root of the current heading."
   (interactive)
@@ -1383,7 +1374,7 @@ If N-OR-NIL is provided, set the number of child levels to N-OR-NIL."
   (-nomis/tree/command
       nil
     (if n-or-nil
-        (nomis/tree/show-children-from-root n-or-nil)
+        (-nomis/tree/set-level-etc :root n-or-nil :set-to-n)
       (-nomis/tree/set-level-etc :root :dec :collapse))))
 
 (defun nomis/tree/show-children-from-root/incremental/more (n-or-nil)
@@ -1394,7 +1385,7 @@ If N-OR-NIL is provided, set the number of child levels to N-OR-NIL."
   (-nomis/tree/command
       nil
     (if n-or-nil
-        (nomis/tree/show-children-from-root n-or-nil)
+        (-nomis/tree/set-level-etc :root n-or-nil :set-to-n)
       (-nomis/tree/set-level-etc :root :inc :expand))))
 
 (defun nomis/tree/show-children-from-root/to-current-level ()
@@ -1407,9 +1398,6 @@ If N-OR-NIL is provided, set the number of child levels to N-OR-NIL."
 
 
 ;;;;; nomis/tree/show-children-from-all-roots/xxxx
-
-(defun nomis/tree/show-children-from-all-roots (n)
-  (-nomis/tree/set-level-etc :all-roots n :set-to-n))
 
 (defun nomis/tree/show-children-from-all-roots/set-min ()
   "Fully collapse all roots."
@@ -1433,7 +1421,7 @@ If N-OR-NIL is provided, set the number of child levels to N-OR-NIL."
   (-nomis/tree/command
       nil
     (if n-or-nil
-        (nomis/tree/show-children-from-all-roots n-or-nil)
+        (-nomis/tree/set-level-etc :all-roots n-or-nil :set-to-n)
       (-nomis/tree/set-level-etc :all-roots :dec :collapse))))
 
 (defun nomis/tree/show-children-from-all-roots/incremental/more (n-or-nil)
@@ -1444,7 +1432,7 @@ If N-OR-NIL is provided, set the number of child levels to N-OR-NIL."
   (-nomis/tree/command
       nil
     (if n-or-nil
-        (nomis/tree/show-children-from-all-roots n-or-nil)
+        (-nomis/tree/set-level-etc :all-roots n-or-nil :set-to-n)
       (-nomis/tree/set-level-etc :all-roots :inc :expand))))
 
 (defun nomis/tree/show-children-from-all-roots/to-current-level ()
