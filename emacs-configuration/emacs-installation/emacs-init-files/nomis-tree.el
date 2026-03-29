@@ -362,13 +362,21 @@ heading."
   (when collapse-first? (nomis/outline/w/collapse))
   (nomis/outline/w/show-children n)
   (when -nomis/tree/show-bodies?
-    (let* ((level (nomis/outline/w/level/no-inc-if-in-body)))
+    (let* ((start-level (nomis/outline/w/level/no-inc-if-in-body)))
       (nomis/tree/mapc-entries-from-point
        #'(lambda ()
-           (when (< (- (nomis/outline/w/level/boh)
-                       level)
-                    n)
-             (nomis/outline/w/show-entry)))))))
+           (let* ((n-levels-below-start (- (nomis/outline/w/level/boh)
+                                           start-level)))
+             (when (< n-levels-below-start n)
+               (nomis/outline/w/show-entry))
+             ;; Hack to avoid unwanted ellipsis for last heading in file when it
+             ;; has no body:
+             (when (and (= n-levels-below-start n)
+                        (nomis/outline/w/no-further-headings?)
+                        (not (-nomis/outline/w/has-body?/boh)))
+               ;; Yes, the heading has no body, but this gets rid of the
+               ;; ellipsis.
+               (nomis/outline/w/show-entry))))))))
 
 (defun nomis/tree/expand-fully ()
   (nomis/tree/expand 1000) ; TODO magic number
