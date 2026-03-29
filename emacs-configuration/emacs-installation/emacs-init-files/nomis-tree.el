@@ -1160,7 +1160,7 @@ command has changed since the timer was started."
                   (nomis/outline/w/pulse-current-section)))
     (:all-roots (nomis/msg/pulse-buffer))))
 
-(defun -nomis/tree/new-level-message-format-string (scope)
+(defun -nomis/tree/set-level/message-format-string (scope)
   (cl-ecase scope
     (:point     (if *expanding-parent?*
                     "[%s / %s] from parent"
@@ -1181,7 +1181,7 @@ command has changed since the timer was started."
     (funcall (if error?
                  #'nomis/popup/error-message
                #'nomis/popup/message)
-             (concat (-nomis/tree/new-level-message-format-string
+             (concat (-nomis/tree/set-level/message-format-string
                       scope)
                      "%s%s")
              new-value
