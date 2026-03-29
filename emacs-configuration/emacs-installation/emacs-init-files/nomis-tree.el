@@ -1147,11 +1147,11 @@ command has changed since the timer was started."
       (-nomis/tree/start-level-for-incremental-contract/for-scope scope)
     (-nomis/tree/n-levels-being-shown-or-infinity/for-scope scope)))
 
-(defun -nomis/tree/already-at-limit? (direction cv)
-  (= cv
-     (cl-ecase direction
-       (:collapse (if *expanding-parent?* 1 0))
-       (:expand   nomis/outline/w/plus-infinity))))
+(defun -nomis/tree/already-at-limit? (direction
+                                      current-value)
+  (cl-ecase direction
+    (:collapse (<= current-value (if *expanding-parent?* 1 0)))
+    (:expand   (= current-value nomis/outline/w/plus-infinity))))
 
 (defun -nomis/tree/set-level/do-action (scope n)
   (cl-ecase scope
