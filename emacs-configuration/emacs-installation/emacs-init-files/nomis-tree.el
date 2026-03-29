@@ -1180,29 +1180,28 @@ Required when DIRECTION is non-nil; ignored otherwise."
         (let* ((error? (and direction
                             (not do-cycling?)
                             (-nomis/tree/already-at-limit? direction cv))))
-          (prog1
-              (-nomis/tree/new-level-action scope new-level)
-            (when (and (not error?)
-                       (> maximum-value 0)
-                       (= new-level maximum-value))
-              (-nomis/tree/new-level-pulse scope))
-            (unless *-nomis/tree/inhibit-set-level-etc-message?*
-              (funcall (if error?
-                           #'nomis/popup/error-message
-                         #'nomis/popup/message)
-                       (concat (-nomis/tree/new-level-message-format-string
-                                scope)
-                               "%s%s")
-                       new-level
-                       maximum-value
-                       (if -nomis/tree/show-bodies?
-                           ""
-                         " (not showing bodies)")
-                       (if error?
-                           (cl-ecase direction
-                             (:collapse " —- already fully collapsed")
-                             (:expand   " —- already fully expanded"))
-                         "")))))))))
+          (-nomis/tree/new-level-action scope new-level)
+          (when (and (not error?)
+                     (> maximum-value 0)
+                     (= new-level maximum-value))
+            (-nomis/tree/new-level-pulse scope))
+          (unless *-nomis/tree/inhibit-set-level-etc-message?*
+            (funcall (if error?
+                         #'nomis/popup/error-message
+                       #'nomis/popup/message)
+                     (concat (-nomis/tree/new-level-message-format-string
+                              scope)
+                             "%s%s")
+                     new-level
+                     maximum-value
+                     (if -nomis/tree/show-bodies?
+                         ""
+                       " (not showing bodies)")
+                     (if error?
+                         (cl-ecase direction
+                           (:collapse " —- already fully collapsed")
+                           (:expand   " —- already fully expanded"))
+                       ""))))))))
 
 ;;;;; nomis/tree/show-children-from-point/xxxx
 
