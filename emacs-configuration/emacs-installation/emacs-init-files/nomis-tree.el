@@ -1207,8 +1207,8 @@ popup message and optionally pulse. The min-allowed value is 1 when
 SCOPE is one of `:point', `:root', or `:all-roots'.
 
 REQUESTED-VALUE is the desired number of levels to show. It can be a
-non-negative integer, `:min'/`:max' to mean the minimum/maximum for the
-current scope, or `:dec'/`:inc' to mean one less/more than the current
+non-negative integer, `:min' or `:max' to mean the minimum/maximum for the
+current scope, or `:dec' or `:inc' to mean one less/more than the current
 value. It is clamped to the valid range.
 
 DIRECTION should be `:collapse' or `:expand' for incremental callers, or
