@@ -273,7 +273,7 @@
          (nomis/cider-ns-refresh/log-post-message)
          (nomis/msg/grab-user-attention/high)
          (error msg))))
-   (apply orig-fun mode args))
+   (apply orig-fun mode other-args))
  '((name . nomis/maybe-forbid-refresh)
    (depth . 100)))
 ;; (advice-remove 'cider-ns-refresh 'nomis/maybe-forbid-refresh)
