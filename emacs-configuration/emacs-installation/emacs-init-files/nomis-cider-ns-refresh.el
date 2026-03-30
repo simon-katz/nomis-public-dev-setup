@@ -376,5 +376,66 @@
    "You need to fix `-nomis/cider-ns-refresh/reloading-face` for this version of CIDER.")))
 
 ;;;; ___________________________________________________________________________
+;;;; Fix some `cider-ns-refresh` issues
+
+(cond
+ ((member (pkg-info-version-info 'cider)
+          '("20250806.1944"))
+
+  ;; When `cider-ns-refresh` encounters an error, `cider-ns--present-error` is
+  ;; called. It displays the `*cider-error*` buffer, then:
+  ;; - calls `cider-jump-to` to navigate to the error location -- but ns-refresh
+  ;;   errors don't carry real line/column info, so the jump always lands at
+  ;;   line 1 of the error file, which is useless and disruptive; and
+  ;; - calls `select-window` to focus the culprit source buffer -- but we want
+  ;;   `*cider-error*` focused instead (handled by
+  ;;   `nomis/display-buffer-and-select-for-cider-error` below), and if
+  ;;   `cider-jump-to` has been suppressed the window doesn't exist anyway,
+  ;;   causing a `wrong-type-argument` error. Suppress both.
+  (advice-add 'cider-ns--present-error
+              :around
+              (lambda (orig-fun &rest args)
+                (cl-letf (((symbol-function 'cider-jump-to) #'ignore)
+                          ((symbol-function 'select-window) #'ignore))
+                  (apply orig-fun args)))
+              '((name . nomis/no-jump-on-ns-error)))
+  ;; (advice-remove 'cider-ns--present-error 'nomis/no-jump-on-ns-error)
+  )
+
+ (t
+  (message-box
+   "You need to fix `nomis/no-jump-on-ns-error` for this version of CIDER.")))
+
+
+(cond
+ ((member (pkg-info-version-info 'cider)
+          '("20250806.1944"))
+
+  ;; `cider-auto-select-error-buffer' is t, but `cider-ns--present-error'
+  ;; displays the `*cider-error*' buffer via a path that doesn't honour it.
+  ;; So we use `display-buffer-alist' to focus the window ourselves.
+  ;;
+  ;; We can't simply call `select-window' synchronously in the action function,
+  ;; because something later in the call chain steals focus back. Instead we
+  ;; return nil (so `display-buffer' handles the actual display normally) and
+  ;; schedule the `select-window' call for the next event-loop iteration via
+  ;; `run-at-time', by which point the focus-stealing has already happened.
+  (defun nomis/display-buffer-and-select-for-cider-error (buffer _alist)
+    (run-at-time 0 nil
+                 (lambda ()
+                   (when-let ((window (get-buffer-window buffer 'visible)))
+                     (select-window window))))
+    nil ; Return nil so display-buffer continues with its normal logic
+    )
+
+  (add-to-list 'display-buffer-alist
+               '("\\*cider-error\\*"
+                 (nomis/display-buffer-and-select-for-cider-error))))
+
+ (t
+  (message-box
+   "You need to fix `nomis/display-buffer-and-select-for-cider-error` for this version of CIDER.")))
+
+;;;; ___________________________________________________________________________
 
 (provide 'nomis-cider-ns-refresh)
