@@ -99,6 +99,15 @@
             :after
             #'-nomis/outline/show-after-find/after-advice)
 
+(eval-after-load 'nomis-clojure-lsp
+  (progn
+    (advice-add 'nomis/clojure-lsp-and-cider/find-definition
+                :after
+                #'-nomis/outline/show-after-find/after-advice)
+    (advice-add 'nomis/clojure-lsp-and-cider/find-definition-v2
+                :after
+                #'-nomis/outline/show-after-find/after-advice)))
+
 ;;;; `outline-regexp`
 
 ;;;;; Emacs Lisp
