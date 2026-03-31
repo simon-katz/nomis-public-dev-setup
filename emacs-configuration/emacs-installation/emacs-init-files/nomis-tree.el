@@ -594,6 +594,28 @@ One of:
 
 (defvar -nomis/tree/nav+lineage/n-child-levels-to-show nil) ; Buffer-local? No.
 
+(defun nomis/tree/nav+lineage/set-n-child-levels-to-show (n-or-nil)
+  (interactive "P")
+  (numerify-when-non-nil n-or-nil)
+  (-nomis/tree/command
+      nil
+    (when (null n-or-nil)
+      (setq n-or-nil
+            (let* ((s (read-string
+                       (cl-format nil
+                                  "Number of levels to show ~
+                                 (empty string for all children) ~
+                                 (currently ~s): "
+                                  -nomis/tree/nav+lineage/n-child-levels-to-show))))
+              (if (member (s-trim s) '("" "nil"))
+                  nil
+                (string-to-number s)))))
+    (setq -nomis/tree/nav+lineage/n-child-levels-to-show
+          (if (null n-or-nil) n-or-nil (max 0 (floor n-or-nil))))
+    (-nomis/tree/nav+lineage/show-lineage)
+    (message "nav+lineage n-child-levels-to-show set to %s"
+             -nomis/tree/nav+lineage/n-child-levels-to-show)))
+
 ;;;;; -nomis/tree/nav+lineage/show-lineage
 
 (defun -nomis/tree/nav+lineage/show-lineage (&optional n-or-nil)
@@ -618,30 +640,6 @@ One of:
     (message "ancestors: %s  n-children: %s"
              (-nomis/tree/nav+lineage/ancestors-approach-text)
              (or n-levels-or-nil "all"))))
-
-;;;;; nomis/tree/nav+lineage/set-n-child-levels-to-show
-
-(defun nomis/tree/nav+lineage/set-n-child-levels-to-show (n-or-nil)
-  (interactive "P")
-  (numerify-when-non-nil n-or-nil)
-  (-nomis/tree/command
-      nil
-    (when (null n-or-nil)
-      (setq n-or-nil
-            (let* ((s (read-string
-                       (cl-format nil
-                                  "Number of levels to show ~
-                                 (empty string for all children) ~
-                                 (currently ~s): "
-                                  -nomis/tree/nav+lineage/n-child-levels-to-show))))
-              (if (member (s-trim s) '("" "nil"))
-                  nil
-                (string-to-number s)))))
-    (setq -nomis/tree/nav+lineage/n-child-levels-to-show
-          (if (null n-or-nil) n-or-nil (max 0 (floor n-or-nil))))
-    (-nomis/tree/nav+lineage/show-lineage)
-    (message "nav+lineage n-child-levels-to-show set to %s"
-             -nomis/tree/nav+lineage/n-child-levels-to-show)))
 
 ;;;;; On first/last sibling/peer
 
