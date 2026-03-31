@@ -88,7 +88,7 @@ H-o p    Set ancestors approach for nav+lineage
 H-o c    Set # child levels for nav+lineage
 H-o m    Toggle maintain-line-no-in-window when scrolling
 
-H-o H-o  Prefix providing access to the standard set of outline commands
+H-o o    Prefix providing access to the standard set of outline commands
 
 H-o ?    Show this help")
 

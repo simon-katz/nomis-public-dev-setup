@@ -32,7 +32,7 @@
 (defvar-keymap nomis/outline/kb/map
   :doc "Keymap for nomis/outline commands.")
 
-(define-key nomis/tree/kb/map (kbd "H-o") nomis/outline/kb/map)
+(define-key nomis/tree/kb/map (kbd "o") nomis/outline/kb/map)
 
 (define-key nomis/outline/kb/map (kbd "c")   'outline-hide-entry)
 (define-key nomis/outline/kb/map (kbd "e")   'outline-show-entry)
