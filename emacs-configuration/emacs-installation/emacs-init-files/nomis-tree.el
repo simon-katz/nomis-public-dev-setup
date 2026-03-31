@@ -564,6 +564,32 @@ One of:
            return text
            finally (error "Unexpected value for -nomis/tree/nav+lineage/ancestors-approach")))
 
+(defun -nomis/tree/nav+lineage/set-ancestors-approach* (v)
+  (setq -nomis/tree/nav+lineage/ancestors-approach v)
+  (-nomis/tree/nav+lineage/show-lineage)
+  (message "nav+lineage ancestors-approach set to %s"
+           (-nomis/tree/nav+lineage/ancestors-approach-text)))
+
+(defun nomis/tree/nav+lineage/set-ancestors-approach ()
+  (interactive)
+  (-nomis/tree/command
+      nil
+    (let* ((curr-string (-nomis/tree/nav+lineage/ancestors-approach-text))
+           (prompt (format "Choose ancestors approach — currently %S: "
+                           curr-string))
+           (response
+            (ido-completing-read
+             prompt
+             (-map #'cdr -nomis/tree/nav+lineage/ancestors-approach/pairs)
+             nil
+             t
+             nil
+             'nomis/tree/nav+lineage/set-ancestors-approach/prompt-history
+             curr-string))
+           (v (car (rassoc response
+                           -nomis/tree/nav+lineage/ancestors-approach/pairs))))
+      (-nomis/tree/nav+lineage/set-ancestors-approach* v))))
+
 ;;;;;; Children
 
 (defvar -nomis/tree/nav+lineage/n-child-levels-to-show nil) ; Buffer-local? No.
@@ -616,34 +642,6 @@ One of:
     (-nomis/tree/nav+lineage/show-lineage)
     (message "nav+lineage n-child-levels-to-show set to %s"
              -nomis/tree/nav+lineage/n-child-levels-to-show)))
-
-;;;;; nomis/tree/nav+lineage/set-ancestors-approach
-
-(defun -nomis/tree/nav+lineage/set-ancestors-approach* (v)
-  (setq -nomis/tree/nav+lineage/ancestors-approach v)
-  (-nomis/tree/nav+lineage/show-lineage)
-  (message "nav+lineage ancestors-approach set to %s"
-           (-nomis/tree/nav+lineage/ancestors-approach-text)))
-
-(defun nomis/tree/nav+lineage/set-ancestors-approach ()
-  (interactive)
-  (-nomis/tree/command
-      nil
-    (let* ((curr-string (-nomis/tree/nav+lineage/ancestors-approach-text))
-           (prompt (format "Choose ancestors approach — currently %S: "
-                           curr-string))
-           (response
-            (ido-completing-read
-             prompt
-             (-map #'cdr -nomis/tree/nav+lineage/ancestors-approach/pairs)
-             nil
-             t
-             nil
-             'nomis/tree/nav+lineage/set-ancestors-approach/prompt-history
-             curr-string))
-           (v (car (rassoc response
-                           -nomis/tree/nav+lineage/ancestors-approach/pairs))))
-      (-nomis/tree/nav+lineage/set-ancestors-approach* v))))
 
 ;;;;; On first/last sibling/peer
 
