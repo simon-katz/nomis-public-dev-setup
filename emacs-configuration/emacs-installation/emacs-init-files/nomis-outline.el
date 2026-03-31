@@ -71,8 +71,8 @@
   ;; 4 colors in rainbow order, at least when using a dark theme.
   ;;
   ;; "Of York Gave Battle"
-  (set-face-attribute 'outline-1 nil :inherit 'font-lock-string-face)
-  (set-face-attribute 'outline-2 nil :inherit 'font-lock-variable-name-face)
+  (set-face-attribute 'outline-1 nil :inherit 'font-lock-variable-name-face)
+  (set-face-attribute 'outline-2 nil :inherit 'font-lock-string-face)
   (set-face-attribute 'outline-3 nil :inherit 'font-lock-constant-face)
   (set-face-attribute 'outline-4 nil :inherit 'font-lock-function-name-face)
   (set-face-attribute 'outline-5 nil :inherit 'outline-1)
