@@ -84,8 +84,8 @@ H-o b    Toggle showing of bodies when expanding/collapsing
 H-o ]    Show children from root to current level
 H-o =    Show children from all roots to current level
 
-H-o a    Set ancestors approach for nav+lineage
-H-o c    Set # child levels for nav+lineage
+H-o n a  Set ancestors approach for nav+lineage
+H-o n c  Set # child levels for nav+lineage
 H-o m    Toggle maintain-line-no-in-window when scrolling
 
 H-o o    Prefix providing access to the standard set of outline commands
@@ -231,11 +231,19 @@ H-o ?    Show this help")
 (define-key nomis/tree/kb/map (kbd "]") 'nomis/tree/show-children-from-root/to-current-level)
 (define-key nomis/tree/kb/map (kbd "=") 'nomis/tree/show-children-from-all-roots/to-current-level)
 
-(define-key nomis/tree/kb/map (kbd "c") 'nomis/tree/nav+lineage/set-n-child-levels-to-show)
-(define-key nomis/tree/kb/map (kbd "a") 'nomis/tree/nav+lineage/set-ancestors-approach)
 (define-key nomis/tree/kb/map (kbd "m") 'nomis/scrolling/toggle-maintain-line-no-in-window)
 
 (define-key nomis/tree/kb/map (kbd "?") 'nomis/tree/pop-up-help)
+
+;;;; nomis/tree/kb/nav+lineage-map
+
+(defvar-keymap nomis/tree/kb/nav+lineage-map
+  :doc "Keymap for nomis/tree nav+lineage commands.")
+
+(define-key nomis/tree/kb/map (kbd "n") nomis/tree/kb/nav+lineage-map)
+
+(define-key nomis/tree/kb/nav+lineage-map (kbd "a") 'nomis/tree/nav+lineage/set-ancestors-approach)
+(define-key nomis/tree/kb/nav+lineage-map (kbd "c") 'nomis/tree/nav+lineage/set-n-child-levels-to-show)
 
 ;;; End
 
