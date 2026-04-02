@@ -566,9 +566,7 @@ One of:
 
 (defun -nomis/tree/nav+lineage/set-ancestors-approach* (v)
   (setq -nomis/tree/nav+lineage/ancestors-approach v)
-  (-nomis/tree/nav+lineage/show-lineage)
-  (message "nav+lineage ancestors-approach set to %s"
-           (-nomis/tree/nav+lineage/ancestors-approach-text)))
+  (-nomis/tree/nav+lineage/show-lineage))
 
 (defun nomis/tree/nav+lineage/set-ancestors-approach ()
   (interactive)
@@ -612,9 +610,7 @@ One of:
                 (string-to-number s)))))
     (setq -nomis/tree/nav+lineage/n-child-levels-to-show
           (if (null n-or-nil) n-or-nil (max 0 (floor n-or-nil))))
-    (-nomis/tree/nav+lineage/show-lineage)
-    (message "nav+lineage n-child-levels-to-show set to %s"
-             -nomis/tree/nav+lineage/n-child-levels-to-show)))
+    (-nomis/tree/nav+lineage/show-lineage)))
 
 ;;;;; -nomis/tree/nav+lineage/show-lineage
 
