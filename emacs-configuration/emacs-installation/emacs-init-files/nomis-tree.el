@@ -590,7 +590,12 @@ One of:
 
 ;;;;;; Children
 
-(defvar -nomis/tree/nav+lineage/n-child-levels-to-show nil) ; Buffer-local? No.
+(defvar -nomis/tree/nav+lineage/n-child-levels-to-show nil ; Buffer-local? No.
+  "What to do with children in `-nomis/tree/nav+lineage/show-lineage'.
+
+One of:
+- nil, meaning show all children.
+- A number, meaning show that number of levels of child.")
 
 (defun nomis/tree/nav+lineage/set-n-child-levels-to-show (n-or-nil)
   (interactive "P")
