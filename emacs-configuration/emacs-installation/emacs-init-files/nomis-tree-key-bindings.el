@@ -74,6 +74,8 @@ Use H with various other keys:
 Other commands
 --------------
 
+H-o ?    Show this help
+
 H-S      Search heading text for the text of this heading
 H-s      Repeat search heading text
 
@@ -84,13 +86,12 @@ H-o b    Toggle showing of bodies when expanding/collapsing
 H-o ]    Show children from root to current level
 H-o =    Show children from all roots to current level
 
-H-o n a  Set ancestors approach for nav+lineage
-H-o n c  Set # child levels for nav+lineage
 H-o m    Toggle maintain-line-no-in-window when scrolling
 
 H-o o    Prefix providing access to the standard set of outline commands
 
-H-o ?    Show this help")
+H-o n a  Set ancestors approach for nav+lineage
+H-o n c  Set # child levels for nav+lineage")
 
 (defun nomis/tree/pop-up-help ()
   (interactive)
