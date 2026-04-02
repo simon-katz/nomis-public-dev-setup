@@ -84,7 +84,7 @@ H-o b    Toggle showing of bodies when expanding/collapsing
 H-o ]    Show children from root to current level
 H-o =    Show children from all roots to current level
 
-H-o p    Set ancestors approach for nav+lineage
+H-o a    Set ancestors approach for nav+lineage
 H-o c    Set # child levels for nav+lineage
 H-o m    Toggle maintain-line-no-in-window when scrolling
 
@@ -232,7 +232,7 @@ H-o ?    Show this help")
 (define-key nomis/tree/kb/map (kbd "=") 'nomis/tree/show-children-from-all-roots/to-current-level)
 
 (define-key nomis/tree/kb/map (kbd "c") 'nomis/tree/nav+lineage/set-n-child-levels-to-show)
-(define-key nomis/tree/kb/map (kbd "p") 'nomis/tree/nav+lineage/set-ancestors-approach)
+(define-key nomis/tree/kb/map (kbd "a") 'nomis/tree/nav+lineage/set-ancestors-approach)
 (define-key nomis/tree/kb/map (kbd "m") 'nomis/scrolling/toggle-maintain-line-no-in-window)
 
 (define-key nomis/tree/kb/map (kbd "?") 'nomis/tree/pop-up-help)
