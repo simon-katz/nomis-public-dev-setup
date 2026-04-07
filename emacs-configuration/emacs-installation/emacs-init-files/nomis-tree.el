@@ -1483,6 +1483,31 @@ If N-OR-NIL is provided, set the number of child levels to N-OR-NIL."
     (add-to-list 'beacon-dont-blink-commands cmd) ; noflycheck
     ))
 
+;;;; Debug
+
+;;;;; Print interesting values
+
+(defvar *-nomis/tree/print-interesting-values? nil)
+
+(defun -nomis/tree/print-interesting-values ()
+  (when *-nomis/tree/print-interesting-values?
+    (let* ((inhibit-message t))
+      (message "--------------------------------")
+      (dolist (scope '(:all-roots :root :point))
+        (message "Scope: %s" scope)
+        (message "  start-level-for-incremental-contract = %s"
+                 (-nomis/tree/start-level-for-incremental-contract/for-scope
+                  scope))
+        (message "  n-levels-being-shown-or-infinity     = %s"
+                 (-nomis/tree/n-levels-being-shown-or-infinity/for-scope scope)))
+      (message "--------------------------------"))))
+
+(defun -nomis/tree/add-print-interesting-values ()
+  (add-hook 'post-command-hook '-nomis/tree/print-interesting-values nil t))
+
+(add-hook 'nomis/tree-mode-hook
+          #'-nomis/tree/add-print-interesting-values)
+
 ;;; End
 
 (provide 'nomis-tree)
