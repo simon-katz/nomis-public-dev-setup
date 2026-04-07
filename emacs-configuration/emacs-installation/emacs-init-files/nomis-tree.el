@@ -1138,9 +1138,11 @@ the command has changed since the timer was started."
     (:all-roots (-nomis/tree/n-levels-being-shown-or-infinity/buffer))))
 
 (defun -nomis/tree/current-expansion-level/for-scope (direction scope)
-  (if (eq direction :collapse)
-      (-nomis/tree/start-level-for-incremental-contract/for-scope scope)
-    (-nomis/tree/n-levels-being-shown-or-infinity/for-scope scope)))
+  (cl-ecase direction
+    ((:collapse)
+     (-nomis/tree/start-level-for-incremental-contract/for-scope scope))
+    ((:expand :set-to-n)
+     (-nomis/tree/n-levels-being-shown-or-infinity/for-scope scope))))
 
 (defun -nomis/tree/at-limit? (hacked-direction value maximum)
   (cl-ecase hacked-direction
