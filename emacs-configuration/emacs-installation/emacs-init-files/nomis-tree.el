@@ -741,8 +741,10 @@ backward navigation."
                        ;; as the desired number of levels.
                        (= n-levels-being-shown-or-infinity
                           n-levels-or-nil)))))
-               (collapse-start-point ()
-                 (nomis/outline/w/collapse))
+               (maybe-collapse-start-point ()
+                 (unless (eq -nomis/tree/nav+lineage/ancestors-approach
+                             :nav+lineage/ancestors/leave-as-is)
+                   (nomis/outline/w/collapse)))
                (try-to-nav ()
                  (nomis/outline/w/prev-or-next-heading 1
                                                        (if (< n 0)
@@ -752,7 +754,7 @@ backward navigation."
                (show-lineage ()
                  (-nomis/tree/nav+lineage/show-lineage n-or-nil))
                (try-to-nav-then-show-lineage ()
-                 (collapse-start-point)
+                 (maybe-collapse-start-point)
                  (let* ((starting-point (point)))
                    (try-to-nav)
                    (let* ((moved? (not (= (point) starting-point))))
@@ -760,7 +762,8 @@ backward navigation."
                        (show-lineage))))))
       (nomis/outline/w/back-to-heading)
       (cond ((-nomis/tree/nav+lineage/doing-same-level-final-not-lone?/boh)
-             ;; This will display a can't-move message, then collapse:
+             ;; This will display a can't-move message and might collapse the
+             ;; start point.
              (try-to-nav-then-show-lineage))
             ((-nomis/tree/nav+lineage/sibling-then-peer-with-small-time-gap?)
              ;; If we very recently did a `nomis/tree/nav+lineage/xxxx-sibling`
