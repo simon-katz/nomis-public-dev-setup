@@ -752,8 +752,8 @@ backward navigation."
                (show-lineage ()
                  (-nomis/tree/nav+lineage/show-lineage n-or-nil))
                (try-to-nav-then-show-lineage ()
+                 (collapse-start-point)
                  (let* ((starting-point (point)))
-                   (collapse-start-point)
                    (try-to-nav)
                    (let* ((moved? (not (= (point) starting-point))))
                      (when moved?
