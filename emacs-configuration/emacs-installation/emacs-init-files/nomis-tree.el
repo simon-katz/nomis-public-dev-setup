@@ -741,6 +741,8 @@ backward navigation."
                        ;; as the desired number of levels.
                        (= n-levels-being-shown-or-infinity
                           n-levels-or-nil)))))
+               (collapse-start-point ()
+                 (nomis/outline/w/collapse))
                (try-to-nav ()
                  (nomis/outline/w/prev-or-next-heading 1
                                                        (if (< n 0)
@@ -751,7 +753,7 @@ backward navigation."
                  (-nomis/tree/nav+lineage/show-lineage n-or-nil))
                (try-to-nav-then-show-lineage ()
                  (let* ((starting-point (point)))
-                   (nomis/outline/w/collapse)
+                   (collapse-start-point)
                    (try-to-nav)
                    (let* ((moved? (not (= (point) starting-point))))
                      (when moved?
