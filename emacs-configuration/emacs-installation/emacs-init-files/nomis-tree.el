@@ -457,89 +457,54 @@ heading."
 
 ;;;;; Forward and backward
 
-(defun nomis/tree/previous-heading ()
-  "Move backward to the previous heading at any level.
-
-When the target is invisible, make it visible.
-
-If there is no previous heading, display a popup message."
-  (interactive)
+(defun -nomis/tree/prev-or-next-impl (n direction kind)
   (-nomis/tree/command
       nil
-    (let* ((nav-args (list 1 :backward :any-level)))
-      (if (apply #'nomis/outline/w/prev-or-next-heading nav-args)
-          (nomis/outline/w/ensure-heading-shown)
-        (apply #'nomis/outline/w/prev-or-next-heading/error-message nav-args)))))
+    (if (nomis/outline/w/prev-or-next-heading n direction kind)
+        (nomis/outline/w/ensure-heading-shown)
+      (nomis/outline/w/prev-or-next-heading/error-message n direction kind))))
+
+(defun nomis/tree/previous-heading ()
+  "Move backward to the previous heading at any level.
+When the target is invisible, make it visible.
+If there is no previous heading, display a popup message."
+  (interactive)
+  (-nomis/tree/prev-or-next-impl 1 :backward :any-level))
 
 (defun nomis/tree/next-heading ()
   "Move forward to the next heading at any level.
-
 When the target is invisible, make it visible.
-
 If there is no next heading, display a popup message."
   (interactive)
-  (-nomis/tree/command
-      nil
-    (let* ((nav-args (list 1 :forward :any-level)))
-      (if (apply #'nomis/outline/w/prev-or-next-heading nav-args)
-          (nomis/outline/w/ensure-heading-shown)
-        (apply #'nomis/outline/w/prev-or-next-heading/error-message nav-args)))))
+  (-nomis/tree/prev-or-next-impl 1 :forward :any-level))
 
 (defun nomis/tree/previous-sibling ()
   "Move backward one sibling.
-
 When the target is invisible, make it visible.
-
 If there is no previous sibling, display a popup message."
   (interactive)
-  (-nomis/tree/command
-      nil
-    (let* ((nav-args (list 1 :backward :sibling)))
-      (if (apply #'nomis/outline/w/prev-or-next-heading nav-args)
-          (nomis/outline/w/ensure-heading-shown)
-        (apply #'nomis/outline/w/prev-or-next-heading/error-message nav-args)))))
+  (-nomis/tree/prev-or-next-impl 1 :backward :sibling))
 
 (defun nomis/tree/next-sibling ()
   "Move forward one sibling.
-
 When the target is invisible, make it visible.
-
 If there is no next sibling, display a popup message."
   (interactive)
-  (-nomis/tree/command
-      nil
-    (let* ((nav-args (list 1 :forward :sibling)))
-      (if (apply #'nomis/outline/w/prev-or-next-heading nav-args)
-          (nomis/outline/w/ensure-heading-shown)
-        (apply #'nomis/outline/w/prev-or-next-heading/error-message nav-args)))))
+  (-nomis/tree/prev-or-next-impl 1 :forward :sibling))
 
 (defun nomis/tree/previous-peer ()
   "Move backward one peer.
-
 When the target is invisible, make it visible.
-
 If there is no previous peer, display a popup message."
   (interactive)
-  (-nomis/tree/command
-      nil
-    (let* ((nav-args (list 1 :backward :peer)))
-      (if (apply #'nomis/outline/w/prev-or-next-heading nav-args)
-          (nomis/outline/w/ensure-heading-shown)
-        (apply #'nomis/outline/w/prev-or-next-heading/error-message nav-args)))))
+  (-nomis/tree/prev-or-next-impl 1 :backward :peer))
 
 (defun nomis/tree/next-peer ()
   "Move forward one peer.
-
 When the target is invisible, make it visible.
-
 If there is no next peer, display a popup message."
   (interactive)
-  (-nomis/tree/command
-      nil
-    (let* ((nav-args (list 1 :forward :peer)))
-      (if (apply #'nomis/outline/w/prev-or-next-heading nav-args)
-          (nomis/outline/w/ensure-heading-shown)
-        (apply #'nomis/outline/w/prev-or-next-heading/error-message nav-args)))))
+  (-nomis/tree/prev-or-next-impl 1 :forward :peer))
 
 ;;;; Nav+lineage
 
