@@ -766,7 +766,7 @@ backward navigation."
                  (apply #'nomis/outline/w/prev-or-next-heading/error-message
                         nav-args))
                (show-lineage ()
-                 (-nomis/tree/nav+lineage/show-lineage n-or-nil))
+                 (-nomis/tree/nav+lineage/show-lineage n-levels-or-nil))
                (try-to-nav-then-show-lineage ()
                  (maybe-collapse-start-point)
                  (if (try-to-nav)
