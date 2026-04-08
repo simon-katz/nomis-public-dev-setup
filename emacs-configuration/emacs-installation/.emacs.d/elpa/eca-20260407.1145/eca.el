@@ -2,9 +2,9 @@
 ;; Copyright (C) 2025 Eric Dallo
 ;; Author: Eric Dallo <ercdll1337@gmail.com>
 ;; Maintainer: Eric Dallo <ercdll1337@gmail.com>
-;; Package-Version: 20260324.1353
-;; Package-Revision: a18106b02bf7
-;; Package-Requires: ((emacs "28.1") (dash "2.18.0") (f "0.20.0") (markdown-mode "2.3") (compat "30.1"))
+;; Package-Version: 20260407.1145
+;; Package-Revision: 7453af365c93
+;; Package-Requires: ((emacs "28.1") (dash "2.18.0") (s "1.12.0") (f "0.20.0") (markdown-mode "2.3") (compat "30.1"))
 ;; Keywords: tools
 ;; Homepage: https://github.com/editor-code-assistant/eca-emacs
 ;;
@@ -20,6 +20,10 @@
 ;;
 ;;; Code:
 
+(when (version< emacs-version "28.1")
+  (error "ECA requires Emacs 28.1 or later, but you are running %s"
+         emacs-version))
+
 (require 'cl-lib)
 (require 'backtrace)
 (require 'hierarchy)
@@ -29,8 +33,11 @@
 (require 'eca-util)
 (require 'eca-process)
 (require 'eca-api)
+(require 'eca-settings)
 (require 'eca-chat)
 (require 'eca-mcp)
+(require 'eca-providers)
+(require 'eca-config)
 (require 'eca-editor)
 (require 'eca-completion)
 (require 'eca-rewrite)
@@ -81,6 +88,14 @@ Tries git info first, then package.el version, then file modification date."
 (defcustom eca-after-initialize-hook nil
   "List of functions to be called after ECA has been initialized."
   :type 'hook
+  :group 'eca)
+
+(defcustom eca-send-process-id t
+  "Whether to send the Emacs process ID to the ECA server.
+When non-nil, the server uses it to detect when Emacs exits and
+shut down automatically.  Set to nil to omit it, e.g. when running
+the server independently of Emacs."
+  :type 'boolean
   :group 'eca)
 
 (defface eca-workspaces-tree-chat-idle-face
@@ -190,7 +205,19 @@ frames captured via `backtrace-get-frames'."
                    (plist-get server :name)
                    server))
   (eca-chat--handle-mcp-server-updated session server)
-  (eca-mcp--handle-mcp-server-updated session server))
+  (eca-mcp--handle-mcp-server-updated session server)
+  (eca-settings-refresh-tab "mcps" session))
+
+(defun eca--handle-progress (session params)
+  "Handle $/progress notification with PARAMS for SESSION."
+  (let ((task-id (plist-get params :taskId))
+        (type (plist-get params :type))
+        (title (plist-get params :title)))
+    (setf (eca--session-init-tasks session)
+          (eca-assoc (eca--session-init-tasks session)
+                     task-id
+                     (list :title title :type type)))
+    (eca-chat--handle-init-progress session)))
 
 (defun eca--handle-server-notification (session notification)
   "Handle NOTIFICATION sent by server for SESSION."
@@ -201,10 +228,13 @@ frames captured via `backtrace-get-frames'."
       ("chat/contentReceived" (eca-chat-content-received session params))
       ("chat/cleared" (eca-chat-cleared session params))
       ("chat/deleted" (eca-chat-deleted session params))
+      ("chat/opened" (eca-chat-opened session params))
       ("chat/statusChanged" (eca-chat-status-changed session params))
       ("rewrite/contentReceived" (eca-rewrite-content-received session params))
       ("tool/serverUpdated" (eca--tool-server-updated session params))
+      ("providers/updated" (eca-providers--handle-provider-updated session params))
       ("$/showMessage" (eca--handle-show-message params))
+      ("$/progress" (eca--handle-progress session params))
       (_ 'ignore))))
 
 (defun eca--handle-server-request (session request)
@@ -215,15 +245,26 @@ frames captured via `backtrace-get-frames'."
       ("editor/getDiagnostics" (eca-editor-get-diagnostics session params))
       (_ (eca-warn "Unknown server request %s" method)))))
 
+(defmacro eca--with-backtrace (var &rest body)
+  "Execute BODY, capturing backtrace into VAR on error.
+On Emacs 30+ uses `handler-bind' to capture a pre-unwind
+backtrace.  On older Emacs, runs BODY without capture."
+  (declare (indent 1))
+  (if (fboundp 'handler-bind)
+      `(handler-bind
+           ((error (lambda (_err)
+                     (setq ,var
+                           (backtrace-get-frames
+                            'handler-bind)))))
+         ,@body)
+    `(progn ,@body)))
+
 (defun eca--handle-message (session json-data)
   "Handle raw message JSON-DATA for SESSION."
   (let ((id (plist-get json-data :id))
         (result (plist-get json-data :result))
         (backtrace nil))
-    (handler-bind
-        ((error (lambda (_err)
-                  (setq backtrace
-                        (backtrace-get-frames 'handler-bind)))))
+    (eca--with-backtrace backtrace
       (condition-case err
           (pcase (eca--get-message-type json-data)
             ('response (-let [(success-callback) (plist-get (eca--session-response-handlers session) id)]
@@ -248,18 +289,20 @@ frames captured via `backtrace-get-frames'."
   (eca-api-request-async
    session
    :method "initialize"
-   :params (list :processId (unless (-some-> (buffer-file-name)
-                                      (file-remote-p))
-                              (emacs-pid))
-                 :clientInfo (list :name "emacs"
-                                   :version (emacs-version))
-                 :capabilities (list :codeAssistant (list :chat t
-                                                          :editor (list :diagnostics t)))
-                 :initializationOptions (list :chatAgent eca-chat-custom-agent)
-                 :workspaceFolders (vconcat (-map (lambda (folder)
-                                                    (list :uri (eca--path-to-uri folder)
-                                                          :name (file-name-nondirectory (directory-file-name folder))))
-                                                  (eca--session-workspace-folders session))))
+   :params (append (when-let* ((pid (and eca-send-process-id
+                                        (unless (-some-> (buffer-file-name)
+                                                  (file-remote-p))
+                                          (emacs-pid)))))
+                     (list :processId pid))
+                   (list :clientInfo (list :name "emacs"
+                                          :version (emacs-version))
+                         :capabilities (list :codeAssistant (list :chat t
+                                                                  :editor (list :diagnostics t)))
+                         :initializationOptions (list :chatAgent eca-chat-custom-agent)
+                         :workspaceFolders (vconcat (-map (lambda (folder)
+                                                           (list :uri (eca--path-to-uri folder)
+                                                                 :name (file-name-nondirectory (directory-file-name folder))))
+                                                         (eca--session-workspace-folders session)))))
    :success-callback (-lambda (res)
                        (setf (eca--session-status session) 'started)
                        (setf (eca--session-chat-welcome-message session) (plist-get res :chatWelcomeMessage))
@@ -362,6 +405,7 @@ When ARG is current prefix, ask for workspace roots to use."
       (eca-process-stop session)
       (eca-chat-exit session)
       (eca-mcp-details-exit session)
+      (eca-settings-exit session)
       (eca--emacs-errors-exit session)
       (eca-delete-session session))))
 
@@ -433,18 +477,9 @@ When ARG is current prefix, ask for workspace roots to use."
 
 ;;;###autoload
 (defun eca-open-global-config ()
-  "Open global ECA config file.
-If the file does not exist, create the directory if needed and open a new
-buffer visiting that path with `{}` pre-filled."
+  "Open the global config tab in eca-settings."
   (interactive)
-  (let* ((file (if-let (xdg (getenv "XDG_CONFIG_HOME"))
-                   (f-join xdg "eca" "config.json")
-                 (f-join (f-expand "~") ".config" "eca" "config.json")))
-         (dir (file-name-directory file)))
-    (make-directory dir t)
-    (find-file file)
-    (when (= (buffer-size) 0)
-      (insert "{}\n"))))
+  (eca-settings "global-config"))
 
 (provide 'eca)
 ;;; eca.el ends here

@@ -30,9 +30,7 @@ Restart eca, if not running just start." t)
 (autoload 'eca-workspaces "eca" "\
 Display all running ECA sessions and their chats in a tree view." t)
 (autoload 'eca-open-global-config "eca" "\
-Open global ECA config file.
-If the file does not exist, create the directory if needed and open a new
-buffer visiting that path with `{}` pre-filled." t)
+Open the global config tab in eca-settings." t)
 (register-definition-prefixes "eca" '("eca-"))
 
 
@@ -53,6 +51,10 @@ Select which variant to use for the current model." t)
 Select which chat agent to use from what server supports." t)
 (autoload 'eca-chat-cycle-agent "eca-chat" "\
 Cycle between existing chat agents to use." t)
+(autoload 'eca-chat-add-flag "eca-chat" "\
+Add a named flag to the current chat.
+The flag is placed after the nearest message block at or before
+point.  Works with any message type (user, tool call, etc)." t)
 (autoload 'eca-chat-toggle-trust "eca-chat" "\
 Toggle trust mode (auto-accept all tool call)." t)
 (autoload 'eca-chat-tool-call-accept-all "eca-chat" "\
@@ -132,7 +134,7 @@ Start a new ECA chat for same session." t)
 (autoload 'eca-chat-talk "eca-chat" "\
 Talk to the assistent by recording audio and transcribing it." t)
 (autoload 'eca-chat-timeline "eca-chat" "\
-Navigate to a user message via completion." t)
+Navigate to a user message or flag via completion." t)
 (autoload 'eca-chat-clear-prompt "eca-chat" "\
 Clear the prompt input field in chat." t)
 (autoload 'eca-chat-repeat-prompt "eca-chat" "\
@@ -179,6 +181,11 @@ Complete at the current point." t)
 (register-definition-prefixes "eca-completion" '("eca-completion-"))
 
 
+;;; Generated autoloads from eca-config.el
+
+(register-definition-prefixes "eca-config" '("eca-config--"))
+
+
 ;;; Generated autoloads from eca-diff.el
 
 (register-definition-prefixes "eca-diff" '("eca-diff-"))
@@ -192,7 +199,8 @@ Complete at the current point." t)
 ;;; Generated autoloads from eca-mcp.el
 
 (autoload 'eca-mcp-details "eca-mcp" "\
-List MCP servers with their status and options." t)
+List MCP servers with their status and options.
+Opens the settings panel focused on the MCPs tab." t)
 (register-definition-prefixes "eca-mcp" '("eca-mcp-"))
 
 
@@ -205,6 +213,13 @@ Force download the latest eca server." t)
 (autoload 'eca-uninstall-server "eca-process" "\
 Remove downloaded eca server if present." t)
 (register-definition-prefixes "eca-process" '("eca-"))
+
+
+;;; Generated autoloads from eca-providers.el
+
+(autoload 'eca-providers "eca-providers" "\
+Open the providers/models settings tab." t)
+(register-definition-prefixes "eca-providers" '("eca-providers-"))
 
 
 ;;; Generated autoloads from eca-rewrite.el
@@ -229,6 +244,16 @@ Apply diff between original text and rewrite overlay at point." t)
 (autoload 'eca-rewrite-merge "eca-rewrite" "\
 Merge between original text and rewrite overlay OV." t)
 (register-definition-prefixes "eca-rewrite" '("eca-rewrite-"))
+
+
+;;; Generated autoloads from eca-settings.el
+
+(autoload 'eca-settings "eca-settings" "\
+Open the ECA settings panel.
+Optional TAB-KEY focuses a specific tab.
+
+(fn &optional TAB-KEY)" t)
+(register-definition-prefixes "eca-settings" '("eca-settings-"))
 
 
 ;;; Generated autoloads from eca-table.el
