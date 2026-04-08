@@ -337,13 +337,10 @@ FEWER-OK? is truthy."
 
 (defun nomis/outline/w/prev-or-next-heading (n
                                              direction
-                                             kind
-                                             &optional
-                                             no-msg?)
+                                             kind)
   "Go to the N'th-next heading of kind KIND in direction DIRECTION.
-If such a heading exists, return `t`.
-If no such heading exists, return `nil', leave point unchanged and.
-when NO-MSG? is nil, display a popup message.
+If such a heading exists, return its position in the buffer.
+If no such heading exists, return nil and leave point unchanged.
 KIND is one of `:sibling`, `:peer` and `:any-level`.
 DIRECTION is one or `:forward` and `:backward`."
   (let* ((pos (->> (-iterate (lambda (start)
@@ -356,25 +353,31 @@ DIRECTION is one or `:forward` and `:backward`."
                    cl-rest
                    (-drop (1- n))
                    cl-first)))
-    (if pos
-        (progn
-          (goto-char pos)
-          t)
-      (unless no-msg?
-        (let* ((direction-word (cl-ecase direction
-                                 (:backward "previous")
-                                 (:forward "next")))
-               (kind-word (cl-ecase kind
-                            (:any-level "heading")
-                            (:sibling "sibling")
-                            (:peer "peer"))))
-          (nomis/popup/error-message
-           "No %s%s %s"
-           (if (= n 1) "" (concat (-nomis/outline/w/ordinal n)
-                                  "-"))
-           direction-word
-           kind-word)))
-      nil)))
+    (when pos
+      (goto-char pos)
+      pos)))
+
+(defun nomis/outline/w/prev-or-next-heading/error-message (n
+                                                           direction
+                                                           kind)
+  "Popup an error message saying we can't do
+`nomis/outline/w/prev-or-next-heading'.
+
+This is intended to be called after getting a nil return from
+`nomis/outline/w/prev-or-next-heading`."
+  (let* ((direction-word (cl-ecase direction
+                           (:backward "previous")
+                           (:forward "next")))
+         (kind-word (cl-ecase kind
+                      (:any-level "heading")
+                      (:sibling "sibling")
+                      (:peer "peer"))))
+    (nomis/popup/error-message
+     "No %s%s %s"
+     (if (= n 1) "" (concat (-nomis/outline/w/ordinal n)
+                            "-"))
+     direction-word
+     kind-word)))
 
 ;;; End
 
