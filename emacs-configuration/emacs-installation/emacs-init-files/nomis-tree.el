@@ -759,7 +759,9 @@ backward navigation."
              (if (expanded-to-desired-level?)
                  (try-to-nav-then-show-lineage)
                (show-lineage)
-               (message "Expanding before navigating")))))))
+               (-nomis/tree/nav+lineage/message n-levels-or-nil)
+               (let* ((*nomis/popup/duration* 2))
+                 (nomis/popup/message "Showing specified lineage before navigating"))))))))
 
 ;;;;; Nav+lineage commands
 
