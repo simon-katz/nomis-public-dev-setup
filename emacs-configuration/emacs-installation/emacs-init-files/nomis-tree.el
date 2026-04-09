@@ -520,7 +520,7 @@ If there is no next peer, display a popup message."
 ;;;;;; Ancestors
 
 (defvar -nomis/tree/nav+lineage/ancestors-approach ; Buffer-local? No.
-  :nav+lineage/ancestors/all-roots-to-current-level
+  :nav+lineage/ancestors/fat
   "What to do with ancestors in
 `-nomis/tree/nav+lineage/show-lineage-with-message'.
 
