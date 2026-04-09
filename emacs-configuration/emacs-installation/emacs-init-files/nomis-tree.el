@@ -521,7 +521,8 @@ If there is no next peer, display a popup message."
 
 (defvar -nomis/tree/nav+lineage/ancestors-approach ; Buffer-local? No.
   :nav+lineage/ancestors/all-roots-to-current-level
-  "What to do with ancestors in `-nomis/tree/nav+lineage/show-lineage'.
+  "What to do with ancestors in
+`-nomis/tree/nav+lineage/show-lineage-with-message'.
 
 One of:
 - `:nav+lineage/ancestors/leave-as-is' (but show ancestors if hidden)
@@ -543,8 +544,7 @@ One of:
 
 (defun -nomis/tree/nav+lineage/set-ancestors-approach* (v)
   (setq -nomis/tree/nav+lineage/ancestors-approach v)
-  (-nomis/tree/nav+lineage/show-lineage)
-  (-nomis/tree/nav+lineage/message nil))
+  (-nomis/tree/nav+lineage/show-lineage-with-message nil))
 
 (defun nomis/tree/nav+lineage/set-ancestors-approach ()
   (interactive)
@@ -569,7 +569,8 @@ One of:
 ;;;;;; Children
 
 (defvar -nomis/tree/nav+lineage/n-child-levels-to-show nil ; Buffer-local? No.
-  "What to do with children in `-nomis/tree/nav+lineage/show-lineage'.
+  "What to do with children in
+`-nomis/tree/nav+lineage/show-lineage-with-message'.
 
 One of:
 - nil, meaning show all children.
@@ -593,12 +594,11 @@ One of:
                 (string-to-number s)))))
     (setq -nomis/tree/nav+lineage/n-child-levels-to-show
           (if (null n-or-nil) n-or-nil (max 0 (floor n-or-nil))))
-    (-nomis/tree/nav+lineage/show-lineage)
-    (-nomis/tree/nav+lineage/message nil)))
+    (-nomis/tree/nav+lineage/show-lineage-with-message nil)))
 
-;;;;; -nomis/tree/nav+lineage/show-lineage
+;;;;; -nomis/tree/nav+lineage/show-lineage-with-message
 
-(defun -nomis/tree/nav+lineage/show-lineage (&optional n-or-nil)
+(defun -nomis/tree/nav+lineage/show-lineage-with-message (n-or-nil)
   (let* ((n-levels-or-nil (or n-or-nil
                               -nomis/tree/nav+lineage/n-child-levels-to-show)))
     (cl-ecase -nomis/tree/nav+lineage/ancestors-approach
@@ -616,14 +616,12 @@ One of:
         nomis/tree/ls/spec/hide-all--thin-ancestors--no-children)))
     (if (null n-levels-or-nil)
         (nomis/tree/expand-fully)
-      (nomis/tree/expand n-levels-or-nil t))))
-
-(defun -nomis/tree/nav+lineage/message (n-or-nil)
-  (let* ((n-levels-or-nil (or n-or-nil
-                              -nomis/tree/nav+lineage/n-child-levels-to-show)))
-    (message "ancestors: %s  n-children: %s"
-             (-nomis/tree/nav+lineage/ancestors-approach-text)
-             (or n-levels-or-nil "all"))))
+      (nomis/tree/expand n-levels-or-nil t))
+    (let* ((n-levels-or-nil (or n-or-nil
+                                -nomis/tree/nav+lineage/n-child-levels-to-show)))
+      (message "ancestors: %s  n-children: %s"
+               (-nomis/tree/nav+lineage/ancestors-approach-text)
+               (or n-levels-or-nil "all")))))
 
 ;;;;; On first/last sibling/peer
 
@@ -730,14 +728,13 @@ backward navigation."
                (nav-error-message ()
                  (apply #'nomis/outline/w/prev-or-next-heading/error-message
                         nav-args))
-               (show-lineage ()
-                 (-nomis/tree/nav+lineage/show-lineage n-levels-or-nil))
+               (show-lineage-with-message ()
+                 (-nomis/tree/nav+lineage/show-lineage-with-message
+                  n-levels-or-nil))
                (try-to-nav-then-show-lineage ()
                  (maybe-collapse-start-point)
                  (if (try-to-nav)
-                     (progn
-                       (show-lineage)
-                       (-nomis/tree/nav+lineage/message n-levels-or-nil))
+                     (show-lineage-with-message)
                    (nav-error-message))))
       (nomis/outline/w/back-to-heading)
       (cond ((-nomis/tree/nav+lineage/doing-same-level-final-not-lone?/boh)
@@ -758,8 +755,7 @@ backward navigation."
              ;; nav+lineage).
              (if (expanded-to-desired-level?)
                  (try-to-nav-then-show-lineage)
-               (show-lineage)
-               (-nomis/tree/nav+lineage/message n-levels-or-nil)
+               (show-lineage-with-message)
                (let* ((*nomis/popup/duration* 2))
                  (nomis/popup/message "Showing specified lineage before navigating"))))))))
 
