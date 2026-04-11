@@ -161,15 +161,19 @@
 
 (defn parse-bullet-entries [lines]
   "Convert raw indented bullet lines to [{:indent :bullet? :text}]."
-  (->> lines
-       (remove str/blank?)
-       (map (fn [line]
-              (let [indent  (count (re-find #"^ *" line))
-                    trimmed (str/triml line)
-                    bullet? (str/starts-with? trimmed "- ")]
-                {:indent  indent
-                 :bullet? bullet?
-                 :text    (if bullet? (subs trimmed 2) trimmed)})))))
+  (let [entries (->> lines
+                     (remove str/blank?)
+                     (map (fn [line]
+                            (let [indent  (count (re-find #"^ *" line))
+                                  trimmed (str/triml line)
+                                  bullet? (str/starts-with? trimmed "- ")]
+                              {:indent  indent
+                               :bullet? bullet?
+                               :text    (if bullet? (subs trimmed 2) trimmed)}))))
+        min-indent (if (seq entries)
+                     (apply min (map :indent entries))
+                     0)]
+    (map #(update % :indent - min-indent) entries)))
 
 (defn build-bullet-tree [entries]
   "Convert flat entries to a tree [{:text :children}]."
