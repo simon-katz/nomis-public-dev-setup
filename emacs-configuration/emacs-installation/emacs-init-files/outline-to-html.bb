@@ -413,7 +413,7 @@
       margin-top: 1em;
     }
     .prose-section + .prose-section::before {
-      content: '✦';
+      content: '✦ ✦ ✦';
       display: block;
       text-align: center;
       color: #404040;
@@ -424,7 +424,7 @@
       margin-top: 1em;
     }
     .prose-section-separator::before {
-      content: '✦';
+      content: '✦ ✦ ✦';
     }
     .todo {
       color: red;
