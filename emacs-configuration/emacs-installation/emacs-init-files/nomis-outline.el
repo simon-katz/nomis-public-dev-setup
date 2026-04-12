@@ -91,15 +91,28 @@
             (bound-and-true-p outline-minor-mode))
     (nomis/tree/ls/show-after-find)))
 
+(eval-after-load 'simple
+  (progn
+    (advice-add 'previous-error
+                :after
+                #'-nomis/outline/show-after-find/after-advice)
+    (advice-add 'next-error
+                :after
+                #'-nomis/outline/show-after-find/after-advice)))
+
 (eval-after-load 'compile
   (advice-add 'compilation-next-error-function
               :after
               #'-nomis/outline/show-after-find/after-advice))
 
 (eval-after-load 'xref
-  (advice-add 'xref-find-definitions
-              :after
-              #'-nomis/outline/show-after-find/after-advice))
+  (progn
+    (advice-add 'xref-find-definitions
+                :after
+                #'-nomis/outline/show-after-find/after-advice)
+    (advice-add 'xref-goto-xref
+                :after
+                #'-nomis/outline/show-after-find/after-advice)))
 
 (eval-after-load 'nomis-clojure-lsp
   (progn
