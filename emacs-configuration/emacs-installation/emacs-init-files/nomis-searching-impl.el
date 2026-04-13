@@ -14,8 +14,8 @@
 ;;;; ___________________________________________________________________________
 ;;;; ---- grep vars ----
 
-(defvar nomis/grep/local-ignored-directories '()) ; set this in .dir-locals.el
-(defvar nomis/grep/local-ignored-files '()) ; set this in .dir-locals.el
+(defvar-local nomis/grep/local-ignored-directories '()) ; set this in .dir-locals.el
+(defvar-local nomis/grep/local-ignored-files '()) ; set this in .dir-locals.el
 
 ;;;; We don't want to set directory-local variables, because the behaviour isn't
 ;;;; easy to understand. So instead have global xxxx/ignore-overridden variables.
