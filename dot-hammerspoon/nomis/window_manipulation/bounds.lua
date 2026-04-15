@@ -23,16 +23,22 @@ end
 ---- getBounds ----
 
 local getBoundsScript = [[
-set curApp to (path to frontmost application as Unicode text)
-
-tell application curApp
-    tell front window
-        set {x1, y1, x2, y2} to (get bounds)
-        set result to (get bounds)
+-- Use System Events (Accessibility API) rather than talking directly to the
+-- application. Talking directly can cause a hang if the app doesn't support
+-- the AppleScript `bounds` property (e.g. ForkLift).
+tell application "System Events"
+    set curProc to first application process whose frontmost is true
+    tell front window of curProc
+        set pos  to position
+        set sz   to size
     end tell
 end tell
 
-return result
+set x1 to item 1 of pos
+set y1 to item 2 of pos
+set x2 to x1 + item 1 of sz
+set y2 to y1 + item 2 of sz
+return {x1, y1, x2, y2}
 ]]
 
 function getBounds ()
@@ -56,26 +62,29 @@ local function indexOf(array, value)
 end
 
 local setBoundsScriptFormatString = [[
-set curApp to (path to frontmost application as Unicode text)
-
-if curApp contains "emacs" then
-    -- We choose not to deal with Emacs, for two reasons:
-    -- - We generally have multiple instances of Emacs and we don't know
-    --   how to deal with that in AppleScript.
-    -- - Some AppleScript doesn't seem to work with Emacs.
-    -- display notification ("Choosing not to run AppleScript on Emacs")
-    error "Choosing not to run AppleScript on Emacs"
-else
-    tell application curApp
-        tell front window
-            set bounds to {%s, %s, %s, %s}
-        end tell
+-- Use System Events (Accessibility API) rather than talking directly to the
+-- application. Talking directly can cause a hang if the app doesn't support
+-- the AppleScript `bounds` property (e.g. ForkLift).
+tell application "System Events"
+    set curProc to first application process whose frontmost is true
+    set procName to name of curProc
+    if procName contains "Emacs" then
+        -- We choose not to deal with Emacs, for two reasons:
+        -- - We generally have multiple instances of Emacs and we don't know
+        --   how to deal with that in AppleScript.
+        -- - Some AppleScript doesn't seem to work with Emacs.
+        error "Choosing not to run AppleScript on Emacs"
+    end if
+    tell front window of curProc
+        set position to {%s, %s}
+        set size     to {%s, %s}
     end tell
-end if
+end tell
 ]]
 
 local function setBoundsScript (x1, y1, x2, y2)
-   return string.format(setBoundsScriptFormatString, x1, y1, x2, y2)
+   -- System Events uses position {x, y} and size {w, h}, not bounds {x1,y1,x2,y2}.
+   return string.format(setBoundsScriptFormatString, x1, y1, x2 - x1, y2 - y1)
 end
 
 function buggyHammerspoonSetBounds (x1, y1, x2, y2)
