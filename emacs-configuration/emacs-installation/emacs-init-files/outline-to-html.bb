@@ -233,8 +233,52 @@
           (assoc :bullet-lines [])))
     state))
 
+(defn table-separator-row? [row-text]
+  ;; A separator row contains only |, -, +, and spaces — no other characters.
+  (boolean (re-matches #"[\|\-\+\s]+" row-text)))
+
+(defn parse-table-row [row-text]
+  ;; Split on | with limit -1 to preserve trailing empty strings, trim each
+  ;; cell, then drop the first and last elements (always empty) from the
+  ;; outer leading/trailing pipes.
+  (->> (str/split row-text #"\|" -1)
+       (drop 1)       ; drop empty string before leading |
+       (drop-last 1)  ; drop empty string after trailing |
+       (map str/trim)
+       vec))
+
+(defn flush-table [{:keys [table-lines] :as state}]
+  (if (seq table-lines)
+    (let [data-rows  (->> table-lines
+                          (remove table-separator-row?)
+                          (map parse-table-row))
+          header-row (first data-rows)
+          body-rows  (rest data-rows)
+          cell       (fn [tag row]
+                       (str/join (map #(str "<" tag ">"
+                                            (apply-styles (html-escape %))
+                                            "</" tag ">")
+                                      row)))
+          thead      (str "<thead><tr>" (cell "th" header-row) "</tr></thead>\n")
+          body-row   (fn [row]
+                       (str "<tr>"
+                            (when (seq row)
+                              (str "<th scope=\"row\">"
+                                   (apply-styles (html-escape (first row)))
+                                   "</th>"))
+                            (cell "td" (rest row))
+                            "</tr>\n"))
+          tbody      (str "<tbody>\n"
+                          (str/join (map body-row body-rows))
+                          "</tbody>\n")
+          html       (str "<table>\n" thead tbody "</table>\n")]
+      (-> state
+          (update :section-parts conj html)
+          (assoc :table-lines [])))
+    state))
+
 (defn flush-section [state]
-  (let [{:keys [section-parts] :as state} (-> state flush-para flush-bullets)]
+  (let [{:keys [section-parts] :as state} (-> state flush-para flush-bullets flush-table)]
     (if (seq section-parts)
       (-> state
           (update :html-parts conj
@@ -328,11 +372,21 @@
           (assoc :mode :prose))
 
       ;; Blank ;; line: skip silently if inside a bullet list (inter-bullet
-      ;; spacing), otherwise treat as a paragraph break.
+      ;; spacing), otherwise flush any pending table/para and treat as a
+      ;; paragraph break.
       (str/blank? text)
       (if (seq (:bullet-lines state))
         (assoc state :mode :prose)
-        (-> state flush-para (assoc :mode :prose)))
+        (-> state flush-table flush-para (assoc :mode :prose)))
+
+      ;; Table row (org-mode pipe syntax).
+      (let [t (str/trim text)]
+        (and (str/starts-with? t "|") (str/ends-with? t "|")))
+      (-> state
+          flush-para
+          flush-bullets
+          (update :table-lines conj (str/trim text))
+          (assoc :mode :prose))
 
       ;; Bullet at any indent level (top-level or nested).
       (re-find #"^\s*- " text)
@@ -516,6 +570,23 @@
       padding: 0;
       border-radius: 0;
       white-space: pre;
+    }
+    table {
+      border-collapse: collapse;
+      margin: 1em 0;
+      border: 1px solid black;
+    }
+    th, td {
+      border: 2px solid black;
+      padding: 0.3em 0.7em;
+      text-align: left;
+    }
+    th {
+      font-family: sans-serif;
+      background: #e0e0e0;
+    }
+    tbody tr {
+      border-bottom: 1px solid #ddd;
     }")
 
 (defn html-page [title body]
@@ -566,6 +637,7 @@
                    :code-lines    []
                    :para-lines    []
                    :bullet-lines  []
+                   :table-lines   []
                    :section-parts []
                    :html-parts    []}
       final       (-> (reduce process-line initial lines)
