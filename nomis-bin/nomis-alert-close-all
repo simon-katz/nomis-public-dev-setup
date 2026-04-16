@@ -13,3 +13,4 @@
 
 # Just use the new approach:
 osascript /Users/simonkatz/development-100/repositories/nomis/dev-setup/nomis-public-dev-setup/nomis-bin/nomis-alert-close-all.js
+~/bin-private/hs -c 'nomisMessage("Cleared all notifications")'
