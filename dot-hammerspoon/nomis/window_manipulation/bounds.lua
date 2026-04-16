@@ -67,14 +67,6 @@ local setBoundsScriptFormatString = [[
 -- the AppleScript `bounds` property (e.g. ForkLift).
 tell application "System Events"
     set curProc to first application process whose frontmost is true
-    set procName to name of curProc
-    if procName contains "Emacs" then
-        -- We choose not to deal with Emacs, for two reasons:
-        -- - We generally have multiple instances of Emacs and we don't know
-        --   how to deal with that in AppleScript.
-        -- - Some AppleScript doesn't seem to work with Emacs.
-        error "Choosing not to run AppleScript on Emacs"
-    end if
     tell front window of curProc
         set position to {%s, %s}
         set size     to {%s, %s}
