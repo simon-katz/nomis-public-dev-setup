@@ -1,8 +1,12 @@
 global _debugP
 set _debugP to false
 
+set _logFile to "/tmp/nomis-alerts-describe.log"
+do shell script "rm -f " & _logFile
+
 to displayMessage(msg)
     do shell script "~/bin-private/hs -c 'nomisMessage(\"" & msg & "\")'"
+    do shell script "echo " & quoted form of msg & " >> /tmp/nomis-alerts-describe.log"
 end
 
 to logInfo(msg)
@@ -24,7 +28,9 @@ logInfo("In nomis-alerts-expand-or-describe.applescript")
 tell application "System Events"
     set _w to null
     try
-        set _w to window "Notification Center" ¬
+        -- Use window 1 rather than window "Notification Center" to avoid
+        -- locale issues (e.g. "Notification Centre" in British English).
+        set _w to window 1 ¬
                   of application process "NotificationCenter"
     on error errMsg number errNum
         tell me to logInfo(_msg_when_no_notifications)
@@ -33,8 +39,11 @@ tell application "System Events"
         try
             repeat with _group1 in groups of _w
                 tell me to logInfo("1-top-level " & description of _group1)
+                -- In Tahoe the scroll area is one level deeper than before:
+                --   old: scroll area 1 of _group1
+                --   new: scroll area 1 of group 1 of _group1
                 repeat with _item_group ¬
-                       in groups of UI element 1 of scroll area 1 of _group1
+                       in groups of group 1 of scroll area 1 of group 1 of _group1
                     tell me to logInfo("  --------")
                     set [_x, _y] to position of _item_group
                     tell me to logInfo("  2-item: " ¬
