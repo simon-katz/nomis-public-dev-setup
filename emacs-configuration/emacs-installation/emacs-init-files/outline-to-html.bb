@@ -160,54 +160,82 @@
     state))
 
 (defn parse-bullet-entries [lines]
-  "Convert raw indented bullet lines to [{:indent :bullet? :text}]."
-  (let [entries (->> lines
-                     (remove str/blank?)
-                     (map (fn [line]
-                            (let [indent  (count (re-find #"^ *" line))
-                                  trimmed (str/triml line)
-                                  bullet? (str/starts-with? trimmed "- ")]
-                              {:indent  indent
-                               :bullet? bullet?
-                               :text    (if bullet? (subs trimmed 2) trimmed)}))))
-        min-indent (if (seq entries)
-                     (apply min (map :indent entries))
-                     0)]
-    (map #(update % :indent - min-indent) entries)))
+  "Convert raw indented bullet lines to [{:indent :bullet? :text}].
+  :paragraph-break entries in lines are sentinels and are passed through
+  as {:paragraph-break? true ...}; they are excluded from the min-indent
+  calculation."
+  (let [string-lines (filter string? lines)
+        non-blank    (remove str/blank? string-lines)
+        min-indent   (if (seq non-blank)
+                       (apply min (map #(count (re-find #"^ *" %)) non-blank))
+                       0)]
+    (keep (fn [line]
+            (cond
+              (= line :paragraph-break)
+              {:paragraph-break? true :indent 0 :bullet? false :text ""}
+
+              (str/blank? line)
+              nil
+
+              :else
+              (let [indent  (- (count (re-find #"^ *" line)) min-indent)
+                    trimmed (str/triml line)
+                    bullet? (str/starts-with? trimmed "- ")]
+                {:indent  indent
+                 :bullet? bullet?
+                 :text    (if bullet? (subs trimmed 2) trimmed)})))
+          lines)))
 
 (defn build-bullet-tree [entries]
-  "Convert flat entries to a tree [{:text :children}]."
-  (loop [entries entries
-         items   []
-         current nil]
+  "Convert flat entries to a tree [{:text :children}].
+  :text is a vector of paragraph strings. new-para? controls whether the next
+  continuation line starts a fresh paragraph (true) or is appended with a
+  space to the last paragraph of the current node (false)."
+  (loop [entries   entries
+         items     []
+         current   nil
+         new-para? false]
     (if (empty? entries)
       (if current (conj items current) items)
-      (let [{:keys [indent bullet? text]} (first entries)]
+      (let [{:keys [indent bullet? text paragraph-break?]} (first entries)]
         (cond
+          ;; Paragraph-break sentinel — next continuation starts a new paragraph
+          paragraph-break?
+          (recur (rest entries) items current true)
+
           ;; New top-level bullet
           (and bullet? (zero? indent))
           (recur (rest entries)
                  (if current (conj items current) items)
-                 {:text text :children []})
+                 {:text [text] :children []}
+                 false)
 
           ;; New nested bullet
           (and bullet? (pos? indent))
           (recur (rest entries)
                  items
-                 (update current :children conj {:text text :children []}))
+                 (update current :children conj {:text [text] :children []})
+                 false)
 
           ;; Continuation of last nested bullet
           (and (not bullet?) (pos? indent) (seq (:children current)))
           (recur (rest entries)
                  items
-                 (update-in current [:children (dec (count (:children current))) :text]
-                            str " " text))
+                 (if new-para?
+                   (update-in current [:children (dec (count (:children current))) :text]
+                              conj text)
+                   (update-in current [:children (dec (count (:children current))) :text]
+                              (fn [v] (conj (pop v) (str (peek v) " " text)))))
+                 false)
 
           ;; Continuation of current top-level bullet
           :else
           (recur (rest entries)
                  items
-                 (update current :text str " " text)))))))
+                 (if new-para?
+                   (update current :text conj text)
+                   (update current :text (fn [v] (conj (pop v) (str (peek v) " " text)))))
+                 false))))))
 
 (defn render-bullet-tree [items]
   "Render a bullet tree to an HTML <ul> string."
@@ -215,7 +243,10 @@
        (str/join
         (map (fn [{:keys [text children]}]
                (str "<li>"
-                    (apply-styles (html-escape text))
+                    (if (= 1 (count text))
+                      (apply-styles (html-escape (first text)))
+                      (str/join "\n    " (map #(str "<p>" (apply-styles (html-escape %)) "</p>")
+                                             text)))
                     (when (seq children)
                       (str "\n" (render-bullet-tree children)))
                     "</li>\n"))
@@ -371,12 +402,12 @@
           (update :html-parts conj "<div class=\"prose-section-separator\"></div>\n")
           (assoc :mode :prose))
 
-      ;; Blank ;; line: skip silently if inside a bullet list (inter-bullet
-      ;; spacing), otherwise flush any pending table/para and treat as a
-      ;; paragraph break.
+      ;; Blank ;; line: if inside a bullet list, push a nil paragraph-break
+      ;; sentinel so build-bullet-tree knows where paragraph boundaries are;
+      ;; otherwise flush any pending table/para and treat as a paragraph break.
       (str/blank? text)
       (if (seq (:bullet-lines state))
-        (assoc state :mode :prose)
+        (update state :bullet-lines conj :paragraph-break)
         (-> state flush-table flush-para (assoc :mode :prose)))
 
       ;; Table row (org-mode pipe syntax).
