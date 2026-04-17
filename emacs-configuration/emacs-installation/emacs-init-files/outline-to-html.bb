@@ -269,40 +269,49 @@
   (boolean (re-matches #"[\|\-\+\s]+" row-text)))
 
 (defn parse-table-row [row-text]
-  ;; Split on | with limit -1 to preserve trailing empty strings, trim each
-  ;; cell, then drop the first and last elements (always empty) from the
-  ;; outer leading/trailing pipes.
-  (->> (str/split row-text #"\|" -1)
-       (drop 1)       ; drop empty string before leading |
-       (drop-last 1)  ; drop empty string after trailing |
-       (map str/trim)
-       vec))
+  ;; Split on the last | to separate the cell content from any trailing
+  ;; Org-mode inline comment (e.g. "| cell | value |  <- this comment").
+  ;; Returns {:cells [...] :comment "..." (or nil)}.
+  (let [last-pipe (.lastIndexOf row-text "|")
+        truncated (subs row-text 0 (inc last-pipe))
+        trailing  (str/trim (subs row-text (inc last-pipe)))]
+    {:cells   (->> (str/split truncated #"\|" -1)
+                   (drop 1)       ; drop empty string before leading |
+                   (drop-last 1)  ; drop empty string after trailing |
+                   (map str/trim)
+                   vec)
+     :comment (when (seq trailing) trailing)}))
 
 (defn flush-table [{:keys [table-lines] :as state}]
   (if (seq table-lines)
-    (let [data-rows  (->> table-lines
-                          (remove table-separator-row?)
-                          (map parse-table-row))
-          header-row (first data-rows)
-          body-rows  (rest data-rows)
-          cell       (fn [tag row]
-                       (str/join (map #(str "<" tag ">"
-                                            (apply-styles (html-escape %))
-                                            "</" tag ">")
-                                      row)))
-          thead      (str "<thead><tr>" (cell "th" header-row) "</tr></thead>\n")
-          body-row   (fn [row]
-                       (str "<tr>"
-                            (when (seq row)
-                              (str "<th scope=\"row\">"
-                                   (apply-styles (html-escape (first row)))
-                                   "</th>"))
-                            (cell "td" (rest row))
-                            "</tr>\n"))
-          tbody      (str "<tbody>\n"
-                          (str/join (map body-row body-rows))
-                          "</tbody>\n")
-          html       (str "<table>\n" thead tbody "</table>\n")]
+    (let [all-rows     (->> table-lines
+                            (remove table-separator-row?)
+                            (map parse-table-row))
+          header-cells (:cells (first all-rows))
+          body-rows    (rest all-rows)
+          has-comments? (some :comment body-rows)
+          cell         (fn [tag content & [extra-attrs]]
+                         (str "<" tag (when extra-attrs (str " " extra-attrs)) ">"
+                              (apply-styles (html-escape content))
+                              "</" tag ">"))
+          thead        (str "<thead><tr>"
+                            (str/join (map #(cell "th" %) header-cells))
+                            (when has-comments? "<th class=\"row-comment\"></th>")
+                            "</tr></thead>\n")
+          body-row     (fn [{:keys [cells comment]}]
+                         (str "<tr>"
+                              (when (seq cells)
+                                (str "<th scope=\"row\">"
+                                     (apply-styles (html-escape (first cells)))
+                                     "</th>"))
+                              (str/join (map #(cell "td" %) (rest cells)))
+                              (when has-comments?
+                                (cell "td" (or comment "") "class=\"row-comment\""))
+                              "</tr>\n"))
+          tbody        (str "<tbody>\n"
+                            (str/join (map body-row body-rows))
+                            "</tbody>\n")
+          html         (str "<table>\n" thead tbody "</table>\n")]
       (-> state
           (update :section-parts conj html)
           (assoc :table-lines [])))
@@ -410,9 +419,10 @@
         (update state :bullet-lines conj :paragraph-break)
         (-> state flush-table flush-para (assoc :mode :prose)))
 
-      ;; Table row (org-mode pipe syntax).
-      (let [t (str/trim text)]
-        (and (str/starts-with? t "|") (str/ends-with? t "|")))
+      ;; Table row (org-mode pipe syntax). Trailing content after the last |
+      ;; is allowed (Org-mode style inline comments), so only the leading |
+      ;; is required.
+      (str/starts-with? (str/trim text) "|")
       (-> state
           flush-para
           flush-bullets
@@ -618,6 +628,10 @@
     }
     tbody tr {
       border-bottom: 1px solid #ddd;
+    }
+    .row-comment,
+    th.row-comment {
+      background: #fff0f0;
     }")
 
 (defn html-page [title body]
