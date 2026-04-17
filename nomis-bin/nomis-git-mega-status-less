@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 set -e
 
-nomis-git-mega-status | less -NR
+nomis-git-mega-status | less -NRc

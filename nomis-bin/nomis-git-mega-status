@@ -39,7 +39,7 @@ function usage {
     echo "  nomis-git-mega-status -m"
     echo "    Does not report on current non-master, non-main, non-trunk branches."
     echo ""
-    echo "  nomis-git-mega-status -m | less -NR"
+    echo "  nomis-git-mega-status -m | less -NRc"
     echo "    As above, and pipes the output into less."
     echo "    (The -N option gives line numbers and the -R option deals with ANSI color codes.)"
     echo ""
@@ -51,7 +51,7 @@ function usage {
     echo "  nomis-git-mega-status -v"
     echo "    Produces a full report on each repo."
     echo ""
-    echo "  nomis-git-mega-status -v | less -NR"
+    echo "  nomis-git-mega-status -v | less -NRc"
     echo "    Produces a full report on each repo and pipes the output into less."
 }
 
