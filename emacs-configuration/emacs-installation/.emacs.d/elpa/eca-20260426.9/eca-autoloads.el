@@ -56,7 +56,8 @@ Add a named flag to the current chat.
 The flag is placed after the nearest message block at or before
 point.  Works with any message type (user, tool call, etc)." t)
 (autoload 'eca-chat-toggle-trust "eca-chat" "\
-Toggle trust mode (auto-accept all tool call)." t)
+Toggle trust mode (auto-accept all tool call).
+Sends chat/update to server so trust applies immediately to the next tool call." t)
 (autoload 'eca-chat-tool-call-accept-all "eca-chat" "\
 Accept all pending approval tool call in chat." t)
 (autoload 'eca-chat-tool-call-accept-all-and-remember "eca-chat" "\
@@ -194,6 +195,13 @@ Complete at the current point." t)
 ;;; Generated autoloads from eca-editor.el
 
 (register-definition-prefixes "eca-editor" '("eca-editor-"))
+
+
+;;; Generated autoloads from eca-jobs.el
+
+(autoload 'eca-jobs "eca-jobs" "\
+List background jobs with their status and options." t)
+(register-definition-prefixes "eca-jobs" '("eca-jobs-"))
 
 
 ;;; Generated autoloads from eca-mcp.el
