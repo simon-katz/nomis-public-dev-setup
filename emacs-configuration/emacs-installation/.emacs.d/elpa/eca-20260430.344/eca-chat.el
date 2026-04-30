@@ -22,6 +22,7 @@
 (require 'eca-table)
 (require 'eca-chat-expandable)
 (require 'eca-chat-context)
+(require 'eca-chat-image)
 
 (require 'evil nil t)
 
@@ -126,6 +127,16 @@ ECA chat opens in a regular buffer that follows standard
 
 (defcustom eca-chat-trust-off-symbol "🛡️"
   "The string used in eca chat buffer mode-line when trust is OFF."
+  :type 'string
+  :group 'eca)
+
+(defcustom eca-chat-trust-on-symbol-tty "●"
+  "Mode-line trust ON glyph used on terminal (non-graphic) frames."
+  :type 'string
+  :group 'eca)
+
+(defcustom eca-chat-trust-off-symbol-tty "○"
+  "Mode-line trust OFF glyph used on terminal (non-graphic) frames."
   :type 'string
   :group 'eca)
 
@@ -655,6 +666,17 @@ A plist with :session :request :question :options :tool-call-id :allow-freeform.
     (define-key map (kbd "C-c <up>") #'eca-chat-go-to-prev-expandable-block)
     (define-key map (kbd "C-c <down>") #'eca-chat-go-to-next-expandable-block)
     (define-key map (kbd "C-c <tab>") #'eca-chat-toggle-expandable-block)
+    ;; Per-chat inline image zoom (browser-style).  Uses `C-c C-z' as
+    ;; the prefix because `C-c <letter>' sequences are reserved for
+    ;; users by the Emacs key binding conventions; `C-c' followed by
+    ;; a control character is reserved for major modes.  `=' is a
+    ;; no-Shift alias for `+' so users on US layouts don't need to
+    ;; press Shift.
+    (define-key map (kbd "C-c C-z +") #'eca-chat-image-zoom-in)
+    (define-key map (kbd "C-c C-z =") #'eca-chat-image-zoom-in)
+    (define-key map (kbd "C-c C-z -") #'eca-chat-image-zoom-out)
+    (define-key map (kbd "C-c C-z 0") #'eca-chat-image-zoom-reset)
+    (define-key map (kbd "C-c C-z s") #'eca-chat-save-image-at-point)
     map)
   "Keymap used by `eca-chat-mode'.")
 
@@ -1894,15 +1916,21 @@ are in progress."
      (eca-chat--init-progress-str session))
     (:trust
      (let* ((trust? (eca-chat--trust))
+            (graphic? (display-graphic-p))
             (face (if trust?
                       'eca-chat-trust-on-face
                     'eca-chat-trust-off-face))
             (help (if trust?
                       "Trust ON - auto-accepting tool calls"
-                    "Trust OFF - not auto-accepting tool calls")))
-       (propertize (if trust?
-                       eca-chat-trust-on-symbol
-                     eca-chat-trust-off-symbol)
+                    "Trust OFF - not auto-accepting tool calls"))
+            (symbol (if trust?
+                        (if graphic?
+                            eca-chat-trust-on-symbol
+                          eca-chat-trust-on-symbol-tty)
+                      (if graphic?
+                          eca-chat-trust-off-symbol
+                        eca-chat-trust-off-symbol-tty))))
+       (propertize symbol
                    'face face
                    'mouse-face 'highlight
                    'help-echo help
@@ -2687,6 +2715,8 @@ Must be called with `eca-chat--with-current-buffer' or equivalent."
                    (plist-get content :title)
                    (lambda () (browse-url (plist-get content :url))))
                   "\n\n"))))
+      ("image"
+       (eca-chat--render-image-content content parent-tool-call-id))
       ("flag"
        (let* ((flag-text (plist-get content :text))
               (flag-content-id (plist-get content :contentId))

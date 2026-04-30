@@ -2,8 +2,8 @@
 ;; Copyright (C) 2025 Eric Dallo
 ;; Author: Eric Dallo <ercdll1337@gmail.com>
 ;; Maintainer: Eric Dallo <ercdll1337@gmail.com>
-;; Package-Version: 20260426.9
-;; Package-Revision: 5a53e86712fe
+;; Package-Version: 20260430.344
+;; Package-Revision: 642312484e58
 ;; Package-Requires: ((emacs "28.1") (dash "2.18.0") (s "1.12.0") (f "0.20.0") (markdown-mode "2.3") (compat "30.1"))
 ;; Keywords: tools
 ;; Homepage: https://github.com/editor-code-assistant/eca-emacs

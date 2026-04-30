@@ -157,6 +157,11 @@ Export the current chat to a FILE.
 (register-definition-prefixes "eca-chat-expandable" '("eca-chat-"))
 
 
+;;; Generated autoloads from eca-chat-image.el
+
+(register-definition-prefixes "eca-chat-image" '("eca-chat-"))
+
+
 ;;; Generated autoloads from eca-completion.el
 
 (autoload 'eca-completion-mode "eca-completion" "\
@@ -217,7 +222,15 @@ Opens the settings panel focused on the MCPs tab." t)
 (autoload 'eca-show-stderr "eca-process" "\
 Open the eca process stderr buffer if running." t)
 (autoload 'eca-install-server "eca-process" "\
-Force download the latest eca server." t)
+Force download the latest eca server.
+Clears `eca-process--releases-cache' first so the latest version is
+re-checked against GitHub even within a long-running Emacs session." t)
+(autoload 'eca-server-check-updates "eca-process" "\
+Check GitHub for a newer eca server release.
+Bypasses `eca-process--releases-cache' (and thus
+`eca-server-releases-cache-ttl') so the answer is always fresh.
+Reports via the echo area whether the installed server is up to date,
+whether a newer version is available, or whether the check failed." t)
 (autoload 'eca-uninstall-server "eca-process" "\
 Remove downloaded eca server if present." t)
 (register-definition-prefixes "eca-process" '("eca-"))
