@@ -44,6 +44,22 @@
                  (const :tag "Isolated (independent session per worktree)" isolated))
   :group 'eca)
 
+(defun eca-uuid ()
+  "Return a fresh v4-style UUID string.
+
+Uses Emacs's pseudo-random generator reseeded from system entropy
+on every call so consecutive ids inside the same Emacs session do
+not repeat across, e.g., quickly-clicked \"+ new chat\" tabs.  Used
+for client-generated `chatId' values sent to the eca server."
+  (random t)
+  (format "%04x%04x-%04x-4%03x-%01x%03x-%04x%04x%04x"
+          (random 65536) (random 65536)
+          (random 65536)
+          (logand (random 65536) #x0fff)
+          (logior #x8 (logand (random 16) #x3))
+          (logand (random 65536) #x0fff)
+          (random 65536) (random 65536) (random 65536)))
+
 (defun eca-assoc (map key val)
   "Return a new MAP with KEY associated to flat plist VAL, replacing any existing."
   (cons (cons key val)
@@ -162,16 +178,35 @@ directory, which is the same for all worktrees of a repository."
                (not (string= output "--git-common-dir")))
       (expand-file-name output default-directory))))
 
+(defun eca--paths-nested-p (a b)
+  "Return non-nil when paths A and B are equal or nested.
+Two paths are nested when one is an ancestor directory of the
+other.  Both paths are normalized via `file-truename' and
+compared with a trailing slash to avoid prefix false-positives
+\(e.g. \"/foo\" matching \"/foobar\")."
+  (let ((a (file-name-as-directory (file-truename (expand-file-name a))))
+        (b (file-name-as-directory (file-truename (expand-file-name b)))))
+    (or (string= a b)
+        (string-prefix-p a b)
+        (string-prefix-p b a))))
+
 (defun eca--session-for-worktree (root)
   "Find a session whose workspace shares the same git repo as ROOT.
 Returns the session if ROOT is a git worktree (or regular repo) that
-shares the same `git-common-dir` as one of an existing session's
-workspace folders. Returns nil otherwise."
+shares the same `git-common-dir' as one of an existing session's
+workspace folders AND is not in an ancestor/descendant relationship
+with that folder.  True git worktrees are always sibling directories,
+never nested, so a match where one path contains the other indicates
+ROOT is merely a sub- or super-directory of an existing folder rather
+than a separate worktree (typical case: $HOME is a dotfiles git repo
+and the user starts ECA on a subdirectory, or vice versa).  Returns
+nil otherwise."
   (when-let* ((root-common-dir (eca--git-common-dir root)))
     (-first (lambda (session)
               (--first (when-let* ((folder-common-dir (eca--git-common-dir it)))
-                         (string= (file-truename root-common-dir)
-                                  (file-truename folder-common-dir)))
+                         (and (string= (file-truename root-common-dir)
+                                       (file-truename folder-common-dir))
+                              (not (eca--paths-nested-p root it))))
                        (eca--session-workspace-folders session)))
             (eca-vals eca--sessions))))
 

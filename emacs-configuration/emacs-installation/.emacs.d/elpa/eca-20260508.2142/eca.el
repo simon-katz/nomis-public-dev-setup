@@ -2,8 +2,8 @@
 ;; Copyright (C) 2025 Eric Dallo
 ;; Author: Eric Dallo <ercdll1337@gmail.com>
 ;; Maintainer: Eric Dallo <ercdll1337@gmail.com>
-;; Package-Version: 20260430.344
-;; Package-Revision: 642312484e58
+;; Package-Version: 20260508.2142
+;; Package-Revision: cf1bfae9a596
 ;; Package-Requires: ((emacs "28.1") (dash "2.18.0") (s "1.12.0") (f "0.20.0") (markdown-mode "2.3") (compat "30.1"))
 ;; Keywords: tools
 ;; Homepage: https://github.com/editor-code-assistant/eca-emacs
@@ -95,7 +95,13 @@ Tries git info first, then package.el version, then file modification date."
   "Whether to send the Emacs process ID to the ECA server.
 When non-nil, the server uses it to detect when Emacs exits and
 shut down automatically.  Set to nil to omit it, e.g. when running
-the server independently of Emacs."
+the server independently of Emacs.
+
+Set to nil when running the server inside a sandbox that hides or
+remaps the host PID (firejail, bubblewrap, jai, containers); in
+those setups the server's parent-process watchdog would otherwise
+see an invalid PID and shut down right after startup.  Pair this
+with `eca-process-wrapper-function' for a fully sandboxed setup."
   :type 'boolean
   :group 'eca)
 
