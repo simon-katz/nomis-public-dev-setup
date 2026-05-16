@@ -12,6 +12,7 @@
 ;;; Code:
 
 (require 'f)
+(require 'find-func)
 (require 'markdown-mode)
 (require 'compat)
 
@@ -1300,11 +1301,16 @@ the prompt/context line."
 
 (defun eca-chat--refine-context (context)
   "Refine CONTEXT before sending in prompt."
-  (pcase (plist-get context :type)
-    ("cursor" (-> context
-                  (plist-put :path (plist-get eca-chat--cursor-context :path))
-                  (plist-put :position (plist-get eca-chat--cursor-context :position))))
-    (_ context)))
+  (let* ((type (plist-get context :type))
+         (refined (pcase type
+                    ("cursor" (-> context
+                                  (plist-put :path (plist-get eca-chat--cursor-context :path))
+                                  (plist-put :position (plist-get eca-chat--cursor-context :position))))
+                    (_ context)))
+         (path (plist-get refined :path)))
+    (if path
+        (plist-put (copy-sequence refined) :path (eca--path-local-to-remote path))
+      refined)))
 
 (defun eca-chat--normalize-prompt (prompt)
   "Normalize PROMPT before sending to server.
@@ -1317,9 +1323,14 @@ the prompt/context line."
              (expanded-str (get-text-property pos 'eca-chat-expanded-item-str prompt))
              (item-type (get-text-property pos 'eca-chat-item-type prompt)))
         (if expanded-str
-            (setq result (concat result (if (eq 'filepath item-type)
-                                            (substring expanded-str 1)
-                                          expanded-str)))
+            (setq result (concat result
+                                 (cond
+                                  ((eq item-type 'filepath)
+                                   (eca--path-local-to-remote (substring expanded-str 1)))
+                                  ((eq item-type 'context)
+                                   (concat "@" (eca--path-local-to-remote
+                                                (substring expanded-str 1))))
+                                  (t expanded-str))))
           (setq result (concat result (substring prompt pos next-change))))
         (setq pos next-change)))
     result))
@@ -1492,7 +1503,7 @@ the prompt-field overlay's start advances past inserted content."
   (eca-api-notify session
                   :method "chat/promptSteer"
                   :params (list :chatId eca-chat--id
-                                :message prompt)))
+                                :message (eca-chat--normalize-prompt prompt))))
 
 (defun eca-chat--send-steered-prompt (session)
   "Merge any unconsumed steered prompt into the queued prompt for SESSION.
@@ -1553,17 +1564,17 @@ Does not send directly — `eca-chat--send-queued-prompt' handles sending."
          (get-text-property 0 'eca-button-on-action)
          (funcall)))
 
+      ;; check is inside a expandable text
+      ((eca-chat--expandable-content-at-point)
+       (let ((ov (eca-chat--expandable-content-at-point)))
+         (eca-chat--expandable-content-toggle (overlay-get ov 'eca-chat--expandable-content-id))))
+
       ;; follow markdown link [text](url)
       ((let ((face (get-text-property (point) 'face)))
          (or (eq face 'markdown-link-face)
              (eq face 'markdown-url-face)
              (eq face 'markdown-plain-url-face)))
        (markdown-follow-thing-at-point nil))
-
-      ;; check is inside a expandable text
-      ((eca-chat--expandable-content-at-point)
-       (let ((ov (eca-chat--expandable-content-at-point)))
-         (eca-chat--expandable-content-toggle (overlay-get ov 'eca-chat--expandable-content-id))))
 
       ;; pending question + freeform allowed — answer with prompt text
       ((and eca-chat--pending-question
@@ -2059,17 +2070,17 @@ If `eca-chat-focus-on-open' is non-nil, the window is selected."
              (let* ((side eca-chat-window-side)
                     (slot 0)
                     (window-parameters '((no-delete-other-windows . t)))
-                    (display-buffer-alist
-                     `((,(regexp-quote (buffer-name buffer))
-                        (display-buffer-in-side-window)
-                        (side . ,side)
-                        (slot . ,slot)
-                        ,@(when (memq side '(left right))
-                            `((window-width . ,eca-chat-window-width)))
-                        ,@(when (memq side '(top bottom))
-                            `((window-height . ,eca-chat-window-height)))
-                        (window-parameters . ,window-parameters)))))
-               (display-buffer buffer))
+                    (display-action
+                     `((display-buffer-in-side-window)
+                       (side . ,side)
+                       (slot . ,slot)
+                       (dedicated . t)
+                       ,@(when (memq side '(left right))
+                           `((window-width . ,eca-chat-window-width)))
+                       ,@(when (memq side '(top bottom))
+                           `((window-height . ,eca-chat-window-height)))
+                       (window-parameters . ,window-parameters))))
+               (display-buffer buffer display-action))
            ;; Use regular buffer
            (display-buffer buffer))))
     ;; Select the window to give it focus if configured to do so
@@ -2533,7 +2544,7 @@ CONTENT is the tool call content, LABEL is the label.
 Can include optional APPROVAL-TEXT and TIME.
 Append STATUS, ROOTS and optional PARENT-ID."
   (-let* (((&plist :name name :details details :id id) content)
-          (path (plist-get details :path))
+          (path (eca--path-remote-to-local (plist-get details :path)))
           (diff (plist-get details :diff))
           (view-diff-btn
            (when (and path diff)
@@ -2545,7 +2556,7 @@ Append STATUS, ROOTS and optional PARENT-ID."
     (eca-chat--update-expandable-content
      id
      (concat (propertize label 'font-lock-face 'eca-chat-mcp-tool-call-label-face)
-             " " (eca-chat--file-change-details-label details)
+             " " (eca-chat--file-change-details-label (plist-put (copy-sequence details) :path path))
              " " status time
              (when view-diff-btn
                (concat " " view-diff-btn))
@@ -4221,6 +4232,280 @@ Resteps selected message plist or nil if no messages or cancelled."
         (insert chat-content)
         (save-buffer))
       (eca-info (format "Saved chat to '%s'" file)))))
+
+(defun eca-chat--doctor-find-buffer ()
+  "Find an ECA chat buffer to inspect for diagnostics.
+Tries, in order: a chat buffer for the current buffer's session, then
+the most recent chat of any running session.  Returns the buffer or
+nil if no chat buffer can be located."
+  (let ((session (ignore-errors (eca-session))))
+    (or (and session
+             (let ((b (ignore-errors (eca-chat--get-last-buffer session))))
+               (and b (buffer-live-p b) b)))
+        (-some (lambda (s)
+                 (let ((b (ignore-errors (eca-chat--get-last-buffer s))))
+                   (and b (buffer-live-p b) b)))
+               (eca-vals eca--sessions)))))
+
+(defun eca-chat--doctor-self-check (src-buf)
+  "Probe loaded ECA chat code and SRC-BUF for fix-presence indicators.
+Return a plist describing the state of mode-map bindings, the
+cond ordering inside `eca-chat--key-pressed-return', the first
+expandable label's keymap, and whether the loaded `.elc' is stale
+relative to the on-disk `.el'."
+  (let* ((mode-map-ret (ignore-errors
+                         (lookup-key eca-chat-mode-map (kbd "RET"))))
+         (mode-map-ret-ok (eq mode-map-ret 'eca-chat--key-pressed-return))
+         (kpr-body (ignore-errors
+                     (prin1-to-string
+                      (symbol-function 'eca-chat--key-pressed-return))))
+         (kpr-exp-pos (and kpr-body
+                           (string-match-p "expandable-content-at-point"
+                                           kpr-body)))
+         (kpr-md-pos (and kpr-body
+                          (string-match-p "markdown-link-face" kpr-body)))
+         (cond-ok (cond ((and kpr-exp-pos kpr-md-pos)
+                         (< kpr-exp-pos kpr-md-pos))
+                        (t 'unknown)))
+         (label-ov (with-current-buffer src-buf
+                     (-first (lambda (o)
+                               (overlay-get o 'eca-chat--expandable-content-id))
+                             (overlays-in (point-min) (point-max)))))
+         (label-ret
+          (and label-ov
+               (with-current-buffer src-buf
+                 (save-excursion
+                   (goto-char (overlay-start label-ov))
+                   (let ((line-end (line-end-position))
+                         (km nil)
+                         (pos (point)))
+                     (while (and (< pos line-end) (not km))
+                       (setq km (get-text-property pos 'keymap))
+                       (unless km
+                         (setq pos (or (next-single-property-change
+                                        pos 'keymap nil line-end)
+                                       line-end))))
+                     (when km
+                       (or (lookup-key km (kbd "RET"))
+                           (lookup-key km (kbd "<return>")))))))))
+         (label-ret-ok (and label-ret (functionp label-ret)))
+         (loaded-file (ignore-errors
+                        (symbol-file 'eca-chat--insert-expandable-block
+                                     'defun)))
+         (source-file (ignore-errors
+                        (find-library-name "eca-chat-expandable")))
+         (stale-elc-p (and loaded-file source-file
+                           (string-suffix-p ".elc" loaded-file)
+                           (file-newer-than-file-p source-file
+                                                   loaded-file))))
+    (list :mode-map-ret mode-map-ret
+          :mode-map-ret-ok mode-map-ret-ok
+          :cond-ok cond-ok
+          :has-label (not (null label-ov))
+          :label-ret label-ret
+          :label-ret-ok label-ret-ok
+          :loaded-file loaded-file
+          :source-file source-file
+          :stale-elc-p stale-elc-p)))
+
+(defun eca-chat--doctor-format (src-buf)
+  "Return a markdown diagnostic string describing chat buffer SRC-BUF.
+Captures `major-mode' derivation, RET binding, shadowing minor modes,
+ECA chat state, prompt overlays, and rule-based hints."
+  (let* ((mm (buffer-local-value 'major-mode src-buf))
+         (in-chat-p (with-current-buffer src-buf
+                      (derived-mode-p 'eca-chat-mode)))
+         (parent-mode (and (boundp 'eca-chat-parent-mode)
+                           eca-chat-parent-mode))
+         (def-dir (buffer-local-value 'default-directory src-buf))
+         (ret-cmd (with-current-buffer src-buf
+                    (key-binding (kbd "RET"))))
+         (return-cmd (with-current-buffer src-buf
+                       (key-binding (kbd "<return>"))))
+         (cm-cmd (with-current-buffer src-buf
+                   (key-binding (kbd "C-m"))))
+         (input-method (buffer-local-value 'current-input-method src-buf))
+         (e-indent (and (boundp 'electric-indent-mode)
+                        (buffer-local-value 'electric-indent-mode src-buf)))
+         (e-pair (and (boundp 'electric-pair-mode)
+                      (buffer-local-value 'electric-pair-mode src-buf)))
+         (e-quote (and (boundp 'electric-quote-mode)
+                       (buffer-local-value 'electric-quote-mode src-buf)))
+         (evil-on (and (boundp 'evil-mode) (symbol-value 'evil-mode)))
+         (evil-state-val (and (boundp 'evil-state)
+                              (buffer-local-value 'evil-state src-buf)))
+         (viper-on (and (boundp 'viper-mode) (symbol-value 'viper-mode)))
+         (god-on (and (boundp 'god-local-mode)
+                      (buffer-local-value 'god-local-mode src-buf)))
+         (sp-on (and (boundp 'smartparens-mode)
+                     (buffer-local-value 'smartparens-mode src-buf)))
+         (paredit-on (and (boundp 'paredit-mode)
+                          (buffer-local-value 'paredit-mode src-buf)))
+         (corfu-on (and (boundp 'corfu-mode)
+                        (buffer-local-value 'corfu-mode src-buf)))
+         (company-on (and (boundp 'company-mode)
+                          (buffer-local-value 'company-mode src-buf)))
+         (chat-id (buffer-local-value 'eca-chat--id src-buf))
+         (closed (buffer-local-value 'eca-chat--closed src-buf))
+         (loading (buffer-local-value 'eca-chat--chat-loading src-buf))
+         (pending (buffer-local-value 'eca-chat--pending-question src-buf))
+         (session (with-current-buffer src-buf
+                    (ignore-errors (eca-session))))
+         (prompt-area (with-current-buffer src-buf
+                        (ignore-errors (eca-chat--prompt-area-ov))))
+         (prompt-field (with-current-buffer src-buf
+                         (ignore-errors (eca-chat--prompt-field-ov))))
+         (prompt-content (with-current-buffer src-buf
+                           (ignore-errors (eca-chat--prompt-content))))
+         (pt (with-current-buffer src-buf (point)))
+         (self (eca-chat--doctor-self-check src-buf))
+         (hints nil))
+    ;; --- compute hints ---
+    (unless in-chat-p
+      (push (format "Inspected buffer's `major-mode' is `%s' and is not \
+derived from `eca-chat-mode'.  `eca-chat-mode' likely failed to activate." mm)
+            hints))
+    (when (and in-chat-p
+               (not (eq ret-cmd 'eca-chat--key-pressed-return))
+               (not (eq return-cmd 'eca-chat--key-pressed-return)))
+      (push (format "RET is bound to `%s' (and <return> to `%s'), not \
+`eca-chat--key-pressed-return'.  Another keymap is intercepting RET — see \
+\"Likely shadowing\" below." ret-cmd return-cmd)
+            hints))
+    (when (and in-chat-p (null session))
+      (push "(eca-session) returned nil from inside the chat buffer — \
+the buffer is not registered to any ECA workspace." hints))
+    (when (and in-chat-p (null prompt-area))
+      (push "The `eca-chat-prompt-area' overlay is missing — chat buffer is \
+in an inconsistent state.  Try `M-x eca-chat-reset'." hints))
+    (when (and in-chat-p evil-on (eq evil-state-val 'insert))
+      (push "evil-mode is in insert state.  `evil-insert-state-map' (an \
+emulation map) beats major-mode maps.  If RET above is `evil-ret' / \
+`newline', that is the cause." hints))
+    (when (and in-chat-p pending)
+      (push "An unanswered question is pending \
+(`eca-chat--pending-question' non-nil).  RET without freeform input is \
+intentionally a no-op until you answer the question." hints))
+    (when (and in-chat-p closed)
+      (push "This chat is marked closed (`eca-chat--closed' non-nil); \
+sending will raise a user-error." hints))
+    (when (and in-chat-p (not (plist-get self :mode-map-ret-ok)))
+      (push (format "`eca-chat-mode-map' RET is `%s', expected \
+`eca-chat--key-pressed-return'.  Some code has clobbered the mode-map \
+after `eca-chat' was loaded; check your user config."
+                    (plist-get self :mode-map-ret))
+            hints))
+    (when (and in-chat-p (eq (plist-get self :cond-ok) nil))
+      (push "`eca-chat--key-pressed-return' references the markdown-link \
+clause before the expandable clause.  Loaded code predates commit \
+`dac33d8'; pull master, restart Emacs, and `M-x byte-recompile-directory' \
+if the warning persists." hints))
+    (when (and in-chat-p (plist-get self :has-label)
+               (not (plist-get self :label-ret-ok)))
+      (push "The first expandable block label has no RET binding in its \
+`keymap' text-property.  Either the loaded `eca-chat-expandable.el' \
+predates commit `dac33d8' or this block was rendered before the fix was \
+reloaded; start a new chat or wait for a fresh tool call to be rendered."
+            hints))
+    (when (and in-chat-p (plist-get self :stale-elc-p))
+      (push (format "`%s' is newer than the loaded `%s'.  Recompile \
+(`M-x byte-recompile-directory') or delete the stale `.elc' and restart \
+Emacs." (plist-get self :source-file) (plist-get self :loaded-file))
+            hints))
+    ;; --- render report into temp buffer and return as string ---
+    (with-temp-buffer
+      (insert "### Inspected chat buffer\n\n")
+      (insert (format "- buffer:            %s\n" (buffer-name src-buf)))
+      (insert (format "- major-mode:        %s\n" mm))
+      (insert (format "- derived from `eca-chat-mode': %s\n"
+                      (if in-chat-p "yes" "NO")))
+      (insert (format "- `eca-chat-parent-mode': %s\n" parent-mode))
+      (insert (format "- default-directory: %s\n\n" def-dir))
+      (insert "### Key bindings in chat buffer\n\n")
+      (insert (format "- RET        → %s\n" (or ret-cmd "<unbound>")))
+      (insert (format "- <return>   → %s\n" (or return-cmd "<unbound>")))
+      (insert (format "- C-m        → %s\n\n" (or cm-cmd "<unbound>")))
+      (insert "### Likely shadowing / input translation\n\n")
+      (insert (format "- current-input-method:  %s\n" (or input-method "nil")))
+      (insert (format "- electric-indent-mode:  %s\n" e-indent))
+      (insert (format "- electric-pair-mode:    %s\n" e-pair))
+      (insert (format "- electric-quote-mode:   %s\n" e-quote))
+      (insert (format "- evil-mode:             %s (state=%s)\n"
+                      evil-on evil-state-val))
+      (insert (format "- viper-mode:            %s\n" viper-on))
+      (insert (format "- god-local-mode:        %s\n" god-on))
+      (insert (format "- smartparens-mode:      %s\n" sp-on))
+      (insert (format "- paredit-mode:          %s\n" paredit-on))
+      (insert (format "- corfu-mode:            %s\n" corfu-on))
+      (insert (format "- company-mode:          %s\n\n" company-on))
+      (insert "### ECA chat state\n\n")
+      (insert (format "- eca-chat--id:               %s\n" chat-id))
+      (insert (format "- eca-chat--closed:           %s\n" closed))
+      (insert (format "- eca-chat--chat-loading:     %s\n" loading))
+      (insert (format "- eca-chat--pending-question: %s\n"
+                      (if pending "set" "nil")))
+      (insert "- (eca-session): ")
+      (if session
+          (insert (format "found (id=%s, roots=%S)\n\n"
+                          (eca--session-id session)
+                          (eca--session-workspace-folders session)))
+        (insert "NIL — buffer is not registered to a workspace\n\n"))
+      (insert "### Self-check\n\n")
+      (insert (format "- `eca-chat-mode-map' RET → %s  %s\n"
+                      (or (plist-get self :mode-map-ret) "<unbound>")
+                      (if (plist-get self :mode-map-ret-ok) "✓" "✗")))
+      (insert (format
+               "- `eca-chat--key-pressed-return': expandable before \
+markdown-link  %s\n"
+               (let ((status (plist-get self :cond-ok)))
+                 (cond ((eq status t) "✓")
+                       ((null status) "✗")
+                       (t "? (could not introspect)")))))
+      (if (plist-get self :has-label)
+          (insert (format "- nearest expandable label RET → %s  %s\n"
+                          (let ((b (plist-get self :label-ret)))
+                            (cond ((null b) "<unbound>")
+                                  ((functionp b) "<toggle lambda>")
+                                  (t (format "%s" b))))
+                          (if (plist-get self :label-ret-ok) "✓" "✗")))
+        (insert "- nearest expandable label RET: n.a. \
+(no blocks rendered yet)\n"))
+      (insert (format "- loaded from: %s\n"
+                      (or (plist-get self :loaded-file) "<unknown>")))
+      (when (plist-get self :stale-elc-p)
+        (insert (format "  ⚠ source `%s' is newer than the loaded `.elc'\n"
+                        (plist-get self :source-file))))
+      (insert "\n")
+      (insert "### Prompt overlays\n\n")
+      (insert (format "- prompt-area overlay:  %s\n"
+                      (if prompt-area
+                          (format "%d..%d"
+                                  (overlay-start prompt-area)
+                                  (overlay-end prompt-area))
+                        "MISSING")))
+      (insert (format "- prompt-field overlay: %s\n"
+                      (if prompt-field
+                          (format "%d..%d"
+                                  (overlay-start prompt-field)
+                                  (overlay-end prompt-field))
+                        "MISSING")))
+      (insert (format "- point:                %d\n" pt))
+      (insert (format "- (eca-chat--prompt-content): %S\n\n" prompt-content))
+      (insert "### Hints\n\n")
+      (if hints
+          (dolist (h (nreverse hints))
+            (insert "- " h "\n"))
+        (insert "- No obvious issue detected by the static checks.\n"))
+      (buffer-string))))
+
+(defun eca-chat--doctor-section ()
+  "Return a markdown-formatted diagnostic string for the active chat.
+Auto-finds the chat buffer via `eca-chat--doctor-find-buffer'.  When
+no chat buffer is available, returns a single-line notice instead.
+Used by `eca-doctor'."
+  (if-let ((src-buf (eca-chat--doctor-find-buffer)))
+      (eca-chat--doctor-format src-buf)
+    "No chat buffer found in any running session.\n"))
 
 (provide 'eca-chat)
 ;;; eca-chat.el ends here

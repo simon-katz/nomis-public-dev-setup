@@ -2,8 +2,8 @@
 ;; Copyright (C) 2025 Eric Dallo
 ;; Author: Eric Dallo <ercdll1337@gmail.com>
 ;; Maintainer: Eric Dallo <ercdll1337@gmail.com>
-;; Package-Version: 20260508.2142
-;; Package-Revision: cf1bfae9a596
+;; Package-Version: 20260514.1345
+;; Package-Revision: 1887e4de9fe2
 ;; Package-Requires: ((emacs "28.1") (dash "2.18.0") (s "1.12.0") (f "0.20.0") (markdown-mode "2.3") (compat "30.1"))
 ;; Keywords: tools
 ;; Homepage: https://github.com/editor-code-assistant/eca-emacs
@@ -45,6 +45,7 @@
 
 (declare-function package-desc-version "package" (pkg-desc))
 (declare-function package-version-join "package" (vlist))
+(declare-function eca-chat--doctor-section "eca-chat")
 
 (defun eca--client-version ()
   "Return the eca-emacs client version string.
@@ -389,6 +390,33 @@ Displays eca-emacs client version, server version, and Emacs version."
              client-version server-version (emacs-version))))
 
 ;;;###autoload
+(defun eca-doctor ()
+  "Print ECA diagnostic info to `*eca-doctor*' for bug reports.
+The report contains the same data as `eca-version' followed by a
+chat section automatically sourced from the active session's
+chat buffer.  See `eca-chat--doctor-section'."
+  (interactive)
+  (let* ((out-buf (get-buffer-create "*eca-doctor*"))
+         (client-ver (or (eca--client-version) "unknown"))
+         (server-ver (or (eca-process--server-version) "not found"))
+         (chat-section (eca-chat--doctor-section)))
+    (with-current-buffer out-buf
+      (let ((inhibit-read-only t))
+        (erase-buffer)
+        (insert "# eca-doctor\n\n")
+        (insert "Paste this buffer into your bug report.\n\n")
+        (insert "## Versions\n\n")
+        (insert (format "- eca-emacs:   %s\n" client-ver))
+        (insert (format "- eca server:  %s\n" server-ver))
+        (insert (format "- emacs:       %s\n" (emacs-version)))
+        (insert (format "- system-type: %s\n\n" system-type))
+        (insert "## Chat\n\n")
+        (insert chat-section)
+        (goto-char (point-min))
+        (special-mode)))
+    (pop-to-buffer out-buf)))
+
+;;;###autoload
 (defun eca (&optional arg)
   "Start or switch to a eca session.
 When ARG is current prefix, ask for workspace roots to use."
@@ -479,13 +507,14 @@ When ARG is current prefix, ask for workspace roots to use."
         (widget-create (eca--tree-widget-open-all
                         (hierarchy-convert-to-tree-widget h label-fn)))
         (widget-setup))
-      (let* ((display-buffer-alist
-              `((,(regexp-quote (buffer-name b))
-                 (display-buffer-in-side-window)
-                 (side . bottom)
-                 (slot . 0)
-                 (window-parameters . ((no-delete-other-windows . t)))))))
-        (select-window (display-buffer b))))))
+      (select-window
+       (display-buffer
+        b
+        '((display-buffer-in-side-window)
+          (side . bottom)
+          (slot . 0)
+          (dedicated . t)
+          (window-parameters . ((no-delete-other-windows . t)))))))))
 
 ;;;###autoload
 (defun eca-open-global-config ()

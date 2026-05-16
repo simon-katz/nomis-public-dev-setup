@@ -18,6 +18,11 @@ Connect in eca nrepl port for development." t)
 (autoload 'eca-version "eca" "\
 Show ECA version information for debugging.
 Displays eca-emacs client version, server version, and Emacs version." t)
+(autoload 'eca-doctor "eca" "\
+Print ECA diagnostic info to `*eca-doctor*' for bug reports.
+The report contains the same data as `eca-version' followed by a
+chat section automatically sourced from the active session's
+chat buffer.  See `eca-chat--doctor-section'." t)
 (autoload 'eca "eca" "\
 Start or switch to a eca session.
 When ARG is current prefix, ask for workspace roots to use.
