@@ -1,1 +1,1 @@
-/Users/simonkatz/development-100/repositories/nomis/_apps-and-libs/nomis-electric-clojure-mode/nomis-ec-mode.el
+/Users/simonkatz/development-100/repositories/nomis/dev/apps-and-libs/nomis-electric-clojure-mode/nomis-ec-mode.el
