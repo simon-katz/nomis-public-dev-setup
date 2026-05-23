@@ -1,34 +1,35 @@
-;;;; Init stuff -- nomis-eca --  -*- lexical-binding: t -*-
+;;; Init stuff -- nomis-eca --  -*- lexical-binding: t -*-
 
-;;;; ___________________________________________________________________________
+;;; Code:
 
-(require 'eca)
+;;;; Require things
 
-;;;; ___________________________________________________________________________
+(require 'eca nil t)
 
-(setq eca-chat-use-side-window nil)
+;;;; The rest
 
-(set-face-attribute 'eca-chat-user-messages-face nil :foreground "grey95")
-(set-face-attribute 'eca-chat-user-messages-face nil :background "#580058")
+(when (featurep 'eca) ; eca changes rapidly, so we don't have it in git
 
-(set-face-attribute 'eca-chat-approval-modeline-face nil :background "yellow")
+  (setq eca-chat-use-side-window nil)
 
-;;;; ___________________________________________________________________________
+  (set-face-attribute 'eca-chat-user-messages-face nil :foreground "grey95")
+  (set-face-attribute 'eca-chat-user-messages-face nil :background "#580058")
 
-(defun nomis/setup-eca-chat-mode ()
-  (nomis/wwo/mode)
-  (nomis/wwo/set-binary-encoding-0))
+  (set-face-attribute 'eca-chat-approval-modeline-face nil :background "yellow")
 
-(add-hook 'eca-chat-mode-hook 'nomis/setup-eca-chat-mode)
+  (defun nomis/setup-eca-chat-mode ()
+    (nomis/wwo/mode)
+    (nomis/wwo/set-binary-encoding-0))
 
-;;;; ___________________________________________________________________________
+  (add-hook 'eca-chat-mode-hook 'nomis/setup-eca-chat-mode)
 
-(keymap-set eca-chat-mode-map "H-k" #'eca-chat-clear)
-(keymap-set eca-chat-mode-map "M-p" #'eca-chat--key-pressed-previous-prompt-history)
-(keymap-set eca-chat-mode-map "M-n" #'eca-chat--key-pressed-next-prompt-history)
+  (keymap-set eca-chat-mode-map "H-k" #'eca-chat-clear)
+  (keymap-set eca-chat-mode-map "M-p" #'eca-chat--key-pressed-previous-prompt-history)
+  (keymap-set eca-chat-mode-map "M-n" #'eca-chat--key-pressed-next-prompt-history)
 
-;; (setq eca-custom-command '("/Users/simonkatz/bin-private/eca" "server" "--log-level" "debug"))
+  ;; (setq eca-custom-command '("/Users/simonkatz/bin-private/eca" "server" "--log-level" "debug"))
+  )
 
-;;;; ___________________________________________________________________________
+;;; End
 
 (provide 'nomis-eca)
