@@ -18,7 +18,10 @@
     ("#_{:clj-kondo/ignore #?(:clj [] :cljs [:unresolved-namespace])}"
      "●")
     ("#_{:clj-kondo/ignore #?(:clj nil :default true)}"
-     "■")))
+     "■")
+    ;; Other
+    ("#_{:clj-kondo/ignore [:redundant-primitive-coercion]}"
+     "→")))
 
 (defconst -nomis/replace-text-keywords
   (cl-loop for (old new eat-whitespace?) in -nomis/replace-text-text-pairs
