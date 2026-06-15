@@ -153,6 +153,13 @@
 
 (add-hook 'clojure-mode-hook '-nomis/set-clojure-outline)
 
+;;;;; SCSS mode
+
+(defun -nomis/set-scss-mode-outline ()
+  (setq-local outline-regexp "////*"))
+
+(add-hook 'scss-mode-hook '-nomis/set-scss-mode-outline)
+
 ;;;; Fix `outline-mark-subtree` so that selection goes to next heading
 
 (defun nomis/outline/mark-subtree/extend (&rest _)
