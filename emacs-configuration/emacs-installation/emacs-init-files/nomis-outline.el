@@ -156,7 +156,7 @@
 ;;;;; SCSS mode
 
 (defun -nomis/set-scss-mode-outline ()
-  (setq-local outline-regexp "////*"))
+  (setq-local outline-regexp "/////*"))
 
 (add-hook 'scss-mode-hook '-nomis/set-scss-mode-outline)
 
