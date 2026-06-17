@@ -355,6 +355,39 @@ When in a body, \"current heading\" means the current body's parent heading."
 
 ;;;;; Expanding and collapsing
 
+(defun nomis/outline-hide-trailing-blank-lines ()
+  (save-excursion
+    (let ((heading-pos (point)))
+      (outline-next-heading)
+      (let ((end (point)))
+        (when (re-search-backward "[^[:space:]\n]" heading-pos t)
+          (forward-line 1)
+          (let ((start (point)))
+            (when (< start end)
+              (remove-overlays start end 'nomis-hide-trailing-blank-lines t)
+              (let ((ov (make-overlay start end)))
+                (overlay-put ov 'nomis-hide-trailing-blank-lines t)
+                (overlay-put ov 'invisible t)))))))))
+
+(defun nomis/outline-show-trailing-blank-lines ()
+  (save-excursion
+    (let ((start (point))
+          (end (progn (outline-end-of-subtree) (point))))
+      (remove-overlays start end 'nomis-hide-trailing-blank-lines t))))
+
+(defun nomis/outline-show-trailing-blank-lines--all ()
+  (remove-overlays nil nil 'nomis-hide-trailing-blank-lines t))
+
+(advice-add 'outline-hide-subtree
+            :before
+            (lambda (&rest _) (nomis/outline-show-trailing-blank-lines))
+            '((name . nomis/outline-hide-trailing-blank-lines/cleanup)))
+
+(advice-add 'outline-hide-sublevels
+            :before
+            (lambda (&rest _) (nomis/outline-show-trailing-blank-lines--all))
+            '((name . nomis/outline-hide-trailing-blank-lines/cleanup)))
+
 (defun nomis/tree/expand (n &optional collapse-first?)
   "Expand N levels below the current heading. If COLLAPSE-FIRST? is non-nil,
 collapse the tree first so that only N levels are shown. When in
@@ -369,7 +402,8 @@ heading."
            (let* ((n-levels-below-start (- (nomis/outline/w/level/boh)
                                            start-level)))
              (when (< n-levels-below-start n)
-               (nomis/outline/w/show-entry))
+               (nomis/outline/w/show-entry)
+               (nomis/outline-hide-trailing-blank-lines))
              ;; Hack to avoid unwanted ellipsis for last heading in file when it
              ;; has no body:
              (when (and (= n-levels-below-start n)
@@ -1162,6 +1196,9 @@ the command has changed since the timer was started."
   (when (and (not error?)
              (> maximum-value 0)
              (= new-value maximum-value))
+    (if (eq scope :all-roots)
+        (nomis/outline-show-trailing-blank-lines--all)
+      (nomis/outline-show-trailing-blank-lines))
     (-nomis/tree/set-level/pulse scope))
   (unless *-nomis/tree/inhibit-set-level-etc-message?*
     (funcall (if error?
