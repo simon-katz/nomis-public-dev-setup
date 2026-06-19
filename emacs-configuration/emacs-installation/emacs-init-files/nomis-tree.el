@@ -137,25 +137,6 @@ a bare `C-u' becomes 4, `C-u C-u' becomes 16, etc., while nil stays nil."
       *nomis/popup/duration*
     1))
 
-(defconst -nomis/tree/allow-wrap-duration
-  ;; This should be smaller than the OS's initial-delay-for-repeat-key value,
-  ;; otherwise we get wrapping when pressing-and-holding the TAB key on
-  ;; an already-fully-expanded heading.
-  0.25)
-
-(defconst -nomis/tree/repeat-key-assumed-interval-s 0.1)
-
-(defun -nomis/tree/repeat-key-likely-used? ()
-  ;; Unfortunately there's no good way to determine whether this is a first
-  ;; repeat (after the long initial delay). This means that if we are already
-  ;; fully expanded when the user starts, we will allow cycling.
-  ;;
-  ;; Ah, it's OK if we make `-nomis/tree/allow-wrap-duration` smaller
-  ;; than the repeat-initial-delay value.
-  (< (float-time)
-     (+ -nomis/tree/prev-command-timestamp
-        -nomis/tree/repeat-key-assumed-interval-s)))
-
 ;;;; Tailor other functionality
 
 ;;;;; what-cursor-position
@@ -1084,20 +1065,6 @@ with N as the parameter."
 
 ;; "wrapex" means "wrap-expand-collapse".
 
-(defconst -nomis/tree/wrapex? t)
-(defvar -nomis/tree/allow-wrapex-timer nil)
-
-(defun -nomis/tree/cancel-wrapex-timer ()
-  (when -nomis/tree/allow-wrapex-timer
-    (cancel-timer -nomis/tree/allow-wrapex-timer)
-    (setq -nomis/tree/allow-wrapex-timer nil)))
-
-(defun -nomis/tree/allow-wrapex-for-a-while ()
-  (setq -nomis/tree/allow-wrapex-timer
-        (run-at-time -nomis/tree/allow-wrap-duration
-                     nil
-                     '-nomis/tree/cancel-wrapex-timer)))
-
 (defun -nomis/tree/set-level/maybe-wrap (v minimum maximum)
   "Clamp V to [MINIMUM, MAXIMUM] and return a list (NEW-VALUE DO-CYCLING?).
 
@@ -1111,30 +1078,37 @@ the command has changed since the timer was started."
   (if (zerop maximum)
       (progn (cl-assert (zerop minimum))
              '(0 nil))
-    (let* ((repeat-key-likely-used? (-nomis/tree/repeat-key-likely-used?)))
-      (cl-flet ((normal-behaviour () (list (min (max minimum v)
-                                                maximum)
-                                           nil))
-                (wrapping-behaviour () (list (if (= v (1- minimum))
-                                                 maximum
-                                               minimum)
-                                             t)))
-        (let* ((allow-wrapex-now? (and -nomis/tree/allow-wrapex-timer
-                                       (not repeat-key-likely-used?))))
-          (-nomis/tree/cancel-wrapex-timer)
-          (if (<= minimum v maximum)
+    (cl-flet ((normal-behaviour () (list (min (max minimum v)
+                                              maximum)
+                                         nil))
+              (wrapping-behaviour () (list (if (= v (1- minimum))
+                                               maximum
+                                             minimum)
+                                           t)))
+      (let* ((allow-wrap?
+              ;; Turn this feature off. We need a reliable way of detecting
+              ;; a double-tap as opposed to keyboard repeat, and that seems to
+              ;; be impossible.
+              ;;
+              ;; The point of this was to allow double-tap to wrap when using
+              ;; tab or backtab. Instead, the user has the following options:
+              ;;
+              ;; - Use keyboard repeat with backtab or tab.
+              ;;
+              ;; - (In org mode), use `Fn-Tab` for `org-cycle`, which will
+              ;;   collaps the subtree when it's fully expanded.
+              ;;
+              ;; - Use `C-H-M-` or `C-H-M-\` (but that requires hand movement).
+              nil))
+        (if (<= minimum v maximum)
+            (normal-behaviour)
+          (if (not allow-wrap?)
               (normal-behaviour)
-            (if (not allow-wrapex-now?)
-                (progn
-                  (when (and -nomis/tree/wrapex?
-                             (not repeat-key-likely-used?))
-                    (-nomis/tree/allow-wrapex-for-a-while))
-                  (normal-behaviour))
-              ;; Don't wrap if we moved to another position that also happens to
-              ;; be fully-expanded. Don't wrap if we moved away and came back.
-              (if (not (eq this-command (nomis/outline/w/last-command)))
-                  (normal-behaviour)
-                (wrapping-behaviour)))))))))
+            ;; Don't wrap if we moved to another position that also happens to
+            ;; be fully-expanded. Don't wrap if we moved away and came back.
+            (if (not (eq this-command (nomis/outline/w/last-command)))
+                (normal-behaviour)
+              (wrapping-behaviour))))))))
 
 (defun -nomis/tree/n-levels-below/for-scope (scope)
   (cl-ecase scope
