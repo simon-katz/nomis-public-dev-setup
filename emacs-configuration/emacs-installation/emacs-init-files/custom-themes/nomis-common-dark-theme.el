@@ -8,7 +8,7 @@
                   ;; :foreground "white"
                   :background "Red3"))))
 
- `(hl-line ((t  ,(list :background "#407040"))))
+ `(hl-line ((t  ,(list :underline "#060"))))
 
  `(font-lock-warning-face ((t ,(list :bold t
                                      :foreground "Red2"))))

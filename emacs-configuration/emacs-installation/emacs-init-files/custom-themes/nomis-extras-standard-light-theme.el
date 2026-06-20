@@ -13,12 +13,13 @@
    ((t ,(list :foreground "grey84"
               :background "grey84"))))
 
- `(hl-line ((t ,(cl-case 0
+ `(hl-line ((t ,(cl-case 3
                   (0 (list :background "darkseagreen1"))
                   (1 (list :background "palegoldenrod"))
                   (2 (list :box (list :line-width -1
                                       :color "grey25"
-                                      :style nil)))))))
+                                      :style nil)))
+                  (3 (list :underline "#8a8"))))))
 
  `(ido-vertical-first-match-face
    ((t ,(list :foreground "blue"))))
