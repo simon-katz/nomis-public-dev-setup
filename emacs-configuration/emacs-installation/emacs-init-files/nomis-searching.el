@@ -2,6 +2,7 @@
 
 ;;;; ___________________________________________________________________________
 
+(require 'grep)
 (require 'nomis-searching-directory-stuff)
 (require 'nomis-searching-file-stuff)
 
