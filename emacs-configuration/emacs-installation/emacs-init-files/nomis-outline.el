@@ -34,10 +34,10 @@
   )
 
 (defun -nomis/hack-outline-minor-faces ()
-  (set-face-attribute 'outline-minor-0 nil
-                      :weight 'normal
-                      :overline t
-                      :background (face-background 'default)))
+  (face-remap-add-relative 'outline-minor-0
+                           :weight 'normal
+                           :overline t
+                           :background (face-background 'default)))
 
 ;; If we decide that the extra vertical space for overlines is bad, we can do:
 ;; `(setq overline-margin 0)`.
