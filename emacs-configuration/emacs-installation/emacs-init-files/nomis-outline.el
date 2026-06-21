@@ -34,10 +34,28 @@
   )
 
 (defun -nomis/hack-outline-minor-faces ()
+  ;; Previously we had:
+  ;;
+  ;;     (face-remap-add-relative 'outline-minor-0
+  ;;                              :weight 'normal
+  ;;                              :overline t
+  ;;                              :background (face-background 'default))
+  ;;
+  ;; (`:overline t` means to use the foreground color,)
+  ;;
+  ;; That doesn't work. When another face (for me `hl-line`) specifies
+  ;; `:underline`, the overline color is not the foreground color — instead it's
+  ;; the same as the underline color.
+  ;;
+  ;; This appears to be an Emacs face merging quirk.
+  ;;
+  ;; Instead we change each of `outline-minor-faces` individually.
   (face-remap-add-relative 'outline-minor-0
                            :weight 'normal
-                           :overline t
-                           :background (face-background 'default)))
+                           :background (face-background 'default))
+  (cl-loop for face across outline-minor-faces
+           do (let* ((fg (face-foreground face nil 'default)))
+                (face-remap-add-relative face :overline fg))))
 
 ;; If we decide that the extra vertical space for overlines is bad, we can do:
 ;; `(setq overline-margin 0)`.
