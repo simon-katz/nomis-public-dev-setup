@@ -220,8 +220,9 @@
 
 (defun nomis/tree/ls/show-after-find ()
   (unless (nomis/outline/w/before-first-heading?)
-    (nomis/tree/ls/show-lineage
-     nomis/tree/ls/spec/no-hide--fat-ancestors--all-children)))
+    (when (nomis/outline/w/invisible?)
+      (nomis/tree/ls/show-lineage
+       nomis/tree/ls/spec/no-hide--fat-ancestors--all-children))))
 
 ;;; End
 
