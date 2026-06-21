@@ -25,7 +25,46 @@
 ;;;; ___________________________________________________________________________
 ;;;; Better grepping.
 
+(defun -nomis/hack-to-avoid-calling-shell-quote-argument ()
+  ;; `shell-quote-argument` seems to be broken.
+  ;;
+  ;; `shell-quote-argument` is called in `grep-expand-keywords` in `grep.el`:
+  ;;
+  ;;     ("<R>" . (shell-quote-argument (or regexp "") grep-quoting-style))
+  ;;
+  ;; This expression is evaluated by `grep-expand-template` when it processes
+  ;; the `<R>` placeholder.
+  ;;
+  ;; With our advice in place, we replace `<R>` in the template before calling
+  ;; `orig-fun`, so when `grep-expand-template` iterates over
+  ;; `grep-expand-keywords` looking for `<R>` in the command string, it's
+  ;; already gone — and `shell-quote-argument` is never called for the regexp.
+  ;;
+  ;; Claude says: `shell-quote-argument' on macOS ignores its `posix' argument
+  ;; and always backslash-escapes. This causes `$' to reach grep unescaped (the
+  ;; shell strips the backslash), where it is interpreted as end-of-line rather
+  ;; than a literal `$'. Fix by doing our own single-quote wrapping for <R>,
+  ;; bypassing `shell-quote-argument' entirely. Note: inside single quotes, what
+  ;; you type is what grep sees -- so type `\$' for a literal `$'.
+  (advice-add 'grep-expand-template :around
+              (lambda (orig-fun template &optional regexp &rest args)
+                (let* ((quoted (concat "'"
+                                       (replace-regexp-in-string "'"
+                                                                 "'\\''"
+                                                                 (or regexp "")
+                                                                 t
+                                                                 t)
+                                       "'"))
+                       (new-template (replace-regexp-in-string "<R>"
+                                                               quoted
+                                                               template
+                                                               t
+                                                               t)))
+                  (apply orig-fun new-template regexp args)))
+              '((name . nomis/single-quote-grep-regexp))))
+
 (with-eval-after-load 'grep
+  (-nomis/hack-to-avoid-calling-shell-quote-argument)
   (when (equal system-type 'darwin)
     (grep-apply-setting
      'grep-find-template
