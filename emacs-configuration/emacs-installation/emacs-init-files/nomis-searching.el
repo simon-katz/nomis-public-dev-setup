@@ -74,7 +74,7 @@
         "find <D> <X> -type f <F> -exec grep <C> -nH --null -e <R> \\{\\} +")
        (2
         ;; What I'm trying -- sort the files
-        "find <D> <X> -type f <F> -print0 | sort -z | xargs -0 grep <C> -nH --null -e <R>")))))
+        "find <D> <X> -type f <F> -print0 | sort -z | xargs -0 grep -I <C> -nH --null -e <R>")))))
 
 ;;;; Based on code found at
 ;;;; https://github.com/magnars/.emacs.d/blob/master/setup-rgrep.el.
