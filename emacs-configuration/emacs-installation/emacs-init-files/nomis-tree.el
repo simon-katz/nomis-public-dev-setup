@@ -1026,6 +1026,98 @@ When in a body, \"current heading\" means the current body's parent heading."
 
 ;;;; Expanding and collapsing
 
+;;;;; Support for double-tap
+
+(defvar -nomis/tree/prev-expand-or-collapse-beyond-limit? nil)
+
+(defun -nomis/tree/wrap-delay-s ()
+  (if (boundp 'key-chord-one-key-delay)
+      key-chord-one-key-delay
+    0.2))
+
+(defvar -nomis/tree/wrap-min-delay-s 0.1)
+
+(defun -nomis/tree/normalize-raw-event (event)
+  "Translate raw symbol events to character equivalents, as input-decode-map would."
+  ;; Hacky Emacs key stuff. Yeuch!
+  (if (symbolp event)
+      (or (cdr (assq event '((tab       . ?\t)
+                             (S-tab     . backtab)
+                             (return    . ?\r)
+                             (escape    . ?\e)
+                             (backspace . ?\d))))
+          event)
+    event))
+
+(defun -nomis/tree/same-command-key? (next)
+  (let* ((normalized (-nomis/tree/normalize-raw-event next))
+         (b (key-binding (vector normalized) t)))
+    (or (eq b this-command)
+        (and (consp b)
+             (eq (nth 2 b) this-command)))))
+
+(defun -nomis/tree/drain-buffered-same-key-events ()
+  "Discard same-key events buffered at the front of the input queue.
+Stops at the first non-same-key event, which is pushed back."
+  (while (let* ((e (read-event nil nil 0)))
+           (cond ((null e)                          nil)
+                 ((-nomis/tree/same-command-key? e) t)
+                 (t (push e unread-command-events)  nil)))))
+
+(defun -nomis/tree/double-tap? ()
+  "Return non-nil if the user double-tapped.
+Do not treat auto-repeat as a double tap (which is tricky!)."
+  ;; How it works:
+  ;;
+  ;; This is used for `:inc` and `:dec` commands.
+  ;;
+  ;; First we check whether the previous invocation tried to go beyond the
+  ;; expand/collapse limit and the same command is being repeated; if not, we
+  ;; return nil immediately.
+  ;;
+  ;; Then any same-key events already buffered in the input queue are discarded.
+  ;; These are events that have accumulated while the current command is
+  ;; executing (perhaps due to auto-repeat).
+  ;; - This is not strictly required — the min-delay check would catch buffered
+  ;;   events too — but it avoids a burst of rapid re-invocations if many
+  ;;   auto-repeat events accumulated while the command was running.
+  ;;
+  ;; Then we call `read-event`, waiting up to `(-nomis/tree/wrap-delay-s)` for
+  ;; a fresh key event. We handle the event as follows:
+  ;;
+  ;; - No event: return nil.
+  ;;
+  ;; - Non-same-key event: Push the event back and return nil.
+  ;;
+  ;; - Same-key event:
+  ;;
+  ;;   - If arrived more quickly than a human-produced-double-tap
+  ;;     time `-nomis/tree/wrap-min-delay-s`:
+  ;;     - This is an auto-repeat event.
+  ;;     - Push back and return nil.
+  ;;
+  ;;   - Otherwise:
+  ;;     - This is a deliberate second tap.
+  ;;     - Return t.
+  ;;     - Note that we have "eaten" an event -- two events have been used
+  ;;       to run one command.
+  (when (and -nomis/tree/prev-expand-or-collapse-beyond-limit?
+             (eq this-command (nomis/outline/w/last-command)))
+    (-nomis/tree/drain-buffered-same-key-events)
+    (let* ((start-time (current-time))
+           (next (read-event nil nil (-nomis/tree/wrap-delay-s))))
+      (when next
+        (cl-flet* ((push-back ()
+                     (push next unread-command-events)
+                     nil))
+          (cond ((not (-nomis/tree/same-command-key? next))
+                 (push-back))
+                ((< (float-time (time-subtract (current-time) start-time))
+                    -nomis/tree/wrap-min-delay-s)
+                 (push-back))
+                (t
+                 t)))))))
+
 ;;;;; *expanding-parent?*
 
 (defvar *expanding-parent?* nil)
@@ -1065,7 +1157,7 @@ with N as the parameter."
 
 ;; "wrapex" means "wrap-expand-collapse".
 
-(defun -nomis/tree/set-level/maybe-wrap (v minimum maximum)
+(defun -nomis/tree/set-level/maybe-wrap (v minimum maximum allow-wrap?)
   "Clamp V to [MINIMUM, MAXIMUM] and return a list (NEW-VALUE DO-CYCLING?).
 
 Normally V is clamped to the valid range and DO-CYCLING? is nil. However, if V
@@ -1085,30 +1177,15 @@ the command has changed since the timer was started."
                                                maximum
                                              minimum)
                                            t)))
-      (let* ((allow-wrap?
-              ;; Turn this feature off. We need a reliable way of detecting
-              ;; a double-tap as opposed to keyboard repeat, and that seems to
-              ;; be impossible.
-              ;;
-              ;; The point of this was to allow double-tap to wrap when using
-              ;; tab or backtab. Instead, the user has the following options:
-              ;;
-              ;; - Use keyboard repeat with backtab or tab.
-              ;;
-              ;; - (In org mode), use `Fn-Tab` for `org-cycle`, which will
-              ;;   collaps the subtree when it's fully expanded.
-              ;;
-              ;; - Use `C-H-M-` or `C-H-M-\` (but that requires hand movement).
-              nil))
-        (if (<= minimum v maximum)
+      (if (<= minimum v maximum)
+          (normal-behaviour)
+        (if (not allow-wrap?)
             (normal-behaviour)
-          (if (not allow-wrap?)
+          ;; Don't wrap if we moved to another position that also happens to
+          ;; be fully-expanded. Don't wrap if we moved away and came back.
+          (if (not (eq this-command (nomis/outline/w/last-command)))
               (normal-behaviour)
-            ;; Don't wrap if we moved to another position that also happens to
-            ;; be fully-expanded. Don't wrap if we moved away and came back.
-            (if (not (eq this-command (nomis/outline/w/last-command)))
-                (normal-behaviour)
-              (wrapping-behaviour))))))))
+            (wrapping-behaviour)))))))
 
 (defun -nomis/tree/n-levels-below/for-scope (scope)
   (cl-ecase scope
@@ -1207,44 +1284,51 @@ value. It is clamped to the valid range.
 DIRECTION should be `:collapse' or `:expand' for incremental callers, or
 `:set-to-n' for explicit-value callers."
   (save-excursion ; sometimes position is lost when at an invisible pount-- a hacky fix
-    (thunk-let* ((current-value (-nomis/tree/current-expansion-level/for-scope
-                                 direction
-                                 scope)))
-      (let* ((minimum-value (if *expanding-parent?* 1 0))
-             (maximum-value (-nomis/tree/n-levels-below/for-scope scope))
-             (requested-value-num
-              (cond ((eq requested-value :dec)  (1- current-value))
-                    ((eq requested-value :inc)  (1+ current-value))
-                    ((eql requested-value :min) minimum-value)
-                    ((eql requested-value :max) maximum-value)
-                    (t                          requested-value))))
-        (cl-destructuring-bind (new-value do-cycling?)
-            (-nomis/tree/set-level/maybe-wrap requested-value-num
-                                              minimum-value
-                                              maximum-value)
-          (let* ((hacked-direction (if (eq direction :set-to-n)
-                                       (if (<= requested-value-num
-                                               minimum-value)
-                                           :collapse
-                                         :expand)
-                                     direction))
-                 (error? (and (not do-cycling?)
-                              (-nomis/tree/at-limit? hacked-direction
-                                                     current-value
-                                                     maximum-value)
-                              (cl-ecase direction
-                                ((:collapse :expand) t)
-                                (:set-to-n
-                                 (-nomis/tree/at-limit? hacked-direction
-                                                        new-value
-                                                        maximum-value))))))
-            (unless error?
-              (-nomis/tree/set-level/do-action scope new-value))
-            (-nomis/tree/set-level/give-feedback new-value
-                                                 hacked-direction
-                                                 maximum-value
-                                                 scope
-                                                 error?)))))))
+    (let* ((allow-wrap?
+            ;; Do this straight away. If we wait, the timing can be wrong.
+            (when (or (eq requested-value :dec)
+                      (eq requested-value :inc))
+              (-nomis/tree/double-tap?))))
+      (thunk-let* ((current-value (-nomis/tree/current-expansion-level/for-scope
+                                   direction
+                                   scope)))
+        (let* ((minimum-value (if *expanding-parent?* 1 0))
+               (maximum-value (-nomis/tree/n-levels-below/for-scope scope))
+               (requested-value-num
+                (cond ((eq requested-value :dec)  (1- current-value))
+                      ((eq requested-value :inc)  (1+ current-value))
+                      ((eql requested-value :min) minimum-value)
+                      ((eql requested-value :max) maximum-value)
+                      (t                          requested-value))))
+          (cl-destructuring-bind (new-value do-cycling?)
+              (-nomis/tree/set-level/maybe-wrap requested-value-num
+                                                minimum-value
+                                                maximum-value
+                                                allow-wrap?)
+            (let* ((hacked-direction (if (eq direction :set-to-n)
+                                         (if (<= requested-value-num
+                                                 minimum-value)
+                                             :collapse
+                                           :expand)
+                                       direction))
+                   (error? (and (not do-cycling?)
+                                (-nomis/tree/at-limit? hacked-direction
+                                                       current-value
+                                                       maximum-value)
+                                (cl-ecase direction
+                                  ((:collapse :expand) t)
+                                  (:set-to-n
+                                   (-nomis/tree/at-limit? hacked-direction
+                                                          new-value
+                                                          maximum-value))))))
+              (setq -nomis/tree/prev-expand-or-collapse-beyond-limit? error?)
+              (unless error?
+                (-nomis/tree/set-level/do-action scope new-value))
+              (-nomis/tree/set-level/give-feedback new-value
+                                                   hacked-direction
+                                                   maximum-value
+                                                   scope
+                                                   error?))))))))
 
 ;;;;; nomis/tree/show-children-from-point/xxxx
 
