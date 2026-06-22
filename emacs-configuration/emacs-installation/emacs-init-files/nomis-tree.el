@@ -1030,7 +1030,7 @@ When in a body, \"current heading\" means the current body's parent heading."
 
 (defvar -nomis/tree/prev-expand-or-collapse-beyond-limit? nil)
 
-(defvar -nomis/tree/wrap-delay-s 0.2)
+(defvar -nomis/tree/wrap-delay-s 0.35)
 
 (defvar -nomis/tree/wrap-min-delay-s 0.1)
 
