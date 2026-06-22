@@ -8,23 +8,27 @@
 
 ;;;; `nomis/define-key-with-filter`
 
+(defun -nomis/menu-item-with-filter (command condition)
+  `(menu-item ,(symbol-name command) ,command
+              :filter (lambda (cmd) (when ,condition cmd))))
+
 (defmacro nomis/define-key-with-filter (keymap key command condition)
   "In KEYMAP, bind KEY to COMMAND only if CONDITION is met.
 Otherwise, the keybinding is ignored, letting Emacs search lower-priority maps."
   ;; The `menu-item` trick with `:filter` is an Emacs idiom for conditional
   ;; keybindings. When the filter returns `nil`, Emacs treats the binding as if
   ;; it doesn't exist and falls through to lower-priority keymaps.
-  `(define-key ,keymap ,key
-               `(menu-item ,(symbol-name ,command) ,,command
-                           :filter (lambda (cmd) (when ,',condition cmd)))))
+  `(define-key ,keymap
+               ,key
+               (-nomis/menu-item-with-filter ,command ',condition)))
 
 (defmacro nomis/define-key-chord-with-filter (keymap keys command condition)
   "In KEYMAP, bind the key chord KEYS to COMMAND only if CONDITION is met.
 Otherwise, the key chprd is ignored, letting Emacs search lower-priority maps."
   ;; c.f. `nomis/define-key-with-filter`.
-  `(key-chord-define ,keymap ,keys
-                     `(menu-item ,(symbol-name ,command) ,,command
-                                 :filter (lambda (cmd) (when ,',condition cmd)))))
+  `(key-chord-define ,keymap
+                     ,keys
+                     (-nomis/menu-item-with-filter ,command ',condition)))
 
 ;;;; `nomis/temporarily-disable-keys`
 
