@@ -2,6 +2,10 @@
 
 ;;; Code:
 
+;;;; Requires
+
+(require 'key-chord)
+
 ;;;; `nomis/define-key-with-filter`
 
 (defmacro nomis/define-key-with-filter (keymap key command condition)
@@ -13,6 +17,14 @@ Otherwise, the keybinding is ignored, letting Emacs search lower-priority maps."
   `(define-key ,keymap ,key
                `(menu-item ,(symbol-name ,command) ,,command
                            :filter (lambda (cmd) (when ,',condition cmd)))))
+
+(defmacro nomis/define-key-chord-with-filter (keymap keys command condition)
+  "In KEYMAP, bind the key chord KEYS to COMMAND only if CONDITION is met.
+Otherwise, the key chprd is ignored, letting Emacs search lower-priority maps."
+  ;; c.f. `nomis/define-key-with-filter`.
+  `(key-chord-define ,keymap ,keys
+                     `(menu-item ,(symbol-name ,command) ,,command
+                                 :filter (lambda (cmd) (when ,',condition cmd)))))
 
 ;;;; `nomis/temporarily-disable-keys`
 
