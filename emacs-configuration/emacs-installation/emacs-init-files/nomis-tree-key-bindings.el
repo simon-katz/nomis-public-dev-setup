@@ -4,6 +4,7 @@
 
 ;;;; Requires
 
+(require 'nomis-key-chord)
 (require 'nomis-msg)
 (require 'nomis-outline-wrappers)
 (require 'nomis-tree)
@@ -150,6 +151,11 @@ H-o n c  Set # child levels for nav+lineage")
                                 key
                                 'nomis/tree/show-children-from-point/incremental/more
                                 (nomis/outline/w/on-heading?)))
+
+(nomis/define-key-chord-with-filter nomis/tree-mode-map
+                                    "qq"
+                                    'nomis/tree/show-children-from-point/set-min
+                                    (nomis/outline/w/on-heading?))
 
 ;;;;; <backtab>
 
