@@ -1030,10 +1030,7 @@ When in a body, \"current heading\" means the current body's parent heading."
 
 (defvar -nomis/tree/prev-expand-or-collapse-beyond-limit? nil)
 
-(defun -nomis/tree/wrap-delay-s ()
-  (if (boundp 'key-chord-one-key-delay)
-      key-chord-one-key-delay
-    0.2))
+(defvar -nomis/tree/wrap-delay-s 0.2)
 
 (defvar -nomis/tree/wrap-min-delay-s 0.1)
 
@@ -1082,7 +1079,7 @@ Do not treat auto-repeat as a double tap (which is tricky!)."
   ;;   events too — but it avoids a burst of rapid re-invocations if many
   ;;   auto-repeat events accumulated while the command was running.
   ;;
-  ;; Then we call `read-event`, waiting up to `(-nomis/tree/wrap-delay-s)` for
+  ;; Then we call `read-event`, waiting up to `-nomis/tree/wrap-delay-s` for
   ;; a fresh key event. We handle the event as follows:
   ;;
   ;; - No event: return nil.
@@ -1105,7 +1102,7 @@ Do not treat auto-repeat as a double tap (which is tricky!)."
              (eq this-command (nomis/outline/w/last-command)))
     (-nomis/tree/drain-buffered-same-key-events)
     (let* ((start-time (current-time))
-           (next (read-event nil nil (-nomis/tree/wrap-delay-s))))
+           (next (read-event nil nil -nomis/tree/wrap-delay-s)))
       (when next
         (cl-flet* ((push-back ()
                      (push next unread-command-events)
