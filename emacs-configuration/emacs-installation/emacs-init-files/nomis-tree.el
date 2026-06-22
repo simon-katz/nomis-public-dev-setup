@@ -1032,6 +1032,8 @@ When in a body, \"current heading\" means the current body's parent heading."
 
 (defvar -nomis/tree/wrap-delay-s 0.35)
 
+(defvar -nomis/tree/post-wrap-inhibit-s 0.3) ; avoid accidental inc/dec after wrap
+
 (defvar -nomis/tree/wrap-min-delay-s 0.1)
 
 (defun -nomis/tree/normalize-raw-event (event)
@@ -1152,7 +1154,7 @@ with N as the parameter."
 
 ;;;;; -nomis/tree/set-level-etc
 
-;; "wrapex" means "wrap-expand-collapse".
+(defvar -nomis/tree/disallow-set-level? nil)
 
 (defun -nomis/tree/set-level/maybe-wrap (v minimum maximum allow-wrap?)
   "Clamp V to [MINIMUM, MAXIMUM] and return a list (NEW-VALUE DO-CYCLING?).
@@ -1170,10 +1172,16 @@ the command has changed since the timer was started."
     (cl-flet ((normal-behaviour () (list (min (max minimum v)
                                               maximum)
                                          nil))
-              (wrapping-behaviour () (list (if (= v (1- minimum))
-                                               maximum
-                                             minimum)
-                                           t)))
+              (wrapping-behaviour ()
+                (setq -nomis/tree/disallow-set-level? t)
+                (run-at-time -nomis/tree/post-wrap-inhibit-s
+                             nil
+                             (lambda ()
+                               (setq -nomis/tree/disallow-set-level? nil)))
+                (list (if (= v (1- minimum))
+                          maximum
+                        minimum)
+                      t)))
       (if (<= minimum v maximum)
           (normal-behaviour)
         (if (not allow-wrap?)
@@ -1280,52 +1288,53 @@ value. It is clamped to the valid range.
 
 DIRECTION should be `:collapse' or `:expand' for incremental callers, or
 `:set-to-n' for explicit-value callers."
-  (save-excursion ; sometimes position is lost when at an invisible pount-- a hacky fix
-    (let* ((allow-wrap?
-            ;; Do this straight away. If we wait, the timing can be wrong.
-            (when (or (eq requested-value :dec)
-                      (eq requested-value :inc))
-              (-nomis/tree/double-tap?))))
-      (thunk-let* ((current-value (-nomis/tree/current-expansion-level/for-scope
-                                   direction
-                                   scope)))
-        (let* ((minimum-value (if *expanding-parent?* 1 0))
-               (maximum-value (-nomis/tree/n-levels-below/for-scope scope))
-               (requested-value-num
-                (cond ((eq requested-value :dec)  (1- current-value))
-                      ((eq requested-value :inc)  (1+ current-value))
-                      ((eql requested-value :min) minimum-value)
-                      ((eql requested-value :max) maximum-value)
-                      (t                          requested-value))))
-          (cl-destructuring-bind (new-value do-cycling?)
-              (-nomis/tree/set-level/maybe-wrap requested-value-num
-                                                minimum-value
-                                                maximum-value
-                                                allow-wrap?)
-            (let* ((hacked-direction (if (eq direction :set-to-n)
-                                         (if (<= requested-value-num
-                                                 minimum-value)
-                                             :collapse
-                                           :expand)
-                                       direction))
-                   (error? (and (not do-cycling?)
-                                (-nomis/tree/at-limit? hacked-direction
-                                                       current-value
-                                                       maximum-value)
-                                (cl-ecase direction
-                                  ((:collapse :expand) t)
-                                  (:set-to-n
-                                   (-nomis/tree/at-limit? hacked-direction
-                                                          new-value
-                                                          maximum-value))))))
-              (setq -nomis/tree/prev-expand-or-collapse-beyond-limit? error?)
-              (unless error?
-                (-nomis/tree/set-level/do-action scope new-value))
-              (-nomis/tree/set-level/give-feedback new-value
-                                                   hacked-direction
-                                                   maximum-value
-                                                   scope
-                                                   error?))))))))
+  (unless -nomis/tree/disallow-set-level?
+    (save-excursion ; sometimes position is lost when at an invisible pount-- a hacky fix
+      (let* ((allow-wrap?
+              ;; Do this straight away. If we wait, the timing can be wrong.
+              (when (or (eq requested-value :dec)
+                        (eq requested-value :inc))
+                (-nomis/tree/double-tap?))))
+        (thunk-let* ((current-value (-nomis/tree/current-expansion-level/for-scope
+                                     direction
+                                     scope)))
+          (let* ((minimum-value (if *expanding-parent?* 1 0))
+                 (maximum-value (-nomis/tree/n-levels-below/for-scope scope))
+                 (requested-value-num
+                  (cond ((eq requested-value :dec)  (1- current-value))
+                        ((eq requested-value :inc)  (1+ current-value))
+                        ((eql requested-value :min) minimum-value)
+                        ((eql requested-value :max) maximum-value)
+                        (t                          requested-value))))
+            (cl-destructuring-bind (new-value do-cycling?)
+                (-nomis/tree/set-level/maybe-wrap requested-value-num
+                                                  minimum-value
+                                                  maximum-value
+                                                  allow-wrap?)
+              (let* ((hacked-direction (if (eq direction :set-to-n)
+                                           (if (<= requested-value-num
+                                                   minimum-value)
+                                               :collapse
+                                             :expand)
+                                         direction))
+                     (error? (and (not do-cycling?)
+                                  (-nomis/tree/at-limit? hacked-direction
+                                                         current-value
+                                                         maximum-value)
+                                  (cl-ecase direction
+                                    ((:collapse :expand) t)
+                                    (:set-to-n
+                                     (-nomis/tree/at-limit? hacked-direction
+                                                            new-value
+                                                            maximum-value))))))
+                (setq -nomis/tree/prev-expand-or-collapse-beyond-limit? error?)
+                (unless error?
+                  (-nomis/tree/set-level/do-action scope new-value))
+                (-nomis/tree/set-level/give-feedback new-value
+                                                     hacked-direction
+                                                     maximum-value
+                                                     scope
+                                                     error?)))))))))
 
 ;;;;; nomis/tree/show-children-from-point/xxxx
 
