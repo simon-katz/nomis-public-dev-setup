@@ -5,6 +5,8 @@
 (require 'key-chord)
 (key-chord-mode 1)
 
+(setopt key-chord-one-key-delay 0.3)
+
 (setopt key-chord-typing-detection
         ;; I find this is essential.
         ;; Without it:
