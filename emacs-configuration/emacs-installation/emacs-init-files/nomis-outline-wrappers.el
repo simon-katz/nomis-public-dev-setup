@@ -239,6 +239,8 @@ FEWER-OK? is truthy."
       (funcall fun)
       (while (and (progn
                     (nomis/outline/w/next-heading)
+                    (when (not (bolp))
+                      (error "Something went wrong -- probably last heading in file does not have a newline"))
                     (and (nomis/outline/w/on-heading?) ; might be after last heading
                          (> (nomis/outline/w/level/boh) level)))
                   (not (eobp)))
