@@ -353,7 +353,9 @@ When in a body, \"current heading\" means the current body's parent heading."
 (defun nomis/outline-show-trailing-blank-lines ()
   (save-excursion
     (let ((start (point))
-          (end (progn (outline-end-of-subtree) (point))))
+          (end (progn (outline-end-of-subtree)
+                      (min (1+ (point))
+                           (point-max)))))
       (remove-overlays start end 'nomis-hide-trailing-blank-lines t))))
 
 (defun nomis/outline-show-trailing-blank-lines--all ()
