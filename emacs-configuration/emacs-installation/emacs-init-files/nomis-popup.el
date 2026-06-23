@@ -107,62 +107,98 @@ If POS is nil, use `point' instead."
     ;; We're done. Where are we?
     (point)))
 
+(defvar -nomis/popup/prev-non-sticky-details
+  ;; Value is nil or a plist with keys `:command', `:popup-pos', `:face',
+  ;; `:msg'.
+  nil)
+
 (defun -nomis/popup/remove-non-sticky-popups ()
   (remove-overlays nil nil :nomis/stickiness :nomis/non-sticky))
 
-(add-hook 'pre-command-hook '-nomis/popup/remove-non-sticky-popups)
+(defun -nomis/popup/remove-non-sticky-popups-unless-repeating ()
+  ;; Don't remove the popup if the same command is repeating -- that would
+  ;; cause flashing (or worse, the popup disappearing for the duration of
+  ;; the command's `read-event` wait). The dedup check in
+  ;; `-nomis/popup/message*' ensures no redundant re-creation.
+  (unless (eq this-command
+              (plist-get -nomis/popup/prev-non-sticky-details :command))
+    (setq -nomis/popup/prev-non-sticky-details nil)
+    (-nomis/popup/remove-non-sticky-popups)))
+
+(add-hook 'pre-command-hook '-nomis/popup/remove-non-sticky-popups-unless-repeating)
+;; (remove-hook 'pre-command-hook '-nomis/popup/remove-non-sticky-popups-unless-repeating)
 
 ;;;; Useful in dev (run with the relevant buffer current):
 ;;;;   (remove-overlays nil nil :nomis/stickiness :nomis/sticky)
 
 (defun -nomis/popup/message* (sticky? popup-pos face msg)
-  (cl-flet ((n-chars-we-can-replace-at-pos
-             (pos)
-             (let* ((n-chars-before-eol
-                     (save-excursion
-                       (- (- (progn (goto-char pos) (point))
-                             (progn (end-of-line) (point)))))))
-               (or (cl-loop for i from 0 to n-chars-before-eol
-                            when (-nomis/popup/point-invisible? (+ pos i))
-                            return (1- i))
-                   n-chars-before-eol))))
-    (-nomis/popup/remove-non-sticky-popups)
-    (let* ((len (length msg))
-           (msg-part-1-len (min len
-                                (n-chars-we-can-replace-at-pos popup-pos)))
-           (msg-part-1 (substring msg 0 msg-part-1-len))
-           (msg-part-2 (substring msg msg-part-1-len)))
-      (unless (equal msg-part-2 "")
-        (put-text-property 0
-                           (length msg-part-2)
-                           'face
-                           face
-                           msg-part-2))
-      (let* ((ov1-start-pos popup-pos)
-             (ov2-start-pos (+ popup-pos msg-part-1-len))
-             (ov1-id (gensym))
-             (ov2-id (gensym))
-             (stickiness (if sticky? :nomis/sticky :nomis/non-sticky))
-             (_ov1 (-make-nomis-popup-overlay ov1-start-pos
-                                              ov2-start-pos
-                                              'display          msg-part-1
-                                              'face             face
-                                              :nomis/id         ov1-id
-                                              :nomis/stickiness stickiness))
-             (_ov2 (-make-nomis-popup-overlay ov2-start-pos
-                                              ov2-start-pos
-                                              'before-string    msg-part-2
-                                              'face             face
-                                              :nomis/id         ov2-id
-                                              :nomis/stickiness stickiness))
-             (buffer (current-buffer)))
-        (run-at-time *nomis/popup/duration*
-                     nil
-                     (lambda ()
-                       (when (buffer-live-p buffer)
-                         (with-current-buffer buffer
-                           (remove-overlays nil nil :nomis/id ov1-id)
-                           (remove-overlays nil nil :nomis/id ov2-id)))))))))
+  (cl-flet*
+      ((n-chars-we-can-replace-at-pos (pos)
+         (let* ((n-chars-before-eol
+                 (save-excursion
+                   (- (- (progn (goto-char pos) (point))
+                         (progn (end-of-line) (point)))))))
+           (or (cl-loop for i from 0 to n-chars-before-eol
+                        when (-nomis/popup/point-invisible? (+ pos i))
+                        return (1- i))
+               n-chars-before-eol)))
+       (do-it ()
+         (let* ((len (length msg))
+                (msg-part-1-len (min len
+                                     (n-chars-we-can-replace-at-pos popup-pos)))
+                (msg-part-1 (substring msg 0 msg-part-1-len))
+                (msg-part-2 (substring msg msg-part-1-len)))
+           (unless (equal msg-part-2 "")
+             (put-text-property 0
+                                (length msg-part-2)
+                                'face
+                                face
+                                msg-part-2))
+           (let* ((ov1-start-pos popup-pos)
+                  (ov2-start-pos (+ popup-pos msg-part-1-len))
+                  (ov1-id (gensym))
+                  (ov2-id (gensym))
+                  (stickiness (if sticky? :nomis/sticky :nomis/non-sticky))
+                  (_ov1 (-make-nomis-popup-overlay ov1-start-pos
+                                                   ov2-start-pos
+                                                   'display          msg-part-1
+                                                   'face             face
+                                                   :nomis/id         ov1-id
+                                                   :nomis/stickiness stickiness))
+                  (_ov2 (-make-nomis-popup-overlay ov2-start-pos
+                                                   ov2-start-pos
+                                                   'before-string    msg-part-2
+                                                   'face             face
+                                                   :nomis/id         ov2-id
+                                                   :nomis/stickiness stickiness))
+                  (buffer (current-buffer)))
+             (run-at-time *nomis/popup/duration*
+                          nil
+                          (lambda ()
+                            (setq -nomis/popup/prev-non-sticky-details nil)
+                            (when (buffer-live-p buffer)
+                              (with-current-buffer buffer
+                                (remove-overlays nil nil :nomis/id ov1-id)
+                                (remove-overlays nil nil :nomis/id ov2-id)))))))))
+    (let* ((details (list :command  this-command
+                          :popup-pos popup-pos
+                          :face     face
+                          :msg      msg)))
+      ;; Avoid removing existing popup and then popping up an identical one.
+      ;; That causes (a) at best, flashing, and (b) at worst, messages being
+      ;; lost because the `pre-command-hook` function removes the popup before
+      ;; the command gets to redisplay it.
+      (cond (sticky?
+             (progn (setq -nomis/popup/prev-non-sticky-details nil)
+                    (-nomis/popup/remove-non-sticky-popups)
+                    (do-it)))
+            ((equal details -nomis/popup/prev-non-sticky-details)
+             ;; Same command, same message: popup already visible; leave it.
+             )
+            (t
+             (setq -nomis/popup/prev-non-sticky-details details)
+             (-nomis/popup/remove-non-sticky-popups)
+             (do-it))))))
 
 (defun nomis/popup/message (format-string &rest args)
   (-nomis/popup/message* nil
