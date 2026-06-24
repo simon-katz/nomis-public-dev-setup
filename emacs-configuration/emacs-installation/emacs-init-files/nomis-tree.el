@@ -1030,7 +1030,7 @@ When in a body, \"current heading\" means the current body's parent heading."
 
 ;;;;; Support for double-tap
 
-(defvar -nomis/tree/prev-expand-or-collapse-beyond-limit? nil)
+(defvar -nomis/tree/prev-expand-or-collapse-beyond-limit? nil) ; this lets us avoid waiting for next event most of the time, so UI isn't sluggish
 
 (defvar -nomis/tree/wrap-delay-s 0.2)
 
