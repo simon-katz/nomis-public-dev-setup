@@ -1032,11 +1032,11 @@ When in a body, \"current heading\" means the current body's parent heading."
 
 (defvar -nomis/tree/prev-expand-or-collapse-beyond-limit? nil) ; this lets us avoid waiting for next event most of the time, so UI isn't sluggish
 
-(defvar -nomis/tree/wrap-delay-s 0.2)
+(defvar -nomis/tree/wrap-delay-s 0.35)
 
 (defvar -nomis/tree/post-wrap-inhibit-s 0.3) ; avoid accidental inc/dec after wrap
 
-(defvar -nomis/tree/wrap-min-delay-s 0.1)
+(defvar -nomis/tree/wrap-min-delay-s 0.13)
 
 (defun -nomis/tree/normalize-raw-event (event)
   "Translate raw symbol events to character equivalents, as input-decode-map would."
