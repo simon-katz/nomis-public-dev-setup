@@ -1032,6 +1032,12 @@ When in a body, \"current heading\" means the current body's parent heading."
 
 (defvar -nomis/tree/prev-expand-or-collapse-beyond-limit? nil) ; this lets us avoid waiting for next event most of the time, so UI isn't sluggish
 
+;; A double-tap is detected when the same key arrives again within
+;; `-nomis/tree/wrap-delay-s', but not sooner than
+;; `-nomis/tree/wrap-min-delay-s' (which filters out auto-repeat).
+;;
+;; Double-tap window at time of writing: 0.35 - 0.13 = 0.22s.
+
 (defvar -nomis/tree/wrap-min-delay-s 0.13)
 (defvar -nomis/tree/wrap-delay-s 0.35)
 
