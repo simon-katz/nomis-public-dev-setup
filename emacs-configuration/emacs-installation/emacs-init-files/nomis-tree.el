@@ -1035,11 +1035,22 @@ When in a body, \"current heading\" means the current body's parent heading."
 ;; A double-tap is detected when the same key arrives again within
 ;; `-nomis/tree/wrap-delay-s', but not sooner than
 ;; `-nomis/tree/wrap-min-delay-s' (which filters out auto-repeat).
-;;
-;; Double-tap window at time of writing: 0.35 - 0.13 = 0.22s.
 
-(defvar -nomis/tree/wrap-min-delay-s 0.13)
+(defvar -nomis/tree/wrap-min-delay-s
+  (let* ((repeat-interval (if (not (eq system-type 'darwin))
+                              0.035
+                            (/ (-> "defaults read -g KeyRepeat"
+                                   shell-command-to-string
+                                   string-trim
+                                   string-to-number)
+                               60.0))))
+    (* repeat-interval 2.5)))
+
 (defvar -nomis/tree/wrap-delay-s 0.35)
+
+(when (< -nomis/tree/wrap-delay-s
+         (* 2 -nomis/tree/wrap-min-delay-s))
+  (message "You should take a look at `-nomis/tree/wrap-delay-s` and `-nomis/tree/wrap-min-delay-s`."))
 
 (defvar -nomis/tree/post-wrap-inhibit-s 0.3) ; avoid accidental inc/dec after wrap
 
