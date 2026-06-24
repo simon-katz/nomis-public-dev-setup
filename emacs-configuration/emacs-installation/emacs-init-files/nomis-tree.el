@@ -1065,6 +1065,24 @@ Stops at the first non-same-key event, which is pushed back."
                  ((-nomis/tree/same-command-key? e) t)
                  (t (push e unread-command-events)  nil)))))
 
+(defvar -nomis/tree/inc-dec-equiv-classes
+  '((nomis/tree/show-children-from-point/incremental/less
+     nomis/tree/show-children-from-point/incremental/more
+     nomis/tree/backtab)
+    (nomis/tree/show-children-from-parent/incremental/less
+     nomis/tree/show-children-from-parent/incremental/more)
+    (nomis/tree/show-children-from-root/incremental/less
+     nomis/tree/show-children-from-root/incremental/more)
+    (nomis/tree/show-children-from-all-roots/incremental/less
+     nomis/tree/show-children-from-all-roots/incremental/more)))
+
+(defun -nomis/tree/same-inc-dec-equiv-class? (cmd1 cmd2)
+  (cl-some (lambda (class) (and (memq cmd1 class) (memq cmd2 class)))
+           -nomis/tree/inc-dec-equiv-classes))
+
+(defun -nomis/tree/repeated-inc-dec-equiv-class? (cmd)
+  (-nomis/tree/same-inc-dec-equiv-class? cmd (nomis/outline/w/last-command)))
+
 (defun -nomis/tree/double-tap? ()
   "Return non-nil if the user double-tapped.
 Do not treat auto-repeat as a double tap (which is tricky!)."
@@ -1103,7 +1121,7 @@ Do not treat auto-repeat as a double tap (which is tricky!)."
   ;;     - Note that we have "eaten" an event -- two events have been used
   ;;       to run one command.
   (when (and -nomis/tree/prev-expand-or-collapse-beyond-limit?
-             (eq this-command (nomis/outline/w/last-command)))
+             (-nomis/tree/repeated-inc-dec-equiv-class? this-command))
     (-nomis/tree/drain-buffered-same-key-events)
     (let* ((start-time (current-time))
            (next (read-event nil nil -nomis/tree/wrap-delay-s)))
@@ -1190,9 +1208,9 @@ the command has changed since the timer was started."
             (normal-behaviour)
           ;; Don't wrap if we moved to another position that also happens to
           ;; be fully-expanded. Don't wrap if we moved away and came back.
-          (if (not (eq this-command (nomis/outline/w/last-command)))
-              (normal-behaviour)
-            (wrapping-behaviour)))))))
+          (if (-nomis/tree/repeated-inc-dec-equiv-class? this-command)
+              (wrapping-behaviour)
+            (normal-behaviour)))))))
 
 (defun -nomis/tree/n-levels-below/for-scope (scope)
   (cl-ecase scope
@@ -1329,7 +1347,8 @@ DIRECTION should be `:collapse' or `:expand' for incremental callers, or
                                      (-nomis/tree/at-limit? hacked-direction
                                                             new-value
                                                             maximum-value))))))
-                (setq -nomis/tree/prev-expand-or-collapse-beyond-limit? error?)
+                (setq -nomis/tree/prev-expand-or-collapse-beyond-limit?
+                      (or error? do-cycling?))
                 (unless error?
                   (-nomis/tree/set-level/do-action scope new-value))
                 (-nomis/tree/set-level/give-feedback new-value
