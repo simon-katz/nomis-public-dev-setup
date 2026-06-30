@@ -14,8 +14,9 @@
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ;;;; For GNU Emacs 25.1 and newer versions
 
-(save-place-mode 1) 
-(setq save-place-forget-unreadable-files nil)
+(save-place-mode 1)
+(setopt save-place-forget-unreadable-files nil)
+(setopt save-place-limit 2000)
 
 ;;;; ___________________________________________________________________________
 
