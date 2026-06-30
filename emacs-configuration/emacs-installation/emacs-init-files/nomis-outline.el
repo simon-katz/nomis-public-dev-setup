@@ -141,6 +141,15 @@
                 :after
                 #'-nomis/outline/show-after-find/after-advice)))
 
+(eval-after-load 'magit-diff
+  (progn
+    (advice-add 'magit-diff-visit-worktree-file
+                :after
+                #'-nomis/outline/show-after-find/after-advice)
+    (advice-add 'magit-diff-visit-worktree-file-other-window
+                :after
+                #'-nomis/outline/show-after-find/after-advice)))
+
 ;;;; `outline-regexp`
 
 ;;;;; Emacs Lisp
