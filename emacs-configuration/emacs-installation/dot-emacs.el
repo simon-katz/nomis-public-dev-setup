@@ -213,6 +213,7 @@
 (require 'nomis-timers)
 (require 'nomis-msg)
 (require 'nomis-scrolling)
+(require 'nomis-conservative-scrolling-mode)
 (require 'nomis-mouse-scrolling)
 (require 'nomis-avoid-window-stealing)
 (require 'nomis-highlight-chars)
