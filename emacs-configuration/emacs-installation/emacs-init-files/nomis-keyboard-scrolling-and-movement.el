@@ -55,10 +55,10 @@ in the display."
   (with-selected-window (other-window-for-scrolling)
     (nomis/scroll-up-line-in-place n)))
 
-(define-key global-map (kbd "<M-S-prior>") 'nomis/scroll-down-line-other-window)
-(define-key global-map (kbd "<M-S-next>")  'nomis/scroll-up-line-other-window)
-(define-key global-map (kbd "<S-prior>")   'nomis/scroll-down-line-in-place-other-window)
-(define-key global-map (kbd "<S-next>")    'nomis/scroll-up-line-in-place-other-window)
+(define-key global-map (kbd "<M-S-prior>") 'nomis/scroll-down-line-other-window)          ; Fn-S-M-<up>
+(define-key global-map (kbd "<M-S-next>")  'nomis/scroll-up-line-other-window)            ; Fn-S-M-<down>
+(define-key global-map (kbd "<S-prior>")   'nomis/scroll-down-line-in-place-other-window) ; Fn-S-<up>
+(define-key global-map (kbd "<S-next>")    'nomis/scroll-up-line-in-place-other-window)   ; Fn-S-<up>
 
 ;;;; ___________________________________________________________________________
 
