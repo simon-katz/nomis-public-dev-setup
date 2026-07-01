@@ -168,6 +168,132 @@
 ;; /OFF/
 ;; /OFF/(add-hook 'pre-command-hook #'nomis/scrolling/-set-aggressive-scrolling-for-command)
 
+;;;; Improve autoscrolling, v2
+
+;;;;; Notes
+
+;; `scroll-preserve-screen-position` is read inside `scroll-up-command` and
+;; `scroll-down-command`, so we can use `:around` advice to set it.
+
+;; `scroll-conservatively` is read in the post-command redraw phase.
+;; The simplest way to set a temporary value is to use `:after` advice that sets
+;; up a binding and calls `redisplay` explicitly.
+
+;;;;; Maintain screen position on Page Up / Page Down
+
+(advice-add 'scroll-up-command
+            :around
+            (lambda (orig-fun &rest args)
+              (let* ((scroll-preserve-screen-position t))
+                (apply orig-fun args)))
+            '((name . nomis/scroll-preserve-screen-position)))
+
+(advice-add 'scroll-down-command
+            :around
+            (lambda (orig-fun &rest args)
+              (let* ((scroll-preserve-screen-position t))
+                (apply orig-fun args)))
+            '((name . nomis/scroll-preserve-screen-position)))
+
+;; (progn
+;;   (advice-remove 'scroll-up-command 'nomis/scroll-preserve-screen-position)
+;;   (advice-remove 'scroll-down-command 'nomis/scroll-preserve-screen-position))
+
+;;;;; nomis/scrolling/conservative-mode
+
+;;;;;; The mode itself
+
+(defvar nomis/scrolling/conservative-mode-map
+  (make-sparse-keymap))
+
+(define-minor-mode nomis/scrolling/conservative-mode
+  "Minor mode overriding movement commands with conservative-scrolling versions."
+  :global t
+  :group 'nomis/scrolling
+  :keymap nomis/scrolling/conservative-mode-map)
+
+(add-to-list 'emulation-mode-map-alists
+             `((nomis/scrolling/conservative-mode
+                . ,nomis/scrolling/conservative-mode-map)))
+
+(define-key global-map (kbd "C-M-ç") ; C-Option-M-c
+            #'nomis/scrolling/conservative-mode)
+
+;;;;;; nomis/scrolling/define-conservative-scroller
+
+(cl-defmacro nomis/scrolling/define-conservative-scroller (name key base-command)
+  (declare (indent 1))
+  `(progn
+     (defun ,name (&optional arg)
+       ,(format "Call `%s' with conservative scrolling." base-command)
+       (interactive "^p")
+       (let* ((scroll-conservatively 101))
+         (,base-command arg)
+         (redisplay) ; scroll while let-binding is still alive
+         ))
+     (define-key nomis/scrolling/conservative-mode-map (kbd ,key)
+                 ',name)))
+
+;;;;;; Scroll conservatively by paragraph
+
+(nomis/scrolling/define-conservative-scroller
+    nomis/scrolling/backward-paragraph-conservatively
+  "C-<up>" backward-paragraph)
+
+(nomis/scrolling/define-conservative-scroller
+    nomis/scrolling/forward-paragraph-conservatively
+  "C-<down>" forward-paragraph)
+
+;;;;;; Scroll conservatively by sexp
+
+(nomis/scrolling/define-conservative-scroller
+    nomis/scrolling/backward-sexp-conservatively
+  "C-M-b" backward-sexp)
+
+(nomis/scrolling/define-conservative-scroller
+    nomis/scrolling/forward-sexp-conservatively
+  "C-M-f" forward-sexp)
+
+;;;;;; Scroll conservatively by defun
+
+(nomis/scrolling/define-conservative-scroller
+    nomis/scrolling/beginning-of-defun-conservatively
+  "C-M-a" beginning-of-defun)
+
+(nomis/scrolling/define-conservative-scroller
+    nomis/scrolling/end-of-defun-conservatively
+  "C-M-e" end-of-defun)
+
+;;;;;; Scroll conservatively by list
+
+(nomis/scrolling/define-conservative-scroller
+    nomis/scrolling/forward-list-conservatively
+  "C-M-n" forward-list)
+
+(nomis/scrolling/define-conservative-scroller
+    nomis/scrolling/backward-list-conservatively
+  "C-M-p" backward-list)
+
+;;;;;; Scroll conservatively for `down-list` and `backward-up-list`
+
+(nomis/scrolling/define-conservative-scroller
+    nomis/scrolling/down-list-conservatively
+  "C-M-d" down-list)
+
+(nomis/scrolling/define-conservative-scroller
+    nomis/scrolling/backward-up-list-conservatively
+  "C-M-u" backward-up-list)
+
+;;;;;; Scroll conservatively by sentence
+
+(nomis/scrolling/define-conservative-scroller
+    nomis/scrolling/backward-sentence-conservatively
+  "M-a" backward-sentence)
+
+(nomis/scrolling/define-conservative-scroller
+    nomis/scrolling/forward-sentence-conservatively
+  "M-e" forward-sentence)
+
 ;;; End
 
 (provide 'nomis-scrolling)
