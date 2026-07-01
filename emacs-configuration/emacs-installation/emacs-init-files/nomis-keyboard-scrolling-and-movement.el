@@ -1,13 +1,15 @@
-;;;; Init stuff -- Keyboard scrolling and movement.
+;;; Init stuff -- Keyboard scrolling and movement.
 
-;;;; ___________________________________________________________________________
+;;; Code:
 
-;;;; See https://www.gnu.org/software/emacs/manual/html_node/emacs/Horizontal-Scrolling.html
+;;;; Horizontal scroll settings
+
+;; See https://www.gnu.org/software/emacs/manual/html_node/emacs/Horizontal-Scrolling.html
 
 (setq hscroll-margin 0)
 (setq hscroll-step 1)
 
-;;;; ___________________________________________________________________________
+;;;; Scroll a line at a time
 
 (defun nomis/scroll-down-line-in-place (&optional n)
   "Like scroll-down-line, except move point to keep it at the same position
@@ -29,7 +31,7 @@ in the display."
   (define-key global-map (kbd "C-S-<up>")     'nomis/scroll-down-line-in-place)
   (define-key global-map (kbd "C-S-<down>")   'nomis/scroll-up-line-in-place))
 
-;;;; ___________________________________________________________________________
+;;;; Scroll a line at a time, other window
 
 (defun nomis/scroll-down-line-other-window (&optional n)
   "Do scroll-down-line in other window."
@@ -60,7 +62,7 @@ in the display."
 (define-key global-map (kbd "<S-prior>")   'nomis/scroll-down-line-in-place-other-window) ; Fn-S-<up>
 (define-key global-map (kbd "<S-next>")    'nomis/scroll-up-line-in-place-other-window)   ; Fn-S-<up>
 
-;;;; ___________________________________________________________________________
+;;;; nomis/go-right-lots and nomis/go-left-lots
 
 (defconst go-left-right-amount 40)
 
@@ -87,6 +89,6 @@ in the display."
 (define-key global-map (kbd "C-S-<right>") 'nomis/go-right-lots)
 (define-key global-map (kbd "C-S-<left>") 'nomis/go-left-lots)
 
-;;;; ___________________________________________________________________________
+;;; End
 
 (provide 'nomis-keyboard-scrolling-and-movement)
