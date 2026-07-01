@@ -232,7 +232,7 @@
          (redisplay) ; scroll while let-binding is still alive
          ))
      (define-key nomis/scrolling/conservative-mode-map (kbd ,key)
-                 ',name)))
+                 #',name)))
 
 ;;;;;; Scroll conservatively by paragraph
 
