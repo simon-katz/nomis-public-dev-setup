@@ -228,11 +228,26 @@
        ,(format "Call `%s' with conservative scrolling." base-command)
        (interactive "^p")
        (let* ((scroll-conservatively 101))
-         (,base-command arg)
+         ;; Set `this-command` to the base command. This allows e.g. `next-line`
+         ;; and `previous-line` to preserve `temporary-goal-column` when
+         ;; switching between their conservative-scrolling versions.
+         (setq this-command ',base-command)
+         (with-suppressed-warnings ((interactive-only ,base-command))
+           (,base-command arg))
          (redisplay) ; scroll while let-binding is still alive
          ))
      (define-key nomis/scrolling/conservative-mode-map (kbd ,key)
                  #',name)))
+
+;;;;;; Scroll conservatively by line
+
+(nomis/scrolling/define-conservative-scroller
+    nomis/scrolling/previous-line-conservatively
+    "<up>" previous-line)
+
+(nomis/scrolling/define-conservative-scroller
+    nomis/scrolling/next-line-conservatively
+  "<down>" next-line)
 
 ;;;;;; Scroll conservatively by paragraph
 
