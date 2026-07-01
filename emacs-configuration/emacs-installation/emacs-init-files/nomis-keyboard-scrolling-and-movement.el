@@ -16,13 +16,15 @@
 in the display."
   (interactive "p")
   (scroll-down-line n)
-  (previous-line n))
+  (with-suppressed-warnings ((interactive-only previous-line))
+    (previous-line n)))
 
 (defun nomis/scroll-up-line-in-place (&optional n)
   "Like scroll-up-line, except move point to keep it at the same position
 in the display."
   (interactive "p")
-  (next-line n)
+  (with-suppressed-warnings ((interactive-only next-line))
+    (next-line n))
   (scroll-up-line n))
 
 (progn
