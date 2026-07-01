@@ -74,99 +74,99 @@
 
 ;;;; Improve autoscrolling, v1
 
-(defconst nomis/scrolling/-scroll-conservatively 101) ; never recenter
-
-;; Emacs's autoscrolling is a bit shit, IMO.
-;;
-;; Simply doing
-;;   `(setq scroll-conservatively nomis/scrolling/-scroll-conservatively)`
-;; does what I want for scrolling up and down, but with that jumping to
-;; a definition can put the top of the definition at the bottom of the window.
-;;
-;; This code sets that up only for commands that don't "jump".
-
-(defconst nomis/scrolling/-commands-that-jump
-  '(bookmark-jump
-    compilation-next-error-function
-    compile-goto-error
-    find-file
-    find-file-other-window
-    find-function
-    find-variable
-    goto-line
-    ido-exit-minibuffer
-    ido-find-file
-    ido-find-file-other-window
-    imenu
-    isearch-backward
-    isearch-backward-regexp
-    isearch-exit
-    isearch-forward
-    isearch-forward-regexp
-    isearch-repeat-backward
-    isearch-repeat-forward
-    jump-to-register
-    next-error
-    magit-diff-visit-file
-    magit-diff-visit-file-other-frame
-    magit-diff-visit-file-other-window
-    magit-diff-visit-worktree-file
-    magit-diff-visit-worktree-file-other-frame
-    magit-diff-visit-worktree-file-other-window
-    nomis/clojure-lsp-and-cider/find-definition
-    nomis/clojure-lsp-and-cider/find-definition-v2
-    occur-mode-goto-occurrence
-    pop-global-mark
-    previous-error
-    xref-find-apropos
-    xref-find-definitions
-    xref-find-references
-    xref-go-back
-    xref-go-forward
-    xref-goto-xref
-    ;;
-    nomis/dirtree/display-file
-    nomis/dirtree/display-file-and-goto-other-window
-    nomis/dirtree/display-file-in-new-frame
-    nomis/dirtree/goto-file
-    nomis/dirtree/goto-file/no-create-window
-    nomis/dirtree/goto-file/return-to-window
-    nomis/dirtree/make-dirtree
-    nomis/dirtree/show
-    nomis/dirtree/next-line-and-display
-    nomis/dirtree/previous-line-and-display
-    nomis/dirtree/next-line-with-expansion-and-display
-    nomis/dirtree/up-directory-and-display
-    nomis/dirtree/next-sib-and-display
-    nomis/dirtree/previous-sib-and-display
-    nomis/dirtree/goto-root-and-display
-    nomis/dirtree/scroll-up-and-display
-    nomis/dirtree/scroll-down-and-display
-    nomis/dirtree/history-step-back-and-display
-    nomis/dirtree/history-step-forward-and-display)
-  "Commands for which aggressive scrolling should NOT be applied.")
-
-(defvar nomis/scrolling/-original-scroll-conservatively 0)
-
-(add-hook 'emacs-startup-hook
-          (lambda ()
-            ;; Capture default value after all init files have loaded. Gap:
-            ;; customizations via deferred loading (e.g. `with-eval-after-load`,
-            ;; `use-package :defer`) that set `scroll-conservatively` on first
-            ;; use of a package will not be captured here.
-            (setq nomis/scrolling/-original-scroll-conservatively
-                  (default-value 'scroll-conservatively))))
-
-(defun nomis/scrolling/-set-aggressive-scrolling-for-command ()
-  (setq scroll-conservatively
-        (if (memq this-command nomis/scrolling/-commands-that-jump)
-            nomis/scrolling/-original-scroll-conservatively
-          nomis/scrolling/-scroll-conservatively))
-  (nomis/scrolling/-debug "scroll-conservatively = %s for %s"
-                          scroll-conservatively
-                          this-command))
-
-(add-hook 'pre-command-hook #'nomis/scrolling/-set-aggressive-scrolling-for-command)
+;; /OFF/(defconst nomis/scrolling/-scroll-conservatively 101) ; never recenter
+;; /OFF/
+;; /OFF/;; Emacs's autoscrolling is a bit shit, IMO.
+;; /OFF/;;
+;; /OFF/;; Simply doing
+;; /OFF/;;   `(setq scroll-conservatively nomis/scrolling/-scroll-conservatively)`
+;; /OFF/;; does what I want for scrolling up and down, but with that jumping to
+;; /OFF/;; a definition can put the top of the definition at the bottom of the window.
+;; /OFF/;;
+;; /OFF/;; This code sets that up only for commands that don't "jump".
+;; /OFF/
+;; /OFF/(defconst nomis/scrolling/-commands-that-jump
+;; /OFF/  '(bookmark-jump
+;; /OFF/    compilation-next-error-function
+;; /OFF/    compile-goto-error
+;; /OFF/    find-file
+;; /OFF/    find-file-other-window
+;; /OFF/    find-function
+;; /OFF/    find-variable
+;; /OFF/    goto-line
+;; /OFF/    ido-exit-minibuffer
+;; /OFF/    ido-find-file
+;; /OFF/    ido-find-file-other-window
+;; /OFF/    imenu
+;; /OFF/    isearch-backward
+;; /OFF/    isearch-backward-regexp
+;; /OFF/    isearch-exit
+;; /OFF/    isearch-forward
+;; /OFF/    isearch-forward-regexp
+;; /OFF/    isearch-repeat-backward
+;; /OFF/    isearch-repeat-forward
+;; /OFF/    jump-to-register
+;; /OFF/    next-error
+;; /OFF/    magit-diff-visit-file
+;; /OFF/    magit-diff-visit-file-other-frame
+;; /OFF/    magit-diff-visit-file-other-window
+;; /OFF/    magit-diff-visit-worktree-file
+;; /OFF/    magit-diff-visit-worktree-file-other-frame
+;; /OFF/    magit-diff-visit-worktree-file-other-window
+;; /OFF/    nomis/clojure-lsp-and-cider/find-definition
+;; /OFF/    nomis/clojure-lsp-and-cider/find-definition-v2
+;; /OFF/    occur-mode-goto-occurrence
+;; /OFF/    pop-global-mark
+;; /OFF/    previous-error
+;; /OFF/    xref-find-apropos
+;; /OFF/    xref-find-definitions
+;; /OFF/    xref-find-references
+;; /OFF/    xref-go-back
+;; /OFF/    xref-go-forward
+;; /OFF/    xref-goto-xref
+;; /OFF/    ;;
+;; /OFF/    nomis/dirtree/display-file
+;; /OFF/    nomis/dirtree/display-file-and-goto-other-window
+;; /OFF/    nomis/dirtree/display-file-in-new-frame
+;; /OFF/    nomis/dirtree/goto-file
+;; /OFF/    nomis/dirtree/goto-file/no-create-window
+;; /OFF/    nomis/dirtree/goto-file/return-to-window
+;; /OFF/    nomis/dirtree/make-dirtree
+;; /OFF/    nomis/dirtree/show
+;; /OFF/    nomis/dirtree/next-line-and-display
+;; /OFF/    nomis/dirtree/previous-line-and-display
+;; /OFF/    nomis/dirtree/next-line-with-expansion-and-display
+;; /OFF/    nomis/dirtree/up-directory-and-display
+;; /OFF/    nomis/dirtree/next-sib-and-display
+;; /OFF/    nomis/dirtree/previous-sib-and-display
+;; /OFF/    nomis/dirtree/goto-root-and-display
+;; /OFF/    nomis/dirtree/scroll-up-and-display
+;; /OFF/    nomis/dirtree/scroll-down-and-display
+;; /OFF/    nomis/dirtree/history-step-back-and-display
+;; /OFF/    nomis/dirtree/history-step-forward-and-display)
+;; /OFF/  "Commands for which aggressive scrolling should NOT be applied.")
+;; /OFF/
+;; /OFF/(defvar nomis/scrolling/-original-scroll-conservatively 0)
+;; /OFF/
+;; /OFF/(add-hook 'emacs-startup-hook
+;; /OFF/          (lambda ()
+;; /OFF/            ;; Capture default value after all init files have loaded. Gap:
+;; /OFF/            ;; customizations via deferred loading (e.g. `with-eval-after-load`,
+;; /OFF/            ;; `use-package :defer`) that set `scroll-conservatively` on first
+;; /OFF/            ;; use of a package will not be captured here.
+;; /OFF/            (setq nomis/scrolling/-original-scroll-conservatively
+;; /OFF/                  (default-value 'scroll-conservatively))))
+;; /OFF/
+;; /OFF/(defun nomis/scrolling/-set-aggressive-scrolling-for-command ()
+;; /OFF/  (setq scroll-conservatively
+;; /OFF/        (if (memq this-command nomis/scrolling/-commands-that-jump)
+;; /OFF/            nomis/scrolling/-original-scroll-conservatively
+;; /OFF/          nomis/scrolling/-scroll-conservatively))
+;; /OFF/  (nomis/scrolling/-debug "scroll-conservatively = %s for %s"
+;; /OFF/                          scroll-conservatively
+;; /OFF/                          this-command))
+;; /OFF/
+;; /OFF/(add-hook 'pre-command-hook #'nomis/scrolling/-set-aggressive-scrolling-for-command)
 
 ;;; End
 
