@@ -87,9 +87,9 @@
 
 ;;;;; Maintain screen position on various commands
 
-;; `scroll-preserve-screen-position` is read inside thse commands, so we can use
-;; `:around` advice to set it. (Contrast with `scroll-conservatively` which is
-;; read in the post-command redraw phase.)
+;; `scroll-preserve-screen-position` is read inside these commands, so we can
+;; use `:around` advice to set it. (Contrast with `scroll-conservatively` which
+;; is read in the post-command redraw phase.)
 
 (defconst nomis/scrolling/preserve-screen-position-commands
   '(scroll-up-command
