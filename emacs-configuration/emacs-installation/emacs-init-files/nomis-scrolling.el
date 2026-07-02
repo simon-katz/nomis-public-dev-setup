@@ -85,7 +85,7 @@
                    (apply orig-fun args)))
                '((name . nomis/scroll-preserve-screen-position))))
 
-;;;;; Maintain screen position on Page Up / Page Down
+;;;;; Maintain screen position on various commands
 
 ;; `scroll-preserve-screen-position` is read inside thse commands, so we can use
 ;; `:around` advice to set it. (Contrast with `scroll-conservatively` which is
@@ -93,7 +93,9 @@
 
 (defconst nomis/scrolling/preserve-screen-position-commands
   '(scroll-up-command
-    scroll-down-command))
+    scroll-down-command
+    scroll-other-window
+    scroll-other-window-down))
 
 (dolist (command nomis/scrolling/preserve-screen-position-commands)
   (nomis/define-preserving-scroller command))
