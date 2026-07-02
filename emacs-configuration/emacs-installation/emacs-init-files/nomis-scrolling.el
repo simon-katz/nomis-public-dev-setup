@@ -74,29 +74,32 @@
 
 ;;;; Improve autoscrolling
 
+;;;;; nomis/define-preserving-scroller
+
+(cl-defmacro nomis/define-preserving-scroller (command)
+  (declare (indent 1))
+  `(advice-add ,command
+               :around
+               (lambda (orig-fun &rest args)
+                 (let* ((scroll-preserve-screen-position t))
+                   (apply orig-fun args)))
+               '((name . nomis/scroll-preserve-screen-position))))
+
 ;;;;; Maintain screen position on Page Up / Page Down
 
-;; `scroll-preserve-screen-position` is read inside `scroll-up-command` and
-;; `scroll-down-command`, so we can use `:around` advice to set it. (Contrast
-;; with `scroll-conservatively` which is read in the post-command redraw phase.)
+;; `scroll-preserve-screen-position` is read inside thse commands, so we can use
+;; `:around` advice to set it. (Contrast with `scroll-conservatively` which is
+;; read in the post-command redraw phase.)
 
-(advice-add 'scroll-up-command
-            :around
-            (lambda (orig-fun &rest args)
-              (let* ((scroll-preserve-screen-position t))
-                (apply orig-fun args)))
-            '((name . nomis/scroll-preserve-screen-position)))
+(defconst nomis/scrolling/preserve-screen-position-commands
+  '(scroll-up-command
+    scroll-down-command))
 
-(advice-add 'scroll-down-command
-            :around
-            (lambda (orig-fun &rest args)
-              (let* ((scroll-preserve-screen-position t))
-                (apply orig-fun args)))
-            '((name . nomis/scroll-preserve-screen-position)))
+(dolist (command nomis/scrolling/preserve-screen-position-commands)
+  (nomis/define-preserving-scroller command))
 
-;; (progn
-;;   (advice-remove 'scroll-up-command 'nomis/scroll-preserve-screen-position)
-;;   (advice-remove 'scroll-down-command 'nomis/scroll-preserve-screen-position))
+;; (dolist (command nomis/scrolling/preserve-screen-position-commands)
+;;   (advice-remove command 'nomis/scroll-preserve-screen-position))
 
 ;;; End
 
