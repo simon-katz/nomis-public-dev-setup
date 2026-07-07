@@ -2,13 +2,7 @@
 
 ;;;; ___________________________________________________________________________
 
-(defun nomis/visual-line-mode ()
-  (setq line-move-visual nil) ; the default of T is annoying, and it screws up keyboard macros
-  )
-
-(add-hook 'visual-line-mode-hook 'nomis/visual-line-mode)
-
-(defun nomis/toggle-line-move-visual ()
+(defun nomis/toggle-line-move-visual () ; probably not needed
   (interactive)
   (message
    "line-move-visual = %s"
