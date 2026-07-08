@@ -5,6 +5,8 @@
 ;; You may delete these explanatory comments.
 ;; (package-initialize)
 
+(setq package-install-upgrade-built-in t)
+
 (defun load-file-relative-to-this-file (file-name)
   (let* ((directory (file-name-directory
                      (file-truename
