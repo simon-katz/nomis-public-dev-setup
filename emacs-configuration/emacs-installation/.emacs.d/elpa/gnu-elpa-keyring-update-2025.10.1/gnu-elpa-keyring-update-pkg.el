@@ -1,0 +1,2 @@
+;; Generated package description from gnu-elpa-keyring-update.el  -*- no-byte-compile: t -*-
+(define-package "gnu-elpa-keyring-update" "2025.10.1" "Update Emacs's GPG keyring for GNU ELPA" 'nil :commit "62156e2ec72ca9f79eed3e7275aba38f71808361" :url "https://elpa.gnu.org/packages/gnu-elpa-keyring-update.html" :authors '(("Stefan Monnier" . "monnier@iro.umontreal.ca")) :maintainer '("Stefan Monnier" . "monnier@iro.umontreal.ca") :keywords '("maint" "tools"))
