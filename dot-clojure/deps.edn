@@ -1,0 +1,96 @@
+;; The deps.edn file describes the information needed to build a classpath.
+;;
+;; When using the `clojure` or `clj` script, there are several deps.edn files
+;; that are combined:
+;; - install-level
+;; - user level (this file)
+;; - project level (current directory when invoked)
+;;
+;; For all attributes other than :paths, these config files are merged left to right.
+;; Only the last :paths is kept and others are dropped.
+
+{
+ ;; Paths
+ ;;   Directories in the current project to include in the classpath
+
+ ;; :paths ["src"]
+
+ ;; External dependencies
+
+ :deps
+ {}
+
+ ;; Aliases
+ ;;   resolve-deps aliases (-R) affect dependency resolution, options:
+ ;;     :extra-deps - specifies extra deps to add to :deps
+ ;;     :override-deps - specifies a coordinate to use instead of that in :deps
+ ;;     :default-deps - specifies a coordinate to use for a lib if one isn't found
+ ;;   make-classpath aliases (-C) affect the classpath generation, options:
+ ;;     :extra-paths - vector of additional paths to add to the classpath
+ ;;     :classpath-overrides - map of lib to path that overrides the result of resolving deps
+
+ :aliases
+ {;; To use these aliases:
+  ;; - Have .dir-locals.el with the following:
+  ;;
+  ;;     ((clojure-mode . ((cider-clojure-cli-aliases . "project/dev:user/dev") ; c.f. the `clj-dev.sh` script.
+  ;;                   )))
+  ;;
+  ;; - Have scripts/clj-dev.sh with the following:
+  ;;
+  ;;     #!/usr/bin/env bash
+  ;;
+  ;;     # c.f. `cider-clojure-cli-aliases` in .dir-locals.clj.
+  ;;
+  ;;     clj -M:project/dev:user/dev:user/cider-nrepl
+  ;;
+  ;; /nomis-deps-edn-note/
+  ;; - Is there a way to magically include stuff (/eg/ a dependency,
+  ;;   /eg/ clj-commons/pomegranate) in every deps.edn project? (Like a user
+  ;;   profile in Leiningen?)
+  ;;   I think maybe not.
+  :user/dev
+  {:extra-paths ["_no-commit_/code"
+                 "_no-commit_/stories"]
+   :extra-deps {;; TODO: /nomis-deps-edn-note/ If you use Pomegranate,
+                ;;       reconsider most of this.
+                ;;       (And note that there have been changes since
+                ;;       you wrote the above comment -- /eg/ this
+                ;;       new :user/dev` alias.)
+                ;; Using `cemerick.pomegranate/add-dependencies`
+                ;; breaks `cider-ns-refresh`.
+                ;; (I haven't checked to see if it breaks tools.namespace.)
+                ;; So, instead, include all dev dependencies here.
+                ;; clj-commons/pomegranate {:mvn/version "1.2.0"}
+                ;; Do `(require 'nomis-clj-repl-tools)`.
+
+                cider/cider-nrepl                         {:mvn/version "0.57.0"}
+                com.nomistech/kaocha-with-nomis-hacks     {:mvn/version "0.9.0" #_#_:local/root "/Users/simonkatz/development-100/repositories/nomis/dev/apps-and-libs/kaocha-with-nomis-hacks"}
+                com.nomistech/portal-logger               {:mvn/version "0.1.0-SNAPSHOT"}
+                djblue/portal                             {:mvn/version "0.35.0"}
+                fipp/fipp                                 {:mvn/version "0.6.26"}
+                lambdaisland/deep-diff2                   {:mvn/version "2.7.169"}
+                midje/midje                               {:mvn/version "1.10.9"} ; to allow running Midje autotest in a CLJ REPL
+                nomis-clj-repl-tools/nomis-clj-repl-tools {:mvn/version "0.1.7"}
+                org.clojure/java.classpath                {:mvn/version "1.0.0"}
+                pjstadig/humane-test-output               {:mvn/version "0.11.0"}
+                refactor-nrepl/refactor-nrepl             {:mvn/version "3.11.0"}}}
+
+  :user/snowball ; see https://github.com/phronmophobic/snowball
+  {:exec-fn      com.phronemophobic.snowball/-main
+   :replace-deps {com.phronemophobic/snowball {:mvn/version "1.0"}}}
+
+
+  ;; :deps {:extra-deps {org.clojure/tools.deps.alpha {:mvn/version "0.12.1109"}}}
+  ;; :test {:extra-paths ["test"]}
+  :user/bin-kaocha {:main-opts ["-m" "kaocha.runner"]
+                    :extra-deps {com.nomistech/kaocha-with-nomis-hacks {:mvn/version "0.9.0"
+                                                                        #_#_:local/root "/Users/simonkatz/development-100/repositories/nomis/dev/apps-and-libs/kaocha-with-nomis-hacks"}}}}
+
+ ;; Provider attributes
+
+ ;; :mvn/repos {
+ ;;   "central" {:url "https://repo1.maven.org/maven2/"}
+ ;;   "clojars" {:url "https://repo.clojars.org/"}
+ ;; }
+ }
