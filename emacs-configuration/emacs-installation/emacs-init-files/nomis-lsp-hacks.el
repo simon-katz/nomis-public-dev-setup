@@ -185,8 +185,9 @@ g. `error', `warning') and list of LSP TAGS."
               new-level)))))
 
    ((member (pkg-info-package-version 'lsp-mode)
-            '((20250811 806)))
-    ;; TODO: Is this fixed?
+            '((20250811 806)
+              (20260702 527)))
+    ;; Seems to be fixed.
     )
 
    (t
@@ -281,6 +282,11 @@ g. `error', `warning') and list of LSP TAGS."
                *-nomis/lsp-collected-overlays)
          res))
      '((name . nomis/hack-lsp-overlay-priorities))))
+
+   ((member (pkg-info-package-version 'lsp-mode)
+            '((20260702 527)))
+    ;; Do we still need this?
+    )
 
    (t
     (message-box

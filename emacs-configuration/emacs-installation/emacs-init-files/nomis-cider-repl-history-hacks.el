@@ -14,7 +14,8 @@
             "1.7.0 (package: 20230518.550)"
             "20250217.1433"
             "20250430.722"
-            "20250806.1944"))
+            "20250806.1944"
+            "20260708.1059"))
 
   (with-eval-after-load 'cider-repl
     ;; The original is in `cider-repl`.
@@ -98,6 +99,7 @@ If REGEXP is non-nil, only lines matching REGEXP are considered."
             "20250217.1433"
             "20250430.722"
             "20250806.1944" ; Not thoroughly checked but seems to work.
+            "20260708.1059" ; Not thoroughly checked but seems to work.
             ))
 
   (defun nomis/-cider-repl-history-maybe-warn ()
@@ -244,6 +246,7 @@ utf-8-unix."
           '("20250217.1433"
             "20250430.722"
             "20250806.1944" ; Not thoroughly checked but seems to work.
+            "20260708.1059" ; Not thoroughly checked but seems to work.
             ))
   ;; CIDER does do this but we need it earlier, otherwise /eg/ CLJ and CLJS
   ;; histories can get muddled.

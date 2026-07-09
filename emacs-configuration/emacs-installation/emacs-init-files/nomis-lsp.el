@@ -1,6 +1,7 @@
 ;;; nomis-lsp.el --- LSP tailoring -*- lexical-binding: t; -*-
 
-(require 'lsp-diagnostics)
+(with-eval-after-load 'lsp
+  (require 'lsp-diagnostics))
 
 ;;;; ___________________________________________________________________________
 ;;;; Don't start lsp for large files
@@ -132,35 +133,35 @@
 ;;;; ___________________________________________________________________________
 ;;;; Tailoring of faces, needed especially for light themes.
 
-(defun nomis/lsp-set-funky-faces ()
-  ;; See https://github.com/emacs-lsp/lsp-mode/issues/2037
-  (setf (alist-get 'unnecessary lsp-diagnostics-attributes)
-        ;; This was simply `:foreground "gray"` I think.
-        (if (nomis/dark-background-mode?)
-            (list :foreground "Black"
-                  :background "Grey70")
-          (list :foreground "Grey45")))
-  ;; Recreate dynamic faces. Relies in our hacked version of
-  ;; `lsp-diagnostics--flycheck-level` to recalculate things such as:
-  ;; - `lsp-flycheck-warning-unnecessary`
-  ;; - `lsp-flycheck-info-unnecessary`.
-  ;; We do this by causing `lsp-diagnostics-mode` initialisation to re-run.
-  (let* ((a-lsp-diagnostics-mode-buffer (-find (lambda (b)
-                                                 (with-current-buffer b
-                                                   lsp-diagnostics-mode))
-                                               (buffer-list))))
-    (if a-lsp-diagnostics-mode-buffer
-        (with-current-buffer a-lsp-diagnostics-mode-buffer
-          (lsp-diagnostics-mode 0)
-          (lsp-diagnostics-mode 1))
-      (lsp-diagnostics-mode 1)
-      (lsp-diagnostics-mode 0))))
+;; (defun nomis/lsp-set-funky-faces ()
+;;   ;; See https://github.com/emacs-lsp/lsp-mode/issues/2037
+;;   (setf (alist-get 'unnecessary lsp-diagnostics-attributes)
+;;         ;; This was simply `:foreground "gray"` I think.
+;;         (if (nomis/dark-background-mode?)
+;;             (list :foreground "Black"
+;;                   :background "Grey70")
+;;           (list :foreground "Grey45")))
+;;   ;; Recreate dynamic faces. Relies in our hacked version of
+;;   ;; `lsp-diagnostics--flycheck-level` to recalculate things such as:
+;;   ;; - `lsp-flycheck-warning-unnecessary`
+;;   ;; - `lsp-flycheck-info-unnecessary`.
+;;   ;; We do this by causing `lsp-diagnostics-mode` initialisation to re-run.
+;;   (let* ((a-lsp-diagnostics-mode-buffer (-find (lambda (b)
+;;                                                  (with-current-buffer b
+;;                                                    lsp-diagnostics-mode))
+;;                                                (buffer-list))))
+;;     (if a-lsp-diagnostics-mode-buffer
+;;         (with-current-buffer a-lsp-diagnostics-mode-buffer
+;;           (lsp-diagnostics-mode 0)
+;;           (lsp-diagnostics-mode 1))
+;;       (lsp-diagnostics-mode 1)
+;;       (lsp-diagnostics-mode 0))))
 
-(add-hook 'emacs-startup-hook
-          'nomis/lsp-set-funky-faces)
+;; (add-hook 'emacs-startup-hook
+;;           'nomis/lsp-set-funky-faces)
 
-(add-hook 'nomis/themes/theme-changed-hook
-          'nomis/lsp-set-funky-faces)
+;; (add-hook 'nomis/themes/theme-changed-hook
+;;           'nomis/lsp-set-funky-faces)
 
 ;;;; ___________________________________________________________________________
 ;;;; Hack echo area messages.

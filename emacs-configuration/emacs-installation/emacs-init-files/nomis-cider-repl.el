@@ -31,7 +31,7 @@ after will overwrite what's already written on this line.
                (insert char))))
       (buffer-substring (point-min) (point-max))))
 
-  (defun cider-repl--emit-output (buffer string face) ; original is in cider-repl.el
+  (defun cider-repl--emit-output (buffer string face) ; original is in `cider-repl`
     "Using BUFFER, emit STRING as output font-locked using FACE.
 Before inserting, run `cider-repl-preoutput-hook' on STRING."
     (with-current-buffer buffer
@@ -130,6 +130,11 @@ object is a root list or dict."
       ;; Ensure loop break and clean queues' states in nrepl-bdecode:
       (goto-char (point-max))
       (cons :end nil)))))
+
+ ((member (pkg-info-package-version 'cider)
+          '((20260708 1059)))
+  ;; The previous fix no longer works. Needs fixing.
+  )
 
  (t
   (message-box
