@@ -185,8 +185,9 @@ g. `error', `warning') and list of LSP TAGS."
               new-level)))))
 
    ((member (pkg-info-package-version 'lsp-mode)
-            '((20250811 806)))
-    ;; TODO: Is this fixed?
+            '((20250811 806)
+              (20260702 527)))
+    ;; Seems to be fixed.
     )
 
    (t
@@ -255,7 +256,7 @@ g. `error', `warning') and list of LSP TAGS."
    ((member (pkg-info-package-version 'lsp-mode)
             '((20250214 818)
               (20250811 806) ; I don't remember why we want this. It doesn't seem to cause any problems. I guess leave it here unless/until there's a problem.
-              ))
+              (20260702 527)))
 
     (defvar *-nomis/lsp-in-lsp--document-highlight-callback?* nil)
     (defvar *-nomis/lsp-collected-overlays '())

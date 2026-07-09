@@ -145,7 +145,8 @@
                 "1.7.0 (package: 20230518.550)"
                 "20250217.1433"
                 "20250430.722"
-                "20250806.1944")))
+                "20250806.1944"
+                "20260708.1059")))
 
   (defvar nomis/cider-ns-refresh/-vars-to-pass-to-log-buffer
     '(nomis/cider-forbid-refresh?
@@ -302,7 +303,8 @@
             "1.7.0 (package: 20230518.550)"
             "20250217.1433"
             "20250430.722"
-            "20250806.1944"))
+            "20250806.1944"
+            "20260708.1059"))
 
   (defvar *nomis/cider-ns-refresh/-in-handle-response?* nil)
 
@@ -353,7 +355,8 @@
             "1.7.0 (package: 20230518.550)"
             "20250217.1433"
             "20250430.722"
-            "20250806.1944"))
+            "20250806.1944"
+            "20260708.1059"))
 
   (advice-add
    'cider-emit-into-popup-buffer
@@ -380,7 +383,8 @@
 
 (cond
  ((member (pkg-info-version-info 'cider)
-          '("20250806.1944"))
+          '("20250806.1944"
+            "20260708.1059"))
 
   ;; When `cider-ns-refresh` encounters an error, `cider-ns--present-error` is
   ;; called. It displays the `*cider-error*` buffer, then:
@@ -409,7 +413,8 @@
 
 (cond
  ((member (pkg-info-version-info 'cider)
-          '("20250806.1944"))
+          '("20250806.1944"
+            "20260708.1059"))
 
   ;; `cider-auto-select-error-buffer' is t, but `cider-ns--present-error'
   ;; displays the `*cider-error*' buffer via a path that doesn't honour it.

@@ -57,6 +57,7 @@ the need to save files so that a file-watcher can spot changes).")
                 "20250217.1433"
                 "20250430.722"
                 "20250806.1944" ; Not thoroughly checked but seems to work.
+                "20260708.1059" ; Not thoroughly checked but seems to work.
                 )))
 
   (cl-flet*

@@ -79,7 +79,8 @@
               "20211103.2050"
               "20230317.1101"
               "20250213.1137"
-              "20250704.908"))
+              "20250704.908"
+              "20260708.804"))
 
     (defvar *nomis/in-projectile-grep?* nil)
     (defvar *nomis/projectile-grep-regexp* nil)
