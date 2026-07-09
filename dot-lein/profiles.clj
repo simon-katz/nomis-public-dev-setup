@@ -5,7 +5,12 @@
                         ;; ==== Below here same as work
                         ["clojars-no-sign" {:url "https://clojars.org/repo"
                                             :sign-releases false}]]
-  :dependencies [[cider/cider-nrepl "0.57.0"]
+  :dependencies [;; Upgrade with CIDER. (Do a `cider-jack-in` with these
+                 ;; commented out, and look at the command line that is used.)
+                 [cider/cider-nrepl "0.62.0-alpha2"]
+                 [refactor-nrepl/refactor-nrepl "3.11.0"]
+
+                 ;; Other
                  [com.nomistech/kaocha-with-nomis-hacks "0.9.0"]
                  [com.nomistech/portal-logger "0.1.0-SNAPSHOT"]
                  [djblue/portal "0.35.0"]
@@ -14,8 +19,7 @@
                  [midje/midje "1.10.9"] ; to allow running Midje autotest in a CLJ REPL
                  [nomis-clj-repl-tools/nomis-clj-repl-tools "0.1.7"]
                  [org.clojure/java.classpath "1.0.0"]
-                 [pjstadig/humane-test-output "0.11.0"]
-                 [refactor-nrepl/refactor-nrepl "3.11.0"]]
+                 [pjstadig/humane-test-output "0.11.0"]]
   :aliases {"kaocha" ["run" "-m" "kaocha.runner"]}
   :injections [;; (require 'spyscope.core)
                (require 'nomis-clj-repl-tools)
