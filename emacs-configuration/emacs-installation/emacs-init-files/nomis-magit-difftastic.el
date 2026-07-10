@@ -1,9 +1,11 @@
-;;;; Init stuff -- nomis-magit-difftastic  -*- lexical-binding: t; -*-
+;;; Init stuff -- nomis-magit-difftastic  -*- lexical-binding: t; -*-
 
-;;;; From https://tsdh.org/posts/2022-08-01-difftastic-diffing-with-magit.html
-;;;; (with changes).
+;; From https://tsdh.org/posts/2022-08-01-difftastic-diffing-with-magit.html
+;; (with changes).
 
-;;;; ___________________________________________________________________________
+;;; Code:
+
+;;;; Old stuff -- manually calling `difft`
 
 (with-eval-after-load 'magit
 
@@ -113,6 +115,6 @@
 
   (define-key magit-status-mode-map (kbd "`") #'th/magit-aux-commands))
 
-;;;; ___________________________________________________________________________
+;;; End
 
 (provide 'nomis-magit-difftastic)
