@@ -64,7 +64,12 @@
                 ;; clj-commons/pomegranate {:mvn/version "1.2.0"}
                 ;; Do `(require 'nomis-clj-repl-tools)`.
 
+                ;; Upgrade with CIDER. (Do a `cider-jack-in` with these
+                ;; commented out, and look at the command line that is used.)
                 cider/cider-nrepl                         {:mvn/version "0.57.0"}
+                refactor-nrepl/refactor-nrepl             {:mvn/version "3.11.0"}
+
+                ;; Other
                 com.nomistech/kaocha-with-nomis-hacks     {:mvn/version "0.9.0" #_#_:local/root "/Users/simonkatz/development-100/repositories/nomis/dev/apps-and-libs/kaocha-with-nomis-hacks"}
                 com.nomistech/portal-logger               {:mvn/version "0.1.0-SNAPSHOT"}
                 djblue/portal                             {:mvn/version "0.35.0"}
@@ -73,8 +78,7 @@
                 midje/midje                               {:mvn/version "1.10.9"} ; to allow running Midje autotest in a CLJ REPL
                 nomis-clj-repl-tools/nomis-clj-repl-tools {:mvn/version "0.1.7"}
                 org.clojure/java.classpath                {:mvn/version "1.0.0"}
-                pjstadig/humane-test-output               {:mvn/version "0.11.0"}
-                refactor-nrepl/refactor-nrepl             {:mvn/version "3.11.0"}}}
+                pjstadig/humane-test-output               {:mvn/version "0.11.0"}}}
 
   :user/snowball ; see https://github.com/phronmophobic/snowball
   {:exec-fn      com.phronemophobic.snowball/-main
