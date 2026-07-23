@@ -28,7 +28,7 @@
   :plugins [[lein-midje "3.2.2"]
             [lein-ancient "1.0.0-RC3"]
             [lein-cljfmt "0.8.0"]
-            [lein-cloverage "1.2.2"]
+            [lein-cloverage "1.2.4"]
             [walmartlabs/vizdeps "0.2.0"]
             [jonase/eastwood "0.9.6"]
             [lein-kibit "0.1.8" :exclusions [org.clojure/tools.namespace]]
