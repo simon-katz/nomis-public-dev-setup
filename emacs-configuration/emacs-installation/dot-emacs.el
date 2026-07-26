@@ -314,7 +314,7 @@
 
 (require 'nomis-irc)
 
-(require 'nomis-auto-save-hacks)
+(require 'nomis-backup-lock-auto-save)
 
 (require 'nomis-nav-flash)
 

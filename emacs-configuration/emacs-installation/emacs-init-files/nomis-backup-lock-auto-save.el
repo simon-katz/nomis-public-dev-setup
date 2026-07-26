@@ -1,4 +1,4 @@
-;;; Init stuff --- nomis-auto-save-etc tailoring  -*- lexical-binding: t; -*-
+;;; Init stuff --- nomis-backup-lock-auto-save tailoring  -*- lexical-binding: t; -*-
 
 ;;; Code:
 
@@ -11,15 +11,15 @@
 ;; - https://emacs.stackexchange.com/questions/48301/spacemacs-and-file-name-too-long-error-on-auto-save
 ;; - https://www.reddit.com/r/emacs/comments/t07e7e/file_name_too_long_error/
 
-(defconst nomis/auto-save-hacks/max-filename-length 150) ; A bit arbitrary,
-(defconst nomis/auto-save-hacks/sha1-length 40)
+(defconst nomis/blau/max-filename-length 150) ; A bit arbitrary,
+(defconst nomis/blau/sha1-length 40)
 
-(defun nomis/auto-save-hacks/maybe-shorten-filename (filename)
+(defun nomis/blau/maybe-shorten-filename (filename)
   (if (<= (length filename)
-          nomis/auto-save-hacks/max-filename-length)
+          nomis/blau/max-filename-length)
       filename
-    (let* ((n-chars-we-can-keep (- nomis/auto-save-hacks/max-filename-length
-                                   nomis/auto-save-hacks/sha1-length
+    (let* ((n-chars-we-can-keep (- nomis/blau/max-filename-length
+                                   nomis/blau/sha1-length
                                    1) )
            (cut-off (- (length filename)
                        n-chars-we-can-keep))
@@ -27,7 +27,7 @@
            (second-part (substring filename cut-off))
            (result (concat (sha1 first-part) "-" second-part)))
       (let* ((inhibit-message t))
-        (message "nomis/auto-save-hacks/maybe-shorten-filename: Shortened filename from %s chars to %s chars -- %s to %s"
+        (message "nomis/blau/maybe-shorten-filename: Shortened filename from %s chars to %s chars -- %s to %s"
                  (length filename)
                  (length result)
                  filename
@@ -47,16 +47,16 @@
                 (let* ((buffer-file-name
                         (when buffer-file-name
                           (-> buffer-file-name
-                              nomis/auto-save-hacks/maybe-shorten-filename))))
+                              nomis/blau/maybe-shorten-filename))))
                   (apply orig-fun args)))
-              '((name . nomis/auto-save-hacks/shorten-file-name))))
+              '((name . nomis/blau/shorten-file-name))))
 
  (t
   (message-box
    "You need to fix/check `make-auto-save-file-name` for this version of Emacs.")))
 
-;; (advice-remove 'make-auto-save-file-name 'nomis/auto-save-hacks/shorten-file-name)
+;; (advice-remove 'make-auto-save-file-name 'nomis/blau/shorten-file-name)
 
 ;;; End
 
-(provide 'nomis-auto-save-hacks)
+(provide 'nomis-backup-lock-auto-save)
