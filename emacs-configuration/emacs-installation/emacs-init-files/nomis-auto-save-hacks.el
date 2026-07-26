@@ -1,14 +1,15 @@
-;;;; Init stuff -- Nomis auto-save hacks --  -*- lexical-binding: t -*-
+;;; Init stuff --- nomis-auto-save-etc tailoring  -*- lexical-binding: t; -*-
 
-;;;; ___________________________________________________________________________
-;;;; Prevent auto-save file names being too long.
+;;; Code:
 
-;;;; You were having problems when editing the following namespace:
-;;;;   `com.nomistech.clojure-the-language.c-950-tools-stuff.s-100-linting.ss-0400-nested-lets-to-demo-highlighting-test`
+;;;; Prevent auto-save file names being too long
 
-;;;; Based on code from the following places:
-;;;; - https://emacs.stackexchange.com/questions/48301/spacemacs-and-file-name-too-long-error-on-auto-save
-;;;; - https://www.reddit.com/r/emacs/comments/t07e7e/file_name_too_long_error/
+;; You were having problems when editing the following namespace:
+;;   `com.nomistech.clojure-the-language.c-950-tools-stuff.s-100-linting.ss-0400-nested-lets-to-demo-highlighting-test`
+
+;; Based on code from the following places:
+;; - https://emacs.stackexchange.com/questions/48301/spacemacs-and-file-name-too-long-error-on-auto-save
+;; - https://www.reddit.com/r/emacs/comments/t07e7e/file_name_too_long_error/
 
 (defconst nomis/auto-save-hacks/max-filename-length 150) ; A bit arbitrary,
 (defconst nomis/auto-save-hacks/sha1-length 40)
@@ -56,6 +57,6 @@
 
 ;; (advice-remove 'make-auto-save-file-name 'nomis/auto-save-hacks/shorten-file-name)
 
-;;;; ___________________________________________________________________________
+;;; End
 
 (provide 'nomis-auto-save-hacks)
