@@ -2,6 +2,20 @@
 
 ;;; Code:
 
+;;;; File locations
+
+(defconst nomis/backup-directory (expand-file-name "~/.emacs-backups/"))
+
+(make-directory nomis/backup-directory t)
+(setq backup-directory-alist
+      `(("." . ,nomis/backup-directory)))
+(setq auto-save-file-name-transforms
+      `((".*" ,nomis/backup-directory t)))
+
+(defconst nomis/lockfile-directory (expand-file-name "~/.emacs-lockfiles/"))
+(make-directory nomis/lockfile-directory t)
+(setq lock-file-name-transforms `((".*" ,nomis/lockfile-directory t)))
+
 ;;;; Prevent auto-save file names being too long
 
 ;; You were having problems when editing the following namespace:
