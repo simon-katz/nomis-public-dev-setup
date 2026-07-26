@@ -2,9 +2,16 @@
 
 ;;; Code:
 
+;;;; Require things
+
+(require 'cl-lib)
+
 ;;;; File locations
 
-(defconst nomis/backup-directory (expand-file-name "~/.emacs-backups/"))
+(defconst nomis/backup-directory
+  (expand-file-name (cl-ecase 2
+                      (1 "~/.emacs-backups/")
+                      (2 "~/development-100/.emacs-backups/"))))
 
 (make-directory nomis/backup-directory t)
 (setq backup-directory-alist
@@ -12,7 +19,11 @@
 (setq auto-save-file-name-transforms
       `((".*" ,nomis/backup-directory t)))
 
-(defconst nomis/lockfile-directory (expand-file-name "~/.emacs-lockfiles/"))
+(defconst nomis/lockfile-directory
+  (expand-file-name (cl-ecase 2
+                      (1 "~/.emacs-lockfiles/")
+                      (2 "~/development-100/.emacs-lockfiles/"))))
+
 (make-directory nomis/lockfile-directory t)
 (setq lock-file-name-transforms `((".*" ,nomis/lockfile-directory t)))
 
