@@ -82,6 +82,29 @@
 
 ;; (advice-remove 'make-auto-save-file-name 'nomis/blau/shorten-file-name)
 
+;;;; Look at lock file names
+
+;; (defvar my-lock-dir (expand-file-name "~/.emacs.d/nomis-locks/"))
+
+;; (unless (file-directory-p my-lock-dir)
+;;   (make-directory my-lock-dir t))
+
+(advice-add
+ 'make-lock-file-name
+ :around
+ (lambda (orig-fun filename)
+   (let ((inhibit-message t))
+     (message "make-lock-file-name %S" filename))
+   (funcall orig-fun filename)
+   ;; (if (file-remote-p filename)
+   ;;     (funcall orig-fun filename)
+   ;;   (let* ((dir (file-name-directory filename))
+   ;;          (base (file-name-nondirectory filename))
+   ;;          (dir-hash (substring (secure-hash 'md5 dir) 0 8)))
+   ;;     (expand-file-name (concat ".#" dir-hash "_" base) my-lock-dir)))
+   )
+ '((name . nomis/blau/hack-lock-file-name)))
+
 ;;; End
 
 (provide 'nomis-backup-lock-auto-save)
