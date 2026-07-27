@@ -6,6 +6,10 @@
 
 (require 'cl-lib)
 
+;;;; TEMP
+
+(setq vc-make-backup-files t)
+
 ;;;; File locations
 
 (defconst nomis/backup-directory
