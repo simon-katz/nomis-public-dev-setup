@@ -156,6 +156,7 @@
      (nomis/cider/cljs-dev-port . 9000)
      (nomis/cider/cljs-dev-port . 9001)
      (nomis/cider/cljs-dev-port . 9002)
+     (nomis/cider/cljs-dev-port . 9003)
      (nomis/cider/post-interactive-eval/clj-function-name
       . "dev/post-interactive-eval-hook")
      (nomis/cider/post-interactive-eval/cljs-function-name
@@ -170,6 +171,7 @@
                                            "resources/pub-dev/assets")
      (nomis/grep/local-ignored-directories "compiler-output")
      (nomis/grep/local-ignored-directories "giggin/public/js" "increments")
+     (nomis/grep/local-ignored-directories "resources/pub-dev/compiler-output")
      (nomis/grep/local-ignored-directories "resources/public/js")
      (nomis/grep/local-ignored-directories)
      (nomis/grep/local-ignored-files "package-lock.json" "main.js")
