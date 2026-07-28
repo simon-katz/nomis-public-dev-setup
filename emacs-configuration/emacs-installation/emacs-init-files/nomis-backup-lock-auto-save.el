@@ -5,6 +5,7 @@
 ;;;; Require things
 
 (require 'cl-lib)
+(require 'dash)
 
 ;;;; TEMP
 
@@ -63,35 +64,42 @@
                  result))
       result)))
 
-;; (cond
-;;  ((member emacs-version
-;;           '("28.1"
-;;             "28.2"
-;;             "29.4"
-;;             "30.1"
-;;             "30.2"))
-;;   (advice-add 'make-auto-save-file-name
-;;               :around
-;;               (lambda (orig-fun &rest args)
-;;                 (let* ((buffer-file-name
-;;                         (when buffer-file-name
-;;                           (-> buffer-file-name
-;;                               nomis/blau/maybe-shorten-filename))))
-;;                   (apply orig-fun args)))
-;;               '((name . nomis/blau/shorten-file-name))))
+(cond
+ ((member emacs-version
+          '("28.1"
+            "28.2"
+            "29.4"
+            "30.1"
+            "30.2"))
+  (advice-add 'make-auto-save-file-name
+              :around
+              (lambda (orig-fun &rest args)
+                (let ((inhibit-message t))
+                  (message "make-auto-save-file-name %S" buffer-file-name))
+                (cl-ecase 1
+                  (1 (apply orig-fun args))
+                  (2 (let* ((buffer-file-name
+                             (when buffer-file-name
+                               (-> buffer-file-name
+                                   nomis/blau/maybe-shorten-filename))))
+                       (apply orig-fun args)))))
+              '((name . nomis/blau/shorten-file-name))))
 
-;;  (t
-;;   (message-box
-;;    "You need to fix/check `make-auto-save-file-name` for this version of Emacs.")))
+ (t
+  (message-box
+   "You need to fix/check `make-auto-save-file-name` for this version of Emacs.")))
 
 ;; (advice-remove 'make-auto-save-file-name 'nomis/blau/shorten-file-name)
 
-;;;; Look at lock file names
+;;;; Shorten lock file names
 
-;; (defvar my-lock-dir (expand-file-name "~/.emacs.d/nomis-locks/"))
+(defvar my-lock-dir
+  (expand-file-name (cl-ecase 2
+                      (1 "~/.emacs.d/nomis-locks/")
+                      (2 "~/development-100/.emacs-locks/"))))
 
-;; (unless (file-directory-p my-lock-dir)
-;;   (make-directory my-lock-dir t))
+(unless (file-directory-p my-lock-dir)
+  (make-directory my-lock-dir t))
 
 (advice-add
  'make-lock-file-name
@@ -99,15 +107,17 @@
  (lambda (orig-fun filename)
    (let ((inhibit-message t))
      (message "make-lock-file-name %S" filename))
-   (funcall orig-fun filename)
-   ;; (if (file-remote-p filename)
-   ;;     (funcall orig-fun filename)
-   ;;   (let* ((dir (file-name-directory filename))
-   ;;          (base (file-name-nondirectory filename))
-   ;;          (dir-hash (substring (secure-hash 'md5 dir) 0 8)))
-   ;;     (expand-file-name (concat ".#" dir-hash "_" base) my-lock-dir)))
-   )
+   (cl-ecase 1
+     (1 (funcall orig-fun filename))
+     (2 (if (file-remote-p filename)
+            (funcall orig-fun filename)
+          (let* ((dir (file-name-directory filename))
+                 (base (file-name-nondirectory filename))
+                 (dir-hash (substring (secure-hash 'md5 dir) 0 8)))
+            (expand-file-name (concat ".#" dir-hash "_" base) my-lock-dir))))))
  '((name . nomis/blau/hack-lock-file-name)))
+
+;; (advice-remove 'make-lock-file-name 'nomis/blau/hack-lock-file-name)
 
 ;;; End
 
