@@ -56,26 +56,26 @@
                  result))
       result)))
 
-;; (cond
-;;  ((member emacs-version
-;;           '("28.1"
-;;             "28.2"
-;;             "29.4"
-;;             "30.1"
-;;             "30.2"))
-;;   (advice-add 'make-auto-save-file-name
-;;               :around
-;;               (lambda (orig-fun &rest args)
-;;                 (let* ((buffer-file-name
-;;                         (when buffer-file-name
-;;                           (-> buffer-file-name
-;;                               nomis/blau/maybe-shorten-filename))))
-;;                   (apply orig-fun args)))
-;;               '((name . nomis/blau/shorten-file-name))))
+(cond
+ ((member emacs-version
+          '("28.1"
+            "28.2"
+            "29.4"
+            "30.1"
+            "30.2"))
+  (advice-add 'make-auto-save-file-name
+              :around
+              (lambda (orig-fun &rest args)
+                (let* ((buffer-file-name
+                        (when buffer-file-name
+                          (-> buffer-file-name
+                              nomis/blau/maybe-shorten-filename))))
+                  (apply orig-fun args)))
+              '((name . nomis/blau/shorten-file-name))))
 
-;;  (t
-;;   (message-box
-;;    "You need to fix/check `make-auto-save-file-name` for this version of Emacs.")))
+ (t
+  (message-box
+   "You need to fix/check `make-auto-save-file-name` for this version of Emacs.")))
 
 ;; (advice-remove 'make-auto-save-file-name 'nomis/blau/shorten-file-name)
 
