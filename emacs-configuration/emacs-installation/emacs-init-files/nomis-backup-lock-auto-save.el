@@ -78,28 +78,78 @@
  (lambda (orig-fun &rest args)
    (let ((inhibit-message t))
      (message "make-auto-save-file-name %S" buffer-file-name))
-   (cl-ecase 2
-     (1 (apply orig-fun args))
-     (2 (if (or (not buffer-file-name)
-                (file-remote-p buffer-file-name)
-                ;; If any `auto-save-file-name-transforms' entry matches
-                ;; `buffer-file-name', a caller has overridden the transforms
-                ;; to redirect this file (e.g. `diff-hl' uses `".*"' to
-                ;; redirect to `temporary-file-directory'). Respect that by
-                ;; falling back to the original behaviour. The default
-                ;; transforms only match remote-style paths so they won't
-                ;; affect normal local files.
-                (cl-some (lambda (transform)
-                           (string-match-p (car transform) buffer-file-name))
-                         auto-save-file-name-transforms))
-            (apply orig-fun args)
-          (let* ((dir  (file-name-directory buffer-file-name))
-                 (base (-> (file-name-nondirectory buffer-file-name)
-                           nomis/blau/maybe-shorten-filename))
-                 (dir-hash (substring (secure-hash 'md5 dir) 0 8)))
-            (expand-file-name (concat "#" dir-hash "_" base "#")
-                              nomis/auto-save-directory))))))
+   (cond
+    ((or (not buffer-file-name)
+         (file-remote-p buffer-file-name))
+     (apply orig-fun args))
+    ;; If any `auto-save-file-name-transforms' entry matches
+    ;; `buffer-file-name', a caller has overridden the transforms to
+    ;; redirect this file (e.g. `diff-hl' uses `".*"' to redirect to
+    ;; `temporary-file-directory'). Use our hash-based scheme but in
+    ;; `temporary-file-directory', giving a short deterministic path
+    ;; without the mangled long filename that `orig-fun' would produce.
+    ;; The default transforms only match remote-style paths so they
+    ;; won't trigger this for normal local files.
+    ((cl-some (lambda (transform)
+                (string-match-p (car transform) buffer-file-name))
+              auto-save-file-name-transforms)
+     (let* ((dir      (file-name-directory buffer-file-name))
+            (base     (-> (file-name-nondirectory buffer-file-name)
+                          nomis/blau/maybe-shorten-filename))
+            (dir-hash (substring (secure-hash 'md5 dir) 0 8))
+            (res      (expand-file-name (concat "#" dir-hash "_" base "#")
+                                        temporary-file-directory)))
+       ;; (let ((inhibit-message t))
+       ;;   (message " ")
+       ;;   (message "vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv")
+       ;;   (message "make-auto-save-file-name")
+       ;;   (message "buffer-file-name = %s" buffer-file-name)
+       ;;   (message "transforms match -- use temporary-file-directory")
+       ;;   (message "res = %s" res)
+       ;;   (message "Call stack: %S" (backtrace-frames 'make-auto-save-file-name))
+       ;;   (message "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^")
+       ;;   (message " "))
+       res))
+    (t
+     (let* ((dir      (file-name-directory buffer-file-name))
+            (base     (-> (file-name-nondirectory buffer-file-name)
+                          nomis/blau/maybe-shorten-filename))
+            (dir-hash (substring (secure-hash 'md5 dir) 0 8))
+            (res      (expand-file-name (concat "#" dir-hash "_" base "#")
+                                        nomis/auto-save-directory)))
+       ;; (let ((inhibit-message t))
+       ;;   (message " ")
+       ;;   (message "vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv")
+       ;;   (message "make-auto-save-file-name")
+       ;;   (message "buffer-file-name = %s" buffer-file-name)
+       ;;   (message "do our own work")
+       ;;   (message "res = %s" res)
+       ;;   (message "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^")
+       ;;   (message " "))
+       res))))
  '((name . nomis/blau/shorten-auto-save-file-name)))
+
+;;;; Debug -- trace creation of .~sha1~-style files in auto-save directory
+
+;; (advice-add
+;;  'copy-file
+;;  :before
+;;  (lambda (file newname &rest _)
+;;    (when (string-match-p (regexp-quote nomis/auto-save-directory)
+;;                          (expand-file-name newname))
+;;      (message "copy-file to auto-save dir: %S -> %S" file newname)
+;;      (message "Call stack: %S" (backtrace-frames 'copy-file))))
+;;  '((name . nomis/debug-copy-to-auto-save)))
+
+;; (advice-add
+;;  'write-region
+;;  :before
+;;  (lambda (_start _end filename &rest _)
+;;    (when (string-match-p (regexp-quote nomis/auto-save-directory)
+;;                          (expand-file-name filename))
+;;      (message "write-region to auto-save dir: %S" filename)
+;;      (message "Call stack: %S" (backtrace-frames 'write-region))))
+;;  '((name . nomis/debug-write-to-auto-save)))
 
 ;;;; Shorten lock file names
 
