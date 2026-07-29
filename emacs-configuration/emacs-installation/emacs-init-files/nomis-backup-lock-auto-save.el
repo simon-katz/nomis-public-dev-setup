@@ -5,6 +5,7 @@
 ;;;; Require things
 
 (require 'cl-lib)
+(require 'dash)
 
 ;;;; TEMP
 
@@ -22,14 +23,6 @@
       `(("." . ,nomis/backup-directory)))
 (setq auto-save-file-name-transforms
       `((".*" ,nomis/backup-directory t)))
-
-(defconst nomis/lockfile-directory
-  (expand-file-name (cl-ecase 2
-                      (1 "~/.emacs-lockfiles/")
-                      (2 "~/development-100/.emacs-lockfiles/"))))
-
-(make-directory nomis/lockfile-directory t)
-(setq lock-file-name-transforms `((".*" ,nomis/lockfile-directory t)))
 
 ;;;; Prevent auto-save file names being too long
 
@@ -86,12 +79,14 @@
 
 ;; (advice-remove 'make-auto-save-file-name 'nomis/blau/shorten-file-name)
 
-;;;; Look at lock file names
+;;;; Shorten lock file names
 
-;; (defvar my-lock-dir (expand-file-name "~/.emacs.d/nomis-locks/"))
+(defconst nomis/lockfile-directory
+  (expand-file-name (cl-ecase 2
+                      (1 "~/.emacs-lockfiles/")
+                      (2 "~/development-100/.emacs-lockfiles/"))))
 
-;; (unless (file-directory-p my-lock-dir)
-;;   (make-directory my-lock-dir t))
+(make-directory nomis/lockfile-directory t)
 
 (advice-add
  'make-lock-file-name
@@ -99,13 +94,16 @@
  (lambda (orig-fun filename)
    (let ((inhibit-message t))
      (message "make-lock-file-name %S" filename))
-   (funcall orig-fun filename)
-   ;; (if (file-remote-p filename)
-   ;;     (funcall orig-fun filename)
-   ;;   (let* ((dir (file-name-directory filename))
-   ;;          (base (file-name-nondirectory filename))
-   ;;          (dir-hash (substring (secure-hash 'md5 dir) 0 8)))
-   ;;     (expand-file-name (concat ".#" dir-hash "_" base) my-lock-dir)))
+   (cl-ecase 2
+     (1 (funcall orig-fun filename))
+     (2 (if (file-remote-p filename)
+            (funcall orig-fun filename)
+          (let* ((dir (file-name-directory filename))
+                 (base (-> (file-name-nondirectory filename)
+                           nomis/blau/maybe-shorten-filename))
+                 (dir-hash (substring (secure-hash 'md5 dir) 0 8)))
+            (expand-file-name (concat ".#" dir-hash "_" base)
+                              nomis/lockfile-directory)))))
    )
  '((name . nomis/blau/hack-lock-file-name)))
 
