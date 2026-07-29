@@ -81,7 +81,17 @@
    (cl-ecase 2
      (1 (apply orig-fun args))
      (2 (if (or (not buffer-file-name)
-                (file-remote-p buffer-file-name))
+                (file-remote-p buffer-file-name)
+                ;; If any `auto-save-file-name-transforms' entry matches
+                ;; `buffer-file-name', a caller has overridden the transforms
+                ;; to redirect this file (e.g. `diff-hl' uses `".*"' to
+                ;; redirect to `temporary-file-directory'). Respect that by
+                ;; falling back to the original behaviour. The default
+                ;; transforms only match remote-style paths so they won't
+                ;; affect normal local files.
+                (cl-some (lambda (transform)
+                           (string-match-p (car transform) buffer-file-name))
+                         auto-save-file-name-transforms))
             (apply orig-fun args)
           (let* ((dir  (file-name-directory buffer-file-name))
                  (base (-> (file-name-nondirectory buffer-file-name)
