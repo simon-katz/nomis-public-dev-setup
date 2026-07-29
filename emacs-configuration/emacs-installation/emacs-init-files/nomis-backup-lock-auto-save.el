@@ -11,17 +11,6 @@
 
 (setq vc-make-backup-files t)
 
-;;;; File locations
-
-(defconst nomis/backup-directory
-  (expand-file-name (cl-ecase 2
-                      (1 "~/.emacs-backups/")
-                      (2 "~/development-100/.emacs-backups/"))))
-
-(make-directory nomis/backup-directory t)
-(setq backup-directory-alist
-      `(("." . ,nomis/backup-directory)))
-
 ;;;; Shorten filenames
 
 (defconst nomis/blau/max-filename-length 150) ; A bit arbitrary,
@@ -46,6 +35,33 @@
                  filename
                  result))
       result)))
+
+;;;; Shorten backup file names
+
+(defconst nomis/backup-directory
+  (expand-file-name (cl-ecase 2
+                      (1 "~/.emacs-backups/")
+                      (2 "~/development-100/.emacs-backups/"))))
+
+(make-directory nomis/backup-directory t)
+
+(advice-add
+ 'make-backup-file-name-1
+ :around
+ (lambda (orig-fun filename)
+   (let ((inhibit-message t))
+     (message "make-backup-file-name-1 %S" filename))
+   (cl-ecase 2
+     (1 (funcall orig-fun filename))
+     (2 (if (file-remote-p filename)
+            (funcall orig-fun filename)
+          (let* ((dir      (file-name-directory filename))
+                 (base     (-> (file-name-nondirectory filename)
+                               nomis/blau/maybe-shorten-filename))
+                 (dir-hash (substring (secure-hash 'md5 dir) 0 8)))
+            (expand-file-name (concat dir-hash "_" base)
+                              nomis/backup-directory))))))
+ '((name . nomis/blau/shorten-backup-file-name)))
 
 ;;;; Shorten auto-save file names
 
