@@ -13,6 +13,13 @@
 
 ;;;; Shorten filenames
 
+;; We were having problems when editing the following namespace:
+;;   `com.nomistech.clojure-the-language.c-950-tools-stuff.s-100-linting.ss-0400-nested-lets-to-demo-highlighting-test`
+
+;; Based on code from the following places:
+;; - https://emacs.stackexchange.com/questions/48301/spacemacs-and-file-name-too-long-error-on-auto-save
+;; - https://www.reddit.com/r/emacs/comments/t07e7e/file_name_too_long_error/
+
 (defconst nomis/blau/max-filename-length 150) ; A bit arbitrary,
 (defconst nomis/blau/sha1-length 40)
 
