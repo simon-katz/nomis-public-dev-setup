@@ -340,7 +340,8 @@ With prefix argument select `nomis/dirtree/buffer'"
 (define-derived-mode nomis/dirtree/mode tree-mode "Dir-Tree"
   "A mode to display tree of directory"
   (tree-widget-set-theme "folder")
-  (hl-line-mode))
+  ;; (hl-line-mode)
+  )
 
 (defconst nomis/dirtree/approach-to-children :new)
 

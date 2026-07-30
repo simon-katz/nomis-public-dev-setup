@@ -40,18 +40,18 @@
 ;;;; ___________________________________________________________________________
 ;;;; Highlighting of the current line
 
-(require 'hl-line)
+;; (require 'hl-line)
 
-(progn
-  ;; I might almost want global-hl-line-mode, but with that magit-status-mode's
-  ;; diff highlighting gets blatted.
-  ;; So:
-  (dolist (h '(text-mode-hook
-               prog-mode-hook
-               grep-mode-hook
-               dired-mode-hook
-               org-mode-hook))
-    (add-hook h 'hl-line-mode)))
+;; (progn
+;;   ;; I might almost want global-hl-line-mode, but with that magit-status-mode's
+;;   ;; diff highlighting gets blatted.
+;;   ;; So:
+;;   (dolist (h '(text-mode-hook
+;;                prog-mode-hook
+;;                grep-mode-hook
+;;                dired-mode-hook
+;;                org-mode-hook))
+;;     (add-hook h 'hl-line-mode)))
 
 ;; (set-face-background 'hl-line "lightcyan")
 ;; (set-face-background 'hl-line "lightcyan1")

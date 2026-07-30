@@ -236,7 +236,7 @@
 
 (progn
   (defun nomis/org/finalize-agenda-hook ()
-    (hl-line-mode)
+    ;; (hl-line-mode)
     ;; From http://orgmode.org/worg/org-faq.html
     ;;   How can I stop the mouse cursor from highlighting lines
     ;;   in the agenda?
