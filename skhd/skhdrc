@@ -63,8 +63,7 @@ fn         + ctrl + alt + cmd - r        : ~/bin-private/hs -c 'hs.reload()'
 
 ### NotalSpaces
 
-             # This chunk is being handled by TotalSpaces.
-
+             # This chunk is being handled by GridIron.
              # ctrl + alt + cmd - left     : ~/.config/notal-spaces/bin/notal_spaces.clj left
              # ctrl + alt + cmd - right    : ~/.config/notal-spaces/bin/notal_spaces.clj right
              # ctrl + alt + cmd - up       : ~/.config/notal-spaces/bin/notal_spaces.clj up
@@ -79,12 +78,15 @@ fn         + ctrl + alt + cmd - r        : ~/bin-private/hs -c 'hs.reload()'
              # ctrl + alt + cmd - p        : ~/.config/notal-spaces/bin/notal_spaces.clj goto-space 08
              # ctrl + alt + cmd - j        : ~/.config/notal-spaces/bin/notal_spaces.clj goto-space 09
              # ctrl + alt + cmd - k        : ~/.config/notal-spaces/bin/notal_spaces.clj goto-space 10
-             # ctrl + alt + cmd - l        : ~/.config/notal-spaces/bin/notal_spaces.clj goto-space 11
-             # ctrl + alt + cmd - 0x29     : ~/.config/notal-spaces/bin/notal_spaces.clj goto-space 12 # 0x29 is ;
-             # ctrl + alt + cmd - m        : ~/.config/notal-spaces/bin/notal_spaces.clj goto-space 13
-             # ctrl + alt + cmd - 0x2B     : ~/.config/notal-spaces/bin/notal_spaces.clj goto-space 14 # 0x2B is ,
-             # ctrl + alt + cmd - 0x2F     : ~/.config/notal-spaces/bin/notal_spaces.clj goto-space 15 # 0x2F is .
-             # ctrl + alt + cmd - 0x2C     : ~/.config/notal-spaces/bin/notal_spaces.clj goto-space 16 # 0x2C is /
+
+             ctrl + alt + cmd - l        : ~/.config/notal-spaces/bin/notal_spaces.clj goto-space 11
+             ctrl + alt + cmd - 0x29     : ~/.config/notal-spaces/bin/notal_spaces.clj goto-space 12 # 0x29 is ;
+             ctrl + alt + cmd - m        : ~/.config/notal-spaces/bin/notal_spaces.clj goto-space 13
+             ctrl + alt + cmd - 0x2B     : ~/.config/notal-spaces/bin/notal_spaces.clj goto-space 14 # 0x2B is ,
+             ctrl + alt + cmd - 0x2F     : ~/.config/notal-spaces/bin/notal_spaces.clj goto-space 15 # 0x2F is .
+             ctrl + alt + cmd - 0x2C     : ~/.config/notal-spaces/bin/notal_spaces.clj goto-space 16 # 0x2C is /
+
+             # This chunk is being handled by GridIron.
              # ctrl + alt + cmd - 0x31     : ~/.config/notal-spaces/bin/notal_spaces.clj report-current-space # 0x31 is space
 
              # 2023-08-04 If this isn't working, see the comment in notal-spaces
