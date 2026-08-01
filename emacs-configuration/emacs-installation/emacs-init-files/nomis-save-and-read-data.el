@@ -2,6 +2,8 @@
 
 ;;;; ___________________________________________________________________________
 
+(require 'cl-lib)
+
 (cl-defun nomis/save-to-file (filename data &key pretty?)
   (make-directory (file-name-directory filename)
                   t)
