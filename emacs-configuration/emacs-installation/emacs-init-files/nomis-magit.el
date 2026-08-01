@@ -26,6 +26,13 @@
 
 (setq magit-list-refs-sortby "-creatordate")
 
+;;; Don't truncate lines
+
+(defun -nomis/magit/no-truncate-lines ()
+  (toggle-truncate-lines 1))
+
+(add-hook 'git-rebase-mode-hook '-nomis/magit/no-truncate-lines)
+
 ;;; End
 
 (provide 'nomis-magit)
