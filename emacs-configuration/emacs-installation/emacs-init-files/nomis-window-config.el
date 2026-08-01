@@ -12,6 +12,10 @@
 
 ;;;; _______________ Customizable variables ____________________________________
 
+(defgroup nomis/wc/group nil
+  "Frame and window configurations."
+  :group 'tools)
+
 (defconst nomis/wc/directory/old-selected-frame
   "~/.emacs-nomis-frame-window-config/old-selected-frame/")
 
@@ -22,6 +26,27 @@
   "~/.emacs-nomis-frame-window-config/all-frames/")
 
 (defvar nomis/wc/root-dir-for-searches nil)
+
+(defcustom nomis/wc/point-at-end/always-modes '(vterm-mode)
+  "Major modes for which point is always restored to end of buffer on
+window config restore."
+  :type '(repeat symbol)
+  :group 'nomis/wc/group)
+
+(defcustom nomis/wc/point-at-end/modes '(cider-repl-mode
+                                         messages-buffer-mode)
+  "Major modes for which point is conditionally restored to end of buffer on
+window config restore -- only if point was at end of buffer when the config
+was saved."
+  :type '(repeat symbol)
+  :group 'nomis/wc/group)
+
+(defcustom nomis/wc/point-at-end/buffer-name-regexps '()
+  "Buffer name regexps for which point is conditionally restored to end of
+buffer on window config restore -- only if point was at end of buffer when
+the config was saved."
+  :type '(repeat regexp)
+  :group 'nomis/wc/group)
 
 ;;;; _______________ Private things ____________________________________________
 
@@ -124,6 +149,57 @@
            (message-box "WTF replace-unknown-buffers error: %s" err)
            window-state)))
 
+(defun -nomis/wc/point-at-end/buffer-matches-filter? (buffer)
+  (with-current-buffer buffer
+    (or (memq major-mode nomis/wc/point-at-end/modes)
+        (-any? (lambda (regexp)
+                 (string-match-p regexp (buffer-name buffer)))
+               nomis/wc/point-at-end/buffer-name-regexps))))
+
+(defun -nomis/wc/window-state/add-point-at-end (window-state)
+  (->> window-state
+       (treepy-prewalk
+        (lambda (form)
+          (if (not (and (listp form) (eq (car form) 'leaf)))
+              form
+            (let* ((buffer-entry  (assq 'buffer (cdr form)))
+                   (buffer-name   (when buffer-entry (nth 1 buffer-entry)))
+                   (buffer        (when buffer-name (get-buffer buffer-name)))
+                   (saved-point   (when buffer-entry
+                                    (cdr (assq 'point (cddr buffer-entry)))))
+                   (at-end?       (when (and buffer saved-point)
+                                    (with-current-buffer buffer
+                                      (= saved-point (point-max))))))
+              (if (not at-end?)
+                  form
+                (let* ((rest            (cdr form))
+                       (params-entry    (assq 'parameters rest))
+                       (existing-params (cdr params-entry))
+                       (new-params-entry ;
+                        (cons 'parameters
+                              (cons '(nomis/point-at-end . t)
+                                    existing-params)))
+                       (new-rest        (cons new-params-entry
+                                              (-remove (lambda (e)
+                                                         (and (consp e)
+                                                              (eq (car e)
+                                                                  'parameters)))
+                                                       rest))))
+                  (cons 'leaf new-rest)))))))))
+
+(defun -nomis/wc/window-state/restore-point-at-end (frame)
+  (walk-windows
+   (lambda (win)
+     (let* ((buffer (window-buffer win)))
+       (when (or (with-current-buffer buffer
+                   (memq major-mode nomis/wc/point-at-end/always-modes))
+                 (and (window-parameter win 'nomis/point-at-end)
+                      (-nomis/wc/point-at-end/buffer-matches-filter? buffer)))
+         (with-selected-window win
+           (goto-char (point-max))))))
+   nil
+   frame))
+
 (defun -nomis/wc/frame->frame-info (frame)
   ()
   (cl-multiple-value-bind (monitor-left-px
@@ -138,7 +214,8 @@
                          monitor-top-px))
            (width-px  (* (frame-parameter frame 'width) (frame-char-width frame)))
            (height-px (* (frame-parameter frame 'height) (frame-char-height frame)))
-           (state  (window-state-get (frame-root-window frame) t)))
+           (state  (-> (window-state-get (frame-root-window frame) t)
+                       -nomis/wc/window-state/add-point-at-end)))
       (puthash :monitor-width-px  monitor-width-px  info)
       (puthash :monitor-height-px monitor-height-px info)
       (puthash :left-px           left-px   info)
@@ -178,7 +255,8 @@
                                                    1.0
                                                    (frame-char-height frame))))
       (window-state-put (-nomis/wc/window-state/replace-unknown-buffers state)
-                        (frame-root-window frame)))))
+                        (frame-root-window frame))
+      (-nomis/wc/window-state/restore-point-at-end frame))))
 
 (defun -nomis/wc/make-restore-error-buffer (kind wc-name err)
   (let* ((title (format "Failed to restore %s %s" kind wc-name))
@@ -244,7 +322,8 @@
                        wc-name
                        nomis/wc/directory/old-selected-frame
                        -nomis/wc/old-file-suffix)
-                      (window-state-get nil t)
+                      (-> (window-state-get nil t)
+                          -nomis/wc/window-state/add-point-at-end)
                       :pretty? t)
   (message "Saved window config: %s" wc-name))
 
@@ -262,6 +341,7 @@
                                window-state)))
     (window-state-put hacked-window-state
                       (frame-root-window))
+    (-nomis/wc/window-state/restore-point-at-end (selected-frame))
     (message "Restored window config: %s"
              wc-name)))
 
