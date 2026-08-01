@@ -9,6 +9,8 @@
 (require 'nomis-save-and-read-data)
 (require 'treepy)
 (require 'cl-format)
+(require 'nomis-msg)
+(require 'homeless-non-lexical)
 
 ;;;; _______________ Customizable variables ____________________________________
 
@@ -90,7 +92,7 @@ the config was saved."
                      'nomis/wc/wc-name-history
                      (cl-ecase save-or-restore
                        (:save "")
-                       (:restore (first wc-names))))))
+                       (:restore (cl-first wc-names))))))
 
 (defconst -nomis/wc/no-such-buffer-prefix "*NO-SUCH-BUFFER--")
 (defconst -nomis/wc/no-such-buffer-suffix "*")
@@ -133,10 +135,10 @@ the config was saved."
        (treepy-prewalk
         (lambda (form)
           (if (not (and (listp form)
-                        (eq (first form) 'buffer)
-                        (not (get-buffer (second form)))))
+                        (eq (cl-first form) 'buffer)
+                        (not (get-buffer (cl-second form)))))
               form
-            (let* ((buffer-name (second form))
+            (let* ((buffer-name (cl-second form))
                    (proxy-buffer-name (-nomis/wc/buffer-name->proxy-buffer-name
                                        buffer-name)))
               (-nomis/wc/get-or-create-buffer-for-no-such-buffer buffer-name)
@@ -442,7 +444,7 @@ the config was saved."
   (interactive)
   (if (null nomis/wc/just-closed-frame-info-list)
       (user-error "There is no deleted frame to restore")
-    (let* ((info (first nomis/wc/just-closed-frame-info-list))
+    (let* ((info (cl-first nomis/wc/just-closed-frame-info-list))
            (err (-nomis/wc/window-state/make-frame-using-frame-info
                  "just-deleted-frame"
                  "(just-deleted-frame)"
@@ -480,6 +482,7 @@ the config was saved."
 ;;;; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ;;;; keymap
 
+(defvar nomis/wc/keymap)
 (prog1 (define-prefix-command 'nomis/wc/keymap)
   (define-key nomis/wc/keymap (kbd "s") 'nomis/wc/old-save-selected-frame)
   (define-key nomis/wc/keymap (kbd "r") 'nomis/wc/old-restore-single-frame-to-selected-frame)
