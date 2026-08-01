@@ -1,20 +1,19 @@
-;;;; Init stuff -- nomis-magit  -*- lexical-binding: t; -*-
+;;; Init stuff --- nomis-magit  -*- lexical-binding: t; -*-
 
-;;;; ___________________________________________________________________________
+;;; Code:
 
 (require 'nomis-magit-fixes)
 (require 'nomis-magit-non-lexical)
 (require 'nomis-magit-difftastic)
 
-;;;; ___________________________________________________________________________
+;;; magit-auto-revert-mode
 
-;;;; See https://emacs.stackexchange.com/questions/35701/magit-sets-auto-revert-mode-annoying
-;;;;
-;;;; Don't globally set auto-revert-mode (that's very rude!).
+;; See https://emacs.stackexchange.com/questions/35701/magit-sets-auto-revert-mode-annoying
+;; - Don't globally set auto-revert-mode (that's very rude!).
 
 ;; (magit-auto-revert-mode 0)
 
-;;;; ___________________________________________________________________________
+;;; Key bindings
 
 (with-eval-after-load 'magit-diff
   ;; Add H key to some existing key bindings to get "other-window".
@@ -23,10 +22,10 @@
   (define-key magit-hunk-section-map (kbd "<C-kp-enter>") ; H-C-<return>
     'magit-diff-visit-worktree-file-other-window))
 
-;;;; ___________________________________________________________________________
+;;; magit-list-refs-sortby
 
 (setq magit-list-refs-sortby "-creatordate")
 
-;;;; ___________________________________________________________________________
+;;; End
 
 (provide 'nomis-magit)
