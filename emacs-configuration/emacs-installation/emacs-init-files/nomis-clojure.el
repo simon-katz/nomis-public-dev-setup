@@ -14,6 +14,7 @@
 (require 'nomis-clojure-privacy-highlighting-mode)
 (require 'nomis-ec-mode)
 (require 'nomis-ec-mode-tailoring)
+(require 'nomis-re-frame-jump)
 
 ;;;; ___________________________________________________________________________
 
