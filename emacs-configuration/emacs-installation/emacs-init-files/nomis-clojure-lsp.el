@@ -5,6 +5,7 @@
 ;;;; ___________________________________________________________________________
 
 (require 'nomis-lsp)
+(require 'nomis-re-frame-jump)
 
 ;;;; ___________________________________________________________________________
 
@@ -22,6 +23,21 @@
         (expand-file-name "~/.emacs-d-stuff/lsp-clojure-workspace/cache")))
 
 (add-hook 'lsp-mode-hook 'nomis/clojure-lsp-init)
+
+;;;; ___________________________________________________________________________
+;;;; Keep track of xref pushes
+
+(defvar nomis/-clojure-lsp/xref-push-tracked? nil)
+
+(defun nomis/-clojure-lsp/start-tracking-xref-push ()
+  (setq nomis/-clojure-lsp/xref-push-tracked? nil)
+  (advice-add 'xref-push-marker-stack
+              :before
+              (lambda (&rest _) (setq nomis/-clojure-lsp/xref-push-tracked? t))
+              '((name . nomis/-clojure-lsp/track-xref-push))))
+
+(defun nomis/-clojure-lsp/stop-tracking-xref-push ()
+  (advice-remove 'xref-push-marker-stack 'nomis/-clojure-lsp/track-xref-push))
 
 ;;;; ___________________________________________________________________________
 ;;;; ---- nomis/clojure-lsp-and-cider/find-definition ----
@@ -67,6 +83,60 @@
             ;; with first.
             (run-at-time 0 nil (lambda () (cider-find-var nil)))))))))
 
+(defconst nomis/-clojure-lsp/debug? nil)
+
+(defun nomis/clojure-lsp-and-cider/find-definition-v3 ()
+  "Try to find definition of thing at point.
+- First try lsp.
+- Then, if on a keyword, try `nomis/re-frame-jump-to-reg'.
+- Then try `cider-find-var`.
+We leave `cider-find-var` to the end in case it does async stuff. (I think it
+doesn't, FWIW)."
+  (interactive)
+  (cl-flet ((buffer-and-point () (list (current-buffer) (point)))
+            (debug-message (format-string &rest args)
+              (when nomis/-clojure-lsp/debug?
+                (let* ((inhibit-message t))
+                  (apply #'message format-string args)))))
+    (let* ((initial-bap  (buffer-and-point))
+           (initial-line (line-number-at-pos))
+           (sym          (cider-symbol-at-point 'look-back))
+           (at-keyword?  (and sym (string-prefix-p ":" sym))))
+      (nomis/-clojure-lsp/start-tracking-xref-push)
+      (unwind-protect
+          (lsp-find-definition)
+        (nomis/-clojure-lsp/stop-tracking-xref-push)
+        (let* ((lsp-kw-fail?
+                ;; When lsp "fails" on keywords, it moves to the start of the
+                ;; keyword (same buffer, same line) rather than to
+                ;; a real definition.
+                (and at-keyword?
+                     (eq (car initial-bap) (current-buffer))
+                     (= initial-line (line-number-at-pos))))
+               (lsp-found? (and (not lsp-kw-fail?)
+                                (not (equal initial-bap (buffer-and-point))))))
+          (if lsp-found?
+              (debug-message "Found by lsp")
+            (when (and lsp-kw-fail?
+                       nomis/-clojure-lsp/xref-push-tracked?)
+              ;; Restore original position.
+              (let* ((xref-after-return-hook (remove 'xref-pulse-momentarily
+                                                     xref-after-return-hook)))
+                (xref-go-back)))
+            (let* ((re-frame-found?
+                    ;; Note that lsp finds re-frame definitions that use
+                    ;; non-alpha defining operators, so we only need this for
+                    ;; the alpha ones. - Simon Katz 2026-08-11
+                    (and at-keyword?
+                         (nomis/re-frame-jump-to-reg))))
+              (if re-frame-found?
+                  (debug-message "Found by nomis/re-frame-jump-to-reg")
+                (when (cider-repls)
+                  (debug-message "Trying cider-find-var")
+                  ;; Use `run-at-time` so that any lsp-produced exception is
+                  ;; dealt with first.
+                  (run-at-time 0 nil (lambda () (cider-find-var nil))))))))))))
+
 (with-eval-after-load 'cider
   (with-eval-after-load 'lsp-mode
     (cond
@@ -97,7 +167,7 @@
                        cider-mode-map
                        clojurec-mode-map
                        clojurescript-mode-map))
-        (define-key m (kbd "M-.") 'nomis/clojure-lsp-and-cider/find-definition-v2))))))
+        (define-key m (kbd "M-.") 'nomis/clojure-lsp-and-cider/find-definition-v3))))))
 
 ;;;; ___________________________________________________________________________
 

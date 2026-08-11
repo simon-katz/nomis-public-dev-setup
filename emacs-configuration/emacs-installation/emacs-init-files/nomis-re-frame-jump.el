@@ -18,6 +18,10 @@ Return t if we jumped, nil otherwise."
   ;; This looks at file contents rather than buffer contents -- that's
   ;; a limitation of our ripgrep-based approach.
   ;;
+  ;; Note `lsp` finds definitions for non-alpha re-frame and that we only call
+  ;; this when `lsp` fails to find definitions -- so only for alpha re-frame or
+  ;; for random (non-re-frame-registered) symbols.
+  ;;
   ;; Approach:
   ;;   - Run ripgrep with `-B 1` (one line of before-context) to find all
   ;;     occurrences of the keyword in the project.
