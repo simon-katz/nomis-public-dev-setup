@@ -157,6 +157,7 @@
      (nomis/cider/cljs-dev-port . 9001)
      (nomis/cider/cljs-dev-port . 9002)
      (nomis/cider/cljs-dev-port . 9003)
+     (nomis/cider/cljs-dev-port . 9004)
      (nomis/cider/post-interactive-eval/clj-function-name
       . "dev/post-interactive-eval-hook")
      (nomis/cider/post-interactive-eval/cljs-function-name
