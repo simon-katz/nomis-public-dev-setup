@@ -173,6 +173,7 @@
      (nomis/grep/local-ignored-directories "compiler-output")
      (nomis/grep/local-ignored-directories "giggin/public/js" "increments")
      (nomis/grep/local-ignored-directories "resources/pub-dev/compiler-output")
+     (nomis/grep/local-ignored-directories "resources/public/compiler-output")
      (nomis/grep/local-ignored-directories "resources/public/js")
      (nomis/grep/local-ignored-directories)
      (nomis/grep/local-ignored-files "package-lock.json" "main.js")
