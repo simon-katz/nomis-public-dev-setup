@@ -143,6 +143,7 @@
     "src-old"
     "target"
     "test-old"
+    "wikipedia-cache"
     "zzzz-nomis-dirtree-test-keep-collapsed"))
 
 ;;;; ___________________________________________________________________________
