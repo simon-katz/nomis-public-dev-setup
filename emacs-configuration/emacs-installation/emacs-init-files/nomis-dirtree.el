@@ -140,7 +140,9 @@
     "node_modules"
     "out"
     "out2"
+    "src-old"
     "target"
+    "test-old"
     "zzzz-nomis-dirtree-test-keep-collapsed"))
 
 ;;;; ___________________________________________________________________________
