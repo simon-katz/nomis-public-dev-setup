@@ -602,12 +602,13 @@ With numerical argument N, show content up to level N."
 ;;;; org-todo-keywords
 
 (setq org-todo-keywords
-      '((sequence "TODO" "SOON" "CRNT" "|" "DONE" "WONT" "HOLD")))
+      '((sequence "TODO" "SOON" "CRNT" "|" "DONE" "MOOT" "WONT" "HOLD")))
 
 (setq org-todo-keyword-faces
       '(("TODO" . org-warning)
         ("SOON" . "Orange")
         ("CRNT" . "Yellow")
+        ("MOOT" . "DodgerBlue1")
         ("WONT" . "DodgerBlue1")
         ("HOLD" . "DodgerBlue1")))
 
