@@ -100,6 +100,10 @@
   (a-hash-table :spec/ancestors-approach :ancestors/fat
                 :spec/children-approach nomis/tree/ls/children-approach-max))
 
+(defconst nomis/tree/ls/spec/no-hide--fat-ancestors--no-children
+  (a-hash-table :spec/ancestors-approach :ancestors/fat
+                :spec/children-approach 0))
+
 ;;;; Hide/show lineage
 
 (defun -nomis/tree/ls/hsl-hide (lineage-spec)
@@ -223,6 +227,14 @@
     (when (nomis/outline/w/invisible?)
       (nomis/tree/ls/show-lineage
        nomis/tree/ls/spec/no-hide--fat-ancestors--all-children))))
+
+;;;; nomis/tree/ls/show-after-nav
+
+(defun nomis/tree/ls/show-after-nav ()
+  (unless (nomis/outline/w/before-first-heading?)
+    (when (nomis/outline/w/invisible?)
+      (nomis/tree/ls/show-lineage
+       nomis/tree/ls/spec/no-hide--fat-ancestors--no-children))))
 
 ;;; End
 

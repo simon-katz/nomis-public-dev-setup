@@ -478,7 +478,7 @@ heading."
   (-nomis/tree/command
       nil
     (if (nomis/outline/w/prev-or-next-heading n direction kind)
-        (nomis/outline/w/ensure-heading-shown)
+        (nomis/tree/ls/show-after-nav)
       (nomis/outline/w/prev-or-next-heading/error-message n direction kind))))
 
 (defun nomis/tree/previous-heading ()
