@@ -138,11 +138,10 @@
     "cljs-runtime"
     "musimathics-errata_files"
     "node_modules"
+    "old-ec3"
     "out"
     "out2"
-    "src-old"
     "target"
-    "test-old"
     "wikipedia-cache"
     "zzzz-nomis-dirtree-test-keep-collapsed"))
 
