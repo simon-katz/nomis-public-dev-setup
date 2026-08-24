@@ -308,7 +308,7 @@ FEWER-OK? is truthy."
     (when npoint
       (goto-char npoint))))
 
-(defun -nomis/outline/w/prev-or-next-heading-pos/n=1 (start
+(defun -nomis/outline/w/prev-or-next-heading/pos/n=1 (start
                                                       direction
                                                       kind)
   (when start
@@ -337,12 +337,16 @@ FEWER-OK? is truthy."
             ;;    no prev/next heading.
             (point)))))))
 
-(defun -nomis/outline/w/prev-or-next-heading-pos (start
+(defun -nomis/outline/w/prev-or-next-heading/pos (start
                                                   n
                                                   direction
                                                   kind)
+  "Return the pos of the N'th-next heading of kind KIND in direction DIRECTION.
+If no such heading exists, return nil.
+KIND is one of `:sibling`, `:peer` and `:any-level`.
+DIRECTION is one or `:forward` and `:backward`."
   (->> (-iterate (lambda (start)
-                   (-nomis/outline/w/prev-or-next-heading-pos/n=1
+                   (-nomis/outline/w/prev-or-next-heading/pos/n=1
                     start
                     direction
                     kind))
@@ -360,7 +364,7 @@ If such a heading exists, return its position in the buffer.
 If no such heading exists, return nil and leave point unchanged.
 KIND is one of `:sibling`, `:peer` and `:any-level`.
 DIRECTION is one or `:forward` and `:backward`."
-  (let* ((pos (-nomis/outline/w/prev-or-next-heading-pos (point)
+  (let* ((pos (-nomis/outline/w/prev-or-next-heading/pos (point)
                                                          n
                                                          direction
                                                          kind)))
