@@ -294,16 +294,15 @@ FEWER-OK? is truthy."
                                             (outline-on-heading-p t)))
                             (:forward t))
                       (while (and (cl-ecase direction
-                                    (:backward t)
+                                    (:backward
+                                     (not
+                                      (nomis/outline/w/no-previous-headings?)))
                                     (:forward (not (eobp))))
                                   (funcall (cl-ecase sibling-or-peer
                                              (:sibling #'>)
                                              (:peer #'/=))
                                            (nomis/outline/w/level/boh)
-                                           level)
-                                  (cl-ecase direction
-                                    (:backward (not (bobp)))
-                                    (:forward t)))
+                                           level))
                         (-nomis/outline/w/prev-or-next direction))
                       (if (or (cl-ecase direction
                                 (:backward nil)
