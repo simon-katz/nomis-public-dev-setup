@@ -94,6 +94,13 @@
                nil)
       (error t))))
 
+(defun nomis/outline/w/no-previous-headings? ()
+  (save-excursion
+    (beginning-of-line)
+    (or (bobp)
+        (progn (backward-char 1)
+               (nomis/outline/w/before-first-heading?)))))
+
 (defun nomis/outline/w/at-beginning-of-heading? ()
   (and (bolp)
        (nomis/outline/w/on-heading?)))
