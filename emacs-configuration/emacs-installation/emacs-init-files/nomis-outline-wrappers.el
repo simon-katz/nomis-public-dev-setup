@@ -352,9 +352,9 @@ FEWER-OK? is truthy."
        (-drop (1- n))
        cl-first))
 
-(defun nomis/outline/w/prev-or-next-heading (n
-                                             direction
-                                             kind)
+(defun nomis/outline/w/prev-or-next-heading/goto (n
+                                                  direction
+                                                  kind)
   "Go to the N'th-next heading of kind KIND in direction DIRECTION.
 If such a heading exists, return its position in the buffer.
 If no such heading exists, return nil and leave point unchanged.
@@ -368,14 +368,14 @@ DIRECTION is one or `:forward` and `:backward`."
       (goto-char pos)
       pos)))
 
-(defun nomis/outline/w/prev-or-next-heading/error-message (n
-                                                           direction
-                                                           kind)
+(defun nomis/outline/w/prev-or-next-heading/goto/error-message (n
+                                                                direction
+                                                                kind)
   "Popup an error message saying we can't do
-`nomis/outline/w/prev-or-next-heading'.
+`nomis/outline/w/prev-or-next-heading/goto'.
 
 This is intended to be called after getting a nil return from
-`nomis/outline/w/prev-or-next-heading`."
+`nomis/outline/w/prev-or-next-heading/goto`."
   (let* ((direction-word (cl-ecase direction
                            (:backward "previous")
                            (:forward "next")))

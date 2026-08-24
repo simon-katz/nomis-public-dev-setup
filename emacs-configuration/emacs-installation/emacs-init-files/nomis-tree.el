@@ -477,9 +477,9 @@ heading."
 (defun -nomis/tree/prev-or-next-impl (n direction kind)
   (-nomis/tree/command
       nil
-    (if (nomis/outline/w/prev-or-next-heading n direction kind)
+    (if (nomis/outline/w/prev-or-next-heading/goto n direction kind)
         (nomis/tree/ls/show-after-nav)
-      (nomis/outline/w/prev-or-next-heading/error-message n direction kind))))
+      (nomis/outline/w/prev-or-next-heading/goto/error-message n direction kind))))
 
 (defun nomis/tree/previous-heading ()
   "Move backward to the previous heading at any level.
@@ -645,22 +645,22 @@ One of:
 (defun nomis/tree/on-first-sibling?/boh ()
   "Truthy if on first or only sibling."
   (save-excursion
-    (not (nomis/outline/w/prev-or-next-heading 1 :backward :sibling))))
+    (not (nomis/outline/w/prev-or-next-heading/goto 1 :backward :sibling))))
 
 (defun nomis/tree/on-last-sibling?/boh ()
   "Truthy if on last or only sibling."
   (save-excursion
-    (not (nomis/outline/w/prev-or-next-heading 1 :forward :sibling))))
+    (not (nomis/outline/w/prev-or-next-heading/goto 1 :forward :sibling))))
 
 (defun nomis/tree/on-first-peer?/boh ()
   "Truthy if on first or only peer."
   (save-excursion
-    (not (nomis/outline/w/prev-or-next-heading 1 :backward :peer))))
+    (not (nomis/outline/w/prev-or-next-heading/goto 1 :backward :peer))))
 
 (defun nomis/tree/on-last-peer?/boh ()
   "Truthy if on last or only peer."
   (save-excursion
-    (not (nomis/outline/w/prev-or-next-heading 1 :forward :peer))))
+    (not (nomis/outline/w/prev-or-next-heading/goto 1 :forward :peer))))
 
 ;;;;; Nav+lineage algorithm
 
@@ -741,9 +741,9 @@ backward navigation."
                              :nav+lineage/ancestors/leave-as-is)
                    (nomis/outline/w/collapse)))
                (try-to-nav ()
-                 (apply #'nomis/outline/w/prev-or-next-heading nav-args))
+                 (apply #'nomis/outline/w/prev-or-next-heading/goto nav-args))
                (nav-error-message ()
-                 (apply #'nomis/outline/w/prev-or-next-heading/error-message
+                 (apply #'nomis/outline/w/prev-or-next-heading/goto/error-message
                         nav-args))
                (show-lineage-with-message ()
                  (-nomis/tree/nav+lineage/show-lineage-with-message
