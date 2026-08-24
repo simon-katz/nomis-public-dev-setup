@@ -477,9 +477,11 @@ heading."
 (defun -nomis/tree/prev-or-next-impl (n direction kind)
   (-nomis/tree/command
       nil
-    (if (nomis/outline/w/prev-or-next-heading/goto n direction kind)
-        (nomis/tree/ls/show-after-nav)
-      (nomis/outline/w/prev-or-next-heading/goto/error-message n direction kind))))
+    (if-let* ((pos (nomis/outline/w/prev-or-next-heading/pos n direction kind)))
+        (progn
+          (goto-char pos)
+          (nomis/tree/ls/show-after-nav))
+      (nomis/outline/w/prev-or-next-heading/error-message n direction kind))))
 
 (defun nomis/tree/previous-heading ()
   "Move backward to the previous heading at any level.
@@ -644,23 +646,19 @@ One of:
 
 (defun nomis/tree/on-first-sibling?/boh ()
   "Truthy if on first or only sibling."
-  (save-excursion
-    (not (nomis/outline/w/prev-or-next-heading/goto 1 :backward :sibling))))
+  (not (nomis/outline/w/prev-or-next-heading/pos 1 :backward :sibling)))
 
 (defun nomis/tree/on-last-sibling?/boh ()
   "Truthy if on last or only sibling."
-  (save-excursion
-    (not (nomis/outline/w/prev-or-next-heading/goto 1 :forward :sibling))))
+  (not (nomis/outline/w/prev-or-next-heading/pos 1 :forward :sibling)))
 
 (defun nomis/tree/on-first-peer?/boh ()
   "Truthy if on first or only peer."
-  (save-excursion
-    (not (nomis/outline/w/prev-or-next-heading/goto 1 :backward :peer))))
+  (not (nomis/outline/w/prev-or-next-heading/pos 1 :backward :peer)))
 
 (defun nomis/tree/on-last-peer?/boh ()
   "Truthy if on last or only peer."
-  (save-excursion
-    (not (nomis/outline/w/prev-or-next-heading/goto 1 :forward :peer))))
+  (not (nomis/outline/w/prev-or-next-heading/pos 1 :forward :peer)))
 
 ;;;;; Nav+lineage algorithm
 
@@ -740,24 +738,27 @@ backward navigation."
                  (unless (eq -nomis/tree/nav+lineage/ancestors-approach
                              :nav+lineage/ancestors/leave-as-is)
                    (nomis/outline/w/collapse)))
-               (try-to-nav ()
-                 (apply #'nomis/outline/w/prev-or-next-heading/goto nav-args))
+               (nav-pos ()
+                 (apply #'nomis/outline/w/prev-or-next-heading/pos
+                        nav-args))
                (nav-error-message ()
-                 (apply #'nomis/outline/w/prev-or-next-heading/goto/error-message
+                 (apply #'nomis/outline/w/prev-or-next-heading/error-message
                         nav-args))
                (show-lineage-with-message ()
                  (-nomis/tree/nav+lineage/show-lineage-with-message
                   n-levels-or-nil))
-               (try-to-nav-then-show-lineage ()
+               (nav-then-show-lineage ()
                  (maybe-collapse-start-point)
-                 (if (try-to-nav)
-                     (show-lineage-with-message)
+                 (if-let* ((pos (nav-pos)))
+                     (progn
+                       (goto-char pos)
+                       (show-lineage-with-message))
                    (nav-error-message))))
       (nomis/outline/w/back-to-heading)
       (cond ((-nomis/tree/nav+lineage/doing-same-level-final-not-lone?/boh)
              ;; This will display a can't-move message and might collapse the
              ;; start point.
-             (try-to-nav-then-show-lineage))
+             (nav-then-show-lineage))
             ((-nomis/tree/nav+lineage/sibling-then-peer-with-small-time-gap?)
              ;; If we very recently did a `nomis/tree/nav+lineage/xxxx-sibling`
              ;; which tried to go too far and which so collapsed the current
@@ -765,13 +766,13 @@ backward navigation."
              ;; a `nomis/tree/nav+lineage/xxxx-peer`, we're happy to do
              ;; a nav+lineage/peer -- we'll forego the normal
              ;; expand-before-navigating:
-             (try-to-nav-then-show-lineage))
+             (nav-then-show-lineage))
             (t
              ;; Expand-before-navigating: If expanded, do nav+lineage.
              ;; Otherwise expand (and repeating the command will do
              ;; nav+lineage).
              (if (expanded-to-desired-level?)
-                 (try-to-nav-then-show-lineage)
+                 (nav-then-show-lineage)
                (show-lineage-with-message)
                (let* ((*nomis/popup/duration* 2))
                  (nomis/popup/message "Showing specified lineage before navigating"))))))))
