@@ -5,6 +5,7 @@
 ;;;; Requires
 
 (require 'nomis-msg)
+(require 'nomis-outline-wrappers)
 (require 'nomis-tree-lineage-specs)
 (require 'outline)
 
@@ -205,6 +206,49 @@
             '((name . -nomis/outline/mark-subtree/extend)))
 
 ;; (advice-remove 'outline-mark-subtree '-nomis/outline/mark-subtree/extend)
+
+;;;; Moving subtrees
+
+(defun nomis/outline/move-subtree-up/peer ()
+  "Move subtree backward to previous peer position.
+If there is no previous peer position, display a popup message."
+  (interactive)
+  (nomis/outline/w/back-to-heading)
+  (let* ((sibling-pos
+          (nomis/outline/w/prev-or-next-heading/pos 1 :backward :sibling))
+         (peer-pos
+          (nomis/outline/w/prev-or-next-heading/pos 1 :backward :peer)))
+    (if peer-pos
+        (if sibling-pos
+            (nomis/outline/w/move-subtree-up)
+          (progn
+            (nomis/outline/w/cut-subtree)
+            (goto-char peer-pos)
+            (nomis/tree/ls/show-after-nav)
+            (nomis/outline/w/paste-subtree)
+            (nomis/outline/w/move-subtree-down)))
+      (nomis/outline/w/prev-or-next-heading/error-message 1 :backward :peer))))
+
+(defun nomis/outline/move-subtree-down/peer ()
+  "Move subtree forward to next peer position.
+If there is no next peer position, display a popup message."
+  (interactive)
+  (nomis/outline/w/back-to-heading)
+  (let* ((sibling-pos
+          (nomis/outline/w/prev-or-next-heading/pos 1 :forward :sibling))
+         (peer-pos
+          (nomis/outline/w/prev-or-next-heading/pos 1 :forward :peer)))
+    (if peer-pos
+        (if sibling-pos
+            (nomis/outline/w/move-subtree-down)
+          (progn
+            (let* ((peer-marker (copy-marker peer-pos)))
+              (nomis/outline/w/cut-subtree)
+              (goto-char peer-marker)
+              (set-marker peer-marker nil)
+              (nomis/tree/ls/show-after-nav)
+              (nomis/outline/w/paste-subtree))))
+      (nomis/outline/w/prev-or-next-heading/error-message 1 :forward :peer))))
 
 ;;; End
 

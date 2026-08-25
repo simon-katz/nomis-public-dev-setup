@@ -382,6 +382,42 @@ This is intended to be called after getting a nil return from
      direction-word
      kind-word)))
 
+;;;; Subtree helpers
+
+(defmacro -nomis/outline/w/with-avoid-kill-ring-appending (&rest body)
+  (declare (indent 0))
+  ;; We don't understand why, but... `this-command` and `last-command` are
+  ;; getting weird values, including `kill-region`. Emacs appends to the kill
+  ;; ring when `last-command` is a kill (or something along those lines), so
+  ;; that was causing duplicate text to be inserted when yanking.
+  ;; This fixes things.
+  `(let* ((last-command nil))
+     ,@body))
+
+(defun nomis/outline/w/move-subtree-up ()
+  (-nomis/outline/w/with-avoid-kill-ring-appending
+    (cl-ecase (nomis/outline/w/mode)
+      (:outline (outline-move-subtree-up 1))
+      (:org     (org-move-subtree-up)))))
+
+(defun nomis/outline/w/move-subtree-down ()
+  (-nomis/outline/w/with-avoid-kill-ring-appending
+    (cl-ecase (nomis/outline/w/mode)
+      (:outline (outline-move-subtree-down 1))
+      (:org     (org-move-subtree-down)))))
+
+(defun nomis/outline/w/cut-subtree ()
+  (-nomis/outline/w/with-avoid-kill-ring-appending
+    (cl-ecase (nomis/outline/w/mode)
+      (:outline (outline-mark-subtree)
+                (kill-region (region-beginning) (region-end)))
+      (:org     (org-cut-special)))))
+
+(defun nomis/outline/w/paste-subtree ()
+  (cl-ecase (nomis/outline/w/mode)
+    (:outline (save-excursion (yank)))
+    (:org     (org-paste-special nil))))
+
 ;;; End
 
 (provide 'nomis-outline-wrappers)

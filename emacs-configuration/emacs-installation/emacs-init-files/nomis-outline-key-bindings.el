@@ -4,6 +4,7 @@
 
 ;;;; Requires
 
+(require 'nomis-outline)
 (require 'nomis-tree-key-bindings)
 (require 'outline)
 
@@ -48,6 +49,8 @@
 (define-key nomis/outline/kb/map (kbd "/ h") 'outline-hide-by-heading-regexp)
 (define-key nomis/outline/kb/map (kbd "/ s") 'outline-show-by-heading-regexp)
 (define-key nomis/outline/kb/map (kbd "@")   'outline-mark-subtree)
+(define-key nomis/outline/kb/map (kbd "<up>") 'nomis/outline/move-subtree-up/peer)
+(define-key nomis/outline/kb/map (kbd "<down>") 'nomis/outline/move-subtree-down/peer)
 
 ;;; End
 
