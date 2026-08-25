@@ -312,7 +312,10 @@ If there is no previous peer position, display a popup message."
               (nomis/outline/w/cut-subtree)
               (goto-char parent-peer-pos)
               (nomis/outline/w/next-current-or-higher-level)
-              (nomis/tree/ls/show-after-nav)
+              (save-excursion (backward-char)
+                              ;; Why is `(nomis/outline/w/invisible?)` t when
+                              ;; I think it should be nil?
+                              (nomis/tree/ls/show-after-nav/no-visibility-check))
               (cl-ecase (nomis/outline/w/mode)
                 (:outline (save-excursion (yank)))
                 (:org     (org-paste-subtree level))))))

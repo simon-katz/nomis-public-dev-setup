@@ -236,6 +236,11 @@
       (nomis/tree/ls/show-lineage
        nomis/tree/ls/spec/no-hide--fat-ancestors--no-children))))
 
+(defun nomis/tree/ls/show-after-nav/no-visibility-check ()
+  (unless (nomis/outline/w/before-first-heading?)
+    (nomis/tree/ls/show-lineage
+     nomis/tree/ls/spec/no-hide--fat-ancestors--no-children)))
+
 ;;; End
 
 (provide 'nomis-tree-lineage-specs)
