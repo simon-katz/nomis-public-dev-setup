@@ -207,7 +207,91 @@
 
 ;; (advice-remove 'outline-mark-subtree '-nomis/outline/mark-subtree/extend)
 
-;;;; Moving subtrees
+;;;; Support for restoring blank line convention when moving subtrees
+
+(defun -nomis/outline/section-ends-with-blank? (pos)
+  "Does the section at POS end with a blank line?"
+  (save-excursion
+    (goto-char pos)
+    (outline-end-of-subtree)
+    (if (eobp)
+        ;; At eobp; two final \n chars = trailing blank line.
+        (and (> (point) 2)
+             (eq ?\n (char-before))
+             (eq ?\n (char-before (1- (point)))))
+      ;; At the \n before the next heading; preceding \n = blank line.
+      (eq ?\n (char-before)))))
+
+(defun -nomis/outline/blank-lines-follow-convention? (p1-before p2-before)
+  "Return non-nil if the blank-line convention holds for a potential peer swap.
+Specifically:
+- Potential down-swap: current ends with blank; next peer (last) ends without.
+- Potential up-swap: current (last) ends without blank; prev peer ends with."
+  (when (nomis/outline/w/outline-mode?)
+    (cond
+     ((and p1-before (null p2-before))
+      ;; Potential down-swap: current is second-to-last peer
+      (and (-nomis/outline/section-ends-with-blank? (point))
+           (not (-nomis/outline/section-ends-with-blank? p1-before))))
+     ((null p1-before)
+      ;; Potential up-swap: current is last peer
+      (let* ((prev-peer
+              (nomis/outline/w/prev-or-next-heading/pos 1 :backward :peer)))
+        (and prev-peer
+             (not (-nomis/outline/section-ends-with-blank? (point)))
+             (-nomis/outline/section-ends-with-blank? prev-peer)))))))
+
+(defun -nomis/outline/fix-blank-lines-for-last-heading (pos)
+  (save-excursion
+    (goto-char pos)
+    (outline-end-of-subtree)
+    (delete-char -1)
+    (goto-char pos)
+    (insert "\n")))
+
+(defun -nomis/outline/maybe-fix-blank-lines (p1-before
+                                             p2-before
+                                             p1-after
+                                             p2-after)
+  (let* ((down-swap?
+          (and p1-before (null p2-before) (null p1-after) (null p2-after)))
+         (up-swap?
+          (and (null p1-before) (null p2-before) p1-after (null p2-after))))
+    (cond
+     (down-swap?
+      (-nomis/outline/fix-blank-lines-for-last-heading (point))
+      (forward-char 1))
+     (up-swap?
+      (-nomis/outline/fix-blank-lines-for-last-heading p1-after)))))
+
+(defvar *nomis/outline/restore-blank-lines/active* nil
+  "Non-nil when `nomis/outline/with-restore-blank-lines` is active.
+Used to prevent re-entrant blank-line fix attempts.")
+
+(defmacro nomis/outline/with-restore-blank-lines (&rest body)
+  (declare (indent 0))
+  `(if *nomis/outline/restore-blank-lines/active*
+       (progn ,@body)
+     (let* ((*nomis/outline/restore-blank-lines/active* t)
+            (p1-before
+             (nomis/outline/w/prev-or-next-heading/pos 1 :forward :peer))
+            (p2-before
+             (nomis/outline/w/prev-or-next-heading/pos 2 :forward :peer))
+            (blank-lines-follow-convention?
+             (-nomis/outline/blank-lines-follow-convention? p1-before p2-before)))
+       (prog1
+           (progn ,@body)
+         (when blank-lines-follow-convention?
+           (let* ((p1-after
+                   (nomis/outline/w/prev-or-next-heading/pos 1 :forward :peer))
+                  (p2-after
+                   (nomis/outline/w/prev-or-next-heading/pos 2 :forward :peer)))
+             (-nomis/outline/maybe-fix-blank-lines p1-before
+                                                   p2-before
+                                                   p1-after
+                                                   p2-after)))))))
+
+;;;; Move subtrees
 
 (defun nomis/outline/move-subtree-up/peer ()
   "Move subtree backward to previous peer position.
@@ -221,7 +305,7 @@ If there is no previous peer position, display a popup message."
     (if peer-pos
         (if sibling-pos
             (nomis/outline/w/move-subtree-up)
-          (progn
+          (nomis/outline/with-restore-blank-lines
             (nomis/outline/w/cut-subtree)
             (goto-char peer-pos)
             (nomis/tree/ls/show-after-nav)
@@ -241,7 +325,7 @@ If there is no next peer position, display a popup message."
     (if peer-pos
         (if sibling-pos
             (nomis/outline/w/move-subtree-down)
-          (progn
+          (nomis/outline/with-restore-blank-lines
             (let* ((peer-marker (copy-marker peer-pos)))
               (nomis/outline/w/cut-subtree)
               (goto-char peer-marker)
@@ -249,6 +333,22 @@ If there is no next peer position, display a popup message."
               (nomis/tree/ls/show-after-nav)
               (nomis/outline/w/paste-subtree))))
       (nomis/outline/w/prev-or-next-heading/error-message 1 :forward :peer))))
+
+(defun -nomis/outline/move-subtree/restore-blank-lines/advice (orig-fn
+                                                               &rest args)
+  (nomis/outline/with-restore-blank-lines
+    (apply orig-fn args)))
+
+(advice-add 'outline-move-subtree-up
+            :around
+            #'-nomis/outline/move-subtree/restore-blank-lines/advice)
+
+(advice-add 'outline-move-subtree-down
+            :around
+            #'-nomis/outline/move-subtree/restore-blank-lines/advice)
+
+;; (advice-remove 'outline-move-subtree-up #'-nomis/outline/move-subtree/restore-blank-lines/advice)
+;; (advice-remove 'outline-move-subtree-down #'-nomis/outline/move-subtree/restore-blank-lines/advice)
 
 ;;; End
 
