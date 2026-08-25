@@ -175,6 +175,7 @@
      (nomis/grep/local-ignored-directories "resources/pub-dev/compiler-output")
      (nomis/grep/local-ignored-directories "resources/public/compiler-output")
      (nomis/grep/local-ignored-directories "resources/public/js")
+     (nomis/grep/local-ignored-directories "shadow-cljs-output")
      (nomis/grep/local-ignored-directories)
      (nomis/grep/local-ignored-files "package-lock.json" "main.js")
      (nomis/grep/local-ignored-files "package-lock.json")
