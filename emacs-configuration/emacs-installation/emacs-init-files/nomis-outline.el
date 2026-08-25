@@ -300,17 +300,22 @@ If there is no previous peer position, display a popup message."
   (nomis/outline/w/back-to-heading)
   (let* ((sibling-pos
           (nomis/outline/w/prev-or-next-heading/pos 1 :backward :sibling))
-         (peer-pos
-          (nomis/outline/w/prev-or-next-heading/pos 1 :backward :peer)))
-    (if peer-pos
+         (parent-peer-pos
+          (save-excursion
+            (when (nomis/outline/w/up-heading* 1 t t)
+              (nomis/outline/w/prev-or-next-heading/pos 1 :backward :peer)))))
+    (if (or sibling-pos parent-peer-pos)
         (if sibling-pos
             (nomis/outline/w/move-subtree-up)
           (nomis/outline/with-restore-blank-lines
-            (nomis/outline/w/cut-subtree)
-            (goto-char peer-pos)
-            (nomis/tree/ls/show-after-nav)
-            (nomis/outline/w/paste-subtree)
-            (nomis/outline/w/move-subtree-down)))
+            (let* ((level (nomis/outline/w/level/boh)))
+              (nomis/outline/w/cut-subtree)
+              (goto-char parent-peer-pos)
+              (nomis/outline/w/next-current-or-higher-level)
+              (nomis/tree/ls/show-after-nav)
+              (cl-ecase (nomis/outline/w/mode)
+                (:outline (save-excursion (yank)))
+                (:org     (org-paste-subtree level))))))
       (nomis/outline/w/prev-or-next-heading/error-message 1 :backward :peer))))
 
 (defun nomis/outline/move-subtree-down/peer ()
@@ -320,18 +325,24 @@ If there is no next peer position, display a popup message."
   (nomis/outline/w/back-to-heading)
   (let* ((sibling-pos
           (nomis/outline/w/prev-or-next-heading/pos 1 :forward :sibling))
-         (peer-pos
-          (nomis/outline/w/prev-or-next-heading/pos 1 :forward :peer)))
-    (if peer-pos
+         (parent-peer-pos
+          (save-excursion
+            (when (nomis/outline/w/up-heading* 1 t t)
+              (nomis/outline/w/prev-or-next-heading/pos 1 :forward :peer)))))
+    (if (or sibling-pos parent-peer-pos)
         (if sibling-pos
             (nomis/outline/w/move-subtree-down)
           (nomis/outline/with-restore-blank-lines
-            (let* ((peer-marker (copy-marker peer-pos)))
+            (let* ((level (nomis/outline/w/level/boh))
+                   (parent-peer-marker (copy-marker parent-peer-pos)))
               (nomis/outline/w/cut-subtree)
-              (goto-char peer-marker)
-              (set-marker peer-marker nil)
+              (goto-char parent-peer-marker)
+              (set-marker parent-peer-marker nil)
+              (nomis/outline/w/next-heading)
               (nomis/tree/ls/show-after-nav)
-              (nomis/outline/w/paste-subtree))))
+              (cl-ecase (nomis/outline/w/mode)
+                (:outline (save-excursion (yank)))
+                (:org     (org-paste-subtree level))))))
       (nomis/outline/w/prev-or-next-heading/error-message 1 :forward :peer))))
 
 (defun -nomis/outline/move-subtree/restore-blank-lines/advice (orig-fn
