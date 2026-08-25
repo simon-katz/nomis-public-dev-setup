@@ -49,8 +49,8 @@
 (define-key nomis/outline/kb/map (kbd "/ h") 'outline-hide-by-heading-regexp)
 (define-key nomis/outline/kb/map (kbd "/ s") 'outline-show-by-heading-regexp)
 (define-key nomis/outline/kb/map (kbd "@")   'outline-mark-subtree)
-(define-key nomis/outline/kb/map (kbd "<up>") 'nomis/outline/move-subtree-up/peer)
-(define-key nomis/outline/kb/map (kbd "<down>") 'nomis/outline/move-subtree-down/peer)
+(define-key nomis/outline/kb/map (kbd "i")   'nomis/outline/move-subtree-up/peer)
+(define-key nomis/outline/kb/map (kbd "p")   'nomis/outline/move-subtree-down/peer)
 
 ;;; End
 
