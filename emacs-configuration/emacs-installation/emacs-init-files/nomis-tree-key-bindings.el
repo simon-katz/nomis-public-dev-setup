@@ -74,7 +74,7 @@ Use H with various other keys:
 Other commands
 --------------
 
-H-o ?    Show this help
+H-?      Show this help
 
 H-S      Search heading text for the text of this heading
 H-s      Repeat search heading text
@@ -100,6 +100,10 @@ H-o n c  Set # child levels for nav+lineage")
          (nomis/popup/message "%s" -nomis/tree/help)))
     (2 (with-help-window (help-buffer)
          (princ -nomis/tree/help)))))
+
+;;;; Help
+
+(define-key nomis/tree-mode-map (kbd "H-?")      'nomis/tree/pop-up-help)
 
 ;;;; Lineage
 
@@ -233,8 +237,6 @@ H-o n c  Set # child levels for nav+lineage")
 (define-key nomis/tree/kb/map (kbd "=") 'nomis/tree/show-children-from-all-roots/to-current-level)
 
 (define-key nomis/tree/kb/map (kbd "m") 'nomis/scrolling/toggle-maintain-line-no-in-window)
-
-(define-key nomis/tree/kb/map (kbd "?") 'nomis/tree/pop-up-help)
 
 ;;;; nomis/tree/kb/nav+lineage-map
 
