@@ -59,6 +59,14 @@ Otherwise, the key chprd is ignored, letting Emacs search lower-priority maps."
                    (when pulse-on-restore?
                      (nomis/msg/pulse-buffer)))))) ; noflycheck -- see earlier `noflycheck` comment
 
+;;;; Highlight em dashes
+
+(with-eval-after-load 'disp-table
+  (when standard-display-table
+    (aset standard-display-table
+          ?—
+          (vector (make-glyph-code ?— 'highlight)))))
+
 ;;; End
 
 (provide 'nomis-very-general-stuff-new-lexical)
