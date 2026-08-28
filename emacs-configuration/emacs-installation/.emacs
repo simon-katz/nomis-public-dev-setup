@@ -116,6 +116,7 @@
  '(safe-local-variable-values
    '((cider-clojure-cli-aliases . "-A:test")
      (cider-font-lock-max-length . 1000)
+     (cider-known-endpoints ("CLJ" "localhost" "14003"))
      (cider-ns-refresh-after-fn . "dev/cider-refresh--start!")
      (cider-ns-refresh-after-fn . "dev/go")
      (cider-ns-refresh-after-fn . "integrant.repl/resume")
