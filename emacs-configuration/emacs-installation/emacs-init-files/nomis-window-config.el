@@ -82,7 +82,9 @@ the config was saved."
     (when (and (null wc-names)
                (eq save-or-restore :restore))
       (error "No saved configurations"))
-    (completing-read "Name: "
+    (completing-read (cl-ecase save-or-restore
+                       (:save "Name to save to: ")
+                       (:restore "File to restore from: "))
                      wc-names
                      nil
                      (cl-ecase save-or-restore
