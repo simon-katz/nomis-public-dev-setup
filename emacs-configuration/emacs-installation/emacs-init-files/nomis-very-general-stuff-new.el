@@ -182,6 +182,9 @@ This allows you to temporarily modify read-only buffers too."
   (let* ((comment-start ";; todo->re-frame "))
     (comment-or-uncomment-region beg end arg)))
 
+(define-key global-map (kbd "H-C-/")
+            #'nomis/comment-or-uncomment-todo-re-frame)
+
 ;;;; ___________________________________________________________________________
 
 (provide 'nomis-very-general-stuff-new)
