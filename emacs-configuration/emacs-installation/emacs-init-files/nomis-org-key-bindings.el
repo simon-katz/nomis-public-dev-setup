@@ -38,9 +38,9 @@
 (define-key org-mode-map (kbd "M-.") 'org-open-at-point)
 (define-key org-mode-map (kbd "M-,") 'org-mark-ring-goto)
 
-;;;; Agenda
+;;;; `nomis/setup-org-keys`
 
-(progn ; TODO This is not only agenda stuff (contrary to the comment above), and this does not need to be done in a hook (or else everything should go in a hook)
+(progn ; TODO This does not need to be done in a hook (or else everything should go in a hook)
   (defun nomis/setup-org-keys ()
     ;; I don't like RETURN in org agenda giving ORG-AGENDA-SWITCH-TO.
     ;; I prefer this:
@@ -48,7 +48,8 @@
     (define-key org-agenda-mode-map (kbd "<SPC>") 'org-agenda-show)
     ;; Stuff that got changed when I upgraded to Emacs 26.1 -- this is mad!
     (define-key org-mode-map (kbd "M-S-<down>") 'org-move-subtree-down)
-    (define-key org-mode-map (kbd "M-S-<up>")   'org-move-subtree-up))
+    (define-key org-mode-map (kbd "M-S-<up>")   'nomis/outline/move-subtree-up/peer ; 'org-move-subtree-up
+                ))
   (add-hook 'org-mode-hook 'nomis/setup-org-keys))
 
 ;;; End
