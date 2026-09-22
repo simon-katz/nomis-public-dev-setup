@@ -71,6 +71,8 @@ Otherwise, the key chprd is ignored, letting Emacs search lower-priority maps."
 
 (defun nomis/convert-electric-dom-to-hiccup ()
   (interactive)
+  (paredit-forward)
+  (paredit-backward)
   (if (or (looking-at-p "(dom/text")
           (looking-at-p "(dom/props"))
       (progn
