@@ -67,6 +67,26 @@ Otherwise, the key chprd is ignored, letting Emacs search lower-priority maps."
           ?—
           (vector (make-glyph-code ?— 'highlight)))))
 
+;;;; `nomis/convert-electric-dom-to-hiccup`
+
+(defun nomis/convert-electric-dom-to-hiccup ()
+  (interactive)
+  (if (or (looking-at-p "(dom/text")
+          (looking-at-p "(dom/props"))
+      (progn
+        (paredit-forward-down)
+        (forward-sexp 2)
+        (backward-sexp)
+        (paredit-splice-sexp-killing-backward))
+    (clojure-convert-collection-to-vector)
+    (right-char 5)
+    (paredit-backward-delete 5)
+    (insert ":")
+    (left-char 2)))
+
+(define-key global-map (kbd "H-C-d")
+            #'nomis/convert-electric-dom-to-hiccup)
+
 ;;; End
 
 (provide 'nomis-very-general-stuff-new-lexical)

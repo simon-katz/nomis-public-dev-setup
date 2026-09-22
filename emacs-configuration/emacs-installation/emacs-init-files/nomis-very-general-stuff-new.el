@@ -185,24 +185,6 @@ This allows you to temporarily modify read-only buffers too."
 (define-key global-map (kbd "H-C-/")
             #'nomis/comment-or-uncomment-todo-re-frame)
 
-(defun nomis/convert-electric-dom-to-hiccup ()
-  (interactive)
-  (if (or (looking-at-p "(dom/text")
-          (looking-at-p "(dom/props"))
-      (progn
-        (paredit-forward-down)
-        (forward-sexp 2)
-        (backward-sexp)
-        (paredit-splice-sexp-killing-backward))
-    (clojure-convert-collection-to-vector)
-    (right-char 5)
-    (paredit-backward-delete 5)
-    (insert ":")
-    (left-char 2)))
-
-(define-key global-map (kbd "H-C-d")
-            #'nomis/convert-electric-dom-to-hiccup)
-
 ;;;; ___________________________________________________________________________
 
 (provide 'nomis-very-general-stuff-new)
