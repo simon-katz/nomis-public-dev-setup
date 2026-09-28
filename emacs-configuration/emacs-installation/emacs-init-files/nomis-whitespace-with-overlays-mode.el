@@ -13,7 +13,7 @@
 
 (defvar-local nomis/wwo/whitespace-trailing-on? t)
 
-(defvar-local nomis/wwo/beyond-margin-on? t)
+(defvar-local nomis/wwo/beyond-margin-on? nil)
 
 (defface nomis/wwo/whitespace-trailing-face
   '((t :background "hotpink"))
