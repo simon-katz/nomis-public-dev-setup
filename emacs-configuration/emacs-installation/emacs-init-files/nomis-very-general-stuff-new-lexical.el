@@ -67,6 +67,11 @@ Otherwise, the key chprd is ignored, letting Emacs search lower-priority maps."
           ?—
           (vector (make-glyph-code ?— 'highlight)))))
 
+;;;; `comment-or-uncomment-region`
+
+(define-key global-map (kbd "H-C-;")
+            #'comment-or-uncomment-region)
+
 ;;; End
 
 (provide 'nomis-very-general-stuff-new-lexical)
