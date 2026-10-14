@@ -1,11 +1,13 @@
 ;;; nomis-vterm.el --- vterm tailoring -*- lexical-binding: t; -*-
 
-;;;; ___________________________________________________________________________
+;;; Code
 
-;;;; Emacs libvterm README says
-;;;;   And add this to your init.el:
-;;;;     (add-to-list 'load-path "path/to/emacs-libvterm")
-;;;;     (require 'vterm)
+;;;; Standard vterm config
+
+;; Emacs libvterm README says
+;;   And add this to your init.el:
+;;     (add-to-list 'load-path "path/to/emacs-libvterm")
+;;     (require 'vterm)
 
 (add-to-list 'load-path "/Users/simonkatz/development-100/repositories/software-installations/emacs-libvterm")
 
@@ -22,6 +24,6 @@
 
   (unbind-key "M-`" vterm-mode-map))
 
-;;;; ___________________________________________________________________________
+;;; End
 
 (provide 'nomis-vterm)
