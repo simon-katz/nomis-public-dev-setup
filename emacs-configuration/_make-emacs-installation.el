@@ -46,6 +46,7 @@
     flycheck-kotlin
     flycheck-projectile
     fuzzy
+    ghostel
     gnu-elpa-keyring-update
     helm
     hide-lines
