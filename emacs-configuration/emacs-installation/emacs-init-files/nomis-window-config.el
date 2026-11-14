@@ -29,7 +29,8 @@
 
 (defvar nomis/wc/root-dir-for-searches nil)
 
-(defcustom nomis/wc/point-at-end/always-modes '(vterm-mode)
+(defcustom nomis/wc/point-at-end/always-modes '(vterm-mode
+                                                ghostel-mode)
   "Major modes for which point is always restored to end of buffer on
 window config restore."
   :type '(repeat symbol)
