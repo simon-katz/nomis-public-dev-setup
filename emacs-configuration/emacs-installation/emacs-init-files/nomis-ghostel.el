@@ -20,6 +20,8 @@
 
 ;;;; ghostel config
 
+(setopt ghostel-module-directory "~/development-100/repositories/software-installations/emacs-downloads/ghostel")
+
 (defun nomis/ghostel--append-fast-exit-indicator ()
   "Append fast-exit indicator to `mode-line-process' after ghostel refreshes it."
   (when (memq ghostel--input-mode '(copy emacs))
