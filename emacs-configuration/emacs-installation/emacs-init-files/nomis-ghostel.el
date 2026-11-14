@@ -42,6 +42,8 @@
                         "M-Z"))
               cl-remove-duplicates))
 
+  (setopt ghostel-readonly-default-mode 'emacs)
+
   (advice-add 'ghostel--mode-line-refresh :after
               #'nomis/ghostel--append-fast-exit-indicator))
 
