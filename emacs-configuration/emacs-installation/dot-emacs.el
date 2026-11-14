@@ -188,6 +188,8 @@
 (require 'nomis-vterm-hacks)
 (require 'nomis-vterm)
 
+(require 'nomis-ghostel)
+
 (require 'nomis-tooltips)
 
 ;;;; ---- Lisp and Clojure stuff probably good for anyone ----
