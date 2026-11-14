@@ -14,6 +14,7 @@
 (defvar ghostel-keymap-exceptions)
 (defvar ghostel--input-mode)
 (defvar ghostel--readonly-fast-exit)
+(defvar ghostel-identity)
 (declare-function ghostel-clear "ghostel")
 (declare-function ghostel-clear-scrollback "ghostel")
 
@@ -27,6 +28,11 @@
             (if (listp mode-line-process)
                 (append mode-line-process (list indicator))
               (list mode-line-process indicator))))))
+
+(defun nomis/ghostel-buffer-name (_title)
+  "Name ghostel buffers as \"*ghostel<N>*\" using ghostel's instance number."
+  (format "*ghostel<%s>"
+          (alist-get 'instance ghostel-identity)))
 
 (with-eval-after-load 'ghostel
 
@@ -45,7 +51,9 @@
   (setopt ghostel-readonly-default-mode 'emacs)
 
   (advice-add 'ghostel--mode-line-refresh :after
-              #'nomis/ghostel--append-fast-exit-indicator))
+              #'nomis/ghostel--append-fast-exit-indicator)
+
+  (setopt ghostel-buffer-name-function #'nomis/ghostel-buffer-name))
 
 ;;; End
 
