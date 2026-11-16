@@ -612,6 +612,17 @@ With numerical argument N, show content up to level N."
         ("WONT" . "DodgerBlue1")
         ("HOLD" . "DodgerBlue1")))
 
+;;;; Fix common problems
+
+(defun nomis/org-fix-common-problems ()
+  "Fix common org-mode problems in the current buffer."
+  (interactive)
+  (org-element-cache-reset)
+  (when (bound-and-true-p org-indent-mode)
+    (org-indent-mode -1)
+    (org-indent-mode +1))
+  (message "nomis/org-fix-common-problems: Done"))
+
 ;;;; Key bindings
 
 (require 'nomis-org-key-bindings)
