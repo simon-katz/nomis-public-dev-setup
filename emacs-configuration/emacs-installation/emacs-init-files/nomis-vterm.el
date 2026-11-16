@@ -2,6 +2,13 @@
 
 ;;; Code
 
+;;;; We're using ghostel now
+
+(defun vterm--reminder-that-ghostel-now ()
+  ;; Once used from `M-x`, this will be top of the list when typing `M-x vt`.
+  (interactive)
+  (message-box "We're using ghostel now."))
+
 ;;;; Standard vterm config
 
 ;; Emacs libvterm README says
