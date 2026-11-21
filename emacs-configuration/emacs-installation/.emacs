@@ -118,6 +118,7 @@
    '((cider-clojure-cli-aliases . "-A:test")
      (cider-font-lock-max-length . 1000)
      (cider-known-endpoints ("CLJ" "localhost" "14003"))
+     (cider-known-endpoints ("CLJ" "localhost" "15003"))
      (cider-ns-refresh-after-fn . "dev/cider-refresh--start!")
      (cider-ns-refresh-after-fn . "dev/go")
      (cider-ns-refresh-after-fn . "integrant.repl/resume")
@@ -163,6 +164,7 @@
      (nomis/cider/cljs-dev-port . 11001)
      (nomis/cider/cljs-dev-port . 13001)
      (nomis/cider/cljs-dev-port . 14001)
+     (nomis/cider/cljs-dev-port . 15001)
      (nomis/cider/post-interactive-eval/clj-function-name
       . "dev/post-interactive-eval-hook")
      (nomis/cider/post-interactive-eval/cljs-function-name
