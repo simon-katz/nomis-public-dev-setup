@@ -1,10 +1,12 @@
-;;;; Init stuff -- flycheck mode
+;;; Init stuff -- flycheck mode
 
-;;;; ___________________________________________________________________________
+;;; Code:
+
+;;;; Require things
 
 (require 'flycheck)
 
-;;;; ___________________________________________________________________________
+;;;; A heading
 
 (pushnew 'idle-buffer-switch flycheck-check-syntax-automatically)
 
@@ -16,7 +18,7 @@
         ("ID" 18 t)
         (,(flycheck-error-list-make-last-column "Message" 'Checker) 0 t)])
 
-;;;; ___________________________________________________________________________
+;;;; A heading
 
 (progn ; Include checker name in flycheck messages in echo area.
   (cond
@@ -60,19 +62,20 @@
     ;; We are doing this generically in `mp-flycheck-eldoc` now.
     )))
 
-;;;; ___________________________________________________________________________
+;;;; A heading
 
 (setopt flycheck-emacs-lisp-load-path 'inherit)
 
 (setopt flycheck-temp-prefix "_no-commit_flycheck_")
 
-;;;; ___________________________________________________________________________
-;;;; Provide some easier-to-type key bindings than the built-in ones
+;;;; A heading
+
+;; Provide some easier-to-type key bindings than the built-in ones
 
 (let* ((m flycheck-mode-map))
   (define-key m (kbd "C-z C-<left>")  'flycheck-previous-error)
   (define-key m (kbd "C-z C-<right>") 'flycheck-next-error))
 
-;;;; ___________________________________________________________________________
+;;; End
 
 (provide 'nomis-flycheck)
