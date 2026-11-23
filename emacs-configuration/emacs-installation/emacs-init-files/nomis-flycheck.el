@@ -5,6 +5,8 @@
 ;;;; Require things
 
 (require 'flycheck)
+(require 'flycheck-projectile)
+(require 'projectile)
 
 ;;;; A heading
 
@@ -75,6 +77,45 @@
 (let* ((m flycheck-mode-map))
   (define-key m (kbd "C-z C-<left>")  'flycheck-previous-error)
   (define-key m (kbd "C-z C-<right>") 'flycheck-next-error))
+
+;;;; Per-project `flycheck-projectile-list-errors` buffers
+
+(defun nomis/flycheck-projectile-list-errors-per-project (orig-fn &optional dir)
+  "Call ORIG-FN with `flycheck-projectile-error-list-buffer' set
+per-project, so that multiple project error buffers can coexist.
+See also `nomis/flycheck-projectile-auto-switch'."
+  (require 'projectile)
+  (setq flycheck-projectile-error-list-buffer
+        (format "*Project errors: %s*" (projectile-project-name)))
+  (funcall orig-fn dir))
+
+(advice-add 'flycheck-projectile-list-errors
+            :around #'nomis/flycheck-projectile-list-errors-per-project)
+
+(defun nomis/flycheck-projectile-auto-switch (_window_or_frame)
+  "Transfer `flycheck-projectile' live updates on project switch.
+Called via `window-buffer-change-functions' and
+`window-selection-change-functions'.  Does nothing if the
+per-project error buffer for the current buffer's project does
+not exist yet."
+  (let* ((buf (current-buffer)))
+    (when (buffer-file-name buf)
+      (with-current-buffer buf
+        (when (and (fboundp 'projectile-project-p)
+                   (projectile-project-p))
+          (let* ((project-name (projectile-project-name))
+                 (buf-name     (format "*Project errors: %s*" project-name)))
+            (when (and (get-buffer buf-name)
+                       (not (equal project-name
+                                   flycheck-projectile--project)))
+              (save-window-excursion
+                (flycheck-projectile-list-errors)))))))))
+
+(add-hook 'window-buffer-change-functions
+          #'nomis/flycheck-projectile-auto-switch)
+
+(add-hook 'window-selection-change-functions
+          #'nomis/flycheck-projectile-auto-switch)
 
 ;;; End
 
