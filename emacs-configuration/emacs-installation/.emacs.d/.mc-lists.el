@@ -26,6 +26,7 @@
         kill-region
         kill-sentence
         mark-sexp
+        markdown-end-of-line
         markdown-exdent-or-delete
         markdown-outdent-or-delete
         nomis/clojure/insert-reader-comment
